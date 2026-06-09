@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Monday Football Team — Dashboard</title>
+<style>
+  :root {
+    --bg: #0f0f13;
+    --bg2: #1a1a24;
+    --bg3: #22222f;
+    --border: rgba(255,255,255,.08);
+    --border2: rgba(255,255,255,.14);
+    --text: #f0f0f4;
+    --text2: #9898aa;
+    --text3: #5a5a6a;
+    --rouge: #e53935; --rouge-bg: rgba(229,57,53,.15); --rouge-border: rgba(229,57,53,.3);
+    --vert:  #43a047; --vert-bg:  rgba(67,160,71,.15);  --vert-border:  rgba(67,160,71,.3);
+    --bleu:  #1e88e5; --bleu-bg:  rgba(30,136,229,.15); --bleu-border:  rgba(30,136,229,.3);
+    --gold: #f5c842; --silver: #aab0bc; --bronze: #c47c3a;
+    --radius: 10px; --radius-lg: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.5; min-height: 100vh; }
+
+  header { padding: 2rem 2rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 14px; }
+  header .logo { font-size: 26px; }
+  header h1 { font-size: 20px; font-weight: 600; }
+  header p { font-size: 13px; color: var(--text2); margin-top: 2px; }
+  header .spacer { flex: 1; }
+  .refresh-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border2);
+    background: transparent; color: var(--text2); font-size: 13px; cursor: pointer;
+    transition: all .15s; white-space: nowrap;
+  }
+  .refresh-btn:hover { background: var(--bg3); color: var(--text); border-color: rgba(255,255,255,.22); }
+  .refresh-btn svg { opacity: .7; transition: transform .4s; }
+  .refresh-btn:hover svg { transform: rotate(180deg); }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+
+  /* ── Onglets principaux ── */
+  .main-tabs { display: inline-flex; background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 4px; margin-bottom: 2rem; gap: 3px; }
+  .main-tab {
+    padding: 9px 22px; border-radius: 9px; font-size: 13px; font-weight: 500;
+    cursor: pointer; background: transparent; color: var(--text3); border: none;
+    transition: background .18s, color .18s, box-shadow .18s; letter-spacing: .01em; white-space: nowrap;
+  }
+  .main-tab.active {
+    background: rgba(255,255,255,.11); color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.07);
+  }
+  .main-tab:hover:not(.active) { background: rgba(255,255,255,.05); color: var(--text2); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── Filtres période (dashboard) ── */
+  .period-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .pill { padding: 7px 18px; border-radius: 20px; border: 1px solid var(--border2); font-size: 13px; cursor: pointer; background: transparent; color: var(--text2); transition: all .15s; }
+  .pill.active { background: #fff; color: #0f0f13; border-color: #fff; font-weight: 500; }
+  .pill:hover:not(.active) { background: var(--bg3); color: var(--text); }
+
+  .period-sub { display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem; min-height: 38px; }
+  .period-sub select {
+    background: var(--bg2); color: var(--text); border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 7px 28px 7px 12px; font-size: 13px; cursor: pointer; outline: none;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239898aa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+  }
+  .period-sub select:focus { border-color: rgba(255,255,255,.25); }
+
+  /* ── Sélecteur de session ── */
+  .session-selector { display: flex; align-items: center; gap: 12px; margin-bottom: 2rem; }
+  .session-selector label { font-size: 13px; color: var(--text2); }
+  .session-selector select {
+    background: var(--bg2); color: var(--text); border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 8px 14px; font-size: 14px; cursor: pointer; outline: none;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239898aa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px;
+  }
+  .session-selector select:focus { border-color: var(--border2); }
+
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); margin: 2rem 0 .75rem; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
+  .card .lbl { font-size: 12px; color: var(--text3); margin-bottom: 8px; }
+  .card .val { font-size: 26px; font-weight: 600; line-height: 1.1; }
+  .card .sub { font-size: 12px; color: var(--text2); margin-top: 6px; }
+  .card .match-line { display: flex; align-items: center; gap: 7px; margin-top: 10px; flex-wrap: wrap; }
+  .card .match-line .sc { font-size: 16px; font-weight: 600; }
+  .card .match-line .dash { color: var(--text3); }
+
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 5px; font-size: 12px; font-weight: 600; }
+  .badge.rouge { background: var(--rouge-bg); color: var(--rouge); border: 1px solid var(--rouge-border); }
+  .badge.vert  { background: var(--vert-bg);  color: var(--vert);  border: 1px solid var(--vert-border); }
+  .badge.bleu  { background: var(--bleu-bg);  color: var(--bleu);  border: 1px solid var(--bleu-border); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+
+  .podium { display: flex; flex-direction: column; gap: 5px; }
+  .podium-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); }
+  .podium-row:first-child { border-color: rgba(245,200,66,.2); background: rgba(245,200,66,.04); }
+  .podium-row:nth-child(2) { border-color: rgba(170,176,188,.15); }
+  .rank { font-size: 13px; font-weight: 700; min-width: 20px; }
+  .rank.gold { color: var(--gold); }
+  .rank.silver { color: var(--silver); }
+  .rank.bronze { color: var(--bronze); }
+  .rank.plain { color: var(--text3); }
+  .pname { flex: 1; font-size: 14px; }
+  .pval { font-size: 13px; font-weight: 600; color: var(--text2); }
+  .pval.danger { color: #ef5350; }
+  .pval.warn { color: #ffa726; }
+  .pval.success { color: #66bb6a; }
+
+  .cdot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+  .cdot.rouge { background: var(--rouge); }
+  .cdot.vert  { background: var(--vert); }
+  .cdot.bleu  { background: var(--bleu); }
+
+  .no-data { color: var(--text3); font-size: 13px; font-style: italic; padding: 6px 0; }
+
+  .buts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
+  .buts-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); }
+  .buts-bar-wrap { flex: 1; height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+  .buts-bar { height: 100%; border-radius: 2px; background: #fff; opacity: .5; }
+
+  /* ── Résultats de session ── */
+  .session-highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 2rem; }
+  .highlight-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 22px; }
+  .highlight-card .h-icon { font-size: 22px; margin-bottom: 10px; }
+  .highlight-card .h-lbl { font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
+  .highlight-card .h-val { font-size: 22px; font-weight: 700; line-height: 1.2; margin-bottom: 6px; }
+  .highlight-card .h-sub { font-size: 12px; color: var(--text2); }
+  .highlight-card .h-match { display: flex; align-items: center; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .highlight-card .h-match .sc { font-size: 15px; font-weight: 600; }
+  .highlight-card .h-match .dash { color: var(--text3); font-size: 13px; }
+
+  .matches-list { display: flex; flex-direction: column; gap: 6px; }
+  .match-row { display: flex; align-items: center; gap: 10px; padding: 11px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; }
+  .match-row .teams { display: flex; align-items: center; gap: 6px; flex: 1; }
+  .match-row .score { font-size: 15px; font-weight: 700; letter-spacing: .03em; padding: 0 8px; }
+  .match-row .result-tag { font-size: 11px; color: var(--text3); min-width: 60px; text-align: right; }
+
+  /* ── KPI summary ── */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 10px; margin-bottom: 2rem; }
+  .kpi-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 20px; position: relative; overflow: hidden; }
+  .kpi-card::after { content:""; position:absolute; inset:0; pointer-events:none; border-radius: var(--radius-lg); }
+  .kpi-card.accent-green::after  { background: radial-gradient(circle at top left, rgba(67,160,71,.12), transparent 65%); }
+  .kpi-card.accent-red::after    { background: radial-gradient(circle at top left, rgba(229,57,53,.10), transparent 65%); }
+  .kpi-card.accent-amber::after  { background: radial-gradient(circle at top left, rgba(245,200,66,.10), transparent 65%); }
+  .kpi-num { font-size: 46px; font-weight: 700; line-height: 1; letter-spacing: -.03em; }
+  .kpi-num.green  { color: #66bb6a; }
+  .kpi-num.red    { color: #ef5350; }
+  .kpi-num.amber  { color: var(--gold); }
+  .kpi-lbl { font-size: 11px; color: var(--text3); margin-top: 10px; text-transform: uppercase; letter-spacing: .07em; font-weight: 600; }
+  .kpi-sub { font-size: 12px; color: var(--text2); margin-top: 5px; }
+
+  /* ── Podium visuel ── */
+  .podium-section { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1rem; }
+  @media (max-width: 640px) { .podium-section { grid-template-columns: 1fr; } }
+  .podium-block { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .podium-block-header { padding: 13px 18px 11px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .ph-title { font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--text3); }
+  .podium-entry { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+  .podium-entry:last-child { border-bottom: none; }
+  .podium-entry.first { background: rgba(245,200,66,.03); border-left: 2px solid rgba(245,200,66,.3); }
+  .pe-rank { font-size: 18px; min-width: 28px; }
+  .pe-name { flex: 1; font-size: 15px; font-weight: 500; }
+  .pe-count { font-size: 28px; font-weight: 700; line-height: 1; }
+  .pe-count.green  { color: #66bb6a; }
+  .pe-count.red    { color: #ef5350; }
+  .pe-count.amber  { color: #ffa726; }
+  .pe-unit { font-size: 11px; color: var(--text3); margin-left: 3px; align-self: flex-end; padding-bottom: 3px; }
+
+  /* ── Records ── */
+  .records-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 10px; }
+  .record-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; }
+  .rc-icon { font-size: 22px; margin-bottom: 10px; }
+  .rc-lbl { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; font-weight: 600; margin-bottom: 8px; }
+  .rc-num { font-size: 42px; font-weight: 700; line-height: 1; letter-spacing: -.03em; margin-bottom: 10px; }
+  .rc-match { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+  .rc-match .sc { font-size: 14px; font-weight: 600; }
+  .rc-match .da { color: var(--text3); }
+  .rc-sub { font-size: 12px; color: var(--text2); margin-top: 6px; }
+
+  /* ── Top buteur hero ── */
+  .top-scorer-hero { display: flex; align-items: center; gap: 20px; background: var(--bg2); border: 1px solid rgba(245,200,66,.25); border-radius: var(--radius-lg); padding: 22px 26px; margin-bottom: 12px; position: relative; overflow: hidden; }
+  .top-scorer-hero::before { content:""; position:absolute; inset:0; background: radial-gradient(circle at left, rgba(245,200,66,.08), transparent 60%); pointer-events:none; }
+  .ts-num { font-size: 64px; font-weight: 700; color: var(--gold); line-height: 1; letter-spacing: -.04em; }
+  .ts-info .ts-name { font-size: 24px; font-weight: 600; }
+  .ts-info .ts-lbl { font-size: 12px; color: var(--text2); margin-top: 4px; }
+
+  /* ── Tableau Joueurs ── */
+  .players-table-wrap { overflow-x: auto; border-radius: var(--radius-lg); border: 1px solid var(--border); }
+  .players-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .players-table thead { position: sticky; top: 0; z-index: 2; }
+  .players-table thead tr { background: var(--bg3); }
+  .players-table th {
+    padding: 12px 16px; text-align: left; font-size: 10px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--text3);
+    white-space: nowrap; cursor: pointer; user-select: none;
+    border-bottom: 2px solid var(--border2);
+    transition: color .12s, background .12s;
+  }
+  .players-table th:first-child { border-right: 1px solid var(--border2); }
+  .players-table th:hover { color: var(--text2); background: rgba(255,255,255,.025); }
+  .players-table th.sorted { color: var(--text); }
+  .players-table th .sort-arrow { display: inline-block; margin-left: 4px; opacity: .25; font-size: 9px; }
+  .players-table th.sorted .sort-arrow { opacity: 1; }
+  .players-table tbody tr { border-bottom: 1px solid rgba(255,255,255,.04); transition: background .1s; }
+  .players-table tbody tr:nth-child(even) { background: rgba(255,255,255,.018); }
+  .players-table tbody tr:last-child { border-bottom: none; }
+  .players-table tbody tr:hover { background: rgba(255,255,255,.065) !important; }
+  .players-table td { padding: 11px 16px; vertical-align: middle; }
+  .players-table td.name { font-weight: 500; font-size: 14px; color: var(--text); border-right: 1px solid var(--border); }
+  .players-table td.num { color: var(--text2); text-align: right; font-variant-numeric: tabular-nums; }
+  .players-table td.num.zero { color: var(--text3); opacity: .55; }
+  .players-table td.num.highlight { color: var(--text); font-weight: 700; }
+  .players-table td.num.danger  { color: #ef5350; font-weight: 600; }
+  .players-table td.num.warn    { color: #ffa726; font-weight: 600; }
+  .players-table td.num.muted   { color: var(--text3); }
+  .players-table td.num.nr      { color: #7a7a90; font-weight: 700; }
+  .players-table td.team-cell   { text-align: center; }
+  /* taux colonne */
+  .taux-cell { text-align: right; white-space: nowrap; }
+  .taux-wrap { display: inline-flex; align-items: center; gap: 8px; }
+  .taux-track { width: 44px; height: 4px; background: rgba(255,255,255,.08); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+  .taux-fill { height: 100%; border-radius: 2px; transition: width .3s; }
+  .taux-fill.high { background: #66bb6a; }
+  .taux-fill.mid  { background: var(--text2); opacity: .7; }
+  .taux-fill.low  { background: var(--text3); opacity: .6; }
+  .taux-val { font-size: 12px; font-variant-numeric: tabular-nums; min-width: 30px; text-align: right; }
+  .taux-val.high { color: #66bb6a; font-weight: 600; }
+  .taux-val.mid  { color: var(--text2); }
+  .taux-val.low  { color: var(--text3); }
+  .joker-tag { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: .05em; color: var(--gold); background: rgba(245,200,66,.1); border: 1px solid rgba(245,200,66,.25); border-radius: 4px; padding: 1px 6px; margin-left: 6px; vertical-align: middle; }
+
+  /* ── Lock screen ── */
+  #lock-screen {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--bg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0;
+  }
+  #lock-screen .lock-card {
+    background: var(--bg2); border: 1px solid var(--border2);
+    border-radius: 20px; padding: 40px 44px 36px;
+    width: 100%; max-width: 360px;
+    display: flex; flex-direction: column; align-items: center; gap: 0;
+    box-shadow: 0 24px 64px rgba(0,0,0,.5);
+  }
+  #lock-screen .lock-icon { font-size: 36px; margin-bottom: 18px; }
+  #lock-screen h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  #lock-screen p  { font-size: 13px; color: var(--text3); margin-bottom: 24px; }
+  #lock-screen input[type="password"] {
+    width: 100%; padding: 12px 16px; font-size: 15px; letter-spacing: .12em;
+    background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px;
+    color: var(--text); outline: none; margin-bottom: 12px;
+    transition: border-color .15s;
+  }
+  #lock-screen input[type="password"]:focus { border-color: rgba(255,255,255,.3); }
+  #lock-screen input[type="password"].error { border-color: var(--rouge); animation: shake .35s; }
+  #lock-screen .lock-btn {
+    width: 100%; padding: 12px; font-size: 14px; font-weight: 600;
+    background: #fff; color: #0f0f13; border: none; border-radius: 10px;
+    cursor: pointer; transition: opacity .15s;
+  }
+  #lock-screen .lock-btn:hover { opacity: .88; }
+  #lock-screen .lock-err { font-size: 12px; color: var(--rouge); margin-top: 10px; min-height: 16px; }
+  @keyframes shake {
+    0%,100%{ transform: translateX(0); }
+    20%    { transform: translateX(-6px); }
+    60%    { transform: translateX(6px); }
+    80%    { transform: translateX(-3px); }
+  }
+
+  footer { text-align: center; padding: 2rem; color: var(--text3); font-size: 12px; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<div id="lock-screen">
+  <div class="lock-card">
+    <div class="lock-icon">🔒</div>
+    <h2>Accès restreint</h2>
+    <p>Happy Monday Football Team</p>
+    <input type="password" id="pwd-input" placeholder="Mot de passe" autocomplete="current-password">
+    <button class="lock-btn" id="pwd-btn">Entrer</button>
+    <div class="lock-err" id="pwd-err"></div>
+  </div>
+</div>
+
+<header>
+  <span class="logo">⚽</span>
+  <div>
+    <h1>Happy Monday Football Team</h1>
+    <p id="header-sub">Dashboard · mis à jour par Claude chaque semaine</p>
+  </div>
+  <span class="spacer"></span>
+  <button class="refresh-btn" id="refresh-btn">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M13 2v4H9"/><path d="M1 12V8h4"/>
+      <path d="M2.5 5a5.5 5.5 0 0 1 9.1-1.4L13 6M1 8l1.4 2.4A5.5 5.5 0 0 0 11.5 9"/>
+    </svg>
+    Actualiser
+  </button>
+</header>
+
+<div class="container">
+
+  <div class="main-tabs">
+    <button class="main-tab active" data-tab="dashboard">Dashboard</button>
+    <button class="main-tab" data-tab="session">Résultats de session</button>
+    <button class="main-tab" data-tab="joueurs">Joueurs</button>
+  </div>
+
+  <!-- ── Onglet Dashboard ── -->
+  <div class="tab-panel active" id="panel-dashboard">
+    <div class="period-bar" id="periods">
+      <button class="pill active" data-period="last">Dernière session</button>
+      <button class="pill" data-period="month">Ce mois-ci</button>
+      <button class="pill" data-period="year">Cette année</button>
+      <button class="pill" data-period="all">All-time</button>
+    </div>
+    <div class="period-sub" id="period-sub">
+      <select id="filter-month" hidden></select>
+      <select id="filter-year"></select>
+    </div>
+    <div id="dash"></div>
+  </div>
+
+  <!-- ── Onglet Joueurs ── -->
+  <div class="tab-panel" id="panel-joueurs">
+    <div id="joueurs-content"></div>
+  </div>
+
+  <!-- ── Onglet Résultats de session ── -->
+  <div class="tab-panel" id="panel-session">
+    <div class="session-selector">
+      <label for="session-date">Session :</label>
+      <select id="session-date"></select>
+    </div>
+    <div id="session-results"></div>
+  </div>
+
+</div>
+
+<footer>Happy Monday Football Team &mdash; Luxembourg &mdash; <span id="year"></span></footer>
+
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
+
+/* ── Authentification ── */
+(function() {
+  const HASH = "2db71540fe9ba207f224a702328bf24adefc72c0b3fd4b4d7544fce7146b468b";
+
+  async function sha256(str) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+  }
+
+  async function tryUnlock() {
+    const val = document.getElementById("pwd-input").value;
+    const hash = await sha256(val);
+    if (hash === HASH) {
+      sessionStorage.setItem("hmft_auth", "1");
+      document.getElementById("lock-screen").style.display = "none";
+    } else {
+      const inp = document.getElementById("pwd-input");
+      const err = document.getElementById("pwd-err");
+      inp.classList.add("error");
+      err.textContent = "Mot de passe incorrect.";
+      inp.value = "";
+      setTimeout(() => inp.classList.remove("error"), 400);
+    }
+  }
+
+  if (sessionStorage.getItem("hmft_auth") === "1") {
+    document.getElementById("lock-screen").style.display = "none";
+  } else {
+    document.getElementById("pwd-btn").addEventListener("click", tryUnlock);
+    document.getElementById("pwd-input").addEventListener("keydown", e => {
+      if (e.key === "Enter") tryUnlock();
+    });
+    setTimeout(() => document.getElementById("pwd-input").focus(), 50);
+  }
+})();
+
+/* ── Persistance onglet actif + bouton Actualiser ── */
+document.getElementById("refresh-btn").addEventListener("click", () => {
+  const activeTab = document.querySelector(".main-tab.active");
+  if (activeTab) sessionStorage.setItem("activeTab", activeTab.dataset.tab);
+  location.reload();
+});
+
+/* ═══════════════════════════════════════════════════════
+   DATA — Claude met cette section à jour chaque semaine
+═══════════════════════════════════════════════════════ */
+const SESSIONS = [
+  {
+    date: "2026-04-20",
+    presences: {
+      "Boris":          { statut: "Présent",     equipe: "" },
+      "Sylvain":        { statut: "Présent",     equipe: "" },
+      "Antoine":        { statut: "Blessé",      equipe: "" },
+      "Yassir":         { statut: "Pas répondu", equipe: "" },
+      "Mahdi":          { statut: "Absent",      equipe: "" },
+      "Madani":         { statut: "Absent",      equipe: "" },
+      "JB":             { statut: "Présent",     equipe: "" },
+      "Renaud":         { statut: "Présent",     equipe: "" },
+      "Clément":        { statut: "Présent",     equipe: "" },
+      "Guy":            { statut: "Blessé",      equipe: "" },
+      "Loïc":           { statut: "Blessé",      equipe: "" },
+      "Raphaël 1":      { statut: "Absent",      equipe: "" },
+      "Raphaël 2":      { statut: "Blessé",      equipe: "" },
+      "Ben":            { statut: "Présent",     equipe: "" },
+      "Pierre-Olivier": { statut: "Pas répondu", equipe: "" },
+      "Tof":            { statut: "Absent",      equipe: "" },
+      "Benji":          { statut: "Absent",      equipe: "" },
+      "Benou":          { statut: "Pas répondu", equipe: "" },
+      "Cédric":         { statut: "Pas répondu", equipe: "" },
+      "Houari":         { statut: "Pas répondu", equipe: "" },
+      "Morgane":        { statut: "Absent",      equipe: "" },
+      "Jordan":         { statut: "Pas répondu", equipe: "" },
+      "Laury":          { statut: "Pas répondu", equipe: "" },
+      "Ludo":           { statut: "Absent",      equipe: "" },
+      "Tabley":         { statut: "Absent",      equipe: "" },
+      "Virgile":        { statut: "Pas répondu", equipe: "" },
+      "Zoltan":         { statut: "Présent",     equipe: "" },
+      "Gauthier":       { statut: "Pas répondu", equipe: "" },
+      "Hamine":         { statut: "Présent",     equipe: "", joker: true },
+      "Marius":         { statut: "Présent",     equipe: "", joker: true },
+      "Harone":         { statut: "Présent",     equipe: "", joker: true }
+    },
+    matchs: []
+  },
+  {
+    date: "2026-04-27",
+    presences: {
+      "Boris":          { statut: "Présent",     equipe: "" },
+      "Sylvain":        { statut: "Présent",     equipe: "" },
+      "Antoine":        { statut: "Blessé",      equipe: "" },
+      "Yassir":         { statut: "Absent",      equipe: "" },
+      "Mahdi":          { statut: "Pas répondu", equipe: "" },
+      "Madani":         { statut: "Présent",     equipe: "" },
+      "JB":             { statut: "Présent",     equipe: "" },
+      "Renaud":         { statut: "Absent",      equipe: "" },
+      "Clément":        { statut: "Présent",     equipe: "" },
+      "Guy":            { statut: "Blessé",      equipe: "" },
+      "Loïc":           { statut: "Blessé",      equipe: "" },
+      "Raphaël 1":      { statut: "Présent",     equipe: "" },
+      "Raphaël 2":      { statut: "Blessé",      equipe: "" },
+      "Ben":            { statut: "Présent",     equipe: "" },
+      "Pierre-Olivier": { statut: "Pas répondu", equipe: "" },
+      "Tof":            { statut: "Absent",      equipe: "" },
+      "Benji":          { statut: "Absent",      equipe: "" },
+      "Benou":          { statut: "Pas répondu", equipe: "" },
+      "Cédric":         { statut: "Absent",      equipe: "" },
+      "Houari":         { statut: "Pas répondu", equipe: "" },
+      "Morgane":        { statut: "Absent",      equipe: "" },
+      "Jordan":         { statut: "Pas répondu", equipe: "" },
+      "Laury":          { statut: "Absent",      equipe: "" },
+      "Ludo":           { statut: "Absent",      equipe: "" },
+      "Tabley":         { statut: "Absent",      equipe: "" },
+      "Virgile":        { statut: "Pas répondu", equipe: "" },
+      "Zoltan":         { statut: "Absent",      equipe: "" },
+      "Gauthier":       { statut: "Pas répondu", equipe: "" },
+      "Hamine":         { statut: "Présent",     equipe: "", joker: true },
+      "Marius":         { statut: "Présent",     equipe: "", joker: true },
+      "Harone":         { statut: "Présent",     equipe: "", joker: true }
+    },
+    matchs: []
+  },
+  {
+    date: "2026-05-11",
+    presences: {
+      "Boris":          { statut: "Présent",     equipe: "" },
+      "Sylvain":        { statut: "Blessé",      equipe: "" },
+      "Antoine":        { statut: "Blessé",      equipe: "" },
+      "Yassir":         { statut: "Absent",      equipe: "" },
+      "Mahdi":          { statut: "Pas répondu", equipe: "" },
+      "Madani":         { statut: "Présent",     equipe: "" },
+      "JB":             { statut: "Présent",     equipe: "" },
+      "Renaud":         { statut: "Présent",     equipe: "" },
+      "Clément":        { statut: "Présent",     equipe: "" },
+      "Guy":            { statut: "Blessé",      equipe: "" },
+      "Loïc":           { statut: "Blessé",      equipe: "" },
+      "Raphaël 1":      { statut: "Présent",     equipe: "" },
+      "Raphaël 2":      { statut: "Blessé",      equipe: "" },
+      "Ben":            { statut: "Absent",      equipe: "" },
+      "Pierre-Olivier": { statut: "Pas répondu", equipe: "" },
+      "Tof":            { statut: "Absent",      equipe: "" },
+      "Benji":          { statut: "Absent",      equipe: "" },
+      "Benou":          { statut: "Pas répondu", equipe: "" },
+      "Cédric":         { statut: "Absent",      equipe: "" },
+      "Houari":         { statut: "Absent",      equipe: "" },
+      "Morgane":        { statut: "Présent",     equipe: "" },
+      "Jordan":         { statut: "Pas répondu", equipe: "" },
+      "Laury":          { statut: "Pas répondu", equipe: "" },
+      "Ludo":           { statut: "Absent",      equipe: "" },
+      "Tabley":         { statut: "Absent",      equipe: "" },
+      "Virgile":        { statut: "Absent",      equipe: "" },
+      "Zoltan":         { statut: "Présent",     equipe: "" },
+      "Gauthier":       { statut: "Absent",      equipe: "" },
+      "Harone":         { statut: "Présent",     equipe: "", joker: true },
+      "A":              { statut: "Présent",     equipe: "", joker: true }
+    },
+    matchs: []
+  },
+  {
+    date: "2026-05-25",
+    presences: {
+      "Boris":          { statut: "Présent",     equipe: "" },
+      "Sylvain":        { statut: "Blessé",      equipe: "" },
+      "Antoine":        { statut: "Blessé",      equipe: "" },
+      "Yassir":         { statut: "Absent",      equipe: "" },
+      "Mahdi":          { statut: "Absent",      equipe: "" },
+      "Madani":         { statut: "Présent",     equipe: "" },
+      "JB":             { statut: "Présent",     equipe: "" },
+      "Renaud":         { statut: "Présent",     equipe: "" },
+      "Clément":        { statut: "Présent",     equipe: "" },
+      "Guy":            { statut: "Blessé",      equipe: "" },
+      "Loïc":           { statut: "Blessé",      equipe: "" },
+      "Raphaël 1":      { statut: "Présent",     equipe: "" },
+      "Raphaël 2":      { statut: "Blessé",      equipe: "" },
+      "Ben":            { statut: "Présent",     equipe: "" },
+      "Pierre-Olivier": { statut: "Pas répondu", equipe: "" },
+      "Tof":            { statut: "Absent",      equipe: "" },
+      "Benji":          { statut: "Absent",      equipe: "" },
+      "Benou":          { statut: "Pas répondu", equipe: "" },
+      "Cédric":         { statut: "Absent",      equipe: "" },
+      "Houari":         { statut: "Présent",     equipe: "" },
+      "Harone":         { statut: "Présent",     equipe: "", joker: true },
+      "Morgane":        { statut: "Présent",     equipe: "" },
+      "Jordan":         { statut: "Pas répondu", equipe: "" },
+      "Laury":          { statut: "Pas répondu", equipe: "" },
+      "Ludo":           { statut: "Pas répondu", equipe: "" },
+      "Tabley":         { statut: "Pas répondu", equipe: "" },
+      "Virgile":        { statut: "Absent",      equipe: "" },
+      "Zoltan":         { statut: "Absent",      equipe: "" },
+      "Gauthier":       { statut: "Pas répondu", equipe: "" }
+    },
+    matchs: []
+  },
+  {
+    date: "2026-06-01",
+    presences: {
+      "Boris":          { statut: "Présent",     equipe: "" },
+      "Sylvain":        { statut: "Blessé",      equipe: "" },
+      "Antoine":        { statut: "Blessé",      equipe: "" },
+      "Yassir":         { statut: "Absent",      equipe: "" },
+      "Mahdi":          { statut: "Présent",     equipe: "" },
+      "Madani":         { statut: "Présent",     equipe: "" },
+      "JB":             { statut: "Présent",     equipe: "" },
+      "Renaud":         { statut: "Présent",     equipe: "" },
+      "Clément":        { statut: "Présent",     equipe: "" },
+      "Guy":            { statut: "Blessé",      equipe: "" },
+      "Loïc":           { statut: "Blessé",      equipe: "" },
+      "Raphaël 1":      { statut: "Présent",     equipe: "" },
+      "Raphaël 2":      { statut: "Blessé",      equipe: "" },
+      "Ben":            { statut: "Absent",      equipe: "" },
+      "Pierre-Olivier": { statut: "Pas répondu", equipe: "" },
+      "Tof":            { statut: "Absent",      equipe: "" },
+      "Benji":          { statut: "Pas répondu", equipe: "" },
+      "Benou":          { statut: "Pas répondu", equipe: "" },
+      "Cédric":         { statut: "Pas répondu", equipe: "" },
+      "Houari":         { statut: "Présent",     equipe: "" },
+      "Morgane":        { statut: "Absent",      equipe: "" },
+      "Jordan":         { statut: "Pas répondu", equipe: "" },
+      "Laury":          { statut: "Pas répondu", equipe: "" },
+      "Ludo":           { statut: "Présent",     equipe: "" },
+      "Tabley":         { statut: "Absent",      equipe: "" },
+      "Virgile":        { statut: "Pas répondu", equipe: "" },
+      "Zoltan":         { statut: "Présent",     equipe: "" },
+      "Gauthier":       { statut: "Pas répondu", equipe: "" },
+      "Harone":         { statut: "Présent",     equipe: "", joker: true },
+      "A":              { statut: "Présent",     equipe: "", joker: true },
+      "B":              { statut: "Présent",     equipe: "", joker: true }
+    },
+    matchs: []
+  }
+];
+/* ═══════════════════════════════════════════════════════ */
+
+const ALL_PLAYERS = [
+  "Boris","Sylvain","Antoine","Yassir","Mahdi","Madani","JB","Renaud",
+  "Clément","Guy","Loïc","Raphaël 1","Raphaël 2","Ben","Pierre-Olivier",
+  "Tof","Benji","Benou","Cédric","Houari","Harone","Morgane","Jordan",
+  "Laury","Ludo","Tabley","Virgile","Zoltan","Gauthier",
+  "Hamine","Marius","Harone","A","B"
+];
+
+/* Jokers — présents uniquement quand listés en "+1".
+   Jamais comptés "pas répondu" lors de leurs absences. */
+const JOKERS = new Set(["Hamine","Marius","Harone","A","B"]);
+
+/* ── Helpers ── */
+function badge(color) {
+  const cls = color.toLowerCase();
+  return `<span class="badge ${cls}">${color}</span>`;
+}
+function dot(color) {
+  if (!color) return "";
+  return `<span class="cdot ${color.toLowerCase()}"></span>`;
+}
+function fmtDate(d) {
+  const [y,m,j] = d.split("-");
+  const months = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  return `${parseInt(j)} ${months[parseInt(m)-1]} ${y}`;
+}
+function rankCls(i) { return i===0?"gold":i===1?"silver":i===2?"bronze":"plain"; }
+
+/* ══════════════════════════════════════════════════════════
+   DASHBOARD
+══════════════════════════════════════════════════════════ */
+let currentPeriod = "last";
+let filterYear  = null;
+let filterMonth = null;
+
+const MONTH_NAMES = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+
+function filterSessions(period) {
+  if (!SESSIONS.length) return [];
+  const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
+  if (period === "last")  return [sorted[0]];
+  if (period === "month") return SESSIONS.filter(s => {
+    const d = new Date(s.date);
+    return d.getMonth() === filterMonth && d.getFullYear() === filterYear;
+  });
+  if (period === "year")  return SESSIONS.filter(s => new Date(s.date).getFullYear() === filterYear);
+  return SESSIONS;
+}
+
+function updateSubFilter(period) {
+  const sub   = document.getElementById("period-sub");
+  const selM  = document.getElementById("filter-month");
+  const selY  = document.getElementById("filter-year");
+
+  if (period !== "month" && period !== "year") {
+    sub.style.visibility = "hidden";
+    return;
+  }
+  sub.style.visibility = "visible";
+
+  /* Années disponibles */
+  const years = [...new Set(SESSIONS.map(s => new Date(s.date).getFullYear()))].sort((a,b)=>b-a);
+
+  /* Mois disponibles pour l'année sélectionnée (mode mois) */
+  function monthsForYear(yr) {
+    return [...new Set(
+      SESSIONS
+        .filter(s => new Date(s.date).getFullYear() === yr)
+        .map(s => new Date(s.date).getMonth())
+    )].sort((a,b)=>b-a);
+  }
+
+  if (period === "year") {
+    selM.hidden = true;
+    selY.hidden = false;
+    selY.innerHTML = years.map(y => `<option value="${y}" ${y===filterYear?"selected":""}>${y}</option>`).join("");
+    if (filterYear === null && years.length) filterYear = years[0];
+    selY.value = filterYear;
+
+  } else {
+    selM.hidden = false;
+    selY.hidden = false;
+
+    /* Populate years */
+    selY.innerHTML = years.map(y => `<option value="${y}" ${y===filterYear?"selected":""}>${y}</option>`).join("");
+    if (filterYear === null && years.length) filterYear = years[0];
+    selY.value = filterYear;
+
+    /* Populate months for selected year */
+    const months = monthsForYear(Number(selY.value));
+    selM.innerHTML = months.map(m => `<option value="${m}" ${m===filterMonth?"selected":""}>${MONTH_NAMES[m]}</option>`).join("");
+    if (filterMonth === null || !months.includes(filterMonth)) filterMonth = months[0] ?? null;
+    selM.value = filterMonth;
+  }
+}
+
+function computeStats(sessions) {
+  const allMatchs = sessions.flatMap(s => s.matchs.map(m => ({...m, date:s.date})));
+  const ps = {};
+  ALL_PLAYERS.forEach(p => { ps[p] = {presences:0,absences:0,blesses:0,pasRepondu:0,buts:0,vR:0,vV:0,vB:0}; });
+
+  sessions.forEach(s => {
+    Object.entries(s.presences).forEach(([p, info]) => {
+      if (!ps[p]) ps[p] = {presences:0,absences:0,blesses:0,pasRepondu:0,buts:0,vR:0,vV:0,vB:0};
+      if      (info.statut==="Présent")     ps[p].presences++;
+      else if (info.statut==="Absent")      ps[p].absences++;
+      else if (info.statut==="Blessé")      ps[p].blesses++;
+      else if (info.statut==="Pas répondu") ps[p].pasRepondu++;
+    });
+    s.matchs.forEach(m => {
+      [...m.buteursA,...m.buteursB].forEach(p => { if (ps[p]) ps[p].buts++; });
+      const winner = m.scoreA > m.scoreB ? m.eqA : m.scoreB > m.scoreA ? m.eqB : null;
+      if (winner) {
+        Object.entries(s.presences).forEach(([p, info]) => {
+          if (info.statut==="Présent" && info.equipe===winner && ps[p]) {
+            if (winner==="Rouge") ps[p].vR++; else if (winner==="Vert") ps[p].vV++; else ps[p].vB++;
+          }
+        });
+      }
+    });
+  });
+
+  Object.values(ps).forEach(p => {
+    p.totalVic = p.vR + p.vV + p.vB;
+    const best = Math.max(p.vR, p.vV, p.vB);
+    p.bestColor = best===0 ? null : p.vR===best ? "Rouge" : p.vV===best ? "Vert" : "Bleu";
+  });
+
+  const mostGoals   = allMatchs.reduce((b,m) => { const t=m.scoreA+m.scoreB; return (!b||t>b.total)?{...m,total:t}:b; }, null);
+  const biggestAmp  = allMatchs.reduce((b,m) => { const a=Math.abs(m.scoreA-m.scoreB); return (!b||a>b.amp)?{...m,amp:a}:b; }, null);
+  const bestAttack  = allMatchs.reduce((b,m) => { const mx=Math.max(m.scoreA,m.scoreB); return (!b||mx>b.mx)?{...m,mx,topTeam:m.scoreA>=m.scoreB?m.eqA:m.eqB}:b; }, null);
+  const topButeur   = Object.entries(ps).filter(([,p])=>p.buts>0).sort((a,b)=>b[1].buts-a[1].buts)[0]||null;
+  const colorWins   = {Rouge:0,Vert:0,Bleu:0};
+  allMatchs.forEach(m => { if(m.scoreA>m.scoreB) colorWins[m.eqA]++; else if(m.scoreB>m.scoreA) colorWins[m.eqB]++; });
+  const bestColor   = Object.entries(colorWins).sort((a,b)=>b[1]-a[1])[0]||null;
+
+  const byAlpha = (a,b) => a[0].localeCompare(b[0], "fr");
+  const top3Pres    = Object.entries(ps).filter(([,p])=>p.presences>0).sort((a,b)=>b[1].presences-a[1].presences||byAlpha(a,b)).slice(0,3);
+  const top3Abs     = Object.entries(ps).filter(([,p])=>p.absences>0).sort((a,b)=>b[1].absences-a[1].absences||byAlpha(a,b)).slice(0,3);
+  const top3Bles    = Object.entries(ps).filter(([,p])=>p.blesses>0).sort((a,b)=>b[1].blesses-a[1].blesses||byAlpha(a,b)).slice(0,3);
+  const buteursRank = Object.entries(ps).filter(([,p])=>p.buts>0).sort((a,b)=>b[1].buts-a[1].buts||byAlpha(a,b));
+
+  return {ps, mostGoals, biggestAmp, bestAttack, topButeur, bestColor, colorWins, top3Pres, top3Abs, top3Bles, buteursRank, allMatchs};
+}
+
+function renderDashboard() {
+  const sessions = filterSessions(currentPeriod);
+  const dash = document.getElementById("dash");
+
+  const latestDate = SESSIONS.length
+    ? fmtDate([...SESSIONS].sort((a,b)=>new Date(b.date)-new Date(a.date))[0].date)
+    : "—";
+  document.getElementById("header-sub").textContent = `Dashboard · dernière session : ${latestDate}`;
+
+  if (!sessions.length) {
+    dash.innerHTML = '<p class="no-data" style="margin-top:2rem">Aucune session pour cette période.</p>';
+    return;
+  }
+
+  const st = computeStats(sessions);
+  let h = "";
+
+  /* ── KPI summary ── */
+  const totalPres = sessions.reduce((acc,s) => acc + Object.values(s.presences).filter(p=>p.statut==="Présent").length, 0);
+  const totalAbs  = sessions.reduce((acc,s) => acc + Object.values(s.presences).filter(p=>p.statut==="Absent").length, 0);
+  const totalBles = sessions.reduce((acc,s) => acc + Object.values(s.presences).filter(p=>p.statut==="Blessé").length, 0);
+  const totalButs = st.allMatchs.reduce((acc,m) => acc + m.scoreA + m.scoreB, 0);
+  const avgPres   = (totalPres / sessions.length).toFixed(1).replace(".",",");
+
+  h += `<div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-num">${sessions.length}</div>
+      <div class="kpi-lbl">Session${sessions.length>1?"s":""}</div>
+    </div>
+    <div class="kpi-card accent-green">
+      <div class="kpi-num green">${avgPres}</div>
+      <div class="kpi-lbl">Moy. présents / session</div>
+      <div class="kpi-sub">${totalPres} présence${totalPres>1?"s":""} au total</div>
+    </div>
+    <div class="kpi-card accent-red">
+      <div class="kpi-num red">${totalAbs}</div>
+      <div class="kpi-lbl">Total absences</div>
+      <div class="kpi-sub">${totalBles} blessure${totalBles>1?"s":""} &nbsp;·&nbsp; ${st.allMatchs.length} match${st.allMatchs.length>1?"s":""}</div>
+    </div>
+    <div class="kpi-card accent-amber">
+      <div class="kpi-num amber">${totalButs}</div>
+      <div class="kpi-lbl">Buts marqués</div>
+      ${totalButs===0 ? `<div class="kpi-sub" style="font-style:italic">Matchs à saisir</div>` : ""}
+    </div>
+  </div>`;
+
+  /* ── Podiums présences / absences ── */
+  h += `<div class="podium-section">`;
+
+  h += `<div class="podium-block">
+    <div class="podium-block-header"><span style="font-size:15px">✅</span>&ensp;<span class="ph-title">Top présences</span></div>`;
+  if (!st.top3Pres.length) {
+    h += `<div style="padding:16px 18px"><p class="no-data">—</p></div>`;
+  } else {
+    const medals = ["🥇","🥈","🥉"];
+    st.top3Pres.forEach(([p,ps],i) => {
+      h += `<div class="podium-entry${i===0?" first":""}">
+        <span class="pe-rank">${medals[i]}</span>
+        <span class="pe-name">${p}</span>
+        <span class="pe-count green">${ps.presences}</span><span class="pe-unit">sess.</span>
+      </div>`;
+    });
+  }
+  h += `</div>`;
+
+  h += `<div class="podium-block">
+    <div class="podium-block-header"><span style="font-size:15px">❌</span>&ensp;<span class="ph-title">Top absences</span></div>`;
+  if (!st.top3Abs.length) {
+    h += `<div style="padding:16px 18px"><p class="no-data">Personne absent</p></div>`;
+  } else {
+    st.top3Abs.forEach(([p,ps],i) => {
+      h += `<div class="podium-entry${i===0?" first":""}">
+        <span class="pe-rank" style="font-size:13px;font-weight:700;color:var(--text3)">${i+1}</span>
+        <span class="pe-name">${p}</span>
+        <span class="pe-count red">${ps.absences}</span><span class="pe-unit">abs.</span>
+      </div>`;
+    });
+  }
+  h += `</div>`;
+
+  h += `</div>`;
+
+  /* ── Blessés ── */
+  if (st.top3Bles.length > 0) {
+    h += `<div class="podium-block" style="max-width:480px;margin-bottom:1.5rem">
+      <div class="podium-block-header"><span style="font-size:15px">🩹</span>&ensp;<span class="ph-title">Blessés récurrents</span></div>`;
+    st.top3Bles.forEach(([p,ps],i) => {
+      h += `<div class="podium-entry${i===0?" first":""}">
+        <span class="pe-rank" style="font-size:13px;font-weight:700;color:var(--text3)">${i+1}</span>
+        <span class="pe-name">${p}</span>
+        <span class="pe-count amber">${ps.blesses}</span><span class="pe-unit">blessure${ps.blesses>1?"s":""}</span>
+      </div>`;
+    });
+    h += `</div>`;
+  }
+
+  /* ── Records (si matchs) ── */
+  if (st.allMatchs.length > 0) {
+    h += `<div class="section-label">Records</div><div class="records-grid">`;
+
+    if (st.mostGoals) {
+      h += `<div class="record-card">
+        <div class="rc-icon">⚡</div>
+        <div class="rc-lbl">Plus gros score</div>
+        <div class="rc-num">${st.mostGoals.total}</div>
+        <div class="rc-match">${badge(st.mostGoals.eqA)}<span class="sc">${st.mostGoals.scoreA}</span><span class="da">–</span><span class="sc">${st.mostGoals.scoreB}</span>${badge(st.mostGoals.eqB)}</div>
+        <div class="rc-sub">${fmtDate(st.mostGoals.date)}</div>
+      </div>`;
+    }
+
+    if (st.biggestAmp) {
+      const winner = st.biggestAmp.scoreA > st.biggestAmp.scoreB ? st.biggestAmp.eqA : st.biggestAmp.eqB;
+      h += `<div class="record-card">
+        <div class="rc-icon">📐</div>
+        <div class="rc-lbl">Plus large victoire</div>
+        <div class="rc-num">+${st.biggestAmp.amp}</div>
+        <div class="rc-match">${badge(st.biggestAmp.eqA)}<span class="sc">${st.biggestAmp.scoreA}</span><span class="da">–</span><span class="sc">${st.biggestAmp.scoreB}</span>${badge(st.biggestAmp.eqB)}</div>
+        <div class="rc-sub">Victoire ${winner}</div>
+      </div>`;
+    }
+
+    if (st.bestAttack) {
+      h += `<div class="record-card">
+        <div class="rc-icon">🔥</div>
+        <div class="rc-lbl">Meilleure attaque</div>
+        <div class="rc-num">${st.bestAttack.mx}</div>
+        <div class="rc-match">${badge(st.bestAttack.topTeam)}<span style="font-size:12px;color:var(--text3)">en un match</span></div>
+        <div class="rc-match" style="margin-top:6px">${badge(st.bestAttack.eqA)}<span class="sc">${st.bestAttack.scoreA}</span><span class="da">–</span><span class="sc">${st.bestAttack.scoreB}</span>${badge(st.bestAttack.eqB)}</div>
+      </div>`;
+    }
+
+    if (st.bestColor && st.bestColor[1]>0) {
+      const [col, wins] = st.bestColor;
+      h += `<div class="record-card">
+        <div class="rc-icon">${dot(col)}</div>
+        <div class="rc-lbl">Couleur dominante</div>
+        <div class="rc-num" style="font-size:30px">${col}</div>
+        <div class="rc-sub">${wins} victoire${wins>1?"s":""} &nbsp;·&nbsp; R:${st.colorWins.Rouge} V:${st.colorWins.Vert} B:${st.colorWins.Bleu}</div>
+      </div>`;
+    }
+
+    h += `</div>`;
+
+    /* ── Buteurs ── */
+    if (st.buteursRank.length > 0) {
+      const [topName, topStats] = st.buteursRank[0];
+      h += `<div class="section-label">Classement buteurs</div>
+      <div class="top-scorer-hero">
+        <div class="ts-num">${topStats.buts}</div>
+        <div class="ts-info">
+          <div class="ts-name">${topName}</div>
+          <div class="ts-lbl">🥇 Meilleur buteur${topStats.bestColor ? ` &nbsp;·&nbsp; ${dot(topStats.bestColor)}${topStats.bestColor}` : ""}</div>
+        </div>
+      </div>`;
+
+      if (st.buteursRank.length > 1) {
+        const maxButs = topStats.buts;
+        h += `<div class="buts-grid">`;
+        st.buteursRank.slice(1).forEach(([p,ps],i) => {
+          const rank = i + 2;
+          const pct  = Math.round((ps.buts / maxButs) * 100);
+          h += `<div class="buts-row">
+            <span class="rank ${rankCls(rank-1)}" style="min-width:18px">${rank}</span>
+            <span class="pname">${p}</span>
+            ${ps.bestColor ? `<span style="font-size:11px;color:var(--text3)">${dot(ps.bestColor)}${ps.bestColor}</span>` : ""}
+            <div class="buts-bar-wrap"><div class="buts-bar" style="width:${pct}%"></div></div>
+            <span class="pval" style="min-width:28px;text-align:right">${ps.buts}</span>
+          </div>`;
+        });
+        h += `</div>`;
+      }
+    }
+  }
+
+  dash.innerHTML = h;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RÉSULTATS DE SESSION
+══════════════════════════════════════════════════════════ */
+
+function populateSessionSelect() {
+  const sel = document.getElementById("session-date");
+  sel.innerHTML = "";
+  if (!SESSIONS.length) {
+    sel.innerHTML = `<option value="">Aucune session disponible</option>`;
+    return;
+  }
+  const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
+  sorted.forEach((s, i) => {
+    const opt = document.createElement("option");
+    opt.value = s.date;
+    opt.textContent = fmtDate(s.date);
+    if (i === 0) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function renderSessionResults(date) {
+  const container = document.getElementById("session-results");
+  const session = SESSIONS.find(s => s.date === date);
+
+  if (!session) {
+    container.innerHTML = `<p class="no-data" style="margin-top:1rem">Aucune donnée pour cette session.</p>`;
+    return;
+  }
+
+  const matchs = session.matchs;
+
+  /* Meilleur buteur */
+  const buteursCount = {};
+  matchs.forEach(m => {
+    [...m.buteursA, ...m.buteursB].forEach(p => {
+      buteursCount[p] = (buteursCount[p] || 0) + 1;
+    });
+  });
+  const topButeurEntry = Object.entries(buteursCount).sort((a,b) => b[1]-a[1])[0] || null;
+
+  /* Équipe dominante (plus de victoires sur la soirée) */
+  const colorWins = {Rouge:0, Vert:0, Bleu:0};
+  matchs.forEach(m => {
+    if      (m.scoreA > m.scoreB) colorWins[m.eqA]++;
+    else if (m.scoreB > m.scoreA) colorWins[m.eqB]++;
+  });
+  const maxWins = Math.max(...Object.values(colorWins));
+  const winners = Object.entries(colorWins).filter(([,v]) => v === maxWins).map(([k]) => k);
+  const equipeGagnante = winners.length === 1 ? winners[0] : null;
+  const totalMatchs = matchs.length;
+
+  /* Match au plus gros score (total de buts) */
+  const matchPlusGros = matchs.reduce((best, m) => {
+    const total = m.scoreA + m.scoreB;
+    return (!best || total > best.total) ? {...m, total} : best;
+  }, null);
+
+  /* Match au plus large écart */
+  const matchPlusLarge = matchs.reduce((best, m) => {
+    const amp = Math.abs(m.scoreA - m.scoreB);
+    return (!best || amp > best.amp) ? {...m, amp} : best;
+  }, null);
+
+  let h = `<div class="session-highlights">`;
+
+  /* Card — Meilleur buteur */
+  if (topButeurEntry) {
+    h += `<div class="highlight-card">
+      <div class="h-icon">🥅</div>
+      <div class="h-lbl">Meilleur buteur</div>
+      <div class="h-val">${topButeurEntry[0]}</div>
+      <div class="h-sub">${topButeurEntry[1]} but${topButeurEntry[1]>1?"s":""} sur la soirée</div>
+    </div>`;
+  } else {
+    h += `<div class="highlight-card">
+      <div class="h-icon">🥅</div>
+      <div class="h-lbl">Meilleur buteur</div>
+      <div class="h-val" style="font-size:14px;color:var(--text3)">Aucun but</div>
+    </div>`;
+  }
+
+  /* Card — Équipe dominante */
+  if (equipeGagnante) {
+    h += `<div class="highlight-card">
+      <div class="h-icon">🏆</div>
+      <div class="h-lbl">Équipe du soir</div>
+      <div class="h-val">${dot(equipeGagnante)}${equipeGagnante}</div>
+      <div class="h-sub">${maxWins} victoire${maxWins>1?"s":""} sur ${totalMatchs} matchs &nbsp;·&nbsp; R:${colorWins.Rouge} V:${colorWins.Vert} B:${colorWins.Bleu}</div>
+    </div>`;
+  } else {
+    h += `<div class="highlight-card">
+      <div class="h-icon">🏆</div>
+      <div class="h-lbl">Équipe du soir</div>
+      <div class="h-val" style="font-size:15px">Égalité</div>
+      <div class="h-sub">${winners.map(w => `${dot(w)}${w}`).join(" ")} · R:${colorWins.Rouge} V:${colorWins.Vert} B:${colorWins.Bleu}</div>
+    </div>`;
+  }
+
+  /* Card — Plus gros score */
+  if (matchPlusGros) {
+    const winnerMG = matchPlusGros.scoreA > matchPlusGros.scoreB ? matchPlusGros.eqA
+                   : matchPlusGros.scoreB > matchPlusGros.scoreA ? matchPlusGros.eqB : null;
+    h += `<div class="highlight-card">
+      <div class="h-icon">⚡</div>
+      <div class="h-lbl">Plus gros score</div>
+      <div class="h-val">${matchPlusGros.total} buts</div>
+      <div class="h-match">
+        ${badge(matchPlusGros.eqA)}
+        <span class="sc">${matchPlusGros.scoreA}</span>
+        <span class="dash">–</span>
+        <span class="sc">${matchPlusGros.scoreB}</span>
+        ${badge(matchPlusGros.eqB)}
+      </div>
+      ${winnerMG ? `<div class="h-sub" style="margin-top:8px">Victoire ${winnerMG}</div>` : `<div class="h-sub" style="margin-top:8px">Match nul</div>`}
+    </div>`;
+  }
+
+  /* Card — Plus large écart */
+  if (matchPlusLarge) {
+    const winnerML = matchPlusLarge.scoreA > matchPlusLarge.scoreB ? matchPlusLarge.eqA
+                   : matchPlusLarge.scoreB > matchPlusLarge.scoreA ? matchPlusLarge.eqB : null;
+    h += `<div class="highlight-card">
+      <div class="h-icon">📐</div>
+      <div class="h-lbl">Plus large victoire</div>
+      <div class="h-val">${matchPlusLarge.amp > 0 ? `+${matchPlusLarge.amp} buts` : "Match nul"}</div>
+      <div class="h-match">
+        ${badge(matchPlusLarge.eqA)}
+        <span class="sc">${matchPlusLarge.scoreA}</span>
+        <span class="dash">–</span>
+        <span class="sc">${matchPlusLarge.scoreB}</span>
+        ${badge(matchPlusLarge.eqB)}
+      </div>
+      ${winnerML ? `<div class="h-sub" style="margin-top:8px">Victoire ${winnerML}</div>` : ""}
+    </div>`;
+  }
+
+  h += `</div>`;
+
+  /* Tous les matchs de la session */
+  h += `<div class="section-label">Tous les matchs</div>`;
+  h += `<div class="matches-list">`;
+  matchs.forEach(m => {
+    const total = m.scoreA + m.scoreB;
+    const winner = m.scoreA > m.scoreB ? m.eqA : m.scoreB > m.scoreA ? m.eqB : null;
+    const resultLabel = winner ? `Victoire ${winner}` : "Nul";
+    h += `<div class="match-row">
+      <div class="teams">
+        ${badge(m.eqA)}
+        <span class="score">${m.scoreA} – ${m.scoreB}</span>
+        ${badge(m.eqB)}
+      </div>
+      <span style="font-size:12px;color:var(--text3)">${total} buts</span>
+      <span class="result-tag">${resultLabel}</span>
+    </div>`;
+  });
+  h += `</div>`;
+
+  container.innerHTML = h;
+}
+
+/* ══════════════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════════════ */
+
+document.querySelectorAll(".main-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById(`panel-${tab.dataset.tab}`).classList.add("active");
+    if (tab.dataset.tab === "joueurs") renderJoueurs();
+  });
+});
+
+document.getElementById("periods").addEventListener("click", e => {
+  const pill = e.target.closest(".pill");
+  if (!pill) return;
+  document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+  pill.classList.add("active");
+  currentPeriod = pill.dataset.period;
+  updateSubFilter(currentPeriod);
+  renderDashboard();
+});
+
+document.getElementById("filter-year").addEventListener("change", e => {
+  filterYear = Number(e.target.value);
+  if (currentPeriod === "month") {
+    /* Re-populate months for new year */
+    const months = [...new Set(
+      SESSIONS.filter(s => new Date(s.date).getFullYear() === filterYear)
+               .map(s => new Date(s.date).getMonth())
+    )].sort((a,b)=>b-a);
+    const selM = document.getElementById("filter-month");
+    selM.innerHTML = months.map(m => `<option value="${m}">${MONTH_NAMES[m]}</option>`).join("");
+    filterMonth = months[0] ?? null;
+    if (selM.value) filterMonth = Number(selM.value);
+  }
+  renderDashboard();
+});
+
+document.getElementById("filter-month").addEventListener("change", e => {
+  filterMonth = Number(e.target.value);
+  renderDashboard();
+});
+
+document.getElementById("session-date").addEventListener("change", e => {
+  renderSessionResults(e.target.value);
+});
+
+/* ══════════════════════════════════════════════════════════
+   JOUEURS
+══════════════════════════════════════════════════════════ */
+
+let playerSort = { col: "name", dir: 1 };
+
+function computePlayerStats() {
+  const ps = {};
+  ALL_PLAYERS.forEach(p => {
+    ps[p] = { presences:0, absences:0, blesses:0, pasRepondu:0, buts:0, vR:0, vV:0, vB:0 };
+  });
+
+  SESSIONS.forEach(s => {
+    Object.entries(s.presences).forEach(([p, info]) => {
+      if (!ps[p]) ps[p] = { presences:0, absences:0, blesses:0, pasRepondu:0, buts:0, vR:0, vV:0, vB:0 };
+      if      (info.statut === "Présent")     ps[p].presences++;
+      else if (info.statut === "Absent")      ps[p].absences++;
+      else if (info.statut === "Blessé")      ps[p].blesses++;
+      else if (info.statut === "Pas répondu") ps[p].pasRepondu++;
+    });
+    if (s.matchs) {
+      s.matchs.forEach(m => {
+        [...(m.buteursA||[]), ...(m.buteursB||[])].forEach(p => { if (ps[p]) ps[p].buts++; });
+        const winner = m.scoreA > m.scoreB ? m.eqA : m.scoreB > m.scoreA ? m.eqB : null;
+        if (winner) {
+          Object.entries(s.presences).forEach(([p, info]) => {
+            if (info.statut === "Présent" && info.equipe === winner && ps[p]) {
+              if (winner==="Rouge") ps[p].vR++; else if (winner==="Vert") ps[p].vV++; else ps[p].vB++;
+            }
+          });
+        }
+      });
+    }
+  });
+
+  return Object.entries(ps).map(([name, d]) => {
+    const best = Math.max(d.vR, d.vV, d.vB);
+    const favTeam = best === 0 ? null : d.vR === best ? "Rouge" : d.vV === best ? "Vert" : "Bleu";
+    return { name, ...d, favTeam };
+  });
+}
+
+function renderJoueurs() {
+  const container = document.getElementById("joueurs-content");
+  const rows = computePlayerStats();
+
+  const totalSessions = SESSIONS.length;
+
+  const colDef = [
+    { key:"name",       label:"Joueur",           arrow:"↕" },
+    { key:"presences",  label:"Présences",         arrow:"↕" },
+    { key:"taux",       label:"Taux prés.",        arrow:"↕" },
+    { key:"absences",   label:"Absences",          arrow:"↕" },
+    { key:"blesses",    label:"Blessures",         arrow:"↕" },
+    { key:"pasRepondu", label:"Non répondu",       arrow:"↕" },
+    { key:"buts",       label:"Buts",              arrow:"↕" },
+    { key:"favTeam",    label:"Équipe préférée",   arrow:"↕" },
+  ];
+
+  const rowsWithTaux = rows.map(r => ({
+    ...r,
+    taux: totalSessions > 0 ? Math.round(r.presences / totalSessions * 100) : 0
+  }));
+
+  const sorted = [...rowsWithTaux].sort((a, b) => {
+    const av = a[playerSort.col] ?? "";
+    const bv = b[playerSort.col] ?? "";
+    if (typeof av === "number" && typeof bv === "number") return (bv - av) * playerSort.dir;
+    return String(av).localeCompare(String(bv), "fr") * playerSort.dir;
+  });
+
+  const thead = colDef.map(c => {
+    const active = playerSort.col === c.key ? " sorted" : "";
+    const arrowDir = playerSort.col === c.key ? (playerSort.dir === 1 ? "↑" : "↓") : "↕";
+    return `<th data-col="${c.key}" class="${active}">${c.label}<span class="sort-arrow">${arrowDir}</span></th>`;
+  }).join("");
+
+  const dash_ = `<span style="color:var(--text3);font-size:13px">—</span>`;
+
+  const tbody = sorted.map(r => {
+    const isJoker  = JOKERS.has(r.name);
+    const nameCell = `${r.name}${isJoker ? `<span class="joker-tag">+1</span>` : ""}`;
+    const teamCell = r.favTeam
+      ? `${dot(r.favTeam)}<span style="font-size:12px">${r.favTeam}</span>`
+      : dash_;
+
+    const tauxCls  = r.taux >= 75 ? "high" : r.taux >= 40 ? "mid" : "low";
+    const tauxCell = `<div class="taux-wrap">
+      <div class="taux-track"><div class="taux-fill ${tauxCls}" style="width:${r.taux}%"></div></div>
+      <span class="taux-val ${tauxCls}">${r.taux}%</span>
+    </div>`;
+
+    if (isJoker) {
+      return `<tr>
+        <td class="name">${nameCell}</td>
+        <td class="num ${r.presences > 0 ? "highlight" : "zero"}">${r.presences}</td>
+        <td class="taux-cell">${dash_}</td>
+        <td class="num zero">${dash_}</td>
+        <td class="num zero">${dash_}</td>
+        <td class="num zero">${dash_}</td>
+        <td class="num ${r.buts > 0 ? "highlight" : "zero"}">${r.buts}</td>
+        <td class="team-cell">${teamCell}</td>
+      </tr>`;
+    }
+
+    return `<tr>
+      <td class="name">${nameCell}</td>
+      <td class="num ${r.presences > 0 ? "highlight" : "zero"}">${r.presences}</td>
+      <td class="taux-cell">${tauxCell}</td>
+      <td class="num ${r.absences > 0 ? "danger" : "zero"}">${r.absences}</td>
+      <td class="num ${r.blesses > 0 ? "warn" : "zero"}">${r.blesses}</td>
+      <td class="num ${r.pasRepondu > 0 ? "nr" : "zero"}">${r.pasRepondu}</td>
+      <td class="num ${r.buts > 0 ? "highlight" : "zero"}">${r.buts}</td>
+      <td class="team-cell">${teamCell}</td>
+    </tr>`;
+  }).join("");
+
+  container.innerHTML = `
+    <div class="players-table-wrap">
+      <table class="players-table">
+        <thead><tr>${thead}</tr></thead>
+        <tbody>${tbody}</tbody>
+      </table>
+    </div>`;
+
+  container.querySelectorAll("th[data-col]").forEach(th => {
+    th.addEventListener("click", () => {
+      const col = th.dataset.col;
+      if (playerSort.col === col) {
+        playerSort.dir *= -1;
+      } else {
+        playerSort.col = col;
+        playerSort.dir = col === "name" ? 1 : -1;
+      }
+      renderJoueurs();
+    });
+  });
+}
+
+/* ── Init ── */
+const savedTab = sessionStorage.getItem("activeTab");
+if (savedTab) {
+  sessionStorage.removeItem("activeTab");
+  document.querySelectorAll(".main-tab").forEach(t => {
+    t.classList.toggle("active", t.dataset.tab === savedTab);
+  });
+  document.querySelectorAll(".tab-panel").forEach(p => {
+    p.classList.toggle("active", p.id === `panel-${savedTab}`);
+  });
+}
+
+document.getElementById("period-sub").style.visibility = "hidden";
+renderDashboard();
+populateSessionSelect();
+renderJoueurs();
+if (SESSIONS.length) {
+  const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
+  renderSessionResults(sorted[0].date);
+} else {
+  document.getElementById("session-results").innerHTML =
+    `<p class="no-data" style="margin-top:1rem">Aucune session enregistrée.</p>`;
+}
+</script>
+</body>
+</html>
