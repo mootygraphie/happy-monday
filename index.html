@@ -509,7 +509,7 @@ const SESSIONS = [
       "Zoltan":         { statut: "Présent",     equipe: "" },
       "Gauthier":       { statut: "Absent",      equipe: "" },
       "Harone":         { statut: "Présent",     equipe: "", joker: true },
-      "A":              { statut: "Présent",     equipe: "", joker: true }
+      "Alexi":          { statut: "Présent",     equipe: "", joker: true }
     },
     matchs: []
   },
@@ -580,8 +580,8 @@ const SESSIONS = [
       "Zoltan":         { statut: "Présent",     equipe: "" },
       "Gauthier":       { statut: "Pas répondu", equipe: "" },
       "Harone":         { statut: "Présent",     equipe: "", joker: true },
-      "A":              { statut: "Présent",     equipe: "", joker: true },
-      "B":              { statut: "Présent",     equipe: "", joker: true }
+      "Alexi":          { statut: "Présent",     equipe: "", joker: true },
+      "Godefroy":       { statut: "Présent",     equipe: "", joker: true }
     },
     matchs: []
   }
@@ -593,12 +593,12 @@ const ALL_PLAYERS = [
   "Clément","Guy","Loïc","Raphaël 1","Raphaël 2","Ben","Pierre-Olivier",
   "Tof","Benji","Benou","Cédric","Houari","Harone","Morgane","Jordan",
   "Laury","Ludo","Tabley","Virgile","Zoltan","Gauthier",
-  "Hamine","Marius","Harone","A","B"
+  "Hamine","Marius","Harone","Alexi","Godefroy"
 ];
 
 /* Jokers — présents uniquement quand listés en "+1".
    Jamais comptés "pas répondu" lors de leurs absences. */
-const JOKERS = new Set(["Hamine","Marius","Harone","A","B"]);
+const JOKERS = new Set(["Hamine","Marius","Harone","Alexi","Godefroy"]);
 
 /* ── Helpers ── */
 function badge(color) {
