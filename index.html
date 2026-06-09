@@ -241,6 +241,8 @@
   .taux-val.low  { color: var(--text3); }
   .joker-tag { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: .05em; color: var(--gold); background: rgba(245,200,66,.1); border: 1px solid rgba(245,200,66,.25); border-radius: 4px; padding: 1px 6px; margin-left: 6px; vertical-align: middle; }
 
+  .joueurs-section-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); margin: 2rem 0 .75rem; }
+
   /* ── Lock screen ── */
   #lock-screen {
     position: fixed; inset: 0; z-index: 9999;
@@ -417,8 +419,8 @@ const SESSIONS = [
       "Clément":        { statut: "Présent",     equipe: "" },
       "Guy":            { statut: "Blessé",      equipe: "" },
       "Loïc":           { statut: "Blessé",      equipe: "" },
-      "Raphaël 1":      { statut: "Absent",      equipe: "" },
-      "Raphaël 2":      { statut: "Blessé",      equipe: "" },
+      "Raph P.":      { statut: "Absent",      equipe: "" },
+      "Raph L.":      { statut: "Blessé",      equipe: "" },
       "Ben":            { statut: "Présent",     equipe: "" },
       "Pierre-Olivier": { statut: "Pas répondu", equipe: "" },
       "Tof":            { statut: "Absent",      equipe: "" },
@@ -454,8 +456,8 @@ const SESSIONS = [
       "Clément":        { statut: "Présent",     equipe: "" },
       "Guy":            { statut: "Blessé",      equipe: "" },
       "Loïc":           { statut: "Blessé",      equipe: "" },
-      "Raphaël 1":      { statut: "Présent",     equipe: "" },
-      "Raphaël 2":      { statut: "Blessé",      equipe: "" },
+      "Raph P.":      { statut: "Présent",     equipe: "" },
+      "Raph L.":      { statut: "Blessé",      equipe: "" },
       "Ben":            { statut: "Présent",     equipe: "" },
       "Pierre-Olivier": { statut: "Pas répondu", equipe: "" },
       "Tof":            { statut: "Absent",      equipe: "" },
@@ -491,8 +493,8 @@ const SESSIONS = [
       "Clément":        { statut: "Présent",     equipe: "" },
       "Guy":            { statut: "Blessé",      equipe: "" },
       "Loïc":           { statut: "Blessé",      equipe: "" },
-      "Raphaël 1":      { statut: "Présent",     equipe: "" },
-      "Raphaël 2":      { statut: "Blessé",      equipe: "" },
+      "Raph P.":      { statut: "Présent",     equipe: "" },
+      "Raph L.":      { statut: "Blessé",      equipe: "" },
       "Ben":            { statut: "Absent",      equipe: "" },
       "Pierre-Olivier": { statut: "Pas répondu", equipe: "" },
       "Tof":            { statut: "Absent",      equipe: "" },
@@ -527,8 +529,8 @@ const SESSIONS = [
       "Clément":        { statut: "Présent",     equipe: "" },
       "Guy":            { statut: "Blessé",      equipe: "" },
       "Loïc":           { statut: "Blessé",      equipe: "" },
-      "Raphaël 1":      { statut: "Présent",     equipe: "" },
-      "Raphaël 2":      { statut: "Blessé",      equipe: "" },
+      "Raph P.":      { statut: "Présent",     equipe: "" },
+      "Raph L.":      { statut: "Blessé",      equipe: "" },
       "Ben":            { statut: "Présent",     equipe: "" },
       "Pierre-Olivier": { statut: "Pas répondu", equipe: "" },
       "Tof":            { statut: "Absent",      equipe: "" },
@@ -562,8 +564,8 @@ const SESSIONS = [
       "Clément":        { statut: "Présent",     equipe: "" },
       "Guy":            { statut: "Blessé",      equipe: "" },
       "Loïc":           { statut: "Blessé",      equipe: "" },
-      "Raphaël 1":      { statut: "Présent",     equipe: "" },
-      "Raphaël 2":      { statut: "Blessé",      equipe: "" },
+      "Raph P.":      { statut: "Présent",     equipe: "" },
+      "Raph L.":      { statut: "Blessé",      equipe: "" },
       "Ben":            { statut: "Absent",      equipe: "" },
       "Pierre-Olivier": { statut: "Pas répondu", equipe: "" },
       "Tof":            { statut: "Absent",      equipe: "" },
@@ -590,15 +592,16 @@ const SESSIONS = [
 
 const ALL_PLAYERS = [
   "Boris","Sylvain","Antoine","Yassir","Mahdi","Madani","JB","Renaud",
-  "Clément","Guy","Loïc","Raphaël 1","Raphaël 2","Ben","Pierre-Olivier",
-  "Tof","Benji","Benou","Cédric","Houari","Harone","Morgane","Jordan",
+  "Clément","Guy","Loïc","Raph P.","Raph L.","Ben","Pierre-Olivier",
+  "Tof","Benji","Benou","Cédric","Houari","Morgane","Jordan",
   "Laury","Ludo","Tabley","Virgile","Zoltan","Gauthier",
   "Hamine","Marius","Harone","Alexi","Godefroy"
 ];
 
 /* Jokers — présents uniquement quand listés en "+1".
-   Jamais comptés "pas répondu" lors de leurs absences. */
-const JOKERS = new Set(["Hamine","Marius","Harone","Alexi","Godefroy"]);
+   Jamais comptés "pas répondu" lors de leurs absences.
+*/
+let JOKERS = new Set(["Hamine","Marius","Harone","Alexi","Godefroy"]);
 
 /* ── Helpers ── */
 function badge(color) {
@@ -716,6 +719,23 @@ function computeStats(sessions) {
     p.bestColor = best===0 ? null : p.vR===best ? "Rouge" : p.vV===best ? "Vert" : "Bleu";
   });
 
+  /* Episode detection: séquences consécutives de "Blessé" = 1 épisode */
+  const sessionsByDate = [...sessions].sort((a,b) => new Date(a.date)-new Date(b.date));
+  const inEpisode = {};
+  Object.keys(ps).forEach(p => { ps[p].episodesBlessures = 0; ps[p].matchsBlessures = 0; inEpisode[p] = false; });
+  sessionsByDate.forEach(s => {
+    Object.keys(ps).forEach(p => {
+      const info = s.presences[p];
+      if (!info) { inEpisode[p] = false; return; }
+      if (info.statut === "Blessé") {
+        ps[p].matchsBlessures++;
+        if (!inEpisode[p]) { ps[p].episodesBlessures++; inEpisode[p] = true; }
+      } else {
+        inEpisode[p] = false;
+      }
+    });
+  });
+
   const mostGoals   = allMatchs.reduce((b,m) => { const t=m.scoreA+m.scoreB; return (!b||t>b.total)?{...m,total:t}:b; }, null);
   const biggestAmp  = allMatchs.reduce((b,m) => { const a=Math.abs(m.scoreA-m.scoreB); return (!b||a>b.amp)?{...m,amp:a}:b; }, null);
   const bestAttack  = allMatchs.reduce((b,m) => { const mx=Math.max(m.scoreA,m.scoreB); return (!b||mx>b.mx)?{...m,mx,topTeam:m.scoreA>=m.scoreB?m.eqA:m.eqB}:b; }, null);
@@ -726,8 +746,10 @@ function computeStats(sessions) {
 
   const byAlpha = (a,b) => a[0].localeCompare(b[0], "fr");
   const top3Pres    = Object.entries(ps).filter(([,p])=>p.presences>0).sort((a,b)=>b[1].presences-a[1].presences||byAlpha(a,b)).slice(0,3);
-  const top3Abs     = Object.entries(ps).filter(([,p])=>p.absences>0).sort((a,b)=>b[1].absences-a[1].absences||byAlpha(a,b)).slice(0,3);
-  const top3Bles    = Object.entries(ps).filter(([,p])=>p.blesses>0).sort((a,b)=>b[1].blesses-a[1].blesses||byAlpha(a,b)).slice(0,3);
+  const top3Abs     = Object.entries(ps).filter(([,p])=>(p.absences+p.episodesBlessures)>0)
+    .sort((a,b)=>(b[1].absences+b[1].episodesBlessures)-(a[1].absences+a[1].episodesBlessures)||byAlpha(a,b)).slice(0,3);
+  const top3Bles    = Object.entries(ps).filter(([,p])=>p.episodesBlessures>0)
+    .sort((a,b)=>b[1].episodesBlessures-a[1].episodesBlessures||b[1].matchsBlessures-a[1].matchsBlessures||byAlpha(a,b)).slice(0,3);
   const buteursRank = Object.entries(ps).filter(([,p])=>p.buts>0).sort((a,b)=>b[1].buts-a[1].buts||byAlpha(a,b));
 
   return {ps, mostGoals, biggestAmp, bestAttack, topButeur, bestColor, colorWins, top3Pres, top3Abs, top3Bles, buteursRank, allMatchs};
@@ -804,10 +826,14 @@ function renderDashboard() {
     h += `<div style="padding:16px 18px"><p class="no-data">Personne absent</p></div>`;
   } else {
     st.top3Abs.forEach(([p,ps],i) => {
+      const score = ps.absences + ps.episodesBlessures;
+      const parts = [];
+      if (ps.absences > 0) parts.push(`${ps.absences} abs.`);
+      if (ps.episodesBlessures > 0) parts.push(`${ps.episodesBlessures} blessure${ps.episodesBlessures>1?"s":""}`);
       h += `<div class="podium-entry${i===0?" first":""}">
         <span class="pe-rank" style="font-size:13px;font-weight:700;color:var(--text3)">${i+1}</span>
         <span class="pe-name">${p}</span>
-        <span class="pe-count red">${ps.absences}</span><span class="pe-unit">abs.</span>
+        <span class="pe-count red">${score}</span><span class="pe-unit">${parts.join(" · ")}</span>
       </div>`;
     });
   }
@@ -823,7 +849,7 @@ function renderDashboard() {
       h += `<div class="podium-entry${i===0?" first":""}">
         <span class="pe-rank" style="font-size:13px;font-weight:700;color:var(--text3)">${i+1}</span>
         <span class="pe-name">${p}</span>
-        <span class="pe-count amber">${ps.blesses}</span><span class="pe-unit">blessure${ps.blesses>1?"s":""}</span>
+        <span class="pe-count amber">${ps.episodesBlessures}</span><span class="pe-unit">épisode${ps.episodesBlessures>1?"s":""} · ${ps.matchsBlessures} match${ps.matchsBlessures>1?"s":""}</span>
       </div>`;
     });
     h += `</div>`;
@@ -1124,7 +1150,8 @@ document.getElementById("session-date").addEventListener("change", e => {
    JOUEURS
 ══════════════════════════════════════════════════════════ */
 
-let playerSort = { col: "name", dir: 1 };
+let rosterSort = { col: "taux",      dir: -1 };
+let jokerSort  = { col: "presences", dir: -1 };
 
 function computePlayerStats() {
   const ps = {};
@@ -1162,21 +1189,21 @@ function computePlayerStats() {
   });
 }
 
+
 function renderJoueurs() {
   const container = document.getElementById("joueurs-content");
   const rows = computePlayerStats();
-
   const totalSessions = SESSIONS.length;
 
   const colDef = [
-    { key:"name",       label:"Joueur",           arrow:"↕" },
-    { key:"presences",  label:"Présences",         arrow:"↕" },
-    { key:"taux",       label:"Taux prés.",        arrow:"↕" },
-    { key:"absences",   label:"Absences",          arrow:"↕" },
-    { key:"blesses",    label:"Blessures",         arrow:"↕" },
-    { key:"pasRepondu", label:"Non répondu",       arrow:"↕" },
-    { key:"buts",       label:"Buts",              arrow:"↕" },
-    { key:"favTeam",    label:"Équipe préférée",   arrow:"↕" },
+    { key:"name",       label:"Joueur"         },
+    { key:"presences",  label:"Présences"      },
+    { key:"taux",       label:"Taux prés."     },
+    { key:"absences",   label:"Absences"       },
+    { key:"blesses",    label:"Blessures"      },
+    { key:"pasRepondu", label:"Non répondu"    },
+    { key:"buts",       label:"Buts"           },
+    { key:"favTeam",    label:"Équipe préférée"},
   ];
 
   const rowsWithTaux = rows.map(r => ({
@@ -1184,49 +1211,33 @@ function renderJoueurs() {
     taux: totalSessions > 0 ? Math.round(r.presences / totalSessions * 100) : 0
   }));
 
-  const sorted = [...rowsWithTaux].sort((a, b) => {
-    const av = a[playerSort.col] ?? "";
-    const bv = b[playerSort.col] ?? "";
-    if (typeof av === "number" && typeof bv === "number") return (bv - av) * playerSort.dir;
-    return String(av).localeCompare(String(bv), "fr") * playerSort.dir;
-  });
+  const rosterRows = rowsWithTaux.filter(r => !JOKERS.has(r.name));
+  const jokerRows  = rowsWithTaux.filter(r =>  JOKERS.has(r.name));
 
-  const thead = colDef.map(c => {
-    const active = playerSort.col === c.key ? " sorted" : "";
-    const arrowDir = playerSort.col === c.key ? (playerSort.dir === 1 ? "↑" : "↓") : "↕";
-    return `<th data-col="${c.key}" class="${active}">${c.label}<span class="sort-arrow">${arrowDir}</span></th>`;
-  }).join("");
+  function sortArr(arr, s) {
+    return [...arr].sort((a, b) => {
+      const av = a[s.col] ?? ""; const bv = b[s.col] ?? "";
+      if (typeof av === "number" && typeof bv === "number") return (bv - av) * s.dir;
+      return String(av).localeCompare(String(bv), "fr") * s.dir;
+    });
+  }
 
   const dash_ = `<span style="color:var(--text3);font-size:13px">—</span>`;
 
-  const tbody = sorted.map(r => {
-    const isJoker  = JOKERS.has(r.name);
-    const nameCell = `${r.name}${isJoker ? `<span class="joker-tag">+1</span>` : ""}`;
-    const teamCell = r.favTeam
-      ? `${dot(r.favTeam)}<span style="font-size:12px">${r.favTeam}</span>`
-      : dash_;
+  function buildThead(s) {
+    return colDef.map(c => {
+      const active = s.col === c.key ? " sorted" : "";
+      const arrow  = s.col === c.key ? (s.dir === 1 ? "↑" : "↓") : "↕";
+      return `<th data-col="${c.key}" class="${active}">${c.label}<span class="sort-arrow">${arrow}</span></th>`;
+    }).join("");
+  }
 
+  function buildRosterRow(r) {
+    const teamCell = r.favTeam ? `${dot(r.favTeam)}<span style="font-size:12px">${r.favTeam}</span>` : dash_;
     const tauxCls  = r.taux >= 75 ? "high" : r.taux >= 40 ? "mid" : "low";
-    const tauxCell = `<div class="taux-wrap">
-      <div class="taux-track"><div class="taux-fill ${tauxCls}" style="width:${r.taux}%"></div></div>
-      <span class="taux-val ${tauxCls}">${r.taux}%</span>
-    </div>`;
-
-    if (isJoker) {
-      return `<tr>
-        <td class="name">${nameCell}</td>
-        <td class="num ${r.presences > 0 ? "highlight" : "zero"}">${r.presences}</td>
-        <td class="taux-cell">${dash_}</td>
-        <td class="num zero">${dash_}</td>
-        <td class="num zero">${dash_}</td>
-        <td class="num zero">${dash_}</td>
-        <td class="num ${r.buts > 0 ? "highlight" : "zero"}">${r.buts}</td>
-        <td class="team-cell">${teamCell}</td>
-      </tr>`;
-    }
-
+    const tauxCell = `<div class="taux-wrap"><div class="taux-track"><div class="taux-fill ${tauxCls}" style="width:${r.taux}%"></div></div><span class="taux-val ${tauxCls}">${r.taux}%</span></div>`;
     return `<tr>
-      <td class="name">${nameCell}</td>
+      <td class="name">${r.name}</td>
       <td class="num ${r.presences > 0 ? "highlight" : "zero"}">${r.presences}</td>
       <td class="taux-cell">${tauxCell}</td>
       <td class="num ${r.absences > 0 ? "danger" : "zero"}">${r.absences}</td>
@@ -1235,25 +1246,59 @@ function renderJoueurs() {
       <td class="num ${r.buts > 0 ? "highlight" : "zero"}">${r.buts}</td>
       <td class="team-cell">${teamCell}</td>
     </tr>`;
-  }).join("");
+  }
+
+  function buildJokerRow(r) {
+    const teamCell = r.favTeam ? `${dot(r.favTeam)}<span style="font-size:12px">${r.favTeam}</span>` : dash_;
+    return `<tr>
+      <td class="name">${r.name}<span class="joker-tag">+1</span></td>
+      <td class="num ${r.presences > 0 ? "highlight" : "zero"}">${r.presences}</td>
+      <td class="taux-cell">${dash_}</td>
+      <td class="num zero">${dash_}</td>
+      <td class="num zero">${dash_}</td>
+      <td class="num zero">${dash_}</td>
+      <td class="num ${r.buts > 0 ? "highlight" : "zero"}">${r.buts}</td>
+      <td class="team-cell">${teamCell}</td>
+    </tr>`;
+  }
+
+  const rosterThead = buildThead(rosterSort);
+  const rosterTbody = sortArr(rosterRows, rosterSort).map(buildRosterRow).join("");
+  const jokerThead  = buildThead(jokerSort);
+  const jokerTbody  = sortArr(jokerRows,  jokerSort).map(buildJokerRow).join("");
+
+  const jokerSection = jokerRows.length > 0 ? `
+    <div class="joueurs-section-label" style="margin-top:2rem">Joueurs +1</div>
+    <div class="players-table-wrap">
+      <table class="players-table" id="jokers-table">
+        <thead><tr>${jokerThead}</tr></thead>
+        <tbody>${jokerTbody}</tbody>
+      </table>
+    </div>` : "";
 
   container.innerHTML = `
+    <div class="joueurs-section-label">Roster</div>
     <div class="players-table-wrap">
-      <table class="players-table">
-        <thead><tr>${thead}</tr></thead>
-        <tbody>${tbody}</tbody>
+      <table class="players-table" id="roster-table">
+        <thead><tr>${rosterThead}</tr></thead>
+        <tbody>${rosterTbody}</tbody>
       </table>
-    </div>`;
+    </div>${jokerSection}`;
 
-  container.querySelectorAll("th[data-col]").forEach(th => {
+  document.getElementById("roster-table")?.querySelectorAll("th[data-col]").forEach(th => {
     th.addEventListener("click", () => {
       const col = th.dataset.col;
-      if (playerSort.col === col) {
-        playerSort.dir *= -1;
-      } else {
-        playerSort.col = col;
-        playerSort.dir = col === "name" ? 1 : -1;
-      }
+      if (rosterSort.col === col) { rosterSort.dir *= -1; }
+      else { rosterSort.col = col; rosterSort.dir = col === "name" ? 1 : -1; }
+      renderJoueurs();
+    });
+  });
+
+  document.getElementById("jokers-table")?.querySelectorAll("th[data-col]").forEach(th => {
+    th.addEventListener("click", () => {
+      const col = th.dataset.col;
+      if (jokerSort.col === col) { jokerSort.dir *= -1; }
+      else { jokerSort.col = col; jokerSort.dir = col === "name" ? 1 : -1; }
       renderJoueurs();
     });
   });
