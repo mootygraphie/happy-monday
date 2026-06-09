@@ -1150,8 +1150,8 @@ document.getElementById("session-date").addEventListener("change", e => {
    JOUEURS
 ══════════════════════════════════════════════════════════ */
 
-let rosterSort = { col: "taux",      dir: -1 };
-let jokerSort  = { col: "presences", dir: -1 };
+let rosterSort = { col: "taux",      dir: 1 };
+let jokerSort  = { col: "presences", dir: 1 };
 
 function computePlayerStats() {
   const ps = {};
