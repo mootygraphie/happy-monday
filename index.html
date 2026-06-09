@@ -438,20 +438,20 @@ const SESSIONS = [
   {
     date: "2026-05-25",
     presences: {
-      "Boris":          { statut: "Présent",     equipe: "Bleue" },
+      "Boris":          { statut: "Présent",     equipe: "Vert" },
       "Sylvain":        { statut: "Blessé",      equipe: "" },
       "Antoine":        { statut: "Blessé",      equipe: "" },
       "Yassir":         { statut: "Absent",      equipe: "" },
       "Mahdi":          { statut: "Absent",      equipe: "" },
-      "Madani":         { statut: "Présent",     equipe: "Bleue" },
+      "Madani":         { statut: "Présent",     equipe: "Vert" },
       "JB":             { statut: "Présent",     equipe: "Rouge" },
-      "Renaud":         { statut: "Présent",     equipe: "Bleue" },
-      "Clément":        { statut: "Présent",     equipe: "Bleu" },
+      "Renaud":         { statut: "Présent",     equipe: "Vert" },
+      "Clément":        { statut: "Présent",     equipe: "Vert" },
       "Guy":            { statut: "Blessé",      equipe: "" },
       "Loïc":           { statut: "Blessé",      equipe: "" },
       "Raph P.":      { statut: "Présent",     equipe: "Rouge" },
       "Raph L.":      { statut: "Blessé",      equipe: "" },
-      "Ben":            { statut: "Présent",     equipe: "Bleue" },
+      "Ben":            { statut: "Présent",     equipe: "Rouge" },
       "Pierre-Olivier": { statut: "Pas répondu", equipe: "" },
       "Tof":            { statut: "Absent",      equipe: "" },
       "Benji":          { statut: "Absent",      equipe: "" },
@@ -459,6 +459,7 @@ const SESSIONS = [
       "Cédric":         { statut: "Absent",      equipe: "" },
       "Houari":         { statut: "Présent",     equipe: "Rouge" },
       "Harone":         { statut: "Présent",     equipe: "Rouge", joker: true },
+      "Marius":         { statut: "Présent",     equipe: "Vert",  joker: true },
       "Morgane":        { statut: "Présent",     equipe: "Rouge" },
       "Jordan":         { statut: "Pas répondu", equipe: "" },
       "Laury":          { statut: "Pas répondu", equipe: "" },
@@ -524,13 +525,15 @@ const ALL_PLAYERS = [
 let JOKERS = new Set(["Hamine","Marius","Harone","Alexi","Godefroy"]);
 
 /* ── Helpers ── */
+const TEAM_LABEL = { Rouge: "Rouge", Vert: "Verte", Bleue: "Bleue" };
+
 function teamCard(color, teamMap, icons) {
   const cls = color.toLowerCase();
   return `<div class="team-card">
     <div class="team-card-accent ${cls}"></div>
     <div class="team-card-header">
       <div class="team-card-icon ${cls}">${icons[color]}</div>
-      <span class="team-card-title ${cls}">Équipe ${color}</span>
+      <span class="team-card-title ${cls}">Équipe ${TEAM_LABEL[color] || color}</span>
       <span class="team-card-count">${teamMap[color].length} joueur${teamMap[color].length > 1 ? "s" : ""}</span>
     </div>
     <div class="team-card-players">
