@@ -212,6 +212,21 @@
   .pe-count.amber  { color: #ffa726; }
   .pe-unit { font-size: 11px; color: var(--text3); margin-left: 3px; align-self: flex-end; padding-bottom: 3px; }
 
+  /* ── Palmarès équipes ── */
+  .palmares-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 500px) { .palmares-grid { grid-template-columns: 1fr; } }
+  .palmares-block { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
+  .palmares-title { font-size: 13px; font-weight: 700; color: var(--fg2); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 14px; }
+  .palmares-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+  .palmares-row:last-child { border-bottom: none; }
+  .palmares-first .palmares-val { font-weight: 700; color: var(--fg); }
+  .palmares-medal { font-size: 16px; width: 22px; text-align: center; flex-shrink: 0; }
+  .palmares-badge { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; flex-shrink: 0; }
+  .palmares-val { font-size: 13px; color: var(--fg2); margin-left: auto; }
+  .eq-rouge { background: #e74c3c22; color: #e74c3c; }
+  .eq-vert  { background: #2ecc7122; color: #27ae60; }
+  .eq-bleue { background: #3498db22; color: #2980b9; }
+
   /* ── Records ── */
   .records-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 10px; }
   .record-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; }
@@ -398,6 +413,61 @@
   .pp-teammate-name { flex: 1; font-size: 14px; font-weight: 500; }
   .pp-teammate-val  { font-size: 13px; font-weight: 600; color: var(--text2); }
   .pp-teammate-unit { font-size: 11px; color: var(--text3); margin-left: 2px; }
+
+  /* ── Saisie ── */
+  .saisie-wrap { max-width: 760px; }
+  .saisie-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px; }
+  .saisie-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .saisie-btn { padding: 7px 16px; border-radius: 8px; border: 1px solid var(--border2); font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s, opacity .15s; }
+  .saisie-btn.secondary { background: var(--bg2); color: var(--fg); }
+  .saisie-btn.secondary:hover { background: var(--bg3); }
+  .saisie-btn.danger { background: transparent; color: #e74c3c; border-color: #e74c3c44; }
+  .saisie-btn.danger:hover { background: #e74c3c15; }
+  .saisie-btn.primary { background: var(--green,#2ecc71); color: #111; border-color: transparent; }
+  .saisie-btn.primary:hover { opacity: .9; }
+  .saisie-section { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; }
+  .saisie-section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--fg2); margin-bottom: 16px; }
+  .saisie-date-input { background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 8px 12px; color: var(--fg); font-size: 15px; cursor: pointer; }
+  .saisie-presences-grid { display: flex; flex-direction: column; gap: 4px; }
+  .saisie-player-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--border); }
+  .saisie-player-row:last-child { border-bottom: none; }
+  .saisie-player-name { font-size: 14px; font-weight: 500; min-width: 120px; flex-shrink: 0; }
+  .saisie-status-btns { display: flex; gap: 4px; flex-wrap: wrap; }
+  .saisie-statut-btn { padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border2); background: var(--bg3); color: var(--fg2); font-size: 12px; cursor: pointer; transition: all .12s; }
+  .saisie-statut-btn:hover { border-color: var(--fg2); }
+  .saisie-statut-btn.active-present  { background: #2ecc7125; border-color: #2ecc71; color: #2ecc71; font-weight: 700; }
+  .saisie-statut-btn.active-absent   { background: #e74c3c20; border-color: #e74c3c; color: #e74c3c; font-weight: 700; }
+  .saisie-statut-btn.active-blesse   { background: #f39c1220; border-color: #f39c12; color: #f39c12; font-weight: 700; }
+  .saisie-statut-btn.active-nr       { background: #99999920; border-color: #999; color: #999; font-weight: 700; }
+  .saisie-jokers-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--fg3); margin: 14px 0 8px; }
+  .saisie-logistique { display: flex; gap: 16px; margin-top: 18px; flex-wrap: wrap; }
+  .saisie-logistique-row { display: flex; align-items: center; gap: 10px; }
+  .saisie-logistique-row label { font-size: 14px; font-weight: 600; color: var(--fg2); }
+  .saisie-select { background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 6px 10px; color: var(--fg); font-size: 13px; cursor: pointer; }
+  .saisie-equipes-grid { display: flex; flex-direction: column; gap: 6px; }
+  .saisie-equipe-row { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
+  .saisie-eq-btns { display: flex; gap: 5px; }
+  .saisie-eq-btn { width: 32px; height: 28px; border-radius: 6px; border: 1px solid var(--border2); background: var(--bg3); color: var(--fg2); font-size: 12px; font-weight: 700; cursor: pointer; transition: all .12s; }
+  .saisie-eq-btn:hover { border-color: var(--fg2); }
+  .eq-btn-rouge.active { background: #e74c3c; border-color: #e74c3c; color: #fff; }
+  .eq-btn-vert.active  { background: #27ae60; border-color: #27ae60; color: #fff; }
+  .eq-btn-bleue.active { background: #2980b9; border-color: #2980b9; color: #fff; }
+  .saisie-match-card { background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
+  .saisie-match-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .saisie-match-num { font-size: 13px; font-weight: 700; color: var(--fg2); }
+  .saisie-remove-match { background: transparent; border: none; color: var(--fg3); cursor: pointer; font-size: 16px; padding: 2px 6px; border-radius: 4px; }
+  .saisie-remove-match:hover { color: #e74c3c; }
+  .saisie-match-score-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .saisie-score-input { width: 52px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 8px; padding: 6px 10px; color: var(--fg); font-size: 18px; font-weight: 700; text-align: center; }
+  .saisie-dash { font-size: 20px; font-weight: 300; color: var(--fg3); }
+  .saisie-buteurs-row { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+  .saisie-buteurs-side { flex: 1; min-width: 160px; }
+  .saisie-buteurs-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--fg3); display: block; margin-bottom: 6px; }
+  .saisie-buteurs-sels { display: flex; flex-direction: column; gap: 4px; }
+  .saisie-add-match { width: 100%; padding: 10px; background: transparent; border: 2px dashed var(--border2); border-radius: 10px; color: var(--fg2); font-size: 14px; cursor: pointer; transition: all .15s; }
+  .saisie-add-match:hover { border-color: var(--fg); color: var(--fg); background: var(--bg3); }
+  .saisie-empty { color: var(--fg3); font-size: 14px; font-style: italic; margin: 0; }
+  .saisie-status { font-size: 12px; }
 </style>
 </head>
 <body>
@@ -435,6 +505,7 @@
     <button class="main-tab active" data-tab="dashboard">Dashboard</button>
     <button class="main-tab" data-tab="session">Sessions</button>
     <button class="main-tab" data-tab="joueurs">Joueurs</button>
+    <button class="main-tab" data-tab="saisie">Saisie</button>
   </div>
 
   <!-- ── Onglet Dashboard ── -->
@@ -464,6 +535,11 @@
       <select id="session-date"></select>
     </div>
     <div id="session-results"></div>
+  </div>
+
+  <!-- ── Onglet Saisie ── -->
+  <div class="tab-panel" id="panel-saisie">
+    <div id="saisie-content"></div>
   </div>
 
 </div>
@@ -603,6 +679,13 @@ const SESSIONS = [
     matchs: []
   }
 ];
+/* ── Merge sessions validées depuis localStorage ── */
+(function() {
+  try {
+    const extra = JSON.parse(localStorage.getItem('hmft_sessions') || '[]');
+    extra.forEach(s => { if (!SESSIONS.find(e => e.date === s.date)) SESSIONS.push(s); });
+  } catch(e) {}
+})();
 /* ═══════════════════════════════════════════════════════ */
 
 const ALL_PLAYERS = [
@@ -775,6 +858,9 @@ function computeStats(sessions) {
   allMatchs.forEach(m => { if(m.scoreA>m.scoreB) colorWins[m.eqA]++; else if(m.scoreB>m.scoreA) colorWins[m.eqB]++; });
   const bestColor   = Object.entries(colorWins).sort((a,b)=>b[1]-a[1])[0]||null;
 
+  const goalsPerTeam = {Rouge:0, Vert:0, Bleue:0};
+  allMatchs.forEach(m => { goalsPerTeam[m.eqA] = (goalsPerTeam[m.eqA]||0) + m.scoreA; goalsPerTeam[m.eqB] = (goalsPerTeam[m.eqB]||0) + m.scoreB; });
+
   const byAlpha = (a,b) => a[0].localeCompare(b[0], "fr");
   const top3Pres    = Object.entries(ps).filter(([n,p])=>p.presences>0&&!JOKERS.has(n)).sort((a,b)=>b[1].presences-a[1].presences||byAlpha(a,b)).slice(0,3);
   const top3Abs     = Object.entries(ps).filter(([n,p])=>p.absences>0&&!JOKERS.has(n))
@@ -783,7 +869,7 @@ function computeStats(sessions) {
     .sort((a,b)=>b[1].episodesBlessures-a[1].episodesBlessures||b[1].matchsBlessures-a[1].matchsBlessures||byAlpha(a,b)).slice(0,3);
   const buteursRank = Object.entries(ps).filter(([,p])=>p.buts>0).sort((a,b)=>b[1].buts-a[1].buts||byAlpha(a,b));
 
-  return {ps, mostGoals, biggestAmp, bestAttack, topButeur, bestColor, colorWins, top3Pres, top3Abs, top3Bles, buteursRank, allMatchs};
+  return {ps, mostGoals, biggestAmp, bestAttack, topButeur, bestColor, colorWins, goalsPerTeam, top3Pres, top3Abs, top3Bles, buteursRank, allMatchs};
 }
 
 function renderDashboard() {
@@ -881,6 +967,39 @@ function renderDashboard() {
       </div>`;
     });
     h += `</div>`;
+  }
+
+  /* ── Palmarès équipes ── */
+  if (st.allMatchs.length > 0) {
+    const TEAM_COLORS_DISP = [
+      { key: "Rouge",  label: "Rouge",  cls: "rouge" },
+      { key: "Vert",   label: "Verte",  cls: "vert"  },
+      { key: "Bleue",  label: "Bleue",  cls: "bleue" },
+    ];
+    const goalsSorted = [...TEAM_COLORS_DISP].sort((a,b) => (st.goalsPerTeam[b.key]||0) - (st.goalsPerTeam[a.key]||0));
+    const winsSorted  = [...TEAM_COLORS_DISP].sort((a,b) => (st.colorWins[b.key]||0) - (st.colorWins[a.key]||0));
+
+    const podiumRow = (arr, valFn, unit) => arr.map((t, i) => {
+      const val = valFn(t);
+      const medals = ["🥇","🥈","🥉"];
+      return `<div class="palmares-row ${i===0?"palmares-first":""}">
+        <span class="palmares-medal">${medals[i]||""}</span>
+        <span class="palmares-badge eq-${t.cls}">${t.label}</span>
+        <span class="palmares-val">${val} ${unit}</span>
+      </div>`;
+    }).join("");
+
+    h += `<div class="section-label">Palmarès équipes</div>
+    <div class="palmares-grid">
+      <div class="palmares-block">
+        <div class="palmares-title">⚽ Plus de buts</div>
+        ${podiumRow(goalsSorted, t => st.goalsPerTeam[t.key]||0, "buts")}
+      </div>
+      <div class="palmares-block">
+        <div class="palmares-title">🏆 Plus de victoires</div>
+        ${podiumRow(winsSorted, t => st.colorWins[t.key]||0, "victoires")}
+      </div>
+    </div>`;
   }
 
   /* ── Records (si matchs) ── */
@@ -1192,6 +1311,7 @@ document.querySelectorAll(".main-tab").forEach(tab => {
     tab.classList.add("active");
     document.getElementById(`panel-${tab.dataset.tab}`).classList.add("active");
     if (tab.dataset.tab === "joueurs") renderJoueurs();
+    if (tab.dataset.tab === "saisie")  renderSaisie();
   });
 });
 
@@ -1240,17 +1360,19 @@ let jokerSort  = { col: "presences", dir: 1 };
 function computePlayerStats() {
   const ps = {};
   ALL_PLAYERS.forEach(p => {
-    ps[p] = { presences:0, absences:0, blesses:0, pasRepondu:0, buts:0, vR:0, vV:0, vB:0 };
+    ps[p] = { presences:0, absences:0, blesses:0, pasRepondu:0, buts:0, vR:0, vV:0, vB:0, sac:0, maillots:0 };
   });
 
   SESSIONS.forEach(s => {
     Object.entries(s.presences).forEach(([p, info]) => {
-      if (!ps[p]) ps[p] = { presences:0, absences:0, blesses:0, pasRepondu:0, buts:0, vR:0, vV:0, vB:0 };
+      if (!ps[p]) ps[p] = { presences:0, absences:0, blesses:0, pasRepondu:0, buts:0, vR:0, vV:0, vB:0, sac:0, maillots:0 };
       if      (info.statut === "Présent")     ps[p].presences++;
       else if (info.statut === "Absent")      ps[p].absences++;
       else if (info.statut === "Blessé")      ps[p].blesses++;
       else if (info.statut === "Pas répondu") ps[p].pasRepondu++;
     });
+    if (s.sac     && ps[s.sac])     ps[s.sac].sac++;
+    if (s.maillots && ps[s.maillots]) ps[s.maillots].maillots++;
     if (s.matchs) {
       s.matchs.forEach(m => {
         [...(m.buteursA||[]), ...(m.buteursB||[])].forEach(p => { if (ps[p]) ps[p].buts++; });
@@ -1287,6 +1409,8 @@ function renderJoueurs() {
     { key:"blesses",    label:"Blessures"      },
     { key:"pasRepondu", label:"Non répondu"    },
     { key:"buts",       label:"Buts"           },
+    { key:"sac",        label:"Sac 🎒"         },
+    { key:"maillots",   label:"Maillots 👕"    },
     { key:"favTeam",    label:"Équipe préférée"},
   ];
 
@@ -1332,6 +1456,8 @@ function renderJoueurs() {
       <td class="num ${r.blesses > 0 ? "warn" : "zero"}">${r.blesses}</td>
       <td class="num ${r.pasRepondu > 0 ? "nr" : "zero"}">${r.pasRepondu}</td>
       <td class="num ${r.buts > 0 ? "highlight" : "zero"}">${r.buts}</td>
+      <td class="num ${r.sac > 0 ? "highlight" : "zero"}">${r.sac}</td>
+      <td class="num ${r.maillots > 0 ? "highlight" : "zero"}">${r.maillots}</td>
       <td class="team-cell">${teamCell}</td>
     </tr>`;
   }
@@ -1346,6 +1472,8 @@ function renderJoueurs() {
       <td class="num zero">${dash_}</td>
       <td class="num zero">${dash_}</td>
       <td class="num ${r.buts > 0 ? "highlight" : "zero"}">${r.buts}</td>
+      <td class="num zero">${dash_}</td>
+      <td class="num zero">${dash_}</td>
       <td class="team-cell">${teamCell}</td>
     </tr>`;
   }
@@ -1563,6 +1691,355 @@ function closePlayerPanel() {
   document.getElementById("player-panel").classList.remove("open");
   document.body.style.overflow = "";
 }
+
+/* ─────────────────────────────────────────────────────
+   SAISIE — onglet de saisie des sessions
+───────────────────────────────────────────────────── */
+
+let _draft = null;
+let _draftSavedAt = null;
+
+const _STATUTS_REG  = ["Présent", "Absent", "Blessé", "Pas répondu"];
+const _STATUT_CLS   = { "Présent":"active-present", "Absent":"active-absent", "Blessé":"active-blesse", "Pas répondu":"active-nr" };
+const _JOKER_ABSENT = "_joker_absent";
+
+function _newDraft() {
+  const presences = {};
+  ALL_PLAYERS.forEach(p => {
+    presences[p] = { statut: JOKERS.has(p) ? _JOKER_ABSENT : "Pas répondu", equipe: "" };
+  });
+  return { date: "", sac: "", maillots: "", presences, matchs: [], tempJokers: [] };
+}
+
+function _loadDraft() {
+  try {
+    const s = localStorage.getItem("hmft_draft");
+    if (s) { _draft = JSON.parse(s); return; }
+  } catch(e) {}
+  _draft = _newDraft();
+}
+
+function _saveDraft() {
+  localStorage.setItem("hmft_draft", JSON.stringify(_draft));
+  _draftSavedAt = new Date().toLocaleTimeString("fr", { hour: "2-digit", minute: "2-digit" });
+  const el = document.getElementById("saisie-status");
+  if (el) el.innerHTML = `<span style="color:#2ecc71;font-size:12px">✓ Sauvegardé à ${_draftSavedAt}</span>`;
+}
+
+function _presentList() {
+  return Object.entries(_draft.presences).filter(([,v]) => v.statut === "Présent").map(([k]) => k);
+}
+
+function _activeTeams() {
+  const t = new Set();
+  Object.values(_draft.presences).forEach(v => { if (v.statut === "Présent" && v.equipe) t.add(v.equipe); });
+  return ["Rouge","Vert","Bleue"].filter(c => t.has(c));
+}
+
+function _playersOfTeam(color) {
+  return Object.entries(_draft.presences)
+    .filter(([,v]) => v.statut === "Présent" && v.equipe === color).map(([k]) => k);
+}
+
+function _presenceRowHTML(p, statut, isJoker, removable) {
+  if (isJoker) {
+    const on = statut === "Présent";
+    return `<div class="saisie-player-row">
+      <span class="saisie-player-name">${p}<span class="joker-tag">+1</span></span>
+      <div class="saisie-status-btns">
+        <button class="saisie-statut-btn ${on?"active-present":""}" data-player="${p}" data-statut="Présent">Invité ✓</button>
+        <button class="saisie-statut-btn ${!on?"active-absent":""}" data-player="${p}" data-statut="${_JOKER_ABSENT}">Absent</button>
+        ${removable ? `<button class="saisie-remove-temp-joker" data-player="${p}" title="Retirer ce joueur" style="background:transparent;border:none;color:var(--fg3);cursor:pointer;font-size:15px;padding:0 4px;margin-left:4px">✕</button>` : ""}
+      </div>
+    </div>`;
+  }
+  return `<div class="saisie-player-row">
+    <span class="saisie-player-name">${p}</span>
+    <div class="saisie-status-btns">
+      ${_STATUTS_REG.map(s => `<button class="saisie-statut-btn ${statut===s?_STATUT_CLS[s]:""}" data-player="${p}" data-statut="${s}">${s==="Pas répondu"?"NR":s}</button>`).join("")}
+    </div>
+  </div>`;
+}
+
+function _buildEquipesHTML() {
+  const presents = _presentList();
+  if (!presents.length) return `<p class="saisie-empty">Aucun joueur marqué comme Présent.</p>`;
+  const TEAM_BTNS = [
+    { key: "Rouge", label: "R", cls: "eq-btn-rouge" },
+    { key: "Vert",  label: "V", cls: "eq-btn-vert"  },
+    { key: "Bleue", label: "B", cls: "eq-btn-bleue"  },
+  ];
+  return `<div class="saisie-equipes-grid">${presents.map(p => {
+    const eq = _draft.presences[p]?.equipe || "";
+    const isJoker = JOKERS.has(p) || (_draft.tempJokers||[]).includes(p);
+    const btns = TEAM_BTNS.map(t =>
+      `<button class="saisie-eq-btn ${t.cls}${eq===t.key?" active":""}" data-player="${p}" data-equipe="${t.key}">${t.label}</button>`
+    ).join("");
+    return `<div class="saisie-equipe-row">
+      <span class="saisie-player-name">${p}${isJoker?'<span class="joker-tag">+1</span>':""}</span>
+      <div class="saisie-eq-btns">${btns}</div>
+    </div>`;
+  }).join("")}</div>`;
+}
+
+function _buildMatchCardHTML(m, idx, teams) {
+  const teamOpts = sel => teams.map(t => `<option value="${t}" ${sel===t?"selected":""}>${TEAM_LABEL[t]||t}</option>`).join("");
+  const pA = m.eqA ? _playersOfTeam(m.eqA) : [];
+  const pB = m.eqB ? _playersOfTeam(m.eqB) : [];
+  const butSelHTML = (side, list, buteurs, score) =>
+    Array.from({length: score}, (_,j) => {
+      const v = buteurs[j] || "";
+      const opts = ["", ...list].map(p => `<option value="${p}" ${v===p?"selected":""}>${p||"—"}</option>`).join("");
+      return `<select class="saisie-select saisie-buteur-sel" data-match="${idx}" data-side="${side}" data-goal="${j}">${opts}</select>`;
+    }).join("");
+  const showButeurs = m.scoreA > 0 || m.scoreB > 0;
+  return `<div class="saisie-match-card">
+    <div class="saisie-match-header">
+      <span class="saisie-match-num">Match ${idx+1}</span>
+      <button class="saisie-remove-match" data-match="${idx}">✕</button>
+    </div>
+    <div class="saisie-match-score-row">
+      <select class="saisie-select saisie-team-sel" data-match="${idx}" data-side="A">${teamOpts(m.eqA)}</select>
+      <input type="number" class="saisie-score-input" min="0" max="20" data-match="${idx}" data-side="A" value="${m.scoreA}">
+      <span class="saisie-dash">–</span>
+      <input type="number" class="saisie-score-input" min="0" max="20" data-match="${idx}" data-side="B" value="${m.scoreB}">
+      <select class="saisie-select saisie-team-sel" data-match="${idx}" data-side="B">${teamOpts(m.eqB)}</select>
+    </div>
+    ${showButeurs ? `<div class="saisie-buteurs-row">
+      <div class="saisie-buteurs-side">
+        <span class="saisie-buteurs-label">${TEAM_LABEL[m.eqA]||m.eqA||"A"}</span>
+        <div class="saisie-buteurs-sels">${butSelHTML("A",pA,m.buteursA,m.scoreA)||'<span style="color:var(--fg3);font-size:12px">—</span>'}</div>
+      </div>
+      <div class="saisie-buteurs-side">
+        <span class="saisie-buteurs-label">${TEAM_LABEL[m.eqB]||m.eqB||"B"}</span>
+        <div class="saisie-buteurs-sels">${butSelHTML("B",pB,m.buteursB,m.scoreB)||'<span style="color:var(--fg3);font-size:12px">—</span>'}</div>
+      </div>
+    </div>` : ""}
+  </div>`;
+}
+
+function _buildMatchsSectionHTML() {
+  const teams = _activeTeams();
+  if (teams.length < 2) return `<p class="saisie-empty">Assignez au moins 2 équipes pour ajouter des matchs.</p>
+    <button class="saisie-add-match" id="saisie-add-match" disabled style="opacity:.4;cursor:default">+ Ajouter un match</button>`;
+  return _draft.matchs.map((m, i) => _buildMatchCardHTML(m, i, teams)).join("") +
+    `<button class="saisie-add-match" id="saisie-add-match">+ Ajouter un match</button>`;
+}
+
+function renderSaisie() {
+  if (!_draft) _loadDraft();
+  const presents = _presentList();
+  const regularPlayers = ALL_PLAYERS.filter(p => !JOKERS.has(p));
+  const jokerPlayers   = ALL_PLAYERS.filter(p =>  JOKERS.has(p));
+  const sacOpts    = ["", ...presents].map(p => `<option value="${p}" ${_draft.sac===p?"selected":""}>${p||"— non défini —"}</option>`).join("");
+  const mailOpts   = ["", ...presents].map(p => `<option value="${p}" ${_draft.maillots===p?"selected":""}>${p||"— non défini —"}</option>`).join("");
+  const statusTxt  = _draftSavedAt
+    ? `<span style="color:#2ecc71;font-size:12px">✓ Sauvegardé à ${_draftSavedAt}</span>`
+    : `<span style="color:var(--fg3);font-size:12px">Brouillon non sauvegardé</span>`;
+
+  document.getElementById("saisie-content").innerHTML = `<div class="saisie-wrap">
+
+    <div class="saisie-bar">
+      <span id="saisie-status" class="saisie-status">${statusTxt}</span>
+      <div class="saisie-actions">
+        <button class="saisie-btn secondary" id="saisie-save">Enregistrer</button>
+        <button class="saisie-btn danger"    id="saisie-clear">Effacer le brouillon</button>
+        <button class="saisie-btn primary"   id="saisie-commit">Valider la session ✓</button>
+      </div>
+    </div>
+
+    <div class="saisie-section">
+      <div class="saisie-section-title">📅 Date de la session</div>
+      <input type="date" class="saisie-date-input" id="saisie-date" value="${_draft.date}">
+    </div>
+
+    <div class="saisie-section">
+      <div class="saisie-section-title">👥 Présences</div>
+      <div class="saisie-presences-grid">
+        ${regularPlayers.map(p => _presenceRowHTML(p, _draft.presences[p]?.statut||"Pas répondu", false)).join("")}
+      </div>
+      <div class="saisie-jokers-title">Joueurs +1</div>
+      <div class="saisie-presences-grid">
+        ${jokerPlayers.map(p => _presenceRowHTML(p, _draft.presences[p]?.statut||_JOKER_ABSENT, true, false)).join("")}
+        ${(_draft.tempJokers||[]).map(p => _presenceRowHTML(p, _draft.presences[p]?.statut||"Présent", true, true)).join("")}
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+        <input type="text" id="saisie-new-joker-input" placeholder="Nom du +1 ponctuel…" class="saisie-date-input" style="font-size:13px;padding:6px 10px;flex:1;max-width:220px">
+        <button class="saisie-btn secondary" id="saisie-add-temp-joker">+ Ajouter</button>
+      </div>
+      <div class="saisie-logistique">
+        <div class="saisie-logistique-row">
+          <label>🎒 Sac</label>
+          <select class="saisie-select" id="saisie-sac">${sacOpts}</select>
+        </div>
+        <div class="saisie-logistique-row">
+          <label>👕 Maillots</label>
+          <select class="saisie-select" id="saisie-maillots">${mailOpts}</select>
+        </div>
+      </div>
+    </div>
+
+    <div class="saisie-section" id="saisie-equipes-section">
+      <div class="saisie-section-title">🎽 Équipes</div>
+      ${_buildEquipesHTML()}
+    </div>
+
+    <div class="saisie-section" id="saisie-matchs-section">
+      <div class="saisie-section-title">⚽ Matchs</div>
+      ${_buildMatchsSectionHTML()}
+    </div>
+
+  </div>`;
+}
+
+function _reRenderEquipes() {
+  const sec = document.getElementById("saisie-equipes-section");
+  if (!sec) return;
+  sec.innerHTML = `<div class="saisie-section-title">🎽 Équipes</div>${_buildEquipesHTML()}`;
+}
+
+function _reRenderMatchs() {
+  const sec = document.getElementById("saisie-matchs-section");
+  if (!sec) return;
+  sec.innerHTML = `<div class="saisie-section-title">⚽ Matchs</div>${_buildMatchsSectionHTML()}`;
+}
+
+function _commitSession() {
+  if (!_draft.date) { alert("Veuillez saisir une date pour la session."); return; }
+  if (SESSIONS.find(s => s.date === _draft.date)) {
+    alert(`Une session du ${fmtDate(_draft.date)} existe déjà.`); return;
+  }
+  if (!confirm(`Valider la session du ${fmtDate(_draft.date)} ?\n\nCette action est définitive.`)) return;
+
+  const finalPresences = {};
+  Object.entries(_draft.presences).forEach(([p, info]) => {
+    if (info.statut === _JOKER_ABSENT) return;
+    finalPresences[p] = { statut: info.statut, equipe: info.equipe || "" };
+    if (JOKERS.has(p) && info.statut === "Présent") finalPresences[p].joker = true;
+  });
+
+  const finalSession = {
+    date: _draft.date,
+    ...(_draft.sac      ? { sac:      _draft.sac      } : {}),
+    ...(_draft.maillots ? { maillots: _draft.maillots } : {}),
+    presences: finalPresences,
+    matchs: _draft.matchs.map(m => ({
+      eqA: m.eqA, eqB: m.eqB, scoreA: m.scoreA, scoreB: m.scoreB,
+      buteursA: (m.buteursA || []).filter(b => b),
+      buteursB: (m.buteursB || []).filter(b => b)
+    }))
+  };
+
+  const stored = JSON.parse(localStorage.getItem("hmft_sessions") || "[]");
+  stored.push(finalSession);
+  localStorage.setItem("hmft_sessions", JSON.stringify(stored));
+  SESSIONS.push(finalSession);
+
+  _draft = null;
+  _draftSavedAt = null;
+  localStorage.removeItem("hmft_draft");
+
+  // Naviguer vers la session validée
+  const dateNav = finalSession.date;
+  document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.querySelector(".main-tab[data-tab='session']").classList.add("active");
+  document.getElementById("panel-session").classList.add("active");
+  populateSessionSelect();
+  document.getElementById("session-date").value = dateNav;
+  renderSessionResults(dateNav);
+}
+
+/* ── Événements saisie (attachés une seule fois) ── */
+document.getElementById("saisie-content").addEventListener("click", e => {
+  if (!_draft) return;
+
+  const statBtn = e.target.closest(".saisie-statut-btn");
+  if (statBtn) {
+    const p = statBtn.dataset.player; const s = statBtn.dataset.statut;
+    if (!_draft.presences[p]) _draft.presences[p] = { statut: s, equipe: "" };
+    _draft.presences[p].statut = s;
+    if (s !== "Présent") _draft.presences[p].equipe = "";
+    renderSaisie(); return;
+  }
+  if (e.target.id === "saisie-save")   { _saveDraft(); return; }
+  if (e.target.id === "saisie-clear") {
+    if (confirm("Effacer le brouillon en cours ?")) {
+      _draft = _newDraft(); _draftSavedAt = null;
+      localStorage.removeItem("hmft_draft"); renderSaisie();
+    }
+    return;
+  }
+  if (e.target.id === "saisie-commit") { _commitSession(); return; }
+  if (e.target.id === "saisie-add-match") {
+    const teams = _activeTeams();
+    _draft.matchs.push({ eqA: teams[0]||"", eqB: teams[1]||"", scoreA: 0, scoreB: 0, buteursA: [], buteursB: [] });
+    _reRenderMatchs(); return;
+  }
+  const rmBtn = e.target.closest(".saisie-remove-match");
+  if (rmBtn) { _draft.matchs.splice(Number(rmBtn.dataset.match), 1); _reRenderMatchs(); return; }
+
+  if (e.target.id === "saisie-add-temp-joker") {
+    const input = document.getElementById("saisie-new-joker-input");
+    const name = (input?.value || "").trim();
+    if (!name) return;
+    if (ALL_PLAYERS.includes(name) || (_draft.tempJokers||[]).includes(name)) {
+      alert(`"${name}" est déjà dans la liste.`); return;
+    }
+    if (!_draft.tempJokers) _draft.tempJokers = [];
+    _draft.tempJokers.push(name);
+    _draft.presences[name] = { statut: "Présent", equipe: "", joker: true, temp: true };
+    renderSaisie(); return;
+  }
+
+  const rmTempBtn = e.target.closest(".saisie-remove-temp-joker");
+  if (rmTempBtn) {
+    const name = rmTempBtn.dataset.player;
+    _draft.tempJokers = (_draft.tempJokers||[]).filter(p => p !== name);
+    delete _draft.presences[name];
+    renderSaisie(); return;
+  }
+
+  const eqBtn = e.target.closest(".saisie-eq-btn");
+  if (eqBtn) {
+    const p = eqBtn.dataset.player; const eq = eqBtn.dataset.equipe;
+    if (_draft.presences[p]) {
+      _draft.presences[p].equipe = _draft.presences[p].equipe === eq ? "" : eq;
+    }
+    _reRenderEquipes(); _reRenderMatchs(); return;
+  }
+});
+
+document.getElementById("saisie-content").addEventListener("change", e => {
+  if (!_draft) return;
+  if (e.target.id === "saisie-date")     { _draft.date = e.target.value; return; }
+  if (e.target.id === "saisie-sac")      { _draft.sac = e.target.value; return; }
+  if (e.target.id === "saisie-maillots") { _draft.maillots = e.target.value; return; }
+
+  const teamSel = e.target.closest(".saisie-team-sel");
+  if (teamSel) {
+    const idx = Number(teamSel.dataset.match); const side = teamSel.dataset.side;
+    _draft.matchs[idx][side === "A" ? "eqA" : "eqB"] = e.target.value;
+    _reRenderMatchs(); return;
+  }
+  const scoreInput = e.target.closest(".saisie-score-input");
+  if (scoreInput) {
+    const idx = Number(scoreInput.dataset.match); const side = scoreInput.dataset.side;
+    const val = Math.max(0, parseInt(e.target.value) || 0);
+    const field = side === "A" ? "scoreA" : "scoreB";
+    const bfield = side === "A" ? "buteursA" : "buteursB";
+    _draft.matchs[idx][field] = val;
+    _draft.matchs[idx][bfield] = (_draft.matchs[idx][bfield] || []).slice(0, val);
+    while (_draft.matchs[idx][bfield].length < val) _draft.matchs[idx][bfield].push("");
+    _reRenderMatchs(); return;
+  }
+  const buteurSel = e.target.closest(".saisie-buteur-sel");
+  if (buteurSel) {
+    const idx = Number(buteurSel.dataset.match); const side = buteurSel.dataset.side;
+    const goal = Number(buteurSel.dataset.goal);
+    _draft.matchs[idx][side === "A" ? "buteursA" : "buteursB"][goal] = e.target.value;
+  }
+});
 
 /* ── Init ── */
 const savedTab = sessionStorage.getItem("activeTab");
