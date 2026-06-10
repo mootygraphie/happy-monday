@@ -317,6 +317,87 @@
   }
 
   footer { text-align: center; padding: 2rem; color: var(--text3); font-size: 12px; border-top: 1px solid var(--border); }
+
+  /* ── Noms cliquables ── */
+  .player-link {
+    background: none; border: none; color: var(--text); cursor: pointer;
+    font-size: inherit; font-weight: inherit; font-family: inherit;
+    padding: 0; text-align: left;
+    text-decoration: underline; text-decoration-color: rgba(255,255,255,.18);
+    text-underline-offset: 3px; transition: color .12s, text-decoration-color .12s;
+  }
+  .player-link:hover { color: #fff; text-decoration-color: rgba(255,255,255,.55); }
+
+  /* ── Fiche joueur (panneau latéral) ── */
+  #player-panel-overlay {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,.6); opacity: 0; pointer-events: none;
+    transition: opacity .22s;
+  }
+  #player-panel-overlay.open { opacity: 1; pointer-events: all; }
+  #player-panel {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 1000;
+    width: min(440px, 100vw); background: var(--bg2);
+    border-left: 1px solid var(--border2);
+    overflow-y: auto; overflow-x: hidden;
+    transform: translateX(100%);
+    transition: transform .28s cubic-bezier(.4,0,.2,1);
+  }
+  #player-panel.open { transform: translateX(0); }
+  .pp-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 22px 22px 18px; border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; background: var(--bg2); z-index: 2;
+  }
+  .pp-name { font-size: 20px; font-weight: 700; flex: 1; font-style: italic; }
+  .pp-close {
+    width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+    background: var(--bg3); border: 1px solid var(--border);
+    color: var(--text2); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; line-height: 1; transition: background .12s, color .12s;
+  }
+  .pp-close:hover { background: rgba(255,255,255,.1); color: var(--text); }
+  .pp-body { padding: 20px 22px; display: flex; flex-direction: column; gap: 22px; }
+  .pp-section-title {
+    font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--text3); font-style: italic; margin-bottom: 10px;
+  }
+  .pp-stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .pp-stat-card {
+    background: var(--bg3); border-radius: var(--radius);
+    padding: 14px 16px; border: 1px solid var(--border);
+  }
+  .pp-stat-val { font-size: 28px; font-weight: 700; line-height: 1; font-style: italic; }
+  .pp-stat-val.green { color: #66bb6a; }
+  .pp-stat-val.red   { color: #ef5350; }
+  .pp-stat-val.amber { color: var(--gold); }
+  .pp-stat-val.blue  { color: var(--bleu); }
+  .pp-stat-val.muted { color: var(--text2); }
+  .pp-stat-lbl { font-size: 11px; color: var(--text3); margin-top: 6px; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+  .pp-stat-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
+  .pp-match-card {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+  }
+  .pp-match-score { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .pp-color-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;
+  }
+  .pp-color-pill.rouge { background: var(--rouge-bg); color: var(--rouge); border: 1px solid var(--rouge-border); }
+  .pp-color-pill.vert  { background: var(--vert-bg);  color: var(--vert);  border: 1px solid var(--vert-border); }
+  .pp-color-pill.bleue { background: var(--bleu-bg);  color: var(--bleu);  border: 1px solid var(--bleu-border); }
+  .pp-teammate-list { display: flex; flex-direction: column; gap: 6px; }
+  .pp-teammate-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: var(--radius);
+  }
+  .pp-teammate-rank { font-size: 16px; min-width: 24px; }
+  .pp-teammate-name { flex: 1; font-size: 14px; font-weight: 500; }
+  .pp-teammate-val  { font-size: 13px; font-weight: 600; color: var(--text2); }
+  .pp-teammate-unit { font-size: 11px; color: var(--text3); margin-left: 2px; }
 </style>
 </head>
 <body>
@@ -385,6 +466,15 @@
     <div id="session-results"></div>
   </div>
 
+</div>
+
+<div id="player-panel-overlay"></div>
+<div id="player-panel">
+  <div class="pp-header">
+    <span id="pp-name" class="pp-name"></span>
+    <button class="pp-close" id="pp-close" aria-label="Fermer">✕</button>
+  </div>
+  <div class="pp-body" id="pp-body"></div>
 </div>
 
 <footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; <span id="year"></span></footer>
@@ -478,37 +568,37 @@ const SESSIONS = [
   {
     date: "2026-06-01",
     presences: {
-      "Boris":          { statut: "Présent",     equipe: "" },
+      "Boris":          { statut: "Présent",     equipe: "Bleue" },
       "Sylvain":        { statut: "Blessé",      equipe: "" },
       "Antoine":        { statut: "Blessé",      equipe: "" },
       "Yassir":         { statut: "Absent",      equipe: "" },
-      "Mahdi":          { statut: "Présent",     equipe: "" },
-      "Madani":         { statut: "Présent",     equipe: "" },
-      "JB":             { statut: "Présent",     equipe: "" },
-      "Renaud":         { statut: "Présent",     equipe: "" },
-      "Clément":        { statut: "Présent",     equipe: "" },
+      "Mahdi":          { statut: "Présent",     equipe: "Rouge" },
+      "Madani":         { statut: "Présent",     equipe: "Rouge" },
+      "JB":             { statut: "Présent",     equipe: "Rouge" },
+      "Renaud":         { statut: "Présent",     equipe: "Vert" },
+      "Clément":        { statut: "Présent",     equipe: "Vert" },
       "Guy":            { statut: "Blessé",      equipe: "" },
       "Loïc":           { statut: "Blessé",      equipe: "" },
-      "Raph P.":      { statut: "Présent",     equipe: "" },
-      "Raph L.":      { statut: "Blessé",      equipe: "" },
+      "Raph P.":        { statut: "Présent",     equipe: "Bleue" },
+      "Raph L.":        { statut: "Blessé",      equipe: "" },
       "Ben":            { statut: "Absent",      equipe: "" },
       "Pierre-Olivier": { statut: "Pas répondu", equipe: "" },
       "Tof":            { statut: "Absent",      equipe: "" },
       "Benji":          { statut: "Pas répondu", equipe: "" },
       "Benou":          { statut: "Pas répondu", equipe: "" },
       "Cédric":         { statut: "Pas répondu", equipe: "" },
-      "Houari":         { statut: "Présent",     equipe: "" },
+      "Houari":         { statut: "Présent",     equipe: "Vert" },
       "Morgane":        { statut: "Absent",      equipe: "" },
       "Jordan":         { statut: "Pas répondu", equipe: "" },
       "Laury":          { statut: "Pas répondu", equipe: "" },
-      "Ludo":           { statut: "Présent",     equipe: "" },
+      "Ludo":           { statut: "Présent",     equipe: "Bleue" },
       "Tabley":         { statut: "Absent",      equipe: "" },
       "Virgile":        { statut: "Pas répondu", equipe: "" },
-      "Zoltan":         { statut: "Présent",     equipe: "" },
+      "Zoltan":         { statut: "Présent",     equipe: "Bleue" },
       "Gauthier":       { statut: "Pas répondu", equipe: "" },
-      "Harone":         { statut: "Présent",     equipe: "", joker: true },
-      "Alexi":          { statut: "Présent",     equipe: "", joker: true },
-      "Godefroy":       { statut: "Présent",     equipe: "", joker: true }
+      "Harone":         { statut: "Présent",     equipe: "Rouge", joker: true },
+      "Alexi":          { statut: "Présent",     equipe: "Vert",  joker: true },
+      "Godefroy":       { statut: "Présent",     equipe: "Bleue", joker: true }
     },
     matchs: []
   }
@@ -969,7 +1059,7 @@ function renderSessionResults(date) {
       <div class="h-icon">🏆</div>
       <div class="h-lbl">Équipe du soir</div>
       <div class="h-val" style="font-size:15px">Égalité</div>
-      <div class="h-sub">${winners.map(w => `${dot(w)}${w}`).join(" ")} · R:${colorWins.Rouge} V:${colorWins.Vert} B:${colorWins.Bleu}</div>
+      <div class="h-sub">${winners.map(w => `${dot(w)}${w}`).join(" ")} · R:${colorWins.Rouge} V:${colorWins.Vert} B:${colorWins.Bleue}</div>
     </div>`;
   }
 
@@ -1047,8 +1137,12 @@ function renderSessionResults(date) {
         h += teamCard(activeColors[1], teamMap, TEAM_ICONS);
         h += `</div>`;
       } else {
-        h += `<div class="teams-vs-layout" style="grid-template-columns:repeat(${activeColors.length},1fr)">`;
-        activeColors.forEach(color => { h += teamCard(color, teamMap, TEAM_ICONS); });
+        const colsTemplate = activeColors.map(() => "1fr").join(" auto ");
+        h += `<div class="teams-vs-layout" style="grid-template-columns:${colsTemplate}">`;
+        activeColors.forEach((color, i) => {
+          h += teamCard(color, teamMap, TEAM_ICONS);
+          if (i < activeColors.length - 1) h += `<div class="teams-vs-divider"><span class="teams-vs-badge">VS</span></div>`;
+        });
         h += `</div>`;
       }
 
@@ -1227,7 +1321,7 @@ function renderJoueurs() {
     const tauxCls  = r.taux >= 75 ? "high" : r.taux >= 40 ? "mid" : "low";
     const tauxCell = `<div class="taux-wrap"><div class="taux-track"><div class="taux-fill ${tauxCls}" style="width:${r.taux}%"></div></div><span class="taux-val ${tauxCls}">${r.taux}%</span></div>`;
     return `<tr>
-      <td class="name">${r.name}</td>
+      <td class="name"><button class="player-link" data-player="${r.name}">${r.name}</button></td>
       <td class="num ${r.presences > 0 ? "highlight" : "zero"}">${r.presences}</td>
       <td class="taux-cell">${tauxCell}</td>
       <td class="num ${r.absences > 0 ? "danger" : "zero"}">${r.absences}</td>
@@ -1241,7 +1335,7 @@ function renderJoueurs() {
   function buildJokerRow(r) {
     const teamCell = r.favTeam ? `${dot(r.favTeam)}<span style="font-size:12px">${r.favTeam}</span>` : dash_;
     return `<tr>
-      <td class="name">${r.name}<span class="joker-tag">+1</span></td>
+      <td class="name"><button class="player-link" data-player="${r.name}">${r.name}<span class="joker-tag">+1</span></button></td>
       <td class="num ${r.presences > 0 ? "highlight" : "zero"}">${r.presences}</td>
       <td class="taux-cell">${dash_}</td>
       <td class="num zero">${dash_}</td>
@@ -1294,6 +1388,174 @@ function renderJoueurs() {
   });
 }
 
+/* ══════════════════════════════════════════════════════════
+   FICHE JOUEUR
+══════════════════════════════════════════════════════════ */
+
+function computePlayerDetailStats(playerName) {
+  const sessionsByDate = [...SESSIONS].sort((a,b) => new Date(a.date)-new Date(b.date));
+  let presences = 0, absences = 0, blesses = 0, buts = 0, episodesBlessures = 0, inEpisode = false;
+  const teamCount = {}, winsByColor = {}, teammateCount = {}, winTeammateCount = {};
+  let bestMatch = null, bestMatchGoals = 0;
+
+  sessionsByDate.forEach(s => {
+    const info = s.presences[playerName];
+    if (!info) { inEpisode = false; return; }
+    if (info.statut === "Présent") {
+      presences++; inEpisode = false;
+      const myEquipe = info.equipe || null;
+      if (myEquipe) {
+        teamCount[myEquipe] = (teamCount[myEquipe] || 0) + 1;
+        Object.entries(s.presences).forEach(([other, oi]) => {
+          if (other === playerName || oi.statut !== "Présent" || oi.equipe !== myEquipe) return;
+          teammateCount[other] = (teammateCount[other] || 0) + 1;
+        });
+      }
+      (s.matchs || []).forEach(m => {
+        const g = [...(m.buteursA||[]), ...(m.buteursB||[])].filter(p => p === playerName).length;
+        buts += g;
+        if (g > bestMatchGoals) { bestMatchGoals = g; bestMatch = {...m, date: s.date}; }
+        if (!myEquipe || (m.eqA !== myEquipe && m.eqB !== myEquipe)) return;
+        const winner = m.scoreA > m.scoreB ? m.eqA : m.scoreB > m.scoreA ? m.eqB : null;
+        if (winner !== myEquipe) return;
+        winsByColor[myEquipe] = (winsByColor[myEquipe] || 0) + 1;
+        Object.entries(s.presences).forEach(([other, oi]) => {
+          if (other === playerName || oi.statut !== "Présent" || oi.equipe !== myEquipe) return;
+          winTeammateCount[other] = (winTeammateCount[other] || 0) + 1;
+        });
+      });
+    } else if (info.statut === "Absent") {
+      absences++; inEpisode = false;
+    } else if (info.statut === "Blessé") {
+      blesses++;
+      if (!inEpisode) { episodesBlessures++; inEpisode = true; }
+    } else {
+      inEpisode = false;
+    }
+  });
+
+  const top3T  = Object.entries(teammateCount).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  const top3WT = Object.entries(winTeammateCount).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  const maxTeam = Math.max(0, ...Object.values(teamCount));
+  const recurringColor = maxTeam > 0 ? Object.entries(teamCount).sort((a,b)=>b[1]-a[1])[0][0] : null;
+  const maxWins = Math.max(0, ...Object.values(winsByColor));
+  const prefWinColor = maxWins > 0 ? Object.entries(winsByColor).sort((a,b)=>b[1]-a[1])[0][0] : null;
+
+  return { presences, absences, blesses, episodesBlessures, buts,
+           bestMatch, bestMatchGoals, recurringColor, teamCount,
+           top3Teammates: top3T, top3WinTeammates: top3WT, prefWinColor, maxWins };
+}
+
+function openPlayerPanel(playerName) {
+  const st = computePlayerDetailStats(playerName);
+  const isJoker = JOKERS.has(playerName);
+  const medals  = ["🥇","🥈","🥉"];
+  const nd = `<p class="no-data" style="margin-top:4px">—</p>`;
+  let h = "";
+
+  /* Statistiques */
+  h += `<div>
+    <div class="pp-section-title">Statistiques</div>
+    <div class="pp-stats-grid">
+      <div class="pp-stat-card">
+        <div class="pp-stat-val green">${st.presences}</div>
+        <div class="pp-stat-lbl">Présences</div>
+      </div>
+      <div class="pp-stat-card">
+        <div class="pp-stat-val ${st.absences>0?"red":"muted"}">${st.absences}</div>
+        <div class="pp-stat-lbl">Absences</div>
+      </div>
+      <div class="pp-stat-card">
+        <div class="pp-stat-val ${st.episodesBlessures>0?"amber":"muted"}">${st.episodesBlessures}</div>
+        <div class="pp-stat-lbl">Blessures</div>
+        ${st.blesses>0?`<div class="pp-stat-sub">${st.blesses} session${st.blesses>1?"s":""} manquée${st.blesses>1?"s":""}</div>`:""}
+      </div>
+      <div class="pp-stat-card">
+        <div class="pp-stat-val ${st.buts>0?"blue":"muted"}">${st.buts}</div>
+        <div class="pp-stat-lbl">Buts</div>
+      </div>
+    </div>
+  </div>`;
+
+  /* Meilleur match */
+  if (st.bestMatch && st.bestMatchGoals > 0) {
+    h += `<div>
+      <div class="pp-section-title">Meilleur match</div>
+      <div class="pp-match-card">
+        <div style="font-size:13px;color:var(--text2)">${fmtDate(st.bestMatch.date)}</div>
+        <div style="font-size:24px;font-weight:700;margin:6px 0;color:var(--gold);font-style:italic">${st.bestMatchGoals} but${st.bestMatchGoals>1?"s":""}</div>
+        <div class="pp-match-score">
+          ${badge(st.bestMatch.eqA)}<span style="font-size:15px;font-weight:700">${st.bestMatch.scoreA}–${st.bestMatch.scoreB}</span>${badge(st.bestMatch.eqB)}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  /* Couleur habituelle */
+  h += `<div><div class="pp-section-title">Couleur habituelle</div>`;
+  if (st.recurringColor) {
+    const c = st.recurringColor, cls = c.toLowerCase(), n = st.teamCount[c];
+    h += `<div style="display:flex;align-items:center;gap:10px">
+      <span class="pp-color-pill ${cls}">${dot(c)}${TEAM_LABEL[c]||c}</span>
+      <span style="font-size:12px;color:var(--text3)">${n} session${n>1?"s":""}</span>
+    </div>`;
+  } else { h += nd; }
+  h += `</div>`;
+
+  /* Top 3 coéquipiers récurrents */
+  h += `<div><div class="pp-section-title">Top 3 coéquipiers récurrents</div>`;
+  if (st.top3Teammates.length) {
+    h += `<div class="pp-teammate-list">`;
+    st.top3Teammates.forEach(([name, n], i) => {
+      h += `<div class="pp-teammate-row">
+        <span class="pp-teammate-rank">${medals[i]}</span>
+        <span class="pp-teammate-name">${name}${JOKERS.has(name)?`<span class="joker-tag">+1</span>`:""}</span>
+        <span class="pp-teammate-val">${n}</span><span class="pp-teammate-unit">session${n>1?"s":""}</span>
+      </div>`;
+    });
+    h += `</div>`;
+  } else { h += nd; }
+  h += `</div>`;
+
+  /* Top 3 coéquipiers préférés */
+  h += `<div><div class="pp-section-title">Top 3 coéquipiers préférés</div>`;
+  if (st.top3WinTeammates.length) {
+    h += `<div class="pp-teammate-list">`;
+    st.top3WinTeammates.forEach(([name, n], i) => {
+      h += `<div class="pp-teammate-row">
+        <span class="pp-teammate-rank">${medals[i]}</span>
+        <span class="pp-teammate-name">${name}${JOKERS.has(name)?`<span class="joker-tag">+1</span>`:""}</span>
+        <span class="pp-teammate-val">${n}</span><span class="pp-teammate-unit">victoire${n>1?"s":""}</span>
+      </div>`;
+    });
+    h += `</div>`;
+  } else { h += `<p class="no-data" style="margin-top:4px">Aucune victoire enregistrée</p>`; }
+  h += `</div>`;
+
+  /* Couleur préférée (victoires) */
+  h += `<div><div class="pp-section-title">Couleur préférée</div>`;
+  if (st.prefWinColor) {
+    const c = st.prefWinColor, cls = c.toLowerCase(), n = st.maxWins;
+    h += `<div style="display:flex;align-items:center;gap:10px">
+      <span class="pp-color-pill ${cls}">${dot(c)}${TEAM_LABEL[c]||c}</span>
+      <span style="font-size:12px;color:var(--text3)">${n} victoire${n>1?"s":""}</span>
+    </div>`;
+  } else { h += `<p class="no-data" style="margin-top:4px">Aucune victoire enregistrée</p>`; }
+  h += `</div>`;
+
+  document.getElementById("pp-name").textContent = playerName + (isJoker ? " +1" : "");
+  document.getElementById("pp-body").innerHTML = h;
+  document.getElementById("player-panel-overlay").classList.add("open");
+  document.getElementById("player-panel").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closePlayerPanel() {
+  document.getElementById("player-panel-overlay").classList.remove("open");
+  document.getElementById("player-panel").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
 /* ── Init ── */
 const savedTab = sessionStorage.getItem("activeTab");
 if (savedTab) {
@@ -1305,6 +1567,14 @@ if (savedTab) {
     p.classList.toggle("active", p.id === `panel-${savedTab}`);
   });
 }
+
+document.getElementById("player-panel-overlay").addEventListener("click", closePlayerPanel);
+document.getElementById("pp-close").addEventListener("click", closePlayerPanel);
+document.addEventListener("keydown", e => { if (e.key === "Escape") closePlayerPanel(); });
+document.getElementById("joueurs-content").addEventListener("click", e => {
+  const btn = e.target.closest(".player-link");
+  if (btn) openPlayerPanel(btn.dataset.player);
+});
 
 document.getElementById("period-sub").style.visibility = "hidden";
 renderDashboard();
