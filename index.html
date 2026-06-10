@@ -156,6 +156,7 @@
   .cdot.rouge { background: var(--rouge); }
   .cdot.vert  { background: var(--vert); }
   .cdot.bleu, .cdot.bleue  { background: var(--bleu); }
+  .cdot.gris { background: var(--text3); }
 
   .no-data { color: var(--text3); font-size: 13px; font-style: italic; padding: 6px 0; }
 
@@ -1010,7 +1011,7 @@ function renderSessionDetail(session) {
 
   const maxWins      = Math.max(0, ...Object.values(colorWins));
   const winnerTeams  = Object.entries(colorWins).filter(([,v]) => v === maxWins && maxWins > 0).map(([k]) => k);
-  const bestTeam     = winnerTeams.length === 1 ? winnerTeams[0] : null;
+  const bestTeam     = winnerTeams.length > 0 ? winnerTeams.sort((a, b) => (goalsFor[b]||0) - (goalsFor[a]||0))[0] : null;
   const topButeur    = Object.entries(buteursCount).sort((a,b) => b[1]-a[1])[0] || null;
   const teamsPlayed  = [...new Set(matchs.flatMap(m => [m.eqA, m.eqB]))];
   const bestAtkTeam  = teamsPlayed.length ? [...teamsPlayed].sort((a,b) => (goalsFor[b]||0)-(goalsFor[a]||0))[0] : null;
@@ -1031,7 +1032,7 @@ function renderSessionDetail(session) {
   /* ── Rangée 1 : 4 KPI ── */
   const victSub = ["Rouge","Vert","Bleue"].filter(c => colorWins[c] > 0)
     .map(c => `${dot(c)}${colorWins[c]}`).join(" · ");
-  const matchSub = [victSub, draws > 0 ? `${draws} nul${draws>1?"s":""}` : ""].filter(Boolean).join(" · ");
+  const matchSub = [victSub, draws > 0 ? `<span class="cdot gris"></span>${draws} nul${draws>1?"s":""}` : ""].filter(Boolean).join(" · ");
 
   h += `<div class="kpi-grid" style="margin-bottom:10px">
     <div class="kpi-card">
@@ -1864,8 +1865,8 @@ function openPlayerPanel(playerName) {
     </div>`;
   }
 
-  /* Couleur habituelle */
-  h += `<div><div class="pp-section-title">Couleur habituelle</div>`;
+  /* Couleur récurrente */
+  h += `<div><div class="pp-section-title">Couleur récurrente</div>`;
   if (st.recurringColor) {
     const c = st.recurringColor, cls = c.toLowerCase(), n = st.teamCount[c];
     h += `<div style="display:flex;align-items:center;gap:10px">
@@ -1890,6 +1891,17 @@ function openPlayerPanel(playerName) {
   } else { h += nd; }
   h += `</div>`;
 
+  /* Couleur préférée (victoires) */
+  h += `<div><div class="pp-section-title">Couleur préférée</div>`;
+  if (st.prefWinColor) {
+    const c = st.prefWinColor, cls = c.toLowerCase(), n = st.maxWins;
+    h += `<div style="display:flex;align-items:center;gap:10px">
+      <span class="pp-color-pill ${cls}">${dot(c)}${TEAM_LABEL[c]||c}</span>
+      <span style="font-size:12px;color:var(--text3)">${n} victoire${n>1?"s":""}</span>
+    </div>`;
+  } else { h += `<p class="no-data" style="margin-top:4px">Aucune victoire enregistrée</p>`; }
+  h += `</div>`;
+
   /* Top 3 coéquipiers préférés */
   h += `<div><div class="pp-section-title">Top 3 coéquipiers préférés</div>`;
   if (st.top3WinTeammates.length) {
@@ -1902,17 +1914,6 @@ function openPlayerPanel(playerName) {
       </div>`;
     });
     h += `</div>`;
-  } else { h += `<p class="no-data" style="margin-top:4px">Aucune victoire enregistrée</p>`; }
-  h += `</div>`;
-
-  /* Couleur préférée (victoires) */
-  h += `<div><div class="pp-section-title">Couleur préférée</div>`;
-  if (st.prefWinColor) {
-    const c = st.prefWinColor, cls = c.toLowerCase(), n = st.maxWins;
-    h += `<div style="display:flex;align-items:center;gap:10px">
-      <span class="pp-color-pill ${cls}">${dot(c)}${TEAM_LABEL[c]||c}</span>
-      <span style="font-size:12px;color:var(--text3)">${n} victoire${n>1?"s":""}</span>
-    </div>`;
   } else { h += `<p class="no-data" style="margin-top:4px">Aucune victoire enregistrée</p>`; }
   h += `</div>`;
 
