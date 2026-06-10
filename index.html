@@ -977,6 +977,16 @@ function renderSessionDetail(session) {
   const matchGros    = matchs.reduce((b,m) => { const t=m.scoreA+m.scoreB; return (!b||t>b.total)?{...m,total:t}:b; }, null);
   const matchLarge   = matchs.reduce((b,m) => { const a=Math.abs(m.scoreA-m.scoreB); return (!b||a>b.amp)?{...m,amp:a}:b; }, null);
 
+  const fmtBut = arr => {
+    if (!arr || !arr.length) return "";
+    const c = {};
+    arr.forEach(p => { c[p]=(c[p]||0)+1; });
+    return Object.entries(c).sort((a,b)=>a[0].localeCompare(b[0],"fr")).map(([p,n]) => {
+      const d = p==="CSC" ? p : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
+      return n>1 ? `${d} ×${n}` : d;
+    }).join(", ");
+  };
+
   /* ── Rangée 1 : 4 KPI ── */
   const victSub = ["Rouge","Vert","Bleue"].filter(c => colorWins[c] > 0)
     .map(c => `${dot(c)}${colorWins[c]}`).join(" · ");
@@ -1019,14 +1029,36 @@ function renderSessionDetail(session) {
       <div class="kpi-sub">${defGoals} but${defGoals!==1?"s":""}</div>
     </div>
     <div class="kpi-card accent-amber">
-      <div class="kpi-num amber">${matchGros ? matchGros.total : 0}</div>
-      <div class="kpi-lbl">Plus gros score</div>
-      ${matchGros ? `<div class="kpi-sub">${badge(matchGros.eqA)} ${matchGros.scoreA}–${matchGros.scoreB} ${badge(matchGros.eqB)}</div>` : ""}
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Plus gros score</div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
+        <div style="flex:1;text-align:left">
+          <div style="font-size:36px;font-weight:700;font-style:italic;color:var(--gold);line-height:1">${matchGros ? matchGros.scoreA : "—"}</div>
+          <div style="margin-top:5px">${matchGros ? badge(matchGros.eqA) : ""}</div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text2)">${matchGros ? (fmtBut(matchGros.buteursA)||"—") : "—"}</div>
+        </div>
+        <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
+        <div style="flex:1;text-align:right">
+          <div style="font-size:36px;font-weight:700;font-style:italic;color:var(--gold);line-height:1">${matchGros ? matchGros.scoreB : "—"}</div>
+          <div style="margin-top:5px">${matchGros ? badge(matchGros.eqB) : ""}</div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text2)">${matchGros ? (fmtBut(matchGros.buteursB)||"—") : ""}</div>
+        </div>
+      </div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-num">${matchLarge && matchLarge.amp > 0 ? `+${matchLarge.amp}` : "0"}</div>
-      <div class="kpi-lbl">Plus grand écart</div>
-      ${matchLarge && matchLarge.amp > 0 ? `<div class="kpi-sub">${badge(matchLarge.eqA)} ${matchLarge.scoreA}–${matchLarge.scoreB} ${badge(matchLarge.eqB)}</div>` : ""}
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Plus grand écart</div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
+        <div style="flex:1;text-align:left">
+          <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1">${matchLarge ? matchLarge.scoreA : "—"}</div>
+          <div style="margin-top:5px">${matchLarge ? badge(matchLarge.eqA) : ""}</div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text2)">${matchLarge ? (fmtBut(matchLarge.buteursA)||"—") : "—"}</div>
+        </div>
+        <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
+        <div style="flex:1;text-align:right">
+          <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1">${matchLarge ? matchLarge.scoreB : "—"}</div>
+          <div style="margin-top:5px">${matchLarge ? badge(matchLarge.eqB) : ""}</div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text2)">${matchLarge ? (fmtBut(matchLarge.buteursB)||"—") : ""}</div>
+        </div>
+      </div>
     </div>
   </div>`;
 
@@ -1076,15 +1108,6 @@ function renderSessionDetail(session) {
   }
 
   /* ── Matchs ── */
-  const fmtBut = arr => {
-    if (!arr || !arr.length) return "";
-    const c = {};
-    arr.forEach(p => { c[p]=(c[p]||0)+1; });
-    return Object.entries(c).sort((a,b)=>a[0].localeCompare(b[0],"fr")).map(([p,n]) => {
-      const d = p==="CSC" ? p : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
-      return n>1 ? `${d} ×${n}` : d;
-    }).join(", ");
-  };
   if (matchs.length > 0) {
     h += `<div class="section-label">Tous les matchs</div><div class="matches-grid">`;
     matchs.forEach(m => {
