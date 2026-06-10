@@ -940,6 +940,174 @@ function computeStats(sessions) {
   return {ps, mostGoals, biggestAmp, bestAttack, topButeur, bestColor, colorWins, goalsPerTeam, top3Pres, top3Abs, top3Bles, buteursRank, allMatchs};
 }
 
+/* ══════════════════════════════════════════════════════════
+   VUE PARTAGÉE : DÉTAIL D'UNE SESSION
+   Utilisée dans Dashboard "Dernière session" ET onglet Sessions
+══════════════════════════════════════════════════════════ */
+function renderSessionDetail(session) {
+  const matchs = session.matchs || [];
+  let h = "";
+
+  /* Calculs */
+  const colorWins    = {Rouge:0, Vert:0, Bleue:0};
+  const goalsFor     = {Rouge:0, Vert:0, Bleue:0};
+  const goalsAgainst = {Rouge:0, Vert:0, Bleue:0};
+  let draws = 0, totalButs = 0;
+  const buteursCount = {};
+
+  matchs.forEach(m => {
+    totalButs += m.scoreA + m.scoreB;
+    goalsFor[m.eqA]      = (goalsFor[m.eqA]||0)      + m.scoreA;
+    goalsFor[m.eqB]      = (goalsFor[m.eqB]||0)      + m.scoreB;
+    goalsAgainst[m.eqA]  = (goalsAgainst[m.eqA]||0)  + m.scoreB;
+    goalsAgainst[m.eqB]  = (goalsAgainst[m.eqB]||0)  + m.scoreA;
+    if      (m.scoreA > m.scoreB) colorWins[m.eqA]++;
+    else if (m.scoreB > m.scoreA) colorWins[m.eqB]++;
+    else draws++;
+    [...(m.buteursA||[]), ...(m.buteursB||[])].forEach(p => { buteursCount[p] = (buteursCount[p]||0)+1; });
+  });
+
+  const maxWins      = Math.max(0, ...Object.values(colorWins));
+  const winnerTeams  = Object.entries(colorWins).filter(([,v]) => v === maxWins && maxWins > 0).map(([k]) => k);
+  const bestTeam     = winnerTeams.length === 1 ? winnerTeams[0] : null;
+  const topButeur    = Object.entries(buteursCount).sort((a,b) => b[1]-a[1])[0] || null;
+  const teamsPlayed  = [...new Set(matchs.flatMap(m => [m.eqA, m.eqB]))];
+  const bestAtkTeam  = teamsPlayed.length ? [...teamsPlayed].sort((a,b) => (goalsFor[b]||0)-(goalsFor[a]||0))[0] : null;
+  const worstDefTeam = teamsPlayed.length ? [...teamsPlayed].sort((a,b) => (goalsAgainst[b]||0)-(goalsAgainst[a]||0))[0] : null;
+  const matchGros    = matchs.reduce((b,m) => { const t=m.scoreA+m.scoreB; return (!b||t>b.total)?{...m,total:t}:b; }, null);
+  const matchLarge   = matchs.reduce((b,m) => { const a=Math.abs(m.scoreA-m.scoreB); return (!b||a>b.amp)?{...m,amp:a}:b; }, null);
+
+  /* ── Rangée 1 : 4 KPI ── */
+  const victSub = ["Rouge","Vert","Bleue"].filter(c => colorWins[c] > 0)
+    .map(c => `${dot(c)}${colorWins[c]}`).join(" · ");
+  const matchSub = [victSub, draws > 0 ? `${draws} nul${draws>1?"s":""}` : ""].filter(Boolean).join(" · ");
+
+  h += `<div class="kpi-grid" style="margin-bottom:10px">
+    <div class="kpi-card">
+      <div class="kpi-num">${matchs.length}</div>
+      <div class="kpi-lbl">Matchs</div>
+      ${matchSub ? `<div class="kpi-sub">${matchSub}</div>` : ""}
+    </div>
+    <div class="kpi-card accent-amber">
+      <div class="kpi-num amber">${totalButs}</div>
+      <div class="kpi-lbl">Buts marqués</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${topButeur ? `<button class="player-link" data-player="${topButeur[0]}" style="font-size:inherit;font-weight:inherit;color:var(--gold)">${topButeur[0]}</button>` : "—"}</div>
+      <div class="kpi-lbl">Meilleur buteur</div>
+      <div class="kpi-sub">${topButeur ? `${topButeur[1]} but${topButeur[1]>1?"s":""}` : "0 but"}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${bestTeam ? `${dot(bestTeam)}<span style="color:var(--text)">${bestTeam}</span>` : "—"}</div>
+      <div class="kpi-lbl">Meilleure équipe</div>
+      <div class="kpi-sub">${maxWins > 0 ? `${maxWins} victoire${maxWins>1?"s":""}` : "0 victoire"}</div>
+    </div>
+  </div>`;
+
+  /* ── Rangée 2 : 4 KPI ── */
+  const atkGoals  = bestAtkTeam  ? (goalsFor[bestAtkTeam]||0)     : 0;
+  const defGoals  = worstDefTeam ? (goalsAgainst[worstDefTeam]||0) : 0;
+  h += `<div class="kpi-grid" style="margin-bottom:2rem">
+    <div class="kpi-card">
+      <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${bestAtkTeam ? `${dot(bestAtkTeam)}<span style="color:var(--text)">${bestAtkTeam}</span>` : "—"}</div>
+      <div class="kpi-lbl">Plus de buts marqués</div>
+      <div class="kpi-sub">${atkGoals} but${atkGoals!==1?"s":""}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${worstDefTeam ? `${dot(worstDefTeam)}<span style="color:var(--text)">${worstDefTeam}</span>` : "—"}</div>
+      <div class="kpi-lbl">Plus de buts encaissés</div>
+      <div class="kpi-sub">${defGoals} but${defGoals!==1?"s":""}</div>
+    </div>
+    <div class="kpi-card accent-amber">
+      <div class="kpi-num amber">${matchGros ? matchGros.total : 0}</div>
+      <div class="kpi-lbl">Plus gros score</div>
+      ${matchGros ? `<div class="kpi-sub">${badge(matchGros.eqA)} ${matchGros.scoreA}–${matchGros.scoreB} ${badge(matchGros.eqB)}</div>` : ""}
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num">${matchLarge && matchLarge.amp > 0 ? `+${matchLarge.amp}` : "0"}</div>
+      <div class="kpi-lbl">Plus grand écart</div>
+      ${matchLarge && matchLarge.amp > 0 ? `<div class="kpi-sub">${badge(matchLarge.eqA)} ${matchLarge.scoreA}–${matchLarge.scoreB} ${badge(matchLarge.eqB)}</div>` : ""}
+    </div>
+  </div>`;
+
+  /* ── Compositions d'équipes ── */
+  const presentsAll = Object.entries(session.presences)
+    .filter(([, info]) => info.statut === "Présent")
+    .map(([name, info]) => ({ name, equipe: info.equipe || "", joker: !!info.joker }))
+    .sort((a, b) => a.name.localeCompare(b.name, "fr"));
+
+  const TEAM_ICONS = { Rouge: "🔴", Vert: "🟢", Bleue: "🔵" };
+  const hasColors  = presentsAll.some(p => p.equipe !== "");
+
+  if (!hasColors) {
+    h += `<div class="section-label">Joueurs présents (${presentsAll.length})</div>
+    <div class="players-present-list">
+      ${presentsAll.map(p => `<button class="player-chip player-link" data-player="${p.name}">${p.name}${p.joker?`<span class="joker-tag">+1</span>`:""}</button>`).join("")}
+    </div>`;
+  } else {
+    const teamMap = { Rouge:[], Vert:[], Bleue:[] };
+    const noTeam  = [];
+    presentsAll.forEach(p => { teamMap[p.equipe]!==undefined ? teamMap[p.equipe].push(p) : noTeam.push(p); });
+    const activeColors = ["Rouge","Vert","Bleue"].filter(c => teamMap[c].length > 0);
+
+    h += `<div class="section-label">Composition des équipes</div><div class="teams-section">`;
+    if (activeColors.length === 2) {
+      h += `<div class="teams-vs-layout" style="grid-template-columns:1fr auto 1fr">`;
+      h += teamCard(activeColors[0], teamMap, TEAM_ICONS);
+      h += `<div class="teams-vs-divider"><span class="teams-vs-badge">VS</span></div>`;
+      h += teamCard(activeColors[1], teamMap, TEAM_ICONS);
+      h += `</div>`;
+    } else {
+      const cols = activeColors.map(() => "1fr").join(" auto ");
+      h += `<div class="teams-vs-layout" style="grid-template-columns:${cols}">`;
+      activeColors.forEach((color, i) => {
+        h += teamCard(color, teamMap, TEAM_ICONS);
+        if (i < activeColors.length - 1) h += `<div class="teams-vs-divider"><span class="teams-vs-badge">VS</span></div>`;
+      });
+      h += `</div>`;
+    }
+    if (noTeam.length > 0) {
+      h += `<div class="no-team-section"><div class="no-team-label">Sans équipe assignée</div>
+        <div class="players-present-list">
+          ${noTeam.map(p => `<button class="player-chip player-link" data-player="${p.name}">${p.name}${p.joker?`<span class="joker-tag">+1</span>`:""}</button>`).join("")}
+        </div></div>`;
+    }
+    h += `</div>`;
+  }
+
+  /* ── Matchs ── */
+  const fmtBut = arr => {
+    if (!arr || !arr.length) return "";
+    const c = {};
+    arr.forEach(p => { c[p]=(c[p]||0)+1; });
+    return Object.entries(c).sort((a,b)=>a[0].localeCompare(b[0],"fr")).map(([p,n]) => {
+      const d = p==="CSC" ? p : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
+      return n>1 ? `${d} ×${n}` : d;
+    }).join(", ");
+  };
+  if (matchs.length > 0) {
+    h += `<div class="section-label">Tous les matchs</div><div class="matches-grid">`;
+    matchs.forEach(m => {
+      const aW = m.scoreA>m.scoreB, bW = m.scoreB>m.scoreA;
+      const cA = aW ? "" : bW ? " lose" : " draw";
+      const cB = bW ? "" : aW ? " lose" : " draw";
+      const bA = fmtBut(m.buteursA), bB = fmtBut(m.buteursB);
+      h += `<div class="match-card">
+        <div class="mc-badges">${badge(m.eqA)}${badge(m.eqB)}</div>
+        <div class="mc-scores">
+          <span class="mc-score${cA}">${m.scoreA}</span>
+          <span class="mc-scores-sep">–</span>
+          <span class="mc-score${cB}">${m.scoreB}</span>
+        </div>
+        ${bA||bB ? `<div class="mc-buteurs"><span class="mc-but">${bA}</span><span class="mc-but right">${bB}</span></div>` : ""}
+      </div>`;
+    });
+    h += `</div>`;
+  }
+
+  return h;
+}
+
 function renderDashboard() {
   const sessions = filterSessions(currentPeriod);
   const dash = document.getElementById("dash");
@@ -951,6 +1119,11 @@ function renderDashboard() {
 
   if (!sessions.length) {
     dash.innerHTML = '<p class="no-data" style="margin-top:2rem">Aucune session pour cette période.</p>';
+    return;
+  }
+
+  if (currentPeriod === "last") {
+    dash.innerHTML = renderSessionDetail(sessions[0]);
     return;
   }
 
@@ -987,54 +1160,111 @@ function renderDashboard() {
     </div>
   </div>`;
 
-  /* ── Podiums présences / absences ── */
-  h += `<div class="podium-section">`;
+  /* ── Compositions d'équipes (dernière session) ou podiums (autres périodes) ── */
+  if (currentPeriod === "last") {
+    const lastSession = sessions[0];
+    const presentsAll = Object.entries(lastSession.presences)
+      .filter(([, info]) => info.statut === "Présent")
+      .map(([name, info]) => ({ name, equipe: info.equipe || "", joker: !!info.joker }))
+      .sort((a, b) => a.name.localeCompare(b.name, "fr"));
 
-  h += `<div class="podium-block">
-    <div class="podium-block-header"><span style="font-size:15px">✅</span>&ensp;<span class="ph-title">Top présences</span></div>`;
-  if (!st.top3Pres.length) {
-    h += `<div style="padding:16px 18px"><p class="no-data">—</p></div>`;
+    const hasColors = presentsAll.some(p => p.equipe !== "");
+    const TEAM_ICONS = { Rouge: "🔴", Vert: "🟢", Bleue: "🔵" };
+
+    if (!hasColors) {
+      h += `<div class="section-label">Joueurs présents (${presentsAll.length})</div>
+      <div class="players-present-list">
+        ${presentsAll.map(p => `<button class="player-chip player-link" data-player="${p.name}">${p.name}${p.joker ? `<span class="joker-tag">+1</span>` : ""}</button>`).join("")}
+      </div>`;
+    } else {
+      const teamMap = { Rouge: [], Vert: [], Bleue: [] };
+      const noTeam  = [];
+      presentsAll.forEach(p => {
+        if (teamMap[p.equipe] !== undefined) teamMap[p.equipe].push(p);
+        else noTeam.push(p);
+      });
+      const activeColors = ["Rouge","Vert","Bleue"].filter(c => teamMap[c].length > 0);
+
+      h += `<div class="section-label">Composition des équipes</div>
+      <div class="teams-section">`;
+
+      if (activeColors.length === 2) {
+        h += `<div class="teams-vs-layout" style="grid-template-columns:1fr auto 1fr">`;
+        h += teamCard(activeColors[0], teamMap, TEAM_ICONS);
+        h += `<div class="teams-vs-divider"><span class="teams-vs-badge">VS</span></div>`;
+        h += teamCard(activeColors[1], teamMap, TEAM_ICONS);
+        h += `</div>`;
+      } else {
+        const colsTemplate = activeColors.map(() => "1fr").join(" auto ");
+        h += `<div class="teams-vs-layout" style="grid-template-columns:${colsTemplate}">`;
+        activeColors.forEach((color, i) => {
+          h += teamCard(color, teamMap, TEAM_ICONS);
+          if (i < activeColors.length - 1) h += `<div class="teams-vs-divider"><span class="teams-vs-badge">VS</span></div>`;
+        });
+        h += `</div>`;
+      }
+
+      if (noTeam.length > 0) {
+        h += `<div class="no-team-section">
+          <div class="no-team-label">Sans équipe assignée</div>
+          <div class="players-present-list">
+            ${noTeam.map(p => `<button class="player-chip player-link" data-player="${p.name}">${p.name}${p.joker ? `<span class="joker-tag">+1</span>` : ""}</button>`).join("")}
+          </div>
+        </div>`;
+      }
+
+      h += `</div>`;
+    }
   } else {
-    const medals = ["🥇","🥈","🥉"];
-    st.top3Pres.forEach(([p,ps],i) => {
-      h += `<div class="podium-entry${i===0?" first":""}">
-        <span class="pe-rank">${medals[i]}</span>
-        <span class="pe-name">${pLink(p)}</span>
-        <span class="pe-count green">${ps.presences}</span><span class="pe-unit">sess.</span>
-      </div>`;
-    });
-  }
-  h += `</div>`;
+    /* ── Podiums présences / absences ── */
+    h += `<div class="podium-section">`;
 
-  h += `<div class="podium-block">
-    <div class="podium-block-header"><span style="font-size:15px">❌</span>&ensp;<span class="ph-title">Top absences</span></div>`;
-  if (!st.top3Abs.length) {
-    h += `<div style="padding:16px 18px"><p class="no-data">Personne absent</p></div>`;
-  } else {
-    st.top3Abs.forEach(([p,ps],i) => {
-      h += `<div class="podium-entry${i===0?" first":""}">
-        <span class="pe-rank" style="font-size:13px;font-weight:700;color:var(--text3)">${i+1}</span>
-        <span class="pe-name">${pLink(p)}</span>
-        <span class="pe-count red">${ps.absences}</span><span class="pe-unit">abs.</span>
-      </div>`;
-    });
-  }
-  h += `</div>`;
-
-  h += `</div>`;
-
-  /* ── Blessés ── */
-  if (st.top3Bles.length > 0) {
-    h += `<div class="podium-block" style="max-width:480px;margin-bottom:1.5rem">
-      <div class="podium-block-header"><span style="font-size:15px">🩹</span>&ensp;<span class="ph-title">Blessés récurrents</span></div>`;
-    st.top3Bles.forEach(([p,ps],i) => {
-      h += `<div class="podium-entry${i===0?" first":""}">
-        <span class="pe-rank" style="font-size:13px;font-weight:700;color:var(--text3)">${i+1}</span>
-        <span class="pe-name">${pLink(p)}</span>
-        <span class="pe-count amber">${ps.episodesBlessures}</span><span class="pe-unit">blessure${ps.episodesBlessures>1?"s":""}</span>
-      </div>`;
-    });
+    h += `<div class="podium-block">
+      <div class="podium-block-header"><span style="font-size:15px">✅</span>&ensp;<span class="ph-title">Top présences</span></div>`;
+    if (!st.top3Pres.length) {
+      h += `<div style="padding:16px 18px"><p class="no-data">—</p></div>`;
+    } else {
+      const medals = ["🥇","🥈","🥉"];
+      st.top3Pres.forEach(([p,ps],i) => {
+        h += `<div class="podium-entry${i===0?" first":""}">
+          <span class="pe-rank">${medals[i]}</span>
+          <span class="pe-name">${pLink(p)}</span>
+          <span class="pe-count green">${ps.presences}</span><span class="pe-unit">sess.</span>
+        </div>`;
+      });
+    }
     h += `</div>`;
+
+    h += `<div class="podium-block">
+      <div class="podium-block-header"><span style="font-size:15px">❌</span>&ensp;<span class="ph-title">Top absences</span></div>`;
+    if (!st.top3Abs.length) {
+      h += `<div style="padding:16px 18px"><p class="no-data">Personne absent</p></div>`;
+    } else {
+      st.top3Abs.forEach(([p,ps],i) => {
+        h += `<div class="podium-entry${i===0?" first":""}">
+          <span class="pe-rank" style="font-size:13px;font-weight:700;color:var(--text3)">${i+1}</span>
+          <span class="pe-name">${pLink(p)}</span>
+          <span class="pe-count red">${ps.absences}</span><span class="pe-unit">abs.</span>
+        </div>`;
+      });
+    }
+    h += `</div>`;
+
+    h += `</div>`;
+
+    /* ── Blessés ── */
+    if (st.top3Bles.length > 0) {
+      h += `<div class="podium-block" style="max-width:480px;margin-bottom:1.5rem">
+        <div class="podium-block-header"><span style="font-size:15px">🩹</span>&ensp;<span class="ph-title">Blessés récurrents</span></div>`;
+      st.top3Bles.forEach(([p,ps],i) => {
+        h += `<div class="podium-entry${i===0?" first":""}">
+          <span class="pe-rank" style="font-size:13px;font-weight:700;color:var(--text3)">${i+1}</span>
+          <span class="pe-name">${pLink(p)}</span>
+          <span class="pe-count amber">${ps.episodesBlessures}</span><span class="pe-unit">blessure${ps.episodesBlessures>1?"s":""}</span>
+        </div>`;
+      });
+      h += `</div>`;
+    }
   }
 
   /* ── Palmarès équipes ── */
@@ -1175,210 +1405,11 @@ function populateSessionSelect() {
 function renderSessionResults(date) {
   const container = document.getElementById("session-results");
   const session = SESSIONS.find(s => s.date === date);
-
   if (!session) {
     container.innerHTML = `<p class="no-data" style="margin-top:1rem">Aucune donnée pour cette session.</p>`;
     return;
   }
-
-  const matchs = session.matchs;
-
-  /* Meilleur buteur */
-  const buteursCount = {};
-  matchs.forEach(m => {
-    [...m.buteursA, ...m.buteursB].forEach(p => {
-      buteursCount[p] = (buteursCount[p] || 0) + 1;
-    });
-  });
-  const topButeurEntry = Object.entries(buteursCount).sort((a,b) => b[1]-a[1])[0] || null;
-
-  /* Équipe dominante (plus de victoires sur la soirée) */
-  const colorWins = {Rouge:0, Vert:0, Bleue:0};
-  matchs.forEach(m => {
-    if      (m.scoreA > m.scoreB) colorWins[m.eqA]++;
-    else if (m.scoreB > m.scoreA) colorWins[m.eqB]++;
-  });
-  const maxWins = Math.max(...Object.values(colorWins));
-  const winners = Object.entries(colorWins).filter(([,v]) => v === maxWins).map(([k]) => k);
-  const equipeGagnante = winners.length === 1 ? winners[0] : null;
-  const totalMatchs = matchs.length;
-
-  /* Match au plus gros score (total de buts) */
-  const matchPlusGros = matchs.reduce((best, m) => {
-    const total = m.scoreA + m.scoreB;
-    return (!best || total > best.total) ? {...m, total} : best;
-  }, null);
-
-  /* Match au plus large écart */
-  const matchPlusLarge = matchs.reduce((best, m) => {
-    const amp = Math.abs(m.scoreA - m.scoreB);
-    return (!best || amp > best.amp) ? {...m, amp} : best;
-  }, null);
-
-  let h = `<div class="session-highlights">`;
-
-  /* Card — Meilleur buteur */
-  if (topButeurEntry) {
-    h += `<div class="highlight-card">
-      <div class="h-icon">🥅</div>
-      <div class="h-lbl">Meilleur buteur</div>
-      <div class="h-val">${topButeurEntry[0]}</div>
-      <div class="h-sub">${topButeurEntry[1]} but${topButeurEntry[1]>1?"s":""} sur la soirée</div>
-    </div>`;
-  } else {
-    h += `<div class="highlight-card">
-      <div class="h-icon">🥅</div>
-      <div class="h-lbl">Meilleur buteur</div>
-      <div class="h-val" style="font-size:14px;color:var(--text3)">Aucun but</div>
-    </div>`;
-  }
-
-  /* Card — Équipe dominante */
-  if (equipeGagnante) {
-    h += `<div class="highlight-card">
-      <div class="h-icon">🏆</div>
-      <div class="h-lbl">Équipe du soir</div>
-      <div class="h-val">${dot(equipeGagnante)}${equipeGagnante}</div>
-      <div class="h-sub">${maxWins} victoire${maxWins>1?"s":""} sur ${totalMatchs} matchs &nbsp;·&nbsp; R:${colorWins.Rouge} V:${colorWins.Vert} B:${colorWins.Bleue}</div>
-    </div>`;
-  } else {
-    h += `<div class="highlight-card">
-      <div class="h-icon">🏆</div>
-      <div class="h-lbl">Équipe du soir</div>
-      <div class="h-val" style="font-size:15px">Égalité</div>
-      <div class="h-sub">${winners.map(w => `${dot(w)}${w}`).join(" ")} · R:${colorWins.Rouge} V:${colorWins.Vert} B:${colorWins.Bleue}</div>
-    </div>`;
-  }
-
-  /* Card — Plus gros score */
-  if (matchPlusGros) {
-    const winnerMG = matchPlusGros.scoreA > matchPlusGros.scoreB ? matchPlusGros.eqA
-                   : matchPlusGros.scoreB > matchPlusGros.scoreA ? matchPlusGros.eqB : null;
-    h += `<div class="highlight-card">
-      <div class="h-icon">⚡</div>
-      <div class="h-lbl">Plus gros score</div>
-      <div class="h-val">${matchPlusGros.total} buts</div>
-      <div class="h-match">
-        ${badge(matchPlusGros.eqA)}
-        <span class="sc">${matchPlusGros.scoreA}</span>
-        <span class="dash">–</span>
-        <span class="sc">${matchPlusGros.scoreB}</span>
-        ${badge(matchPlusGros.eqB)}
-      </div>
-      ${winnerMG ? `<div class="h-sub" style="margin-top:8px">Victoire ${winnerMG}</div>` : `<div class="h-sub" style="margin-top:8px">Match nul</div>`}
-    </div>`;
-  }
-
-  /* Card — Plus large écart */
-  if (matchPlusLarge) {
-    const winnerML = matchPlusLarge.scoreA > matchPlusLarge.scoreB ? matchPlusLarge.eqA
-                   : matchPlusLarge.scoreB > matchPlusLarge.scoreA ? matchPlusLarge.eqB : null;
-    h += `<div class="highlight-card">
-      <div class="h-icon">📐</div>
-      <div class="h-lbl">Plus large victoire</div>
-      <div class="h-val">${matchPlusLarge.amp > 0 ? `+${matchPlusLarge.amp} buts` : "Match nul"}</div>
-      <div class="h-match">
-        ${badge(matchPlusLarge.eqA)}
-        <span class="sc">${matchPlusLarge.scoreA}</span>
-        <span class="dash">–</span>
-        <span class="sc">${matchPlusLarge.scoreB}</span>
-        ${badge(matchPlusLarge.eqB)}
-      </div>
-      ${winnerML ? `<div class="h-sub" style="margin-top:8px">Victoire ${winnerML}</div>` : ""}
-    </div>`;
-  }
-
-  h += `</div>`;
-
-  /* ── Joueurs présents ── */
-  const presentsAll = Object.entries(session.presences)
-    .filter(([, info]) => info.statut === "Présent")
-    .map(([name, info]) => ({ name, equipe: info.equipe || "", joker: !!info.joker }))
-    .sort((a, b) => a.name.localeCompare(b.name, "fr"));
-
-  if (presentsAll.length > 0) {
-    const hasColors = presentsAll.some(p => p.equipe !== "");
-    const TEAM_ICONS = { Rouge: "🔴", Vert: "🟢", Bleue: "🔵" };
-
-    if (!hasColors) {
-      h += `<div class="section-label">Joueurs présents (${presentsAll.length})</div>
-      <div class="players-present-list">
-        ${presentsAll.map(p => `<button class="player-chip player-link" data-player="${p.name}">${p.name}${p.joker ? `<span class="joker-tag">+1</span>` : ""}</button>`).join("")}
-      </div>`;
-    } else {
-      const teamMap = { Rouge: [], Vert: [], Bleue: [] };
-      const noTeam  = [];
-      presentsAll.forEach(p => {
-        if (teamMap[p.equipe] !== undefined) teamMap[p.equipe].push(p);
-        else noTeam.push(p);
-      });
-      const activeColors = ["Rouge","Vert","Bleue"].filter(c => teamMap[c].length > 0);
-
-      h += `<div class="section-label">Composition des équipes</div>
-      <div class="teams-section">`;
-
-      if (activeColors.length === 2) {
-        h += `<div class="teams-vs-layout" style="grid-template-columns:1fr auto 1fr">`;
-        h += teamCard(activeColors[0], teamMap, TEAM_ICONS);
-        h += `<div class="teams-vs-divider"><span class="teams-vs-badge">VS</span></div>`;
-        h += teamCard(activeColors[1], teamMap, TEAM_ICONS);
-        h += `</div>`;
-      } else {
-        const colsTemplate = activeColors.map(() => "1fr").join(" auto ");
-        h += `<div class="teams-vs-layout" style="grid-template-columns:${colsTemplate}">`;
-        activeColors.forEach((color, i) => {
-          h += teamCard(color, teamMap, TEAM_ICONS);
-          if (i < activeColors.length - 1) h += `<div class="teams-vs-divider"><span class="teams-vs-badge">VS</span></div>`;
-        });
-        h += `</div>`;
-      }
-
-      if (noTeam.length > 0) {
-        h += `<div class="no-team-section">
-          <div class="no-team-label">Sans équipe assignée</div>
-          <div class="players-present-list">
-            ${noTeam.map(p => `<button class="player-chip player-link" data-player="${p.name}">${p.name}${p.joker ? `<span class="joker-tag">+1</span>` : ""}</button>`).join("")}
-          </div>
-        </div>`;
-      }
-
-      h += `</div>`;
-    }
-  }
-
-  /* Tous les matchs de la session */
-  const fmtButeurs = arr => {
-    if (!arr || !arr.length) return "";
-    const counts = {};
-    arr.forEach(p => { counts[p] = (counts[p]||0) + 1; });
-    return Object.entries(counts).sort((a,b) => a[0].localeCompare(b[0], "fr")).map(([p,n]) => {
-      const display = p === "CSC" ? p : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
-      return n > 1 ? `${display} ×${n}` : display;
-    }).join(", ");
-  };
-  if (matchs.length > 0) {
-    h += `<div class="section-label">Tous les matchs</div>`;
-    h += `<div class="matches-grid">`;
-    matchs.forEach(m => {
-      const aWins = m.scoreA > m.scoreB, bWins = m.scoreB > m.scoreA;
-      const clsA  = aWins ? "" : bWins ? " lose" : " draw";
-      const clsB  = bWins ? "" : aWins ? " lose" : " draw";
-      const bA = fmtButeurs(m.buteursA);
-      const bB = fmtButeurs(m.buteursB);
-      h += `<div class="match-card">
-        <div class="mc-badges">${badge(m.eqA)}${badge(m.eqB)}</div>
-        <div class="mc-scores">
-          <span class="mc-score${clsA}">${m.scoreA}</span>
-          <span class="mc-scores-sep">–</span>
-          <span class="mc-score${clsB}">${m.scoreB}</span>
-        </div>
-        ${bA||bB ? `<div class="mc-buteurs"><span class="mc-but">${bA}</span><span class="mc-but right">${bB}</span></div>` : ""}
-      </div>`;
-    });
-    h += `</div>`;
-  }
-
-  container.innerHTML = h;
+  container.innerHTML = renderSessionDetail(session);
 }
 
 /* ══════════════════════════════════════════════════════════
