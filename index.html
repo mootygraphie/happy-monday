@@ -175,11 +175,19 @@
   .teams-vs-badge { font-size: 11px; font-weight: 800; letter-spacing: .12em; color: var(--text3); background: var(--bg3); border: 1px solid var(--border); padding: 5px 11px; border-radius: 20px; }
   .no-team-section { margin-top: 10px; }
   .no-team-label { font-size: 11px; color: var(--text3); margin-bottom: 8px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; font-style: italic; }
-  .matches-list { display: flex; flex-direction: column; gap: 6px; }
-  .match-row { display: flex; align-items: center; gap: 10px; padding: 11px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; }
-  .match-row .teams { display: flex; align-items: center; gap: 6px; flex: 1; }
-  .match-row .score { font-size: 15px; font-weight: 700; letter-spacing: .03em; padding: 0 8px; }
-  .match-row .result-tag { font-size: 11px; color: var(--text3); min-width: 60px; text-align: right; }
+  .matches-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  @media (max-width: 860px) { .matches-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 500px) { .matches-grid { grid-template-columns: 1fr; } }
+  .match-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .mc-badges { display: flex; align-items: center; justify-content: space-between; }
+  .mc-scores { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .mc-score { flex: 1; text-align: center; font-size: 38px; font-weight: 700; line-height: 1; font-style: italic; color: var(--text); }
+  .mc-score.lose { color: var(--text3); font-weight: 300; font-size: 30px; }
+  .mc-score.draw { color: var(--text2); }
+  .mc-scores-sep { color: var(--text3); font-size: 16px; font-weight: 300; flex-shrink: 0; }
+  .mc-buteurs { display: flex; gap: 8px; font-size: 11px; color: var(--text2); }
+  .mc-but { flex: 1; }
+  .mc-but.right { text-align: right; }
 
   /* ── KPI summary ── */
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 10px; margin-bottom: 2rem; }
@@ -444,6 +452,7 @@
   .saisie-logistique-row { display: flex; align-items: center; gap: 10px; }
   .saisie-logistique-row label { font-size: 14px; font-weight: 600; color: var(--fg2); }
   .saisie-select { background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 6px 10px; color: var(--fg); font-size: 13px; cursor: pointer; }
+  .saisie-buteur-empty { border-color: #e74c3c !important; }
   .saisie-equipes-grid { display: flex; flex-direction: column; gap: 6px; }
   .saisie-equipe-row { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
   .saisie-eq-btns { display: flex; gap: 5px; }
@@ -533,6 +542,7 @@
     <div class="session-selector">
       <label for="session-date">Session :</label>
       <select id="session-date"></select>
+      <button id="delete-session-btn" title="Supprimer cette session" style="background:transparent;border:1px solid #e74c3c44;color:#e74c3c;border-radius:8px;padding:7px 11px;font-size:16px;cursor:pointer;line-height:1;transition:background .15s;" onmouseover="this.style.background='#e74c3c18'" onmouseout="this.style.background='transparent'">🗑️</button>
     </div>
     <div id="session-results"></div>
   </div>
@@ -679,11 +689,18 @@ const SESSIONS = [
     matchs: []
   }
 ];
-/* ── Merge sessions validées depuis localStorage ── */
+/* ── Merge sessions validées + filtre suppressions ── */
 (function() {
   try {
+    const deleted = new Set(JSON.parse(localStorage.getItem('hmft_deleted') || '[]'));
+    // Filtrer les sessions codées en dur supprimées
+    for (let i = SESSIONS.length - 1; i >= 0; i--) {
+      if (deleted.has(SESSIONS[i].date)) SESSIONS.splice(i, 1);
+    }
     const extra = JSON.parse(localStorage.getItem('hmft_sessions') || '[]');
-    extra.forEach(s => { if (!SESSIONS.find(e => e.date === s.date)) SESSIONS.push(s); });
+    extra.forEach(s => {
+      if (!deleted.has(s.date) && !SESSIONS.find(e => e.date === s.date)) SESSIONS.push(s);
+    });
   } catch(e) {}
 })();
 /* ═══════════════════════════════════════════════════════ */
@@ -1279,23 +1296,33 @@ function renderSessionResults(date) {
   }
 
   /* Tous les matchs de la session */
-  h += `<div class="section-label">Tous les matchs</div>`;
-  h += `<div class="matches-list">`;
-  matchs.forEach(m => {
-    const total = m.scoreA + m.scoreB;
-    const winner = m.scoreA > m.scoreB ? m.eqA : m.scoreB > m.scoreA ? m.eqB : null;
-    const resultLabel = winner ? `Victoire ${winner}` : "Nul";
-    h += `<div class="match-row">
-      <div class="teams">
-        ${badge(m.eqA)}
-        <span class="score">${m.scoreA} – ${m.scoreB}</span>
-        ${badge(m.eqB)}
-      </div>
-      <span style="font-size:12px;color:var(--text3)">${total} buts</span>
-      <span class="result-tag">${resultLabel}</span>
-    </div>`;
-  });
-  h += `</div>`;
+  const fmtButeurs = arr => {
+    if (!arr || !arr.length) return "";
+    const counts = {};
+    arr.forEach(p => { counts[p] = (counts[p]||0) + 1; });
+    return Object.entries(counts).sort((a,b) => a[0].localeCompare(b[0], "fr")).map(([p,n]) => n > 1 ? `${p} ×${n}` : p).join(", ");
+  };
+  if (matchs.length > 0) {
+    h += `<div class="section-label">Tous les matchs</div>`;
+    h += `<div class="matches-grid">`;
+    matchs.forEach(m => {
+      const aWins = m.scoreA > m.scoreB, bWins = m.scoreB > m.scoreA;
+      const clsA  = aWins ? "" : bWins ? " lose" : " draw";
+      const clsB  = bWins ? "" : aWins ? " lose" : " draw";
+      const bA = fmtButeurs(m.buteursA);
+      const bB = fmtButeurs(m.buteursB);
+      h += `<div class="match-card">
+        <div class="mc-badges">${badge(m.eqA)}${badge(m.eqB)}</div>
+        <div class="mc-scores">
+          <span class="mc-score${clsA}">${m.scoreA}</span>
+          <span class="mc-scores-sep">–</span>
+          <span class="mc-score${clsB}">${m.scoreB}</span>
+        </div>
+        ${bA||bB ? `<div class="mc-buteurs"><span class="mc-but">${bA}</span><span class="mc-but right">${bB}</span></div>` : ""}
+      </div>`;
+    });
+    h += `</div>`;
+  }
 
   container.innerHTML = h;
 }
@@ -1348,6 +1375,41 @@ document.getElementById("filter-month").addEventListener("change", e => {
 
 document.getElementById("session-date").addEventListener("change", e => {
   renderSessionResults(e.target.value);
+});
+
+document.getElementById("delete-session-btn").addEventListener("click", () => {
+  const sel = document.getElementById("session-date");
+  const date = sel.value;
+  if (!date) return;
+  if (!confirm(`Supprimer la session du ${fmtDate(date)} ?\n\nCette action est définitive.`)) return;
+
+  // Retirer du tableau en mémoire
+  const idx = SESSIONS.findIndex(s => s.date === date);
+  if (idx !== -1) SESSIONS.splice(idx, 1);
+
+  // Retirer de hmft_sessions (sessions ajoutées via Saisie)
+  try {
+    const stored = JSON.parse(localStorage.getItem('hmft_sessions') || '[]');
+    const filtered = stored.filter(s => s.date !== date);
+    localStorage.setItem('hmft_sessions', JSON.stringify(filtered));
+  } catch(e) {}
+
+  // Mémoriser la suppression (pour filtrer les sessions codées en dur au prochain chargement)
+  try {
+    const deleted = JSON.parse(localStorage.getItem('hmft_deleted') || '[]');
+    if (!deleted.includes(date)) { deleted.push(date); localStorage.setItem('hmft_deleted', JSON.stringify(deleted)); }
+  } catch(e) {}
+
+  // Rafraîchir l'UI
+  populateSessionSelect();
+  renderDashboard();
+  const newSel = document.getElementById("session-date");
+  if (newSel.value) {
+    renderSessionResults(newSel.value);
+  } else {
+    document.getElementById("session-results").innerHTML =
+      `<p class="no-data" style="margin-top:1rem">Aucune session enregistrée.</p>`;
+  }
 });
 
 /* ══════════════════════════════════════════════════════════
@@ -1403,7 +1465,6 @@ function renderJoueurs() {
 
   const colDef = [
     { key:"name",       label:"Joueur"         },
-    { key:"presences",  label:"Présences"      },
     { key:"taux",       label:"Taux prés."     },
     { key:"absences",   label:"Absences"       },
     { key:"blesses",    label:"Blessures"      },
@@ -1411,7 +1472,7 @@ function renderJoueurs() {
     { key:"buts",       label:"Buts"           },
     { key:"sac",        label:"Sac 🎒"         },
     { key:"maillots",   label:"Maillots 👕"    },
-    { key:"favTeam",    label:"Équipe préférée"},
+    { key:"favTeam",    label:"Éq. préf."      },
   ];
 
   const rowsWithTaux = rows.map(r => ({
@@ -1445,12 +1506,11 @@ function renderJoueurs() {
   }
 
   function buildRosterRow(r) {
-    const teamCell = r.favTeam ? `${dot(r.favTeam)}<span style="font-size:12px">${r.favTeam}</span>` : dash_;
+    const teamCell = r.favTeam ? `${dot(r.favTeam)}<span style="font-size:12px">${r.favTeam[0].toUpperCase()}</span>` : dash_;
     const tauxCls  = r.taux >= 75 ? "high" : r.taux >= 40 ? "mid" : "low";
     const tauxCell = `<div class="taux-wrap"><div class="taux-track"><div class="taux-fill ${tauxCls}" style="width:${r.taux}%"></div></div><span class="taux-val ${tauxCls}">${r.taux}%</span></div>`;
     return `<tr>
       <td class="name"><button class="player-link" data-player="${r.name}">${r.name}</button></td>
-      <td class="num ${r.presences > 0 ? "highlight" : "zero"}">${r.presences}</td>
       <td class="taux-cell">${tauxCell}</td>
       <td class="num ${r.absences > 0 ? "danger" : "zero"}">${r.absences}</td>
       <td class="num ${r.blesses > 0 ? "warn" : "zero"}">${r.blesses}</td>
@@ -1463,10 +1523,9 @@ function renderJoueurs() {
   }
 
   function buildJokerRow(r) {
-    const teamCell = r.favTeam ? `${dot(r.favTeam)}<span style="font-size:12px">${r.favTeam}</span>` : dash_;
+    const teamCell = r.favTeam ? `${dot(r.favTeam)}<span style="font-size:12px">${r.favTeam[0].toUpperCase()}</span>` : dash_;
     return `<tr>
       <td class="name"><button class="player-link" data-player="${r.name}">${r.name}<span class="joker-tag">+1</span></button></td>
-      <td class="num ${r.presences > 0 ? "highlight" : "zero"}">${r.presences}</td>
       <td class="taux-cell">${dash_}</td>
       <td class="num zero">${dash_}</td>
       <td class="num zero">${dash_}</td>
@@ -1526,7 +1585,7 @@ function renderJoueurs() {
 
 function computePlayerDetailStats(playerName) {
   const sessionsByDate = [...SESSIONS].sort((a,b) => new Date(a.date)-new Date(b.date));
-  let presences = 0, absences = 0, blesses = 0, buts = 0, episodesBlessures = 0, inEpisode = false;
+  let presences = 0, absences = 0, blesses = 0, buts = 0, episodesBlessures = 0, pasRepondu = 0, inEpisode = false;
   const teamCount = {}, winsByColor = {}, teammateCount = {}, winTeammateCount = {};
   let bestMatch = null, bestMatchGoals = 0;
 
@@ -1561,6 +1620,8 @@ function computePlayerDetailStats(playerName) {
     } else if (info.statut === "Blessé") {
       blesses++;
       if (!inEpisode) { episodesBlessures++; inEpisode = true; }
+    } else if (info.statut === "Pas répondu") {
+      pasRepondu++; inEpisode = false;
     } else {
       inEpisode = false;
     }
@@ -1573,7 +1634,7 @@ function computePlayerDetailStats(playerName) {
   const maxWins = Math.max(0, ...Object.values(winsByColor));
   const prefWinColor = maxWins > 0 ? Object.entries(winsByColor).sort((a,b)=>b[1]-a[1])[0][0] : null;
 
-  return { presences, absences, blesses, episodesBlessures, buts,
+  return { presences, absences, blesses, episodesBlessures, pasRepondu, buts,
            bestMatch, bestMatchGoals, recurringColor, teamCount,
            top3Teammates: top3T, top3WinTeammates: top3WT, prefWinColor, maxWins };
 }
@@ -1789,8 +1850,8 @@ function _buildMatchCardHTML(m, idx, teams) {
   const butSelHTML = (side, list, buteurs, score) =>
     Array.from({length: score}, (_,j) => {
       const v = buteurs[j] || "";
-      const opts = ["", ...list].map(p => `<option value="${p}" ${v===p?"selected":""}>${p||"—"}</option>`).join("");
-      return `<select class="saisie-select saisie-buteur-sel" data-match="${idx}" data-side="${side}" data-goal="${j}">${opts}</select>`;
+      const opts = ["", "CSC", ...list].map(p => `<option value="${p}" ${v===p?"selected":""}>${p==="CSC"?"CSC (c.s.c.)":p||"— Sélectionner —"}</option>`).join("");
+      return `<select class="saisie-select saisie-buteur-sel${v===""?" saisie-buteur-empty":""}" data-match="${idx}" data-side="${side}" data-goal="${j}">${opts}</select>`;
     }).join("");
   const showButeurs = m.scoreA > 0 || m.scoreB > 0;
   return `<div class="saisie-match-card">
@@ -1908,6 +1969,12 @@ function _commitSession() {
   if (!_draft.date) { alert("Veuillez saisir une date pour la session."); return; }
   if (SESSIONS.find(s => s.date === _draft.date)) {
     alert(`Une session du ${fmtDate(_draft.date)} existe déjà.`); return;
+  }
+  const emptyButeurs = _draft.matchs.some(m =>
+    (m.buteursA || []).some(b => !b) || (m.buteursB || []).some(b => !b)
+  );
+  if (emptyButeurs) {
+    alert("Certains buteurs ne sont pas renseignés.\nVeuillez sélectionner un joueur ou « CSC » pour chaque but."); return;
   }
   if (!confirm(`Valider la session du ${fmtDate(_draft.date)} ?\n\nCette action est définitive.`)) return;
 
