@@ -23,6 +23,26 @@
     --gold: #f5c842; --silver: #aab0bc; --bronze: #c47c3a;
     --radius: 10px; --radius-lg: 16px;
   }
+  /* ── Mode clair ── */
+  html.light {
+    --bg: #f4f4f8; --bg2: #ffffff; --bg3: #ebebf2;
+    --border: rgba(0,0,0,.09); --border2: rgba(0,0,0,.15);
+    --text: #111118; --text2: #55556a; --text3: #9898aa;
+    color-scheme: light;
+  }
+  html.light .main-tab { color: #9898aa; }
+  html.light .main-tab.active { background: rgba(0,0,0,.08); color: #111118; box-shadow: 0 1px 4px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.9); }
+  html.light .pill.active { background: #111118; color: #f4f4f8; border-color: #111118; }
+  html.light .refresh-btn:hover { border-color: rgba(0,0,0,.22); }
+  html.light .players-table tbody tr:nth-child(even) { background: rgba(0,0,0,.025); }
+  html.light .players-table tbody tr:hover { background: rgba(0,0,0,.05) !important; }
+  html.light .players-table th:hover { color: #111118; background: rgba(0,0,0,.025); }
+  html.light .buts-bar { background: #555; opacity: .4; }
+  html.light .taux-track { background: rgba(0,0,0,.1); }
+  html.light #lock-screen .lock-btn { background: #111118; color: #f4f4f8; }
+  html.light #lock-screen .lock-card { box-shadow: 0 8px 32px rgba(0,0,0,.12); }
+  html.light .player-link { text-decoration-color: rgba(0,0,0,.18); }
+  html.light .player-link:hover { color: #000; text-decoration-color: rgba(0,0,0,.5); }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Albert Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.5; min-height: 100vh; }
 
@@ -497,6 +517,7 @@
   .saisie-empty { color: var(--fg3); font-size: 14px; font-style: italic; margin: 0; }
   .saisie-status { font-size: 12px; }
 </style>
+<script>if(localStorage.getItem('hmft_theme')==='light')document.documentElement.classList.add('light');</script>
 </head>
 <body>
 
@@ -531,6 +552,7 @@
       </svg>
       Actualiser
     </button>
+    <button class="refresh-btn" id="theme-btn" style="padding:8px 10px"></button>
     <button class="refresh-btn" id="logout-btn" title="Se déconnecter" style="padding:8px 10px">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
         <path d="M5 2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h3"/><path d="M9 10l3-3-3-3"/><path d="M12 7H5"/>
@@ -644,6 +666,25 @@ function applyRole(role) {
     });
     setTimeout(() => document.getElementById("pwd-input").focus(), 50);
   }
+})();
+
+/* ── Thème clair / sombre ── */
+(function() {
+  const SUN  = `<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="7.5" cy="7.5" r="2.5"/><path d="M7.5 1v1.5M7.5 12.5V14M1 7.5h1.5M12.5 7.5H14M3.04 3.04l1.06 1.06M10.9 10.9l1.06 1.06M10.9 4.1l1.06-1.06M3.04 11.96l1.06-1.06"/></svg>`;
+  const MOON = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 9.5A5.5 5.5 0 0 1 4.5 2a5.5 5.5 0 1 0 7.5 7.5z"/></svg>`;
+  function updateThemeBtn() {
+    const btn = document.getElementById('theme-btn');
+    if (!btn) return;
+    const isLight = document.documentElement.classList.contains('light');
+    btn.title = isLight ? 'Mode sombre' : 'Mode clair';
+    btn.innerHTML = isLight ? MOON : SUN;
+  }
+  updateThemeBtn();
+  document.getElementById('theme-btn').addEventListener('click', () => {
+    document.documentElement.classList.toggle('light');
+    localStorage.setItem('hmft_theme', document.documentElement.classList.contains('light') ? 'light' : 'dark');
+    updateThemeBtn();
+  });
 })();
 
 /* ── Persistance onglet actif + bouton Actualiser ── */
@@ -1448,7 +1489,12 @@ document.querySelectorAll(".main-tab").forEach(tab => {
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
     tab.classList.add("active");
     document.getElementById(`panel-${tab.dataset.tab}`).classList.add("active");
-    if (tab.dataset.tab === "joueurs") renderJoueurs();
+    if      (tab.dataset.tab === "joueurs")   renderJoueurs();
+    else if (tab.dataset.tab === "dashboard") renderDashboard();
+    else if (tab.dataset.tab === "session") {
+      const date = document.getElementById("session-date").value;
+      if (date) renderSessionResults(date);
+    }
   });
 });
 
