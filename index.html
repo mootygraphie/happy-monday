@@ -433,12 +433,12 @@
   .saisie-player-row:last-child { border-bottom: none; }
   .saisie-player-name { font-size: 14px; font-weight: 500; min-width: 120px; flex-shrink: 0; }
   .saisie-status-btns { display: flex; gap: 4px; flex-wrap: wrap; }
-  .saisie-statut-btn { padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border2); background: var(--bg3); color: var(--fg2); font-size: 12px; cursor: pointer; transition: all .12s; }
+  .saisie-statut-btn { padding: 6px 0; width: 44px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg3); color: var(--fg2); font-size: 18px; line-height: 1; cursor: pointer; transition: all .12s; text-align: center; }
   .saisie-statut-btn:hover { border-color: var(--fg2); }
-  .saisie-statut-btn.active-present  { background: #2ecc7125; border-color: #2ecc71; color: #2ecc71; font-weight: 700; }
-  .saisie-statut-btn.active-absent   { background: #e74c3c20; border-color: #e74c3c; color: #e74c3c; font-weight: 700; }
-  .saisie-statut-btn.active-blesse   { background: #f39c1220; border-color: #f39c12; color: #f39c12; font-weight: 700; }
-  .saisie-statut-btn.active-nr       { background: #99999920; border-color: #999; color: #999; font-weight: 700; }
+  .saisie-statut-btn.active-present  { background: #2ecc7130; border-color: #2ecc71; box-shadow: 0 0 0 2px #2ecc7155; }
+  .saisie-statut-btn.active-absent   { background: #e74c3c25; border-color: #e74c3c; box-shadow: 0 0 0 2px #e74c3c55; }
+  .saisie-statut-btn.active-blesse   { background: #f39c1225; border-color: #f39c12; box-shadow: 0 0 0 2px #f39c1255; }
+  .saisie-statut-btn.active-nr       { background: #99999925; border-color: #999;    box-shadow: 0 0 0 2px #99999955; }
   .saisie-jokers-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--fg3); margin: 14px 0 8px; }
   .saisie-logistique { display: flex; gap: 16px; margin-top: 18px; flex-wrap: wrap; }
   .saisie-logistique-row { display: flex; align-items: center; gap: 10px; }
@@ -1747,8 +1747,8 @@ function _presenceRowHTML(p, statut, isJoker, removable) {
     return `<div class="saisie-player-row">
       <span class="saisie-player-name">${p}<span class="joker-tag">+1</span></span>
       <div class="saisie-status-btns">
-        <button class="saisie-statut-btn ${on?"active-present":""}" data-player="${p}" data-statut="Présent">Invité ✓</button>
-        <button class="saisie-statut-btn ${!on?"active-absent":""}" data-player="${p}" data-statut="${_JOKER_ABSENT}">Absent</button>
+        <button class="saisie-statut-btn ${on?"active-present":""}" data-player="${p}" data-statut="Présent">✅</button>
+        <button class="saisie-statut-btn ${!on?"active-absent":""}" data-player="${p}" data-statut="${_JOKER_ABSENT}">❌</button>
         ${removable ? `<button class="saisie-remove-temp-joker" data-player="${p}" title="Retirer ce joueur" style="background:transparent;border:none;color:var(--fg3);cursor:pointer;font-size:15px;padding:0 4px;margin-left:4px">✕</button>` : ""}
       </div>
     </div>`;
@@ -1756,7 +1756,7 @@ function _presenceRowHTML(p, statut, isJoker, removable) {
   return `<div class="saisie-player-row">
     <span class="saisie-player-name">${p}</span>
     <div class="saisie-status-btns">
-      ${_STATUTS_REG.map(s => `<button class="saisie-statut-btn ${statut===s?_STATUT_CLS[s]:""}" data-player="${p}" data-statut="${s}">${s==="Pas répondu"?"NR":s}</button>`).join("")}
+      ${_STATUTS_REG.map(s => `<button class="saisie-statut-btn ${statut===s?_STATUT_CLS[s]:""}" data-player="${p}" data-statut="${s}">${{"Présent":"✅","Absent":"❌","Blessé":"🤕","Pas répondu":"❓"}[s]}</button>`).join("")}
     </div>
   </div>`;
 }
