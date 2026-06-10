@@ -518,7 +518,7 @@
   </div>
   <span class="spacer"></span>
   <div class="header-actions">
-    <button class="refresh-btn" id="saisie-nav-btn" title="Saisie">
+    <button class="refresh-btn" id="saisie-nav-btn" title="Saisie" style="display:none">
       <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
         <path d="M9.5 1.5l2 2L4 11H2v-2L9.5 1.5z"/>
       </svg>
@@ -530,6 +530,11 @@
         <path d="M2.5 5a5.5 5.5 0 0 1 9.1-1.4L13 6M1 8l1.4 2.4A5.5 5.5 0 0 0 11.5 9"/>
       </svg>
       Actualiser
+    </button>
+    <button class="refresh-btn" id="logout-btn" title="Se déconnecter" style="padding:8px 10px">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h3"/><path d="M9 10l3-3-3-3"/><path d="M12 7H5"/>
+      </svg>
     </button>
   </div>
   <p id="header-sub"></p>
@@ -568,7 +573,7 @@
     <div class="session-selector">
       <label for="session-date">Session :</label>
       <select id="session-date"></select>
-      <button id="delete-session-btn" title="Supprimer cette session" style="background:transparent;border:1px solid #e74c3c44;color:#e74c3c;border-radius:8px;padding:7px 11px;font-size:16px;cursor:pointer;line-height:1;transition:background .15s;" onmouseover="this.style.background='#e74c3c18'" onmouseout="this.style.background='transparent'">🗑️</button>
+      <button id="delete-session-btn" title="Supprimer cette session" style="display:none;background:transparent;border:1px solid #e74c3c44;color:#e74c3c;border-radius:8px;padding:7px 11px;font-size:16px;cursor:pointer;line-height:1;transition:background .15s;" onmouseover="this.style.background='#e74c3c18'" onmouseout="this.style.background='transparent'">🗑️</button>
     </div>
     <div id="session-results"></div>
   </div>
@@ -595,8 +600,15 @@
 document.getElementById("year").textContent = new Date().getFullYear();
 
 /* ── Authentification ── */
+function applyRole(role) {
+  const isAdmin = role === "admin";
+  document.getElementById("saisie-nav-btn").style.display   = isAdmin ? "flex" : "none";
+  document.getElementById("delete-session-btn").style.display = isAdmin ? "inline-flex" : "none";
+}
+
 (function() {
-  const HASH = "2db71540fe9ba207f224a702328bf24adefc72c0b3fd4b4d7544fce7146b468b";
+  const HASH_USER  = "2db71540fe9ba207f224a702328bf24adefc72c0b3fd4b4d7544fce7146b468b";
+  const HASH_ADMIN = "d12ef5147a4f076dab0c5ae816d718094852541d08135686f96a8c1d8fd0d070";
 
   async function sha256(str) {
     const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
@@ -606,9 +618,12 @@ document.getElementById("year").textContent = new Date().getFullYear();
   async function tryUnlock() {
     const val = document.getElementById("pwd-input").value;
     const hash = await sha256(val);
-    if (hash === HASH) {
+    if (hash === HASH_USER || hash === HASH_ADMIN) {
+      const role = hash === HASH_ADMIN ? "admin" : "user";
       sessionStorage.setItem("hmft_auth", "1");
+      sessionStorage.setItem("hmft_role", role);
       document.getElementById("lock-screen").style.display = "none";
+      applyRole(role);
     } else {
       const inp = document.getElementById("pwd-input");
       const err = document.getElementById("pwd-err");
@@ -621,6 +636,7 @@ document.getElementById("year").textContent = new Date().getFullYear();
 
   if (sessionStorage.getItem("hmft_auth") === "1") {
     document.getElementById("lock-screen").style.display = "none";
+    applyRole(sessionStorage.getItem("hmft_role") || "user");
   } else {
     document.getElementById("pwd-btn").addEventListener("click", tryUnlock);
     document.getElementById("pwd-input").addEventListener("keydown", e => {
@@ -634,6 +650,12 @@ document.getElementById("year").textContent = new Date().getFullYear();
 document.getElementById("refresh-btn").addEventListener("click", () => {
   const activeTab = document.querySelector(".main-tab.active");
   if (activeTab) sessionStorage.setItem("activeTab", activeTab.dataset.tab);
+  location.reload();
+});
+
+document.getElementById("logout-btn").addEventListener("click", () => {
+  sessionStorage.removeItem("hmft_auth");
+  sessionStorage.removeItem("hmft_role");
   location.reload();
 });
 
@@ -1415,18 +1437,10 @@ document.getElementById("session-date").addEventListener("change", e => {
   renderSessionResults(e.target.value);
 });
 
-document.getElementById("delete-session-btn").addEventListener("click", async () => {
+document.getElementById("delete-session-btn").addEventListener("click", () => {
   const sel = document.getElementById("session-date");
   const date = sel.value;
   if (!date) return;
-
-  const pwd = prompt("Mot de passe requis pour supprimer cette session :");
-  if (pwd === null) return;
-  const buf  = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(pwd));
-  const hash = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
-  if (hash !== "42b630bad014a19bdf7c2705d995543688120a48b1b4dfac726654d8f7755141") {
-    alert("Mot de passe incorrect."); return;
-  }
 
   if (!confirm(`Supprimer la session du ${fmtDate(date)} ?\n\nCette action est définitive.`)) return;
 
