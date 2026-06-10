@@ -1301,8 +1301,12 @@ function renderJoueurs() {
   function sortArr(arr, s) {
     return [...arr].sort((a, b) => {
       const av = a[s.col] ?? ""; const bv = b[s.col] ?? "";
-      if (typeof av === "number" && typeof bv === "number") return (bv - av) * s.dir;
-      return String(av).localeCompare(String(bv), "fr") * s.dir;
+      if (typeof av === "number" && typeof bv === "number") {
+        const diff = (bv - av) * s.dir;
+        return diff !== 0 ? diff : a.name.localeCompare(b.name, "fr");
+      }
+      const diff = String(av).localeCompare(String(bv), "fr") * s.dir;
+      return diff !== 0 ? diff : a.name.localeCompare(b.name, "fr");
     });
   }
 
@@ -1473,6 +1477,10 @@ function openPlayerPanel(playerName) {
       <div class="pp-stat-card">
         <div class="pp-stat-val ${st.buts>0?"blue":"muted"}">${st.buts}</div>
         <div class="pp-stat-lbl">Buts</div>
+      </div>
+      <div class="pp-stat-card">
+        <div class="pp-stat-val muted">${st.pasRepondu}</div>
+        <div class="pp-stat-lbl">Pas répondu</div>
       </div>
     </div>
   </div>`;
