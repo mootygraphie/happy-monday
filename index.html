@@ -350,6 +350,10 @@
     text-underline-offset: 3px; transition: color .12s, text-decoration-color .12s;
   }
   .player-link:hover { color: #fff; text-decoration-color: rgba(255,255,255,.55); }
+  .team-player-pill.player-link,
+  .player-chip.player-link { text-decoration: none; }
+  .team-player-pill.player-link:hover,
+  .player-chip.player-link:hover { color: inherit; opacity: .82; text-decoration: none; }
 
   /* ── Fiche joueur (panneau latéral) ── */
   #player-panel-overlay {
@@ -499,6 +503,12 @@
     <p id="header-sub">Dashboard · mis à jour par Claude chaque semaine</p>
   </div>
   <span class="spacer"></span>
+  <button class="refresh-btn" id="saisie-nav-btn" title="Saisie">
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9.5 1.5l2 2L4 11H2v-2L9.5 1.5z"/>
+    </svg>
+    Saisie
+  </button>
   <button class="refresh-btn" id="refresh-btn">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
       <path d="M13 2v4H9"/><path d="M1 12V8h4"/>
@@ -514,7 +524,6 @@
     <button class="main-tab active" data-tab="dashboard">Dashboard</button>
     <button class="main-tab" data-tab="session">Sessions</button>
     <button class="main-tab" data-tab="joueurs">Joueurs</button>
-    <button class="main-tab" data-tab="saisie">Saisie</button>
   </div>
 
   <!-- ── Onglet Dashboard ── -->
@@ -731,7 +740,7 @@ function teamCard(color, teamMap, icons) {
       <span class="team-card-count">${teamMap[color].length} joueur${teamMap[color].length > 1 ? "s" : ""}</span>
     </div>
     <div class="team-card-players">
-      ${teamMap[color].map(p => `<span class="team-player-pill ${cls}">${p.name}${p.joker ? `<span class="joker-tag">+1</span>` : ""}</span>`).join("")}
+      ${teamMap[color].map(p => `<button class="team-player-pill ${cls} player-link" data-player="${p.name}">${p.name}${p.joker ? `<span class="joker-tag">+1</span>` : ""}</button>`).join("")}
     </div>
   </div>`;
 }
@@ -749,6 +758,9 @@ function fmtDate(d) {
   return `${parseInt(j)} ${months[parseInt(m)-1]} ${y}`;
 }
 function rankCls(i) { return i===0?"gold":i===1?"silver":i===2?"bronze":"plain"; }
+function pLink(name, extra) {
+  return `<button class="player-link" data-player="${name}">${name}${extra||""}</button>`;
+}
 
 /* ══════════════════════════════════════════════════════════
    DASHBOARD
@@ -948,7 +960,7 @@ function renderDashboard() {
     st.top3Pres.forEach(([p,ps],i) => {
       h += `<div class="podium-entry${i===0?" first":""}">
         <span class="pe-rank">${medals[i]}</span>
-        <span class="pe-name">${p}</span>
+        <span class="pe-name">${pLink(p)}</span>
         <span class="pe-count green">${ps.presences}</span><span class="pe-unit">sess.</span>
       </div>`;
     });
@@ -963,7 +975,7 @@ function renderDashboard() {
     st.top3Abs.forEach(([p,ps],i) => {
       h += `<div class="podium-entry${i===0?" first":""}">
         <span class="pe-rank" style="font-size:13px;font-weight:700;color:var(--text3)">${i+1}</span>
-        <span class="pe-name">${p}</span>
+        <span class="pe-name">${pLink(p)}</span>
         <span class="pe-count red">${ps.absences}</span><span class="pe-unit">abs.</span>
       </div>`;
     });
@@ -979,7 +991,7 @@ function renderDashboard() {
     st.top3Bles.forEach(([p,ps],i) => {
       h += `<div class="podium-entry${i===0?" first":""}">
         <span class="pe-rank" style="font-size:13px;font-weight:700;color:var(--text3)">${i+1}</span>
-        <span class="pe-name">${p}</span>
+        <span class="pe-name">${pLink(p)}</span>
         <span class="pe-count amber">${ps.episodesBlessures}</span><span class="pe-unit">blessure${ps.episodesBlessures>1?"s":""}</span>
       </div>`;
     });
@@ -1073,7 +1085,7 @@ function renderDashboard() {
       <div class="top-scorer-hero">
         <div class="ts-num">${topStats.buts}</div>
         <div class="ts-info">
-          <div class="ts-name">${topName}</div>
+          <div class="ts-name">${pLink(topName)}</div>
           <div class="ts-lbl">🥇 Meilleur buteur${topStats.bestColor ? ` &nbsp;·&nbsp; ${dot(topStats.bestColor)}${topStats.bestColor}` : ""}</div>
         </div>
       </div>`;
@@ -1086,7 +1098,7 @@ function renderDashboard() {
           const pct  = Math.round((ps.buts / maxButs) * 100);
           h += `<div class="buts-row">
             <span class="rank ${rankCls(rank-1)}" style="min-width:18px">${rank}</span>
-            <span class="pname">${p}</span>
+            <span class="pname">${pLink(p)}</span>
             ${ps.bestColor ? `<span style="font-size:11px;color:var(--text3)">${dot(ps.bestColor)}${ps.bestColor}</span>` : ""}
             <div class="buts-bar-wrap"><div class="buts-bar" style="width:${pct}%"></div></div>
             <span class="pval" style="min-width:28px;text-align:right">${ps.buts}</span>
@@ -1252,7 +1264,7 @@ function renderSessionResults(date) {
     if (!hasColors) {
       h += `<div class="section-label">Joueurs présents (${presentsAll.length})</div>
       <div class="players-present-list">
-        ${presentsAll.map(p => `<span class="player-chip">${p.name}${p.joker ? `<span class="joker-tag">+1</span>` : ""}</span>`).join("")}
+        ${presentsAll.map(p => `<button class="player-chip player-link" data-player="${p.name}">${p.name}${p.joker ? `<span class="joker-tag">+1</span>` : ""}</button>`).join("")}
       </div>`;
     } else {
       const teamMap = { Rouge: [], Vert: [], Bleue: [] };
@@ -1286,7 +1298,7 @@ function renderSessionResults(date) {
         h += `<div class="no-team-section">
           <div class="no-team-label">Sans équipe assignée</div>
           <div class="players-present-list">
-            ${noTeam.map(p => `<span class="player-chip">${p.name}${p.joker ? `<span class="joker-tag">+1</span>` : ""}</span>`).join("")}
+            ${noTeam.map(p => `<button class="player-chip player-link" data-player="${p.name}">${p.name}${p.joker ? `<span class="joker-tag">+1</span>` : ""}</button>`).join("")}
           </div>
         </div>`;
       }
@@ -1300,7 +1312,10 @@ function renderSessionResults(date) {
     if (!arr || !arr.length) return "";
     const counts = {};
     arr.forEach(p => { counts[p] = (counts[p]||0) + 1; });
-    return Object.entries(counts).sort((a,b) => a[0].localeCompare(b[0], "fr")).map(([p,n]) => n > 1 ? `${p} ×${n}` : p).join(", ");
+    return Object.entries(counts).sort((a,b) => a[0].localeCompare(b[0], "fr")).map(([p,n]) => {
+      const display = p === "CSC" ? p : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
+      return n > 1 ? `${display} ×${n}` : display;
+    }).join(", ");
   };
   if (matchs.length > 0) {
     h += `<div class="section-label">Tous les matchs</div>`;
@@ -1338,8 +1353,14 @@ document.querySelectorAll(".main-tab").forEach(tab => {
     tab.classList.add("active");
     document.getElementById(`panel-${tab.dataset.tab}`).classList.add("active");
     if (tab.dataset.tab === "joueurs") renderJoueurs();
-    if (tab.dataset.tab === "saisie")  renderSaisie();
   });
+});
+
+document.getElementById("saisie-nav-btn").addEventListener("click", () => {
+  document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("panel-saisie").classList.add("active");
+  renderSaisie();
 });
 
 document.getElementById("periods").addEventListener("click", e => {
@@ -1474,6 +1495,17 @@ function renderJoueurs() {
     { key:"maillots",   label:"Maillots 👕"    },
     { key:"favTeam",    label:"Éq. préf."      },
   ];
+  const jokerColDef = [
+    { key:"name",       label:"Joueur"         },
+    { key:"presences",  label:"Présences"      },
+    { key:"absences",   label:"Absences"       },
+    { key:"blesses",    label:"Blessures"      },
+    { key:"pasRepondu", label:"Non répondu"    },
+    { key:"buts",       label:"Buts"           },
+    { key:"sac",        label:"Sac 🎒"         },
+    { key:"maillots",   label:"Maillots 👕"    },
+    { key:"favTeam",    label:"Éq. préf."      },
+  ];
 
   const rowsWithTaux = rows.map(r => ({
     ...r,
@@ -1497,8 +1529,8 @@ function renderJoueurs() {
 
   const dash_ = `<span style="color:var(--text3);font-size:13px">—</span>`;
 
-  function buildThead(s) {
-    return colDef.map(c => {
+  function buildThead(s, cols) {
+    return (cols || colDef).map(c => {
       const active = s.col === c.key ? " sorted" : "";
       const arrow  = s.col === c.key ? (s.dir === 1 ? "↑" : "↓") : "↕";
       return `<th data-col="${c.key}" class="${active}">${c.label}<span class="sort-arrow">${arrow}</span></th>`;
@@ -1526,7 +1558,7 @@ function renderJoueurs() {
     const teamCell = r.favTeam ? `${dot(r.favTeam)}<span style="font-size:12px">${r.favTeam[0].toUpperCase()}</span>` : dash_;
     return `<tr>
       <td class="name"><button class="player-link" data-player="${r.name}">${r.name}<span class="joker-tag">+1</span></button></td>
-      <td class="taux-cell">${dash_}</td>
+      <td class="num ${r.presences > 0 ? "highlight" : "zero"}">${r.presences}</td>
       <td class="num zero">${dash_}</td>
       <td class="num zero">${dash_}</td>
       <td class="num zero">${dash_}</td>
@@ -1539,7 +1571,7 @@ function renderJoueurs() {
 
   const rosterThead = buildThead(rosterSort);
   const rosterTbody = sortArr(rosterRows, rosterSort).map(buildRosterRow).join("");
-  const jokerThead  = buildThead(jokerSort);
+  const jokerThead  = buildThead(jokerSort, jokerColDef);
   const jokerTbody  = sortArr(jokerRows,  jokerSort).map(buildJokerRow).join("");
 
   const jokerSection = jokerRows.length > 0 ? `
@@ -2123,9 +2155,9 @@ if (savedTab) {
 document.getElementById("player-panel-overlay").addEventListener("click", closePlayerPanel);
 document.getElementById("pp-close").addEventListener("click", closePlayerPanel);
 document.addEventListener("keydown", e => { if (e.key === "Escape") closePlayerPanel(); });
-document.getElementById("joueurs-content").addEventListener("click", e => {
+document.addEventListener("click", e => {
   const btn = e.target.closest(".player-link");
-  if (btn) openPlayerPanel(btn.dataset.player);
+  if (btn && btn.dataset.player) openPlayerPanel(btn.dataset.player);
 });
 
 document.getElementById("period-sub").style.visibility = "hidden";
