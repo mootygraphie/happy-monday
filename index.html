@@ -1864,7 +1864,7 @@ function renderSaisie() {
         ${(_draft.tempJokers||[]).map(p => _presenceRowHTML(p, _draft.presences[p]?.statut||"Présent", true, true)).join("")}
       </div>
       <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
-        <input type="text" id="saisie-new-joker-input" placeholder="Nom du +1 ponctuel…" class="saisie-date-input" style="font-size:13px;padding:6px 10px;flex:1;max-width:220px">
+        <input type="text" id="saisie-new-joker-input" placeholder="Nom du +1" class="saisie-date-input" style="font-size:13px;padding:6px 10px;flex:1;max-width:220px">
         <button class="saisie-btn secondary" id="saisie-add-temp-joker">+ Ajouter</button>
       </div>
       <div class="saisie-logistique">
