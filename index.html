@@ -1147,6 +1147,7 @@ function renderDashboard() {
 
   if (currentPeriod === "last") {
     dash.innerHTML = renderSessionDetail(sessions[0]);
+    animateView(dash);
     return;
   }
 
@@ -1402,6 +1403,7 @@ function renderDashboard() {
   }
 
   dash.innerHTML = h;
+  animateView(dash);
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -1433,6 +1435,7 @@ function renderSessionResults(date) {
     return;
   }
   container.innerHTML = renderSessionDetail(session);
+  animateView(container);
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -1685,6 +1688,7 @@ function renderJoueurs() {
         <tbody>${rosterTbody}</tbody>
       </table>
     </div>${jokerSection}`;
+  animateTable();
 
   document.getElementById("roster-table")?.querySelectorAll("th[data-col]").forEach(th => {
     th.addEventListener("click", () => {
@@ -1867,7 +1871,11 @@ function openPlayerPanel(playerName) {
   h += `</div>`;
 
   document.getElementById("pp-name").textContent = playerName + (isJoker ? " +1" : "");
-  document.getElementById("pp-body").innerHTML = h;
+  const ppBody = document.getElementById("pp-body");
+  ppBody.innerHTML = h;
+  ppBody.style.opacity   = '0';
+  ppBody.style.transition = 'none';
+  setTimeout(() => { ppBody.style.opacity = ''; animateView(ppBody); }, 290);
   document.getElementById("player-panel-overlay").classList.add("open");
   document.getElementById("player-panel").classList.add("open");
   document.body.style.overflow = "hidden";
@@ -2233,6 +2241,99 @@ document.getElementById("saisie-content").addEventListener("change", e => {
     _draft.matchs[idx][side === "A" ? "buteursA" : "buteursB"][goal] = e.target.value;
   }
 });
+
+/* ══════════════════════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════════════════════ */
+
+function _easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+function animateCounters(root) {
+  const sel = '.kpi-num, .pe-count, .rc-num, .ts-num, .pp-stat-val';
+  (root || document).querySelectorAll(sel).forEach(el => {
+    if (el.childElementCount > 0) return;
+    const raw = el.textContent.trim();
+    const m = raw.match(/^([+\-]?)(\d+(?:[,\.]\d+)?)(.*)$/);
+    if (!m) return;
+    const sign = m[1], num = m[2], suffix = m[3] || '';
+    const target = parseFloat(num.replace(',', '.'));
+    if (isNaN(target) || target === 0) return;
+    const isFloat = num.includes(',') || num.includes('.');
+    const t0 = performance.now();
+    const fmt = v => sign + (isFloat ? v.toFixed(1).replace('.', ',') : String(Math.round(v))) + suffix;
+    (function tick(ts) {
+      const p = Math.min((ts - t0) / 650, 1);
+      el.textContent = fmt(target * _easeOut(p));
+      if (p < 1) requestAnimationFrame(tick);
+    })(performance.now());
+  });
+}
+
+function animateCards(root) {
+  const sel = '.kpi-card, .match-card, .record-card, .top-scorer-hero, .team-card, .buts-row, .pp-stat-card, .pp-match-card';
+  [...(root || document).querySelectorAll(sel)].forEach((el, i) => {
+    el.style.opacity    = '0';
+    el.style.transform  = 'translateY(8px)';
+    el.style.transition = 'none';
+    setTimeout(() => {
+      el.style.transition = 'opacity 0.28s ease, transform 0.28s ease';
+      el.style.opacity    = '';
+      el.style.transform  = '';
+    }, i * 40 + 20);
+  });
+}
+
+function animateRows(root) {
+  const sel = '.podium-entry, .palmares-row, .pp-teammate-row';
+  [...(root || document).querySelectorAll(sel)].forEach((el, i) => {
+    el.style.opacity    = '0';
+    el.style.transform  = 'translateX(-8px)';
+    el.style.transition = 'none';
+    setTimeout(() => {
+      el.style.transition = 'opacity 0.22s ease, transform 0.22s ease';
+      el.style.opacity    = '';
+      el.style.transform  = '';
+    }, i * 48 + 50);
+  });
+}
+
+function animateTable() {
+  document.querySelectorAll('.players-table').forEach(table => {
+    const wrap  = table.closest('.players-table-wrap');
+    const thead = table.querySelector('thead tr');
+    const rows  = [...table.querySelectorAll('tbody tr')];
+    const vCols = [...table.querySelectorAll('thead th:first-child, tbody td.name')];
+    if (!rows.length) return;
+
+    if (wrap)  { wrap.style.opacity  = '0'; wrap.style.transition  = 'none'; }
+    if (thead) { thead.style.opacity = '0'; thead.style.transition = 'none'; }
+    vCols.forEach(c => { c.style.borderRightColor = 'transparent'; c.style.transition = 'none'; });
+    rows.forEach(r  => { r.style.opacity = '0'; r.style.transform = 'translateX(-5px)'; r.style.transition = 'none'; });
+
+    setTimeout(() => {
+      if (wrap) { wrap.style.transition = 'opacity 0.15s ease'; wrap.style.opacity = '1'; }
+    }, 10);
+    setTimeout(() => {
+      if (thead) { thead.style.transition = 'opacity 0.2s ease'; thead.style.opacity = '1'; }
+    }, 150);
+    setTimeout(() => {
+      vCols.forEach(c => { c.style.transition = 'border-right-color 0.28s ease'; c.style.borderRightColor = ''; });
+    }, 260);
+    rows.forEach((r, i) => {
+      setTimeout(() => {
+        r.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+        r.style.opacity    = '1';
+        r.style.transform  = 'translateX(0)';
+      }, 350 + i * 28);
+    });
+  });
+}
+
+function animateView(root) {
+  animateCards(root);
+  animateRows(root);
+  animateCounters(root);
+}
 
 /* ── Init ── */
 const savedTab = sessionStorage.getItem("activeTab");
