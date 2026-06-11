@@ -1071,7 +1071,7 @@ function renderSessionDetail(session) {
   /* ── Rangée 1 : 4 KPI ── */
   const victSub = ["Rouge","Vert","Bleue"].filter(c => colorWins[c] > 0)
     .map(c => `${dot(c)}${colorWins[c]}`).join(" · ");
-  const matchSub = [victSub, draws > 0 ? `<span class="cdot gris"></span>${draws} nul${draws>1?"s":""}` : ""].filter(Boolean).join(" · ");
+  const matchSub = [victSub, draws > 0 ? `<span class="cdot gris"></span>${draws} ${draws>1?"s":""}` : ""].filter(Boolean).join(" · ");
 
   h += `<div class="kpi-grid" style="margin-bottom:10px">
     <div class="kpi-card">
