@@ -1045,7 +1045,7 @@ function renderSessionDetail(session) {
     if      (m.scoreA > m.scoreB) colorWins[m.eqA]++;
     else if (m.scoreB > m.scoreA) colorWins[m.eqB]++;
     else draws++;
-    [...(m.buteursA||[]), ...(m.buteursB||[])].forEach(p => { buteursCount[p] = (buteursCount[p]||0)+1; });
+    [...(m.buteursA||[]), ...(m.buteursB||[])].forEach(p => { if (p && p !== "CSC") buteursCount[p] = (buteursCount[p]||0)+1; });
   });
 
   const maxWins       = Math.max(0, ...Object.values(colorWins));
