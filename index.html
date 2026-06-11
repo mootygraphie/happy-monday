@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Monday Football Team — Dashboard</title>
+<title>⚽️ Happy Monday Football Team — Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
@@ -784,17 +784,18 @@ const SESSIONS = [
   }
 ];
 /* ── Firebase — persistance partagée (remplace localStorage) ── */
-const firebaseConfig = {
-    apiKey: "AIzaSyCFs-vnq6oZUPkOz4L1VXKU8T7D0c1JIw8",
-    authDomain: "happy-monday-a2404.firebaseapp.com",
-    projectId: "happy-monday-a2404",
-    storageBucket: "happy-monday-a2404.firebasestorage.app",
-    messagingSenderId: "853452021336",
-    appId: "1:853452021336:web:eab2816dfa766ca254b42d"
-  };
+const _FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyCFs-vnq6oZUPkOz4L1VXKU8T7D0c1JIw8",
+  authDomain:        "happy-monday-a2404.firebaseapp.com",
+  databaseURL:       "https://happy-monday-a2404-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:         "happy-monday-a2404",
+  storageBucket:     "happy-monday-a2404.firebasestorage.app",
+  messagingSenderId: "853452021336",
+  appId:             "1:853452021336:web:eab2816dfa766ca254b42d"
+};
 let _db = null;
 try {
-  if (typeof firebase !== 'undefined' && _FIREBASE_CONFIG.apiKey !== 'REPLACE_API_KEY') {
+  if (typeof firebase !== 'undefined') {
     firebase.initializeApp(_FIREBASE_CONFIG);
     _db = firebase.database();
   }
