@@ -1225,7 +1225,7 @@ function renderDashboard() {
   /* ── Section 1 : 8 cartes match (2 × 4) ── */
   const victSubAgg = ["Rouge","Vert","Bleue"].filter(c => st.colorWins[c] > 0)
     .map(c => `${dot(c)}${st.colorWins[c]}`).join(" · ");
-  const matchSubAgg = [victSubAgg, draws > 0 ? `<span class="cdot gris"></span>${draws} nul${draws>1?"s":""}` : ""].filter(Boolean).join(" · ");
+  const matchSubAgg = [victSubAgg, draws > 0 ? `<span class="cdot gris"></span>${draws} ${draws>1?"s":""}` : ""].filter(Boolean).join(" · ");
 
   const _aggButSlots = [];
   let _aggButRem = [...st.buteursRank];
