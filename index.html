@@ -521,10 +521,18 @@
   .saisie-status { font-size: 12px; }
 </style>
 <script>if(localStorage.getItem('hmft_theme')==='light')document.documentElement.classList.add('light');</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
-<div id="lock-screen">
+<div id="loading-screen" style="position:fixed;inset:0;z-index:10000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+  <div style="font-size:40px;animation:ldPulse 1.2s ease-in-out infinite">⚽</div>
+  <div style="color:var(--text2);font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:600">Chargement…</div>
+</div>
+<style>@keyframes ldPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.1);opacity:.7}}</style>
+
+<div id="lock-screen" style="display:none">
   <div class="lock-card">
     <div class="lock-icon">🔒</div>
     <h2>Accès restreint</h2>
@@ -659,16 +667,10 @@ function applyRole(role) {
     }
   }
 
-  if (sessionStorage.getItem("hmft_auth") === "1") {
-    document.getElementById("lock-screen").style.display = "none";
-    applyRole(sessionStorage.getItem("hmft_role") || "user");
-  } else {
-    document.getElementById("pwd-btn").addEventListener("click", tryUnlock);
-    document.getElementById("pwd-input").addEventListener("keydown", e => {
-      if (e.key === "Enter") tryUnlock();
-    });
-    setTimeout(() => document.getElementById("pwd-input").focus(), 50);
-  }
+  document.getElementById("pwd-btn").addEventListener("click", tryUnlock);
+  document.getElementById("pwd-input").addEventListener("keydown", e => {
+    if (e.key === "Enter") tryUnlock();
+  });
 })();
 
 /* ── Thème clair / sombre ── */
@@ -781,20 +783,54 @@ const SESSIONS = [
     matchs: []
   }
 ];
-/* ── Merge sessions validées + filtre suppressions ── */
-(function() {
+/* ── Firebase — persistance partagée (remplace localStorage) ── */
+const firebaseConfig = {
+    apiKey: "AIzaSyCFs-vnq6oZUPkOz4L1VXKU8T7D0c1JIw8",
+    authDomain: "happy-monday-a2404.firebaseapp.com",
+    projectId: "happy-monday-a2404",
+    storageBucket: "happy-monday-a2404.firebasestorage.app",
+    messagingSenderId: "853452021336",
+    appId: "1:853452021336:web:eab2816dfa766ca254b42d"
+  };
+let _db = null;
+try {
+  if (typeof firebase !== 'undefined' && _FIREBASE_CONFIG.apiKey !== 'REPLACE_API_KEY') {
+    firebase.initializeApp(_FIREBASE_CONFIG);
+    _db = firebase.database();
+  }
+} catch(e) { console.warn('Firebase init failed:', e); }
+
+async function _fbLoad() {
+  if (!_db) return;
   try {
-    const deleted = new Set(JSON.parse(localStorage.getItem('hmft_deleted') || '[]'));
-    // Filtrer les sessions codées en dur supprimées
+    const [sessSnap, delSnap] = await Promise.all([
+      _db.ref('sessions').once('value'),
+      _db.ref('deleted').once('value')
+    ]);
+    const fbSessions = sessSnap.val() || {};
+    const fbDeleted  = delSnap.val()  || {};
+    const deleted    = new Set(Object.keys(fbDeleted));
     for (let i = SESSIONS.length - 1; i >= 0; i--) {
       if (deleted.has(SESSIONS[i].date)) SESSIONS.splice(i, 1);
     }
-    const extra = JSON.parse(localStorage.getItem('hmft_sessions') || '[]');
-    extra.forEach(s => {
+    Object.values(fbSessions).forEach(s => {
       if (!deleted.has(s.date) && !SESSIONS.find(e => e.date === s.date)) SESSIONS.push(s);
     });
-  } catch(e) {}
-})();
+  } catch(e) { console.error('Firebase load error:', e); }
+}
+
+async function _fbSaveSession(session) {
+  if (!_db) return;
+  await _db.ref('sessions/' + session.date).set(session);
+}
+
+async function _fbDeleteSession(date) {
+  if (!_db) return;
+  await Promise.all([
+    _db.ref('sessions/' + date).remove(),
+    _db.ref('deleted/' + date).set(true)
+  ]);
+}
 /* ═══════════════════════════════════════════════════════ */
 
 const ALL_PLAYERS = [
@@ -1488,18 +1524,10 @@ document.getElementById("delete-session-btn").addEventListener("click", () => {
   const idx = SESSIONS.findIndex(s => s.date === date);
   if (idx !== -1) SESSIONS.splice(idx, 1);
 
-  // Retirer de hmft_sessions (sessions ajoutées via Saisie)
-  try {
-    const stored = JSON.parse(localStorage.getItem('hmft_sessions') || '[]');
-    const filtered = stored.filter(s => s.date !== date);
-    localStorage.setItem('hmft_sessions', JSON.stringify(filtered));
-  } catch(e) {}
-
-  // Mémoriser la suppression (pour filtrer les sessions codées en dur au prochain chargement)
-  try {
-    const deleted = JSON.parse(localStorage.getItem('hmft_deleted') || '[]');
-    if (!deleted.includes(date)) { deleted.push(date); localStorage.setItem('hmft_deleted', JSON.stringify(deleted)); }
-  } catch(e) {}
+  // Supprimer dans Firebase
+  _fbDeleteSession(date).catch(() => {
+    alert('⚠️ Suppression locale effectuée mais la synchronisation Firebase a échoué.\nVérifiez votre connexion.');
+  });
 
   // Rafraîchir l'UI
   populateSessionSelect();
@@ -2114,10 +2142,10 @@ function _commitSession() {
     }))
   };
 
-  const stored = JSON.parse(localStorage.getItem("hmft_sessions") || "[]");
-  stored.push(finalSession);
-  localStorage.setItem("hmft_sessions", JSON.stringify(stored));
   SESSIONS.push(finalSession);
+  _fbSaveSession(finalSession).catch(() => {
+    alert('⚠️ Session validée localement mais la synchronisation Firebase a échoué.\nVérifiez votre connexion et rechargez la page.');
+  });
 
   _draft = null;
   _draftSavedAt = null;
@@ -2318,18 +2346,7 @@ function animateView(root) {
   animateCounters(root);
 }
 
-/* ── Init ── */
-const savedTab = sessionStorage.getItem("activeTab");
-if (savedTab) {
-  sessionStorage.removeItem("activeTab");
-  document.querySelectorAll(".main-tab").forEach(t => {
-    t.classList.toggle("active", t.dataset.tab === savedTab);
-  });
-  document.querySelectorAll(".tab-panel").forEach(p => {
-    p.classList.toggle("active", p.id === `panel-${savedTab}`);
-  });
-}
-
+/* ── Événements globaux ── */
 document.getElementById("player-panel-overlay").addEventListener("click", closePlayerPanel);
 document.getElementById("pp-close").addEventListener("click", closePlayerPanel);
 document.addEventListener("keydown", e => { if (e.key === "Escape") closePlayerPanel(); });
@@ -2338,17 +2355,41 @@ document.addEventListener("click", e => {
   if (btn && btn.dataset.player) openPlayerPanel(btn.dataset.player);
 });
 
-document.getElementById("period-sub").style.visibility = "hidden";
-renderDashboard();
-populateSessionSelect();
-renderJoueurs();
-if (SESSIONS.length) {
-  const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
-  renderSessionResults(sorted[0].date);
-} else {
-  document.getElementById("session-results").innerHTML =
-    `<p class="no-data" style="margin-top:1rem">Aucune session enregistrée.</p>`;
-}
+/* ── Init async ── */
+(async function() {
+  await _fbLoad();
+
+  const savedTab = sessionStorage.getItem("activeTab");
+  if (savedTab) {
+    sessionStorage.removeItem("activeTab");
+    document.querySelectorAll(".main-tab").forEach(t => {
+      t.classList.toggle("active", t.dataset.tab === savedTab);
+    });
+    document.querySelectorAll(".tab-panel").forEach(p => {
+      p.classList.toggle("active", p.id === `panel-${savedTab}`);
+    });
+  }
+
+  document.getElementById("period-sub").style.visibility = "hidden";
+  renderDashboard();
+  populateSessionSelect();
+  renderJoueurs();
+  if (SESSIONS.length) {
+    const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
+    renderSessionResults(sorted[0].date);
+  } else {
+    document.getElementById("session-results").innerHTML =
+      `<p class="no-data" style="margin-top:1rem">Aucune session enregistrée.</p>`;
+  }
+
+  if (sessionStorage.getItem("hmft_auth") !== "1") {
+    document.getElementById("lock-screen").style.display = "flex";
+    setTimeout(() => document.getElementById("pwd-input").focus(), 50);
+  } else {
+    applyRole(sessionStorage.getItem("hmft_role") || "user");
+  }
+  document.getElementById("loading-screen").style.display = "none";
+})();
 </script>
 </body>
 </html>
