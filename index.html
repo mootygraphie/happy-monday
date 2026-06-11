@@ -607,6 +607,7 @@
       <label for="session-date">Session :</label>
       <select id="session-date"></select>
       <button id="delete-session-btn" title="Supprimer cette session" style="display:none;background:transparent;border:1px solid #e74c3c44;color:#e74c3c;border-radius:8px;padding:7px 11px;font-size:16px;cursor:pointer;line-height:1;transition:background .15s;" onmouseover="this.style.background='#e74c3c18'" onmouseout="this.style.background='transparent'">🗑️</button>
+      <button id="edit-session-btn" title="Modifier cette session" style="display:none;background:transparent;border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:7px 11px;font-size:16px;cursor:pointer;line-height:1;transition:background .15s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">✏️</button>
     </div>
     <div id="session-results"></div>
   </div>
@@ -635,8 +636,9 @@ document.getElementById("year").textContent = new Date().getFullYear();
 /* ── Authentification ── */
 function applyRole(role) {
   const isAdmin = role === "admin";
-  document.getElementById("saisie-nav-btn").style.display   = isAdmin ? "flex" : "none";
+  document.getElementById("saisie-nav-btn").style.display     = isAdmin ? "flex" : "none";
   document.getElementById("delete-session-btn").style.display = isAdmin ? "inline-flex" : "none";
+  document.getElementById("edit-session-btn").style.display   = isAdmin ? "inline-flex" : "none";
 }
 
 (function() {
@@ -1508,6 +1510,7 @@ document.querySelectorAll(".main-tab").forEach(tab => {
 });
 
 document.getElementById("saisie-nav-btn").addEventListener("click", () => {
+  _editMode = false;
   document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
   document.getElementById("panel-saisie").classList.add("active");
@@ -1575,6 +1578,21 @@ document.getElementById("delete-session-btn").addEventListener("click", () => {
     document.getElementById("session-results").innerHTML =
       `<p class="no-data" style="margin-top:1rem">Aucune session enregistrée.</p>`;
   }
+});
+
+document.getElementById("edit-session-btn").addEventListener("click", () => {
+  const sel = document.getElementById("session-date");
+  const date = sel.value;
+  if (!date) return;
+  const session = SESSIONS.find(s => s.date === date);
+  if (!session) return;
+  _editMode = true;
+  _draft = _loadSessionIntoDraft(session);
+  _draftSavedAt = null;
+  document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("panel-saisie").classList.add("active");
+  renderSaisie();
 });
 
 /* ══════════════════════════════════════════════════════════
@@ -1940,6 +1958,7 @@ function closePlayerPanel() {
 
 let _draft = null;
 let _draftSavedAt = null;
+let _editMode = false;
 
 const _STATUTS_REG  = ["Présent", "Absent", "Blessé", "Pas répondu"];
 const _STATUT_CLS   = { "Présent":"active-present", "Absent":"active-absent", "Blessé":"active-blesse", "Pas répondu":"active-nr" };
@@ -1959,6 +1978,37 @@ function _loadDraft() {
     if (s) { _draft = JSON.parse(s); return; }
   } catch(e) {}
   _draft = _newDraft();
+}
+
+function _loadSessionIntoDraft(session) {
+  const presences = {};
+  ALL_PLAYERS.forEach(p => {
+    presences[p] = { statut: JOKERS.has(p) ? _JOKER_ABSENT : "Pas répondu", equipe: "" };
+  });
+  const tempJokers = [];
+  Object.entries(session.presences).forEach(([p, info]) => {
+    if (!ALL_PLAYERS.includes(p)) {
+      tempJokers.push(p);
+      presences[p] = { statut: info.statut === "Présent" ? "Présent" : _JOKER_ABSENT, equipe: info.equipe || "", joker: true, temp: true };
+    } else if (JOKERS.has(p)) {
+      presences[p] = { statut: info.statut === "Présent" ? "Présent" : _JOKER_ABSENT, equipe: info.equipe || "" };
+    } else {
+      presences[p] = { statut: info.statut, equipe: info.equipe || "" };
+    }
+  });
+  return {
+    date: session.date,
+    sac: session.sac || "",
+    maillots: session.maillots || "",
+    presences,
+    matchs: (session.matchs || []).map(m => ({
+      eqA: m.eqA, eqB: m.eqB,
+      scoreA: m.scoreA, scoreB: m.scoreB,
+      buteursA: [...(m.buteursA || [])],
+      buteursB: [...(m.buteursB || [])]
+    })),
+    tempJokers
+  };
 }
 
 function _saveDraft() {
@@ -2081,18 +2131,21 @@ function renderSaisie() {
 
   document.getElementById("saisie-content").innerHTML = `<div class="saisie-wrap">
 
+    ${_editMode ? `<div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;padding:10px 14px;background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.2);border-radius:10px;font-size:13px;color:var(--gold)">✏️&ensp;<strong>Mode édition</strong>&ensp;<span style="color:var(--text2)">— Session du ${fmtDate(_draft.date)}</span></div>` : ""}
     <div class="saisie-bar">
-      <span id="saisie-status" class="saisie-status">${statusTxt}</span>
+      <span id="saisie-status" class="saisie-status">${_editMode ? "" : statusTxt}</span>
       <div class="saisie-actions">
-        <button class="saisie-btn secondary" id="saisie-save">Enregistrer</button>
-        <button class="saisie-btn danger"    id="saisie-clear">Effacer le brouillon</button>
-        <button class="saisie-btn primary"   id="saisie-commit">Valider la session ✓</button>
+        ${_editMode ? "" : `<button class="saisie-btn secondary" id="saisie-save">Enregistrer</button>`}
+        ${_editMode
+          ? `<button class="saisie-btn secondary" id="saisie-cancel-edit">Annuler</button>`
+          : `<button class="saisie-btn danger" id="saisie-clear">Effacer le brouillon</button>`}
+        <button class="saisie-btn primary" id="saisie-commit">${_editMode ? "Mettre à jour ✓" : "Valider la session ✓"}</button>
       </div>
     </div>
 
     <div class="saisie-section">
       <div class="saisie-section-title">📅 Date de la session</div>
-      <input type="date" class="saisie-date-input" id="saisie-date" value="${_draft.date}">
+      <input type="date" class="saisie-date-input" id="saisie-date" value="${_draft.date}"${_editMode ? ' readonly style="opacity:.55;cursor:not-allowed"' : ''}>
     </div>
 
     <div class="saisie-section">
@@ -2148,7 +2201,7 @@ function _reRenderMatchs() {
 
 function _commitSession() {
   if (!_draft.date) { alert("Veuillez saisir une date pour la session."); return; }
-  if (SESSIONS.find(s => s.date === _draft.date)) {
+  if (!_editMode && SESSIONS.find(s => s.date === _draft.date)) {
     alert(`Une session du ${fmtDate(_draft.date)} existe déjà.`); return;
   }
   const emptyButeurs = _draft.matchs.some(m =>
@@ -2157,13 +2210,15 @@ function _commitSession() {
   if (emptyButeurs) {
     alert("Certains buteurs ne sont pas renseignés.\nVeuillez sélectionner un joueur ou « CSC » pour chaque but."); return;
   }
-  if (!confirm(`Valider la session du ${fmtDate(_draft.date)} ?\n\nCette action est définitive.`)) return;
+  if (!confirm(_editMode
+    ? `Mettre à jour la session du ${fmtDate(_draft.date)} ?`
+    : `Valider la session du ${fmtDate(_draft.date)} ?\n\nCette action est définitive.`)) return;
 
   const finalPresences = {};
   Object.entries(_draft.presences).forEach(([p, info]) => {
     if (info.statut === _JOKER_ABSENT) return;
     finalPresences[p] = { statut: info.statut, equipe: info.equipe || "" };
-    if (JOKERS.has(p) && info.statut === "Présent") finalPresences[p].joker = true;
+    if ((JOKERS.has(p) || (_draft.tempJokers||[]).includes(p)) && info.statut === "Présent") finalPresences[p].joker = true;
   });
 
   const finalSession = {
@@ -2178,13 +2233,19 @@ function _commitSession() {
     }))
   };
 
-  SESSIONS.push(finalSession);
+  if (_editMode) {
+    const idx = SESSIONS.findIndex(s => s.date === finalSession.date);
+    if (idx !== -1) SESSIONS[idx] = finalSession; else SESSIONS.push(finalSession);
+  } else {
+    SESSIONS.push(finalSession);
+  }
   _fbSaveSession(finalSession).catch((err) => {
     alert('⚠️ Firebase — erreur de synchronisation :\n' + (err?.message || err?.code || String(err)));
   });
 
   _draft = null;
   _draftSavedAt = null;
+  _editMode = false;
   localStorage.removeItem("hmft_draft");
 
   // Naviguer vers la session validée
@@ -2211,6 +2272,15 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     renderSaisie(); return;
   }
   if (e.target.id === "saisie-save")   { _saveDraft(); return; }
+  if (e.target.id === "saisie-cancel-edit") {
+    _editMode = false;
+    _draft = null;
+    document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    document.querySelector(".main-tab[data-tab='session']").classList.add("active");
+    document.getElementById("panel-session").classList.add("active");
+    return;
+  }
   if (e.target.id === "saisie-clear") {
     if (confirm("Effacer le brouillon en cours ?")) {
       _draft = _newDraft(); _draftSavedAt = null;
