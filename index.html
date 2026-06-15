@@ -2050,8 +2050,11 @@ function _buildMatchsSectionHTML() {
 function renderSaisie() {
   if (!_draft) _loadDraft();
   const presents = _presentList();
-  const regularPlayers = ALL_PLAYERS.filter(p => !JOKERS.has(p));
-  const jokerPlayers   = ALL_PLAYERS.filter(p =>  JOKERS.has(p));
+  const regularPlayers = ALL_PLAYERS.filter(p => !JOKERS.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
+  const jokerPlayers   = ALL_PLAYERS.filter(p =>  JOKERS.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
+  const countPresents = Object.values(_draft.presences).filter(v => v.statut === "Présent").length;
+  const countAbsents  = Object.entries(_draft.presences).filter(([k, v]) => !JOKERS.has(k) && !(_draft.tempJokers||[]).includes(k) && v.statut === "Absent").length;
+  const countBlesses  = Object.entries(_draft.presences).filter(([k, v]) => !JOKERS.has(k) && !(_draft.tempJokers||[]).includes(k) && v.statut === "Blessé").length;
   const sacOpts    = ["", ...presents].map(p => `<option value="${p}" ${_draft.sac===p?"selected":""}>${p||"— non défini —"}</option>`).join("");
   const mailOpts   = ["", ...presents].map(p => `<option value="${p}" ${_draft.maillots===p?"selected":""}>${p||"— non défini —"}</option>`).join("");
   const statusTxt  = _draftSavedAt
@@ -2079,6 +2082,11 @@ function renderSaisie() {
 
     <div class="saisie-section">
       <div class="saisie-section-title">👥 Présences</div>
+      <div style="display:flex;gap:16px;margin-bottom:14px;font-size:13px;font-weight:600">
+        <span style="color:#66bb6a">✅ ${countPresents} présent${countPresents>1?"s":""}</span>
+        <span style="color:#ef5350">❌ ${countAbsents} absent${countAbsents>1?"s":""}</span>
+        <span style="color:#ffa726">🤕 ${countBlesses} blessé${countBlesses>1?"s":""}</span>
+      </div>
       <div class="saisie-presences-grid">
         ${regularPlayers.map(p => _presenceRowHTML(p, _draft.presences[p]?.statut||"Pas répondu", false)).join("")}
       </div>
@@ -2091,6 +2099,10 @@ function renderSaisie() {
         <input type="text" id="saisie-new-joker-input" placeholder="Nom du +1" class="saisie-date-input" style="font-size:13px;padding:6px 10px;flex:1;max-width:220px">
         <button class="saisie-btn secondary" id="saisie-add-temp-joker">+ Ajouter</button>
       </div>
+    </div>
+
+    <div class="saisie-section">
+      <div class="saisie-section-title">🎒 Logistique</div>
       <div class="saisie-logistique">
         <div class="saisie-logistique-row">
           <label>🎒 Sac</label>
