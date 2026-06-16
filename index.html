@@ -1948,7 +1948,7 @@ function _saveDraft() {
 }
 
 function _presentList() {
-  return Object.entries(_draft.presences).filter(([,v]) => v.statut === "Présent").map(([k]) => k);
+  return Object.entries(_draft.presences).filter(([,v]) => v.statut === "Présent").map(([k]) => k).sort((a, b) => a.localeCompare(b, "fr"));
 }
 
 function _activeTeams() {
@@ -1959,7 +1959,7 @@ function _activeTeams() {
 
 function _playersOfTeam(color) {
   return Object.entries(_draft.presences)
-    .filter(([,v]) => v.statut === "Présent" && v.equipe === color).map(([k]) => k);
+    .filter(([,v]) => v.statut === "Présent" && v.equipe === color).map(([k]) => k).sort((a, b) => a.localeCompare(b, "fr"));
 }
 
 function _presenceRowHTML(p, statut, isJoker, removable) {
@@ -2140,7 +2140,7 @@ function _reRenderMatchs() {
   sec.innerHTML = `<div class="saisie-section-title">⚽ Matchs</div>${_buildMatchsSectionHTML()}`;
 }
 
-function _commitSession() {
+async function _commitSession() {
   if (!_draft.date) { alert("Veuillez saisir une date pour la session."); return; }
   if (!_editMode && SESSIONS.find(s => s.date === _draft.date)) {
     alert(`Une session du ${fmtDate(_draft.date)} existe déjà.`); return;
@@ -2174,15 +2174,23 @@ function _commitSession() {
     }))
   };
 
+  const commitBtn = document.getElementById("saisie-commit");
+  if (commitBtn) { commitBtn.textContent = "Sauvegarde en cours…"; commitBtn.disabled = true; }
+
   if (_editMode) {
     const idx = SESSIONS.findIndex(s => s.date === finalSession.date);
     if (idx !== -1) SESSIONS[idx] = finalSession; else SESSIONS.push(finalSession);
   } else {
     SESSIONS.push(finalSession);
   }
-  _fbSaveSession(finalSession).catch((err) => {
+
+  try {
+    await _fbSaveSession(finalSession);
+  } catch(err) {
     alert('⚠️ Firebase — erreur de synchronisation :\n' + (err?.message || err?.code || String(err)));
-  });
+    if (commitBtn) { commitBtn.textContent = _editMode ? "Mettre à jour ✓" : "Valider la session ✓"; commitBtn.disabled = false; }
+    return;
+  }
 
   _draft = null;
   _draftSavedAt = null;
