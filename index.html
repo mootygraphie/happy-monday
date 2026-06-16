@@ -227,17 +227,40 @@
 
   /* ── KPI summary ── */
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 10px; margin-bottom: 2rem; }
+  .kpi-grid--main { grid-template-columns: repeat(2, 1fr); }
+  @media (min-width: 768px) {
+    .kpi-grid--main { grid-template-columns: repeat(4, 1fr); }
+    .kpi-card[data-card="meilleure-equipe"] { display: none; }
+    .kpi-card[data-card="avg-standalone"]   { display: none; }
+    .kpi-avg-desktop { display: block !important; }
+    .kpi-card[data-card="matchs"]           { order: 1; }
+    .kpi-card[data-card="buts-marques"]     { order: 2; }
+    .kpi-card[data-card="top-buteurs"]      { order: 3; }
+    .kpi-card[data-card="top-passeurs"]     { order: 4; }
+    .kpi-card[data-card="meilleure-attaque"]{ order: 5; }
+    .kpi-card[data-card="pire-defense"]     { order: 6; }
+    .kpi-card[data-card="plus-gros-score"]  { order: 7; }
+    .kpi-card[data-card="plus-grand-ecart"] { order: 8; }
+  }
+  .kpi-avg-desktop { display: none; }
   .kpi-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 20px; position: relative; overflow: hidden; }
   .kpi-card::after { content:""; position:absolute; inset:0; pointer-events:none; border-radius: var(--radius-lg); }
   .kpi-card.accent-green::after  { background: radial-gradient(circle at top left, rgba(67,160,71,.12), transparent 65%); }
   .kpi-card.accent-red::after    { background: radial-gradient(circle at top left, rgba(229,57,53,.10), transparent 65%); }
   .kpi-card.accent-amber::after  { background: radial-gradient(circle at top left, rgba(245,200,66,.10), transparent 65%); }
+  .kpi-card.accent-rouge::after  { background: radial-gradient(circle at top left, rgba(229,57,53,.15), transparent 65%); }
+  .kpi-card.accent-vert::after   { background: radial-gradient(circle at top left, rgba(67,160,71,.15),  transparent 65%); }
+  .kpi-card.accent-bleu::after   { background: radial-gradient(circle at top left, rgba(30,136,229,.15), transparent 65%); }
   .kpi-num { font-size: 46px; font-weight: 700; line-height: 1; letter-spacing: -.03em; font-style: italic; }
   .kpi-num.green  { color: #66bb6a; }
   .kpi-num.red    { color: #ef5350; }
   .kpi-num.amber  { color: var(--gold); }
+  .kpi-num.rouge  { color: var(--rouge); }
+  .kpi-num.vert   { color: var(--vert); }
+  .kpi-num.bleu   { color: var(--bleu); }
   .kpi-lbl { font-size: 11px; color: var(--text3); margin-top: 10px; text-transform: uppercase; letter-spacing: .07em; font-weight: 600; font-style: italic; }
-  .kpi-sub { font-size: 12px; color: var(--text2); margin-top: 5px; }
+  .kpi-sep { height: 1px; background: var(--border); margin: 10px 0 8px; opacity: .5; }
+  .kpi-sub { font-size: 12px; color: var(--text2); margin-top: 0; }
 
   /* ── Podium visuel ── */
   .podium-section { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1rem; }
@@ -937,6 +960,22 @@ function dot(color) {
 function teamTag(color) {
   return `<span style="white-space:nowrap">${dot(color)}<span style="color:var(--text)">${TEAM_LABEL[color] || color}</span></span>`;
 }
+function teamCls(t) { return t === "Bleue" ? "bleu" : t ? t.toLowerCase() : ""; }
+function teamTagColored(t) {
+  const cls = teamCls(t);
+  return `<span style="white-space:nowrap">${dot(t)}<span style="color:var(--${cls})">${TEAM_LABEL[t]||t}</span></span>`;
+}
+function kpiTeamCard(teams) { return teams && teams.length === 1 ? `accent-${teamCls(teams[0])}` : ""; }
+function scoreColors(m) {
+  if (!m || m.scoreA === m.scoreB) return { a: "var(--text3)", b: "var(--text3)" };
+  return m.scoreA > m.scoreB
+    ? { a: `var(--${teamCls(m.eqA)})`, b: "var(--text)" }
+    : { a: "var(--text)", b: `var(--${teamCls(m.eqB)})` };
+}
+function matchAccent(m) {
+  if (!m || m.scoreA === m.scoreB) return "";
+  return `accent-${teamCls(m.scoreA > m.scoreB ? m.eqA : m.eqB)}`;
+}
 function fmtDate(d) {
   const [y,m,j] = d.split("-");
   const months = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
@@ -1168,87 +1207,103 @@ function renderSessionDetail(session) {
   const top3ButeursHtml  = _buildTop3Html(buteursRanked,  "but",  "buts",  "buts");
   const top3PasseursHtml = _buildTop3Html(passeursRanked, "passe","passes","passes");
 
-  /* Meilleure équipe — jusqu'à 2 en cas d'égalité */
-  const bestTeamsHtml = winnerTeams.length === 0 ? "—" :
-    winnerTeams.slice(0,2).map(t => teamTag(t)).join(" &middot; ");
-
-  const avgButs = matchs.length > 0 ? (totalButs / matchs.length).toFixed(1) : "—";
-  h += `<div class="kpi-grid" style="margin-bottom:10px">
-    <div class="kpi-card">
-      <div class="kpi-num">${matchs.length}</div>
-      <div class="kpi-lbl">Matchs</div>
-      ${matchSub ? `<div class="kpi-sub">${matchSub}</div>` : ""}
+  /* KPI cards — pré-calcul */
+  const avgButs        = matchs.length > 0 ? (totalButs / matchs.length).toFixed(1) : "—";
+  const atkGoals       = maxGoalsFor;
+  const defGoals       = maxGoalsAgst;
+  const bestTeamsHtml  = winnerTeams.length===0?"—":winnerTeams.slice(0,2).map(t=>teamTagColored(t)).join(" &middot; ");
+  const atkTeamHtml    = bestAtkTeams.length===0?"—":bestAtkTeams.slice(0,2).map(t=>teamTagColored(t)).join(" &middot; ");
+  const defTeamHtml    = worstDefTeams.length===0?"—":worstDefTeams.slice(0,2).map(t=>teamTagColored(t)).join(" &middot; ");
+  const bestAccent     = kpiTeamCard(winnerTeams);
+  const atkAccent      = kpiTeamCard(bestAtkTeams);
+  const defAccent      = kpiTeamCard(worstDefTeams);
+  const grosAcc        = matchGros  ? matchAccent(matchGros)  : "";
+  const largeAcc       = matchLarge ? matchAccent(matchLarge) : "";
+  const grosCol        = scoreColors(matchGros);
+  const largeCol       = scoreColors(matchLarge);
+  const grosScoreBody  = matchGros ? `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
+      <div style="flex:1;text-align:left">
+        <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1;color:${grosCol.a}">${matchGros.scoreA}</div>
+        <div style="margin-top:5px">${badge(matchGros.eqA)}</div>
+      </div>
+      <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
+      <div style="flex:1;text-align:right">
+        <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1;color:${grosCol.b}">${matchGros.scoreB}</div>
+        <div style="margin-top:5px">${badge(matchGros.eqB)}</div>
+      </div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-lbl" style="margin-bottom:8px">Meilleure équipe</div>
-      <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${bestTeamsHtml}</div>
+    <div class="kpi-sep"></div>
+    <div style="display:flex;justify-content:space-between;gap:6px;font-size:11px;color:var(--text2)">
+      <span style="flex:1;text-align:left">${fmtBut(matchGros.buteursA)||"—"}</span>
+      <span style="flex:1;text-align:right">${fmtBut(matchGros.buteursB)||""}</span>
+    </div>` : `<span style="color:var(--text3)">—</span>`;
+  const largeScoreBody = matchLarge ? `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
+      <div style="flex:1;text-align:left">
+        <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1;color:${largeCol.a}">${matchLarge.scoreA}</div>
+        <div style="margin-top:5px">${badge(matchLarge.eqA)}</div>
+      </div>
+      <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
+      <div style="flex:1;text-align:right">
+        <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1;color:${largeCol.b}">${matchLarge.scoreB}</div>
+        <div style="margin-top:5px">${badge(matchLarge.eqB)}</div>
+      </div>
+    </div>
+    <div class="kpi-sep"></div>
+    <div style="display:flex;justify-content:space-between;gap:6px;font-size:11px;color:var(--text2)">
+      <span style="flex:1;text-align:left">${fmtBut(matchLarge.buteursA)||"—"}</span>
+      <span style="flex:1;text-align:right">${fmtBut(matchLarge.buteursB)||""}</span>
+    </div>` : `<span style="color:var(--text3)">—</span>`;
+
+  h += `<div class="kpi-grid kpi-grid--main" style="margin-bottom:2rem">
+    <div class="kpi-card accent-amber" data-card="matchs">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Matchs</div>
+      <div class="kpi-num amber">${matchs.length}</div>
+      ${matchSub ? `<div class="kpi-sep"></div><div class="kpi-sub">${matchSub}</div>` : ""}
+    </div>
+    <div class="kpi-card ${bestAccent}" data-card="meilleure-equipe">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure équipe</div>
+      <div style="font-size:24px;font-weight:700;line-height:1.2">${bestTeamsHtml}</div>
+      <div class="kpi-sep"></div>
       <div class="kpi-sub">${maxWins > 0 ? `${maxWins} victoire${maxWins>1?"s":""}` : "0 victoire"}</div>
     </div>
-    <div class="kpi-card accent-amber">
+    <div class="kpi-card accent-amber" data-card="buts-marques">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Buts marqués</div>
       <div class="kpi-num amber">${totalButs}</div>
-      <div class="kpi-lbl">Buts marqués</div>
+      <div class="kpi-avg-desktop"><div class="kpi-sep"></div><div class="kpi-sub">${avgButs} buts / match en moy.</div></div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-num" style="font-size:36px">${avgButs}</div>
-      <div class="kpi-lbl">Moy. buts / match</div>
+    <div class="kpi-card accent-amber" data-card="avg-standalone">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Moy. buts / match</div>
+      <div class="kpi-num amber">${avgButs}</div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:8px">Top buteurs</div>
+    <div class="kpi-card" data-card="top-buteurs">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top buteurs</div>
       ${top3ButeursHtml}
     </div>
-    <div class="kpi-card">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:8px">Top passeurs</div>
+    <div class="kpi-card" data-card="top-passeurs">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top passeurs</div>
       ${top3PasseursHtml}
     </div>
-  </div>`;
-
-  /* ── Rangée 2 : 4 KPI ── */
-  const atkGoals  = maxGoalsFor;
-  const defGoals  = maxGoalsAgst;
-  const atkHtml   = bestAtkTeams.length === 0 ? "—" : bestAtkTeams.slice(0,2).map(t=>teamTag(t)).join(" &middot; ");
-  const defHtml   = worstDefTeams.length === 0 ? "—" : worstDefTeams.slice(0,2).map(t=>teamTag(t)).join(" &middot; ");
-  h += `<div class="kpi-grid" style="margin-bottom:2rem">
-    <div class="kpi-card">
-      <div class="kpi-lbl" style="margin-bottom:8px">Meilleure attaque</div>
-      <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${atkHtml}</div>
+    <div class="kpi-card ${atkAccent}" data-card="meilleure-attaque">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure attaque</div>
+      <div style="font-size:24px;font-weight:700;line-height:1.2">${atkTeamHtml}</div>
+      <div class="kpi-sep"></div>
       <div class="kpi-sub">${atkGoals} but${atkGoals!==1?"s":""}</div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-lbl" style="margin-bottom:8px">Pire défense</div>
-      <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${defHtml}</div>
+    <div class="kpi-card ${defAccent}" data-card="pire-defense">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Pire défense</div>
+      <div style="font-size:24px;font-weight:700;line-height:1.2">${defTeamHtml}</div>
+      <div class="kpi-sep"></div>
       <div class="kpi-sub">${defGoals} but${defGoals!==1?"s":""}</div>
     </div>
-    <div class="kpi-card accent-amber">
+    <div class="kpi-card ${grosAcc}" data-card="plus-gros-score">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Plus gros score</div>
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
-        <div style="flex:1;text-align:left">
-          <div style="font-size:36px;font-weight:700;font-style:italic;color:var(--gold);line-height:1">${matchGros ? matchGros.scoreA : "—"}</div>
-          <div style="margin-top:5px">${matchGros ? badge(matchGros.eqA) : ""}</div>
-          <div style="margin-top:8px;font-size:11px;color:var(--text2)">${matchGros ? (fmtBut(matchGros.buteursA)||"—") : "—"}</div>
-        </div>
-        <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
-        <div style="flex:1;text-align:right">
-          <div style="font-size:36px;font-weight:700;font-style:italic;color:var(--gold);line-height:1">${matchGros ? matchGros.scoreB : "—"}</div>
-          <div style="margin-top:5px">${matchGros ? badge(matchGros.eqB) : ""}</div>
-          <div style="margin-top:8px;font-size:11px;color:var(--text2)">${matchGros ? (fmtBut(matchGros.buteursB)||"—") : ""}</div>
-        </div>
-      </div>
+      ${grosScoreBody}
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card ${largeAcc}" data-card="plus-grand-ecart">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Plus grand écart</div>
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
-        <div style="flex:1;text-align:left">
-          <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1">${matchLarge ? matchLarge.scoreA : "—"}</div>
-          <div style="margin-top:5px">${matchLarge ? badge(matchLarge.eqA) : ""}</div>
-          <div style="margin-top:8px;font-size:11px;color:var(--text2)">${matchLarge ? (fmtBut(matchLarge.buteursA)||"—") : "—"}</div>
-        </div>
-        <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
-        <div style="flex:1;text-align:right">
-          <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1">${matchLarge ? matchLarge.scoreB : "—"}</div>
-          <div style="margin-top:5px">${matchLarge ? badge(matchLarge.eqB) : ""}</div>
-          <div style="margin-top:8px;font-size:11px;color:var(--text2)">${matchLarge ? (fmtBut(matchLarge.buteursB)||"—") : ""}</div>
-        </div>
-      </div>
+      ${largeScoreBody}
     </div>
   </div>`;
 
@@ -1398,78 +1453,103 @@ function renderDashboard() {
   const top3Html      = _buildAggTop3(st.buteursRank.map(([n,p])=>[n,p.buts]),   "but",   "buts");
   const top3PassHtml  = _buildAggTop3(st.passeursRank.map(([n,p])=>[n,p.passes]),"passe","passes");
 
-  const avgButsAgg = st.allMatchs.length > 0 ? (totalButs / st.allMatchs.length).toFixed(1) : "—";
-  h += `<div class="kpi-grid" style="margin-bottom:10px">
-    <div class="kpi-card">
-      <div class="kpi-num">${st.allMatchs.length}</div>
-      <div class="kpi-lbl">Matchs</div>
-      ${matchSubAgg ? `<div class="kpi-sub">${matchSubAgg}</div>` : ""}
+  /* KPI cards agrégées — pré-calcul */
+  const avgButsAgg       = st.allMatchs.length > 0 ? (totalButs / st.allMatchs.length).toFixed(1) : "—";
+  const bestTeamsHtmlAgg = winnerTeamsAgg.length===0?"—":winnerTeamsAgg.slice(0,2).map(t=>teamTagColored(t)).join(" &middot; ");
+  const atkTeamHtmlAgg   = bestAtkTeams.length===0?"—":bestAtkTeams.slice(0,2).map(t=>teamTagColored(t)).join(" &middot; ");
+  const defTeamHtmlAgg   = worstDefTeams.length===0?"—":worstDefTeams.slice(0,2).map(t=>teamTagColored(t)).join(" &middot; ");
+  const bestAccentAgg    = kpiTeamCard(winnerTeamsAgg);
+  const atkAccentAgg     = kpiTeamCard(bestAtkTeams);
+  const defAccentAgg     = kpiTeamCard(worstDefTeams);
+  const grosAccAgg       = st.mostGoals  ? matchAccent(st.mostGoals)  : "";
+  const largeAccAgg      = st.biggestAmp ? matchAccent(st.biggestAmp) : "";
+  const grosColAgg       = scoreColors(st.mostGoals);
+  const largeColAgg      = scoreColors(st.biggestAmp);
+  const grosBodyAgg = st.mostGoals ? `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
+      <div style="flex:1;text-align:left">
+        <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1;color:${grosColAgg.a}">${st.mostGoals.scoreA}</div>
+        <div style="margin-top:5px">${badge(st.mostGoals.eqA)}</div>
+      </div>
+      <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
+      <div style="flex:1;text-align:right">
+        <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1;color:${grosColAgg.b}">${st.mostGoals.scoreB}</div>
+        <div style="margin-top:5px">${badge(st.mostGoals.eqB)}</div>
+      </div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-lbl" style="margin-bottom:8px">Meilleure équipe</div>
-      <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${winnerTeamsAgg.length===0?"—":winnerTeamsAgg.slice(0,2).map(t=>teamTag(t)).join(" &middot; ")}</div>
+    <div class="kpi-sep"></div>
+    <div style="display:flex;justify-content:space-between;gap:6px;font-size:11px;color:var(--text2)">
+      <span style="flex:1;text-align:left">${_fmtBut(st.mostGoals.buteursA)||"—"}</span>
+      <span style="flex:1;text-align:right">${_fmtBut(st.mostGoals.buteursB)||""}</span>
+    </div>
+    <div style="margin-top:6px;font-size:11px;color:var(--text3)">${fmtDate(st.mostGoals.date)}</div>` : `<span style="color:var(--text3)">—</span>`;
+  const largeBodyAgg = st.biggestAmp ? `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
+      <div style="flex:1;text-align:left">
+        <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1;color:${largeColAgg.a}">${st.biggestAmp.scoreA}</div>
+        <div style="margin-top:5px">${badge(st.biggestAmp.eqA)}</div>
+      </div>
+      <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
+      <div style="flex:1;text-align:right">
+        <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1;color:${largeColAgg.b}">${st.biggestAmp.scoreB}</div>
+        <div style="margin-top:5px">${badge(st.biggestAmp.eqB)}</div>
+      </div>
+    </div>
+    <div class="kpi-sep"></div>
+    <div style="display:flex;justify-content:space-between;gap:6px;font-size:11px;color:var(--text2)">
+      <span style="flex:1;text-align:left">${_fmtBut(st.biggestAmp.buteursA)||"—"}</span>
+      <span style="flex:1;text-align:right">${_fmtBut(st.biggestAmp.buteursB)||""}</span>
+    </div>
+    <div style="margin-top:6px;font-size:11px;color:var(--text3)">${fmtDate(st.biggestAmp.date)}</div>` : `<span style="color:var(--text3)">—</span>`;
+
+  h += `<div class="kpi-grid kpi-grid--main" style="margin-bottom:2rem">
+    <div class="kpi-card accent-amber" data-card="matchs">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Matchs</div>
+      <div class="kpi-num amber">${st.allMatchs.length}</div>
+      ${matchSubAgg ? `<div class="kpi-sep"></div><div class="kpi-sub">${matchSubAgg}</div>` : ""}
+    </div>
+    <div class="kpi-card ${bestAccentAgg}" data-card="meilleure-equipe">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure équipe</div>
+      <div style="font-size:24px;font-weight:700;line-height:1.2">${bestTeamsHtmlAgg}</div>
+      <div class="kpi-sep"></div>
       <div class="kpi-sub">${maxWinsAgg > 0 ? `${maxWinsAgg} victoire${maxWinsAgg>1?"s":""}` : "0 victoire"}</div>
     </div>
-    <div class="kpi-card accent-amber">
+    <div class="kpi-card accent-amber" data-card="buts-marques">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Buts marqués</div>
       <div class="kpi-num amber">${totalButs}</div>
-      <div class="kpi-lbl">Buts marqués</div>
+      <div class="kpi-avg-desktop"><div class="kpi-sep"></div><div class="kpi-sub">${avgButsAgg} buts / match en moy.</div></div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-num" style="font-size:36px">${avgButsAgg}</div>
-      <div class="kpi-lbl">Moy. buts / match</div>
+    <div class="kpi-card accent-amber" data-card="avg-standalone">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Moy. buts / match</div>
+      <div class="kpi-num amber">${avgButsAgg}</div>
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card" data-card="top-buteurs">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top buteurs</div>
       ${top3Html}
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card" data-card="top-passeurs">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top passeurs</div>
       ${top3PassHtml}
     </div>
-  </div>`;
-
-  h += `<div class="kpi-grid" style="margin-bottom:2rem">
-    <div class="kpi-card">
-      <div class="kpi-lbl" style="margin-bottom:8px">Meilleure attaque</div>
-      <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${bestAtkTeams.length===0?"—":bestAtkTeams.slice(0,2).map(t=>teamTag(t)).join(" &middot; ")}</div>
+    <div class="kpi-card ${atkAccentAgg}" data-card="meilleure-attaque">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure attaque</div>
+      <div style="font-size:24px;font-weight:700;line-height:1.2">${atkTeamHtmlAgg}</div>
+      <div class="kpi-sep"></div>
       <div class="kpi-sub">${atkGoals} but${atkGoals!==1?"s":""}</div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-lbl" style="margin-bottom:8px">Pire défense</div>
-      <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${worstDefTeams.length===0?"—":worstDefTeams.slice(0,2).map(t=>teamTag(t)).join(" &middot; ")}</div>
+    <div class="kpi-card ${defAccentAgg}" data-card="pire-defense">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Pire défense</div>
+      <div style="font-size:24px;font-weight:700;line-height:1.2">${defTeamHtmlAgg}</div>
+      <div class="kpi-sep"></div>
       <div class="kpi-sub">${defGoals} but${defGoals!==1?"s":""}</div>
     </div>
-    <div class="kpi-card accent-amber">
+    <div class="kpi-card ${grosAccAgg}" data-card="plus-gros-score">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Plus gros score</div>
-      ${st.mostGoals ? `<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
-        <div style="flex:1;text-align:left">
-          <div style="font-size:36px;font-weight:700;font-style:italic;color:var(--gold);line-height:1">${st.mostGoals.scoreA}</div>
-          <div style="margin-top:5px">${badge(st.mostGoals.eqA)}</div>
-          <div style="margin-top:8px;font-size:11px;color:var(--text2)">${_fmtBut(st.mostGoals.buteursA)||"—"}</div>
-        </div>
-        <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
-        <div style="flex:1;text-align:right">
-          <div style="font-size:36px;font-weight:700;font-style:italic;color:var(--gold);line-height:1">${st.mostGoals.scoreB}</div>
-          <div style="margin-top:5px">${badge(st.mostGoals.eqB)}</div>
-          <div style="margin-top:8px;font-size:11px;color:var(--text2)">${_fmtBut(st.mostGoals.buteursB)||""}</div>
-        </div>
-      </div><div style="margin-top:8px;font-size:11px;color:var(--text3)">${fmtDate(st.mostGoals.date)}</div>` : `<span style="color:var(--text3)">—</span>`}
+      ${grosBodyAgg}
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card ${largeAccAgg}" data-card="plus-grand-ecart">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Plus grand écart</div>
-      ${st.biggestAmp ? `<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
-        <div style="flex:1;text-align:left">
-          <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1">${st.biggestAmp.scoreA}</div>
-          <div style="margin-top:5px">${badge(st.biggestAmp.eqA)}</div>
-          <div style="margin-top:8px;font-size:11px;color:var(--text2)">${_fmtBut(st.biggestAmp.buteursA)||"—"}</div>
-        </div>
-        <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
-        <div style="flex:1;text-align:right">
-          <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1">${st.biggestAmp.scoreB}</div>
-          <div style="margin-top:5px">${badge(st.biggestAmp.eqB)}</div>
-          <div style="margin-top:8px;font-size:11px;color:var(--text2)">${_fmtBut(st.biggestAmp.buteursB)||""}</div>
-        </div>
-      </div><div style="margin-top:8px;font-size:11px;color:var(--text3)">${fmtDate(st.biggestAmp.date)}</div>` : `<span style="color:var(--text3)">—</span>`}
+      ${largeBodyAgg}
     </div>
   </div>`;
 
