@@ -1326,7 +1326,24 @@ function renderDashboard() {
   /* ── Ballon d'Or (All-Time uniquement) ── */
   if (currentPeriod === "all") {
     const bdMedals = ["🥇","🥈","🥉"];
-    const top5GA = Object.entries(st.ps)
+    const bdYear = new Date().getFullYear();
+
+    /* Calcul G/A sur l'année civile en cours uniquement */
+    const bdPs = {};
+    SESSIONS
+      .filter(s => new Date(s.date).getFullYear() === bdYear)
+      .forEach(s => {
+        (s.matchs || []).forEach(m => {
+          [...(m.buteursA||[]), ...(m.buteursB||[])].forEach(p => {
+            if (p) { if (!bdPs[p]) bdPs[p] = {buts:0,passes:0}; bdPs[p].buts++; }
+          });
+          [...(m.passeursA||[]), ...(m.passeursB||[])].forEach(p => {
+            if (p) { if (!bdPs[p]) bdPs[p] = {buts:0,passes:0}; bdPs[p].passes++; }
+          });
+        });
+      });
+
+    const top5GA = Object.entries(bdPs)
       .map(([name, p]) => ({ name, buts: p.buts, passes: p.passes, pts: p.buts * 10 + p.passes * 5 }))
       .filter(p => p.pts > 0)
       .sort((a, b) => b.pts - a.pts || b.buts - a.buts || a.name.localeCompare(b.name, "fr"))
@@ -1336,8 +1353,8 @@ function renderDashboard() {
       <div class="ballon-dor-head">
         <span class="ballon-dor-icon">🏆</span>
         <div>
-          <div class="ballon-dor-title">Ballon d'Or</div>
-          <div class="ballon-dor-meta">Classement G/A — All-Time</div>
+          <div class="ballon-dor-title">Ballon d'Or ${bdYear}</div>
+          <div class="ballon-dor-meta">Classement G/A — Janvier à aujourd'hui</div>
         </div>
         <div class="ballon-dor-formula">10 pts / but &nbsp;·&nbsp; 5 pts / passe</div>
       </div>
@@ -1360,7 +1377,7 @@ function renderDashboard() {
         </div>`;
       });
     } else {
-      h += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun but ou passe enregistré pour le moment.</div>`;
+      h += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun but ou passe enregistré en ${bdYear} pour le moment.</div>`;
     }
 
     h += `</div></div>`;
