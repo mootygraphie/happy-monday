@@ -1172,15 +1172,25 @@ function renderSessionDetail(session) {
   const bestTeamsHtml = winnerTeams.length === 0 ? "—" :
     winnerTeams.slice(0,2).map(t => teamTag(t)).join(" &middot; ");
 
+  const avgButs = matchs.length > 0 ? (totalButs / matchs.length).toFixed(1) : "—";
   h += `<div class="kpi-grid" style="margin-bottom:10px">
     <div class="kpi-card">
       <div class="kpi-num">${matchs.length}</div>
       <div class="kpi-lbl">Matchs</div>
       ${matchSub ? `<div class="kpi-sub">${matchSub}</div>` : ""}
     </div>
+    <div class="kpi-card">
+      <div class="kpi-lbl" style="margin-bottom:8px">Meilleure équipe</div>
+      <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${bestTeamsHtml}</div>
+      <div class="kpi-sub">${maxWins > 0 ? `${maxWins} victoire${maxWins>1?"s":""}` : "0 victoire"}</div>
+    </div>
     <div class="kpi-card accent-amber">
       <div class="kpi-num amber">${totalButs}</div>
       <div class="kpi-lbl">Buts marqués</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num" style="font-size:36px">${avgButs}</div>
+      <div class="kpi-lbl">Moy. buts / match</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:8px">Top buteurs</div>
@@ -1189,11 +1199,6 @@ function renderSessionDetail(session) {
     <div class="kpi-card">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:8px">Top passeurs</div>
       ${top3PasseursHtml}
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-lbl" style="margin-bottom:8px">Meilleure équipe</div>
-      <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${bestTeamsHtml}</div>
-      <div class="kpi-sub">${maxWins > 0 ? `${maxWins} victoire${maxWins>1?"s":""}` : "0 victoire"}</div>
     </div>
   </div>`;
 
@@ -1393,15 +1398,25 @@ function renderDashboard() {
   const top3Html      = _buildAggTop3(st.buteursRank.map(([n,p])=>[n,p.buts]),   "but",   "buts");
   const top3PassHtml  = _buildAggTop3(st.passeursRank.map(([n,p])=>[n,p.passes]),"passe","passes");
 
+  const avgButsAgg = st.allMatchs.length > 0 ? (totalButs / st.allMatchs.length).toFixed(1) : "—";
   h += `<div class="kpi-grid" style="margin-bottom:10px">
     <div class="kpi-card">
       <div class="kpi-num">${st.allMatchs.length}</div>
       <div class="kpi-lbl">Matchs</div>
       ${matchSubAgg ? `<div class="kpi-sub">${matchSubAgg}</div>` : ""}
     </div>
+    <div class="kpi-card">
+      <div class="kpi-lbl" style="margin-bottom:8px">Meilleure équipe</div>
+      <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${winnerTeamsAgg.length===0?"—":winnerTeamsAgg.slice(0,2).map(t=>teamTag(t)).join(" &middot; ")}</div>
+      <div class="kpi-sub">${maxWinsAgg > 0 ? `${maxWinsAgg} victoire${maxWinsAgg>1?"s":""}` : "0 victoire"}</div>
+    </div>
     <div class="kpi-card accent-amber">
       <div class="kpi-num amber">${totalButs}</div>
       <div class="kpi-lbl">Buts marqués</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num" style="font-size:36px">${avgButsAgg}</div>
+      <div class="kpi-lbl">Moy. buts / match</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top buteurs</div>
@@ -1410,11 +1425,6 @@ function renderDashboard() {
     <div class="kpi-card">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top passeurs</div>
       ${top3PassHtml}
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-lbl" style="margin-bottom:8px">Meilleure équipe</div>
-      <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${winnerTeamsAgg.length===0?"—":winnerTeamsAgg.slice(0,2).map(t=>teamTag(t)).join(" &middot; ")}</div>
-      <div class="kpi-sub">${maxWinsAgg > 0 ? `${maxWinsAgg} victoire${maxWinsAgg>1?"s":""}` : "0 victoire"}</div>
     </div>
   </div>`;
 
