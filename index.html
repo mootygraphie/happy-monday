@@ -748,32 +748,27 @@ try {
 } catch(e) { console.warn('Firebase init failed:', e); }
 
 async function _fbLoad() {
-  // 1. localStorage d'abord — instantané, toujours disponible
+  // 1. localStorage d'abord — instantané, filet de sécurité hors-ligne
   try {
     const local = JSON.parse(localStorage.getItem('hmft_sessions') || '[]');
     local.forEach(s => { if (!SESSIONS.find(e => e.date === s.date)) SESSIONS.push(s); });
   } catch(e) {}
 
-  // 2. Sync Firebase — peut échouer sur mauvaise connexion
+  // 2. Firebase = source de vérité quand disponible
   if (!_db) return;
   try {
-    const [sessSnap, delSnap] = await Promise.all([
-      _db.ref('sessions').once('value'),
-      _db.ref('deleted').once('value')
-    ]);
+    const sessSnap = await _db.ref('sessions').once('value');
     const fbSessions = sessSnap.val() || {};
-    const fbDeleted  = delSnap.val()  || {};
-    const deleted    = new Set(Object.keys(fbDeleted));
+    const fbDates = new Set(Object.keys(fbSessions));
+    // Retirer du cache les sessions absentes de Firebase (supprimées)
     for (let i = SESSIONS.length - 1; i >= 0; i--) {
-      if (deleted.has(SESSIONS[i].date)) SESSIONS.splice(i, 1);
+      if (!fbDates.has(SESSIONS[i].date)) SESSIONS.splice(i, 1);
     }
+    // Ajouter / mettre à jour depuis Firebase
     Object.values(fbSessions).forEach(s => {
-      if (!deleted.has(s.date)) {
-        const idx = SESSIONS.findIndex(e => e.date === s.date);
-        if (idx === -1) SESSIONS.push(s); else SESSIONS[idx] = s;
-      }
+      const idx = SESSIONS.findIndex(e => e.date === s.date);
+      if (idx === -1) SESSIONS.push(s); else SESSIONS[idx] = s;
     });
-    // Miroir Firebase → localStorage (Firebase gagne les conflits)
     localStorage.setItem('hmft_sessions', JSON.stringify(SESSIONS));
   } catch(e) { console.error('Firebase load error:', e); }
 }
@@ -798,10 +793,7 @@ async function _fbDeleteSession(date) {
   } catch(e) {}
 
   if (!_db) return;
-  await Promise.all([
-    _db.ref('sessions/' + date).remove(),
-    _db.ref('deleted/' + date).set(true)
-  ]);
+  await _db.ref('sessions/' + date).remove();
 }
 /* ═══════════════════════════════════════════════════════ */
 
