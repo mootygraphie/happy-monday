@@ -471,8 +471,8 @@
   /* ── Saisie ── */
   .saisie-wrap { max-width: 760px; }
   .saisie-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px; }
-  .saisie-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-  .saisie-btn { padding: 7px 16px; border-radius: 8px; border: 1px solid var(--border2); font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s, opacity .15s; }
+  .saisie-actions { display: flex; gap: 8px; flex-wrap: nowrap; }
+  .saisie-btn { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border2); font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s, opacity .15s; white-space: nowrap; }
   .saisie-btn.secondary { background: var(--bg2); color: var(--fg); }
   .saisie-btn.secondary:hover { background: var(--bg3); }
   .saisie-btn.danger { background: transparent; color: #e74c3c; border-color: #e74c3c44; }
@@ -2317,8 +2317,8 @@ function renderSaisie() {
         ${_editMode ? "" : `<button class="saisie-btn secondary" id="saisie-save">Enregistrer</button>`}
         ${_editMode
           ? `<button class="saisie-btn secondary" id="saisie-cancel-edit">Annuler</button>`
-          : `<button class="saisie-btn danger" id="saisie-clear">Effacer le brouillon</button>`}
-        <button class="saisie-btn primary" id="saisie-commit">${_editMode ? "Mettre à jour ✓" : "Valider la session ✓"}</button>
+          : `<button class="saisie-btn danger" id="saisie-clear">Effacer</button>`}
+        <button class="saisie-btn primary" id="saisie-commit">${_editMode ? "Mettre à jour ✓" : "Valider ✓"}</button>
       </div>
     </div>
 
