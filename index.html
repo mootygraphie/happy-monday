@@ -1647,6 +1647,7 @@ document.getElementById("periods").addEventListener("click", e => {
   document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
   pill.classList.add("active");
   currentPeriod = pill.dataset.period;
+  history.replaceState(null, '', '#' + currentPeriod);
   updateSubFilter(currentPeriod);
   renderDashboard();
 });
@@ -2695,7 +2696,14 @@ document.addEventListener("click", e => {
     });
   }
 
-  document.getElementById("period-sub").style.visibility = "hidden";
+  const _hashPeriod = location.hash.slice(1);
+  if (["last","month","year","all"].includes(_hashPeriod)) {
+    currentPeriod = _hashPeriod;
+    document.querySelectorAll(".pill").forEach(p => {
+      p.classList.toggle("active", p.dataset.period === currentPeriod);
+    });
+  }
+  updateSubFilter(currentPeriod);
   renderDashboard();
   populateSessionSelect();
   renderJoueurs();
