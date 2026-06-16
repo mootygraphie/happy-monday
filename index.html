@@ -130,9 +130,9 @@
   .card .match-line .dash { color: var(--text3); }
 
   .badge { display: inline-block; padding: 2px 9px; border-radius: 5px; font-size: 12px; font-weight: 600; }
-  .badge.rouge { background: var(--rouge-bg); color: var(--text); border: 1px solid var(--rouge-border); }
-  .badge.vert  { background: var(--vert-bg);  color: var(--text); border: 1px solid var(--vert-border); }
-  .badge.bleu, .badge.bleue  { background: var(--bleu-bg);  color: var(--text); border: 1px solid var(--bleu-border); }
+  .badge.rouge { background: var(--rouge-bg); color: var(--rouge); border: 1px solid var(--rouge-border); }
+  .badge.vert  { background: var(--vert-bg);  color: var(--vert);  border: 1px solid var(--vert-border); }
+  .badge.bleu, .badge.bleue  { background: var(--bleu-bg);  color: var(--bleu);  border: 1px solid var(--bleu-border); }
 
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
@@ -199,9 +199,9 @@
   .team-card-count { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--text3); background: var(--bg3); padding: 3px 10px; border-radius: 20px; }
   .team-card-players { padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 8px; }
   .team-player-pill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; }
-  .team-player-pill.rouge { background: var(--rouge-bg); color: var(--rouge); border: 1px solid var(--rouge-border); }
-  .team-player-pill.vert  { background: var(--vert-bg);  color: var(--vert);  border: 1px solid var(--vert-border); }
-  .team-player-pill.bleu, .team-player-pill.bleue  { background: var(--bleu-bg);  color: var(--bleu);  border: 1px solid var(--bleu-border); }
+  .team-player-pill.rouge { background: var(--rouge-bg); color: var(--text); border: 1px solid var(--rouge-border); }
+  .team-player-pill.vert  { background: var(--vert-bg);  color: var(--text); border: 1px solid var(--vert-border); }
+  .team-player-pill.bleu, .team-player-pill.bleue  { background: var(--bleu-bg);  color: var(--text); border: 1px solid var(--bleu-border); }
   .teams-vs-divider { display: flex; align-items: center; justify-content: center; }
   .teams-vs-badge { font-size: 11px; font-weight: 800; letter-spacing: .12em; color: var(--text3); background: var(--bg3); border: 1px solid var(--border); padding: 5px 11px; border-radius: 20px; }
   .no-team-section { margin-top: 10px; }
@@ -254,7 +254,7 @@
   .kpi-num { font-size: 46px; font-weight: 700; line-height: 1; letter-spacing: -.03em; font-style: italic; }
   .kpi-num.green  { color: #66bb6a; }
   .kpi-num.red    { color: #ef5350; }
-  .kpi-num.amber  { color: var(--gold); }
+  .kpi-num.amber  { color: var(--text); }
   .kpi-num.rouge  { color: var(--rouge); }
   .kpi-num.vert   { color: var(--vert); }
   .kpi-num.bleu   { color: var(--bleu); }
@@ -477,9 +477,9 @@
     display: inline-flex; align-items: center; gap: 7px;
     padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;
   }
-  .pp-color-pill.rouge { background: var(--rouge-bg); color: var(--rouge); border: 1px solid var(--rouge-border); }
-  .pp-color-pill.vert  { background: var(--vert-bg);  color: var(--vert);  border: 1px solid var(--vert-border); }
-  .pp-color-pill.bleue { background: var(--bleu-bg);  color: var(--bleu);  border: 1px solid var(--bleu-border); }
+  .pp-color-pill.rouge { background: var(--rouge-bg); color: var(--text); border: 1px solid var(--rouge-border); }
+  .pp-color-pill.vert  { background: var(--vert-bg);  color: var(--text); border: 1px solid var(--vert-border); }
+  .pp-color-pill.bleue { background: var(--bleu-bg);  color: var(--text); border: 1px solid var(--bleu-border); }
   .pp-teammate-list { display: flex; flex-direction: column; gap: 6px; }
   .pp-teammate-row {
     display: flex; align-items: center; gap: 10px;
@@ -968,8 +968,8 @@ function kpiTeamCard(teams) { return teams && teams.length === 1 ? `accent-${tea
 function scoreColors(m) {
   if (!m || m.scoreA === m.scoreB) return { a: "var(--text3)", b: "var(--text3)" };
   return m.scoreA > m.scoreB
-    ? { a: `var(--${teamCls(m.eqA)})`, b: "var(--text)" }
-    : { a: "var(--text)", b: `var(--${teamCls(m.eqB)})` };
+    ? { a: "var(--text)", b: "var(--text2)" }
+    : { a: "var(--text2)", b: "var(--text)" };
 }
 function matchAccent(m) {
   if (!m || m.scoreA === m.scoreB) return "";
