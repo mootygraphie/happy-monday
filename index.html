@@ -1638,11 +1638,11 @@ function renderJoueurs() {
   const colDef = [
     { key:"name",       label:"Joueur"         },
     { key:"taux",       label:"Taux prés."     },
+    { key:"buts",       label:"Buts"           },
+    { key:"passes",     label:"Passes"         },
     { key:"absences",   label:"Absences"       },
     { key:"blesses",    label:"Blessures"      },
     { key:"pasRepondu", label:"Non répondu"    },
-    { key:"buts",       label:"Buts"           },
-    { key:"passes",     label:"Passes"         },
     { key:"sac",        label:"Sac 🎒"         },
     { key:"maillots",   label:"Maillots 👕"    },
     { key:"favTeam",    label:"Éq. préf."      },
@@ -1650,11 +1650,11 @@ function renderJoueurs() {
   const jokerColDef = [
     { key:"name",       label:"Joueur"         },
     { key:"presences",  label:"Présences"      },
+    { key:"buts",       label:"Buts"           },
+    { key:"passes",     label:"Passes"         },
     { key:"absences",   label:"Absences"       },
     { key:"blesses",    label:"Blessures"      },
     { key:"pasRepondu", label:"Non répondu"    },
-    { key:"buts",       label:"Buts"           },
-    { key:"passes",     label:"Passes"         },
     { key:"sac",        label:"Sac 🎒"         },
     { key:"maillots",   label:"Maillots 👕"    },
     { key:"favTeam",    label:"Éq. préf."      },
@@ -1697,11 +1697,11 @@ function renderJoueurs() {
     return `<tr>
       <td class="name"><button class="player-link" data-player="${r.name}">${r.name}</button></td>
       <td class="taux-cell">${tauxCell}</td>
+      <td class="num ${r.buts > 0 ? "highlight" : "zero"}">${r.buts}</td>
+      <td class="num ${r.passes > 0 ? "highlight" : "zero"}">${r.passes}</td>
       <td class="num ${r.absences > 0 ? "danger" : "zero"}">${r.absences}</td>
       <td class="num ${r.blesses > 0 ? "warn" : "zero"}">${r.blesses}</td>
       <td class="num ${r.pasRepondu > 0 ? "nr" : "zero"}">${r.pasRepondu}</td>
-      <td class="num ${r.buts > 0 ? "highlight" : "zero"}">${r.buts}</td>
-      <td class="num ${r.passes > 0 ? "highlight" : "zero"}">${r.passes}</td>
       <td class="num ${r.sac > 0 ? "highlight" : "zero"}">${r.sac}</td>
       <td class="num ${r.maillots > 0 ? "highlight" : "zero"}">${r.maillots}</td>
       <td class="team-cell">${teamCell}</td>
@@ -1713,11 +1713,11 @@ function renderJoueurs() {
     return `<tr>
       <td class="name"><button class="player-link" data-player="${r.name}">${r.name}<span class="joker-tag">+1</span></button></td>
       <td class="num ${r.presences > 0 ? "highlight" : "zero"}">${r.presences}</td>
-      <td class="num zero">${dash_}</td>
-      <td class="num zero">${dash_}</td>
-      <td class="num zero">${dash_}</td>
       <td class="num ${r.buts > 0 ? "highlight" : "zero"}">${r.buts}</td>
       <td class="num ${r.passes > 0 ? "highlight" : "zero"}">${r.passes}</td>
+      <td class="num zero">${dash_}</td>
+      <td class="num zero">${dash_}</td>
+      <td class="num zero">${dash_}</td>
       <td class="num zero">${dash_}</td>
       <td class="num zero">${dash_}</td>
       <td class="team-cell">${teamCell}</td>
