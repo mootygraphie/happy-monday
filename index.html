@@ -1998,10 +1998,12 @@ function openPlayerPanel(playerName) {
       <div class="pp-stat-card">
         <div class="pp-stat-val ${st.buts>0?"blue":"muted"}">${st.buts}</div>
         <div class="pp-stat-lbl">Buts</div>
+        ${st.matchsJoues>0?`<div class="pp-stat-sub">moy. ${(st.buts/st.matchsJoues).toFixed(2).replace(".",",")} / m</div>`:""}
       </div>
       <div class="pp-stat-card">
         <div class="pp-stat-val ${st.passesDecisives>0?"blue":"muted"}">${st.passesDecisives}</div>
-        <div class="pp-stat-lbl">Passes décisives</div>
+        <div class="pp-stat-lbl">Passes dé.</div>
+        ${st.matchsJoues>0?`<div class="pp-stat-sub">moy. ${(st.passesDecisives/st.matchsJoues).toFixed(2).replace(".",",")} / m</div>`:""}
       </div>
       <div class="pp-stat-card">
         <div class="pp-stat-val ${st.victoires>0?"green":"muted"}">${st.victoires}</div>
