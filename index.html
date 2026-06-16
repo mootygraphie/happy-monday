@@ -1745,6 +1745,7 @@ function renderJoueurs() {
 function computePlayerDetailStats(playerName) {
   const sessionsByDate = [...SESSIONS].sort((a,b) => new Date(a.date)-new Date(b.date));
   let presences = 0, absences = 0, blesses = 0, buts = 0, episodesBlessures = 0, pasRepondu = 0, inEpisode = false;
+  let matchsJoues = 0, victoires = 0, defaites = 0, sac = 0, maillots = 0;
   const teamCount = {}, winsByColor = {}, teammateCount = {}, winTeammateCount = {};
   let bestMatch = null, bestMatchGoals = 0;
 
@@ -1753,6 +1754,8 @@ function computePlayerDetailStats(playerName) {
     if (!info) { inEpisode = false; return; }
     if (info.statut === "Présent") {
       presences++; inEpisode = false;
+      if (s.sac === playerName) sac++;
+      if (s.maillots === playerName) maillots++;
       const myEquipe = info.equipe || null;
       if (myEquipe) {
         teamCount[myEquipe] = (teamCount[myEquipe] || 0) + 1;
@@ -1766,13 +1769,18 @@ function computePlayerDetailStats(playerName) {
         buts += g;
         if (g > bestMatchGoals) { bestMatchGoals = g; bestMatch = {...m, date: s.date}; }
         if (!myEquipe || (m.eqA !== myEquipe && m.eqB !== myEquipe)) return;
+        matchsJoues++;
         const winner = m.scoreA > m.scoreB ? m.eqA : m.scoreB > m.scoreA ? m.eqB : null;
-        if (winner !== myEquipe) return;
-        winsByColor[myEquipe] = (winsByColor[myEquipe] || 0) + 1;
-        Object.entries(s.presences).forEach(([other, oi]) => {
-          if (other === playerName || oi.statut !== "Présent" || oi.equipe !== myEquipe) return;
-          winTeammateCount[other] = (winTeammateCount[other] || 0) + 1;
-        });
+        if (winner === myEquipe) {
+          victoires++;
+          winsByColor[myEquipe] = (winsByColor[myEquipe] || 0) + 1;
+          Object.entries(s.presences).forEach(([other, oi]) => {
+            if (other === playerName || oi.statut !== "Présent" || oi.equipe !== myEquipe) return;
+            winTeammateCount[other] = (winTeammateCount[other] || 0) + 1;
+          });
+        } else if (winner !== null) {
+          defaites++;
+        }
       });
     } else if (info.statut === "Absent") {
       absences++; inEpisode = false;
@@ -1794,6 +1802,7 @@ function computePlayerDetailStats(playerName) {
   const prefWinColor = maxWins > 0 ? Object.entries(winsByColor).sort((a,b)=>b[1]-a[1])[0][0] : null;
 
   return { presences, absences, blesses, episodesBlessures, pasRepondu, buts,
+           matchsJoues, victoires, defaites, sac, maillots,
            bestMatch, bestMatchGoals, recurringColor, teamCount,
            top3Teammates: top3T, top3WinTeammates: top3WT, prefWinColor, maxWins };
 }
@@ -1814,21 +1823,41 @@ function openPlayerPanel(playerName) {
         <div class="pp-stat-lbl">Présences</div>
       </div>
       <div class="pp-stat-card">
-        <div class="pp-stat-val ${st.absences>0?"red":"muted"}">${st.absences}</div>
-        <div class="pp-stat-lbl">Absences</div>
-      </div>
-      <div class="pp-stat-card">
-        <div class="pp-stat-val ${st.episodesBlessures>0?"amber":"muted"}">${st.episodesBlessures}</div>
-        <div class="pp-stat-lbl">Blessures</div>
-        ${st.blesses>0?`<div class="pp-stat-sub">${st.blesses} session${st.blesses>1?"s":""} manquée${st.blesses>1?"s":""}</div>`:""}
+        <div class="pp-stat-val muted">${st.matchsJoues}</div>
+        <div class="pp-stat-lbl">Matchs</div>
       </div>
       <div class="pp-stat-card">
         <div class="pp-stat-val ${st.buts>0?"blue":"muted"}">${st.buts}</div>
         <div class="pp-stat-lbl">Buts</div>
       </div>
       <div class="pp-stat-card">
+        <div class="pp-stat-val ${st.victoires>0?"green":"muted"}">${st.victoires}</div>
+        <div class="pp-stat-lbl">Victoires</div>
+      </div>
+      <div class="pp-stat-card">
+        <div class="pp-stat-val ${st.absences>0?"red":"muted"}">${st.absences}</div>
+        <div class="pp-stat-lbl">Absences</div>
+      </div>
+      <div class="pp-stat-card">
+        <div class="pp-stat-val ${st.defaites>0?"red":"muted"}">${st.defaites}</div>
+        <div class="pp-stat-lbl">Défaites</div>
+      </div>
+      <div class="pp-stat-card">
+        <div class="pp-stat-val ${st.episodesBlessures>0?"amber":"muted"}">${st.episodesBlessures}</div>
+        <div class="pp-stat-lbl">Blessures</div>
+        ${st.blesses>0?`<div class="pp-stat-sub">${st.blesses} sess. manquée${st.blesses>1?"s":""}</div>`:""}
+      </div>
+      <div class="pp-stat-card">
         <div class="pp-stat-val muted">${st.pasRepondu}</div>
         <div class="pp-stat-lbl">Pas répondu</div>
+      </div>
+      <div class="pp-stat-card">
+        <div class="pp-stat-val ${st.sac>0?"amber":"muted"}">${st.sac}</div>
+        <div class="pp-stat-lbl">Sac 🎒</div>
+      </div>
+      <div class="pp-stat-card">
+        <div class="pp-stat-val ${st.maillots>0?"amber":"muted"}">${st.maillots}</div>
+        <div class="pp-stat-lbl">Maillots 👕</div>
       </div>
     </div>
   </div>`;
