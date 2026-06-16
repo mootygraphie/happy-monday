@@ -1323,65 +1323,7 @@ function renderDashboard() {
   const st = computeStats(sessions);
   let h = "";
 
-  /* ── Ballon d'Or (All-Time uniquement) ── */
-  if (currentPeriod === "all") {
-    const bdMedals = ["🥇","🥈","🥉"];
-    const bdYear = new Date().getFullYear();
-
-    /* Calcul G/A sur l'année civile en cours uniquement */
-    const bdPs = {};
-    SESSIONS
-      .filter(s => new Date(s.date).getFullYear() === bdYear)
-      .forEach(s => {
-        (s.matchs || []).forEach(m => {
-          [...(m.buteursA||[]), ...(m.buteursB||[])].forEach(p => {
-            if (p) { if (!bdPs[p]) bdPs[p] = {buts:0,passes:0}; bdPs[p].buts++; }
-          });
-          [...(m.passeursA||[]), ...(m.passeursB||[])].forEach(p => {
-            if (p) { if (!bdPs[p]) bdPs[p] = {buts:0,passes:0}; bdPs[p].passes++; }
-          });
-        });
-      });
-
-    const top5GA = Object.entries(bdPs)
-      .map(([name, p]) => ({ name, buts: p.buts, passes: p.passes, pts: p.buts * 10 + p.passes * 5 }))
-      .filter(p => p.pts > 0)
-      .sort((a, b) => b.pts - a.pts || b.buts - a.buts || a.name.localeCompare(b.name, "fr"))
-      .slice(0, 5);
-
-    h += `<div class="ballon-dor-card">
-      <div class="ballon-dor-head">
-        <span class="ballon-dor-icon">🏆</span>
-        <div>
-          <div class="ballon-dor-title">Ballon d'Or ${bdYear}</div>
-          <div class="ballon-dor-meta">Classement G/A — Janvier à aujourd'hui</div>
-        </div>
-        <div class="ballon-dor-formula">10 pts / but &nbsp;·&nbsp; 5 pts / passe</div>
-      </div>
-      <div class="bd-list">`;
-
-    if (top5GA.length) {
-      const maxPts = top5GA[0].pts;
-      top5GA.forEach((p, i) => {
-        const rankHtml = i < 3
-          ? `<span class="bd-rank">${bdMedals[i]}</span>`
-          : `<span class="bd-rank num">${i+1}</span>`;
-        const gaStr = [p.buts > 0 ? `${p.buts}G` : null, p.passes > 0 ? `${p.passes}A` : null].filter(Boolean).join(" · ");
-        const barPct = Math.round((p.pts / maxPts) * 100);
-        h += `<div class="bd-row${i===0?" bd-first":""}">
-          ${rankHtml}
-          <span class="bd-name">${pLink(p.name)}</span>
-          <div class="bd-bar-wrap"><div class="bd-bar" style="width:${barPct}%"></div></div>
-          <span class="bd-pts">${p.pts}</span>
-          <span class="bd-ga">${gaStr}</span>
-        </div>`;
-      });
-    } else {
-      h += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun but ou passe enregistré en ${bdYear} pour le moment.</div>`;
-    }
-
-    h += `</div></div>`;
-  }
+  /* ── Palmarès Ballon d'Or par année (All-Time) — à implémenter quand on aura les données des années précédentes ── */
 
   /* ── Calculs agrégés ── */
   let draws = 0;
@@ -1875,7 +1817,56 @@ function renderJoueurs() {
       </table>
     </div>` : "";
 
-  container.innerHTML = `
+  /* ── Ballon d'Or année en cours ── */
+  const _bdYear = new Date().getFullYear();
+  const _bdPs = {};
+  SESSIONS.filter(s => new Date(s.date).getFullYear() === _bdYear).forEach(s => {
+    (s.matchs || []).forEach(m => {
+      [...(m.buteursA||[]), ...(m.buteursB||[])].forEach(p => {
+        if (p) { if (!_bdPs[p]) _bdPs[p] = {buts:0,passes:0}; _bdPs[p].buts++; }
+      });
+      [...(m.passeursA||[]), ...(m.passeursB||[])].forEach(p => {
+        if (p) { if (!_bdPs[p]) _bdPs[p] = {buts:0,passes:0}; _bdPs[p].passes++; }
+      });
+    });
+  });
+  const _bdTop5 = Object.entries(_bdPs)
+    .map(([name, p]) => ({ name, buts: p.buts, passes: p.passes, pts: p.buts * 10 + p.passes * 5 }))
+    .filter(p => p.pts > 0)
+    .sort((a, b) => b.pts - a.pts || b.buts - a.buts || a.name.localeCompare(b.name, "fr"))
+    .slice(0, 5);
+  const _bdMedals = ["🥇","🥈","🥉"];
+
+  let _bdHtml = `<div class="ballon-dor-card" style="margin-bottom:2rem">
+    <div class="ballon-dor-head">
+      <span class="ballon-dor-icon">🏆</span>
+      <div>
+        <div class="ballon-dor-title">Ballon d'Or ${_bdYear}</div>
+        <div class="ballon-dor-meta">Classement G/A — Janvier à aujourd'hui</div>
+      </div>
+      <div class="ballon-dor-formula">10 pts / but &nbsp;·&nbsp; 5 pts / passe</div>
+    </div>
+    <div class="bd-list">`;
+  if (_bdTop5.length) {
+    const _bdMax = _bdTop5[0].pts;
+    _bdTop5.forEach((p, i) => {
+      const _bdRank = i < 3 ? `<span class="bd-rank">${_bdMedals[i]}</span>` : `<span class="bd-rank num">${i+1}</span>`;
+      const _bdGa = [p.buts > 0 ? `${p.buts}G` : null, p.passes > 0 ? `${p.passes}A` : null].filter(Boolean).join(" · ");
+      const _bdBar = Math.round((p.pts / _bdMax) * 100);
+      _bdHtml += `<div class="bd-row${i===0?" bd-first":""}">
+        ${_bdRank}
+        <span class="bd-name">${pLink(p.name)}</span>
+        <div class="bd-bar-wrap"><div class="bd-bar" style="width:${_bdBar}%"></div></div>
+        <span class="bd-pts">${p.pts}</span>
+        <span class="bd-ga">${_bdGa}</span>
+      </div>`;
+    });
+  } else {
+    _bdHtml += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun but ou passe enregistré en ${_bdYear} pour le moment.</div>`;
+  }
+  _bdHtml += `</div></div>`;
+
+  container.innerHTML = _bdHtml + `
     <div class="joueurs-section-label">Roster</div>
     <div class="players-table-wrap">
       <table class="players-table" id="roster-table">
