@@ -130,9 +130,9 @@
   .card .match-line .dash { color: var(--text3); }
 
   .badge { display: inline-block; padding: 2px 9px; border-radius: 5px; font-size: 12px; font-weight: 600; }
-  .badge.rouge { background: var(--rouge-bg); color: var(--rouge); border: 1px solid var(--rouge-border); }
-  .badge.vert  { background: var(--vert-bg);  color: var(--vert);  border: 1px solid var(--vert-border); }
-  .badge.bleu, .badge.bleue  { background: var(--bleu-bg);  color: var(--bleu);  border: 1px solid var(--bleu-border); }
+  .badge.rouge { background: var(--rouge-bg); color: var(--text); border: 1px solid var(--rouge-border); }
+  .badge.vert  { background: var(--vert-bg);  color: var(--text); border: 1px solid var(--vert-border); }
+  .badge.bleu, .badge.bleue  { background: var(--bleu-bg);  color: var(--text); border: 1px solid var(--bleu-border); }
 
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
@@ -962,8 +962,7 @@ function teamTag(color) {
 }
 function teamCls(t) { return t === "Bleue" ? "bleu" : t ? t.toLowerCase() : ""; }
 function teamTagColored(t) {
-  const cls = teamCls(t);
-  return `<span style="white-space:nowrap">${dot(t)}<span style="color:var(--${cls})">${TEAM_LABEL[t]||t}</span></span>`;
+  return `<span style="white-space:nowrap">${dot(t)}<span style="color:var(--text)">${TEAM_LABEL[t]||t}</span></span>`;
 }
 function kpiTeamCard(teams) { return teams && teams.length === 1 ? `accent-${teamCls(teams[0])}` : ""; }
 function scoreColors(m) {
