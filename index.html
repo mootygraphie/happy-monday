@@ -341,7 +341,7 @@
   /* ── Lock screen ── */
   #lock-screen {
     position: fixed; inset: 0; z-index: 9999;
-    background: var(--bg);
+    background: rgba(0,0,0,.72);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 0;
   }
@@ -534,13 +534,19 @@
 
 <div id="lock-screen" style="display:none">
   <div class="lock-card">
-    <div class="lock-icon">🔒</div>
-    <h2>Accès restreint</h2>
-    <p>Happy Monday Football Team</p>
+    <div class="lock-icon">🔑</div>
+    <h2>Mode admin</h2>
+    <p>Mot de passe administrateur</p>
     <input type="password" id="pwd-input" placeholder="Mot de passe" autocomplete="current-password">
     <button class="lock-btn" id="pwd-btn">Entrer</button>
     <div class="lock-err" id="pwd-err"></div>
   </div>
+</div>
+
+<div id="fb-saving-overlay" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.8);flex-direction:column;align-items:center;justify-content:center;gap:16px;pointer-events:all">
+  <div style="font-size:44px;animation:ldPulse 1.2s ease-in-out infinite">💾</div>
+  <div style="color:#fff;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Sauvegarde en cours…</div>
+  <div style="color:rgba(255,255,255,.45);font-size:12px">Ne pas fermer ni actualiser cette page</div>
 </div>
 
 <header>
@@ -564,11 +570,7 @@
       Actualiser
     </button>
     <button class="refresh-btn" id="theme-btn" style="padding:8px 10px"></button>
-    <button class="refresh-btn" id="logout-btn" title="Se déconnecter" style="padding:8px 10px">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M5 2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h3"/><path d="M9 10l3-3-3-3"/><path d="M12 7H5"/>
-      </svg>
-    </button>
+    <button class="refresh-btn" id="admin-btn" style="padding:8px 10px"></button>
   </div>
   <p id="header-sub"></p>
 </header>
@@ -641,39 +643,48 @@ function applyRole(role) {
   document.getElementById("edit-session-btn").style.display   = isAdmin ? "inline-flex" : "none";
 }
 
-(function() {
-  const HASH_USER  = "2db71540fe9ba207f224a702328bf24adefc72c0b3fd4b4d7544fce7146b468b";
-  const HASH_ADMIN = "d12ef5147a4f076dab0c5ae816d718094852541d08135686f96a8c1d8fd0d070";
+const HASH_ADMIN = "d12ef5147a4f076dab0c5ae816d718094852541d08135686f96a8c1d8fd0d070";
 
-  async function sha256(str) {
-    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+async function _sha256(str) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+function updateAdminBtn() {
+  const btn = document.getElementById("admin-btn");
+  if (!btn) return;
+  const isAdmin = sessionStorage.getItem("hmft_role") === "admin";
+  const LOCK   = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6.5" width="10" height="6.5" rx="1.5"/><path d="M4.5 6.5V5a2.5 2.5 0 0 1 5 0v1.5"/></svg>`;
+  const UNLOCK = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6.5" width="10" height="6.5" rx="1.5"/><path d="M4.5 6.5V5A2.5 2.5 0 0 1 9.5 5"/></svg>`;
+  btn.innerHTML = isAdmin ? UNLOCK : LOCK;
+  btn.title = isAdmin ? "Quitter le mode admin" : "Connexion admin";
+  btn.style.color = isAdmin ? "var(--gold)" : "";
+}
+
+async function tryAdminUnlock() {
+  const val = document.getElementById("pwd-input").value;
+  const hash = await _sha256(val);
+  if (hash === HASH_ADMIN) {
+    sessionStorage.setItem("hmft_role", "admin");
+    document.getElementById("lock-screen").style.display = "none";
+    document.getElementById("pwd-input").value = "";
+    document.getElementById("pwd-err").textContent = "";
+    applyRole("admin");
+    updateAdminBtn();
+  } else {
+    const inp = document.getElementById("pwd-input");
+    const err = document.getElementById("pwd-err");
+    inp.classList.add("error");
+    err.textContent = "Mot de passe incorrect.";
+    inp.value = "";
+    setTimeout(() => inp.classList.remove("error"), 400);
   }
+}
 
-  async function tryUnlock() {
-    const val = document.getElementById("pwd-input").value;
-    const hash = await sha256(val);
-    if (hash === HASH_USER || hash === HASH_ADMIN) {
-      const role = hash === HASH_ADMIN ? "admin" : "user";
-      sessionStorage.setItem("hmft_auth", "1");
-      sessionStorage.setItem("hmft_role", role);
-      document.getElementById("lock-screen").style.display = "none";
-      applyRole(role);
-    } else {
-      const inp = document.getElementById("pwd-input");
-      const err = document.getElementById("pwd-err");
-      inp.classList.add("error");
-      err.textContent = "Mot de passe incorrect.";
-      inp.value = "";
-      setTimeout(() => inp.classList.remove("error"), 400);
-    }
-  }
-
-  document.getElementById("pwd-btn").addEventListener("click", tryUnlock);
-  document.getElementById("pwd-input").addEventListener("keydown", e => {
-    if (e.key === "Enter") tryUnlock();
-  });
-})();
+document.getElementById("pwd-btn").addEventListener("click", tryAdminUnlock);
+document.getElementById("pwd-input").addEventListener("keydown", e => {
+  if (e.key === "Enter") tryAdminUnlock();
+});
 
 /* ── Thème clair / sombre ── */
 (function() {
@@ -701,10 +712,17 @@ document.getElementById("refresh-btn").addEventListener("click", () => {
   location.reload();
 });
 
-document.getElementById("logout-btn").addEventListener("click", () => {
-  sessionStorage.removeItem("hmft_auth");
-  sessionStorage.removeItem("hmft_role");
-  location.reload();
+document.getElementById("admin-btn").addEventListener("click", () => {
+  if (sessionStorage.getItem("hmft_role") === "admin") {
+    sessionStorage.removeItem("hmft_role");
+    applyRole("user");
+    updateAdminBtn();
+  } else {
+    document.getElementById("pwd-input").value = "";
+    document.getElementById("pwd-err").textContent = "";
+    document.getElementById("lock-screen").style.display = "flex";
+    setTimeout(() => document.getElementById("pwd-input").focus(), 50);
+  }
 });
 
 /* ═══════════════════════════════════════════════════════
@@ -2174,8 +2192,9 @@ async function _commitSession() {
     }))
   };
 
-  const commitBtn = document.getElementById("saisie-commit");
-  if (commitBtn) { commitBtn.textContent = "Sauvegarde en cours…"; commitBtn.disabled = true; }
+  const overlay = document.getElementById("fb-saving-overlay");
+  if (overlay) overlay.style.display = "flex";
+  window.onbeforeunload = () => "La session est en cours de sauvegarde. Quitter maintenant perdra vos données.";
 
   if (_editMode) {
     const idx = SESSIONS.findIndex(s => s.date === finalSession.date);
@@ -2187,10 +2206,14 @@ async function _commitSession() {
   try {
     await _fbSaveSession(finalSession);
   } catch(err) {
+    if (overlay) overlay.style.display = "none";
+    window.onbeforeunload = null;
     alert('⚠️ Firebase — erreur de synchronisation :\n' + (err?.message || err?.code || String(err)));
-    if (commitBtn) { commitBtn.textContent = _editMode ? "Mettre à jour ✓" : "Valider la session ✓"; commitBtn.disabled = false; }
     return;
   }
+
+  if (overlay) overlay.style.display = "none";
+  window.onbeforeunload = null;
 
   _draft = null;
   _draftSavedAt = null;
@@ -2440,12 +2463,8 @@ document.addEventListener("click", e => {
       `<p class="no-data" style="margin-top:1rem">Aucune session enregistrée.</p>`;
   }
 
-  if (sessionStorage.getItem("hmft_auth") !== "1") {
-    document.getElementById("lock-screen").style.display = "flex";
-    setTimeout(() => document.getElementById("pwd-input").focus(), 50);
-  } else {
-    applyRole(sessionStorage.getItem("hmft_role") || "user");
-  }
+  applyRole(sessionStorage.getItem("hmft_role") === "admin" ? "admin" : "user");
+  updateAdminBtn();
   document.getElementById("loading-screen").style.display = "none";
 })();
 </script>
