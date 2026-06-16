@@ -230,19 +230,22 @@
   .kpi-grid--main { grid-template-columns: repeat(2, 1fr); }
   @media (min-width: 768px) {
     .kpi-grid--main { grid-template-columns: repeat(4, 1fr); }
-    .kpi-card[data-card="meilleure-equipe"] { display: none; }
-    .kpi-card[data-card="avg-standalone"]   { display: none; }
+    .kpi-card[data-card="avg-standalone"]    { display: none; }
+    .kpi-card[data-card="meilleure-attaque"] { display: none; }
+    .kpi-card[data-card="pire-defense"]      { display: none; }
+    .kpi-card[data-card="atk-def-combined"]  { display: block; }
     .kpi-avg-desktop { display: block !important; }
-    .kpi-card[data-card="matchs"]           { order: 1; }
-    .kpi-card[data-card="buts-marques"]     { order: 2; }
-    .kpi-card[data-card="top-buteurs"]      { order: 3; }
-    .kpi-card[data-card="top-passeurs"]     { order: 4; }
-    .kpi-card[data-card="meilleure-attaque"]{ order: 5; }
-    .kpi-card[data-card="pire-defense"]     { order: 6; }
-    .kpi-card[data-card="plus-gros-score"]  { order: 7; }
-    .kpi-card[data-card="plus-grand-ecart"] { order: 8; }
+    .kpi-card[data-card="matchs"]            { order: 1; }
+    .kpi-card[data-card="buts-marques"]      { order: 2; }
+    .kpi-card[data-card="top-buteurs"]       { order: 3; }
+    .kpi-card[data-card="top-passeurs"]      { order: 4; }
+    .kpi-card[data-card="meilleure-equipe"]  { order: 5; }
+    .kpi-card[data-card="atk-def-combined"]  { order: 6; }
+    .kpi-card[data-card="plus-gros-score"]   { order: 7; }
+    .kpi-card[data-card="plus-grand-ecart"]  { order: 8; }
   }
   .kpi-avg-desktop { display: none; }
+  .kpi-card[data-card="atk-def-combined"] { display: none; }
   .kpi-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 20px; position: relative; overflow: hidden; }
   .kpi-card::after { content:""; position:absolute; inset:0; pointer-events:none; border-radius: var(--radius-lg); }
   .kpi-card.accent-green::after  { background: radial-gradient(circle at top left, rgba(67,160,71,.12), transparent 65%); }
@@ -1296,6 +1299,19 @@ function renderSessionDetail(session) {
       <div class="kpi-sep"></div>
       <div class="kpi-sub">${defGoals} but${defGoals!==1?"s":""}</div>
     </div>
+    <div class="kpi-card" data-card="atk-def-combined">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure attaque</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <div style="font-size:24px;font-weight:700;line-height:1.2">${atkTeamHtml}</div>
+        <span style="font-size:13px;color:var(--text2);white-space:nowrap">${atkGoals} but${atkGoals!==1?"s":""}</span>
+      </div>
+      <div class="kpi-sep" style="margin:14px 0"></div>
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Pire défense</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <div style="font-size:24px;font-weight:700;line-height:1.2">${defTeamHtml}</div>
+        <span style="font-size:13px;color:var(--text2);white-space:nowrap">${defGoals} but${defGoals!==1?"s":""}</span>
+      </div>
+    </div>
     <div class="kpi-card ${grosAcc}" data-card="plus-gros-score">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Plus gros score</div>
       ${grosScoreBody}
@@ -1541,6 +1557,19 @@ function renderDashboard() {
       <div style="font-size:24px;font-weight:700;line-height:1.2">${defTeamHtmlAgg}</div>
       <div class="kpi-sep"></div>
       <div class="kpi-sub">${defGoals} but${defGoals!==1?"s":""}</div>
+    </div>
+    <div class="kpi-card" data-card="atk-def-combined">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure attaque</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <div style="font-size:24px;font-weight:700;line-height:1.2">${atkTeamHtmlAgg}</div>
+        <span style="font-size:13px;color:var(--text2);white-space:nowrap">${atkGoals} but${atkGoals!==1?"s":""}</span>
+      </div>
+      <div class="kpi-sep" style="margin:14px 0"></div>
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Pire défense</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <div style="font-size:24px;font-weight:700;line-height:1.2">${defTeamHtmlAgg}</div>
+        <span style="font-size:13px;color:var(--text2);white-space:nowrap">${defGoals} but${defGoals!==1?"s":""}</span>
+      </div>
     </div>
     <div class="kpi-card ${grosAccAgg}" data-card="plus-gros-score">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Plus gros score</div>
