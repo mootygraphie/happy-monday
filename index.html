@@ -602,6 +602,24 @@
   html.light .ballon-dor-head { background: rgba(200,168,0,.07); border-bottom-color: rgba(200,168,0,.15); }
   html.light .ballon-dor-formula { color: rgba(160,120,0,.55); }
   html.light .bd-row.bd-first { background: rgba(200,168,0,.05); border-bottom-color: rgba(200,168,0,.12); }
+
+  /* ── Centrage mobile ── */
+  @media (max-width: 640px) {
+    .container { padding-left: 1rem; padding-right: 1rem; }
+    /* Onglets principaux */
+    .main-tabs { display: flex; justify-content: center; width: 100%; }
+    /* Filtres période — scroll horizontal sur une ligne */
+    .period-bar { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; justify-content: flex-start; padding-bottom: 2px; }
+    .period-bar::-webkit-scrollbar { display: none; }
+    .period-bar .pill { flex-shrink: 0; padding: 6px 14px; font-size: 12px; }
+    .period-sub { justify-content: center; }
+    /* Sélecteur de session */
+    .session-selector { justify-content: center; flex-wrap: wrap; }
+    /* Liste de joueurs présents (chips) */
+    .players-present-list { justify-content: center; }
+    /* Grille des buts */
+    .buts-grid { grid-template-columns: 1fr; }
+  }
 </style>
 <script>if(localStorage.getItem('hmft_theme')==='light')document.documentElement.classList.add('light');</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -1173,8 +1191,8 @@ function renderSessionDetail(session) {
       ${top3PasseursHtml}
     </div>
     <div class="kpi-card">
+      <div class="kpi-lbl" style="margin-bottom:8px">Meilleure équipe</div>
       <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${bestTeamsHtml}</div>
-      <div class="kpi-lbl">Meilleure équipe</div>
       <div class="kpi-sub">${maxWins > 0 ? `${maxWins} victoire${maxWins>1?"s":""}` : "0 victoire"}</div>
     </div>
   </div>`;
@@ -1186,13 +1204,13 @@ function renderSessionDetail(session) {
   const defHtml   = worstDefTeams.length === 0 ? "—" : worstDefTeams.slice(0,2).map(t=>teamTag(t)).join(" &middot; ");
   h += `<div class="kpi-grid" style="margin-bottom:2rem">
     <div class="kpi-card">
+      <div class="kpi-lbl" style="margin-bottom:8px">Meilleure attaque</div>
       <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${atkHtml}</div>
-      <div class="kpi-lbl">Plus de buts marqués</div>
       <div class="kpi-sub">${atkGoals} but${atkGoals!==1?"s":""}</div>
     </div>
     <div class="kpi-card">
+      <div class="kpi-lbl" style="margin-bottom:8px">Meilleure défense</div>
       <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${defHtml}</div>
-      <div class="kpi-lbl">Plus de buts encaissés</div>
       <div class="kpi-sub">${defGoals} but${defGoals!==1?"s":""}</div>
     </div>
     <div class="kpi-card accent-amber">
@@ -1394,21 +1412,21 @@ function renderDashboard() {
       ${top3PassHtml}
     </div>
     <div class="kpi-card">
+      <div class="kpi-lbl" style="margin-bottom:8px">Meilleure équipe</div>
       <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${winnerTeamsAgg.length===0?"—":winnerTeamsAgg.slice(0,2).map(t=>teamTag(t)).join(" &middot; ")}</div>
-      <div class="kpi-lbl">Meilleure équipe</div>
       <div class="kpi-sub">${maxWinsAgg > 0 ? `${maxWinsAgg} victoire${maxWinsAgg>1?"s":""}` : "0 victoire"}</div>
     </div>
   </div>`;
 
   h += `<div class="kpi-grid" style="margin-bottom:2rem">
     <div class="kpi-card">
+      <div class="kpi-lbl" style="margin-bottom:8px">Meilleure attaque</div>
       <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${bestAtkTeams.length===0?"—":bestAtkTeams.slice(0,2).map(t=>teamTag(t)).join(" &middot; ")}</div>
-      <div class="kpi-lbl">Plus de buts marqués</div>
       <div class="kpi-sub">${atkGoals} but${atkGoals!==1?"s":""}</div>
     </div>
     <div class="kpi-card">
+      <div class="kpi-lbl" style="margin-bottom:8px">Meilleure défense</div>
       <div class="kpi-num" style="font-size:22px;font-style:normal;line-height:1.3">${worstDefTeams.length===0?"—":worstDefTeams.slice(0,2).map(t=>teamTag(t)).join(" &middot; ")}</div>
-      <div class="kpi-lbl">Plus de buts encaissés</div>
       <div class="kpi-sub">${defGoals} but${defGoals!==1?"s":""}</div>
     </div>
     <div class="kpi-card accent-amber">
