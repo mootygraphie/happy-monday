@@ -526,6 +526,82 @@
   .saisie-add-match:hover { border-color: var(--fg); color: var(--fg); background: var(--bg3); }
   .saisie-empty { color: var(--fg3); font-size: 14px; font-style: italic; margin: 0; }
   .saisie-status { font-size: 12px; }
+
+  /* ── Ballon d'Or ── */
+  .ballon-dor-card {
+    background: var(--bg2);
+    border: 1px solid rgba(245,200,66,.3);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 2rem;
+    position: relative;
+  }
+  .ballon-dor-card::before {
+    content: "";
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--gold) 40%, rgba(245,200,66,.5) 60%, transparent 100%);
+  }
+  .ballon-dor-head {
+    padding: 16px 22px 14px;
+    background: rgba(245,200,66,.05);
+    border-bottom: 1px solid rgba(245,200,66,.12);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .ballon-dor-icon { font-size: 32px; line-height: 1; flex-shrink: 0; }
+  .ballon-dor-title {
+    font-size: 14px; font-weight: 800; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--gold); line-height: 1;
+  }
+  .ballon-dor-meta {
+    font-size: 11px; color: var(--text3); margin-top: 4px;
+    letter-spacing: .04em;
+  }
+  .ballon-dor-formula {
+    margin-left: auto; font-size: 11px; color: rgba(245,200,66,.55);
+    text-align: right; white-space: nowrap; flex-shrink: 0;
+    font-weight: 600; letter-spacing: .04em;
+  }
+  .bd-list { padding: 10px 0 4px; }
+  .bd-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 22px;
+    transition: background .12s;
+  }
+  .bd-row:hover { background: rgba(255,255,255,.03); }
+  .bd-row.bd-first {
+    padding: 14px 22px;
+    background: rgba(245,200,66,.04);
+    border-bottom: 1px solid rgba(245,200,66,.1);
+  }
+  .bd-row.bd-first:hover { background: rgba(245,200,66,.07); }
+  .bd-rank { min-width: 26px; font-size: 18px; text-align: center; flex-shrink: 0; }
+  .bd-rank.num { font-size: 13px; font-weight: 700; color: var(--text3); }
+  .bd-name { flex: 1; font-size: 14px; font-weight: 600; min-width: 0; }
+  .bd-first .bd-name { font-size: 16px; font-weight: 700; }
+  .bd-bar-wrap {
+    flex: 2; height: 4px; background: rgba(255,255,255,.06);
+    border-radius: 2px; overflow: hidden; flex-shrink: 0;
+  }
+  .bd-first .bd-bar-wrap { height: 5px; }
+  .bd-bar {
+    height: 100%; border-radius: 2px;
+    background: linear-gradient(90deg, var(--gold) 0%, rgba(245,200,66,.45) 100%);
+  }
+  .bd-pts {
+    font-size: 14px; font-weight: 800; color: var(--gold);
+    min-width: 44px; text-align: right; flex-shrink: 0;
+  }
+  .bd-first .bd-pts { font-size: 18px; }
+  .bd-ga {
+    font-size: 11px; color: var(--text3); min-width: 68px;
+    text-align: right; flex-shrink: 0;
+  }
+  .bd-first .bd-ga { font-size: 12px; color: var(--text2); }
+  html.light .ballon-dor-card { border-color: rgba(180,140,0,.3); }
+  html.light .ballon-dor-card::before { background: linear-gradient(90deg, transparent, #c8a800, transparent); }
+  html.light .ballon-dor-head { background: rgba(200,168,0,.07); border-bottom-color: rgba(200,168,0,.15); }
+  html.light .ballon-dor-formula { color: rgba(160,120,0,.55); }
+  html.light .bd-row.bd-first { background: rgba(200,168,0,.05); border-bottom-color: rgba(200,168,0,.12); }
 </style>
 <script>if(localStorage.getItem('hmft_theme')==='light')document.documentElement.classList.add('light');</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -1247,6 +1323,49 @@ function renderDashboard() {
   const st = computeStats(sessions);
   let h = "";
 
+  /* ── Ballon d'Or (All-Time uniquement) ── */
+  if (currentPeriod === "all") {
+    const bdMedals = ["🥇","🥈","🥉"];
+    const top5GA = Object.entries(st.ps)
+      .map(([name, p]) => ({ name, buts: p.buts, passes: p.passes, pts: p.buts * 10 + p.passes * 5 }))
+      .filter(p => p.pts > 0)
+      .sort((a, b) => b.pts - a.pts || b.buts - a.buts || a.name.localeCompare(b.name, "fr"))
+      .slice(0, 5);
+
+    h += `<div class="ballon-dor-card">
+      <div class="ballon-dor-head">
+        <span class="ballon-dor-icon">🏆</span>
+        <div>
+          <div class="ballon-dor-title">Ballon d'Or</div>
+          <div class="ballon-dor-meta">Classement G/A — All-Time</div>
+        </div>
+        <div class="ballon-dor-formula">10 pts / but &nbsp;·&nbsp; 5 pts / passe</div>
+      </div>
+      <div class="bd-list">`;
+
+    if (top5GA.length) {
+      const maxPts = top5GA[0].pts;
+      top5GA.forEach((p, i) => {
+        const rankHtml = i < 3
+          ? `<span class="bd-rank">${bdMedals[i]}</span>`
+          : `<span class="bd-rank num">${i+1}</span>`;
+        const gaStr = [p.buts > 0 ? `${p.buts}G` : null, p.passes > 0 ? `${p.passes}A` : null].filter(Boolean).join(" · ");
+        const barPct = Math.round((p.pts / maxPts) * 100);
+        h += `<div class="bd-row${i===0?" bd-first":""}">
+          ${rankHtml}
+          <span class="bd-name">${pLink(p.name)}</span>
+          <div class="bd-bar-wrap"><div class="bd-bar" style="width:${barPct}%"></div></div>
+          <span class="bd-pts">${p.pts}</span>
+          <span class="bd-ga">${gaStr}</span>
+        </div>`;
+      });
+    } else {
+      h += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun but ou passe enregistré pour le moment.</div>`;
+    }
+
+    h += `</div></div>`;
+  }
+
   /* ── Calculs agrégés ── */
   let draws = 0;
   const goalsAgainst = {Rouge:0, Vert:0, Bleue:0};
@@ -1776,7 +1895,7 @@ function computePlayerDetailStats(playerName) {
   let presences = 0, absences = 0, blesses = 0, buts = 0, episodesBlessures = 0, pasRepondu = 0, inEpisode = false;
   let matchsJoues = 0, victoires = 0, defaites = 0, sac = 0, maillots = 0, passesDecisives = 0;
   const teamCount = {}, winsByColor = {}, teammateCount = {}, winTeammateCount = {};
-  let bestMatch = null, bestMatchGoals = 0;
+  let bestMatch = null, bestMatchGoals = 0, bestMatchAssists = 0, bestMatchGA = 0;
 
   sessionsByDate.forEach(s => {
     const info = s.presences[playerName];
@@ -1795,9 +1914,11 @@ function computePlayerDetailStats(playerName) {
       }
       (s.matchs || []).forEach(m => {
         const g = [...(m.buteursA||[]), ...(m.buteursB||[])].filter(p => p === playerName).length;
+        const a = [...(m.passeursA||[]), ...(m.passeursB||[])].filter(p => p === playerName).length;
         buts += g;
-        passesDecisives += [...(m.passeursA||[]), ...(m.passeursB||[])].filter(p => p === playerName).length;
-        if (g > bestMatchGoals) { bestMatchGoals = g; bestMatch = {...m, date: s.date}; }
+        passesDecisives += a;
+        const ga = g + a;
+        if (ga > bestMatchGA) { bestMatchGA = ga; bestMatchGoals = g; bestMatchAssists = a; bestMatch = {...m, date: s.date}; }
         if (!myEquipe || (m.eqA !== myEquipe && m.eqB !== myEquipe)) return;
         matchsJoues++;
         const winner = m.scoreA > m.scoreB ? m.eqA : m.scoreB > m.scoreA ? m.eqB : null;
@@ -1833,7 +1954,7 @@ function computePlayerDetailStats(playerName) {
 
   return { presences, absences, blesses, episodesBlessures, pasRepondu, buts, passesDecisives,
            matchsJoues, victoires, defaites, sac, maillots,
-           bestMatch, bestMatchGoals, recurringColor, teamCount,
+           bestMatch, bestMatchGoals, bestMatchAssists, recurringColor, teamCount,
            top3Teammates: top3T, top3WinTeammates: top3WT, prefWinColor, maxWins };
 }
 
@@ -1901,12 +2022,15 @@ function openPlayerPanel(playerName) {
   </div>`;
 
   /* Meilleur match */
-  if (st.bestMatch && st.bestMatchGoals > 0) {
+  if (st.bestMatch && (st.bestMatchGoals > 0 || st.bestMatchAssists > 0)) {
+    const bmParts = [];
+    if (st.bestMatchGoals > 0) bmParts.push(`${st.bestMatchGoals} but${st.bestMatchGoals>1?"s":""}`);
+    if (st.bestMatchAssists > 0) bmParts.push(`${st.bestMatchAssists} passe${st.bestMatchAssists>1?"s":""}`);
     h += `<div>
       <div class="pp-section-title">Meilleur match</div>
       <div class="pp-match-card">
         <div style="font-size:13px;color:var(--text2)">${fmtDate(st.bestMatch.date)}</div>
-        <div style="font-size:24px;font-weight:700;margin:6px 0;color:var(--gold);font-style:italic">${st.bestMatchGoals} but${st.bestMatchGoals>1?"s":""}</div>
+        <div style="font-size:24px;font-weight:700;margin:6px 0;color:var(--gold);font-style:italic">${bmParts.join(" · ")}</div>
         <div class="pp-match-score">
           ${badge(st.bestMatch.eqA)}<span style="font-size:15px;font-weight:700">${st.bestMatch.scoreA}–${st.bestMatch.scoreB}</span>${badge(st.bestMatch.eqB)}
         </div>
