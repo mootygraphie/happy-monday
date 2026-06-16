@@ -507,14 +507,14 @@
   .eq-btn-rouge.active { background: #e74c3c; border-color: #e74c3c; color: #fff; }
   .eq-btn-vert.active  { background: #27ae60; border-color: #27ae60; color: #fff; }
   .eq-btn-bleue.active { background: #2980b9; border-color: #2980b9; color: #fff; }
-  .saisie-match-card { background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
-  .saisie-match-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-  .saisie-match-num { font-size: 13px; font-weight: 700; color: var(--fg2); }
-  .saisie-remove-match { background: transparent; border: none; color: var(--fg3); cursor: pointer; font-size: 16px; padding: 2px 6px; border-radius: 4px; }
+  .saisie-match-card { background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; }
+  .saisie-match-row { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
+  .saisie-match-num { font-size: 11px; font-weight: 700; color: var(--fg3); flex-shrink: 0; }
+  .saisie-match-row .saisie-team-sel { flex: 1; min-width: 0; }
+  .saisie-remove-match { background: transparent; border: none; color: var(--fg3); cursor: pointer; font-size: 14px; padding: 2px 5px; border-radius: 4px; flex-shrink: 0; line-height: 1; }
   .saisie-remove-match:hover { color: #e74c3c; }
-  .saisie-match-score-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .saisie-score-input { width: 52px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 8px; padding: 6px 10px; color: var(--fg); font-size: 18px; font-weight: 700; text-align: center; }
-  .saisie-dash { font-size: 20px; font-weight: 300; color: var(--fg3); }
+  .saisie-score-input { width: 44px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 8px; padding: 5px 2px; color: var(--fg); font-size: 18px; font-weight: 700; text-align: center; flex-shrink: 0; }
+  .saisie-dash { font-size: 18px; font-weight: 300; color: var(--fg3); flex-shrink: 0; }
   .saisie-buteurs-row { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
   .saisie-buteurs-side { flex: 1; min-width: 160px; }
   .saisie-buteurs-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--fg3); display: block; margin-bottom: 6px; }
@@ -2262,16 +2262,14 @@ function _buildMatchCardHTML(m, idx, teams) {
     }).join("");
   const showButeurs = m.scoreA > 0 || m.scoreB > 0;
   return `<div class="saisie-match-card">
-    <div class="saisie-match-header">
-      <span class="saisie-match-num">Match ${idx+1}</span>
-      <button class="saisie-remove-match" data-match="${idx}">✕</button>
-    </div>
-    <div class="saisie-match-score-row">
+    <div class="saisie-match-row">
+      <span class="saisie-match-num">#${idx+1}</span>
       <select class="saisie-select saisie-team-sel" data-match="${idx}" data-side="A">${teamOpts(m.eqA)}</select>
       <input type="number" class="saisie-score-input" min="0" max="20" data-match="${idx}" data-side="A" value="${m.scoreA}">
       <span class="saisie-dash">–</span>
       <input type="number" class="saisie-score-input" min="0" max="20" data-match="${idx}" data-side="B" value="${m.scoreB}">
       <select class="saisie-select saisie-team-sel" data-match="${idx}" data-side="B">${teamOpts(m.eqB)}</select>
+      <button class="saisie-remove-match" data-match="${idx}">✕</button>
     </div>
     ${showButeurs ? `<div class="saisie-buteurs-row">
       <div class="saisie-buteurs-side">
