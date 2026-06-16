@@ -1583,6 +1583,7 @@ document.getElementById("saisie-nav-btn").addEventListener("click", () => {
   document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
   document.getElementById("panel-saisie").classList.add("active");
+  history.replaceState(null, '', '#saisie');
   renderSaisie();
 });
 
@@ -1662,6 +1663,7 @@ document.getElementById("edit-session-btn").addEventListener("click", () => {
   document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
   document.getElementById("panel-saisie").classList.add("active");
+  history.replaceState(null, '', '#saisie');
   renderSaisie();
 });
 
@@ -2680,7 +2682,17 @@ document.addEventListener("click", e => {
   await _fbLoad();
 
   const _hash = location.hash.slice(1);
-  if (_hash === "joueurs" || _hash === "sessions") {
+  let _loadSaisie = false;
+  if (_hash === "saisie") {
+    if (sessionStorage.getItem("hmft_role") === "admin") {
+      document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+      document.getElementById("panel-saisie").classList.add("active");
+      _loadSaisie = true;
+    } else {
+      history.replaceState(null, '', '#last');
+    }
+  } else if (_hash === "joueurs" || _hash === "sessions") {
     const _tabKey = _hash === "sessions" ? "session" : _hash;
     document.querySelectorAll(".main-tab").forEach(t => t.classList.toggle("active", t.dataset.tab === _tabKey));
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === `panel-${_tabKey}`));
@@ -2692,6 +2704,7 @@ document.addEventListener("click", e => {
   renderDashboard();
   populateSessionSelect();
   renderJoueurs();
+  if (_loadSaisie) renderSaisie();
   if (SESSIONS.length) {
     const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
     renderSessionResults(sorted[0].date);
