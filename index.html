@@ -229,26 +229,28 @@
   /* ── KPI summary ── */
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 10px; margin-bottom: 2rem; }
   .kpi-grid--main { grid-template-columns: repeat(2, 1fr); }
+  .kpi-card[data-card="atk-def-combined"] { display: none !important; }
+  .kpi-card[data-card="pire-defense"]     { display: none !important; }
+  .kpi-avg-desktop { display: none; }
   @media (min-width: 768px) {
-    .kpi-grid--main { grid-template-columns: repeat(4, 1fr); }
+    .kpi-grid--main { grid-template-columns: repeat(6, 1fr); }
+    .kpi-grid--main > .kpi-card { grid-column: span 2; }
+    .kpi-grid--main > .kpi-card[data-card="plus-gros-score"],
+    .kpi-grid--main > .kpi-card[data-card="plus-grand-ecart"] { grid-column: span 3; }
     .kpi-card[data-card="avg-standalone"]    { display: none; }
-    .kpi-card[data-card="meilleure-attaque"] { display: none; }
-    .kpi-card[data-card="pire-defense"]      { display: none; }
-    .kpi-card[data-card="atk-def-combined"]  { display: block !important; }
     .kpi-avg-desktop { display: block !important; }
     .kpi-card[data-card="matchs"]            { order: 1; }
     .kpi-card[data-card="buts-marques"]      { order: 2; }
-    .kpi-card[data-card="top-buteurs"]       { order: 3; }
-    .kpi-card[data-card="top-passeurs"]      { order: 4; }
-    .kpi-card[data-card="meilleure-equipe"]  { order: 5; }
-    .kpi-card[data-card="atk-def-combined"]  { order: 6; }
-    .kpi-card[data-card="meilleur-link-up"]  { order: 7; }
-    .kpi-card[data-card="top-defenseurs"]    { order: 8; }
-    .kpi-card[data-card="plus-gros-score"]   { order: 9; }
-    .kpi-card[data-card="plus-grand-ecart"]  { order: 10; }
+    .kpi-card[data-card="meilleure-equipe"]  { order: 3; }
+    .kpi-card[data-card="top-buteurs"]       { order: 4; }
+    .kpi-card[data-card="top-passeurs"]      { order: 5; }
+    .kpi-card[data-card="top-defenseurs"]    { order: 6; }
+    .kpi-card[data-card="meilleure-attaque"] { order: 7; }
+    .kpi-card[data-card="meilleur-link-up"]  { order: 8; }
+    .kpi-card[data-card="meilleure-defense"] { order: 9; }
+    .kpi-card[data-card="plus-gros-score"]   { order: 10; }
+    .kpi-card[data-card="plus-grand-ecart"]  { order: 11; }
   }
-  .kpi-avg-desktop { display: none; }
-  .kpi-card[data-card="atk-def-combined"] { display: none; }
   .kpi-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 20px; position: relative; overflow: hidden; }
   .kpi-card::after { content:""; position:absolute; inset:0; pointer-events:none; border-radius: var(--radius-lg); }
   .kpi-card.accent-green::after  { background: radial-gradient(circle at top left, rgba(67,160,71,.12), transparent 65%); }
@@ -1260,6 +1262,8 @@ function renderSessionDetail(session) {
   const bestAtkTeams  = teamsPlayed.filter(t => (goalsFor[t]||0) === maxGoalsFor && maxGoalsFor > 0);
   const maxGoalsAgst  = teamsPlayed.length ? Math.max(...teamsPlayed.map(t => goalsAgainst[t]||0)) : 0;
   const worstDefTeams = teamsPlayed.filter(t => (goalsAgainst[t]||0) === maxGoalsAgst && maxGoalsAgst > 0);
+  const minGoalsAgst  = teamsPlayed.length ? Math.min(...teamsPlayed.map(t => goalsAgainst[t]||0)) : 0;
+  const bestDefTeams  = teamsPlayed.filter(t => (goalsAgainst[t]||0) === minGoalsAgst);
   const matchGros    = matchs.reduce((b,m) => { const t=m.scoreA+m.scoreB; return (!b||t>b.total)?{...m,total:t}:b; }, null);
   const matchLarge   = matchs.reduce((b,m) => { const a=Math.abs(m.scoreA-m.scoreB); return (!b||a>b.amp)?{...m,amp:a}:b; }, null);
 
@@ -1277,7 +1281,7 @@ function renderSessionDetail(session) {
     return buteurs.map((p, j) => {
       const passeur = passeurs && passeurs[j] ? passeurs[j] : null;
       const bHtml = p === "CSC" ? `<em>CSC</em>` : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
-      const pHtml = passeur ? ` <span style="color:var(--text3)">(<button class="player-link" data-player="${passeur}" style="font-size:inherit">${passeur}</button>)</span>` : "";
+      const pHtml = passeur ? ` <span style="color:var(--text3);font-size:10px">(<button class="player-link" data-player="${passeur}" style="font-size:inherit;color:inherit">${passeur}</button>)</span>` : "";
       return `<div class="mc-goal-line">${bHtml}${pHtml}</div>`;
     }).join("");
   };
@@ -1323,6 +1327,9 @@ function renderSessionDetail(session) {
   const bestAccent     = kpiTeamCard(winnerTeams);
   const atkAccent      = kpiTeamCard(bestAtkTeams);
   const defAccent      = kpiTeamCard(worstDefTeams);
+  const bestDefAccent  = kpiTeamCard(bestDefTeams);
+  const bestDefTeamHtml = bestDefTeams.length===0?"—":bestDefTeams.slice(0,2).map(t=>teamTagColored(t)).join(" &middot; ");
+  const defGoalsMin    = minGoalsAgst;
   const grosAcc        = matchGros  ? matchAccent(matchGros)  : "";
   const largeAcc       = matchLarge ? matchAccent(matchLarge) : "";
   const grosCol        = scoreColors(matchGros);
@@ -1383,41 +1390,28 @@ function renderSessionDetail(session) {
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Moy. buts / match</div>
       <div class="kpi-num amber">${avgButs}</div>
     </div>
-    <div class="kpi-card" data-card="top-buteurs">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top buteurs</div>
-      ${top3ButeursHtml}
-    </div>
-    <div class="kpi-card" data-card="top-passeurs">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top passeurs</div>
-      ${top3PasseursHtml}
-    </div>
     <div class="kpi-card ${atkAccent}" data-card="meilleure-attaque">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure attaque</div>
       <div style="font-size:24px;font-weight:700;line-height:1.2">${atkTeamHtml}</div>
       <div class="kpi-sep"></div>
       <div class="kpi-sub">${atkGoals} but${atkGoals!==1?"s":""}</div>
     </div>
-    <div class="kpi-card ${defAccent}" data-card="pire-defense">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Pire défense</div>
-      <div style="font-size:24px;font-weight:700;line-height:1.2">${defTeamHtml}</div>
-      <div class="kpi-sep"></div>
-      <div class="kpi-sub">${defGoals} but${defGoals!==1?"s":""}</div>
+    <div class="kpi-card" data-card="top-buteurs">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top buteurs</div>
+      ${top3ButeursHtml}
     </div>
-    <div class="kpi-card" data-card="atk-def-combined">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure attaque</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-        <div style="font-size:24px;font-weight:700;line-height:1.2">${atkTeamHtml}</div>
-        <span style="font-size:13px;color:var(--text2);white-space:nowrap">${atkGoals} but${atkGoals!==1?"s":""}</span>
-      </div>
-      <div class="kpi-sep" style="margin:14px 0"></div>
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Pire défense</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-        <div style="font-size:24px;font-weight:700;line-height:1.2">${defTeamHtml}</div>
-        <span style="font-size:13px;color:var(--text2);white-space:nowrap">${defGoals} but${defGoals!==1?"s":""}</span>
-      </div>
+    <div class="kpi-card ${bestDefAccent}" data-card="meilleure-defense">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure défense</div>
+      <div style="font-size:24px;font-weight:700;line-height:1.2">${bestDefTeamHtml}</div>
+      <div class="kpi-sep"></div>
+      <div class="kpi-sub">${defGoalsMin} but${defGoalsMin!==1?"s":""} conc.</div>
+    </div>
+    ${buildTopDefCardHTML([session])}
+    <div class="kpi-card" data-card="top-passeurs">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top passeurs</div>
+      ${top3PasseursHtml}
     </div>
     ${buildLinkUpCardHTML([session])}
-    ${buildTopDefCardHTML([session])}
     <div class="kpi-card ${grosAcc}" data-card="plus-gros-score">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Plus gros score</div>
       ${grosScoreBody}
@@ -1536,6 +1530,8 @@ function renderDashboard() {
   const bestAtkTeams = teamsActive.filter(t => (st.goalsPerTeam[t]||0) === maxGoalsPT && maxGoalsPT > 0);
   const maxGoalsAg   = teamsActive.length ? Math.max(...teamsActive.map(t => goalsAgainst[t]||0)) : 0;
   const worstDefTeams = teamsActive.filter(t => (goalsAgainst[t]||0) === maxGoalsAg && maxGoalsAg > 0);
+  const minGoalsAgAgg   = teamsActive.length ? Math.min(...teamsActive.map(t => goalsAgainst[t]||0)) : 0;
+  const bestDefTeamsAgg = teamsActive.filter(t => (goalsAgainst[t]||0) === minGoalsAgAgg);
   const maxWinsAgg   = Math.max(0, ...Object.values(st.colorWins));
   const winnerTeamsAgg = Object.entries(st.colorWins).filter(([,v]) => v === maxWinsAgg && maxWinsAgg > 0).map(([k]) => k);
   const atkGoals     = maxGoalsPT;
@@ -1582,6 +1578,9 @@ function renderDashboard() {
   const bestAccentAgg    = kpiTeamCard(winnerTeamsAgg);
   const atkAccentAgg     = kpiTeamCard(bestAtkTeams);
   const defAccentAgg     = kpiTeamCard(worstDefTeams);
+  const bestDefAccentAgg  = kpiTeamCard(bestDefTeamsAgg);
+  const bestDefTeamHtmlAgg = bestDefTeamsAgg.length===0?"—":bestDefTeamsAgg.slice(0,2).map(t=>teamTagColored(t)).join(" &middot; ");
+  const defGoalsMinAgg    = minGoalsAgAgg;
   const grosAccAgg       = st.mostGoals  ? matchAccent(st.mostGoals)  : "";
   const largeAccAgg      = st.biggestAmp ? matchAccent(st.biggestAmp) : "";
   const grosColAgg       = scoreColors(st.mostGoals);
@@ -1644,41 +1643,28 @@ function renderDashboard() {
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Moy. buts / match</div>
       <div class="kpi-num amber">${avgButsAgg}</div>
     </div>
-    <div class="kpi-card" data-card="top-buteurs">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top buteurs</div>
-      ${top3Html}
-    </div>
-    <div class="kpi-card" data-card="top-passeurs">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top passeurs</div>
-      ${top3PassHtml}
-    </div>
     <div class="kpi-card ${atkAccentAgg}" data-card="meilleure-attaque">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure attaque</div>
       <div style="font-size:24px;font-weight:700;line-height:1.2">${atkTeamHtmlAgg}</div>
       <div class="kpi-sep"></div>
       <div class="kpi-sub">${atkGoals} but${atkGoals!==1?"s":""}</div>
     </div>
-    <div class="kpi-card ${defAccentAgg}" data-card="pire-defense">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Pire défense</div>
-      <div style="font-size:24px;font-weight:700;line-height:1.2">${defTeamHtmlAgg}</div>
-      <div class="kpi-sep"></div>
-      <div class="kpi-sub">${defGoals} but${defGoals!==1?"s":""}</div>
+    <div class="kpi-card" data-card="top-buteurs">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top buteurs</div>
+      ${top3Html}
     </div>
-    <div class="kpi-card" data-card="atk-def-combined">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure attaque</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-        <div style="font-size:24px;font-weight:700;line-height:1.2">${atkTeamHtmlAgg}</div>
-        <span style="font-size:13px;color:var(--text2);white-space:nowrap">${atkGoals} but${atkGoals!==1?"s":""}</span>
-      </div>
-      <div class="kpi-sep" style="margin:14px 0"></div>
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Pire défense</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-        <div style="font-size:24px;font-weight:700;line-height:1.2">${defTeamHtmlAgg}</div>
-        <span style="font-size:13px;color:var(--text2);white-space:nowrap">${defGoals} but${defGoals!==1?"s":""}</span>
-      </div>
+    <div class="kpi-card ${bestDefAccentAgg}" data-card="meilleure-defense">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure défense</div>
+      <div style="font-size:24px;font-weight:700;line-height:1.2">${bestDefTeamHtmlAgg}</div>
+      <div class="kpi-sep"></div>
+      <div class="kpi-sub">${defGoalsMinAgg} but${defGoalsMinAgg!==1?"s":""} conc.</div>
+    </div>
+    ${buildTopDefCardHTML(sessions)}
+    <div class="kpi-card" data-card="top-passeurs">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top passeurs</div>
+      ${top3PassHtml}
     </div>
     ${buildLinkUpCardHTML(sessions)}
-    ${buildTopDefCardHTML(sessions)}
     <div class="kpi-card ${grosAccAgg}" data-card="plus-gros-score">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Plus gros score</div>
       ${grosBodyAgg}
@@ -2304,9 +2290,15 @@ function openPlayerPanel(playerName) {
   if (_luAll.length) {
     const _luBest = _luAll[0];
     const _luPartner = _luBest.p1 === playerName ? _luBest.p2 : _luBest.p1;
-    h += `<div style="display:flex;align-items:center;gap:10px">
-      <button class="player-link" data-player="${_luPartner}" style="font-size:14px;font-weight:600">${_luPartner}</button>
-      <span style="font-size:12px;color:var(--text3)">${_luBest.connexions} but${_luBest.connexions>1?"s":""} direct${_luBest.connexions>1?"s":""}</span>
+    h += `<div class="pp-match-card">
+      <div style="font-size:13px;color:var(--text2)">All-time &nbsp;·&nbsp; buts directs</div>
+      <div style="font-size:22px;font-weight:700;margin:6px 0;font-style:italic">
+        <button class="player-link" data-player="${_luPartner}" style="font-size:inherit">${_luPartner}</button>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:5px">
+        <span style="font-size:22px;font-weight:700;color:var(--gold);font-style:italic">${_luBest.connexions}</span>
+        <span style="font-size:13px;color:var(--text2)">but${_luBest.connexions>1?"s":""} direct${_luBest.connexions>1?"s":""}</span>
+      </div>
     </div>`;
   } else { h += nd; }
   h += `</div>`;
