@@ -1230,6 +1230,16 @@ function buildTopDefCardHTML(sessions, minMatches) {
   </div>`;
 }
 
+function fmtGoalsList(buteurs, passeurs) {
+  if (!buteurs || !buteurs.length) return "";
+  return buteurs.map((p, j) => {
+    const passeur = passeurs && passeurs[j] ? passeurs[j] : null;
+    const bHtml = p === "CSC" ? `<em>CSC</em>` : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
+    const pHtml = passeur ? ` <span style="color:var(--text3);font-size:10px">(<button class="player-link" data-player="${passeur}" style="font-size:inherit;color:inherit">${passeur}</button>)</span>` : "";
+    return `<div class="mc-goal-line">${bHtml}${pHtml}</div>`;
+  }).join("");
+}
+
 function renderSessionDetail(session) {
   const matchs = session.matchs || [];
   let h = "";
@@ -1275,15 +1285,6 @@ function renderSessionDetail(session) {
       const d = p==="CSC" ? p : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
       return n>1 ? `${d} ×${n}` : d;
     }).join(", ");
-  };
-  const fmtGoalsList = (buteurs, passeurs) => {
-    if (!buteurs || !buteurs.length) return "";
-    return buteurs.map((p, j) => {
-      const passeur = passeurs && passeurs[j] ? passeurs[j] : null;
-      const bHtml = p === "CSC" ? `<em>CSC</em>` : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
-      const pHtml = passeur ? ` <span style="color:var(--text3);font-size:10px">(<button class="player-link" data-player="${passeur}" style="font-size:inherit;color:inherit">${passeur}</button>)</span>` : "";
-      return `<div class="mc-goal-line">${bHtml}${pHtml}</div>`;
-    }).join("");
   };
 
   /* ── Rangée 1 : 4 KPI ── */
@@ -1344,9 +1345,9 @@ function renderSessionDetail(session) {
       </div>
     </div>
     <div class="kpi-sep"></div>
-    <div style="display:flex;justify-content:space-between;gap:6px;font-size:11px;color:var(--text2)">
-      <span style="flex:1;text-align:left">${fmtBut(matchGros.buteursA)||"—"}</span>
-      <span style="flex:1;text-align:right">${fmtBut(matchGros.buteursB)||""}</span>
+    <div class="mc-buteurs" style="font-size:11px;color:var(--text2)">
+      <div class="mc-but">${fmtGoalsList(matchGros.buteursA, matchGros.passeursA)||"<span style='color:var(--text3)'>—</span>"}</div>
+      <div class="mc-but right">${fmtGoalsList(matchGros.buteursB, matchGros.passeursB)}</div>
     </div>` : `<span style="color:var(--text3)">—</span>`;
   const largeScoreBody = matchLarge ? `
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
@@ -1361,9 +1362,9 @@ function renderSessionDetail(session) {
       </div>
     </div>
     <div class="kpi-sep"></div>
-    <div style="display:flex;justify-content:space-between;gap:6px;font-size:11px;color:var(--text2)">
-      <span style="flex:1;text-align:left">${fmtBut(matchLarge.buteursA)||"—"}</span>
-      <span style="flex:1;text-align:right">${fmtBut(matchLarge.buteursB)||""}</span>
+    <div class="mc-buteurs" style="font-size:11px;color:var(--text2)">
+      <div class="mc-but">${fmtGoalsList(matchLarge.buteursA, matchLarge.passeursA)||"<span style='color:var(--text3)'>—</span>"}</div>
+      <div class="mc-but right">${fmtGoalsList(matchLarge.buteursB, matchLarge.passeursB)}</div>
     </div>` : `<span style="color:var(--text3)">—</span>`;
 
   h += `<div class="kpi-grid kpi-grid--main" style="margin-bottom:2rem">
@@ -1592,9 +1593,9 @@ function renderDashboard() {
       </div>
     </div>
     <div class="kpi-sep"></div>
-    <div style="display:flex;justify-content:space-between;gap:6px;font-size:11px;color:var(--text2)">
-      <span style="flex:1;text-align:left">${_fmtBut(st.mostGoals.buteursA)||"—"}</span>
-      <span style="flex:1;text-align:right">${_fmtBut(st.mostGoals.buteursB)||""}</span>
+    <div class="mc-buteurs" style="font-size:11px;color:var(--text2)">
+      <div class="mc-but">${fmtGoalsList(st.mostGoals.buteursA, st.mostGoals.passeursA)||"<span style='color:var(--text3)'>—</span>"}</div>
+      <div class="mc-but right">${fmtGoalsList(st.mostGoals.buteursB, st.mostGoals.passeursB)}</div>
     </div>
     <div style="margin-top:6px;font-size:11px;color:var(--text3)">${fmtDate(st.mostGoals.date)}</div>` : `<span style="color:var(--text3)">—</span>`;
   const largeBodyAgg = st.biggestAmp ? `
@@ -1610,9 +1611,9 @@ function renderDashboard() {
       </div>
     </div>
     <div class="kpi-sep"></div>
-    <div style="display:flex;justify-content:space-between;gap:6px;font-size:11px;color:var(--text2)">
-      <span style="flex:1;text-align:left">${_fmtBut(st.biggestAmp.buteursA)||"—"}</span>
-      <span style="flex:1;text-align:right">${_fmtBut(st.biggestAmp.buteursB)||""}</span>
+    <div class="mc-buteurs" style="font-size:11px;color:var(--text2)">
+      <div class="mc-but">${fmtGoalsList(st.biggestAmp.buteursA, st.biggestAmp.passeursA)||"<span style='color:var(--text3)'>—</span>"}</div>
+      <div class="mc-but right">${fmtGoalsList(st.biggestAmp.buteursB, st.biggestAmp.passeursB)}</div>
     </div>
     <div style="margin-top:6px;font-size:11px;color:var(--text3)">${fmtDate(st.biggestAmp.date)}</div>` : `<span style="color:var(--text3)">—</span>`;
 
