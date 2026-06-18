@@ -2093,10 +2093,10 @@ function renderJoueurs() {
   SESSIONS.filter(s => new Date(s.date).getFullYear() === _bdYear).forEach(s => {
     (s.matchs || []).forEach(m => {
       [...(m.buteursA||[]), ...(m.buteursB||[])].forEach(p => {
-        if (p) { if (!_bdPs[p]) _bdPs[p] = {buts:0,passes:0}; _bdPs[p].buts++; }
+        if (p && p !== "CSC") { if (!_bdPs[p]) _bdPs[p] = {buts:0,passes:0}; _bdPs[p].buts++; }
       });
       [...(m.passeursA||[]), ...(m.passeursB||[])].forEach(p => {
-        if (p) { if (!_bdPs[p]) _bdPs[p] = {buts:0,passes:0}; _bdPs[p].passes++; }
+        if (p && p !== "CSC") { if (!_bdPs[p]) _bdPs[p] = {buts:0,passes:0}; _bdPs[p].passes++; }
       });
     });
   });
