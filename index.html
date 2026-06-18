@@ -241,8 +241,10 @@
     .kpi-card[data-card="top-passeurs"]      { order: 4; }
     .kpi-card[data-card="meilleure-equipe"]  { order: 5; }
     .kpi-card[data-card="atk-def-combined"]  { order: 6; }
-    .kpi-card[data-card="plus-gros-score"]   { order: 7; }
-    .kpi-card[data-card="plus-grand-ecart"]  { order: 8; }
+    .kpi-card[data-card="meilleur-link-up"]  { order: 7; }
+    .kpi-card[data-card="top-defenseurs"]    { order: 8; }
+    .kpi-card[data-card="plus-gros-score"]   { order: 9; }
+    .kpi-card[data-card="plus-grand-ecart"]  { order: 10; }
   }
   .kpi-avg-desktop { display: none; }
   .kpi-card[data-card="atk-def-combined"] { display: none; }
@@ -1137,6 +1139,104 @@ function computeStats(sessions) {
    VUE PARTAGÉE : DÉTAIL D'UNE SESSION
    Utilisée dans Dashboard "Dernière session" ET onglet Sessions
 ══════════════════════════════════════════════════════════ */
+function computeLinkUpStats(sessions) {
+  const duoMap = {};
+  sessions.forEach(session => {
+    const presences = session.presences || {};
+    (session.matchs || []).forEach(m => {
+      const getPlayers = color => !color ? [] :
+        Object.entries(presences).filter(([,v]) => v.statut === "Présent" && v.equipe === color).map(([k]) => k);
+      const playersA = getPlayers(m.eqA);
+      const playersB = getPlayers(m.eqB);
+      const gaInMatch = {};
+      (m.buteursA||[]).forEach(p => { if (p && p!=="CSC" && playersA.includes(p)) gaInMatch[p]=(gaInMatch[p]||0)+1; });
+      (m.passeursA||[]).forEach(p => { if (p && playersA.includes(p)) gaInMatch[p]=(gaInMatch[p]||0)+1; });
+      (m.buteursB||[]).forEach(p => { if (p && p!=="CSC" && playersB.includes(p)) gaInMatch[p]=(gaInMatch[p]||0)+1; });
+      (m.passeursB||[]).forEach(p => { if (p && playersB.includes(p)) gaInMatch[p]=(gaInMatch[p]||0)+1; });
+      const addPairs = players => {
+        for (let i=0; i<players.length; i++) {
+          for (let j=i+1; j<players.length; j++) {
+            const [a,b] = [players[i],players[j]].sort();
+            const key = `${a}|||${b}`;
+            if (!duoMap[key]) duoMap[key] = {p1:a, p2:b, ga:0};
+            duoMap[key].ga += (gaInMatch[players[i]]||0) + (gaInMatch[players[j]]||0);
+          }
+        }
+      };
+      addPairs(playersA);
+      addPairs(playersB);
+    });
+  });
+  return Object.values(duoMap).filter(d => d.ga > 0).sort((a,b) => b.ga - a.ga);
+}
+
+function computeTopDefendersStats(sessions, minMatches) {
+  const defMap = {};
+  sessions.forEach(session => {
+    const presences = session.presences || {};
+    (session.matchs || []).forEach(m => {
+      Object.entries(presences).forEach(([player, info]) => {
+        if (info.statut !== "Présent" || !info.equipe) return;
+        let gc = null;
+        if (m.eqA === info.equipe) gc = m.scoreB;
+        else if (m.eqB === info.equipe) gc = m.scoreA;
+        if (gc === null) return;
+        if (!defMap[player]) defMap[player] = {goalsAgainst:0, matchCount:0};
+        defMap[player].goalsAgainst += gc;
+        defMap[player].matchCount++;
+      });
+    });
+  });
+  const min = minMatches || 1;
+  return Object.entries(defMap)
+    .filter(([,d]) => d.matchCount >= min)
+    .map(([name,d]) => ({name, ...d, avg: d.goalsAgainst/d.matchCount}))
+    .sort((a,b) => a.avg - b.avg || b.matchCount - a.matchCount);
+}
+
+function buildLinkUpCardHTML(sessions) {
+  const duos = computeLinkUpStats(sessions);
+  if (!duos.length) return `<div class="kpi-card" data-card="meilleur-link-up">
+    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleur Link-Up ⚡</div>
+    <span style="color:var(--text3)">—</span>
+  </div>`;
+  const best = duos[0];
+  const p1 = `<button class="player-link" data-player="${best.p1}" style="font-size:inherit">${best.p1}</button>`;
+  const p2 = `<button class="player-link" data-player="${best.p2}" style="font-size:inherit">${best.p2}</button>`;
+  return `<div class="kpi-card" data-card="meilleur-link-up">
+    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleur Link-Up ⚡</div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;flex-wrap:wrap">${p1}<span style="color:var(--text3)">–</span>${p2}</div>
+    <div class="kpi-sep"></div>
+    <div style="display:flex;align-items:baseline;gap:5px"><span style="font-size:22px;font-weight:700;font-style:italic">${best.ga}</span><span class="kpi-sub" style="margin:0">G/A combinés</span></div>
+  </div>`;
+}
+
+function buildTopDefCardHTML(sessions, minMatches) {
+  const defs = computeTopDefendersStats(sessions, minMatches);
+  const medals = ["🥇","🥈","🥉"];
+  if (!defs.length) return `<div class="kpi-card" data-card="top-defenseurs">
+    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top défenseurs</div>
+    <span style="color:var(--text3)">—</span>
+  </div>`;
+  const slots = [];
+  let rem = [...defs];
+  while (slots.length < 3 && rem.length) {
+    const topAvg = rem[0].avg;
+    const eps = 1e-9;
+    slots.push({rank:slots.length, players:rem.filter(d => Math.abs(d.avg-topAvg)<eps)});
+    rem = rem.filter(d => Math.abs(d.avg-topAvg)>=eps);
+  }
+  const body = slots.map(s => `<div style="display:flex;align-items:center;gap:7px;padding:3px 0">
+    <span style="min-width:20px">${medals[s.rank]}</span>
+    <span style="flex:1;font-size:13px;font-weight:500">${s.players.map(d=>`<button class="player-link" data-player="${d.name}" style="font-size:inherit">${d.name}</button>`).join(", ")}</span>
+    <span style="font-size:13px;font-weight:700;color:var(--text2)">${s.players[0].avg.toFixed(1).replace(".",",")} b.c./m</span>
+  </div>`).join("");
+  return `<div class="kpi-card" data-card="top-defenseurs">
+    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top défenseurs</div>
+    ${body}
+  </div>`;
+}
+
 function renderSessionDetail(session) {
   const matchs = session.matchs || [];
   let h = "";
@@ -1316,6 +1416,8 @@ function renderSessionDetail(session) {
         <span style="font-size:13px;color:var(--text2);white-space:nowrap">${defGoals} but${defGoals!==1?"s":""}</span>
       </div>
     </div>
+    ${buildLinkUpCardHTML([session])}
+    ${buildTopDefCardHTML([session])}
     <div class="kpi-card ${grosAcc}" data-card="plus-gros-score">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Plus gros score</div>
       ${grosScoreBody}
@@ -1575,6 +1677,8 @@ function renderDashboard() {
         <span style="font-size:13px;color:var(--text2);white-space:nowrap">${defGoals} but${defGoals!==1?"s":""}</span>
       </div>
     </div>
+    ${buildLinkUpCardHTML(sessions)}
+    ${buildTopDefCardHTML(sessions)}
     <div class="kpi-card ${grosAccAgg}" data-card="plus-gros-score">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Plus gros score</div>
       ${grosBodyAgg}
