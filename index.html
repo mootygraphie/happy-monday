@@ -2191,10 +2191,29 @@ function computePlayerDetailStats(playerName) {
   const maxWins = Math.max(0, ...Object.values(winsByColor));
   const prefWinColor = maxWins > 0 ? Object.entries(winsByColor).sort((a,b)=>b[1]-a[1])[0][0] : null;
 
+  /* Série active G/A — sessions consécutives (les plus récentes en premier) où le joueur a marqué ou assisté */
+  const presentSessions = sessionsByDate.filter(s => s.presences[playerName]?.statut === "Présent");
+  let streakCount = 0, streakStart = null, streakEnd = null;
+  for (let i = presentSessions.length - 1; i >= 0; i--) {
+    const s = presentSessions[i];
+    const hasGA = (s.matchs || []).some(m =>
+      [...(m.buteursA||[]), ...(m.buteursB||[])].includes(playerName) ||
+      [...(m.passeursA||[]), ...(m.passeursB||[])].includes(playerName)
+    );
+    if (hasGA) {
+      streakCount++;
+      if (!streakEnd) streakEnd = s.date;
+      streakStart = s.date;
+    } else { break; }
+  }
+  const streakIsActive = streakCount > 0 && presentSessions.length > 0 &&
+    streakEnd === presentSessions[presentSessions.length - 1].date;
+
   return { presences, absences, blesses, episodesBlessures, pasRepondu, buts, passesDecisives,
            matchsJoues, victoires, defaites, sac, maillots,
            bestMatch, bestMatchGoals, bestMatchAssists, recurringColor, teamCount,
-           top3Teammates: top3T, top3WinTeammates: top3WT, prefWinColor, maxWins };
+           top3Teammates: top3T, top3WinTeammates: top3WT, prefWinColor, maxWins,
+           streakCount, streakStart, streakEnd, streakIsActive };
 }
 
 function openPlayerPanel(playerName) {
@@ -2294,6 +2313,21 @@ function openPlayerPanel(playerName) {
         <span style="font-size:22px;font-weight:700;color:var(--gold);font-style:italic">${_luBest.connexions}</span>
         <span style="font-size:13px;color:var(--text2)">but${_luBest.connexions>1?"s":""} direct${_luBest.connexions>1?"s":""}</span>
       </div>
+    </div>`;
+  } else { h += nd; }
+  h += `</div>`;
+
+  /* Série active */
+  h += `<div><div class="pp-section-title">Série active 🔥</div>`;
+  if (st.streakCount > 0) {
+    const streakLabel = st.streakIsActive ? "En cours" : "Terminée";
+    const streakDates = st.streakStart === st.streakEnd
+      ? fmtDate(st.streakStart)
+      : `${fmtDate(st.streakStart)} — ${fmtDate(st.streakEnd)}`;
+    h += `<div class="pp-match-card">
+      <div style="font-size:13px;color:var(--text2)">${streakDates}</div>
+      <div style="font-size:24px;font-weight:700;margin:6px 0;color:${st.streakIsActive?"var(--gold)":"var(--text2)"};font-style:italic">${st.streakCount} session${st.streakCount>1?"s":""}</div>
+      <div style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em">${streakLabel}</div>
     </div>`;
   } else { h += nd; }
   h += `</div>`;
