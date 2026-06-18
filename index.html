@@ -222,7 +222,7 @@
   .mc-score.draw { color: var(--text2); }
   .mc-scores-sep { color: var(--text3); font-size: 16px; font-weight: 300; flex-shrink: 0; }
   .mc-buteurs { display: flex; gap: 8px; font-size: 11px; color: var(--text2); align-items: flex-start; }
-  .mc-but { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+  .mc-but { flex: 1; line-height: 1.7; }
   .mc-but.right { align-items: flex-end; text-align: right; }
   .mc-goal-line { line-height: 1.7; }
 
@@ -1236,8 +1236,8 @@ function fmtGoalsList(buteurs, passeurs) {
     const passeur = passeurs && passeurs[j] ? passeurs[j] : null;
     const bHtml = p === "CSC" ? `<em>CSC</em>` : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
     const pHtml = passeur ? ` <span style="color:var(--text3);font-size:10px">(<button class="player-link" data-player="${passeur}" style="font-size:inherit;color:inherit">${passeur}</button>)</span>` : "";
-    return `<div class="mc-goal-line">${bHtml}${pHtml}</div>`;
-  }).join("");
+    return `<span class="mc-goal-line">${bHtml}${pHtml}</span>`;
+  }).join(` <span style="color:var(--text3)">•</span> `);
 }
 
 function renderSessionDetail(session) {
