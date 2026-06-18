@@ -2231,49 +2231,56 @@ function computePlayerDetailStats(playerName) {
   const maxWins = Math.max(0, ...Object.values(winsByColor));
   const prefWinColor = maxWins > 0 ? Object.entries(winsByColor).sort((a,b)=>b[1]-a[1])[0][0] : null;
 
-  /* Série active G/A — matchs consécutifs (du plus récent) où le joueur a marqué ou assisté */
-  /* Agrégation PAR SESSION (pas par match) — une session sans G/A coupe la série,
-     même si le joueur a scoré dans d'autres matchs de cette session. */
-  const playerSessions = [];
+  /* Meilleure série G/A — par MATCH joué (présent + équipe jouait).
+     Seul un match joué à 0 G/A coupe la série ; les absences ne la cassent pas. */
+  const participatedMatches = [];
   sessionsByDate.forEach(s => {
     const info = s.presences[playerName];
     if (!info || info.statut !== "Présent") return;
     const myEquipe = info.equipe;
-    let sg = 0, sa = 0;
-    if (myEquipe) {
-      (s.matchs || []).forEach(m => {
-        if (m.eqA !== myEquipe && m.eqB !== myEquipe) return;
-        sg += [...(m.buteursA||[]), ...(m.buteursB||[])].filter(p => p === playerName).length;
-        sa += [...(m.passeursA||[]), ...(m.passeursB||[])].filter(p => p === playerName).length;
-      });
-    }
-    playerSessions.push({ date: s.date, g: sg, a: sa });
+    if (!myEquipe) return;
+    (s.matchs || []).forEach(m => {
+      if (m.eqA !== myEquipe && m.eqB !== myEquipe) return;
+      const g = [...(m.buteursA||[]), ...(m.buteursB||[])].filter(p => p === playerName).length;
+      const a = [...(m.passeursA||[]), ...(m.passeursB||[])].filter(p => p === playerName).length;
+      participatedMatches.push({ date: s.date, g, a });
+    });
   });
-  let streakCount = 0, streakStart = null, streakEnd = null;
-  let streakGoals = 0, streakAssists = 0, streakIsActive = false;
-  if (playerSessions.length > 0) {
-    const lastSess = playerSessions[playerSessions.length - 1];
-    streakIsActive = lastSess.g + lastSess.a > 0;
-    let i = playerSessions.length - 1;
-    if (!streakIsActive) { while (i >= 0 && playerSessions[i].g + playerSessions[i].a === 0) i--; }
-    for (; i >= 0; i--) {
-      const ps = playerSessions[i];
-      if (ps.g + ps.a > 0) {
-        streakCount++;
-        streakGoals += ps.g;
-        streakAssists += ps.a;
-        if (!streakEnd) streakEnd = ps.date;
-        streakStart = ps.date;
-      } else { break; }
+
+  let bestHistoricalStreak = null;
+  let currentStreak       = null;
+  let _scur = null;
+
+  const _finalizeStreak = (active) => {
+    if (!_scur) return;
+    const s = { start: _scur.start, end: _scur.end, count: _scur.count, g: _scur.g, a: _scur.a };
+    _scur = null;
+    if (active) {
+      currentStreak = s;
+    } else if (!bestHistoricalStreak || s.count > bestHistoricalStreak.count ||
+               (s.count === bestHistoricalStreak.count && (s.g+s.a) > (bestHistoricalStreak.g+bestHistoricalStreak.a))) {
+      bestHistoricalStreak = s;
+    }
+  };
+
+  for (const pm of participatedMatches) {
+    if (pm.g + pm.a > 0) {
+      if (!_scur) _scur = { start: pm.date, end: pm.date, count: 0, g: 0, a: 0 };
+      _scur.end = pm.date;
+      _scur.count++;
+      _scur.g += pm.g;
+      _scur.a += pm.a;
+    } else {
+      _finalizeStreak(false);
     }
   }
+  _finalizeStreak(true);
 
   return { presences, absences, blesses, episodesBlessures, pasRepondu, buts, passesDecisives,
            matchsJoues, victoires, defaites, sac, maillots,
            bestMatch, bestMatchGoals, bestMatchAssists, recurringColor, teamCount,
            top3Teammates: top3T, top3WinTeammates: top3WT, prefWinColor, maxWins,
-           streakCount, streakStart, streakEnd, streakIsActive,
-           streakGoals, streakAssists };
+           bestHistoricalStreak, currentStreak };
 }
 
 function openPlayerPanel(playerName) {
@@ -2379,20 +2386,37 @@ function openPlayerPanel(playerName) {
 
   /* Meilleure série */
   h += `<div><div class="pp-section-title">Meilleure série 🔥</div>`;
-  if (st.streakCount > 0) {
-    const streakGA = st.streakGoals + st.streakAssists;
-    const dateStr = st.streakIsActive
-      ? `Depuis le ${fmtDate(st.streakStart)}`
-      : `${fmtDate(st.streakStart)} — ${fmtDate(st.streakEnd)}`;
-    h += `<div class="pp-match-card">
-      <div style="font-size:13px;color:var(--text2)">${dateStr}</div>
-      <div style="margin:8px 0 6px;display:flex;align-items:baseline;gap:8px">
-        <span style="font-size:28px;font-weight:700;font-style:italic;color:var(--text1);line-height:1">${streakGA} G/A</span>
-        <span style="font-size:13px;color:var(--text1)">· ${st.streakCount} match${st.streakCount>1?"s":""}</span>
-      </div>
-      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:${st.streakIsActive?"#34A853":"var(--text3)"}">${st.streakIsActive?"En cours":"Terminée"}</div>
-    </div>`;
-  } else { h += nd; }
+  {
+    const _cur  = st.currentStreak;
+    const _best = st.bestHistoricalStreak;
+    const _curBetter = (c, b) => c.count > b.count || (c.count === b.count && (c.g+c.a) >= (b.g+b.a));
+    if (!_cur && !_best) {
+      h += nd;
+    } else {
+      const primary  = (_cur && (!_best || _curBetter(_cur, _best))) ? _cur : _best;
+      const isActive = primary === _cur;
+      const ga = primary.g + primary.a;
+      const dateStr = isActive
+        ? `Depuis le ${fmtDate(primary.start)}`
+        : `${fmtDate(primary.start)} — ${fmtDate(primary.end)}`;
+      h += `<div class="pp-match-card">
+        <div style="font-size:13px;color:var(--text2)">${dateStr}</div>
+        <div style="margin:8px 0 4px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+          <span style="font-size:28px;font-weight:700;font-style:italic;color:var(--text1);line-height:1">${ga} G/A</span>
+          <span style="font-size:12px;color:var(--text2)">(${primary.g}G + ${primary.a}A)</span>
+          <span style="font-size:13px;color:var(--text1)">· ${primary.count} match${primary.count>1?"s":""}</span>
+        </div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:${isActive?"#34A853":"var(--text3)"}">${isActive?"En cours":"Terminée"}</div>
+      </div>`;
+      if (!isActive && _cur) {
+        const cga = _cur.g + _cur.a;
+        h += `<div style="margin-top:8px;padding:8px 14px;background:rgba(52,168,83,.08);border:1px solid rgba(52,168,83,.2);border-radius:var(--radius);display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#34A853">En cours</span>
+          <span style="font-size:12px;color:var(--text2)">${cga} G/A (${_cur.g}G + ${_cur.a}A) · ${_cur.count} match${_cur.count>1?"s":""}</span>
+        </div>`;
+      }
+    }
+  }
   h += `</div>`;
 
   /* Couleur récurrente */
