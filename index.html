@@ -2301,7 +2301,7 @@ function openPlayerPanel(playerName) {
     if (st.bestMatchGoals > 0) bmParts.push(`${st.bestMatchGoals} but${st.bestMatchGoals>1?"s":""}`);
     if (st.bestMatchAssists > 0) bmParts.push(`${st.bestMatchAssists} passe${st.bestMatchAssists>1?"s":""}`);
     h += `<div>
-      <div class="pp-section-title">Meilleur match</div>
+      <div class="pp-section-title">Meilleur match ⚽️</div>
       <div class="pp-match-card">
         <div style="font-size:13px;color:var(--text2)">${fmtDate(st.bestMatch.date)}</div>
         <div style="font-size:24px;font-weight:700;margin:6px 0;color:var(--gold);font-style:italic">${bmParts.join(" · ")}</div>
@@ -2332,20 +2332,19 @@ function openPlayerPanel(playerName) {
   h += `</div>`;
 
   /* Meilleure série */
-  h += `<div><div class="pp-section-title">Meilleure série ⚽️</div>`;
+  h += `<div><div class="pp-section-title">Meilleure série 🔥</div>`;
   if (st.streakCount > 0) {
     const streakGA = st.streakGoals + st.streakAssists;
     const dateStr = st.streakIsActive
       ? `Depuis le ${fmtDate(st.streakStart)}`
       : `${fmtDate(st.streakStart)} — ${fmtDate(st.streakEnd)}`;
-    const statusLabel = st.streakIsActive ? "🔥 En cours" : "Terminée";
     h += `<div class="pp-match-card">
       <div style="font-size:13px;color:var(--text2)">${dateStr}</div>
       <div style="margin:8px 0 6px;display:flex;align-items:baseline;gap:8px">
         <span style="font-size:28px;font-weight:700;font-style:italic;color:${st.streakIsActive?"var(--gold)":"var(--text2)"};line-height:1">${streakGA} G/A</span>
         <span style="font-size:13px;color:var(--text3)">· ${st.streakCount} match${st.streakCount>1?"s":""}</span>
       </div>
-      <div style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em">${statusLabel}</div>
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:${st.streakIsActive?"#34A853":"var(--text3)"}">${st.streakIsActive?"En cours":"Terminée"}</div>
     </div>`;
   } else { h += nd; }
   h += `</div>`;
