@@ -1200,7 +1200,7 @@ function buildLinkUpCardHTML(sessions) {
     <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleur Link-Up ⚡</div>
     <div style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;flex-wrap:wrap">${p1}<span style="color:var(--text3)">–</span>${p2}</div>
     <div class="kpi-sep"></div>
-    <div style="display:flex;align-items:baseline;gap:5px"><span style="font-size:22px;font-weight:700;font-style:italic">${best.connexions}</span><span class="kpi-sub" style="margin:0">but${best.connexions>1?"s":""} direct${best.connexions>1?"s":""}</span></div>
+    <div style="display:flex;align-items:baseline;gap:5px"><span style="font-size:22px;font-weight:700;font-style:italic">${best.connexions}</span><span class="kpi-sub" style="margin:0">but${best.connexions>1?"s":""}</span></div>
   </div>`;
 }
 
@@ -2314,13 +2314,13 @@ function openPlayerPanel(playerName) {
     const _luBest = _luAll[0];
     const _luPartner = _luBest.p1 === playerName ? _luBest.p2 : _luBest.p1;
     h += `<div class="pp-match-card">
-      <div style="font-size:13px;color:var(--text2)">All-time &nbsp;·&nbsp; buts directs</div>
+      <div style="font-size:13px;color:var(--text2)">All-time</div>
       <div style="font-size:22px;font-weight:700;margin:6px 0;font-style:italic">
         <button class="player-link" data-player="${_luPartner}" style="font-size:inherit">${_luPartner}</button>
       </div>
       <div style="display:flex;align-items:baseline;gap:5px">
         <span style="font-size:22px;font-weight:700;color:var(--gold);font-style:italic">${_luBest.connexions}</span>
-        <span style="font-size:13px;color:var(--text2)">but${_luBest.connexions>1?"s":""} direct${_luBest.connexions>1?"s":""}</span>
+        <span style="font-size:13px;color:var(--text2)">but${_luBest.connexions>1?"s":""}</span>
       </div>
     </div>`;
   } else { h += nd; }
