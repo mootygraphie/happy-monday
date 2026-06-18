@@ -1327,9 +1327,6 @@ function renderSessionDetail(session) {
   const bestAccent     = kpiTeamCard(winnerTeams);
   const atkAccent      = kpiTeamCard(bestAtkTeams);
   const defAccent      = kpiTeamCard(worstDefTeams);
-  const bestDefAccent  = kpiTeamCard(bestDefTeams);
-  const bestDefTeamHtml = bestDefTeams.length===0?"—":bestDefTeams.slice(0,2).map(t=>teamTagColored(t)).join(" &middot; ");
-  const defGoalsMin    = minGoalsAgst;
   const grosAcc        = matchGros  ? matchAccent(matchGros)  : "";
   const largeAcc       = matchLarge ? matchAccent(matchLarge) : "";
   const grosCol        = scoreColors(matchGros);
@@ -1400,11 +1397,11 @@ function renderSessionDetail(session) {
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top buteurs</div>
       ${top3ButeursHtml}
     </div>
-    <div class="kpi-card ${bestDefAccent}" data-card="meilleure-defense">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure défense</div>
-      <div style="font-size:24px;font-weight:700;line-height:1.2">${bestDefTeamHtml}</div>
+    <div class="kpi-card ${defAccent}" data-card="meilleure-defense">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Pire défense</div>
+      <div style="font-size:24px;font-weight:700;line-height:1.2">${defTeamHtml}</div>
       <div class="kpi-sep"></div>
-      <div class="kpi-sub">${defGoalsMin} but${defGoalsMin!==1?"s":""} conc.</div>
+      <div class="kpi-sub">${defGoals} but${defGoals!==1?"s":""} conc.</div>
     </div>
     ${buildTopDefCardHTML([session])}
     <div class="kpi-card" data-card="top-passeurs">
@@ -1578,9 +1575,6 @@ function renderDashboard() {
   const bestAccentAgg    = kpiTeamCard(winnerTeamsAgg);
   const atkAccentAgg     = kpiTeamCard(bestAtkTeams);
   const defAccentAgg     = kpiTeamCard(worstDefTeams);
-  const bestDefAccentAgg  = kpiTeamCard(bestDefTeamsAgg);
-  const bestDefTeamHtmlAgg = bestDefTeamsAgg.length===0?"—":bestDefTeamsAgg.slice(0,2).map(t=>teamTagColored(t)).join(" &middot; ");
-  const defGoalsMinAgg    = minGoalsAgAgg;
   const grosAccAgg       = st.mostGoals  ? matchAccent(st.mostGoals)  : "";
   const largeAccAgg      = st.biggestAmp ? matchAccent(st.biggestAmp) : "";
   const grosColAgg       = scoreColors(st.mostGoals);
@@ -1653,11 +1647,11 @@ function renderDashboard() {
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top buteurs</div>
       ${top3Html}
     </div>
-    <div class="kpi-card ${bestDefAccentAgg}" data-card="meilleure-defense">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure défense</div>
-      <div style="font-size:24px;font-weight:700;line-height:1.2">${bestDefTeamHtmlAgg}</div>
+    <div class="kpi-card ${defAccentAgg}" data-card="meilleure-defense">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Pire défense</div>
+      <div style="font-size:24px;font-weight:700;line-height:1.2">${defTeamHtmlAgg}</div>
       <div class="kpi-sep"></div>
-      <div class="kpi-sub">${defGoalsMinAgg} but${defGoalsMinAgg!==1?"s":""} conc.</div>
+      <div class="kpi-sub">${defGoals} but${defGoals!==1?"s":""} conc.</div>
     </div>
     ${buildTopDefCardHTML(sessions)}
     <div class="kpi-card" data-card="top-passeurs">
