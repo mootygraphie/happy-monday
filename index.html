@@ -1263,6 +1263,15 @@ function renderSessionDetail(session) {
   const matchGros    = matchs.reduce((b,m) => { const t=m.scoreA+m.scoreB; return (!b||t>b.total)?{...m,total:t}:b; }, null);
   const matchLarge   = matchs.reduce((b,m) => { const a=Math.abs(m.scoreA-m.scoreB); return (!b||a>b.amp)?{...m,amp:a}:b; }, null);
 
+  const fmtBut = arr => {
+    if (!arr || !arr.length) return "";
+    const c = {};
+    arr.forEach(p => { c[p]=(c[p]||0)+1; });
+    return Object.entries(c).sort((a,b)=>a[0].localeCompare(b[0],"fr")).map(([p,n]) => {
+      const d = p==="CSC" ? p : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
+      return n>1 ? `${d} ×${n}` : d;
+    }).join(", ");
+  };
   const fmtGoalsList = (buteurs, passeurs) => {
     if (!buteurs || !buteurs.length) return "";
     return buteurs.map((p, j) => {
