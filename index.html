@@ -1268,7 +1268,7 @@ function renderSessionDetail(session) {
     return buteurs.map((p, j) => {
       const passeur = passeurs && passeurs[j] ? passeurs[j] : null;
       const bHtml = p === "CSC" ? `<em>CSC</em>` : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
-      const pHtml = passeur ? ` <span style="color:var(--text3)">(${`<button class="player-link" data-player="${passeur}" style="font-size:inherit">${passeur}</button>`})</span>` : "";
+      const pHtml = passeur ? ` <span style="color:var(--text3)">(<button class="player-link" data-player="${passeur}" style="font-size:inherit">${passeur}</button>)</span>` : "";
       return `<div class="mc-goal-line">${bHtml}${pHtml}</div>`;
     }).join("");
   };
