@@ -221,9 +221,10 @@
   .mc-score.lose { color: var(--text3); font-weight: 300; font-size: 30px; }
   .mc-score.draw { color: var(--text2); }
   .mc-scores-sep { color: var(--text3); font-size: 16px; font-weight: 300; flex-shrink: 0; }
-  .mc-buteurs { display: flex; gap: 8px; font-size: 11px; color: var(--text2); }
-  .mc-but { flex: 1; }
-  .mc-but.right { text-align: right; }
+  .mc-buteurs { display: flex; gap: 8px; font-size: 11px; color: var(--text2); align-items: flex-start; }
+  .mc-but { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+  .mc-but.right { align-items: flex-end; text-align: right; }
+  .mc-goal-line { line-height: 1.7; }
 
   /* ── KPI summary ── */
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 10px; margin-bottom: 2rem; }
@@ -1142,32 +1143,22 @@ function computeStats(sessions) {
 function computeLinkUpStats(sessions) {
   const duoMap = {};
   sessions.forEach(session => {
-    const presences = session.presences || {};
     (session.matchs || []).forEach(m => {
-      const getPlayers = color => !color ? [] :
-        Object.entries(presences).filter(([,v]) => v.statut === "Présent" && v.equipe === color).map(([k]) => k);
-      const playersA = getPlayers(m.eqA);
-      const playersB = getPlayers(m.eqB);
-      const gaInMatch = {};
-      (m.buteursA||[]).forEach(p => { if (p && p!=="CSC" && playersA.includes(p)) gaInMatch[p]=(gaInMatch[p]||0)+1; });
-      (m.passeursA||[]).forEach(p => { if (p && playersA.includes(p)) gaInMatch[p]=(gaInMatch[p]||0)+1; });
-      (m.buteursB||[]).forEach(p => { if (p && p!=="CSC" && playersB.includes(p)) gaInMatch[p]=(gaInMatch[p]||0)+1; });
-      (m.passeursB||[]).forEach(p => { if (p && playersB.includes(p)) gaInMatch[p]=(gaInMatch[p]||0)+1; });
-      const addPairs = players => {
-        for (let i=0; i<players.length; i++) {
-          for (let j=i+1; j<players.length; j++) {
-            const [a,b] = [players[i],players[j]].sort();
-            const key = `${a}|||${b}`;
-            if (!duoMap[key]) duoMap[key] = {p1:a, p2:b, ga:0};
-            duoMap[key].ga += (gaInMatch[players[i]]||0) + (gaInMatch[players[j]]||0);
-          }
-        }
+      const processSide = (buteurs, passeurs) => {
+        (buteurs || []).forEach((buteur, j) => {
+          const passeur = passeurs && passeurs[j] ? passeurs[j] : null;
+          if (!buteur || buteur === "CSC" || !passeur || passeur === "CSC") return;
+          const [a, b] = [buteur, passeur].sort();
+          const key = `${a}|||${b}`;
+          if (!duoMap[key]) duoMap[key] = {p1: a, p2: b, connexions: 0};
+          duoMap[key].connexions++;
+        });
       };
-      addPairs(playersA);
-      addPairs(playersB);
+      processSide(m.buteursA, m.passeursA);
+      processSide(m.buteursB, m.passeursB);
     });
   });
-  return Object.values(duoMap).filter(d => d.ga > 0).sort((a,b) => b.ga - a.ga);
+  return Object.values(duoMap).filter(d => d.connexions > 0).sort((a,b) => b.connexions - a.connexions);
 }
 
 function computeTopDefendersStats(sessions, minMatches) {
@@ -1207,7 +1198,7 @@ function buildLinkUpCardHTML(sessions) {
     <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleur Link-Up ⚡</div>
     <div style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;flex-wrap:wrap">${p1}<span style="color:var(--text3)">–</span>${p2}</div>
     <div class="kpi-sep"></div>
-    <div style="display:flex;align-items:baseline;gap:5px"><span style="font-size:22px;font-weight:700;font-style:italic">${best.ga}</span><span class="kpi-sub" style="margin:0">G/A combinés</span></div>
+    <div style="display:flex;align-items:baseline;gap:5px"><span style="font-size:22px;font-weight:700;font-style:italic">${best.connexions}</span><span class="kpi-sub" style="margin:0">but${best.connexions>1?"s":""} direct${best.connexions>1?"s":""}</span></div>
   </div>`;
 }
 
@@ -1272,14 +1263,14 @@ function renderSessionDetail(session) {
   const matchGros    = matchs.reduce((b,m) => { const t=m.scoreA+m.scoreB; return (!b||t>b.total)?{...m,total:t}:b; }, null);
   const matchLarge   = matchs.reduce((b,m) => { const a=Math.abs(m.scoreA-m.scoreB); return (!b||a>b.amp)?{...m,amp:a}:b; }, null);
 
-  const fmtBut = arr => {
-    if (!arr || !arr.length) return "";
-    const c = {};
-    arr.forEach(p => { c[p]=(c[p]||0)+1; });
-    return Object.entries(c).sort((a,b)=>a[0].localeCompare(b[0],"fr")).map(([p,n]) => {
-      const d = p==="CSC" ? p : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
-      return n>1 ? `${d} ×${n}` : d;
-    }).join(", ");
+  const fmtGoalsList = (buteurs, passeurs) => {
+    if (!buteurs || !buteurs.length) return "";
+    return buteurs.map((p, j) => {
+      const passeur = passeurs && passeurs[j] ? passeurs[j] : null;
+      const bHtml = p === "CSC" ? `<em>CSC</em>` : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
+      const pHtml = passeur ? ` <span style="color:var(--text3)">(${`<button class="player-link" data-player="${passeur}" style="font-size:inherit">${passeur}</button>`})</span>` : "";
+      return `<div class="mc-goal-line">${bHtml}${pHtml}</div>`;
+    }).join("");
   };
 
   /* ── Rangée 1 : 4 KPI ── */
@@ -1480,7 +1471,7 @@ function renderSessionDetail(session) {
       const aW = m.scoreA>m.scoreB, bW = m.scoreB>m.scoreA;
       const cA = aW ? "" : bW ? " lose" : " draw";
       const cB = bW ? "" : aW ? " lose" : " draw";
-      const bA = fmtBut(m.buteursA), bB = fmtBut(m.buteursB);
+      const bA = fmtGoalsList(m.buteursA, m.passeursA), bB = fmtGoalsList(m.buteursB, m.passeursB);
       h += `<div class="match-card">
         <div class="mc-badges">${badge(m.eqA)}${badge(m.eqB)}</div>
         <div class="mc-scores">
@@ -1488,7 +1479,7 @@ function renderSessionDetail(session) {
           <span class="mc-scores-sep">–</span>
           <span class="mc-score${cB}">${m.scoreB}</span>
         </div>
-        ${bA||bB ? `<div class="mc-buteurs"><span class="mc-but">${bA}</span><span class="mc-but right">${bB}</span></div>` : ""}
+        ${bA||bB ? `<div class="mc-buteurs"><div class="mc-but">${bA}</div><div class="mc-but right">${bB}</div></div>` : ""}
       </div>`;
     });
     h += `</div>`;
