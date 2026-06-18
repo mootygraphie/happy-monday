@@ -2289,6 +2289,19 @@ function openPlayerPanel(playerName) {
     </div>`;
   }
 
+  /* Meilleur Link-Up all-time */
+  const _luAll = computeLinkUpStats(SESSIONS).filter(d => d.p1 === playerName || d.p2 === playerName);
+  h += `<div><div class="pp-section-title">Meilleur Link-Up ⚡</div>`;
+  if (_luAll.length) {
+    const _luBest = _luAll[0];
+    const _luPartner = _luBest.p1 === playerName ? _luBest.p2 : _luBest.p1;
+    h += `<div style="display:flex;align-items:center;gap:10px">
+      <button class="player-link" data-player="${_luPartner}" style="font-size:14px;font-weight:600">${_luPartner}</button>
+      <span style="font-size:12px;color:var(--text3)">${_luBest.connexions} but${_luBest.connexions>1?"s":""} direct${_luBest.connexions>1?"s":""}</span>
+    </div>`;
+  } else { h += nd; }
+  h += `</div>`;
+
   /* Couleur récurrente */
   h += `<div><div class="pp-section-title">Couleur récurrente</div>`;
   if (st.recurringColor) {
