@@ -2194,14 +2194,22 @@ function computePlayerDetailStats(playerName) {
   /* Série active G/A — sessions consécutives (les plus récentes en premier) où le joueur a marqué ou assisté */
   const presentSessions = sessionsByDate.filter(s => s.presences[playerName]?.statut === "Présent");
   let streakCount = 0, streakStart = null, streakEnd = null;
+  let streakGoals = 0, streakAssists = 0, streakMatches = 0;
   for (let i = presentSessions.length - 1; i >= 0; i--) {
     const s = presentSessions[i];
-    const hasGA = (s.matchs || []).some(m =>
-      [...(m.buteursA||[]), ...(m.buteursB||[])].includes(playerName) ||
-      [...(m.passeursA||[]), ...(m.passeursB||[])].includes(playerName)
-    );
-    if (hasGA) {
+    let sg = 0, sa = 0, sm = 0;
+    (s.matchs || []).forEach(m => {
+      const myEquipe = s.presences[playerName]?.equipe;
+      if (!myEquipe || (m.eqA !== myEquipe && m.eqB !== myEquipe)) return;
+      sm++;
+      sg += [...(m.buteursA||[]), ...(m.buteursB||[])].filter(p => p === playerName).length;
+      sa += [...(m.passeursA||[]), ...(m.passeursB||[])].filter(p => p === playerName).length;
+    });
+    if (sg + sa > 0) {
       streakCount++;
+      streakGoals += sg;
+      streakAssists += sa;
+      streakMatches += sm;
       if (!streakEnd) streakEnd = s.date;
       streakStart = s.date;
     } else { break; }
@@ -2213,7 +2221,8 @@ function computePlayerDetailStats(playerName) {
            matchsJoues, victoires, defaites, sac, maillots,
            bestMatch, bestMatchGoals, bestMatchAssists, recurringColor, teamCount,
            top3Teammates: top3T, top3WinTeammates: top3WT, prefWinColor, maxWins,
-           streakCount, streakStart, streakEnd, streakIsActive };
+           streakCount, streakStart, streakEnd, streakIsActive,
+           streakGoals, streakAssists, streakMatches };
 }
 
 function openPlayerPanel(playerName) {
@@ -2320,14 +2329,19 @@ function openPlayerPanel(playerName) {
   /* Série active */
   h += `<div><div class="pp-section-title">Série active 🔥</div>`;
   if (st.streakCount > 0) {
-    const streakLabel = st.streakIsActive ? "En cours" : "Terminée";
+    const streakGA = st.streakGoals + st.streakAssists;
     const streakDates = st.streakStart === st.streakEnd
       ? fmtDate(st.streakStart)
       : `${fmtDate(st.streakStart)} — ${fmtDate(st.streakEnd)}`;
+    const detailParts = [];
+    if (st.streakGoals > 0) detailParts.push(`${st.streakGoals} but${st.streakGoals>1?"s":""}`);
+    if (st.streakAssists > 0) detailParts.push(`${st.streakAssists} passe${st.streakAssists>1?"s":""}`);
+    const statusLabel = st.streakIsActive ? "En cours" : "Terminée";
     h += `<div class="pp-match-card">
       <div style="font-size:13px;color:var(--text2)">${streakDates}</div>
-      <div style="font-size:24px;font-weight:700;margin:6px 0;color:${st.streakIsActive?"var(--gold)":"var(--text2)"};font-style:italic">${st.streakCount} session${st.streakCount>1?"s":""}</div>
-      <div style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em">${streakLabel}</div>
+      <div style="font-size:28px;font-weight:700;margin:6px 0;color:${st.streakIsActive?"var(--gold)":"var(--text2)"};font-style:italic;line-height:1">${streakGA} G/A</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px">${detailParts.join(" · ")}</div>
+      <div style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em">${statusLabel} · ${st.streakMatches} match${st.streakMatches>1?"s":""}</div>
     </div>`;
   } else { h += nd; }
   h += `</div>`;
