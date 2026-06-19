@@ -197,8 +197,8 @@
   .team-card-title.vert  { color: var(--vert); }
   .team-card-title.bleu, .team-card-title.bleue  { color: var(--bleu); }
   .team-card-count { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--text3); background: var(--bg3); padding: 3px 10px; border-radius: 20px; }
-  .team-card-players { padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 8px; }
-  .team-player-pill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+  .team-card-players { padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 4px; }
+  .team-player-pill { display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 10px; font-size: 11px; font-weight: 500; }
   .team-player-pill.rouge { background: var(--rouge-bg); color: var(--text); border: 1px solid var(--rouge-border); }
   .team-player-pill.vert  { background: var(--vert-bg);  color: var(--text); border: 1px solid var(--vert-border); }
   .team-player-pill.bleu, .team-player-pill.bleue  { background: var(--bleu-bg);  color: var(--text); border: 1px solid var(--bleu-border); }
@@ -209,7 +209,7 @@
   @media (max-width: 640px) {
     .teams-vs-layout { grid-template-columns: 1fr !important; gap: 8px; }
     .teams-vs-divider { display: none; }
-    .team-card-players { gap: 6px; }
+    .team-card-players { gap: 4px; }
   }
   .matches-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   @media (max-width: 860px) { .matches-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -232,6 +232,20 @@
   .kpi-card[data-card="atk-def-combined"] { display: none !important; }
   .kpi-card[data-card="pire-defense"]     { display: none !important; }
   .kpi-avg-desktop { display: none; }
+  @media (max-width: 767px) {
+    .kpi-card[data-card="matchs"]            { order: 1; }
+    .kpi-card[data-card="meilleure-equipe"]  { order: 2; }
+    .kpi-card[data-card="buts-marques"]      { order: 3; }
+    .kpi-card[data-card="avg-standalone"]    { order: 4; }
+    .kpi-card[data-card="meilleure-attaque"] { order: 5; }
+    .kpi-card[data-card="meilleure-defense"] { order: 6; }
+    .kpi-card[data-card="top-buteurs"]       { order: 7;  grid-column: 1 / -1; }
+    .kpi-card[data-card="top-defenseurs"]    { order: 8;  grid-column: 1 / -1; }
+    .kpi-card[data-card="meilleur-link-up"]  { order: 9;  grid-column: 1 / -1; }
+    .kpi-card[data-card="top-passeurs"]      { order: 10; grid-column: 1 / -1; }
+    .kpi-card[data-card="plus-gros-score"]   { order: 11; }
+    .kpi-card[data-card="plus-grand-ecart"]  { order: 12; }
+  }
   @media (min-width: 768px) {
     .kpi-grid--main { grid-template-columns: repeat(6, 1fr); }
     .kpi-grid--main > .kpi-card { grid-column: span 2; }
@@ -439,7 +453,7 @@
     text-underline-offset: 3px; transition: color .12s, text-decoration-color .12s;
   }
   .player-link:hover { color: #fff; text-decoration-color: rgba(255,255,255,.55); }
-  .team-player-pill.player-link { text-decoration: none; padding: 7px 16px; }
+  .team-player-pill.player-link { text-decoration: none; padding: 5px 10px; font-size: 11px; }
   .player-chip.player-link { text-decoration: none; padding: 5px 13px; }
   .team-player-pill.player-link:hover,
   .player-chip.player-link:hover { color: inherit; opacity: .82; text-decoration: none; }
@@ -1277,7 +1291,7 @@ function fmtGoalsList(buteurs, passeurs) {
   return buteurs.map((p, j) => {
     const passeur = passeurs && passeurs[j] ? passeurs[j] : null;
     const bHtml = p === "CSC" ? `<em>CSC</em>` : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
-    const pHtml = passeur ? ` <span style="color:var(--text3);font-size:10px">(<button class="player-link" data-player="${passeur}" style="font-size:inherit;color:inherit">${passeur}</button>)</span>` : "";
+    const pHtml = passeur ? ` <span style="color:var(--text3);font-size:10px;white-space:nowrap">(<button class="player-link" data-player="${passeur}" style="font-size:inherit;color:inherit">${passeur}</button>)</span>` : "";
     return `<span class="mc-goal-line" style="white-space:nowrap">${bHtml}${pHtml}</span>`;
   }).join(` <span style="color:var(--text3)">•</span> `);
 }
