@@ -747,6 +747,7 @@
     <button class="main-tab active" data-tab="dashboard">Dashboard</button>
     <button class="main-tab" data-tab="session">Sessions</button>
     <button class="main-tab" data-tab="joueurs">Joueurs</button>
+    <button class="main-tab" data-tab="stats">Stats</button>
   </div>
 
   <!-- ── Onglet Dashboard ── -->
@@ -784,6 +785,9 @@
   <div class="tab-panel" id="panel-saisie">
     <div id="saisie-content"></div>
   </div>
+
+  <!-- ── Onglet Stats ── -->
+  <div class="tab-panel" id="panel-stats"></div>
 
 </div>
 
@@ -1539,6 +1543,179 @@ function renderSessionDetail(session) {
   return h;
 }
 
+function buildAggTop3(ranked, unitS, unitP) {
+  const slots = []; let rem = [...ranked];
+  while (rem.length > 0 && slots.length < 3) {
+    const topN = rem[0][1];
+    slots.push({ rank: slots.length, players: rem.filter(([,n])=>n===topN).map(([n])=>n), count: topN });
+    rem = rem.filter(([,n]) => n < topN);
+  }
+  if (slots.length === 0) return `<span class="no-data">—</span>`;
+  return buildPodiumVizSlots(
+    slots,
+    s => `${s.count} ${s.count > 1 ? unitP : unitS}`,
+    s => s.players.map(n => pLink(n)).join(", ")
+  );
+}
+
+function buildPresencePodium(entries) {
+  if (!entries || !entries.length) return `<span class="no-data">—</span>`;
+  const slots = entries.map(([name, stats], i) => ({ rank: i, players: [name], count: stats.presences }));
+  return buildPodiumVizSlots(
+    slots,
+    s => `${s.count} sess.`,
+    s => s.players.map(n => pLink(n)).join(", ")
+  );
+}
+
+function computeBestAllTimeStreak() {
+  let best = null;
+  ALL_PLAYERS.filter(p => !JOKERS.has(p)).forEach(player => {
+    const st = computePlayerDetailStats(player);
+    const cs = st.currentStreak;
+    const hs = st.bestHistoricalStreak;
+    let candidate = null;
+    if (cs && hs) {
+      if (cs.count > hs.count || (cs.count === hs.count && (cs.g + cs.a) >= (hs.g + hs.a))) {
+        candidate = { player, ...cs, isActive: true };
+      } else {
+        candidate = { player, ...hs, isActive: false };
+      }
+    } else if (cs) {
+      candidate = { player, ...cs, isActive: true };
+    } else if (hs) {
+      candidate = { player, ...hs, isActive: false };
+    }
+    if (!candidate) return;
+    if (!best || candidate.count > best.count ||
+        (candidate.count === best.count && (candidate.g + candidate.a) > (best.g + best.a))) {
+      best = candidate;
+    }
+  });
+  return best;
+}
+
+function buildBallonDorHtml() {
+  const _bdYear = new Date().getFullYear();
+  const _bdPs = {};
+  SESSIONS.filter(s => new Date(s.date).getFullYear() === _bdYear).forEach(s => {
+    (s.matchs || []).forEach(m => {
+      [...(m.buteursA||[]), ...(m.buteursB||[])].forEach(p => {
+        if (p && p !== "CSC") { if (!_bdPs[p]) _bdPs[p] = {buts:0,passes:0}; _bdPs[p].buts++; }
+      });
+      [...(m.passeursA||[]), ...(m.passeursB||[])].forEach(p => {
+        if (p && p !== "CSC") { if (!_bdPs[p]) _bdPs[p] = {buts:0,passes:0}; _bdPs[p].passes++; }
+      });
+    });
+  });
+  const _bdTop5 = Object.entries(_bdPs)
+    .map(([name, p]) => ({ name, buts: p.buts, passes: p.passes, pts: p.buts * 10 + p.passes * 5 }))
+    .filter(p => p.pts > 0)
+    .sort((a, b) => b.pts - a.pts || b.buts - a.buts || a.name.localeCompare(b.name, "fr"))
+    .slice(0, 5);
+  const _bdMedals = ["🥇","🥈","🥉"];
+  let html = `<div class="ballon-dor-card" style="margin-bottom:2rem">
+    <div class="ballon-dor-head">
+      <span class="ballon-dor-icon">🏆</span>
+      <div>
+        <div class="ballon-dor-title">Ballon d'Or ${_bdYear}</div>
+        <div class="ballon-dor-meta">Classement G/A — Janvier à aujourd'hui</div>
+      </div>
+      <div class="ballon-dor-formula">10 pts / but &nbsp;·&nbsp; 5 pts / passe</div>
+    </div>
+    <div class="bd-list">`;
+  if (_bdTop5.length) {
+    const _bdMax = _bdTop5[0].pts;
+    _bdTop5.forEach((p, i) => {
+      const _bdRank = i < 3 ? `<span class="bd-rank">${_bdMedals[i]}</span>` : `<span class="bd-rank num">${i+1}</span>`;
+      const _bdGa = [p.buts > 0 ? `${p.buts}G` : null, p.passes > 0 ? `${p.passes}A` : null].filter(Boolean).join(" · ");
+      const _bdBar = Math.round((p.pts / _bdMax) * 100);
+      html += `<div class="bd-row${i===0?" bd-first":""}">
+        ${_bdRank}
+        <span class="bd-name">${pLink(p.name)}</span>
+        <div class="bd-bar-wrap"><div class="bd-bar" style="width:${_bdBar}%"></div></div>
+        <span class="bd-pts">${p.pts}</span>
+        <span class="bd-ga">${_bdGa}</span>
+      </div>`;
+    });
+  } else {
+    html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun but ou passe enregistré en ${_bdYear} pour le moment.</div>`;
+  }
+  html += `</div></div>`;
+  return html;
+}
+
+function renderStats() {
+  const container = document.getElementById("panel-stats");
+  const allSt = computeStats(SESSIONS);
+
+  /* ── Ballon d'Or ── */
+  let h = buildBallonDorHtml();
+
+  /* ── Ligne 1 : Buteurs | Passeurs ── */
+  const top3Buteurs  = buildAggTop3(allSt.buteursRank.map(([n,p])=>[n,p.buts]), "but", "buts");
+  const top3Passeurs = buildAggTop3(allSt.passeursRank.map(([n,p])=>[n,p.passes]), "passe", "passes");
+
+  h += `<div class="podium-section">
+    <div class="kpi-card">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 3 Buteurs ⚽ (all-time)</div>
+      ${top3Buteurs}
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 3 Passeurs 🎯 (all-time)</div>
+      ${top3Passeurs}
+    </div>
+  </div>`;
+
+  /* ── Ligne 2 : Défenseurs | Link-Up ── */
+  const defCard    = buildTopDefCardHTML(SESSIONS);
+  const linkUpCard = buildLinkUpCardHTML(SESSIONS);
+
+  h += `<div class="podium-section">
+    ${defCard}
+    ${linkUpCard}
+  </div>`;
+
+  /* ── Ligne 3 : Meilleure série | Top Présences ── */
+  const streak = computeBestAllTimeStreak();
+  let streakBody;
+  if (!streak) {
+    streakBody = `<span style="color:var(--text3)">—</span>`;
+  } else {
+    const badge = streak.isActive
+      ? `<span style="display:inline-block;margin-top:8px;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600;background:rgba(67,160,71,.18);color:#43a047;border:1px solid rgba(67,160,71,.3)">🟢 En cours</span>`
+      : `<span style="display:inline-block;margin-top:8px;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600;background:var(--bg3);color:var(--text3);border:1px solid var(--border)">Terminée</span>`;
+    const ga = streak.g + streak.a;
+    streakBody = `
+      <div style="font-size:24px;font-weight:700;line-height:1.2">${pLink(streak.player)}</div>
+      <div class="kpi-sep"></div>
+      <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap">
+        <span style="font-size:28px;font-weight:700;font-style:italic">${streak.count}</span>
+        <span class="kpi-sub" style="margin:0">match${streak.count>1?"s":""} consécutif${streak.count>1?"s":""}</span>
+        <span style="color:var(--text3)">·</span>
+        <span style="font-weight:600">${ga} G/A</span>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">${fmtDate(streak.start)} → ${fmtDate(streak.end)}</div>
+      ${badge}`;
+  }
+
+  const top3PresHtml = buildPresencePodium(allSt.top3Pres);
+
+  h += `<div class="podium-section">
+    <div class="kpi-card">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure série 🔥 (all-time)</div>
+      ${streakBody}
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top présences ✅</div>
+      ${top3PresHtml}
+    </div>
+  </div>`;
+
+  container.innerHTML = h;
+  animateView(container);
+}
+
 function renderDashboard() {
   const sessions = filterSessions(currentPeriod);
   const dash = document.getElementById("dash");
@@ -1599,22 +1776,8 @@ function renderDashboard() {
     .map(c => `${dot(c)}${st.colorWins[c]}`).join(" · ");
   const matchSubAgg = [victSubAgg, draws > 0 ? `<span class="cdot gris"></span>${draws} ${draws>1?"":""}` : ""].filter(Boolean).join(" · ");
 
-  function _buildAggTop3(ranked, unitS, unitP) {
-    const slots = []; let rem = [...ranked];
-    while (rem.length > 0 && slots.length < 3) {
-      const topN = rem[0][1];
-      slots.push({ rank: slots.length, players: rem.filter(([,n])=>n===topN).map(([n])=>n), count: topN });
-      rem = rem.filter(([,n]) => n < topN);
-    }
-    if (slots.length === 0) return `<span class="no-data">—</span>`;
-    return buildPodiumVizSlots(
-      slots,
-      s => `${s.count} ${s.count > 1 ? unitP : unitS}`,
-      s => s.players.map(n => pLink(n)).join(", ")
-    );
-  }
-  const top3Html      = _buildAggTop3(st.buteursRank.map(([n,p])=>[n,p.buts]),   "but",   "buts");
-  const top3PassHtml  = _buildAggTop3(st.passeursRank.map(([n,p])=>[n,p.passes]),"passe","passes");
+  const top3Html      = buildAggTop3(st.buteursRank.map(([n,p])=>[n,p.buts]),   "but",   "buts");
+  const top3PassHtml  = buildAggTop3(st.passeursRank.map(([n,p])=>[n,p.passes]),"passe","passes");
 
   /* KPI cards agrégées — pré-calcul */
   const avgButsAgg       = st.allMatchs.length > 0 ? (totalButs / st.allMatchs.length).toFixed(1) : "—";
@@ -1859,6 +2022,9 @@ document.querySelectorAll(".main-tab").forEach(tab => {
       history.replaceState(null, '', '#sessions');
       const date = document.getElementById("session-date").value;
       if (date) renderSessionResults(date);
+    } else if (tab.dataset.tab === "stats") {
+      history.replaceState(null, '', '#stats');
+      renderStats();
     }
   });
 });
@@ -2107,56 +2273,7 @@ function renderJoueurs() {
       </table>
     </div>` : "";
 
-  /* ── Ballon d'Or année en cours ── */
-  const _bdYear = new Date().getFullYear();
-  const _bdPs = {};
-  SESSIONS.filter(s => new Date(s.date).getFullYear() === _bdYear).forEach(s => {
-    (s.matchs || []).forEach(m => {
-      [...(m.buteursA||[]), ...(m.buteursB||[])].forEach(p => {
-        if (p && p !== "CSC") { if (!_bdPs[p]) _bdPs[p] = {buts:0,passes:0}; _bdPs[p].buts++; }
-      });
-      [...(m.passeursA||[]), ...(m.passeursB||[])].forEach(p => {
-        if (p && p !== "CSC") { if (!_bdPs[p]) _bdPs[p] = {buts:0,passes:0}; _bdPs[p].passes++; }
-      });
-    });
-  });
-  const _bdTop5 = Object.entries(_bdPs)
-    .map(([name, p]) => ({ name, buts: p.buts, passes: p.passes, pts: p.buts * 10 + p.passes * 5 }))
-    .filter(p => p.pts > 0)
-    .sort((a, b) => b.pts - a.pts || b.buts - a.buts || a.name.localeCompare(b.name, "fr"))
-    .slice(0, 5);
-  const _bdMedals = ["🥇","🥈","🥉"];
-
-  let _bdHtml = `<div class="ballon-dor-card" style="margin-bottom:2rem">
-    <div class="ballon-dor-head">
-      <span class="ballon-dor-icon">🏆</span>
-      <div>
-        <div class="ballon-dor-title">Ballon d'Or ${_bdYear}</div>
-        <div class="ballon-dor-meta">Classement G/A — Janvier à aujourd'hui</div>
-      </div>
-      <div class="ballon-dor-formula">10 pts / but &nbsp;·&nbsp; 5 pts / passe</div>
-    </div>
-    <div class="bd-list">`;
-  if (_bdTop5.length) {
-    const _bdMax = _bdTop5[0].pts;
-    _bdTop5.forEach((p, i) => {
-      const _bdRank = i < 3 ? `<span class="bd-rank">${_bdMedals[i]}</span>` : `<span class="bd-rank num">${i+1}</span>`;
-      const _bdGa = [p.buts > 0 ? `${p.buts}G` : null, p.passes > 0 ? `${p.passes}A` : null].filter(Boolean).join(" · ");
-      const _bdBar = Math.round((p.pts / _bdMax) * 100);
-      _bdHtml += `<div class="bd-row${i===0?" bd-first":""}">
-        ${_bdRank}
-        <span class="bd-name">${pLink(p.name)}</span>
-        <div class="bd-bar-wrap"><div class="bd-bar" style="width:${_bdBar}%"></div></div>
-        <span class="bd-pts">${p.pts}</span>
-        <span class="bd-ga">${_bdGa}</span>
-      </div>`;
-    });
-  } else {
-    _bdHtml += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun but ou passe enregistré en ${_bdYear} pour le moment.</div>`;
-  }
-  _bdHtml += `</div></div>`;
-
-  container.innerHTML = _bdHtml + `
+  container.innerHTML = `
     <div class="joueurs-section-label">Roster</div>
     <div class="players-table-wrap">
       <table class="players-table" id="roster-table">
