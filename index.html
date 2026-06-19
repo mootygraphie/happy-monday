@@ -3194,7 +3194,7 @@ document.addEventListener("click", e => {
     } else {
       history.replaceState(null, '', '#last');
     }
-  } else if (_hash === "joueurs" || _hash === "sessions") {
+  } else if (_hash === "joueurs" || _hash === "sessions" || _hash === "stats") {
     const _tabKey = _hash === "sessions" ? "session" : _hash;
     document.querySelectorAll(".main-tab").forEach(t => t.classList.toggle("active", t.dataset.tab === _tabKey));
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === `panel-${_tabKey}`));
@@ -3206,6 +3206,7 @@ document.addEventListener("click", e => {
   renderDashboard();
   populateSessionSelect();
   renderJoueurs();
+  if (_hash === "stats") renderStats();
   if (_loadSaisie) renderSaisie();
   if (SESSIONS.length) {
     const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
