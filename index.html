@@ -1722,6 +1722,8 @@ function renderDashboard() {
   const totalPres         = sessions.reduce((acc,s) => acc + Object.values(s.presences).filter(p=>p.statut==="Présent").length, 0);
   const totalAbs          = sessions.reduce((acc,s) => acc + Object.values(s.presences).filter(p=>p.statut==="Absent").length, 0);
   const totalBlesEpisodes = Object.values(st.ps).reduce((acc,p) => acc + p.episodesBlessures, 0);
+  const uniqueBlesPlayers = Object.values(st.ps).filter(p => p.blesses > 0).length;
+  const sessionsBlessees  = sessions.filter(s => Object.values(s.presences).some(p => p.statut === "Blessé")).length;
   const avgPres           = (totalPres / sessions.length).toFixed(1).replace(".",",");
 
   h += `<div class="kpi-grid" style="margin-bottom:2rem">
@@ -1735,10 +1737,14 @@ function renderDashboard() {
       <div class="kpi-sub">${totalPres} présence${totalPres>1?"s":""} au total</div>
     </div>
     <div class="kpi-card accent-red">
-      <div class="kpi-num red">${totalAbs + totalBlesEpisodes}</div>
+      <div class="kpi-num red">${totalAbs}</div>
       <div class="kpi-lbl">Total absences</div>
-      <div class="kpi-sub">${totalAbs} absent${totalAbs>1?"s":""} &nbsp;·&nbsp; ${totalBlesEpisodes} blessure${totalBlesEpisodes>1?"s":""}</div>
     </div>
+    ${uniqueBlesPlayers > 0 ? `<div class="kpi-card accent-amber">
+      <div class="kpi-num amber">${uniqueBlesPlayers}</div>
+      <div class="kpi-lbl">Blessé${uniqueBlesPlayers>1?"s":""}</div>
+      <div class="kpi-sub">${sessionsBlessees} session${sessionsBlessees>1?"s":""} concernée${sessionsBlessees>1?"s":""}</div>
+    </div>` : ""}
   </div>`;
 
   /* ── Section 3 : podiums sur 3 colonnes ── */
