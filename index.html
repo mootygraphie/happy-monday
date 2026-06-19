@@ -1645,12 +1645,82 @@ function buildBallonDorHtml() {
   return html;
 }
 
+function computeBestTeamAllTime() {
+  let best = null;
+  SESSIONS.forEach(session => {
+    const matchs = session.matchs || [];
+    if (!matchs.length) return;
+    ["Rouge", "Vert", "Bleue"].forEach(team => {
+      const tmMatchs = matchs.filter(m => m.eqA === team || m.eqB === team);
+      if (!tmMatchs.length) return;
+      let wins = 0, goalsFor = 0, goalsAgainst = 0;
+      const scorers = {}, assisters = {};
+      tmMatchs.forEach(m => {
+        const isA = m.eqA === team;
+        const gf = isA ? m.scoreA : m.scoreB;
+        const ga = isA ? m.scoreB : m.scoreA;
+        goalsFor += gf; goalsAgainst += ga;
+        if (gf > ga) wins++;
+        (isA ? (m.buteursA||[])  : (m.buteursB||[])).forEach(p  => { if (p && p !== "CSC") scorers[p]   = (scorers[p]   || 0) + 1; });
+        (isA ? (m.passeursA||[]) : (m.passeursB||[])).forEach(p => { if (p)                assisters[p] = (assisters[p] || 0) + 1; });
+      });
+      const goalDiff = goalsFor - goalsAgainst;
+      const players = Object.entries(session.presences)
+        .filter(([, info]) => info.statut === "Présent" && info.equipe === team)
+        .map(([name]) => name).sort((a, b) => a.localeCompare(b, "fr"));
+      const topSc = Object.entries(scorers).sort((a,b)=>b[1]-a[1])[0];
+      const topAs = Object.entries(assisters).sort((a,b)=>b[1]-a[1])[0];
+      const c = { session, team, wins, goalsFor, goalsAgainst, goalDiff, players,
+        topScorer:   topSc ? { name: topSc[0], count: topSc[1] } : null,
+        topAssister: topAs ? { name: topAs[0], count: topAs[1] } : null };
+      if (!best || wins > best.wins || (wins === best.wins && goalDiff > best.goalDiff)) best = c;
+    });
+  });
+  return best;
+}
+
 function renderStats() {
   const container = document.getElementById("panel-stats");
   const allSt = computeStats(SESSIONS);
 
   /* ── Ballon d'Or ── */
   let h = buildBallonDorHtml();
+
+  /* ── Meilleure équipe all-time ── */
+  const bt = computeBestTeamAllTime();
+  if (bt) {
+    const cls = teamCls(bt.team);
+    const clsBorder = cls === "bleu" ? "var(--bleu-border)" : cls === "rouge" ? "var(--rouge-border)" : "var(--vert-border)";
+    const diffSign = bt.goalDiff >= 0 ? "+" : "";
+    const diffColor = bt.goalDiff > 0 ? "#66bb6a" : bt.goalDiff < 0 ? "#ef5350" : "var(--text3)";
+    const pillsHtml = bt.players.map(p =>
+      `<button class="team-player-pill player-link ${cls}" data-player="${p}" style="text-decoration:none">${p}</button>`
+    ).join("");
+    h += `<div class="kpi-card" style="margin-bottom:1rem;border-color:${clsBorder}">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+        <div class="kpi-lbl" style="margin:0">Meilleure équipe all-time 🏅</div>
+        ${badge(bt.team)}
+        <span style="margin-left:auto;font-size:11px;color:var(--text3)">${fmtDate(bt.session.date)}</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <span style="font-size:36px;font-weight:700;font-style:italic;line-height:1">${bt.wins}</span>
+        <span style="font-size:13px;color:var(--text2)">victoire${bt.wins>1?"s":""}</span>
+        <span style="margin-left:6px;font-size:15px;font-weight:600;color:var(--text2)">${bt.goalsFor} buts</span>
+        <span style="color:var(--text3)">·</span>
+        <span style="font-size:15px;color:var(--text3)">${bt.goalsAgainst} enc.</span>
+        <span style="font-size:14px;font-weight:700;color:${diffColor}">(${diffSign}${bt.goalDiff})</span>
+      </div>
+      <div class="kpi-sep"></div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin:10px 0">
+        ${pillsHtml || `<span style="color:var(--text3);font-size:12px">—</span>`}
+      </div>
+      ${bt.topScorer || bt.topAssister ? `<div class="kpi-sep" style="margin-top:2px"></div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--text2)">
+        ${bt.topScorer   ? `<span>⚽ ${pLink(bt.topScorer.name)} — ${bt.topScorer.count} but${bt.topScorer.count>1?"s":""}</span>` : ""}
+        ${bt.topAssister ? `<span>🎯 ${pLink(bt.topAssister.name)} — ${bt.topAssister.count} passe${bt.topAssister.count>1?"s":""}</span>` : ""}
+      </div>` : ""}
+    </div>`;
+  }
 
   /* ── Ligne 1 : Buteurs | Passeurs ── */
   const top3Buteurs  = buildAggTop3(allSt.buteursRank.map(([n,p])=>[n,p.buts]), "but", "buts");
