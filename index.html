@@ -536,6 +536,65 @@
   .pp-teammate-val  { font-size: 13px; font-weight: 600; color: var(--text2); }
   .pp-teammate-unit { font-size: 11px; color: var(--text3); margin-left: 2px; }
 
+  /* ── Hauts faits ── */
+  .ach-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px;
+  }
+  @media (min-width: 400px) { .ach-grid { grid-template-columns: repeat(7, 1fr); gap: 6px; } }
+  @media (max-width: 399px) { .ach-cell:last-child:nth-child(4n+1) { grid-column: 2 / 4; } }
+  .ach-cell {
+    aspect-ratio: 1; border-radius: 12px; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; position: relative; cursor: default;
+    background: rgba(255,255,255,.03); border: 1px dashed rgba(255,255,255,.09);
+    transition: transform .15s, box-shadow .15s; user-select: none;
+  }
+  .ach-cell:hover { transform: scale(1.08); z-index: 2; box-shadow: 0 4px 16px rgba(0,0,0,.35); }
+  .ach-icon { font-size: 22px; line-height: 1; display: block; }
+  .ach-label {
+    font-size: 7.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+    text-align: center; line-height: 1.2; padding: 0 3px;
+    max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    color: rgba(255,255,255,.2);
+  }
+  .ach-dots { display: flex; gap: 2px; align-items: center; }
+  .ach-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.12); }
+  .ach-dot.on { background: currentColor; }
+  .ach-cell.t0 .ach-icon { opacity: .18; font-size: 18px; }
+  .ach-cell.t1 { background:rgba(107,114,128,.14); border:1px solid rgba(107,114,128,.38); color:#9CA3AF; }
+  .ach-cell.t2 { background:rgba(120,83,28,.16);   border:1px solid rgba(155,110,50,.42); color:#C4994C; }
+  .ach-cell.t3 { background:rgba(205,127,50,.16);  border:1px solid rgba(205,127,50,.48); color:#D4863A; }
+  .ach-cell.t4 { background:rgba(148,163,184,.16); border:1px solid rgba(148,163,184,.5); color:#94A3B8; }
+  .ach-cell.t5 { background:rgba(245,158,11,.18);  border:1px solid rgba(245,158,11,.55); color:#FBBF24; }
+  .ach-cell.t1 .ach-label,.ach-cell.t2 .ach-label,.ach-cell.t3 .ach-label,
+  .ach-cell.t4 .ach-label,.ach-cell.t5 .ach-label { color: currentColor; opacity: .8; }
+  .ach-cell.t4::after,.ach-cell.t5::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 45%; height: 100%;
+    pointer-events: none; animation: achSweep var(--asd,3.6s) ease-in-out infinite;
+  }
+  .ach-cell.t4::after { background: linear-gradient(90deg,transparent,rgba(200,220,255,.18),transparent); }
+  .ach-cell.t5::after { --asd:2.5s; background: linear-gradient(90deg,transparent,rgba(255,205,0,.22),transparent); }
+  @keyframes achSweep { from{transform:skewX(-15deg) translateX(-300%)} to{transform:skewX(-15deg) translateX(400%)} }
+  html.light .ach-cell { background:rgba(0,0,0,.04); border-color:rgba(0,0,0,.1); }
+  html.light .ach-cell.t0 .ach-icon { opacity:.2; }
+  html.light .ach-cell.t1 { background:rgba(100,110,120,.1); border-color:rgba(100,110,120,.3); color:#6B7280; }
+  html.light .ach-cell.t2 { background:rgba(120,83,28,.1);   border-color:rgba(120,83,28,.3);   color:#92400E; }
+  html.light .ach-cell.t3 { background:rgba(205,127,50,.1);  border-color:rgba(205,127,50,.35); color:#B45309; }
+  html.light .ach-cell.t4 { background:rgba(100,116,139,.1); border-color:rgba(100,116,139,.35);color:#475569; }
+  html.light .ach-cell.t5 { background:rgba(217,119,6,.12);  border-color:rgba(217,119,6,.4);   color:#B45309; }
+  /* Tooltip hauts faits */
+  #ach-tip {
+    position:fixed; z-index:10000; pointer-events:none;
+    background:var(--bg3); border:1px solid var(--border2); border-radius:10px;
+    padding:9px 13px; font-size:12px; max-width:200px; min-width:140px;
+    opacity:0; transition:opacity .1s; box-shadow:0 6px 24px rgba(0,0,0,.45);
+    white-space: normal;
+  }
+  #ach-tip.show { opacity:1; }
+  #ach-tip .atn { font-weight:700; font-size:13px; color:var(--text); margin-bottom:3px; }
+  #ach-tip .atv { font-size:11px; color:var(--text2); }
+  #ach-tip .atn2 { font-size:10px; color:var(--text3); margin-top:2px; font-style:italic; }
+
   /* ── Saisie ── */
   .saisie-wrap { max-width: 760px; }
   .saisie-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px; }
@@ -2636,6 +2695,151 @@ function computePlayerDetailStats(playerName) {
            bestHistoricalStreak, currentStreak };
 }
 
+/* ══════════════════════════════════════════════════════════
+   HAUTS FAITS
+══════════════════════════════════════════════════════════ */
+
+const ACH_DEFS = [
+  { id:'buteur',   name:'Buteur',          icon:'⚽', tiers:[1,5,15,30,50],  hidden:false, key:'buts',          desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''}` },
+  { id:'passeur',  name:'Passeur',         icon:'🎯', tiers:[1,5,15,30,50],  hidden:false, key:'passes',        desc:v=>`${v} passe${v>1?'s':''} décisive${v>1?'s':''}` },
+  { id:'ga',       name:'G/A',             icon:'📈', tiers:[5,20,50,100],   hidden:false, key:'gaTotal',       desc:v=>`${v} G/A cumulés` },
+  { id:'fidele',   name:'Fidèle',          icon:'📅', tiers:[5,15,30,50,100],hidden:false, key:'presences',     desc:v=>`${v} session${v>1?'s':''} jouée${v>1?'s':''}` },
+  { id:'sac',      name:'Porteur de sac',  icon:'🎒', tiers:[3,10,25],       hidden:false, key:'sac',           desc:v=>`Sac amené ${v} fois` },
+  { id:'maillots', name:'Intendant',       icon:'👕', tiers:[3,10,25],       hidden:false, key:'maillots',      desc:v=>`Maillots amenés ${v} fois` },
+  { id:'evasif',   name:'L\'Évasif',       icon:'🌴', tiers:[3,10,25],       hidden:true,  key:'absences',      desc:v=>`${v} absence${v>1?'s':''}` },
+  { id:'infirm',   name:'Infirmerie',      icon:'🤕', tiers:[1,3,7],         hidden:true,  key:'injuries',      desc:v=>`${v} épisode${v>1?'s':''} de blessure` },
+  { id:'htrick',   name:'Hat-trick',       icon:'🔥', tiers:[1,3,10],        hidden:false, key:'hattricks',     desc:v=>`${v} hat-trick${v>1?'s':''}` },
+  { id:'serie',    name:'Série G/A',       icon:'⚡', tiers:[3,7,15,30],     hidden:false, key:'bestStreak',    desc:v=>`Série de ${v} match${v>1?'s':''} consécutif${v>1?'s':''}` },
+  { id:'soiree',   name:'Soirée parfaite', icon:'🌟', tiers:[1,3,10],        hidden:false, key:'soireeParfaite',desc:v=>`${v} soirée${v>1?'s':''} parfaite${v>1?'s':''}` },
+  { id:'dbl',      name:'Double Double',   icon:'💥', tiers:[1,5,15,30,50],  hidden:false, key:'doubleDouble',  desc:v=>`${v} match${v>1?'s':''} avec 1G+1A` },
+  { id:'invic',    name:'Invincible',      icon:'🛡️', tiers:[1,5,15],        hidden:false, key:'invincible',    desc:v=>`${v} soirée${v>1?'s':''} sans défaite` },
+  { id:'mur',      name:'Le Mur',          icon:'🧱', tiers:[1,5,15,30,50],  hidden:false, key:'cleanSheets',   desc:v=>`${v} clean sheet${v>1?'s':''}` },
+  { id:'duo',      name:'Duo de légende',  icon:'🤝', tiers:[3,10,25],       hidden:false, key:'bestDuo',       desc:v=>`Duo répété ${v} fois` },
+  { id:'mvp',      name:'Meilleur joueur', icon:'👑', tiers:[1,5,15],        hidden:false, key:'mvp',           desc:v=>`MVP de soirée ${v} fois` },
+  { id:'pois',     name:'Poissard',        icon:'🪨', tiers:[1,3,5],         hidden:true,  key:'csc',           desc:v=>`${v} CSC` },
+  { id:'chelem',   name:'Grand Chelem',    icon:'🎨', tiers:[1],             hidden:true,  key:'grandChelem',   desc:_=>`Les 3 couleurs jouées` },
+  { id:'fantome',  name:'Fantôme',         icon:'👻', tiers:[3,7,15],        hidden:true,  key:'fantomeStreak', desc:v=>`${v} sessions de suite sans G/A` },
+  { id:'legende',  name:'Légende',         icon:'🏅', tiers:[10,20,30],      hidden:true,  key:'legendeCount',  desc:v=>`${v} niveaux débloqués` },
+  { id:'assidu',   name:'Assidu',          icon:'🗓️', tiers:[1,2,3],          hidden:false, key:'assiduAnnes',   desc:v=>`${v} année${v>1?'s':''} à ≥80% de présence` },
+];
+const ACH_TIER_NAMES = ['','Plomb','Bois','Bronze','Argent','Or'];
+
+function _achLevel(val, tiers) {
+  let lv=0; for(let i=0;i<tiers.length;i++){if(val>=tiers[i])lv=i+1;else break;} return lv;
+}
+
+function computeAchievementStats(playerName) {
+  const _ss = [...SESSIONS].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  let buts=0,passes=0,presences=0,absences=0,injuries=0,sac=0,maillots=0;
+  let hattricks=0,doubleDouble=0,cleanSheets=0,mvp=0,soireeParfaite=0,invincible=0,csc=0;
+  const teamsSet=new Set(), duoMap={};
+  let inEp=false, bestStreak=0, curStreak=0, fantomeStreak=0, curFan=0;
+  const yearMap={};
+
+  _ss.forEach(s => {
+    const info=s.presences[playerName]; if(!info){inEp=false;return;}
+    const yr=new Date(s.date).getFullYear();
+    if(!yearMap[yr]) yearMap[yr]={present:0,total:0};
+    yearMap[yr].total++;
+
+    if(info.statut==="Présent") {
+      presences++; yearMap[yr].present++; inEp=false;
+      if(s.sac===playerName) sac++;
+      if(s.maillots===playerName) maillots++;
+      const myEq=info.equipe; if(myEq) teamsSet.add(myEq);
+
+      let sessGA=0,sessPlayed=0,sessWithGA=0,sessInvic=true;
+      const allGA={};
+
+      (s.matchs||[]).forEach(m => {
+        const inMatch=myEq&&(m.eqA===myEq||m.eqB===myEq);
+        let g=0,a=0;
+        ["A","B"].forEach(side=>{
+          (m[`buteurs${side}`]||[]).forEach((b,i)=>{
+            const p=(m[`passeurs${side}`]||[])[i];
+            if(b==="CSC"){if(p===playerName)csc++;return;}
+            if(!b)return;
+            if(!allGA[b])allGA[b]=0; allGA[b]++;
+            if(p&&p!=="CSC"){if(!allGA[p])allGA[p]=0; allGA[p]++;}
+            if(b===playerName)g++;
+            if(p&&p!=="CSC"&&p===playerName)a++;
+            if(p&&p!=="CSC"){
+              if(b===playerName)duoMap[p]=(duoMap[p]||0)+1;
+              else if(p===playerName)duoMap[b]=(duoMap[b]||0)+1;
+            }
+          });
+        });
+        buts+=g; passes+=a; sessGA+=g+a;
+        if(inMatch){
+          sessPlayed++;
+          if(g+a>0){sessWithGA++;curStreak++;if(curStreak>bestStreak)bestStreak=curStreak;}
+          else curStreak=0;
+          const conceded=m.eqA===myEq?m.scoreB:m.scoreA; if(conceded===0)cleanSheets++;
+          const w=m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
+          if(w&&w!==myEq)sessInvic=false;
+          if(g>=3)hattricks++;
+          if(g>=1&&a>=1)doubleDouble++;
+        }
+      });
+
+      if(sessPlayed>0&&sessPlayed===sessWithGA)soireeParfaite++;
+      if(myEq&&sessInvic)invincible++;
+      const pGA=allGA[playerName]||0;
+      if(pGA>0&&!Object.values(allGA).some(v=>v>pGA))mvp++;
+      if(sessGA===0){curFan++;if(curFan>fantomeStreak)fantomeStreak=curFan;}else curFan=0;
+
+    } else if(info.statut==="Absent"){
+      absences++; inEp=false;
+    } else if(info.statut==="Blessé"){
+      if(!inEp){injuries++;inEp=true;}
+    } else { inEp=false; }
+  });
+
+  const bestDuo=Math.max(0,...Object.values(duoMap));
+  const grandChelem=(teamsSet.has("Rouge")&&teamsSet.has("Vert")&&teamsSet.has("Bleue"))?1:0;
+  const assiduAnnes=Object.values(yearMap).filter(y=>y.total>=10&&y.present/y.total>=0.8).length;
+
+  return { buts, passes, gaTotal:buts+passes, presences, absences, injuries,
+           sac, maillots, hattricks, bestStreak, soireeParfaite, doubleDouble,
+           invincible, cleanSheets, bestDuo, mvp, csc, grandChelem,
+           fantomeStreak, assiduAnnes };
+}
+
+function renderAchievementsGrid(achSt) {
+  let legendeCount=0;
+  ACH_DEFS.filter(a=>a.id!=='legende').forEach(a=>{ legendeCount+=_achLevel(achSt[a.key]||0,a.tiers); });
+  achSt.legendeCount=legendeCount;
+
+  let html=`<div class="ach-grid">`;
+  ACH_DEFS.forEach(ach=>{
+    const val=achSt[ach.key]||0;
+    const lv=_achLevel(val,ach.tiers);
+    const locked=lv===0;
+    const hidLocked=ach.hidden&&locked;
+    const maxT=ach.tiers.length;
+
+    const iconHtml=hidLocked
+      ?`<span class="ach-icon" style="font-size:20px;font-weight:600;color:var(--text3);opacity:.25">?</span>`
+      :`<span class="ach-icon"${locked?' style="opacity:.25"':''}>${ach.icon}</span>`;
+    const nameHtml=hidLocked?`<span class="ach-label" style="opacity:.2">???</span>`
+      :`<span class="ach-label">${ach.name}</span>`;
+
+    const dots=(!locked&&maxT>1)?`<div class="ach-dots">${Array.from({length:maxT},(_,i)=>`<div class="ach-dot${i<lv?' on':''}"></div>`).join('')}</div>`:'';
+
+    let tip='';
+    if(hidLocked){ tip='Haut fait inconnu'; }
+    else if(locked){ tip=`${ach.name}\nNon débloqué — seuil : ${ach.tiers[0]}`; }
+    else {
+      const tn=ACH_TIER_NAMES[lv]||`Niveau ${lv}`;
+      tip=`${ach.name} — ${tn}\n${ach.desc(val)}${lv<maxT?`\nProchain seuil : ${ach.tiers[lv]}`:''}`;
+    }
+
+    html+=`<div class="ach-cell t${lv}" data-tip="${tip.replace(/"/g,'&quot;')}">${iconHtml}${nameHtml}${dots}</div>`;
+  });
+  html+=`</div>`;
+  return html;
+}
+
 function openPlayerPanel(playerName) {
   const st = computePlayerDetailStats(playerName);
   const isJoker = JOKERS.has(playerName);
@@ -2733,6 +2937,7 @@ function openPlayerPanel(playerName) {
         <span style="font-size:22px;font-weight:700;color:var(--gold);font-style:italic">${_luBest.connexions}</span>
         <span style="font-size:13px;color:var(--text2)">but${_luBest.connexions>1?"s":""}</span>
       </div>
+      ${(()=>{const _ip1=_luBest.p1===playerName;const _mG=_ip1?_luBest.p1Goals:_luBest.p2Goals;const _mA=_ip1?_luBest.p2Goals:_luBest.p1Goals;const _pG=_ip1?_luBest.p2Goals:_luBest.p1Goals;const _pA=_ip1?_luBest.p1Goals:_luBest.p2Goals;return`<div style="display:flex;gap:10px;margin-top:8px;font-size:11px;color:var(--text3);flex-wrap:wrap"><span><strong style="color:var(--text2)">${playerName}</strong> ${_mG}G · ${_mA}A</span><span><strong style="color:var(--text2)">${_luPartner}</strong> ${_pG}G · ${_pA}A</span></div>`;})()}
     </div>`;
   } else { h += nd; }
   h += `</div>`;
@@ -2823,6 +3028,9 @@ function openPlayerPanel(playerName) {
     h += `</div>`;
   } else { h += `<p class="no-data" style="margin-top:4px">Aucune victoire enregistrée</p>`; }
   h += `</div>`;
+
+  /* Hauts faits */
+  h += `<div><div class="pp-section-title">Hauts faits</div>${renderAchievementsGrid(computeAchievementStats(playerName))}</div>`;
 
   document.getElementById("pp-name").textContent = playerName + (isJoker ? " +1" : "");
   const ppBody = document.getElementById("pp-body");
@@ -3407,6 +3615,28 @@ document.addEventListener("click", e => {
   const btn = e.target.closest(".player-link");
   if (btn && btn.dataset.player) openPlayerPanel(btn.dataset.player);
 });
+
+/* ── Tooltip hauts faits ── */
+{
+  const _tip = document.createElement('div');
+  _tip.id = 'ach-tip'; document.body.appendChild(_tip);
+  let _tipCell = null;
+  const _pp = document.getElementById('player-panel');
+  _pp.addEventListener('pointermove', e => {
+    const cell = e.target.closest('.ach-cell[data-tip]');
+    if (!cell) { _tip.classList.remove('show'); _tipCell=null; return; }
+    if (cell !== _tipCell) {
+      _tipCell = cell;
+      const [l0,...lines] = (cell.dataset.tip||'').split('\n');
+      _tip.innerHTML = `<div class="atn">${l0}</div>${lines.map((l,i)=>`<div class="${i===0?'atv':'atn2'}">${l}</div>`).join('')}`;
+    }
+    const tw=_tip.offsetWidth||180, th=_tip.offsetHeight||55;
+    _tip.style.left=Math.min(e.clientX+14, window.innerWidth-tw-8)+'px';
+    _tip.style.top=Math.max(e.clientY-th-10, 8)+'px';
+    _tip.classList.add('show');
+  });
+  _pp.addEventListener('pointerleave', ()=>{ _tip.classList.remove('show'); _tipCell=null; });
+}
 
 /* ── Init async ── */
 (async function() {
