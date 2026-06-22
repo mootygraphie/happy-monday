@@ -17,9 +17,9 @@
     --text: #f0f0f4;
     --text2: #9898aa;
     --text3: #5a5a6a;
-    --rouge: #e53935; --rouge-bg: rgba(229,57,53,.15); --rouge-border: rgba(229,57,53,.3);
-    --vert:  #43a047; --vert-bg:  rgba(67,160,71,.15);  --vert-border:  rgba(67,160,71,.3);
-    --bleu:  #1e88e5; --bleu-bg:  rgba(30,136,229,.15); --bleu-border:  rgba(30,136,229,.3);
+    --rouge: #FF2D95; --rouge-bg: rgba(255,45,149,.15); --rouge-border: rgba(255,45,149,.3);
+    --vert:  #D4FF00; --vert-bg:  rgba(212,255,0,.15);  --vert-border:  rgba(212,255,0,.3);
+    --bleu:  #00BBFF; --bleu-bg:  rgba(0,187,255,.15);  --bleu-border:  rgba(0,187,255,.3);
     --gold: #f5c842; --silver: #aab0bc; --bronze: #c47c3a;
     --radius: 10px; --radius-lg: 16px;
   }
@@ -28,6 +28,9 @@
     --bg: #f4f4f8; --bg2: #ffffff; --bg3: #ebebf2;
     --border: rgba(0,0,0,.09); --border2: rgba(0,0,0,.15);
     --text: #111118; --text2: #55556a; --text3: #9898aa;
+    --rouge: #CC0073; --rouge-bg: rgba(204,0,115,.1);  --rouge-border: rgba(204,0,115,.22);
+    --vert:  #7A9200; --vert-bg:  rgba(122,146,0,.1);  --vert-border:  rgba(122,146,0,.22);
+    --bleu:  #0088CC; --bleu-bg:  rgba(0,136,204,.1);  --bleu-border:  rgba(0,136,204,.22);
     color-scheme: light;
   }
   html.light .main-tab { color: #9898aa; }
@@ -76,7 +79,7 @@
   /* ── Onglets principaux ── */
   .main-tabs { display: inline-flex; background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 4px; margin-bottom: 2rem; gap: 3px; }
   .main-tab {
-    padding: 9px 22px; border-radius: 9px; font-size: 12px; font-weight: 600;
+    padding: 9px 10px; border-radius: 9px; font-size: 12px; font-weight: 600;
     cursor: pointer; background: transparent; color: var(--text3); border: none;
     transition: background .18s, color .18s, box-shadow .18s; letter-spacing: .08em; white-space: nowrap;
     text-transform: uppercase;
@@ -184,9 +187,9 @@
   .teams-vs-layout { display: grid; gap: 14px; }
   .team-card { border-radius: 14px; overflow: hidden; border: 1px solid var(--border); background: var(--bg2); }
   .team-card-accent { height: 5px; }
-  .team-card-accent.rouge { background: linear-gradient(90deg, var(--rouge), #ff6b6b); }
-  .team-card-accent.vert  { background: linear-gradient(90deg, var(--vert),  #6bcb77); }
-  .team-card-accent.bleu, .team-card-accent.bleue  { background: linear-gradient(90deg, var(--bleu),  #74b9ff); }
+  .team-card-accent.rouge { background: linear-gradient(90deg, var(--rouge), #FF85C2); }
+  .team-card-accent.vert  { background: linear-gradient(90deg, var(--vert),  #EAFF80); }
+  .team-card-accent.bleu, .team-card-accent.bleue  { background: linear-gradient(90deg, var(--bleu),  #80DEFF); }
   .team-card-header { padding: 14px 18px 12px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
   .team-card-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
   .team-card-icon.rouge { background: var(--rouge-bg); }
@@ -270,9 +273,9 @@
   .kpi-card.accent-green::after  { background: radial-gradient(circle at top left, rgba(67,160,71,.12), transparent 65%); }
   .kpi-card.accent-red::after    { background: radial-gradient(circle at top left, rgba(229,57,53,.10), transparent 65%); }
   .kpi-card.accent-amber::after  { background: radial-gradient(circle at top left, rgba(245,200,66,.10), transparent 65%); }
-  .kpi-card.accent-rouge::after  { background: radial-gradient(circle at top left, rgba(229,57,53,.15), transparent 65%); }
-  .kpi-card.accent-vert::after   { background: radial-gradient(circle at top left, rgba(67,160,71,.15),  transparent 65%); }
-  .kpi-card.accent-bleu::after   { background: radial-gradient(circle at top left, rgba(30,136,229,.15), transparent 65%); }
+  .kpi-card.accent-rouge::after  { background: radial-gradient(circle at top left, rgba(255,45,149,.15),  transparent 65%); }
+  .kpi-card.accent-vert::after   { background: radial-gradient(circle at top left, rgba(212,255,0,.15),   transparent 65%); }
+  .kpi-card.accent-bleu::after   { background: radial-gradient(circle at top left, rgba(0,187,255,.15),   transparent 65%); }
   .kpi-num { font-size: 46px; font-weight: 700; line-height: 1; letter-spacing: -.03em; font-style: italic; }
   .kpi-num.green  { color: #66bb6a; }
   .kpi-num.red    { color: #ef5350; }
@@ -334,9 +337,9 @@
   .palmares-medal { font-size: 16px; width: 22px; text-align: center; flex-shrink: 0; }
   .palmares-badge { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; flex-shrink: 0; }
   .palmares-val { font-size: 13px; color: var(--fg2); margin-left: auto; }
-  .eq-rouge { background: #e74c3c22; color: #e74c3c; }
-  .eq-vert  { background: #2ecc7122; color: #27ae60; }
-  .eq-bleue { background: #3498db22; color: #2980b9; }
+  .eq-rouge { background: var(--rouge-bg); color: var(--rouge); }
+  .eq-vert  { background: var(--vert-bg);  color: var(--vert);  }
+  .eq-bleue { background: var(--bleu-bg);  color: var(--bleu);  }
 
   /* ── Records ── */
   .records-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 10px; }
@@ -569,9 +572,9 @@
   .saisie-eq-btns { display: flex; gap: 5px; }
   .saisie-eq-btn { width: 32px; height: 28px; border-radius: 6px; border: 1px solid var(--border2); background: var(--bg3); color: var(--fg2); font-size: 12px; font-weight: 700; cursor: pointer; transition: all .12s; }
   .saisie-eq-btn:hover { border-color: var(--fg2); }
-  .eq-btn-rouge.active { background: #e74c3c; border-color: #e74c3c; color: #fff; }
-  .eq-btn-vert.active  { background: #27ae60; border-color: #27ae60; color: #fff; }
-  .eq-btn-bleue.active { background: #2980b9; border-color: #2980b9; color: #fff; }
+  .eq-btn-rouge.active { background: #FF2D95; border-color: #FF2D95; color: #fff; }
+  .eq-btn-vert.active  { background: #D4FF00; border-color: #D4FF00; color: #111; }
+  .eq-btn-bleue.active { background: #00BBFF; border-color: #00BBFF; color: #111; }
   .saisie-match-card { background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; }
   .saisie-match-row { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
   .saisie-match-num { font-size: 11px; font-weight: 700; color: var(--fg3); flex-shrink: 0; }
@@ -580,8 +583,8 @@
   .saisie-remove-match:hover { color: #e74c3c; }
   .saisie-score-input { width: 44px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 8px; padding: 5px 2px; color: var(--fg); font-size: 18px; font-weight: 700; text-align: center; flex-shrink: 0; }
   .saisie-dash { font-size: 18px; font-weight: 300; color: var(--fg3); flex-shrink: 0; }
-  .saisie-buteurs-row { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
-  .saisie-buteurs-side { flex: 1; min-width: 160px; }
+  .saisie-buteurs-row { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+  .saisie-buteurs-side { min-width: 0; }
   .saisie-buteurs-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--fg3); display: block; margin-bottom: 6px; }
   .saisie-buteurs-sels { display: flex; flex-direction: column; gap: 6px; }
   .saisie-goal-row { display: flex; align-items: center; gap: 4px; }
@@ -979,7 +982,7 @@ const ALL_PLAYERS = [
 let JOKERS = new Set(["Hamine","Marius","Harone","Alexi","Godefroy"]);
 
 /* ── Helpers ── */
-const TEAM_LABEL = { Rouge: "Rouges", Vert: "Verts", Bleue: "Bleus" };
+const TEAM_LABEL = { Rouge: "Roses", Vert: "Jaunes", Bleue: "Bleus" };
 
 function teamCard(color, teamMap, icons) {
   const cls = color.toLowerCase();
@@ -1117,8 +1120,14 @@ function computeStats(sessions) {
       else if (info.statut==="Pas répondu") ps[p].pasRepondu++;
     });
     (s.matchs||[]).forEach(m => {
-      [...(m.buteursA||[]),...(m.buteursB||[])].forEach(p => { if (ps[p]) ps[p].buts++; });
-      [...(m.passeursA||[]),...(m.passeursB||[])].forEach(p => { if (p && ps[p]) ps[p].passes++; });
+      ["A","B"].forEach(side => {
+        const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
+        buts.forEach((b,i) => {
+          if (!b || b==="CSC") return;
+          if (ps[b]) ps[b].buts++;
+          const p = passes[i]; if (p && p!=="CSC" && ps[p]) ps[p].passes++;
+        });
+      });
       const winner = m.scoreA > m.scoreB ? m.eqA : m.scoreB > m.scoreA ? m.eqB : null;
       if (winner) {
         Object.entries(s.presences).forEach(([p, info]) => {
@@ -1190,8 +1199,9 @@ function computeLinkUpStats(sessions) {
           if (!buteur || buteur === "CSC" || !passeur || passeur === "CSC") return;
           const [a, b] = [buteur, passeur].sort();
           const key = `${a}|||${b}`;
-          if (!duoMap[key]) duoMap[key] = {p1: a, p2: b, connexions: 0};
+          if (!duoMap[key]) duoMap[key] = {p1: a, p2: b, connexions: 0, p1Goals: 0, p2Goals: 0};
           duoMap[key].connexions++;
+          if (buteur === a) duoMap[key].p1Goals++; else duoMap[key].p2Goals++;
         });
       };
       processSide(m.buteursA, m.passeursA);
@@ -1261,6 +1271,10 @@ function buildLinkUpCardHTML(sessions) {
     <div style="display:flex;align-items:center;gap:6px;font-size:24px;flex-wrap:wrap">${p1}<span style="color:var(--text3);font-weight:300">–</span>${p2}</div>
     <div class="kpi-sep"></div>
     <div style="display:flex;align-items:baseline;gap:5px"><span style="font-size:22px;font-weight:700;font-style:italic">${best.connexions}</span><span class="kpi-sub" style="margin:0">but${best.connexions>1?"s":""}</span></div>
+    <div style="display:flex;gap:10px;margin-top:8px;font-size:11px;color:var(--text3);flex-wrap:wrap">
+      <span><strong style="color:var(--text2)">${best.p1}</strong> ${best.p1Goals}G · ${best.p2Goals}A</span>
+      <span><strong style="color:var(--text2)">${best.p2}</strong> ${best.p2Goals}G · ${best.p1Goals}A</span>
+    </div>
   </div>`;
 }
 
@@ -1320,8 +1334,14 @@ function renderSessionDetail(session) {
     if      (m.scoreA > m.scoreB) colorWins[m.eqA]++;
     else if (m.scoreB > m.scoreA) colorWins[m.eqB]++;
     else draws++;
-    [...(m.buteursA||[]), ...(m.buteursB||[])].forEach(p => { if (p && p !== "CSC") buteursCount[p] = (buteursCount[p]||0)+1; });
-    [...(m.passeursA||[]), ...(m.passeursB||[])].forEach(p => { if (p) passeursCount[p] = (passeursCount[p]||0)+1; });
+    ["A","B"].forEach(side => {
+      const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
+      buts.forEach((b,i) => {
+        if (!b || b==="CSC") return;
+        buteursCount[b] = (buteursCount[b]||0)+1;
+        const p = passes[i]; if (p && p!=="CSC") passeursCount[p] = (passeursCount[p]||0)+1;
+      });
+    });
   });
 
   const maxWins       = Math.max(0, ...Object.values(colorWins));
@@ -1336,6 +1356,17 @@ function renderSessionDetail(session) {
   const bestDefTeams  = teamsPlayed.filter(t => (goalsAgainst[t]||0) === minGoalsAgst);
   const matchGros    = matchs.reduce((b,m) => { const t=m.scoreA+m.scoreB; return (!b||t>b.total)?{...m,total:t}:b; }, null);
   const matchLarge   = matchs.reduce((b,m) => { const a=Math.abs(m.scoreA-m.scoreB); return (!b||a>b.amp)?{...m,amp:a}:b; }, null);
+
+  const matchesPerTeam = {};
+  const drawsPerTeam = {};
+  matchs.forEach(m => {
+    matchesPerTeam[m.eqA] = (matchesPerTeam[m.eqA]||0) + 1;
+    matchesPerTeam[m.eqB] = (matchesPerTeam[m.eqB]||0) + 1;
+    if (m.scoreA === m.scoreB) {
+      drawsPerTeam[m.eqA] = (drawsPerTeam[m.eqA]||0) + 1;
+      drawsPerTeam[m.eqB] = (drawsPerTeam[m.eqB]||0) + 1;
+    }
+  });
 
   const fmtBut = arr => {
     if (!arr || !arr.length) return "";
@@ -1474,13 +1505,46 @@ function renderSessionDetail(session) {
     </div>
   </div>`;
 
+  /* ── Classement de la soirée ── */
+  if (teamsPlayed.length >= 2 && matchs.length > 0) {
+    const _standings = teamsPlayed.map(t => {
+      const wins = colorWins[t]||0, drawsT = drawsPerTeam[t]||0;
+      return { team: t, pj: matchesPerTeam[t]||0, pts: wins*3+drawsT, gf: goalsFor[t]||0, ga: goalsAgainst[t]||0, diff:(goalsFor[t]||0)-(goalsAgainst[t]||0) };
+    }).sort((a,b) => b.pts-a.pts || b.diff-a.diff || b.gf-a.gf);
+    h += `<div class="section-label">Classement de la soirée</div>
+    <div style="overflow-x:auto;margin-bottom:2rem">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;min-width:320px">
+        <thead><tr style="background:var(--bg3)">
+          <th style="padding:10px 16px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)">Équipe</th>
+          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Matchs joués">PJ</th>
+          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)">Pts</th>
+          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Buts marqués">BM</th>
+          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Buts encaissés">BE</th>
+          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)">Diff</th>
+        </tr></thead>
+        <tbody>${_standings.map((row,i) => {
+          const diffColor = row.diff>0?"#66bb6a":row.diff<0?"#ef5350":"var(--text2)";
+          const diffSign  = row.diff>0?"+":"";
+          return `<tr style="border-top:1px solid var(--border)${i===0?";background:rgba(255,255,255,.015)":""}">
+            <td style="padding:12px 16px">${badge(row.team)}</td>
+            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.pj}</td>
+            <td style="padding:12px 10px;text-align:center;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums">${row.pts}</td>
+            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.gf}</td>
+            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.ga}</td>
+            <td style="padding:12px 10px;text-align:center;font-weight:600;color:${diffColor};font-variant-numeric:tabular-nums">${diffSign}${row.diff}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`;
+  }
+
   /* ── Compositions d'équipes ── */
   const presentsAll = Object.entries(session.presences)
     .filter(([, info]) => info.statut === "Présent")
     .map(([name, info]) => ({ name, equipe: info.equipe || "", joker: !!info.joker }))
     .sort((a, b) => a.name.localeCompare(b.name, "fr"));
 
-  const TEAM_ICONS = { Rouge: "🔴", Vert: "🟢", Bleue: "🔵" };
+  const TEAM_ICONS = { Rouge: "🔴", Vert: "🟡", Bleue: "🔵" };
   const hasColors  = presentsAll.some(p => p.equipe !== "");
 
   if (!hasColors) {
@@ -1600,11 +1664,13 @@ function buildBallonDorHtml() {
   const _bdPs = {};
   SESSIONS.filter(s => new Date(s.date).getFullYear() === _bdYear).forEach(s => {
     (s.matchs || []).forEach(m => {
-      [...(m.buteursA||[]), ...(m.buteursB||[])].forEach(p => {
-        if (p && p !== "CSC") { if (!_bdPs[p]) _bdPs[p] = {buts:0,passes:0}; _bdPs[p].buts++; }
-      });
-      [...(m.passeursA||[]), ...(m.passeursB||[])].forEach(p => {
-        if (p && p !== "CSC") { if (!_bdPs[p]) _bdPs[p] = {buts:0,passes:0}; _bdPs[p].passes++; }
+      ["A","B"].forEach(side => {
+        const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
+        buts.forEach((b,i) => {
+          if (!b || b==="CSC") return;
+          if (!_bdPs[b]) _bdPs[b]={buts:0,passes:0}; _bdPs[b].buts++;
+          const p = passes[i]; if (p && p!=="CSC") { if (!_bdPs[p]) _bdPs[p]={buts:0,passes:0}; _bdPs[p].passes++; }
+        });
       });
     });
   });
@@ -1640,6 +1706,66 @@ function buildBallonDorHtml() {
     });
   } else {
     html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun but ou passe enregistré en ${_bdYear} pour le moment.</div>`;
+  }
+  html += `</div></div>`;
+  return html;
+}
+
+function buildBallonDePlombHtml() {
+  const _bdYear = new Date().getFullYear();
+  const _presCount = {};
+  const _bdPs = {};
+  SESSIONS.filter(s => new Date(s.date).getFullYear() === _bdYear).forEach(s => {
+    Object.entries(s.presences).forEach(([p, info]) => {
+      if (info.statut === "Présent" && !JOKERS.has(p)) _presCount[p] = (_presCount[p]||0)+1;
+    });
+    (s.matchs || []).forEach(m => {
+      ["A","B"].forEach(side => {
+        const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
+        buts.forEach((b,i) => {
+          if (!b || b==="CSC") return;
+          if (!_bdPs[b]) _bdPs[b]={buts:0,passes:0}; _bdPs[b].buts++;
+          const p = passes[i]; if (p && p!=="CSC") { if (!_bdPs[p]) _bdPs[p]={buts:0,passes:0}; _bdPs[p].passes++; }
+        });
+      });
+    });
+  });
+  const _bdBottom5 = Object.entries(_presCount)
+    .filter(([name]) => !JOKERS.has(name))
+    .map(([name, presences]) => {
+      const p = _bdPs[name]||{buts:0,passes:0};
+      return { name, buts: p.buts, passes: p.passes, pts: p.buts*10+p.passes*5, presences };
+    })
+    .sort((a,b) => a.pts-b.pts || a.buts-b.buts || b.presences-a.presences || a.name.localeCompare(b.name,"fr"))
+    .slice(0, 5);
+  let html = `<div style="background:var(--bg2);border:1px solid rgba(150,150,160,.25);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:2rem;position:relative">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(150,150,160,.55),transparent);pointer-events:none"></div>
+    <div class="ballon-dor-head" style="background:rgba(150,150,160,.04);border-bottom-color:rgba(150,150,160,.1)">
+      <span class="ballon-dor-icon">🪨</span>
+      <div>
+        <div class="ballon-dor-title" style="color:var(--text2)">Ballon de Plomb ${_bdYear}</div>
+        <div class="ballon-dor-meta">Classement inversé G/A — Janvier à aujourd'hui</div>
+      </div>
+      <div class="ballon-dor-formula" style="color:rgba(150,150,160,.5)">10 pts / but &nbsp;·&nbsp; 5 pts / passe</div>
+    </div>
+    <div class="bd-list">`;
+  if (_bdBottom5.length) {
+    const _bdMax = Math.max(..._bdBottom5.map(p => p.pts), 1);
+    _bdBottom5.forEach((p, i) => {
+      const _gaStr = [p.buts>0?`${p.buts}G`:null, p.passes>0?`${p.passes}A`:null].filter(Boolean).join(" · ")||"0 G/A";
+      const _bdBar = Math.round((p.pts / _bdMax) * 100);
+      const isFirst = i===0;
+      const rowStyle = isFirst ? ' style="padding:14px 22px;background:rgba(150,150,160,.04);border-bottom:1px solid rgba(150,150,160,.08)"' : '';
+      html += `<div class="bd-row"${rowStyle}>
+        <span class="bd-rank num">${i+1}</span>
+        <span class="bd-name"${isFirst?' style="font-size:16px;font-weight:700"':''}>${pLink(p.name)}</span>
+        <div class="bd-bar-wrap"><div class="bd-bar" style="width:${_bdBar}%;background:linear-gradient(90deg,rgba(150,150,160,.6),rgba(150,150,160,.2))"></div></div>
+        <span class="bd-pts" style="color:var(--text2)${isFirst?';font-size:18px':''}">${p.pts}</span>
+        <span class="bd-ga"${isFirst?' style="font-size:12px;color:var(--text2)"':''}>${_gaStr}</span>
+      </div>`;
+    });
+  } else {
+    html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun joueur présent en ${_bdYear} pour le moment.</div>`;
   }
   html += `</div></div>`;
   return html;
@@ -1685,6 +1811,7 @@ function renderStats() {
 
   /* ── Ballon d'Or ── */
   let h = buildBallonDorHtml();
+  h += buildBallonDePlombHtml();
 
   /* ── Meilleure équipe all-time ── */
   const bt = computeBestTeamAllTime();
@@ -2212,8 +2339,14 @@ function computePlayerStats() {
     if (s.maillots && ps[s.maillots]) ps[s.maillots].maillots++;
     if (s.matchs) {
       s.matchs.forEach(m => {
-        [...(m.buteursA||[]), ...(m.buteursB||[])].forEach(p => { if (ps[p]) ps[p].buts++; });
-        [...(m.passeursA||[]), ...(m.passeursB||[])].forEach(p => { if (p && ps[p]) ps[p].passes++; });
+        ["A","B"].forEach(side => {
+          const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
+          buts.forEach((b,i) => {
+            if (!b || b==="CSC") return;
+            if (ps[b]) ps[b].buts++;
+            const p = passes[i]; if (p && p!=="CSC" && ps[p]) ps[p].passes++;
+          });
+        });
         const winner = m.scoreA > m.scoreB ? m.eqA : m.scoreB > m.scoreA ? m.eqB : null;
         if (winner) {
           Object.entries(s.presences).forEach(([p, info]) => {
@@ -2398,8 +2531,15 @@ function computePlayerDetailStats(playerName) {
         });
       }
       (s.matchs || []).forEach(m => {
-        const g = [...(m.buteursA||[]), ...(m.buteursB||[])].filter(p => p === playerName).length;
-        const a = [...(m.passeursA||[]), ...(m.passeursB||[])].filter(p => p === playerName).length;
+        let g = 0, a = 0;
+        ["A","B"].forEach(side => {
+          const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
+          buts.forEach((b,i) => {
+            if (!b || b==="CSC") return;
+            if (b === playerName) g++;
+            const p = passes[i]; if (p && p!=="CSC" && p === playerName) a++;
+          });
+        });
         buts += g;
         passesDecisives += a;
         const ga = g + a;
@@ -2447,8 +2587,15 @@ function computePlayerDetailStats(playerName) {
     if (!myEquipe) return;
     (s.matchs || []).forEach(m => {
       if (m.eqA !== myEquipe && m.eqB !== myEquipe) return;
-      const g = [...(m.buteursA||[]), ...(m.buteursB||[])].filter(p => p === playerName).length;
-      const a = [...(m.passeursA||[]), ...(m.passeursB||[])].filter(p => p === playerName).length;
+      let g = 0, a = 0;
+      ["A","B"].forEach(side => {
+        const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
+        buts.forEach((b,i) => {
+          if (!b || b==="CSC") return;
+          if (b === playerName) g++;
+          const p = passes[i]; if (p && p!=="CSC" && p === playerName) a++;
+        });
+      });
       participatedMatches.push({ date: s.date, g, a });
     });
   });
@@ -2822,11 +2969,19 @@ function _buildMatchCardHTML(m, idx, teams) {
   const teamOpts = sel => teams.map(t => `<option value="${t}" ${sel===t?"selected":""}>${TEAM_LABEL[t]||t}</option>`).join("");
   const pA = m.eqA ? _playersOfTeam(m.eqA) : [];
   const pB = m.eqB ? _playersOfTeam(m.eqB) : [];
-  const butSelHTML = (side, list, buteurs, passeurs, score) =>
+  const butSelHTML = (side, list, buteurs, passeurs, score, otherList) =>
     Array.from({length: score}, (_,j) => {
       const v  = buteurs[j]  || "";
       const pv = passeurs[j] || "";
+      const isCSC = v === "CSC";
       const opts  = ["", "CSC", ...list].map(p => `<option value="${p}" ${v===p?"selected":""}>${p==="CSC"?"CSC (c.s.c.)":p||"— Buteur —"}</option>`).join("");
+      if (isCSC) {
+        const aOpts = ["", ...(otherList||[])].map(p => `<option value="${p}" ${pv===p?"selected":""}>${p||"— Auteur du CSC —"}</option>`).join("");
+        return `<div class="saisie-goal-row">
+          <select class="saisie-select saisie-buteur-sel" data-match="${idx}" data-side="${side}" data-goal="${j}">${opts}</select>
+          <select class="saisie-select saisie-passeur-sel" data-match="${idx}" data-side="${side}" data-goal="${j}" style="opacity:1;font-size:13px">${aOpts}</select>
+        </div>`;
+      }
       const popts = ["", ...list].map(p => `<option value="${p}" ${pv===p?"selected":""}>${p||"— Passeur (opt.) —"}</option>`).join("");
       return `<div class="saisie-goal-row">
         <select class="saisie-select saisie-buteur-sel${v===""?" saisie-buteur-empty":""}" data-match="${idx}" data-side="${side}" data-goal="${j}">${opts}</select>
@@ -2847,11 +3002,11 @@ function _buildMatchCardHTML(m, idx, teams) {
     ${showButeurs ? `<div class="saisie-buteurs-row">
       <div class="saisie-buteurs-side">
         <span class="saisie-buteurs-label">${TEAM_LABEL[m.eqA]||m.eqA||"A"}</span>
-        <div class="saisie-buteurs-sels">${butSelHTML("A",pA,m.buteursA,m.passeursA||[],m.scoreA)||'<span style="color:var(--fg3);font-size:12px">—</span>'}</div>
+        <div class="saisie-buteurs-sels">${butSelHTML("A",pA,m.buteursA,m.passeursA||[],m.scoreA,pB)||'<span style="color:var(--fg3);font-size:12px">—</span>'}</div>
       </div>
       <div class="saisie-buteurs-side">
         <span class="saisie-buteurs-label">${TEAM_LABEL[m.eqB]||m.eqB||"B"}</span>
-        <div class="saisie-buteurs-sels">${butSelHTML("B",pB,m.buteursB,m.passeursB||[],m.scoreB)||'<span style="color:var(--fg3);font-size:12px">—</span>'}</div>
+        <div class="saisie-buteurs-sels">${butSelHTML("B",pB,m.buteursB,m.passeursB||[],m.scoreB,pA)||'<span style="color:var(--fg3);font-size:12px">—</span>'}</div>
       </div>
     </div>` : ""}
   </div>`;
@@ -3135,7 +3290,12 @@ document.getElementById("saisie-content").addEventListener("change", e => {
   if (buteurSel) {
     const idx = Number(buteurSel.dataset.match); const side = buteurSel.dataset.side;
     const goal = Number(buteurSel.dataset.goal);
+    const prevVal = _draft.matchs[idx][side === "A" ? "buteursA" : "buteursB"][goal];
     _draft.matchs[idx][side === "A" ? "buteursA" : "buteursB"][goal] = e.target.value;
+    if (e.target.value === "CSC" || prevVal === "CSC") {
+      _draft.matchs[idx][side === "A" ? "passeursA" : "passeursB"][goal] = "";
+      _reRenderMatchs();
+    }
     return;
   }
   const passeurSel = e.target.closest(".saisie-passeur-sel");
