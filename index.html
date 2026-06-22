@@ -548,31 +548,40 @@
     transition: transform .15s, box-shadow .15s; user-select: none;
   }
   .ach-cell:hover { transform: scale(1.08); z-index: 2; box-shadow: 0 4px 16px rgba(0,0,0,.35); }
-  .ach-icon { font-size: 22px; line-height: 1; display: block; }
+  .ach-icon { font-size: 40px; line-height: 1; display: block; }
   .ach-label {
-    font-size: 7.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
-    text-align: center; line-height: 1.2; padding: 0 3px;
-    max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+    text-align: center; line-height: 1.2; padding: 0 4px;
+    max-width: 100%; overflow-wrap: break-word; word-break: break-word;
+    white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     color: rgba(255,255,255,.2);
   }
-  .ach-dots { display: flex; gap: 2px; align-items: center; }
+  .ach-dots { display: flex; gap: 5px; align-items: center; }
   .ach-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.12); }
   .ach-dot.on { background: currentColor; }
-  .ach-cell.t0 .ach-icon { opacity: .18; font-size: 18px; }
+  .ach-cell.t0 .ach-icon { opacity: .18; font-size: 30px; }
   .ach-cell.t1 { background:rgba(107,114,128,.14); border:1px solid rgba(107,114,128,.38); color:#9CA3AF; }
   .ach-cell.t2 { background:rgba(120,83,28,.16);   border:1px solid rgba(155,110,50,.42); color:#C4994C; }
   .ach-cell.t3 { background:rgba(205,127,50,.16);  border:1px solid rgba(205,127,50,.48); color:#D4863A; }
   .ach-cell.t4 { background:rgba(148,163,184,.16); border:1px solid rgba(148,163,184,.5); color:#94A3B8; }
   .ach-cell.t5 { background:rgba(245,158,11,.18);  border:1px solid rgba(245,158,11,.55); color:#FBBF24; }
+  .ach-cell.t6 { background:linear-gradient(135deg,rgba(167,243,255,.13),rgba(196,181,255,.13),rgba(252,165,165,.1)); border:1px solid rgba(167,243,255,.45); color:#A5F3FC; animation:achDiamond 5s linear infinite; }
   .ach-cell.t1 .ach-label,.ach-cell.t2 .ach-label,.ach-cell.t3 .ach-label,
-  .ach-cell.t4 .ach-label,.ach-cell.t5 .ach-label { color: currentColor; opacity: .8; }
-  .ach-cell.t4::after,.ach-cell.t5::after {
+  .ach-cell.t4 .ach-label,.ach-cell.t5 .ach-label,.ach-cell.t6 .ach-label { color: currentColor; opacity: .85; }
+  .ach-cell.t4::after,.ach-cell.t5::after,.ach-cell.t6::after {
     content: ''; position: absolute; top: 0; left: 0; width: 45%; height: 100%;
     pointer-events: none; animation: achSweep var(--asd,3.6s) ease-in-out infinite;
   }
   .ach-cell.t4::after { background: linear-gradient(90deg,transparent,rgba(200,220,255,.18),transparent); }
   .ach-cell.t5::after { --asd:2.5s; background: linear-gradient(90deg,transparent,rgba(255,205,0,.22),transparent); }
+  .ach-cell.t6::after { --asd:1.8s; background: linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent); }
   @keyframes achSweep { from{transform:skewX(-15deg) translateX(-300%)} to{transform:skewX(-15deg) translateX(400%)} }
+  @keyframes achDiamond {
+    0%,100%{border-color:rgba(167,243,255,.45);color:#A5F3FC}
+    25%    {border-color:rgba(196,181,255,.5); color:#C4B5FD}
+    50%    {border-color:rgba(252,165,165,.45);color:#FCA5A5}
+    75%    {border-color:rgba(134,239,172,.45);color:#86EFAC}
+  }
   html.light .ach-cell { background:rgba(0,0,0,.04); border-color:rgba(0,0,0,.1); }
   html.light .ach-cell.t0 .ach-icon { opacity:.2; }
   html.light .ach-cell.t1 { background:rgba(100,110,120,.1); border-color:rgba(100,110,120,.3); color:#6B7280; }
@@ -580,6 +589,7 @@
   html.light .ach-cell.t3 { background:rgba(205,127,50,.1);  border-color:rgba(205,127,50,.35); color:#B45309; }
   html.light .ach-cell.t4 { background:rgba(100,116,139,.1); border-color:rgba(100,116,139,.35);color:#475569; }
   html.light .ach-cell.t5 { background:rgba(217,119,6,.12);  border-color:rgba(217,119,6,.4);   color:#B45309; }
+  html.light .ach-cell.t6 { background:rgba(6,182,212,.08);  border-color:rgba(6,182,212,.35);  color:#0891B2; animation:none; }
   /* Tooltip hauts faits */
   #ach-tip {
     position:fixed; z-index:10000; pointer-events:none;
@@ -2768,20 +2778,20 @@ function computePlayerDetailStats(playerName) {
 ══════════════════════════════════════════════════════════ */
 
 const ACH_DEFS = [
-  { id:'buteur',   name:'Buteur',          icon:'⚽', tiers:[1,5,15,30,50],  hidden:false, key:'buts',          desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''}` },
-  { id:'passeur',  name:'Passeur',         icon:'🎯', tiers:[1,5,15,30,50],  hidden:false, key:'passes',        desc:v=>`${v} passe${v>1?'s':''} décisive${v>1?'s':''}` },
-  { id:'ga',       name:'G/A',             icon:'📈', tiers:[5,20,50,100],   hidden:false, key:'gaTotal',       desc:v=>`${v} G/A cumulés` },
+  { id:'buteur',   name:'Buteur',          icon:'⚽', tiers:[1,5,15,30,50,100],  hidden:false, key:'buts',          desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''}` },
+  { id:'passeur',  name:'Passeur',         icon:'🎯', tiers:[1,5,15,30,50,100],  hidden:false, key:'passes',        desc:v=>`${v} passe${v>1?'s':''} décisive${v>1?'s':''}` },
+  { id:'ga',       name:'G/A',             icon:'📈', tiers:[5,20,50,100,200],   hidden:false, key:'gaTotal',       desc:v=>`${v} G/A cumulés` },
   { id:'fidele',   name:'Fidèle',          icon:'📅', tiers:[5,15,30,50,100],hidden:false, key:'presences',     desc:v=>`${v} session${v>1?'s':''} jouée${v>1?'s':''}` },
   { id:'sac',      name:'Porteur de sac',  icon:'🎒', tiers:[3,10,25],       hidden:false, key:'sac',           desc:v=>`Sac amené ${v} fois` },
   { id:'maillots', name:'Intendant',       icon:'👕', tiers:[3,10,25],       hidden:false, key:'maillots',      desc:v=>`Maillots amenés ${v} fois` },
-  { id:'evasif',   name:'L\'Évasif',       icon:'🌴', tiers:[3,10,25],       hidden:true,  key:'absences',      desc:v=>`${v} absence${v>1?'s':''}` },
-  { id:'infirm',   name:'Infirmerie',      icon:'🤕', tiers:[1,3,7],         hidden:true,  key:'injuries',      desc:v=>`${v} épisode${v>1?'s':''} de blessure` },
+  { id:'bonnet',   name:"Bonnet d'Âne",    icon:'🐴', tiers:[1,5,15,30,50,100], hidden:true,  key:'absences',   desc:v=>`${v} absence${v>1?'s':''}` },
+  { id:'infirm',   name:'Infirmerie',      icon:'🩼', tiers:[1,5,15,30,50,100], hidden:true,  key:'injuries',   desc:v=>`${v} épisode${v>1?'s':''} de blessure` },
   { id:'htrick',   name:'Hat-trick',       icon:'🔥', tiers:[1,3,10],        hidden:false, key:'hattricks',     desc:v=>`${v} hat-trick${v>1?'s':''}` },
   { id:'serie',    name:'Série G/A',       icon:'⚡', tiers:[3,7,15,30],     hidden:false, key:'bestStreak',    desc:v=>`Série de ${v} match${v>1?'s':''} consécutif${v>1?'s':''}` },
   { id:'soiree',   name:'Soirée parfaite', icon:'🌟', tiers:[1,3,10],        hidden:false, key:'soireeParfaite',desc:v=>`${v} soirée${v>1?'s':''} parfaite${v>1?'s':''}` },
-  { id:'dbl',      name:'Double Double',   icon:'💥', tiers:[1,5,15,30,50],  hidden:false, key:'doubleDouble',  desc:v=>`${v} match${v>1?'s':''} avec 1G+1A` },
+  { id:'dbl',      name:'Double Double',   icon:'💥', tiers:[1,5,15,30,50,100],  hidden:false, key:'doubleDouble',  desc:v=>`${v} match${v>1?'s':''} avec 1G+1A` },
   { id:'invic',    name:'Invincible',      icon:'🛡️', tiers:[1,5,15],        hidden:false, key:'invincible',    desc:v=>`${v} soirée${v>1?'s':''} sans défaite` },
-  { id:'mur',      name:'Le Mur',          icon:'🧱', tiers:[1,5,15,30,50],  hidden:false, key:'cleanSheets',   desc:v=>`${v} clean sheet${v>1?'s':''}` },
+  { id:'mur',      name:'Le Mur',          icon:'🧱', tiers:[1,5,15,30,50,100],  hidden:false, key:'cleanSheets',   desc:v=>`${v} clean sheet${v>1?'s':''}` },
   { id:'duo',      name:'Duo de légende',  icon:'🤝', tiers:[3,10,25],       hidden:false, key:'bestDuo',       desc:v=>`Duo répété ${v} fois` },
   { id:'mvp',      name:'Meilleur joueur', icon:'👑', tiers:[1,5,15],        hidden:false, key:'mvp',           desc:v=>`MVP de soirée ${v} fois` },
   { id:'pois',     name:'Poissard',        icon:'🪨', tiers:[1,3,5],         hidden:true,  key:'csc',           desc:v=>`${v} CSC` },
@@ -2791,7 +2801,7 @@ const ACH_DEFS = [
   { id:'assidu',   name:'Assidu',          icon:'🗓️', tiers:[1,2,3],          hidden:false, key:'assiduAnnes',   desc:v=>`${v} année${v>1?'s':''} à ≥80% de présence` },
   { id:'comete',   name:'La Comète',       icon:'🌠', tiers:[1,2,3],          hidden:true,  key:'cometeAnnes',   desc:v=>`${v} année${v>1?'s':''} à moins de 10% de présence` },
 ];
-const ACH_TIER_NAMES = ['','Plomb','Bois','Bronze','Argent','Or'];
+const ACH_TIER_NAMES = ['','Plomb','Bois','Bronze','Argent','Or','Diamant'];
 
 function _achLevel(val, tiers) {
   let lv=0; for(let i=0;i<tiers.length;i++){if(val>=tiers[i])lv=i+1;else break;} return lv;
@@ -2888,7 +2898,7 @@ function renderAchievementsGrid(achSt) {
     const maxT=ach.tiers.length;
 
     const iconHtml=locked
-      ?`<span class="ach-icon" style="font-size:20px;font-weight:600;color:var(--text3);opacity:.22">?</span>`
+      ?`<span class="ach-icon" style="font-weight:600;color:var(--text3)">?</span>`
       :`<span class="ach-icon">${ach.icon}</span>`;
     const nameHtml=locked?`<span class="ach-label" style="opacity:.18">???</span>`
       :`<span class="ach-label">${ach.name}</span>`;
