@@ -2877,8 +2877,9 @@ function computeAchievementStats(playerName) {
       if(sessPlayed>0&&sessPlayed===sessWithGA)soireeParfaite++;
       if(myEq&&sessInvic)invincible++;
       if(sessPlayed>0&&sessWins===0)zeroVict++;
-      const allDraw=(s.matchs||[]).length>0&&(s.matchs||[]).every(m=>m.scoreA===m.scoreB);
-      if(sessPlayed>0&&allDraw)toutNul++;
+      const teamMatchs=(s.matchs||[]).filter(m=>myEq&&(m.eqA===myEq||m.eqB===myEq));
+      const allDraw=teamMatchs.length>0&&teamMatchs.every(m=>m.scoreA===m.scoreB);
+      if(allDraw)toutNul++;
       const pGA=allGA[playerName]||0;
       if(pGA>0&&!Object.values(allGA).some(v=>v>pGA))mvp++;
       if(sessGA===0){curFan++;if(curFan>fantomeStreak)fantomeStreak=curFan;}else curFan=0;
