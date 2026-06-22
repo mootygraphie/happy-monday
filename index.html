@@ -541,14 +541,14 @@
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px;
   }
   .ach-cell {
-    aspect-ratio: 1; border-radius: 12px; overflow: hidden;
+    border-radius: 12px; overflow: hidden; padding: 12px 4px;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 3px; position: relative; cursor: default;
+    gap: 6px; position: relative; cursor: default;
     background: rgba(255,255,255,.03); border: 1px dashed rgba(255,255,255,.09);
     transition: transform .15s, box-shadow .15s; user-select: none;
   }
   .ach-cell:hover { transform: scale(1.08); z-index: 2; box-shadow: 0 4px 16px rgba(0,0,0,.35); }
-  .ach-icon { font-size: 40px; line-height: 1; display: block; }
+  .ach-icon { font-size: 34px; line-height: 1; display: block; }
   .ach-label {
     font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
     text-align: center; line-height: 1.2; padding: 0 4px;
@@ -559,7 +559,7 @@
   .ach-dots { display: flex; gap: 5px; align-items: center; }
   .ach-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.12); }
   .ach-dot.on { background: currentColor; }
-  .ach-cell.t0 .ach-icon { opacity: .18; font-size: 30px; }
+  .ach-cell.t0 .ach-icon { opacity: .18; font-size: 26px; }
   .ach-cell.t1 { background:rgba(107,114,128,.14); border:1px solid rgba(107,114,128,.38); color:#9CA3AF; }
   .ach-cell.t2 { background:rgba(120,83,28,.16);   border:1px solid rgba(155,110,50,.42); color:#C4994C; }
   .ach-cell.t3 { background:rgba(205,127,50,.16);  border:1px solid rgba(205,127,50,.48); color:#D4863A; }
