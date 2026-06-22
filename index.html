@@ -140,6 +140,10 @@
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
 
+  .bonnet-infirm-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 2rem; }
+  .bonnet-infirm-row > div { margin-bottom: 0 !important; }
+  @media (max-width: 700px) { .bonnet-infirm-row { grid-template-columns: 1fr; } }
+
   .podium { display: flex; flex-direction: column; gap: 5px; }
   .podium-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); }
   .podium-row:first-child { border-color: rgba(245,200,66,.2); background: rgba(245,200,66,.04); }
@@ -1860,7 +1864,7 @@ function _buildAbsenceRankHtml({ icon, title, subtitle, accentColor, borderColor
         <span class="bd-name"${isFirst?' style="font-size:16px;font-weight:700"':''}>${pLink(p.name)}</span>
         <div class="bd-bar-wrap"><div class="bd-bar" style="width:${bar}%;background:linear-gradient(90deg,${accentColor},${accentColor}44)"></div></div>
         <span class="bd-pts" style="color:var(--text2)${isFirst?';font-size:18px':''}">${p.val}</span>
-        <span class="bd-ga" style="${isFirst?'color:var(--text2)':''}">×</span>
+        <span class="bd-ga" style="${isFirst?'color:var(--text2)':''}">${p.extra !== undefined ? p.extra : '×'}</span>
       </div>`;
     });
   } else {
@@ -1888,19 +1892,26 @@ function buildBonnetDAneHtml() {
 
 function buildInfirmeHtml() {
   const yr = new Date().getFullYear();
-  const injMap = {}; const injEp = {};
+  const injEpMap = {}; const injMatchMap = {}; const injEp = {};
   const _ss = [...SESSIONS].filter(s=>new Date(s.date).getFullYear()===yr).sort((a,b)=>new Date(a.date)-new Date(b.date));
   _ss.forEach(s => {
     Object.entries(s.presences).forEach(([p, info]) => {
       if (!injEp[p]) injEp[p] = false;
       if (info.statut === "Blessé" && !JOKERS.has(p)) {
-        if (!injEp[p]) { injMap[p] = (injMap[p]||0)+1; injEp[p]=true; }
+        if (!injEp[p]) { injEpMap[p] = (injEpMap[p]||0)+1; injEp[p]=true; }
+        injMatchMap[p] = (injMatchMap[p]||0)+1;
       } else { injEp[p] = false; }
     });
   });
-  const top5 = Object.entries(injMap).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([name,val])=>({name,val}));
+  const top5 = Object.entries(injMatchMap)
+    .sort((a,b)=>b[1]-a[1]||((injEpMap[b[0]]||0)-(injEpMap[a[0]]||0)))
+    .slice(0,5)
+    .map(([name,val])=>{
+      const ep = injEpMap[name]||0;
+      return { name, val, extra: `${ep} blessure${ep>1?'s':''}` };
+    });
   return _buildAbsenceRankHtml({
-    icon:'🩼', title:`Infirmerie ${yr}`, subtitle:`Classement épisodes blessures — Janvier à aujourd'hui`,
+    icon:'🩼', title:`Infirmerie ${yr}`, subtitle:`Classement matchs manqués — Janvier à aujourd'hui`,
     accentColor:'rgba(245,158,11,.55)', borderColor:'rgba(245,158,11,.22)',
     players: top5, emptyMsg:`Aucune blessure enregistrée en ${yr}.`
   });
@@ -1947,8 +1958,7 @@ function renderStats() {
   /* ── Ballon d'Or ── */
   let h = buildBallonDorHtml();
   h += buildBallonDePlombHtml();
-  h += buildBonnetDAneHtml();
-  h += buildInfirmeHtml();
+  h += `<div class="bonnet-infirm-row">${buildBonnetDAneHtml()}${buildInfirmeHtml()}</div>`;
 
   /* ── Meilleure équipe all-time ── */
   const bt = computeBestTeamAllTime();
@@ -2785,7 +2795,7 @@ const ACH_DEFS = [
   { id:'sac',      name:'Porteur de sac',  icon:'🎒', tiers:[3,10,25],       hidden:false, key:'sac',           desc:v=>`Sac amené ${v} fois` },
   { id:'maillots', name:'Intendant',       icon:'👕', tiers:[3,10,25],       hidden:false, key:'maillots',      desc:v=>`Maillots amenés ${v} fois` },
   { id:'bonnet',   name:"Bonnet d'Âne",    icon:'🐴', tiers:[1,5,15,30,50,100], hidden:true,  key:'absences',   desc:v=>`${v} absence${v>1?'s':''}` },
-  { id:'infirm',   name:'Infirmerie',      icon:'🩼', tiers:[1,5,15,30,50,100], hidden:true,  key:'injuries',   desc:v=>`${v} épisode${v>1?'s':''} de blessure` },
+  { id:'infirm',   name:'Infirmerie',      icon:'🩼', tiers:[1,5,15,30,50,100], hidden:true,  key:'injuries',   desc:v=>`${v} blessure${v>1?'s':''}` },
   { id:'htrick',   name:'Hat-trick',       icon:'🔥', tiers:[1,3,10],        hidden:false, key:'hattricks',     desc:v=>`${v} hat-trick${v>1?'s':''}` },
   { id:'serie',    name:'Série G/A',       icon:'⚡', tiers:[3,7,15,30],     hidden:false, key:'bestStreak',    desc:v=>`Série de ${v} match${v>1?'s':''} consécutif${v>1?'s':''}` },
   { id:'soiree',   name:'Soirée parfaite', icon:'🌟', tiers:[1,3,10],        hidden:false, key:'soireeParfaite',desc:v=>`${v} soirée${v>1?'s':''} parfaite${v>1?'s':''}` },
@@ -2800,6 +2810,8 @@ const ACH_DEFS = [
   { id:'legende',  name:'Légende',         icon:'🏅', tiers:[10,20,30],      hidden:true,  key:'legendeCount',  desc:v=>`${v} niveaux débloqués` },
   { id:'assidu',   name:'Assidu',          icon:'🗓️', tiers:[1,2,3],          hidden:false, key:'assiduAnnes',   desc:v=>`${v} année${v>1?'s':''} à ≥80% de présence` },
   { id:'comete',   name:'La Comète',       icon:'🌠', tiers:[1,2,3],          hidden:true,  key:'cometeAnnes',   desc:v=>`${v} année${v>1?'s':''} à moins de 10% de présence` },
+  { id:'zerovic',  name:'Disette',         icon:'🌵', tiers:[1,5,15,30],      hidden:true,  key:'zeroVict',      desc:v=>`${v} soirée${v>1?'s':''} sans victoire` },
+  { id:'toutnul',  name:'Statu Quo',       icon:'⚖️', tiers:[1,3,10],         hidden:true,  key:'toutNul',       desc:v=>`${v} soirée${v>1?'s':''} 100% nuls` },
 ];
 const ACH_TIER_NAMES = ['','Plomb','Bois','Bronze','Argent','Or','Diamant'];
 
@@ -2810,7 +2822,7 @@ function _achLevel(val, tiers) {
 function computeAchievementStats(playerName) {
   const _ss = [...SESSIONS].sort((a,b)=>new Date(a.date)-new Date(b.date));
   let buts=0,passes=0,presences=0,absences=0,injuries=0,sac=0,maillots=0;
-  let hattricks=0,doubleDouble=0,cleanSheets=0,mvp=0,soireeParfaite=0,invincible=0,csc=0;
+  let hattricks=0,doubleDouble=0,cleanSheets=0,mvp=0,soireeParfaite=0,invincible=0,csc=0,zeroVict=0,toutNul=0;
   const teamsSet=new Set(), duoMap={};
   let inEp=false, bestStreak=0, curStreak=0, fantomeStreak=0, curFan=0;
   const yearMap={};
@@ -2827,7 +2839,7 @@ function computeAchievementStats(playerName) {
       if(s.maillots===playerName) maillots++;
       const myEq=info.equipe; if(myEq) teamsSet.add(myEq);
 
-      let sessGA=0,sessPlayed=0,sessWithGA=0,sessInvic=true;
+      let sessGA=0,sessPlayed=0,sessWithGA=0,sessInvic=true,sessWins=0;
       const allGA={};
 
       (s.matchs||[]).forEach(m => {
@@ -2856,6 +2868,7 @@ function computeAchievementStats(playerName) {
           const conceded=m.eqA===myEq?m.scoreB:m.scoreA; if(conceded===0)cleanSheets++;
           const w=m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
           if(w&&w!==myEq)sessInvic=false;
+          if(w&&w===myEq)sessWins++;
           if(g>=3)hattricks++;
           if(g>=1&&a>=1)doubleDouble++;
         }
@@ -2863,6 +2876,9 @@ function computeAchievementStats(playerName) {
 
       if(sessPlayed>0&&sessPlayed===sessWithGA)soireeParfaite++;
       if(myEq&&sessInvic)invincible++;
+      if(sessPlayed>0&&sessWins===0)zeroVict++;
+      const allDraw=(s.matchs||[]).length>0&&(s.matchs||[]).every(m=>m.scoreA===m.scoreB);
+      if(sessPlayed>0&&allDraw)toutNul++;
       const pGA=allGA[playerName]||0;
       if(pGA>0&&!Object.values(allGA).some(v=>v>pGA))mvp++;
       if(sessGA===0){curFan++;if(curFan>fantomeStreak)fantomeStreak=curFan;}else curFan=0;
@@ -2882,7 +2898,7 @@ function computeAchievementStats(playerName) {
   return { buts, passes, gaTotal:buts+passes, presences, absences, injuries,
            sac, maillots, hattricks, bestStreak, soireeParfaite, doubleDouble,
            invincible, cleanSheets, bestDuo, mvp, csc, grandChelem,
-           fantomeStreak, assiduAnnes, cometeAnnes };
+           fantomeStreak, assiduAnnes, cometeAnnes, zeroVict, toutNul };
 }
 
 function renderAchievementsGrid(achSt) {
@@ -2903,7 +2919,7 @@ function renderAchievementsGrid(achSt) {
     const nameHtml=locked?`<span class="ach-label" style="opacity:.18">???</span>`
       :`<span class="ach-label">${ach.name}</span>`;
 
-    const dots=(!locked&&maxT>1)?`<div class="ach-dots">${Array.from({length:maxT},(_,i)=>`<div class="ach-dot${i<lv?' on':''}"></div>`).join('')}</div>`:'';
+    const dots=(maxT>1)?`<div class="ach-dots"${locked?' style="opacity:0"':''}>${Array.from({length:maxT},(_,i)=>`<div class="ach-dot${i<lv?' on':''}"></div>`).join('')}</div>`:'';
 
     let tip='';
     if(locked){ tip='Haut fait inconnu'; }
