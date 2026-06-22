@@ -540,8 +540,6 @@
   .ach-grid {
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px;
   }
-  @media (min-width: 400px) { .ach-grid { grid-template-columns: repeat(7, 1fr); gap: 6px; } }
-  @media (max-width: 399px) { .ach-cell:last-child:nth-child(4n+1) { grid-column: 2 / 4; } }
   .ach-cell {
     aspect-ratio: 1; border-radius: 12px; overflow: hidden;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -1830,6 +1828,74 @@ function buildBallonDePlombHtml() {
   return html;
 }
 
+function _buildAbsenceRankHtml({ icon, title, subtitle, accentColor, borderColor, players, emptyMsg }) {
+  let html = `<div style="background:var(--bg2);border:1px solid ${borderColor};border-radius:var(--radius-lg);overflow:hidden;margin-bottom:2rem;position:relative">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,${accentColor},transparent);pointer-events:none"></div>
+    <div class="ballon-dor-head" style="background:rgba(0,0,0,.04);border-bottom-color:${borderColor}">
+      <span class="ballon-dor-icon">${icon}</span>
+      <div>
+        <div class="ballon-dor-title" style="color:var(--text2)">${title}</div>
+        <div class="ballon-dor-meta">${subtitle}</div>
+      </div>
+    </div>
+    <div class="bd-list">`;
+  if (players.length) {
+    const maxVal = Math.max(...players.map(p => p.val), 1);
+    players.forEach((p, i) => {
+      const isFirst = i === 0;
+      const rowStyle = isFirst ? ` style="padding:14px 22px;background:rgba(0,0,0,.04);border-bottom:1px solid ${borderColor}"` : '';
+      const bar = Math.round((p.val / maxVal) * 100);
+      html += `<div class="bd-row"${rowStyle}>
+        <span class="bd-rank num">${i+1}</span>
+        <span class="bd-name"${isFirst?' style="font-size:16px;font-weight:700"':''}>${pLink(p.name)}</span>
+        <div class="bd-bar-wrap"><div class="bd-bar" style="width:${bar}%;background:linear-gradient(90deg,${accentColor},${accentColor}44)"></div></div>
+        <span class="bd-pts" style="color:var(--text2)${isFirst?';font-size:18px':''}">${p.val}</span>
+        <span class="bd-ga" style="${isFirst?'color:var(--text2)':''}">×</span>
+      </div>`;
+    });
+  } else {
+    html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">${emptyMsg}</div>`;
+  }
+  html += `</div></div>`;
+  return html;
+}
+
+function buildBonnetDAneHtml() {
+  const yr = new Date().getFullYear();
+  const absMap = {};
+  SESSIONS.filter(s => new Date(s.date).getFullYear() === yr).forEach(s => {
+    Object.entries(s.presences).forEach(([p, info]) => {
+      if (info.statut === "Absent" && !JOKERS.has(p)) absMap[p] = (absMap[p]||0)+1;
+    });
+  });
+  const top5 = Object.entries(absMap).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([name,val])=>({name,val}));
+  return _buildAbsenceRankHtml({
+    icon:'🐴', title:`Bonnet d'Âne ${yr}`, subtitle:`Classement absences — Janvier à aujourd'hui`,
+    accentColor:'rgba(239,68,68,.55)', borderColor:'rgba(239,68,68,.22)',
+    players: top5, emptyMsg:`Aucune absence enregistrée en ${yr}.`
+  });
+}
+
+function buildInfirmeHtml() {
+  const yr = new Date().getFullYear();
+  const injMap = {}; const injEp = {};
+  const _ss = [...SESSIONS].filter(s=>new Date(s.date).getFullYear()===yr).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  _ss.forEach(s => {
+    Object.entries(s.presences).forEach(([p, info]) => {
+      if (!injEp[p]) injEp[p] = false;
+      if (info.statut === "Blessé" && !JOKERS.has(p)) {
+        if (!injEp[p]) { injMap[p] = (injMap[p]||0)+1; injEp[p]=true; }
+      } else { injEp[p] = false; }
+    });
+  });
+  const top5 = Object.entries(injMap).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([name,val])=>({name,val}));
+  return _buildAbsenceRankHtml({
+    icon:'🩼', title:`Infirmerie ${yr}`, subtitle:`Classement épisodes blessures — Janvier à aujourd'hui`,
+    accentColor:'rgba(245,158,11,.55)', borderColor:'rgba(245,158,11,.22)',
+    players: top5, emptyMsg:`Aucune blessure enregistrée en ${yr}.`
+  });
+}
+
 function computeBestTeamAllTime() {
   let best = null;
   SESSIONS.forEach(session => {
@@ -1871,6 +1937,8 @@ function renderStats() {
   /* ── Ballon d'Or ── */
   let h = buildBallonDorHtml();
   h += buildBallonDePlombHtml();
+  h += buildBonnetDAneHtml();
+  h += buildInfirmeHtml();
 
   /* ── Meilleure équipe all-time ── */
   const bt = computeBestTeamAllTime();
@@ -2721,6 +2789,7 @@ const ACH_DEFS = [
   { id:'fantome',  name:'Fantôme',         icon:'👻', tiers:[3,7,15],        hidden:true,  key:'fantomeStreak', desc:v=>`${v} sessions de suite sans G/A` },
   { id:'legende',  name:'Légende',         icon:'🏅', tiers:[10,20,30],      hidden:true,  key:'legendeCount',  desc:v=>`${v} niveaux débloqués` },
   { id:'assidu',   name:'Assidu',          icon:'🗓️', tiers:[1,2,3],          hidden:false, key:'assiduAnnes',   desc:v=>`${v} année${v>1?'s':''} à ≥80% de présence` },
+  { id:'comete',   name:'La Comète',       icon:'🌠', tiers:[1,2,3],          hidden:true,  key:'cometeAnnes',   desc:v=>`${v} année${v>1?'s':''} à moins de 10% de présence` },
 ];
 const ACH_TIER_NAMES = ['','Plomb','Bois','Bronze','Argent','Or'];
 
@@ -2798,11 +2867,12 @@ function computeAchievementStats(playerName) {
   const bestDuo=Math.max(0,...Object.values(duoMap));
   const grandChelem=(teamsSet.has("Rouge")&&teamsSet.has("Vert")&&teamsSet.has("Bleue"))?1:0;
   const assiduAnnes=Object.values(yearMap).filter(y=>y.total>=10&&y.present/y.total>=0.8).length;
+  const cometeAnnes=Object.values(yearMap).filter(y=>y.total>=10&&y.present/y.total<0.1).length;
 
   return { buts, passes, gaTotal:buts+passes, presences, absences, injuries,
            sac, maillots, hattricks, bestStreak, soireeParfaite, doubleDouble,
            invincible, cleanSheets, bestDuo, mvp, csc, grandChelem,
-           fantomeStreak, assiduAnnes };
+           fantomeStreak, assiduAnnes, cometeAnnes };
 }
 
 function renderAchievementsGrid(achSt) {
@@ -2815,20 +2885,18 @@ function renderAchievementsGrid(achSt) {
     const val=achSt[ach.key]||0;
     const lv=_achLevel(val,ach.tiers);
     const locked=lv===0;
-    const hidLocked=ach.hidden&&locked;
     const maxT=ach.tiers.length;
 
-    const iconHtml=hidLocked
-      ?`<span class="ach-icon" style="font-size:20px;font-weight:600;color:var(--text3);opacity:.25">?</span>`
-      :`<span class="ach-icon"${locked?' style="opacity:.25"':''}>${ach.icon}</span>`;
-    const nameHtml=hidLocked?`<span class="ach-label" style="opacity:.2">???</span>`
+    const iconHtml=locked
+      ?`<span class="ach-icon" style="font-size:20px;font-weight:600;color:var(--text3);opacity:.22">?</span>`
+      :`<span class="ach-icon">${ach.icon}</span>`;
+    const nameHtml=locked?`<span class="ach-label" style="opacity:.18">???</span>`
       :`<span class="ach-label">${ach.name}</span>`;
 
     const dots=(!locked&&maxT>1)?`<div class="ach-dots">${Array.from({length:maxT},(_,i)=>`<div class="ach-dot${i<lv?' on':''}"></div>`).join('')}</div>`:'';
 
     let tip='';
-    if(hidLocked){ tip='Haut fait inconnu'; }
-    else if(locked){ tip=`${ach.name}\nNon débloqué — seuil : ${ach.tiers[0]}`; }
+    if(locked){ tip='Haut fait inconnu'; }
     else {
       const tn=ACH_TIER_NAMES[lv]||`Niveau ${lv}`;
       tip=`${ach.name} — ${tn}\n${ach.desc(val)}${lv<maxT?`\nProchain seuil : ${ach.tiers[lv]}`:''}`;
