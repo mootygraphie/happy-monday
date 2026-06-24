@@ -1118,6 +1118,15 @@ const ALL_PLAYERS = [
 let JOKERS = new Set(JSON.parse(localStorage.getItem('hmft_jokers') || 'null') || ["Hamine","Marius","Harone","Alexi","Godefroy"]);
 function _saveJokers() { localStorage.setItem('hmft_jokers', JSON.stringify([...JOKERS])); }
 
+/* Joueurs ajoutés via saisie (+1 temp) — persistés dans localStorage */
+const _BASE_PLAYERS = new Set(ALL_PLAYERS);
+JSON.parse(localStorage.getItem('hmft_extra_players') || '[]').forEach(n => {
+  if (!ALL_PLAYERS.includes(n)) { ALL_PLAYERS.push(n); JOKERS.add(n); }
+});
+function _saveExtraPlayers() {
+  localStorage.setItem('hmft_extra_players', JSON.stringify(ALL_PLAYERS.filter(p => !_BASE_PLAYERS.has(p))));
+}
+
 /* ── Helpers ── */
 const TEAM_LABEL = { Rouge: "Roses", Vert: "Jaunes", Bleue: "Bleus" };
 
@@ -3742,6 +3751,14 @@ async function _commitSession() {
 
   if (overlay) overlay.style.display = "none";
   window.onbeforeunload = null;
+
+  /* Persister les nouveaux temp jokers dans ALL_PLAYERS + JOKERS */
+  const _newJokers = (_draft.tempJokers || []).filter(n => !ALL_PLAYERS.includes(n));
+  if (_newJokers.length) {
+    _newJokers.forEach(n => { ALL_PLAYERS.push(n); JOKERS.add(n); });
+    _saveJokers();
+    _saveExtraPlayers();
+  }
 
   _draft = null;
   _draftSavedAt = null;
