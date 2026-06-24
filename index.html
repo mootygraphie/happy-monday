@@ -626,6 +626,39 @@
   html.light .ach-cell.ach-bonnet.t4 { background:rgba(120,80,30,.1);   border-color:rgba(120,80,30,.3);   color:#7C4F1A; }
   html.light .ach-cell.ach-bonnet.t5 { background:rgba(55,68,78,.12);   border-color:rgba(55,68,78,.35);   color:#455A64; }
   html.light .ach-cell.ach-bonnet.t6 { background:rgba(30,32,36,.15);   border-color:rgba(30,32,36,.4);    color:#374151; }
+  /* ── Hauts faits — classement admin ── */
+  .ach-cls-pills { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:12px; }
+  .ach-cls-pill {
+    font-size:20px; padding:5px 8px; border-radius:10px; cursor:pointer;
+    border:1px solid var(--border); background:var(--bg2);
+    transition:transform .12s, border-color .12s, background .12s;
+    user-select:none; line-height:1;
+  }
+  .ach-cls-pill:hover { transform:scale(1.15); }
+  .ach-cls-pill.active { border-color:rgba(254,219,0,.65); background:rgba(254,219,0,.1); }
+  .ach-cls-row {
+    display:flex; align-items:center; gap:8px; padding:7px 10px;
+    border-radius:10px; margin-bottom:4px; background:var(--bg2); border:1px solid var(--border);
+  }
+  .ach-cls-rank { font-size:12px; color:var(--text3); min-width:22px; text-align:center; flex-shrink:0; }
+  .ach-cls-name { flex:1; font-size:13px; font-weight:600; min-width:0; }
+  .ach-cls-badge {
+    font-size:10px; font-weight:700; padding:2px 8px; border-radius:8px;
+    border:1px solid; letter-spacing:.03em; white-space:nowrap; flex-shrink:0;
+  }
+  .ach-cls-val { font-size:11px; color:var(--text2); text-align:right; white-space:nowrap; flex-shrink:0; }
+  .ach-cls-dots { display:flex; gap:3px; flex-shrink:0; }
+  .ach-cls-dot { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.12); }
+  details.ach-cls-locked { margin-top:6px; }
+  details.ach-cls-locked > summary {
+    font-size:11px; color:var(--text3); cursor:pointer; padding:5px 0;
+    list-style:none; display:flex; align-items:center; gap:5px; user-select:none;
+  }
+  details.ach-cls-locked > summary::marker, details.ach-cls-locked > summary::-webkit-details-marker { display:none; }
+  details.ach-cls-locked > summary::before { content:'▶'; font-size:9px; transition:transform .15s; }
+  details.ach-cls-locked[open] > summary::before { transform:rotate(90deg); }
+  html.light .ach-cls-pill.active { border-color:rgba(180,120,0,.5); background:rgba(254,219,0,.12); }
+  html.light .ach-cls-dot { background:rgba(0,0,0,.1); }
   /* Tooltip hauts faits */
   #ach-tip {
     position:fixed; z-index:10000; pointer-events:none;
@@ -1932,7 +1965,7 @@ function buildBonnetDAneHtml() {
   });
   const top5 = Object.entries(absMap).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([name,val])=>({name,val}));
   return _buildAbsenceRankHtml({
-    icon:'🐴', title:`Bonnet d'Âne ${yr}`, subtitle:`Classement absences — Janvier à aujourd'hui`,
+    icon:'🫏', title:`Bonnet d'Âne ${yr}`, subtitle:`Classement absences — Janvier à aujourd'hui`,
     accentColor:'rgba(239,68,68,.55)', borderColor:'rgba(239,68,68,.22)',
     players: top5, emptyMsg:`Aucune absence enregistrée en ${yr}.`
   });
@@ -1997,6 +2030,89 @@ function computeBestTeamAllTime() {
     });
   });
   return best;
+}
+
+let _achClsStats = null;
+
+function _achTierStyle(rawLv, ach) {
+  const lv = ach.fixedTier ? ach.fixedTier : Math.min(6, rawLv + (ach.tierOffset||0));
+  const S = [null,
+    {bg:'rgba(107,114,128,.18)',b:'rgba(107,114,128,.38)',c:'#9CA3AF'},
+    {bg:'rgba(205,127,50,.18)', b:'rgba(205,127,50,.45)', c:'#D4863A'},
+    {bg:'rgba(148,163,184,.18)',b:'rgba(148,163,184,.45)',c:'#94A3B8'},
+    {bg:'rgba(245,158,11,.18)', b:'rgba(245,158,11,.5)',  c:'#FBBF24'},
+    {bg:'rgba(16,185,129,.16)', b:'rgba(16,185,129,.48)', c:'#34D399'},
+    {bg:'rgba(167,243,255,.14)',b:'rgba(167,243,255,.42)',c:'#A5F3FC'},
+  ];
+  const t = S[lv] || S[1];
+  const name = (ach.tierNames ? ach.tierNames[rawLv-1] : null) || ACH_TIER_NAMES[lv] || `Niv.${lv}`;
+  return { ...t, name };
+}
+
+function renderAchClsBody(acid) {
+  const ach = ACH_DEFS.find(a => a.id === acid);
+  if (!ach || !_achClsStats) return '';
+  const maxT = ach.tiers.length;
+
+  const rows = Object.entries(_achClsStats).map(([name, s]) => {
+    const val = s[ach.key] || 0;
+    const rawLv = _achLevel(val, ach.tiers);
+    return { name, val, rawLv };
+  });
+
+  const unlocked = rows.filter(r => r.rawLv > 0).sort((a,b) => b.rawLv - a.rawLv || b.val - a.val);
+  const locked   = rows.filter(r => r.rawLv === 0).sort((a,b) => b.val - a.val);
+
+  const rankLabel = i => ['🥇','🥈','🥉'][i] ?? `${i+1}.`;
+  const makeDots  = (rawLv, color) => maxT > 1
+    ? `<div class="ach-cls-dots">${Array.from({length:maxT},(_,j)=>`<div class="ach-cls-dot" style="${j<rawLv?'background:'+color:''}"></div>`).join('')}</div>`
+    : '';
+
+  let h = `<div style="margin-bottom:8px;font-size:12px;color:var(--text2)">${ach.icon} <strong>${ach.name}</strong> &mdash; <span style="color:var(--text);font-weight:700">${unlocked.length}</span> joueur${unlocked.length!==1?'s':''} débloqué${unlocked.length!==1?'s':''}</div>`;
+
+  unlocked.forEach((r, i) => {
+    const ts = _achTierStyle(r.rawLv, ach);
+    h += `<div class="ach-cls-row">
+      <span class="ach-cls-rank">${rankLabel(i)}</span>
+      <span class="ach-cls-name">${r.name}</span>
+      <span class="ach-cls-badge" style="background:${ts.bg};border-color:${ts.b};color:${ts.c}">${ts.name}</span>
+      <span class="ach-cls-val">${ach.desc(r.val)}</span>
+      ${makeDots(r.rawLv, ts.c)}
+    </div>`;
+  });
+
+  if (locked.length) {
+    h += `<details class="ach-cls-locked"><summary>${locked.length} non débloqué${locked.length!==1?'s':''}</summary>`;
+    locked.forEach(r => {
+      h += `<div class="ach-cls-row" style="opacity:.38">
+        <span class="ach-cls-rank" style="font-size:10px">—</span>
+        <span class="ach-cls-name">${r.name}</span>
+        <span class="ach-cls-val" style="color:var(--text3)">${r.val} / ${ach.tiers[0]}</span>
+        ${makeDots(0, '')}
+      </div>`;
+    });
+    h += `</details>`;
+  }
+  return h;
+}
+
+function renderAchievementsClassement() {
+  _achClsStats = {};
+  ALL_PLAYERS.forEach(p => {
+    const s = computeAchievementStats(p);
+    let lc = 0;
+    ACH_DEFS.filter(a => a.id !== 'legende').forEach(a => { lc += _achLevel(s[a.key]||0, a.tiers); });
+    s.legendeCount = lc;
+    _achClsStats[p] = s;
+  });
+
+  const pillsHtml = ACH_DEFS.map(a =>
+    `<button class="ach-cls-pill${a.id==='legende'?' active':''}" data-acid="${a.id}" title="${a.name}">${a.icon}</button>`
+  ).join('');
+
+  return `<div class="section-label" style="margin-top:2rem">Hauts faits — Classement</div>
+    <div class="ach-cls-pills" id="ach-cls-pills">${pillsHtml}</div>
+    <div id="ach-cls-body">${renderAchClsBody('legende')}</div>`;
 }
 
 function renderStats() {
@@ -2103,12 +2219,24 @@ function renderStats() {
     </div>
   </div>`;
 
-  if (sessionStorage.getItem("hmft_role") === "admin") {
+  const isAdmin = sessionStorage.getItem("hmft_role") === "admin";
+  if (isAdmin) {
     h += renderAchievementsLegend();
+    h += renderAchievementsClassement();
   }
 
   container.innerHTML = h;
   animateView(container);
+
+  if (isAdmin) {
+    container.querySelector('#ach-cls-pills').addEventListener('click', e => {
+      const pill = e.target.closest('.ach-cls-pill');
+      if (!pill) return;
+      container.querySelectorAll('.ach-cls-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      document.getElementById('ach-cls-body').innerHTML = renderAchClsBody(pill.dataset.acid);
+    });
+  }
 }
 
 function renderDashboard() {
@@ -2884,7 +3012,7 @@ const ACH_DEFS = [
   { id:'fidele',   name:'Fidèle',          icon:'📅', tiers:[5,15,30,50,75,100],   hidden:false, key:'presences',      desc:v=>`${v} session${v>1?'s':''} jouée${v>1?'s':''}` },
   { id:'sac',      name:'Porteur de sac',  icon:'🎒', tiers:[1,3,7,15,25,40],      hidden:false, key:'sac',            desc:v=>`Sac amené ${v} fois` },
   { id:'maillots', name:'Intendant',       icon:'👕', tiers:[1,3,7,15,25,40],      hidden:false, key:'maillots',       desc:v=>`Maillots amenés ${v} fois` },
-  { id:'bonnet',   name:"Bonnet d'Âne",    icon:'🐴', tiers:[10,30,50,100], tierOffset:2, tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'absences',       desc:v=>`${v} absence${v>1?'s':''}` },
+  { id:'bonnet',   name:"Bonnet d'Âne",    icon:'🫏', tiers:[10,30,50,100], tierOffset:2, tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'absences',       desc:v=>`${v} absence${v>1?'s':''}` },
   { id:'infirm',   name:'Infirmerie',      icon:'🩼', tiers:[1,5,10,20,35,50],     hidden:true,  key:'sessionsBlesses',desc:v=>`${v} session${v>1?'s':''} blessé${v>1?'s':''}` },
   { id:'htrick',   name:'Hat-trick',       icon:'🔥', tiers:[1,2,5,10,20,35],      hidden:false, key:'hattricks',      desc:v=>`${v} hat-trick${v>1?'s':''}` },
   { id:'serie',    name:'Série G/A',       icon:'⚡', tiers:[3,5,8,15,25,40],      hidden:false, key:'bestStreak',     desc:v=>`Série de ${v} match${v>1?'s':''} consécutif${v>1?'s':''}` },
