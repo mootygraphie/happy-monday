@@ -2221,8 +2221,8 @@ function renderStats() {
 
   const isAdmin = sessionStorage.getItem("hmft_role") === "admin";
   if (isAdmin) {
-    h += renderAchievementsLegend();
     h += renderAchievementsClassement();
+    h += renderAchievementsLegend();
   }
 
   container.innerHTML = h;
