@@ -1050,22 +1050,14 @@ const ALL_PLAYERS = [
 /* Jokers — présents uniquement quand listés en "+1".
    Jamais comptés "pas répondu" lors de leurs absences.
 */
-let JOKERS = new Set(["Hamine","Marius","Harone","Alexi","Godefroy"]);
+let JOKERS = new Set(JSON.parse(localStorage.getItem('hmft_jokers') || 'null') || ["Hamine","Marius","Harone","Alexi","Godefroy"]);
+function _saveJokers() { localStorage.setItem('hmft_jokers', JSON.stringify([...JOKERS])); }
 
 /* ── Helpers ── */
 const TEAM_LABEL = { Rouge: "Roses", Vert: "Jaunes", Bleue: "Bleus" };
 
-function teamCard(color, teamMap, icons, opts={}) {
+function teamCard(color, teamMap, icons) {
   const cls = color.toLowerCase();
-  const {sessionDate='', isAdmin=false} = opts;
-  const playerPill = p => {
-    const toggleBtn = isAdmin
-      ? `<button data-action="toggle-joker" data-player="${p.name}" data-session="${sessionDate}" title="${p.joker?'Passer en roster':'Passer en +1'}" style="background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:9px;font-weight:700;cursor:pointer;padding:2px 5px;margin-left:3px;flex-shrink:0;line-height:1.5">${p.joker?'↑R':'↓+1'}</button>`
-      : '';
-    return `<span style="display:inline-flex;align-items:center">`
-      + `<button class="team-player-pill ${cls} player-link" data-player="${p.name}">${p.name}${p.joker?`<span class="joker-tag">+1</span>`:""}</button>`
-      + toggleBtn + `</span>`;
-  };
   return `<div class="team-card">
     <div class="team-card-accent ${cls}"></div>
     <div class="team-card-header">
@@ -1074,7 +1066,7 @@ function teamCard(color, teamMap, icons, opts={}) {
       <span class="team-card-count">${teamMap[color].length} joueur${teamMap[color].length > 1 ? "s" : ""}</span>
     </div>
     <div class="team-card-players">
-      ${teamMap[color].map(p => playerPill(p)).join("")}
+      ${teamMap[color].map(p => `<button class="team-player-pill ${cls} player-link" data-player="${p.name}">${p.name}${p.joker?`<span class="joker-tag">+1</span>`:""}</button>`).join("")}
     </div>
   </div>`;
 }
@@ -1636,16 +1628,8 @@ function renderSessionDetail(session) {
 
   const TEAM_ICONS = { Rouge: "🔴", Vert: "🟡", Bleue: "🔵" };
   const hasColors  = presentsAll.some(p => p.equipe !== "");
-  const tcOpts     = { sessionDate: session.date, isAdmin };
-
-  const _playerChip = p => {
-    const toggleBtn = isAdmin
-      ? `<button data-action="toggle-joker" data-player="${p.name}" data-session="${session.date}" title="${p.joker?'Passer en roster':'Passer en +1'}" style="background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:9px;font-weight:700;cursor:pointer;padding:2px 5px;margin-left:3px;flex-shrink:0;line-height:1.5">${p.joker?'↑R':'↓+1'}</button>`
-      : '';
-    return `<span style="display:inline-flex;align-items:center">`
-      + `<button class="player-chip player-link" data-player="${p.name}">${p.name}${p.joker?`<span class="joker-tag">+1</span>`:""}</button>`
-      + toggleBtn + `</span>`;
-  };
+  const _playerChip = p =>
+    `<button class="player-chip player-link" data-player="${p.name}">${p.name}${p.joker?`<span class="joker-tag">+1</span>`:""}</button>`;
 
   if (!hasColors) {
     const rosterP = presentsAll.filter(p => !p.joker);
@@ -1664,15 +1648,15 @@ function renderSessionDetail(session) {
     h += `<div class="section-label">Composition des équipes</div><div class="teams-section">`;
     if (activeColors.length === 2) {
       h += `<div class="teams-vs-layout" style="grid-template-columns:1fr auto 1fr">`;
-      h += teamCard(activeColors[0], teamMap, TEAM_ICONS, tcOpts);
+      h += teamCard(activeColors[0], teamMap, TEAM_ICONS);
       h += `<div class="teams-vs-divider"><span class="teams-vs-badge">VS</span></div>`;
-      h += teamCard(activeColors[1], teamMap, TEAM_ICONS, tcOpts);
+      h += teamCard(activeColors[1], teamMap, TEAM_ICONS);
       h += `</div>`;
     } else {
       const cols = activeColors.map(() => "1fr").join(" auto ");
       h += `<div class="teams-vs-layout" style="grid-template-columns:${cols}">`;
       activeColors.forEach((color, i) => {
-        h += teamCard(color, teamMap, TEAM_ICONS, tcOpts);
+        h += teamCard(color, teamMap, TEAM_ICONS);
         if (i < activeColors.length - 1) h += `<div class="teams-vs-divider"><span class="teams-vs-badge">VS</span></div>`;
       });
       h += `</div>`;
@@ -1680,7 +1664,7 @@ function renderSessionDetail(session) {
     if (noTeam.length > 0) {
       h += `<div class="no-team-section"><div class="no-team-label">Sans équipe assignée</div>
         <div class="players-present-list">
-          ${noTeam.map(p => _playerChip(p)).join("")}
+          ${noTeam.map(_playerChip).join("")}
         </div></div>`;
     }
     h += `</div>`;
@@ -2370,20 +2354,6 @@ function populateSessionSelect() {
   });
 }
 
-async function togglePlayerJoker(date, playerName) {
-  const session = SESSIONS.find(s => s.date === date);
-  if (!session || !session.presences[playerName]) return;
-  session.presences[playerName].joker = !session.presences[playerName].joker;
-  try { await _fbSaveSession(session); } catch(e) { console.warn("toggle joker save failed", e); }
-  renderSessionResults(date);
-}
-
-document.getElementById("session-results").addEventListener("click", e => {
-  const btn = e.target.closest('[data-action="toggle-joker"]');
-  if (!btn) return;
-  e.stopPropagation();
-  togglePlayerJoker(btn.dataset.session, btn.dataset.player);
-});
 
 function renderSessionResults(date) {
   const container = document.getElementById("session-results");
@@ -2569,6 +2539,7 @@ function renderJoueurs() {
   const container = document.getElementById("joueurs-content");
   const rows = computePlayerStats();
   const totalSessions = SESSIONS.length;
+  const isAdmin = sessionStorage.getItem("hmft_role") === "admin";
 
   const colDef = [
     { key:"name",       label:"Joueur"         },
@@ -2618,11 +2589,12 @@ function renderJoueurs() {
   const dash_ = `<span style="color:var(--text3);font-size:13px">—</span>`;
 
   function buildThead(s, cols) {
-    return (cols || colDef).map(c => {
+    const base = (cols || colDef).map(c => {
       const active = s.col === c.key ? " sorted" : "";
       const arrow  = s.col === c.key ? (s.dir === 1 ? "↑" : "↓") : "↕";
       return `<th data-col="${c.key}" class="${active}">${c.label}<span class="sort-arrow">${arrow}</span></th>`;
     }).join("");
+    return base + (isAdmin ? `<th style="width:44px"></th>` : "");
   }
 
   function buildRosterRow(r) {
@@ -2640,6 +2612,7 @@ function renderJoueurs() {
       <td class="num ${r.sac > 0 ? "highlight" : "zero"}">${r.sac}</td>
       <td class="num ${r.maillots > 0 ? "highlight" : "zero"}">${r.maillots}</td>
       <td class="team-cell">${teamCell}</td>
+      ${isAdmin?`<td style="text-align:right;padding:8px 8px 8px 4px"><button data-action="toggle-roster" data-player="${r.name}" style="background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:9px;font-weight:700;cursor:pointer;padding:2px 6px;white-space:nowrap;line-height:1.5" title="Passer en +1">→+1</button></td>`:""}
     </tr>`;
   }
 
@@ -2656,6 +2629,7 @@ function renderJoueurs() {
       <td class="num zero">${dash_}</td>
       <td class="num zero">${dash_}</td>
       <td class="team-cell">${teamCell}</td>
+      ${isAdmin?`<td style="text-align:right;padding:8px 8px 8px 4px"><button data-action="toggle-roster" data-player="${r.name}" style="background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:9px;font-weight:700;cursor:pointer;padding:2px 6px;white-space:nowrap;line-height:1.5" title="Passer en roster">→R</button></td>`:""}
     </tr>`;
   }
 
@@ -2701,6 +2675,16 @@ function renderJoueurs() {
     });
   });
 }
+
+document.getElementById("joueurs-content").addEventListener("click", e => {
+  const btn = e.target.closest('[data-action="toggle-roster"]');
+  if (!btn) return;
+  e.stopPropagation();
+  const player = btn.dataset.player;
+  if (JOKERS.has(player)) JOKERS.delete(player); else JOKERS.add(player);
+  _saveJokers();
+  renderJoueurs();
+});
 
 /* ══════════════════════════════════════════════════════════
    FICHE JOUEUR
@@ -2839,30 +2823,30 @@ function computePlayerDetailStats(playerName) {
 ══════════════════════════════════════════════════════════ */
 
 const ACH_DEFS = [
-  { id:'buteur',   name:'Buteur',          icon:'⚽', tiers:[1,5,15,30,50,100],  hidden:false, key:'buts',          desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''}` },
-  { id:'passeur',  name:'Passeur',         icon:'🎯', tiers:[1,5,15,30,50,100],  hidden:false, key:'passes',        desc:v=>`${v} passe${v>1?'s':''} décisive${v>1?'s':''}` },
-  { id:'ga',       name:'G/A',             icon:'📈', tiers:[5,20,50,100,200],   hidden:false, key:'gaTotal',       desc:v=>`${v} G/A cumulés` },
-  { id:'fidele',   name:'Fidèle',          icon:'📅', tiers:[5,15,30,50,100],hidden:false, key:'presences',     desc:v=>`${v} session${v>1?'s':''} jouée${v>1?'s':''}` },
-  { id:'sac',      name:'Porteur de sac',  icon:'🎒', tiers:[3,10,25],       hidden:false, key:'sac',           desc:v=>`Sac amené ${v} fois` },
-  { id:'maillots', name:'Intendant',       icon:'👕', tiers:[3,10,25],       hidden:false, key:'maillots',      desc:v=>`Maillots amenés ${v} fois` },
-  { id:'bonnet',   name:"Bonnet d'Âne",    icon:'🐴', tiers:[1,5,15,30,50,100], hidden:true,  key:'absences',   desc:v=>`${v} absence${v>1?'s':''}` },
-  { id:'infirm',   name:'Infirmerie',      icon:'🩼', tiers:[1,5,15,30,50,100], hidden:true,  key:'injuries',   desc:v=>`${v} blessure${v>1?'s':''}` },
-  { id:'htrick',   name:'Hat-trick',       icon:'🔥', tiers:[1,3,10],        hidden:false, key:'hattricks',     desc:v=>`${v} hat-trick${v>1?'s':''}` },
-  { id:'serie',    name:'Série G/A',       icon:'⚡', tiers:[3,7,15,30],     hidden:false, key:'bestStreak',    desc:v=>`Série de ${v} match${v>1?'s':''} consécutif${v>1?'s':''}` },
-  { id:'soiree',   name:'Soirée parfaite', icon:'🌟', tiers:[1,3,10],        hidden:false, key:'soireeParfaite',desc:v=>`${v} soirée${v>1?'s':''} parfaite${v>1?'s':''}` },
-  { id:'dbl',      name:'Double Double',   icon:'💥', tiers:[1,5,15,30,50,100],  hidden:false, key:'doubleDouble',  desc:v=>`${v} match${v>1?'s':''} avec 1G+1A` },
-  { id:'invic',    name:'Invincible',      icon:'🛡️', tiers:[1,5,15],        hidden:false, key:'invincible',    desc:v=>`${v} soirée${v>1?'s':''} sans défaite` },
-  { id:'mur',      name:'Le Mur',          icon:'🧱', tiers:[1,5,15,30,50,100],  hidden:false, key:'cleanSheets',   desc:v=>`${v} clean sheet${v>1?'s':''}` },
-  { id:'duo',      name:'Duo de légende',  icon:'🤝', tiers:[3,10,25],       hidden:false, key:'bestDuo',       desc:v=>`Duo répété ${v} fois` },
-  { id:'mvp',      name:'Meilleur joueur', icon:'👑', tiers:[1,5,15],        hidden:false, key:'mvp',           desc:v=>`MVP de soirée ${v} fois` },
-  { id:'pois',     name:'Poissard',        icon:'🪨', tiers:[1,3,5],         hidden:true,  key:'csc',           desc:v=>`${v} CSC` },
-  { id:'chelem',   name:'Grand Chelem',    icon:'🎨', tiers:[1],             hidden:true,  key:'grandChelem',   desc:_=>`Les 3 couleurs jouées` },
-  { id:'fantome',  name:'Fantôme',         icon:'👻', tiers:[3,7,15],        hidden:true,  key:'fantomeStreak', desc:v=>`${v} sessions de suite sans G/A` },
-  { id:'legende',  name:'Légende',         icon:'🏅', tiers:[10,20,30],      hidden:true,  key:'legendeCount',  desc:v=>`${v} niveaux débloqués` },
-  { id:'assidu',   name:'Assidu',          icon:'🗓️', tiers:[1,2,3],          hidden:false, key:'assiduAnnes',   desc:v=>`${v} année${v>1?'s':''} à ≥80% de présence` },
-  { id:'comete',   name:'La Comète',       icon:'🌠', tiers:[1,2,3],          hidden:true,  key:'cometeAnnes',   desc:v=>`${v} année${v>1?'s':''} à moins de 10% de présence` },
-  { id:'zerovic',  name:'Disette',         icon:'🌵', tiers:[1,5,15,30],      hidden:true,  key:'zeroVict',      desc:v=>`${v} soirée${v>1?'s':''} sans victoire` },
-  { id:'toutnul',  name:'Statu Quo',       icon:'⚖️', tiers:[1,3,10],         hidden:true,  key:'toutNul',       desc:v=>`${v} soirée${v>1?'s':''} 100% nuls` },
+  { id:'buteur',   name:'Buteur',          icon:'⚽', tiers:[1,5,15,30,50,100],    hidden:false, key:'buts',           desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''}` },
+  { id:'passeur',  name:'Passeur',         icon:'🎯', tiers:[1,5,15,30,50,100],    hidden:false, key:'passes',         desc:v=>`${v} passe${v>1?'s':''} décisive${v>1?'s':''}` },
+  { id:'ga',       name:'G/A',             icon:'📈', tiers:[5,20,50,100,200,350],  hidden:false, key:'gaTotal',        desc:v=>`${v} G/A cumulés` },
+  { id:'fidele',   name:'Fidèle',          icon:'📅', tiers:[5,15,30,50,75,100],   hidden:false, key:'presences',      desc:v=>`${v} session${v>1?'s':''} jouée${v>1?'s':''}` },
+  { id:'sac',      name:'Porteur de sac',  icon:'🎒', tiers:[1,3,7,15,25,40],      hidden:false, key:'sac',            desc:v=>`Sac amené ${v} fois` },
+  { id:'maillots', name:'Intendant',       icon:'👕', tiers:[1,3,7,15,25,40],      hidden:false, key:'maillots',       desc:v=>`Maillots amenés ${v} fois` },
+  { id:'bonnet',   name:"Bonnet d'Âne",    icon:'🐴', tiers:[1,5,15,30,50,100],    hidden:true,  key:'absences',       desc:v=>`${v} absence${v>1?'s':''}` },
+  { id:'infirm',   name:'Infirmerie',      icon:'🩼', tiers:[1,5,10,20,35,50],     hidden:true,  key:'sessionsBlesses',desc:v=>`${v} session${v>1?'s':''} blessé${v>1?'s':''}` },
+  { id:'htrick',   name:'Hat-trick',       icon:'🔥', tiers:[1,2,5,10,20,35],      hidden:false, key:'hattricks',      desc:v=>`${v} hat-trick${v>1?'s':''}` },
+  { id:'serie',    name:'Série G/A',       icon:'⚡', tiers:[3,5,8,15,25,40],      hidden:false, key:'bestStreak',     desc:v=>`Série de ${v} match${v>1?'s':''} consécutif${v>1?'s':''}` },
+  { id:'soiree',   name:'Soirée parfaite', icon:'🌟', tiers:[1,2,4,8,15,25],       hidden:false, key:'soireeParfaite', desc:v=>`${v} soirée${v>1?'s':''} parfaite${v>1?'s':''}` },
+  { id:'dbl',      name:'Double Double',   icon:'💥', tiers:[1,5,15,30,50,100],    hidden:false, key:'doubleDouble',   desc:v=>`${v} match${v>1?'s':''} avec 1G+1A` },
+  { id:'invic',    name:'Invincible',      icon:'🛡️', tiers:[1,5,10,20,35,50],     hidden:false, key:'invincible',     desc:v=>`${v} soirée${v>1?'s':''} sans défaite` },
+  { id:'mur',      name:'Le Mur',          icon:'🧱', tiers:[1,5,15,30,50,100],    hidden:false, key:'cleanSheets',    desc:v=>`${v} clean sheet${v>1?'s':''}` },
+  { id:'duo',      name:'Duo de légende',  icon:'🤝', tiers:[3,7,15,25,40,60],     hidden:false, key:'bestDuo',        desc:v=>`Duo répété ${v} fois` },
+  { id:'mvp',      name:'Meilleur joueur', icon:'👑', tiers:[1,3,7,15,25,40],      hidden:false, key:'mvp',            desc:v=>`MVP de soirée ${v} fois` },
+  { id:'pois',     name:'Poissard',        icon:'🪨', tiers:[1,2,4,7,12,20],       hidden:true,  key:'csc',            desc:v=>`${v} CSC` },
+  { id:'chelem',   name:'Grand Chelem',    icon:'🎨', tiers:[1], fixedTier:6,       hidden:true,  key:'grandChelem',    desc:_=>`Les 3 couleurs jouées` },
+  { id:'fantome',  name:'Fantôme',         icon:'👻', tiers:[3,5,8,12,20,30],      hidden:true,  key:'fantomeStreak',  desc:v=>`${v} sessions de suite sans G/A` },
+  { id:'legende',  name:'Légende',         icon:'🏅', tiers:[5,15,30,50], tierOffset:2, hidden:true, key:'legendeCount', desc:v=>`${v} niveaux débloqués` },
+  { id:'assidu',   name:'Assidu',          icon:'🗓️', tiers:[1,2,3,4],  tierOffset:2,  hidden:false, key:'assiduAnnes',  desc:v=>v===4?'1 an à ≥90% de présence':v===3?'1 an à ≥80% de présence':v===2?'1 an à ≥70% de présence':'1 an à ≥60% de présence' },
+  { id:'comete',   name:'La Comète',       icon:'🌠', tiers:[1,2,3,4],  tierOffset:2,  hidden:true,  key:'cometeAnnes',  desc:v=>v===4?'1 an à ≤10% de présence':v===3?'1 an à ≤20% de présence':v===2?'1 an à ≤30% de présence':'1 an à ≤40% de présence' },
+  { id:'zerovic',  name:'Disette',         icon:'🌵', tiers:[1,5,15,30,50,75],     hidden:true,  key:'zeroVict',       desc:v=>`${v} soirée${v>1?'s':''} sans victoire` },
+  { id:'toutnul',  name:'Statu Quo',       icon:'⚖️', tiers:[1,2,5,10,20,35],      hidden:true,  key:'toutNul',        desc:v=>`${v} soirée${v>1?'s':''} 100% nuls` },
 ];
 const ACH_TIER_NAMES = ['','Plomb','Bois','Bronze','Argent','Or','Diamant'];
 
@@ -2872,7 +2856,7 @@ function _achLevel(val, tiers) {
 
 function computeAchievementStats(playerName) {
   const _ss = [...SESSIONS].sort((a,b)=>new Date(a.date)-new Date(b.date));
-  let buts=0,passes=0,presences=0,absences=0,injuries=0,sac=0,maillots=0;
+  let buts=0,passes=0,presences=0,absences=0,injuries=0,sessionsBlesses=0,sac=0,maillots=0;
   let hattricks=0,doubleDouble=0,cleanSheets=0,mvp=0,soireeParfaite=0,invincible=0,csc=0,zeroVict=0,toutNul=0;
   const teamsSet=new Set(), duoMap={};
   let inEp=false, bestStreak=0, curStreak=0, fantomeStreak=0, curFan=0;
@@ -2938,16 +2922,31 @@ function computeAchievementStats(playerName) {
     } else if(info.statut==="Absent"){
       absences++; inEp=false;
     } else if(info.statut==="Blessé"){
+      sessionsBlesses++;
       if(!inEp){injuries++;inEp=true;}
     } else { inEp=false; }
   });
 
   const bestDuo=Math.max(0,...Object.values(duoMap));
   const grandChelem=(teamsSet.has("Rouge")&&teamsSet.has("Vert")&&teamsSet.has("Bleue"))?1:0;
-  const assiduAnnes=Object.values(yearMap).filter(y=>y.total>=10&&y.present/y.total>=0.8).length;
-  const cometeAnnes=Object.values(yearMap).filter(y=>y.total>=10&&y.present/y.total<0.1).length;
+  const assiduAnnes=(()=>{
+    const ys=Object.values(yearMap).filter(y=>y.total>=10);
+    if(ys.some(y=>y.present/y.total>=0.9))return 4;
+    if(ys.some(y=>y.present/y.total>=0.8))return 3;
+    if(ys.some(y=>y.present/y.total>=0.7))return 2;
+    if(ys.some(y=>y.present/y.total>=0.6))return 1;
+    return 0;
+  })();
+  const cometeAnnes=(()=>{
+    const ys=Object.values(yearMap).filter(y=>y.total>=10);
+    if(ys.some(y=>y.present/y.total<=0.10))return 4;
+    if(ys.some(y=>y.present/y.total<=0.20))return 3;
+    if(ys.some(y=>y.present/y.total<=0.30))return 2;
+    if(ys.some(y=>y.present/y.total<=0.40))return 1;
+    return 0;
+  })();
 
-  return { buts, passes, gaTotal:buts+passes, presences, absences, injuries,
+  return { buts, passes, gaTotal:buts+passes, presences, absences, injuries, sessionsBlesses,
            sac, maillots, hattricks, bestStreak, soireeParfaite, doubleDouble,
            invincible, cleanSheets, bestDuo, mvp, csc, grandChelem,
            fantomeStreak, assiduAnnes, cometeAnnes, zeroVict, toutNul };
@@ -2961,8 +2960,9 @@ function renderAchievementsGrid(achSt) {
   let html=`<div class="ach-grid">`;
   ACH_DEFS.forEach(ach=>{
     const val=achSt[ach.key]||0;
-    const lv=_achLevel(val,ach.tiers);
-    const locked=lv===0;
+    const rawLv=_achLevel(val,ach.tiers);
+    const locked=rawLv===0;
+    const lv=locked?0:ach.fixedTier?ach.fixedTier:Math.min(6,rawLv+(ach.tierOffset||0));
     const maxT=ach.tiers.length;
 
     const iconHtml=locked
@@ -2971,13 +2971,13 @@ function renderAchievementsGrid(achSt) {
     const nameHtml=locked?`<span class="ach-label" style="opacity:.18">???</span>`
       :`<span class="ach-label">${ach.name}</span>`;
 
-    const dots=(maxT>1)?`<div class="ach-dots"${locked?' style="opacity:0"':''}>${Array.from({length:maxT},(_,i)=>`<div class="ach-dot${i<lv?' on':''}"></div>`).join('')}</div>`:'';
+    const dots=(maxT>1)?`<div class="ach-dots"${locked?' style="opacity:0"':''}>${Array.from({length:maxT},(_,i)=>`<div class="ach-dot${i<rawLv?' on':''}"></div>`).join('')}</div>`:'';
 
     let tip='';
     if(locked){ tip='Haut fait inconnu'; }
     else {
       const tn=ACH_TIER_NAMES[lv]||`Niveau ${lv}`;
-      tip=`${ach.name} — ${tn}\n${ach.desc(val)}${lv<maxT?`\nProchain seuil : ${ach.tiers[lv]}`:''}`;
+      tip=`${ach.name} — ${tn}\n${ach.desc(val)}${!ach.fixedTier&&rawLv<maxT?`\nProchain seuil : ${ach.tiers[rawLv]}`:''}`;
     }
 
     html+=`<div class="ach-cell t${lv}" data-tip="${tip.replace(/"/g,'&quot;')}">${iconHtml}${nameHtml}${dots}</div>`;
@@ -2995,15 +2995,25 @@ function renderAchievementsLegend() {
         <span style="font-size:16px">${ach.icon}</span>${ach.name}${ach.hidden?`<span style="font-size:10px;color:var(--text3);font-weight:500;text-transform:none;letter-spacing:0;font-style:italic">(masqué)</span>`:''}
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:6px">`;
-    ach.tiers.forEach((threshold, i) => {
-      const tierNum = i + 1;
-      const tierName = ACH_TIER_NAMES[tierNum] || `Niv.${tierNum}`;
-      h += `<div class="ach-cell t${tierNum}" style="height:auto;min-height:90px;padding:10px 6px;cursor:default">
+    if (ach.fixedTier) {
+      const tierName = ACH_TIER_NAMES[ach.fixedTier] || `Niv.${ach.fixedTier}`;
+      h += `<div class="ach-cell t${ach.fixedTier}" style="height:auto;min-height:90px;padding:10px 6px;cursor:default">
         <span class="ach-icon">${ach.icon}</span>
         <span class="ach-label" style="opacity:1;color:currentColor">${tierName}</span>
-        <span style="font-size:9px;color:var(--text3);text-align:center;line-height:1.35;display:block;padding:0 2px">${ach.desc(threshold)}</span>
+        <span style="font-size:9px;color:var(--text3);text-align:center;line-height:1.35;display:block;padding:0 2px">${ach.desc(ach.tiers[0])}</span>
       </div>`;
-    });
+    } else {
+      ach.tiers.forEach((threshold, i) => {
+        const rawNum = i + 1;
+        const displayNum = Math.min(6, rawNum + (ach.tierOffset||0));
+        const tierName = ACH_TIER_NAMES[displayNum] || `Niv.${displayNum}`;
+        h += `<div class="ach-cell t${displayNum}" style="height:auto;min-height:90px;padding:10px 6px;cursor:default">
+          <span class="ach-icon">${ach.icon}</span>
+          <span class="ach-label" style="opacity:1;color:currentColor">${tierName}</span>
+          <span style="font-size:9px;color:var(--text3);text-align:center;line-height:1.35;display:block;padding:0 2px">${ach.desc(threshold)}</span>
+        </div>`;
+      });
+    }
     h += `</div></div>`;
   });
   h += `</div>`;
