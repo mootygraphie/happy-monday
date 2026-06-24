@@ -829,8 +829,7 @@
   .riv-player-name { font-size:13px; font-weight:700; margin-bottom:4px; }
   .riv-wdl { display:flex; gap:6px; flex-wrap:wrap; font-size:12px; }
   .riv-section-title { font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--text3); margin:10px 0 6px; }
-  .riv-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
-  .riv-grid.single { grid-template-columns:1fr; }
+  .riv-grid { display:grid; grid-template-columns:1fr auto 1fr; gap:8px; margin-bottom:12px; }
   .riv-col-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text3); margin-bottom:10px; }
   .riv-wdl { font-size:15px; margin-bottom:8px; font-weight:600; }
   .riv-player-row { font-size:14px; color:var(--text2); margin-bottom:6px; }
@@ -842,7 +841,7 @@
   .riv-sess-date { color:var(--text3); min-width:48px; flex-shrink:0; }
   .riv-sess-ga { color:var(--text2); flex:1; }
   .riv-match-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
-  @media (max-width:480px) { .riv-match-grid { grid-template-columns:1fr 1fr; } .riv-col-card { padding:14px 26px; } }
+  @media (max-width:480px) { .riv-match-grid { grid-template-columns:1fr 1fr; } }
   .riv-match-card { background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:14px 10px; }
   .riv-match-date { font-size:11px; color:var(--text3); text-align:center; margin-bottom:10px; }
   .riv-match-score-row { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; }
@@ -853,7 +852,7 @@
   .riv-match-player-ga { font-size:12px; color:var(--text3); }
   .riv-match-player-ga.active { color:#FEDB00; font-weight:700; }
   .riv-card { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:10px 12px; }
-  .riv-col-card { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:14px 56px; }
+  .riv-col-card { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
   .riv-no-data-small { font-size:12px; color:var(--text3); text-align:center; padding:20px 0; }
 
   /* ── Centrage mobile ── */
@@ -2351,9 +2350,6 @@ function renderRivBody(pA, pB, period) {
       <span style="font-size:11px;color:var(--text3);font-weight:500;letter-spacing:.1em">VS</span>
       <span>${pB}</span>
     </div>
-    <div style="font-size:11px;color:var(--text3);margin-top:5px">
-      ${r.total} session${r.total>1?"s":""} — ${r.matchs} match${r.matchs>1?"s":""} — ${r.together.sessions} ensemble — ${r.versus.sessions} face à face
-    </div>
   </div>`;
 
   if (!hasTogether && !hasVersus) {
@@ -2361,7 +2357,7 @@ function renderRivBody(pA, pB, period) {
     return h;
   }
 
-  // Stats face à face | ensemble — toujours 2 colonnes, toujours les 2 cartes
+  // Stats : face à face | récap | même équipe — 3 colonnes sur la même ligne
   h += `<div class="riv-grid">`;
 
   // Face à face (gauche) — scoreboard pA vs pB
@@ -2392,6 +2388,26 @@ function renderRivBody(pA, pB, period) {
       <div class="riv-no-data-small">Pas de données disponibles</div>
     </div>`;
   }
+
+  // Récap (centre)
+  h += `<div class="riv-col-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center">
+    <div>
+      <div style="font-size:22px;font-weight:800;font-style:italic;line-height:1">${r.total}</div>
+      <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:2px">session${r.total>1?'s':''}</div>
+    </div>
+    <div>
+      <div style="font-size:22px;font-weight:800;font-style:italic;line-height:1">${r.matchs}</div>
+      <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:2px">match${r.matchs>1?'s':''}</div>
+    </div>
+    <div>
+      <div style="font-size:22px;font-weight:800;font-style:italic;line-height:1">${r.together.sessions}</div>
+      <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:2px">ensemble</div>
+    </div>
+    <div>
+      <div style="font-size:22px;font-weight:800;font-style:italic;line-height:1">${r.versus.sessions}</div>
+      <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:2px">face à face</div>
+    </div>
+  </div>`;
 
   // Même équipe (droite) — pA × pB + V/N/D
   if (hasTogether) {
