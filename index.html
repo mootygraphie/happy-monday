@@ -2221,6 +2221,7 @@ function computeRivalites(pA, pB, period) {
 
   const result = {
     total: sessions.length,
+    matchs: sessions.reduce((acc, s) => acc + (s.matchs||[]).length, 0),
     together: { sessions: 0, wA: 0, dA: 0, lA: 0, gaA: 0, gaB: 0, best: [] },
     versus:   { sessions: 0, wA: 0, dA: 0, lA: 0, wB: 0, dB: 0, lB: 0, gaA: 0, gaB: 0, best: [] },
   };
@@ -2348,7 +2349,7 @@ function renderRivBody(pA, pB, period) {
       <span>${pB}</span>
     </div>
     <div style="font-size:11px;color:var(--text3);margin-top:5px">
-      ${r.total} session${r.total>1?"s":""} · ${r.together.sessions} ensemble · ${r.versus.sessions} face à face
+      ${r.total} session${r.total>1?"s":""} — ${r.matchs} match${r.matchs>1?"s":""} — ${r.together.sessions} ensemble — ${r.versus.sessions} face à face
     </div>
   </div>`;
 
