@@ -3813,8 +3813,7 @@ function openPlayerPanel(playerName) {
       const ly = cy + (R+22)*Math.sin((Math.PI*2*i/N)-Math.PI/2);
       const score = _scores[i];
       const anchor = lx < cx-4 ? 'end' : lx > cx+4 ? 'start' : 'middle';
-      svgG += `<text x="${lx}" y="${ly}" text-anchor="${anchor}" dominant-baseline="middle" font-size="9" fill="var(--text3)" font-family="inherit">${_radarAxes[i].label}</text>`;
-      svgG += `<text x="${lx}" y="${ly+11}" text-anchor="${anchor}" dominant-baseline="middle" font-size="9" fill="var(--text2)" font-weight="600" font-family="inherit">${score}</text>`;
+      svgG += `<text x="${lx}" y="${ly}" text-anchor="${anchor}" dominant-baseline="middle" font-size="8" fill="rgba(200,200,215,0.65)" font-family="inherit" letter-spacing="0.06em">${_radarAxes[i].label.toUpperCase()}</text>`;
     });
 
     h += `<div>
