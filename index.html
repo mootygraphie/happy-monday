@@ -1055,8 +1055,17 @@ let JOKERS = new Set(["Hamine","Marius","Harone","Alexi","Godefroy"]);
 /* ── Helpers ── */
 const TEAM_LABEL = { Rouge: "Roses", Vert: "Jaunes", Bleue: "Bleus" };
 
-function teamCard(color, teamMap, icons) {
+function teamCard(color, teamMap, icons, opts={}) {
   const cls = color.toLowerCase();
+  const {sessionDate='', isAdmin=false} = opts;
+  const playerPill = p => {
+    const toggleBtn = isAdmin
+      ? `<button data-action="toggle-joker" data-player="${p.name}" data-session="${sessionDate}" title="${p.joker?'Passer en roster':'Passer en +1'}" style="background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:9px;font-weight:700;cursor:pointer;padding:2px 5px;margin-left:3px;flex-shrink:0;line-height:1.5">${p.joker?'↑R':'↓+1'}</button>`
+      : '';
+    return `<span style="display:inline-flex;align-items:center">`
+      + `<button class="team-player-pill ${cls} player-link" data-player="${p.name}">${p.name}${p.joker?`<span class="joker-tag">+1</span>`:""}</button>`
+      + toggleBtn + `</span>`;
+  };
   return `<div class="team-card">
     <div class="team-card-accent ${cls}"></div>
     <div class="team-card-header">
@@ -1065,7 +1074,7 @@ function teamCard(color, teamMap, icons) {
       <span class="team-card-count">${teamMap[color].length} joueur${teamMap[color].length > 1 ? "s" : ""}</span>
     </div>
     <div class="team-card-players">
-      ${teamMap[color].map(p => `<button class="team-player-pill ${cls} player-link" data-player="${p.name}">${p.name}${p.joker ? `<span class="joker-tag">+1</span>` : ""}</button>`).join("")}
+      ${teamMap[color].map(p => playerPill(p)).join("")}
     </div>
   </div>`;
 }
@@ -1387,6 +1396,7 @@ function fmtGoalsList(buteurs, passeurs) {
 
 function renderSessionDetail(session) {
   const matchs = session.matchs || [];
+  const isAdmin = sessionStorage.getItem("hmft_role") === "admin";
   let h = "";
 
   /* Calculs */
@@ -1544,6 +1554,48 @@ function renderSessionDetail(session) {
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Moy. buts / match</div>
       <div class="kpi-num amber">${avgButs}</div>
     </div>
+  </div>`;
+
+  /* ── Classement de la soirée ── */
+  if (teamsPlayed.length >= 2 && matchs.length > 0) {
+    const _standings = teamsPlayed.map(t => {
+      const wins = colorWins[t]||0, drawsT = drawsPerTeam[t]||0, pj = matchesPerTeam[t]||0;
+      return { team: t, pj, v: wins, n: drawsT, d: pj-wins-drawsT, pts: wins*3+drawsT, gf: goalsFor[t]||0, ga: goalsAgainst[t]||0, diff:(goalsFor[t]||0)-(goalsAgainst[t]||0) };
+    }).sort((a,b) => b.pts-a.pts || b.diff-a.diff || b.gf-a.gf);
+    h += `<div class="section-label">Classement de la soirée</div>
+    <div style="overflow-x:auto;margin-bottom:2rem">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;min-width:360px">
+        <thead><tr style="background:var(--bg3)">
+          <th style="padding:10px 16px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)">Équipe</th>
+          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Matchs joués">PJ</th>
+          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Victoires">V</th>
+          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Nuls">N</th>
+          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Défaites">D</th>
+          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)">Pts</th>
+          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Buts pour">BP</th>
+          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Buts contre">BC</th>
+          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)">Diff</th>
+        </tr></thead>
+        <tbody>${_standings.map((row,i) => {
+          const diffColor = row.diff>0?"#66bb6a":row.diff<0?"#ef5350":"var(--text2)";
+          const diffSign  = row.diff>0?"+":"";
+          return `<tr style="border-top:1px solid var(--border)${i===0?";background:rgba(255,255,255,.015)":""}">
+            <td style="padding:12px 16px">${badge(row.team)}</td>
+            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.pj}</td>
+            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.v}</td>
+            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.n}</td>
+            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.d}</td>
+            <td style="padding:12px 10px;text-align:center;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums">${row.pts}</td>
+            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.gf}</td>
+            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.ga}</td>
+            <td style="padding:12px 10px;text-align:center;font-weight:600;color:${diffColor};font-variant-numeric:tabular-nums">${diffSign}${row.diff}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`;
+  }
+
+  h += `<div class="kpi-grid kpi-grid--main" style="margin-bottom:2rem">
     <div class="kpi-card ${atkAccent}" data-card="meilleure-attaque">
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure attaque</div>
       <div style="font-size:24px;font-weight:700;line-height:1.2">${atkTeamHtml}</div>
@@ -1576,39 +1628,6 @@ function renderSessionDetail(session) {
     </div>
   </div>`;
 
-  /* ── Classement de la soirée ── */
-  if (teamsPlayed.length >= 2 && matchs.length > 0) {
-    const _standings = teamsPlayed.map(t => {
-      const wins = colorWins[t]||0, drawsT = drawsPerTeam[t]||0;
-      return { team: t, pj: matchesPerTeam[t]||0, pts: wins*3+drawsT, gf: goalsFor[t]||0, ga: goalsAgainst[t]||0, diff:(goalsFor[t]||0)-(goalsAgainst[t]||0) };
-    }).sort((a,b) => b.pts-a.pts || b.diff-a.diff || b.gf-a.gf);
-    h += `<div class="section-label">Classement de la soirée</div>
-    <div style="overflow-x:auto;margin-bottom:2rem">
-      <table style="width:100%;border-collapse:collapse;font-size:13px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;min-width:320px">
-        <thead><tr style="background:var(--bg3)">
-          <th style="padding:10px 16px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)">Équipe</th>
-          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Matchs joués">PJ</th>
-          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)">Pts</th>
-          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Buts marqués">BM</th>
-          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Buts encaissés">BE</th>
-          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)">Diff</th>
-        </tr></thead>
-        <tbody>${_standings.map((row,i) => {
-          const diffColor = row.diff>0?"#66bb6a":row.diff<0?"#ef5350":"var(--text2)";
-          const diffSign  = row.diff>0?"+":"";
-          return `<tr style="border-top:1px solid var(--border)${i===0?";background:rgba(255,255,255,.015)":""}">
-            <td style="padding:12px 16px">${badge(row.team)}</td>
-            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.pj}</td>
-            <td style="padding:12px 10px;text-align:center;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums">${row.pts}</td>
-            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.gf}</td>
-            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.ga}</td>
-            <td style="padding:12px 10px;text-align:center;font-weight:600;color:${diffColor};font-variant-numeric:tabular-nums">${diffSign}${row.diff}</td>
-          </tr>`;
-        }).join('')}</tbody>
-      </table>
-    </div>`;
-  }
-
   /* ── Compositions d'équipes ── */
   const presentsAll = Object.entries(session.presences)
     .filter(([, info]) => info.statut === "Présent")
@@ -1617,12 +1636,25 @@ function renderSessionDetail(session) {
 
   const TEAM_ICONS = { Rouge: "🔴", Vert: "🟡", Bleue: "🔵" };
   const hasColors  = presentsAll.some(p => p.equipe !== "");
+  const tcOpts     = { sessionDate: session.date, isAdmin };
+
+  const _playerChip = p => {
+    const toggleBtn = isAdmin
+      ? `<button data-action="toggle-joker" data-player="${p.name}" data-session="${session.date}" title="${p.joker?'Passer en roster':'Passer en +1'}" style="background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:9px;font-weight:700;cursor:pointer;padding:2px 5px;margin-left:3px;flex-shrink:0;line-height:1.5">${p.joker?'↑R':'↓+1'}</button>`
+      : '';
+    return `<span style="display:inline-flex;align-items:center">`
+      + `<button class="player-chip player-link" data-player="${p.name}">${p.name}${p.joker?`<span class="joker-tag">+1</span>`:""}</button>`
+      + toggleBtn + `</span>`;
+  };
 
   if (!hasColors) {
-    h += `<div class="section-label">Joueurs présents (${presentsAll.length})</div>
-    <div class="players-present-list">
-      ${presentsAll.map(p => `<button class="player-chip player-link" data-player="${p.name}">${p.name}${p.joker?`<span class="joker-tag">+1</span>`:""}</button>`).join("")}
-    </div>`;
+    const rosterP = presentsAll.filter(p => !p.joker);
+    const jokerP  = presentsAll.filter(p =>  p.joker);
+    h += `<div class="section-label">Roster (${rosterP.length})</div>
+    <div class="players-present-list">${rosterP.map(_playerChip).join("")}</div>`;
+    if (jokerP.length)
+      h += `<div class="section-label" style="margin-top:1rem">Joueurs +1 (${jokerP.length})</div>
+      <div class="players-present-list">${jokerP.map(_playerChip).join("")}</div>`;
   } else {
     const teamMap = { Rouge:[], Vert:[], Bleue:[] };
     const noTeam  = [];
@@ -1632,15 +1664,15 @@ function renderSessionDetail(session) {
     h += `<div class="section-label">Composition des équipes</div><div class="teams-section">`;
     if (activeColors.length === 2) {
       h += `<div class="teams-vs-layout" style="grid-template-columns:1fr auto 1fr">`;
-      h += teamCard(activeColors[0], teamMap, TEAM_ICONS);
+      h += teamCard(activeColors[0], teamMap, TEAM_ICONS, tcOpts);
       h += `<div class="teams-vs-divider"><span class="teams-vs-badge">VS</span></div>`;
-      h += teamCard(activeColors[1], teamMap, TEAM_ICONS);
+      h += teamCard(activeColors[1], teamMap, TEAM_ICONS, tcOpts);
       h += `</div>`;
     } else {
       const cols = activeColors.map(() => "1fr").join(" auto ");
       h += `<div class="teams-vs-layout" style="grid-template-columns:${cols}">`;
       activeColors.forEach((color, i) => {
-        h += teamCard(color, teamMap, TEAM_ICONS);
+        h += teamCard(color, teamMap, TEAM_ICONS, tcOpts);
         if (i < activeColors.length - 1) h += `<div class="teams-vs-divider"><span class="teams-vs-badge">VS</span></div>`;
       });
       h += `</div>`;
@@ -1648,7 +1680,7 @@ function renderSessionDetail(session) {
     if (noTeam.length > 0) {
       h += `<div class="no-team-section"><div class="no-team-label">Sans équipe assignée</div>
         <div class="players-present-list">
-          ${noTeam.map(p => `<button class="player-chip player-link" data-player="${p.name}">${p.name}${p.joker?`<span class="joker-tag">+1</span>`:""}</button>`).join("")}
+          ${noTeam.map(p => _playerChip(p)).join("")}
         </div></div>`;
     }
     h += `</div>`;
@@ -2055,6 +2087,10 @@ function renderStats() {
     </div>
   </div>`;
 
+  if (sessionStorage.getItem("hmft_role") === "admin") {
+    h += renderAchievementsLegend();
+  }
+
   container.innerHTML = h;
   animateView(container);
 }
@@ -2333,6 +2369,21 @@ function populateSessionSelect() {
     sel.appendChild(opt);
   });
 }
+
+async function togglePlayerJoker(date, playerName) {
+  const session = SESSIONS.find(s => s.date === date);
+  if (!session || !session.presences[playerName]) return;
+  session.presences[playerName].joker = !session.presences[playerName].joker;
+  try { await _fbSaveSession(session); } catch(e) { console.warn("toggle joker save failed", e); }
+  renderSessionResults(date);
+}
+
+document.getElementById("session-results").addEventListener("click", e => {
+  const btn = e.target.closest('[data-action="toggle-joker"]');
+  if (!btn) return;
+  e.stopPropagation();
+  togglePlayerJoker(btn.dataset.session, btn.dataset.player);
+});
 
 function renderSessionResults(date) {
   const container = document.getElementById("session-results");
@@ -2614,7 +2665,7 @@ function renderJoueurs() {
   const jokerTbody  = sortArr(jokerRows,  jokerSort).map(buildJokerRow).join("");
 
   const jokerSection = jokerRows.length > 0 ? `
-    <div class="joueurs-section-label" style="margin-top:2rem">Joueurs +1</div>
+    <div class="joueurs-section-label" style="margin-top:2rem">Joueurs +1 (${jokerRows.length})</div>
     <div class="players-table-wrap">
       <table class="players-table" id="jokers-table">
         <thead><tr>${jokerThead}</tr></thead>
@@ -2623,7 +2674,7 @@ function renderJoueurs() {
     </div>` : "";
 
   container.innerHTML = `
-    <div class="joueurs-section-label">Roster</div>
+    <div class="joueurs-section-label">Roster (${rosterRows.length})</div>
     <div class="players-table-wrap">
       <table class="players-table" id="roster-table">
         <thead><tr>${rosterThead}</tr></thead>
@@ -2933,6 +2984,30 @@ function renderAchievementsGrid(achSt) {
   });
   html+=`</div>`;
   return html;
+}
+
+function renderAchievementsLegend() {
+  let h = `<div class="section-label" style="margin-top:2rem">Référence des hauts faits — admin</div>`;
+  h += `<div style="display:flex;flex-direction:column;gap:18px;margin-bottom:2rem">`;
+  ACH_DEFS.forEach(ach => {
+    h += `<div>
+      <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.07em">
+        <span style="font-size:16px">${ach.icon}</span>${ach.name}${ach.hidden?`<span style="font-size:10px;color:var(--text3);font-weight:500;text-transform:none;letter-spacing:0;font-style:italic">(masqué)</span>`:''}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:6px">`;
+    ach.tiers.forEach((threshold, i) => {
+      const tierNum = i + 1;
+      const tierName = ACH_TIER_NAMES[tierNum] || `Niv.${tierNum}`;
+      h += `<div class="ach-cell t${tierNum}" style="height:auto;min-height:90px;padding:10px 6px;cursor:default">
+        <span class="ach-icon">${ach.icon}</span>
+        <span class="ach-label" style="opacity:1;color:currentColor">${tierName}</span>
+        <span style="font-size:9px;color:var(--text3);text-align:center;line-height:1.35;display:block;padding:0 2px">${ach.desc(threshold)}</span>
+      </div>`;
+    });
+    h += `</div></div>`;
+  });
+  h += `</div>`;
+  return h;
 }
 
 function openPlayerPanel(playerName) {
@@ -3252,7 +3327,7 @@ function _buildEquipesHTML() {
   if (!presents.length) return `<p class="saisie-empty">Aucun joueur marqué comme Présent.</p>`;
   const TEAM_BTNS = [
     { key: "Rouge", label: "R", cls: "eq-btn-rouge" },
-    { key: "Vert",  label: "V", cls: "eq-btn-vert"  },
+    { key: "Vert",  label: "J", cls: "eq-btn-vert"  },
     { key: "Bleue", label: "B", cls: "eq-btn-bleue"  },
   ];
   return `<div class="saisie-equipes-grid">${presents.map(p => {
