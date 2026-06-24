@@ -571,10 +571,10 @@
   .ach-dot.on { background: currentColor; }
   .ach-cell.t0 .ach-icon { opacity: .18; font-size: 26px; }
   .ach-cell.t1 { background:rgba(107,114,128,.14); border:1px solid rgba(107,114,128,.38); color:#9CA3AF; }
-  .ach-cell.t2 { background:rgba(120,83,28,.16);   border:1px solid rgba(155,110,50,.42); color:#C4994C; }
-  .ach-cell.t3 { background:rgba(205,127,50,.16);  border:1px solid rgba(205,127,50,.48); color:#D4863A; }
-  .ach-cell.t4 { background:rgba(148,163,184,.16); border:1px solid rgba(148,163,184,.5); color:#94A3B8; }
-  .ach-cell.t5 { background:rgba(245,158,11,.18);  border:1px solid rgba(245,158,11,.55); color:#FBBF24; }
+  .ach-cell.t2 { background:rgba(205,127,50,.16);  border:1px solid rgba(205,127,50,.48); color:#D4863A; }
+  .ach-cell.t3 { background:rgba(148,163,184,.16); border:1px solid rgba(148,163,184,.5); color:#94A3B8; }
+  .ach-cell.t4 { background:rgba(245,158,11,.18);  border:1px solid rgba(245,158,11,.55); color:#FBBF24; }
+  .ach-cell.t5 { background:rgba(16,185,129,.15);  border:1px solid rgba(16,185,129,.5);  color:#34D399; }
   .ach-cell.t6 { background:linear-gradient(135deg,rgba(167,243,255,.13),rgba(196,181,255,.13),rgba(252,165,165,.1)); border:1px solid rgba(167,243,255,.45); color:#A5F3FC; animation:achDiamond 5s linear infinite; }
   .ach-cell.t1 .ach-label,.ach-cell.t2 .ach-label,.ach-cell.t3 .ach-label,
   .ach-cell.t4 .ach-label,.ach-cell.t5 .ach-label,.ach-cell.t6 .ach-label { color: currentColor; opacity: .85; }
@@ -582,8 +582,8 @@
     content: ''; position: absolute; top: 0; left: 0; width: 45%; height: 100%;
     pointer-events: none; animation: achSweep var(--asd,3.6s) ease-in-out infinite;
   }
-  .ach-cell.t4::after { background: linear-gradient(90deg,transparent,rgba(200,220,255,.18),transparent); }
-  .ach-cell.t5::after { --asd:2.5s; background: linear-gradient(90deg,transparent,rgba(255,205,0,.22),transparent); }
+  .ach-cell.t4::after { background: linear-gradient(90deg,transparent,rgba(255,205,0,.22),transparent); }
+  .ach-cell.t5::after { --asd:2.5s; background: linear-gradient(90deg,transparent,rgba(16,185,129,.22),transparent); }
   .ach-cell.t6::after { --asd:1.8s; background: linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent); }
   @keyframes achSweep { from{transform:skewX(-15deg) translateX(-300%)} to{transform:skewX(-15deg) translateX(400%)} }
   @keyframes achDiamond {
@@ -595,10 +595,10 @@
   html.light .ach-cell { background:rgba(0,0,0,.04); border-color:rgba(0,0,0,.1); }
   html.light .ach-cell.t0 .ach-icon { opacity:.2; }
   html.light .ach-cell.t1 { background:rgba(100,110,120,.1); border-color:rgba(100,110,120,.3); color:#6B7280; }
-  html.light .ach-cell.t2 { background:rgba(120,83,28,.1);   border-color:rgba(120,83,28,.3);   color:#92400E; }
-  html.light .ach-cell.t3 { background:rgba(205,127,50,.1);  border-color:rgba(205,127,50,.35); color:#B45309; }
-  html.light .ach-cell.t4 { background:rgba(100,116,139,.1); border-color:rgba(100,116,139,.35);color:#475569; }
-  html.light .ach-cell.t5 { background:rgba(217,119,6,.12);  border-color:rgba(217,119,6,.4);   color:#B45309; }
+  html.light .ach-cell.t2 { background:rgba(205,127,50,.1);  border-color:rgba(205,127,50,.35); color:#B45309; }
+  html.light .ach-cell.t3 { background:rgba(100,116,139,.1); border-color:rgba(100,116,139,.35);color:#475569; }
+  html.light .ach-cell.t4 { background:rgba(217,119,6,.12);  border-color:rgba(217,119,6,.4);   color:#B45309; }
+  html.light .ach-cell.t5 { background:rgba(5,150,105,.1);   border-color:rgba(5,150,105,.35);  color:#065F46; }
   html.light .ach-cell.t6 { background:rgba(6,182,212,.08);  border-color:rgba(6,182,212,.35);  color:#0891B2; animation:none; }
   /* La Comète — couleurs thème négatif (Pierre/Bois/Plomb/Charbon) */
   .ach-cell.ach-comete.t3 { background:rgba(148,153,158,.14); border:1px solid rgba(148,153,158,.42); color:#9CA3AF; animation:none; }
@@ -615,6 +615,17 @@
   html.light .ach-cell.ach-comete.t4 { background:rgba(120,80,30,.1);   border-color:rgba(120,80,30,.3);   color:#7C4F1A; }
   html.light .ach-cell.ach-comete.t5 { background:rgba(55,68,78,.12);   border-color:rgba(55,68,78,.35);   color:#455A64; }
   html.light .ach-cell.ach-comete.t6 { background:rgba(30,32,36,.15);   border-color:rgba(30,32,36,.4);    color:#374151; }
+  /* Bonnet d'Âne — couleurs thème négatif (Pierre/Bois/Plomb/Charbon) */
+  .ach-cell.ach-bonnet.t3 { background:rgba(148,153,158,.14); border:1px solid rgba(148,153,158,.42); color:#9CA3AF; animation:none; }
+  .ach-cell.ach-bonnet.t4 { background:rgba(139,90,43,.16);   border:1px solid rgba(139,90,43,.45);   color:#A07844; animation:none; }
+  .ach-cell.ach-bonnet.t5 { background:rgba(64,75,86,.2);     border:1px solid rgba(80,94,108,.5);    color:#7090A0; animation:none; }
+  .ach-cell.ach-bonnet.t6 { background:rgba(22,22,24,.72);    border:1px solid rgba(70,72,78,.55);    color:#6A6B72; animation:achCharbon 4s ease-in-out infinite; }
+  .ach-cell.ach-bonnet.t3::after,.ach-cell.ach-bonnet.t4::after,.ach-cell.ach-bonnet.t5::after { content: none; }
+  .ach-cell.ach-bonnet.t6::after { --asd:3.8s; background:linear-gradient(90deg,transparent,rgba(180,55,8,.22),transparent); }
+  html.light .ach-cell.ach-bonnet.t3 { background:rgba(120,125,130,.1); border-color:rgba(120,125,130,.3); color:#6B7280; }
+  html.light .ach-cell.ach-bonnet.t4 { background:rgba(120,80,30,.1);   border-color:rgba(120,80,30,.3);   color:#7C4F1A; }
+  html.light .ach-cell.ach-bonnet.t5 { background:rgba(55,68,78,.12);   border-color:rgba(55,68,78,.35);   color:#455A64; }
+  html.light .ach-cell.ach-bonnet.t6 { background:rgba(30,32,36,.15);   border-color:rgba(30,32,36,.4);    color:#374151; }
   /* Tooltip hauts faits */
   #ach-tip {
     position:fixed; z-index:10000; pointer-events:none;
@@ -2873,7 +2884,7 @@ const ACH_DEFS = [
   { id:'fidele',   name:'Fidèle',          icon:'📅', tiers:[5,15,30,50,75,100],   hidden:false, key:'presences',      desc:v=>`${v} session${v>1?'s':''} jouée${v>1?'s':''}` },
   { id:'sac',      name:'Porteur de sac',  icon:'🎒', tiers:[1,3,7,15,25,40],      hidden:false, key:'sac',            desc:v=>`Sac amené ${v} fois` },
   { id:'maillots', name:'Intendant',       icon:'👕', tiers:[1,3,7,15,25,40],      hidden:false, key:'maillots',       desc:v=>`Maillots amenés ${v} fois` },
-  { id:'bonnet',   name:"Bonnet d'Âne",    icon:'🐴', tiers:[1,5,15,30,50,100],    hidden:true,  key:'absences',       desc:v=>`${v} absence${v>1?'s':''}` },
+  { id:'bonnet',   name:"Bonnet d'Âne",    icon:'🐴', tiers:[10,30,50,100], tierOffset:2, tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'absences',       desc:v=>`${v} absence${v>1?'s':''}` },
   { id:'infirm',   name:'Infirmerie',      icon:'🩼', tiers:[1,5,10,20,35,50],     hidden:true,  key:'sessionsBlesses',desc:v=>`${v} session${v>1?'s':''} blessé${v>1?'s':''}` },
   { id:'htrick',   name:'Hat-trick',       icon:'🔥', tiers:[1,2,5,10,20,35],      hidden:false, key:'hattricks',      desc:v=>`${v} hat-trick${v>1?'s':''}` },
   { id:'serie',    name:'Série G/A',       icon:'⚡', tiers:[3,5,8,15,25,40],      hidden:false, key:'bestStreak',     desc:v=>`Série de ${v} match${v>1?'s':''} consécutif${v>1?'s':''}` },
@@ -2886,13 +2897,13 @@ const ACH_DEFS = [
   { id:'pois',     name:'Poissard',        icon:'🪨', tiers:[1,2,4,7,12,20],       hidden:true,  key:'csc',            desc:v=>`${v} CSC` },
   { id:'chelem',   name:'Grand Chelem',    icon:'🎨', tiers:[1], fixedTier:6,       hidden:true,  key:'grandChelem',    desc:_=>`Les 3 couleurs jouées` },
   { id:'fantome',  name:'Fantôme',         icon:'👻', tiers:[3,5,8,12,20,30],      hidden:true,  key:'fantomeStreak',  desc:v=>`${v} sessions sans G/A` },
-  { id:'legende',  name:'Légende',         icon:'🏅', tiers:[5,15,30,50], tierOffset:2, hidden:true, key:'legendeCount', desc:v=>`${v} niveaux débloqués` },
+  { id:'legende',  name:'Légende',         icon:'🏅', tiers:[5,15,30,50,100,127],         hidden:true, key:'legendeCount', desc:v=>`${v} niveaux débloqués` },
   { id:'assidu',   name:'Assidu',          icon:'🗓️', tiers:[1,2,3,4],  tierOffset:2,  hidden:false, key:'assiduAnnes',  desc:v=>v===4?'1 an à ≥90% de présence':v===3?'1 an à ≥80% de présence':v===2?'1 an à ≥70% de présence':'1 an à ≥60% de présence' },
   { id:'comete',   name:'La Comète',       icon:'🌠', tiers:[1,2,3,4],  tierOffset:2,  tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'cometeAnnes',  desc:v=>v===4?'1 an à ≤10% de présence':v===3?'1 an à ≤20% de présence':v===2?'1 an à ≤30% de présence':'1 an à ≤40% de présence' },
   { id:'zerovic',  name:'Disette',         icon:'🌵', tiers:[1,5,15,30,50,75],     hidden:true,  key:'zeroVict',       desc:v=>`${v} soirée${v>1?'s':''} sans victoire` },
   { id:'toutnul',  name:'Statu Quo',       icon:'⚖️', tiers:[1,2,5,10,20,35],      hidden:true,  key:'toutNul',        desc:v=>`${v} soirée${v>1?'s':''} 100% nuls` },
 ];
-const ACH_TIER_NAMES = ['','Plomb','Bois','Bronze','Argent','Or','Diamant'];
+const ACH_TIER_NAMES = ['','Plomb','Bronze','Argent','Or','Émeraude','Diamant'];
 
 function _achLevel(val, tiers) {
   let lv=0; for(let i=0;i<tiers.length;i++){if(val>=tiers[i])lv=i+1;else break;} return lv;
@@ -3024,7 +3035,7 @@ function renderAchievementsGrid(achSt) {
       tip=`${ach.name} — ${tn}\n${ach.desc(val)}${!ach.fixedTier&&rawLv<maxT?`\nProchain seuil : ${ach.tiers[rawLv]}`:''}`;
     }
 
-    html+=`<div class="ach-cell t${lv}${ach.id==='comete'?' ach-comete':''}" data-tip="${tip.replace(/"/g,'&quot;')}">${iconHtml}${nameHtml}${dots}</div>`;
+    html+=`<div class="ach-cell t${lv}${ach.id==='comete'?' ach-comete':''}${ach.id==='bonnet'?' ach-bonnet':''}" data-tip="${tip.replace(/"/g,'&quot;')}">${iconHtml}${nameHtml}${dots}</div>`;
   });
   html+=`</div>`;
   return html;
@@ -3051,7 +3062,7 @@ function renderAchievementsLegend() {
         const rawNum = i + 1;
         const displayNum = Math.min(6, rawNum + (ach.tierOffset||0));
         const tierName = (ach.tierNames?ach.tierNames[i]:null) || ACH_TIER_NAMES[displayNum] || `Niv.${displayNum}`;
-        h += `<div class="ach-cell t${displayNum}${ach.id==='comete'?' ach-comete':''}" style="height:auto;min-height:90px;padding:10px 6px;cursor:default">
+        h += `<div class="ach-cell t${displayNum}${ach.id==='comete'?' ach-comete':''}${ach.id==='bonnet'?' ach-bonnet':''}" style="height:auto;min-height:90px;padding:10px 6px;cursor:default">
           <span class="ach-icon">${ach.icon}</span>
           <span class="ach-label" style="opacity:1;color:currentColor">${tierName}</span>
           <span style="font-size:9px;color:var(--text3);text-align:center;line-height:1.35;display:block;padding:0 2px">${ach.desc(threshold)}</span>
