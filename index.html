@@ -2885,7 +2885,7 @@ const ACH_DEFS = [
   { id:'mvp',      name:'Meilleur joueur', icon:'👑', tiers:[1,3,7,15,25,40],      hidden:false, key:'mvp',            desc:v=>`MVP de soirée ${v} fois` },
   { id:'pois',     name:'Poissard',        icon:'🪨', tiers:[1,2,4,7,12,20],       hidden:true,  key:'csc',            desc:v=>`${v} CSC` },
   { id:'chelem',   name:'Grand Chelem',    icon:'🎨', tiers:[1], fixedTier:6,       hidden:true,  key:'grandChelem',    desc:_=>`Les 3 couleurs jouées` },
-  { id:'fantome',  name:'Fantôme',         icon:'👻', tiers:[3,5,8,12,20,30],      hidden:true,  key:'fantomeStreak',  desc:v=>`${v} sessions de suite sans G/A` },
+  { id:'fantome',  name:'Fantôme',         icon:'👻', tiers:[3,5,8,12,20,30],      hidden:true,  key:'fantomeStreak',  desc:v=>`${v} sessions sans G/A` },
   { id:'legende',  name:'Légende',         icon:'🏅', tiers:[5,15,30,50], tierOffset:2, hidden:true, key:'legendeCount', desc:v=>`${v} niveaux débloqués` },
   { id:'assidu',   name:'Assidu',          icon:'🗓️', tiers:[1,2,3,4],  tierOffset:2,  hidden:false, key:'assiduAnnes',  desc:v=>v===4?'1 an à ≥90% de présence':v===3?'1 an à ≥80% de présence':v===2?'1 an à ≥70% de présence':'1 an à ≥60% de présence' },
   { id:'comete',   name:'La Comète',       icon:'🌠', tiers:[1,2,3,4],  tierOffset:2,  tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'cometeAnnes',  desc:v=>v===4?'1 an à ≤10% de présence':v===3?'1 an à ≤20% de présence':v===2?'1 an à ≤30% de présence':'1 an à ≤40% de présence' },
@@ -2903,7 +2903,7 @@ function computeAchievementStats(playerName) {
   let buts=0,passes=0,presences=0,absences=0,injuries=0,sessionsBlesses=0,sac=0,maillots=0;
   let hattricks=0,doubleDouble=0,cleanSheets=0,mvp=0,soireeParfaite=0,invincible=0,csc=0,zeroVict=0,toutNul=0;
   const teamsSet=new Set(), duoMap={};
-  let inEp=false, bestStreak=0, curStreak=0, fantomeStreak=0, curFan=0;
+  let inEp=false, bestStreak=0, curStreak=0, fantomeStreak=0;
   const yearMap={};
 
   _ss.forEach(s => {
@@ -2961,7 +2961,7 @@ function computeAchievementStats(playerName) {
       if(allDraw)toutNul++;
       const pGA=allGA[playerName]||0;
       if(pGA>0&&!Object.values(allGA).some(v=>v>pGA))mvp++;
-      if(sessGA===0){curFan++;if(curFan>fantomeStreak)fantomeStreak=curFan;}else curFan=0;
+      if(sessGA===0) fantomeStreak++;
 
     } else if(info.statut==="Absent"){
       absences++; inEp=false;
