@@ -385,7 +385,7 @@
   .players-table tbody tr:last-child { border-bottom: none; }
   .players-table tbody tr:hover { background: rgba(255,255,255,.065) !important; }
   .players-table td { padding: 11px 16px; vertical-align: middle; }
-  .players-table td.name { font-weight: 500; font-size: 14px; color: var(--text); border-right: 1px solid var(--border); }
+  .players-table td.name { font-weight: 500; font-size: 14px; color: var(--text); border-right: 1px solid var(--border); min-width: 130px; }
   .players-table td.num { color: var(--text2); text-align: right; font-variant-numeric: tabular-nums; }
   .players-table td.num.zero { color: var(--text3); opacity: .55; }
   .players-table td.num.highlight { color: var(--text); font-weight: 700; }
@@ -393,7 +393,7 @@
   .players-table td.num.warn    { color: #ffa726; font-weight: 600; }
   .players-table td.num.muted   { color: var(--text3); }
   .players-table td.num.nr      { color: #7a7a90; font-weight: 700; }
-  .players-table td.team-cell   { text-align: center; }
+  .players-table td.team-cell   { text-align: center; position: relative; }
   /* taux colonne */
   .taux-cell { text-align: right; white-space: nowrap; }
   .taux-wrap { display: inline-flex; align-items: center; gap: 8px; }
@@ -594,6 +594,16 @@
   html.light .ach-cell.t4 { background:rgba(100,116,139,.1); border-color:rgba(100,116,139,.35);color:#475569; }
   html.light .ach-cell.t5 { background:rgba(217,119,6,.12);  border-color:rgba(217,119,6,.4);   color:#B45309; }
   html.light .ach-cell.t6 { background:rgba(6,182,212,.08);  border-color:rgba(6,182,212,.35);  color:#0891B2; animation:none; }
+  /* La Comète — couleurs thème négatif (Pierre/Bois/Plomb/Charbon) */
+  .ach-cell.ach-comete.t3 { background:rgba(148,153,158,.14); border:1px solid rgba(148,153,158,.42); color:#9CA3AF; animation:none; }
+  .ach-cell.ach-comete.t4 { background:rgba(139,90,43,.16);   border:1px solid rgba(139,90,43,.45);   color:#A07844; animation:none; }
+  .ach-cell.ach-comete.t5 { background:rgba(64,75,86,.2);     border:1px solid rgba(80,94,108,.5);    color:#7090A0; animation:none; }
+  .ach-cell.ach-comete.t6 { background:rgba(28,30,34,.65);    border:1px solid rgba(70,72,78,.55);    color:#5C5E65; animation:none; }
+  .ach-cell.ach-comete::after { content: none !important; }
+  html.light .ach-cell.ach-comete.t3 { background:rgba(120,125,130,.1); border-color:rgba(120,125,130,.3); color:#6B7280; }
+  html.light .ach-cell.ach-comete.t4 { background:rgba(120,80,30,.1);   border-color:rgba(120,80,30,.3);   color:#7C4F1A; }
+  html.light .ach-cell.ach-comete.t5 { background:rgba(55,68,78,.12);   border-color:rgba(55,68,78,.35);   color:#455A64; }
+  html.light .ach-cell.ach-comete.t6 { background:rgba(30,32,36,.15);   border-color:rgba(30,32,36,.4);    color:#374151; animation:none; }
   /* Tooltip hauts faits */
   #ach-tip {
     position:fixed; z-index:10000; pointer-events:none;
@@ -2543,27 +2553,27 @@ function renderJoueurs() {
 
   const colDef = [
     { key:"name",       label:"Joueur"         },
-    { key:"taux",       label:"Taux prés."     },
+    { key:"taux",       label:"%"              },
     { key:"buts",       label:"Buts"           },
     { key:"passes",     label:"Passes"         },
-    { key:"absences",   label:"Absences"       },
-    { key:"blesses",    label:"Blessures"      },
-    { key:"pasRepondu", label:"Non répondu"    },
+    { key:"absences",   label:"❌"             },
+    { key:"blesses",    label:"🤕"             },
+    { key:"pasRepondu", label:"⁉️"             },
     { key:"sac",        label:"Sac 🎒"         },
     { key:"maillots",   label:"Maillots 👕"    },
-    { key:"favTeam",    label:"Éq. préf."      },
+    { key:"favTeam",    label:"Éq."            },
   ];
   const jokerColDef = [
     { key:"name",       label:"Joueur"         },
-    { key:"presences",  label:"Présences"      },
+    { key:"presences",  label:"✅"             },
     { key:"buts",       label:"Buts"           },
     { key:"passes",     label:"Passes"         },
-    { key:"absences",   label:"Absences"       },
-    { key:"blesses",    label:"Blessures"      },
-    { key:"pasRepondu", label:"Non répondu"    },
+    { key:"absences",   label:"❌"             },
+    { key:"blesses",    label:"🤕"             },
+    { key:"pasRepondu", label:"⁉️"             },
     { key:"sac",        label:"Sac 🎒"         },
     { key:"maillots",   label:"Maillots 👕"    },
-    { key:"favTeam",    label:"Éq. préf."      },
+    { key:"favTeam",    label:"Éq."            },
   ];
 
   const rowsWithTaux = rows.map(r => ({
@@ -2594,7 +2604,7 @@ function renderJoueurs() {
       const arrow  = s.col === c.key ? (s.dir === 1 ? "↑" : "↓") : "↕";
       return `<th data-col="${c.key}" class="${active}">${c.label}<span class="sort-arrow">${arrow}</span></th>`;
     }).join("");
-    return base + (isAdmin ? `<th style="width:44px"></th>` : "");
+    return base;
   }
 
   function buildRosterRow(r) {
@@ -2611,8 +2621,10 @@ function renderJoueurs() {
       <td class="num ${r.pasRepondu > 0 ? "nr" : "zero"}">${r.pasRepondu}</td>
       <td class="num ${r.sac > 0 ? "highlight" : "zero"}">${r.sac}</td>
       <td class="num ${r.maillots > 0 ? "highlight" : "zero"}">${r.maillots}</td>
-      <td class="team-cell">${teamCell}</td>
-      ${isAdmin?`<td style="text-align:right;padding:8px 8px 8px 4px"><button data-action="toggle-roster" data-player="${r.name}" style="background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:9px;font-weight:700;cursor:pointer;padding:2px 6px;white-space:nowrap;line-height:1.5" title="Passer en +1">→+1</button></td>`:""}
+      <td class="team-cell"${isAdmin?' style="padding-right:52px"':''}>
+        ${teamCell}
+        ${isAdmin?`<button data-action="toggle-roster" data-player="${r.name}" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:9px;font-weight:700;cursor:pointer;padding:2px 6px;white-space:nowrap;line-height:1.5" title="Passer en +1">→+1</button>`:''}
+      </td>
     </tr>`;
   }
 
@@ -2628,8 +2640,10 @@ function renderJoueurs() {
       <td class="num zero">${dash_}</td>
       <td class="num zero">${dash_}</td>
       <td class="num zero">${dash_}</td>
-      <td class="team-cell">${teamCell}</td>
-      ${isAdmin?`<td style="text-align:right;padding:8px 8px 8px 4px"><button data-action="toggle-roster" data-player="${r.name}" style="background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:9px;font-weight:700;cursor:pointer;padding:2px 6px;white-space:nowrap;line-height:1.5" title="Passer en roster">→R</button></td>`:""}
+      <td class="team-cell"${isAdmin?' style="padding-right:52px"':''}>
+        ${teamCell}
+        ${isAdmin?`<button data-action="toggle-roster" data-player="${r.name}" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:9px;font-weight:700;cursor:pointer;padding:2px 6px;white-space:nowrap;line-height:1.5" title="Passer en roster">→R</button>`:''}
+      </td>
     </tr>`;
   }
 
@@ -2980,7 +2994,7 @@ function renderAchievementsGrid(achSt) {
       tip=`${ach.name} — ${tn}\n${ach.desc(val)}${!ach.fixedTier&&rawLv<maxT?`\nProchain seuil : ${ach.tiers[rawLv]}`:''}`;
     }
 
-    html+=`<div class="ach-cell t${lv}" data-tip="${tip.replace(/"/g,'&quot;')}">${iconHtml}${nameHtml}${dots}</div>`;
+    html+=`<div class="ach-cell t${lv}${ach.id==='comete'?' ach-comete':''}" data-tip="${tip.replace(/"/g,'&quot;')}">${iconHtml}${nameHtml}${dots}</div>`;
   });
   html+=`</div>`;
   return html;
@@ -3007,7 +3021,7 @@ function renderAchievementsLegend() {
         const rawNum = i + 1;
         const displayNum = Math.min(6, rawNum + (ach.tierOffset||0));
         const tierName = (ach.tierNames?ach.tierNames[i]:null) || ACH_TIER_NAMES[displayNum] || `Niv.${displayNum}`;
-        h += `<div class="ach-cell t${displayNum}" style="height:auto;min-height:90px;padding:10px 6px;cursor:default">
+        h += `<div class="ach-cell t${displayNum}${ach.id==='comete'?' ach-comete':''}" style="height:auto;min-height:90px;padding:10px 6px;cursor:default">
           <span class="ach-icon">${ach.icon}</span>
           <span class="ach-label" style="opacity:1;color:currentColor">${tierName}</span>
           <span style="font-size:9px;color:var(--text3);text-align:center;line-height:1.35;display:block;padding:0 2px">${ach.desc(threshold)}</span>
