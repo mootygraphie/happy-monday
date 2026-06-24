@@ -2626,7 +2626,7 @@ function renderJoueurs() {
   }
 
   function buildRosterRow(r) {
-    const teamCell = r.favTeam ? `${dot(r.favTeam)}<span style="font-size:12px">${r.favTeam[0].toUpperCase()}</span>` : dash_;
+    const teamCell = r.favTeam ? `${dot(r.favTeam)}<span style="font-size:12px">${(TEAM_LABEL[r.favTeam]||r.favTeam)[0].toUpperCase()}</span>` : dash_;
     const tauxCls  = r.taux >= 75 ? "high" : r.taux >= 40 ? "mid" : "low";
     const tauxCell = `<div class="taux-wrap"><div class="taux-track"><div class="taux-fill ${tauxCls}" style="width:${r.taux}%"></div></div><span class="taux-val ${tauxCls}">${r.taux}%</span></div>`;
     return `<tr>
@@ -2644,7 +2644,7 @@ function renderJoueurs() {
   }
 
   function buildJokerRow(r) {
-    const teamCell = r.favTeam ? `${dot(r.favTeam)}<span style="font-size:12px">${r.favTeam[0].toUpperCase()}</span>` : dash_;
+    const teamCell = r.favTeam ? `${dot(r.favTeam)}<span style="font-size:12px">${(TEAM_LABEL[r.favTeam]||r.favTeam)[0].toUpperCase()}</span>` : dash_;
     return `<tr>
       <td class="name"><button class="player-link" data-player="${r.name}">${r.name}<span class="joker-tag">+1</span></button></td>
       <td class="num ${r.presences > 0 ? "highlight" : "zero"}">${r.presences}</td>
