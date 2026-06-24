@@ -369,13 +369,13 @@
   .players-table thead { position: sticky; top: 0; z-index: 2; }
   .players-table thead tr { background: var(--bg3); }
   .players-table th {
-    padding: 12px 16px; text-align: left; font-size: 10px; font-weight: 700;
+    padding: 12px 16px; text-align: center; font-size: 10px; font-weight: 700;
     letter-spacing: .1em; text-transform: uppercase; color: var(--text3);
     white-space: nowrap; cursor: pointer; user-select: none;
     border-bottom: 2px solid var(--border2);
     transition: color .12s, background .12s;
   }
-  .players-table th:first-child { border-right: 1px solid var(--border2); }
+  .players-table th:first-child { border-right: 1px solid var(--border2); text-align: left; }
   .players-table th:hover { color: var(--text2); background: rgba(255,255,255,.025); }
   .players-table th.sorted { color: var(--text); }
   .players-table th .sort-arrow { display: inline-block; margin-left: 4px; opacity: .25; font-size: 9px; }
@@ -393,7 +393,13 @@
   .players-table td.num.warn    { color: #ffa726; font-weight: 600; }
   .players-table td.num.muted   { color: var(--text3); }
   .players-table td.num.nr      { color: #7a7a90; font-weight: 700; }
-  .players-table td.team-cell   { text-align: center; position: relative; }
+  .players-table td.team-cell   { text-align: center; }
+  /* Boutons toggle hors tableau */
+  .table-with-toggle { display: flex; align-items: flex-start; }
+  .table-with-toggle > .players-table-wrap { flex: 1; min-width: 0; }
+  .toggle-btns-col { flex-shrink: 0; display: flex; flex-direction: column; }
+  .toggle-btns-col button { background: transparent; border: none; font-size: 15px; cursor: pointer; padding: 0; line-height: 1; opacity: .6; transition: opacity .12s, transform .1s; display: flex; align-items: center; justify-content: center; }
+  .toggle-btns-col button:hover { opacity: 1; transform: scale(1.2); }
   /* taux colonne */
   .taux-cell { text-align: center; white-space: nowrap; }
   .taux-wrap { display: inline-flex; align-items: center; gap: 8px; }
@@ -2626,10 +2632,7 @@ function renderJoueurs() {
       <td class="num ${r.pasRepondu > 0 ? "nr" : "zero"}">${r.pasRepondu}</td>
       <td class="num ${r.sac > 0 ? "highlight" : "zero"}">${r.sac}</td>
       <td class="num ${r.maillots > 0 ? "highlight" : "zero"}">${r.maillots}</td>
-      <td class="team-cell"${isAdmin?' style="padding-right:52px"':''}>
-        ${teamCell}
-        ${isAdmin?`<button data-action="toggle-roster" data-player="${r.name}" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:9px;font-weight:700;cursor:pointer;padding:2px 6px;white-space:nowrap;line-height:1.5" title="Passer en +1">→+1</button>`:''}
-      </td>
+      <td class="team-cell">${teamCell}</td>
     </tr>`;
   }
 
@@ -2645,10 +2648,7 @@ function renderJoueurs() {
       <td class="num zero">${dash_}</td>
       <td class="num zero">${dash_}</td>
       <td class="num zero">${dash_}</td>
-      <td class="team-cell"${isAdmin?' style="padding-right:52px"':''}>
-        ${teamCell}
-        ${isAdmin?`<button data-action="toggle-roster" data-player="${r.name}" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:9px;font-weight:700;cursor:pointer;padding:2px 6px;white-space:nowrap;line-height:1.5" title="Passer en roster">→R</button>`:''}
-      </td>
+      <td class="team-cell">${teamCell}</td>
     </tr>`;
   }
 
@@ -2659,22 +2659,47 @@ function renderJoueurs() {
 
   const jokerSection = jokerRows.length > 0 ? `
     <div class="joueurs-section-label" style="margin-top:2rem">Joueurs +1 (${jokerRows.length})</div>
-    <div class="players-table-wrap">
-      <table class="players-table" id="jokers-table">
-        <thead><tr>${jokerThead}</tr></thead>
-        <tbody>${jokerTbody}</tbody>
-      </table>
+    <div class="table-with-toggle">
+      <div class="players-table-wrap">
+        <table class="players-table" id="jokers-table">
+          <thead><tr>${jokerThead}</tr></thead>
+          <tbody>${jokerTbody}</tbody>
+        </table>
+      </div>
+      ${isAdmin ? '<div class="toggle-btns-col" id="toggle-col-jokers"></div>' : ''}
     </div>` : "";
 
   container.innerHTML = `
     <div class="joueurs-section-label">Roster (${rosterRows.length})</div>
-    <div class="players-table-wrap">
-      <table class="players-table" id="roster-table">
-        <thead><tr>${rosterThead}</tr></thead>
-        <tbody>${rosterTbody}</tbody>
-      </table>
+    <div class="table-with-toggle">
+      <div class="players-table-wrap">
+        <table class="players-table" id="roster-table">
+          <thead><tr>${rosterThead}</tr></thead>
+          <tbody>${rosterTbody}</tbody>
+        </table>
+      </div>
+      ${isAdmin ? '<div class="toggle-btns-col" id="toggle-col-roster"></div>' : ''}
     </div>${jokerSection}`;
   animateTable();
+
+  if (isAdmin) {
+    [['roster-table','toggle-col-roster',true],['jokers-table','toggle-col-jokers',false]].forEach(([tblId,colId,isRoster]) => {
+      const tbl = document.getElementById(tblId);
+      const col = document.getElementById(colId);
+      if (!tbl || !col) return;
+      const theadH = tbl.querySelector('thead').offsetHeight;
+      const rows   = tbl.querySelectorAll('tbody tr');
+      let h = `<div style="height:${theadH}px"></div>`;
+      rows.forEach(tr => {
+        const player = tr.querySelector('[data-player]')?.dataset.player || '';
+        const rowH   = tr.offsetHeight;
+        h += `<div style="height:${rowH}px;display:flex;align-items:center;padding:0 10px">
+          <button data-action="toggle-roster" data-player="${player}" title="${isRoster?'Passer en +1':'Passer en roster'}">${isRoster?'🔽':'🔼'}</button>
+        </div>`;
+      });
+      col.innerHTML = h;
+    });
+  }
 
   document.getElementById("roster-table")?.querySelectorAll("th[data-col]").forEach(th => {
     th.addEventListener("click", () => {
