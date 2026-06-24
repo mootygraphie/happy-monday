@@ -829,8 +829,20 @@
   .riv-player-name { font-size:13px; font-weight:700; margin-bottom:4px; }
   .riv-wdl { display:flex; gap:6px; flex-wrap:wrap; font-size:12px; }
   .riv-section-title { font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--text3); margin:10px 0 6px; }
-  .riv-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:8px; }
+  .riv-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+  .riv-grid.single { grid-template-columns:1fr; }
+  .riv-col-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text3); margin-bottom:8px; }
+  .riv-wdl { font-size:12px; margin-bottom:6px; }
+  .riv-player-row { font-size:12px; color:var(--text2); margin-bottom:3px; }
+  .riv-player-row strong { color:var(--text); }
+  .riv-dom-bar { height:6px; border-radius:3px; overflow:hidden; display:flex; margin:8px 0 4px; }
+  .riv-dom-label { font-size:10px; color:var(--text3); text-align:center; }
+  .riv-sessions-title { font-size:11px; font-weight:700; color:var(--text2); margin:10px 0 6px; display:flex; align-items:center; gap:5px; }
+  .riv-sess-row { display:flex; align-items:center; gap:6px; font-size:11px; padding:5px 8px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); margin-bottom:4px; flex-wrap:wrap; }
+  .riv-sess-date { color:var(--text3); min-width:48px; flex-shrink:0; }
+  .riv-sess-ga { color:var(--text2); flex:1; }
   .riv-card { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:10px 12px; }
+  .riv-col-card { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:10px 12px; }
 
   /* ── Centrage mobile ── */
   @media (max-width: 640px) {
@@ -2199,10 +2211,13 @@ function computeRivalites(pA, pB, period) {
   });
 
   const result = {
-    sessionsTotal: sessions.length,
-    sameTeam: { sessions: 0, wA: 0, dA: 0, lA: 0, wB: 0, dB: 0, lB: 0, gA: 0, aA: 0, gB: 0, aB: 0 },
-    versus:   { sessions: 0, wA: 0, dA: 0, lA: 0, wB: 0, dB: 0, lB: 0, gA: 0, aA: 0, gB: 0, aB: 0 },
+    total: sessions.length,
+    together: { sessions: 0, wA: 0, dA: 0, lA: 0, gaA: 0, gaB: 0, best: [] },
+    versus:   { sessions: 0, wA: 0, dA: 0, lA: 0, wB: 0, dB: 0, lB: 0, gaA: 0, gaB: 0, best: [] },
   };
+
+  const togetherRaw = [];
+  const versusRaw   = [];
 
   sessions.forEach(s => {
     const eqA = s.presences[pA].equipe;
@@ -2210,7 +2225,7 @@ function computeRivalites(pA, pB, period) {
     const sameEq = eqA && eqB && eqA === eqB;
     const oppEq  = eqA && eqB && eqA !== eqB;
 
-    // Compter G/A de chaque joueur dans la session
+    // G/A individuels dans la session (tous matchs)
     let gA=0, aA=0, gB=0, aB=0;
     (s.matchs||[]).forEach(m => {
       ["A","B"].forEach(side => {
@@ -2228,35 +2243,62 @@ function computeRivalites(pA, pB, period) {
     });
 
     if (sameEq) {
-      result.sameTeam.sessions++;
-      result.sameTeam.gA += gA; result.sameTeam.aA += aA;
-      result.sameTeam.gB += gB; result.sameTeam.aB += aB;
-      // W/D/L par match pour l'équipe commune
+      result.together.sessions++;
+      result.together.gaA += gA + aA;
+      result.together.gaB += gB + aB;
+
+      // W/D/L communs — par match de leur équipe
+      let wMatch=0, dMatch=0, lMatch=0;
       (s.matchs||[]).filter(m => m.eqA===eqA||m.eqB===eqA).forEach(m => {
         const w = m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
-        if (w===eqA) { result.sameTeam.wA++; result.sameTeam.wB++; }
-        else if (w===null) { result.sameTeam.dA++; result.sameTeam.dB++; }
-        else { result.sameTeam.lA++; result.sameTeam.lB++; }
+        if (w===eqA) { result.together.wA++; wMatch++; }
+        else if (w===null) { result.together.dA++; dMatch++; }
+        else { result.together.lA++; lMatch++; }
       });
+
+      const wdl = wMatch > lMatch ? 'W' : lMatch > wMatch ? 'L' : 'D';
+      togetherRaw.push({ date: s.date, equipe: eqA, gaA: gA+aA, gaB: gB+aB, wdl });
     }
 
     if (oppEq) {
       result.versus.sessions++;
-      result.versus.gA += gA; result.versus.aA += aA;
-      result.versus.gB += gB; result.versus.aB += aB;
-      // W/D/L par match pour chacun
-      const matchsA = (s.matchs||[]).filter(m => m.eqA===eqA||m.eqB===eqA);
-      matchsA.forEach(m => {
+      result.versus.gaA += gA + aA;
+      result.versus.gaB += gB + aB;
+
+      // W/D/L séparés pour pA et pB
+      (s.matchs||[]).filter(m => m.eqA===eqA||m.eqB===eqA).forEach(m => {
         const w = m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
         if (w===eqA) result.versus.wA++; else if (w===null) result.versus.dA++; else result.versus.lA++;
       });
-      const matchsB = (s.matchs||[]).filter(m => m.eqA===eqB||m.eqB===eqB);
-      matchsB.forEach(m => {
+      (s.matchs||[]).filter(m => m.eqA===eqB||m.eqB===eqB).forEach(m => {
         const w = m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
         if (w===eqB) result.versus.wB++; else if (w===null) result.versus.dB++; else result.versus.lB++;
       });
+
+      // Score total des matchs directs eqA vs eqB
+      let scA=0, scB=0;
+      (s.matchs||[]).forEach(m => {
+        if (m.eqA===eqA && m.eqB===eqB) { scA+=m.scoreA; scB+=m.scoreB; }
+        else if (m.eqA===eqB && m.eqB===eqA) { scA+=m.scoreB; scB+=m.scoreA; }
+      });
+
+      versusRaw.push({ date: s.date, eqA, eqB, gaA: gA+aA, gaB: gB+aB, scoresA: scA, scoresB: scB });
     }
   });
+
+  // Top 3 sessions ensemble (triées par gaA+gaB desc)
+  result.together.best = togetherRaw
+    .sort((a,b) => (b.gaA+b.gaB) - (a.gaA+a.gaB))
+    .slice(0, 3);
+
+  // Top 3 confrontations (triées par gaA+gaB desc, ou écart score si 0 GA)
+  result.versus.best = versusRaw
+    .sort((a,b) => {
+      const gaTotal = (b.gaA+b.gaB) - (a.gaA+a.gaB);
+      if (gaTotal !== 0) return gaTotal;
+      return Math.abs(b.scoresA-b.scoresB) - Math.abs(a.scoresA-a.scoresB);
+    })
+    .slice(0, 3);
 
   return result;
 }
@@ -2266,62 +2308,109 @@ function renderRivBody(pA, pB, period) {
     return `<p class="no-data">Sélectionne deux joueurs différents.</p>`;
   }
   const r = computeRivalites(pA, pB, period);
-  if (r.sessionsTotal === 0) {
+  if (r.total === 0) {
     return `<p class="no-data">Aucune session commune pour cette période.</p>`;
   }
 
-  const wCol  = "#66bb6a";
-  const dCol  = "var(--text2)";
-  const lCol  = "#ef5350";
+  const wCol = "#34A853";
+  const dCol = "var(--text3)";
+  const lCol = "#ea4335";
 
-  function wdlHtml(w, d, l) {
-    return `<div class="riv-wdl">
-      <span style="font-weight:700;color:${wCol}">${w}V</span>
-      <span style="color:${dCol}">${d}N</span>
-      <span style="font-weight:700;color:${lCol}">${l}D</span>
-    </div>`;
-  }
+  const hasTogether = r.together.sessions > 0;
+  const hasVersus   = r.versus.sessions   > 0;
 
-  function gaHtml(g, a) {
-    return `<span style="font-size:11px;color:var(--text2)">${g}G · ${a}A</span>`;
-  }
+  // Header
+  let h = `<div style="text-align:center;padding:10px 0 14px">
+    <div style="font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:12px">
+      <span>${pA}</span>
+      <span style="font-size:11px;color:var(--text3);font-weight:500;letter-spacing:.1em">VS</span>
+      <span>${pB}</span>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:5px">
+      ${r.total} session${r.total>1?"s":""} · ${r.together.sessions} ensemble · ${r.versus.sessions} face à face
+    </div>
+  </div>`;
 
-  let h = `<div style="font-size:12px;color:var(--text3);margin-bottom:10px">${r.sessionsTotal} session${r.sessionsTotal>1?"s":""} ensemble</div>`;
-
-  if (r.sameTeam.sessions > 0) {
-    h += `<div class="riv-section-title">🤝 Même équipe (${r.sameTeam.sessions} session${r.sameTeam.sessions>1?"s":""})</div>`;
-    h += `<div class="riv-grid">
-      <div class="riv-card">
-        <div class="riv-player-name">${pA}</div>
-        ${wdlHtml(r.sameTeam.wA, r.sameTeam.dA, r.sameTeam.lA)}
-        ${gaHtml(r.sameTeam.gA, r.sameTeam.aA)}
-      </div>
-      <div class="riv-card">
-        <div class="riv-player-name">${pB}</div>
-        ${wdlHtml(r.sameTeam.wB, r.sameTeam.dB, r.sameTeam.lB)}
-        ${gaHtml(r.sameTeam.gB, r.sameTeam.aB)}
-      </div>
-    </div>`;
-  }
-
-  if (r.versus.sessions > 0) {
-    h += `<div class="riv-section-title">⚔️ Équipes opposées (${r.versus.sessions} session${r.versus.sessions>1?"s":""})</div>`;
-    h += `<div class="riv-grid">
-      <div class="riv-card">
-        <div class="riv-player-name">${pA}</div>
-        ${wdlHtml(r.versus.wA, r.versus.dA, r.versus.lA)}
-        ${gaHtml(r.versus.gA, r.versus.aA)}
-      </div>
-      <div class="riv-card">
-        <div class="riv-player-name">${pB}</div>
-        ${wdlHtml(r.versus.wB, r.versus.dB, r.versus.lB)}
-        ${gaHtml(r.versus.gB, r.versus.aB)}
-      </div>
-    </div>`;
-  }
-
-  if (r.sameTeam.sessions === 0 && r.versus.sessions === 0) {
+  if (!hasTogether && !hasVersus) {
     h += `<p class="no-data">Aucune session avec équipes attribuées.</p>`;
+    return h;
+  }
+
+  // Grille 2 col ou 1 col
+  const gridCls = (hasTogether && hasVersus) ? 'riv-grid' : 'riv-grid single';
+  h += `<div class="${gridCls}">`;
+
+  if (hasTogether) {
+    const t = r.together;
+    h += `<div class="riv-col-card">
+      <div class="riv-col-title">🤝 Même équipe (${t.sessions})</div>
+      <div class="riv-wdl">
+        <span style="font-weight:700;color:${wCol}">${t.wA}V</span>
+        <span style="color:${dCol};margin:0 4px">${t.dA}N</span>
+        <span style="font-weight:700;color:${lCol}">${t.lA}D</span>
+      </div>
+      <div class="riv-player-row"><strong>${pA}</strong> : ${t.gaA}G/A</div>
+      <div class="riv-player-row"><strong>${pB}</strong> : ${t.gaB}G/A</div>
+    </div>`;
+  }
+
+  if (hasVersus) {
+    const v = r.versus;
+    const totalMatchesA = v.wA + v.dA + v.lA;
+    const totalMatchesB = v.wB + v.dB + v.lB;
+    // Dominance : comparer victoires
+    const domPctA = (totalMatchesA + totalMatchesB) > 0
+      ? Math.round((v.wA / Math.max(1, totalMatchesA + totalMatchesB)) * 100)
+      : 50;
+    const domPctB = 100 - domPctA;
+    const domLabel = v.wA > v.wB
+      ? `${pA} domine`
+      : v.wB > v.wA
+        ? `${pB} domine`
+        : "Équilibre parfait";
+
+    h += `<div class="riv-col-card">
+      <div class="riv-col-title">⚔️ Face à face (${v.sessions})</div>
+      <div class="riv-player-row"><strong>${pA}</strong> : ${v.gaA}G/A &nbsp;|&nbsp; <span style="color:${wCol};font-weight:700">${v.wA}V</span> <span style="color:${dCol}">${v.dA}N</span> <span style="color:${lCol};font-weight:700">${v.lA}D</span></div>
+      <div class="riv-player-row"><strong>${pB}</strong> : ${v.gaB}G/A &nbsp;|&nbsp; <span style="color:${wCol};font-weight:700">${v.wB}V</span> <span style="color:${dCol}">${v.dB}N</span> <span style="color:${lCol};font-weight:700">${v.lB}D</span></div>
+      <div class="riv-dom-bar">
+        <div style="width:${domPctA}%;background:#FEDB00"></div>
+        <div style="width:${domPctB}%;background:var(--bg3)"></div>
+      </div>
+      <div class="riv-dom-label">${domLabel}</div>
+    </div>`;
+  }
+
+  h += `</div>`;
+
+  // Top soirées ensemble
+  if (hasTogether && r.together.best.length > 0) {
+    h += `<div class="riv-sessions-title">📅 Top soirées ensemble</div>`;
+    r.together.best.forEach(sess => {
+      const dateStr = new Date(sess.date).toLocaleDateString('fr-FR', {day:'numeric', month:'short'});
+      const resStr  = sess.wdl === 'W' ? `<span style="color:#34A853;font-weight:700">✓</span>`
+                    : sess.wdl === 'L' ? `<span style="color:#ea4335;font-weight:700">✗</span>`
+                    : `<span style="color:var(--text3)">=</span>`;
+      h += `<div class="riv-sess-row">
+        <span class="riv-sess-date">${dateStr}</span>
+        ${badge(sess.equipe)}
+        <span class="riv-sess-ga">${pA}: ${sess.gaA}G/A · ${pB}: ${sess.gaB}G/A</span>
+        ${resStr}
+      </div>`;
+    });
+  }
+
+  // Confrontations marquantes
+  if (hasVersus && r.versus.best.length > 0) {
+    h += `<div class="riv-sessions-title">⚔️ Confrontations marquantes</div>`;
+    r.versus.best.forEach(sess => {
+      const dateStr = new Date(sess.date).toLocaleDateString('fr-FR', {day:'numeric', month:'short'});
+      h += `<div class="riv-sess-row">
+        <span class="riv-sess-date">${dateStr}</span>
+        ${badge(sess.eqA)} <span style="font-weight:700;font-size:12px">${sess.scoresA} – ${sess.scoresB}</span> ${badge(sess.eqB)}
+        <span class="riv-sess-ga">${pA}: ${sess.gaA}G/A · ${pB}: ${sess.gaB}G/A</span>
+      </div>`;
+    });
   }
 
   return h;
@@ -3457,6 +3546,69 @@ function openPlayerPanel(playerName) {
   const nd = `<p class="no-data" style="margin-top:4px">—</p>`;
   let h = "";
 
+  /* Forme récente (5 dernières sessions où le joueur était Présent) */
+  {
+    const _sortedSess = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
+    const _recent = _sortedSess.filter(s => {
+      const info = s.presences[playerName];
+      return info && info.statut === "Présent";
+    }).slice(0, 5);
+
+    h += `<div><div class="pp-section-title">Forme récente</div>`;
+    if (_recent.length === 0) {
+      h += `<p class="no-data" style="margin-top:4px">—</p>`;
+    } else {
+      h += `<div style="display:flex;flex-direction:column;gap:5px">`;
+      _recent.forEach(s => {
+        const info = s.presences[playerName];
+        const myEq = info.equipe || null;
+        const dateStr = new Date(s.date).toLocaleDateString('fr-FR', {day:'numeric', month:'short'});
+        // G/A de la session
+        let gSess=0, aSess=0;
+        (s.matchs||[]).forEach(m => {
+          ["A","B"].forEach(side => {
+            const buts   = m[`buteurs${side}`]  || [];
+            const passes = m[`passeurs${side}`] || [];
+            buts.forEach((b,i) => {
+              if (!b || b==="CSC") return;
+              if (b === playerName) gSess++;
+              const p = passes[i];
+              if (p && p!=="CSC" && p === playerName) aSess++;
+            });
+          });
+        });
+        // Résultat : W/D/L
+        let wins=0, losses=0, draws=0;
+        if (myEq) {
+          (s.matchs||[]).filter(m => m.eqA===myEq||m.eqB===myEq).forEach(m => {
+            const w = m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
+            if (w===myEq) wins++; else if (w===null) draws++; else losses++;
+          });
+        }
+        let resultStr, resultColor;
+        if (!myEq || (wins===0 && losses===0 && draws===0)) {
+          resultStr = '='; resultColor = 'var(--text3)';
+        } else if (wins > losses) {
+          resultStr = '✓'; resultColor = '#34A853';
+        } else if (losses > wins) {
+          resultStr = '✗'; resultColor = '#ea4335';
+        } else {
+          resultStr = '='; resultColor = 'var(--text3)';
+        }
+        const gaStr = gSess+aSess > 0 ? `${gSess}G ${aSess}A` : `0 G/A`;
+        const badgeHtml = myEq ? badge(myEq) : '';
+        h += `<div class="forme-row">
+          <span class="forme-date">${dateStr}</span>
+          ${badgeHtml}
+          <span class="forme-ga">${gaStr}</span>
+          <span class="forme-result" style="color:${resultColor}">${resultStr}</span>
+        </div>`;
+      });
+      h += `</div>`;
+    }
+    h += `</div>`;
+  }
+
   /* Statistiques */
   h += `<div>
     <div class="pp-section-title">Statistiques</div>
@@ -3514,6 +3666,75 @@ function openPlayerPanel(playerName) {
       </div>
     </div>
   </div>`;
+
+  /* Radar de profil */
+  {
+    const _achSt = computeAchievementStats(playerName);
+    // Axes : Buteur · Passeur · Présence · Régularité (sessionsAvecGA) · Invincible · Intendant (sac+maillots)
+    const _radarAxes = [
+      { label: 'Buteur',     val: _achSt.buts },
+      { label: 'Passeur',    val: _achSt.passes },
+      { label: 'Présence',   val: _achSt.presences },
+      { label: 'Régularité', val: _achSt.sessionsAvecGA },
+      { label: 'Invincible', val: _achSt.invincible },
+      { label: 'Intendant',  val: _achSt.sac + _achSt.maillots },
+    ];
+    // Normalisation 0-100 relative au max de tous les joueurs
+    const _radarMaxes = _radarAxes.map((ax, i) => {
+      return Math.max(1, ...ALL_PLAYERS.map(p => {
+        const s = computeAchievementStats(p);
+        const vals = [s.buts, s.passes, s.presences, s.sessionsAvecGA, s.invincible, s.sac+s.maillots];
+        return vals[i];
+      }));
+    });
+    const _scores = _radarAxes.map((ax, i) => Math.round((ax.val / _radarMaxes[i]) * 100));
+
+    // SVG radar
+    const cx=110, cy=110, R=80, N=6;
+    const pts = (r) => Array.from({length:N}, (_,i) => {
+      const ang = (Math.PI*2*i/N) - Math.PI/2;
+      return [cx + r*Math.cos(ang), cy + r*Math.sin(ang)];
+    });
+    const ptsStr = (arr) => arr.map(p=>p.join(',')).join(' ');
+    // Grille
+    let svgG = '';
+    [25,50,75,100].forEach(pct => {
+      const r = R*pct/100;
+      svgG += `<polygon points="${ptsStr(pts(r))}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1"/>`;
+    });
+    // Axes
+    const outerPts = pts(R);
+    outerPts.forEach(([x,y]) => {
+      svgG += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,.06)" stroke-width="1"/>`;
+    });
+    // Polygon de données
+    const dataPts = Array.from({length:N}, (_,i) => {
+      const ang = (Math.PI*2*i/N) - Math.PI/2;
+      const r = R * _scores[i] / 100;
+      return [cx + r*Math.cos(ang), cy + r*Math.sin(ang)];
+    });
+    svgG += `<polygon points="${ptsStr(dataPts)}" fill="rgba(254,219,0,.18)" stroke="#FEDB00" stroke-width="1.5"/>`;
+    // Dots
+    dataPts.forEach(([x,y]) => {
+      svgG += `<circle cx="${x}" cy="${y}" r="3" fill="#FEDB00"/>`;
+    });
+    // Labels
+    outerPts.forEach(([x,y], i) => {
+      const lx = cx + (R+22)*Math.cos((Math.PI*2*i/N)-Math.PI/2);
+      const ly = cy + (R+22)*Math.sin((Math.PI*2*i/N)-Math.PI/2);
+      const score = _scores[i];
+      const anchor = lx < cx-4 ? 'end' : lx > cx+4 ? 'start' : 'middle';
+      svgG += `<text x="${lx}" y="${ly}" text-anchor="${anchor}" dominant-baseline="middle" font-size="9" fill="var(--text3)" font-family="inherit">${_radarAxes[i].label}</text>`;
+      svgG += `<text x="${lx}" y="${ly+11}" text-anchor="${anchor}" dominant-baseline="middle" font-size="9" fill="var(--text2)" font-weight="600" font-family="inherit">${score}</text>`;
+    });
+
+    h += `<div>
+      <div class="pp-section-title">Profil</div>
+      <div class="radar-wrap">
+        <svg viewBox="0 0 220 220" width="220" height="220" style="overflow:visible">${svgG}</svg>
+      </div>
+    </div>`;
+  }
 
   /* Meilleur match */
   if (st.bestMatch && (st.bestMatchGoals > 0 || st.bestMatchAssists > 0)) {
@@ -3638,138 +3859,6 @@ function openPlayerPanel(playerName) {
     h += `</div>`;
   } else { h += `<p class="no-data" style="margin-top:4px">Aucune victoire enregistrée</p>`; }
   h += `</div>`;
-
-  /* Radar de profil */
-  {
-    const _achSt = computeAchievementStats(playerName);
-    // Axes : Buteur · Passeur · Présence · Régularité (sessionsAvecGA) · Invincible · Intendant (sac+maillots)
-    const _radarAxes = [
-      { label: 'Buteur',     val: _achSt.buts },
-      { label: 'Passeur',    val: _achSt.passes },
-      { label: 'Présence',   val: _achSt.presences },
-      { label: 'Régularité', val: _achSt.sessionsAvecGA },
-      { label: 'Invincible', val: _achSt.invincible },
-      { label: 'Intendant',  val: _achSt.sac + _achSt.maillots },
-    ];
-    // Normalisation 0-100 relative au max de tous les joueurs
-    const _radarMaxes = _radarAxes.map((ax, i) => {
-      return Math.max(1, ...ALL_PLAYERS.map(p => {
-        const s = computeAchievementStats(p);
-        const vals = [s.buts, s.passes, s.presences, s.sessionsAvecGA, s.invincible, s.sac+s.maillots];
-        return vals[i];
-      }));
-    });
-    const _scores = _radarAxes.map((ax, i) => Math.round((ax.val / _radarMaxes[i]) * 100));
-
-    // SVG radar
-    const cx=110, cy=110, R=80, N=6;
-    const pts = (r) => Array.from({length:N}, (_,i) => {
-      const ang = (Math.PI*2*i/N) - Math.PI/2;
-      return [cx + r*Math.cos(ang), cy + r*Math.sin(ang)];
-    });
-    const ptsStr = (arr) => arr.map(p=>p.join(',')).join(' ');
-    // Grille
-    let svgG = '';
-    [25,50,75,100].forEach(pct => {
-      const r = R*pct/100;
-      svgG += `<polygon points="${ptsStr(pts(r))}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1"/>`;
-    });
-    // Axes
-    const outerPts = pts(R);
-    outerPts.forEach(([x,y]) => {
-      svgG += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,.06)" stroke-width="1"/>`;
-    });
-    // Polygon de données
-    const dataPts = Array.from({length:N}, (_,i) => {
-      const ang = (Math.PI*2*i/N) - Math.PI/2;
-      const r = R * _scores[i] / 100;
-      return [cx + r*Math.cos(ang), cy + r*Math.sin(ang)];
-    });
-    svgG += `<polygon points="${ptsStr(dataPts)}" fill="rgba(254,219,0,.18)" stroke="#FEDB00" stroke-width="1.5"/>`;
-    // Dots
-    dataPts.forEach(([x,y]) => {
-      svgG += `<circle cx="${x}" cy="${y}" r="3" fill="#FEDB00"/>`;
-    });
-    // Labels
-    outerPts.forEach(([x,y], i) => {
-      const lx = cx + (R+22)*Math.cos((Math.PI*2*i/N)-Math.PI/2);
-      const ly = cy + (R+22)*Math.sin((Math.PI*2*i/N)-Math.PI/2);
-      const score = _scores[i];
-      const anchor = lx < cx-4 ? 'end' : lx > cx+4 ? 'start' : 'middle';
-      svgG += `<text x="${lx}" y="${ly}" text-anchor="${anchor}" dominant-baseline="middle" font-size="9" fill="var(--text3)" font-family="inherit">${_radarAxes[i].label}</text>`;
-      svgG += `<text x="${lx}" y="${ly+11}" text-anchor="${anchor}" dominant-baseline="middle" font-size="9" fill="var(--text2)" font-weight="600" font-family="inherit">${score}</text>`;
-    });
-
-    h += `<div>
-      <div class="pp-section-title">Profil</div>
-      <div class="radar-wrap">
-        <svg viewBox="0 0 220 220" width="220" height="220" style="overflow:visible">${svgG}</svg>
-      </div>
-    </div>`;
-  }
-
-  /* Forme récente (5 dernières sessions où le joueur était Présent) */
-  {
-    const _sortedSess = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
-    const _recent = _sortedSess.filter(s => {
-      const info = s.presences[playerName];
-      return info && info.statut === "Présent";
-    }).slice(0, 5);
-
-    h += `<div><div class="pp-section-title">Forme récente</div>`;
-    if (_recent.length === 0) {
-      h += `<p class="no-data" style="margin-top:4px">—</p>`;
-    } else {
-      h += `<div style="display:flex;flex-direction:column;gap:5px">`;
-      _recent.forEach(s => {
-        const info = s.presences[playerName];
-        const myEq = info.equipe || null;
-        const dateStr = new Date(s.date).toLocaleDateString('fr-FR', {day:'numeric', month:'short'});
-        // G/A de la session
-        let gSess=0, aSess=0;
-        (s.matchs||[]).forEach(m => {
-          ["A","B"].forEach(side => {
-            const buts   = m[`buteurs${side}`]  || [];
-            const passes = m[`passeurs${side}`] || [];
-            buts.forEach((b,i) => {
-              if (!b || b==="CSC") return;
-              if (b === playerName) gSess++;
-              const p = passes[i];
-              if (p && p!=="CSC" && p === playerName) aSess++;
-            });
-          });
-        });
-        // Résultat : W/D/L
-        let wins=0, losses=0, draws=0;
-        if (myEq) {
-          (s.matchs||[]).filter(m => m.eqA===myEq||m.eqB===myEq).forEach(m => {
-            const w = m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
-            if (w===myEq) wins++; else if (w===null) draws++; else losses++;
-          });
-        }
-        let resultStr, resultColor;
-        if (!myEq || (wins===0 && losses===0 && draws===0)) {
-          resultStr = '='; resultColor = 'var(--text3)';
-        } else if (wins > losses) {
-          resultStr = '✓'; resultColor = '#34A853';
-        } else if (losses > wins) {
-          resultStr = '✗'; resultColor = '#ea4335';
-        } else {
-          resultStr = '='; resultColor = 'var(--text3)';
-        }
-        const gaStr = gSess+aSess > 0 ? `${gSess}G ${aSess}A` : `0 G/A`;
-        const badgeHtml = myEq ? badge(myEq) : '';
-        h += `<div class="forme-row">
-          <span class="forme-date">${dateStr}</span>
-          ${badgeHtml}
-          <span class="forme-ga">${gaStr}</span>
-          <span class="forme-result" style="color:${resultColor}">${resultStr}</span>
-        </div>`;
-      });
-      h += `</div>`;
-    }
-    h += `</div>`;
-  }
 
   /* Hauts faits */
   h += `<div><div class="pp-section-title">Hauts faits</div>${renderAchievementsGrid(computeAchievementStats(playerName))}</div>`;
