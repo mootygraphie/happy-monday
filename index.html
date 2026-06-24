@@ -841,17 +841,19 @@
   .riv-sess-row { display:flex; align-items:center; gap:6px; font-size:11px; padding:5px 8px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); margin-bottom:4px; flex-wrap:wrap; }
   .riv-sess-date { color:var(--text3); min-width:48px; flex-shrink:0; }
   .riv-sess-ga { color:var(--text2); flex:1; }
-  .riv-match-card { background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin-bottom:8px; }
+  .riv-match-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
+  .riv-match-card { background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:14px 10px; }
   .riv-match-date { font-size:11px; color:var(--text3); text-align:center; margin-bottom:10px; }
-  .riv-match-score-row { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:10px; }
-  .riv-match-score { font-size:22px; font-weight:800; font-style:italic; letter-spacing:-.02em; }
+  .riv-match-score-row { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; }
+  .riv-match-score { font-size:30px; font-weight:800; font-style:italic; letter-spacing:-.02em; }
   .riv-match-players { display:grid; grid-template-columns:1fr 1fr; }
   .riv-match-player { text-align:center; padding:4px; }
   .riv-match-player-name { font-size:12px; font-weight:700; margin-bottom:3px; }
   .riv-match-player-ga { font-size:12px; color:var(--text3); }
   .riv-match-player-ga.active { color:#FEDB00; font-weight:700; }
   .riv-card { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:10px 12px; }
-  .riv-col-card { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:10px 12px; }
+  .riv-col-card { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+  .riv-no-data-small { font-size:12px; color:var(--text3); text-align:center; padding:20px 0; }
 
   /* ── Centrage mobile ── */
   @media (max-width: 640px) {
@@ -2358,29 +2360,14 @@ function renderRivBody(pA, pB, period) {
     return h;
   }
 
-  // Grille 2 col ou 1 col
-  const gridCls = (hasTogether && hasVersus) ? 'riv-grid' : 'riv-grid single';
-  h += `<div class="${gridCls}">`;
+  // Stats face à face | ensemble — toujours 2 colonnes, toujours les 2 cartes
+  h += `<div class="riv-grid">`;
 
-  if (hasTogether) {
-    const t = r.together;
-    h += `<div class="riv-col-card">
-      <div class="riv-col-title">🤝 Même équipe (${t.sessions})</div>
-      <div class="riv-wdl">
-        <span style="font-weight:700;color:${wCol}">${t.wA}V</span>
-        <span style="color:${dCol};margin:0 4px">${t.dA}N</span>
-        <span style="font-weight:700;color:${lCol}">${t.lA}D</span>
-      </div>
-      <div class="riv-player-row"><strong>${pA}</strong> : ${t.gaA}G/A</div>
-      <div class="riv-player-row"><strong>${pB}</strong> : ${t.gaB}G/A</div>
-    </div>`;
-  }
-
+  // Face à face (gauche)
   if (hasVersus) {
     const v = r.versus;
     const totalMatchesA = v.wA + v.dA + v.lA;
     const totalMatchesB = v.wB + v.dB + v.lB;
-    // Dominance : comparer victoires
     const domPctA = (totalMatchesA + totalMatchesB) > 0
       ? Math.round((v.wA / Math.max(1, totalMatchesA + totalMatchesB)) * 100)
       : 50;
@@ -2400,6 +2387,31 @@ function renderRivBody(pA, pB, period) {
         <div style="width:${domPctB}%;background:var(--bg3)"></div>
       </div>
       <div class="riv-dom-label">${domLabel}</div>
+    </div>`;
+  } else {
+    h += `<div class="riv-col-card">
+      <div class="riv-col-title">⚔️ Face à face</div>
+      <div class="riv-no-data-small">Pas de données disponibles</div>
+    </div>`;
+  }
+
+  // Même équipe (droite)
+  if (hasTogether) {
+    const t = r.together;
+    h += `<div class="riv-col-card">
+      <div class="riv-col-title">🤝 Même équipe (${t.sessions})</div>
+      <div class="riv-wdl">
+        <span style="font-weight:700;color:${wCol}">${t.wA}V</span>
+        <span style="color:${dCol};margin:0 4px">${t.dA}N</span>
+        <span style="font-weight:700;color:${lCol}">${t.lA}D</span>
+      </div>
+      <div class="riv-player-row"><strong>${pA}</strong> : ${t.gaA}G/A</div>
+      <div class="riv-player-row"><strong>${pB}</strong> : ${t.gaB}G/A</div>
+    </div>`;
+  } else {
+    h += `<div class="riv-col-card">
+      <div class="riv-col-title">🤝 Même équipe</div>
+      <div class="riv-no-data-small">Pas de données disponibles</div>
     </div>`;
   }
 
@@ -2422,9 +2434,10 @@ function renderRivBody(pA, pB, period) {
     });
   }
 
-  // Confrontations marquantes
+  // Confrontations marquantes — 3 cartes par ligne
   if (hasVersus && r.versus.best.length > 0) {
     h += `<div class="riv-sessions-title">⚔️ Confrontations marquantes</div>`;
+    h += `<div class="riv-match-grid">`;
     r.versus.best.forEach(m => {
       const dateStr = new Date(m.date).toLocaleDateString('fr-FR', {day:'numeric', month:'short', year:'numeric'});
       const gaStrA = `${m.gA}G · ${m.aA}A`;
@@ -2450,6 +2463,7 @@ function renderRivBody(pA, pB, period) {
         </div>
       </div>`;
     });
+    h += `</div>`;
   }
 
   return h;
