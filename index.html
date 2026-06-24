@@ -2369,7 +2369,7 @@ function renderRivBody(pA, pB, period) {
     const colA = v.wA > v.wB ? wCol : v.wA < v.wB ? 'var(--text3)' : 'var(--text)';
     const colB = v.wB > v.wA ? wCol : v.wB < v.wA ? 'var(--text3)' : 'var(--text)';
     h += `<div class="riv-col-card" style="display:flex;flex-direction:column;justify-content:space-between">
-      <div class="riv-col-title">⚔️ Face à face · ${v.sessions} match${v.sessions>1?'s':''}</div>
+      <div class="riv-col-title">⚔️ Face à face</div>
       <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-bottom:6px">
         <span style="font-size:12px;font-weight:700">${pA}</span>
         <span style="font-size:9px;color:var(--text3);font-weight:600;letter-spacing:.12em;padding:0 6px;text-transform:uppercase">vs</span>
@@ -2416,7 +2416,7 @@ function renderRivBody(pA, pB, period) {
   if (hasTogether) {
     const t = r.together;
     h += `<div class="riv-col-card" style="display:flex;flex-direction:column;justify-content:space-between">
-      <div class="riv-col-title">🤝 Même équipe · ${t.sessions} session${t.sessions>1?'s':''}</div>
+      <div class="riv-col-title">🤝 Même équipe</div>
       <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-bottom:6px">
         <span style="font-size:12px;font-weight:700">${pA}</span>
         <span style="font-size:14px;color:var(--text3);font-weight:700;padding:0 6px">×</span>
