@@ -2275,14 +2275,26 @@ function computeRivalites(pA, pB, period) {
         if (w===eqB) result.versus.wB++; else if (w===null) result.versus.dB++; else result.versus.lB++;
       });
 
-      // Score total des matchs directs eqA vs eqB
-      let scA=0, scB=0;
+      // Confrontations marquantes : un entry PAR MATCH direct eqA vs eqB
       (s.matchs||[]).forEach(m => {
-        if (m.eqA===eqA && m.eqB===eqB) { scA+=m.scoreA; scB+=m.scoreB; }
-        else if (m.eqA===eqB && m.eqB===eqA) { scA+=m.scoreB; scB+=m.scoreA; }
-      });
+        let scA, scB, swapped = false;
+        if (m.eqA===eqA && m.eqB===eqB)      { scA=m.scoreA; scB=m.scoreB; }
+        else if (m.eqA===eqB && m.eqB===eqA) { scA=m.scoreB; scB=m.scoreA; swapped=true; }
+        else return;
 
-      versusRaw.push({ date: s.date, eqA, eqB, gaA: gA+aA, gaB: gB+aB, scoresA: scA, scoresB: scB });
+        // G/A de pA et pB dans CE match uniquement
+        let mgA=0, maA=0, mgB=0, maB=0;
+        ["A","B"].forEach(side => {
+          (m[`buteurs${side}`]||[]).forEach((b,i) => {
+            if (!b||b==="CSC") return;
+            const p=(m[`passeurs${side}`]||[])[i];
+            if (b===pA) mgA++; if (p&&p!=="CSC"&&p===pA) maA++;
+            if (b===pB) mgB++; if (p&&p!=="CSC"&&p===pB) maB++;
+          });
+        });
+
+        versusRaw.push({ date: s.date, eqA, eqB, scoreA: scA, scoreB: scB, gA: mgA, aA: maA, gB: mgB, aB: maB });
+      });
     }
   });
 
@@ -2291,12 +2303,12 @@ function computeRivalites(pA, pB, period) {
     .sort((a,b) => (b.gaA+b.gaB) - (a.gaA+a.gaB))
     .slice(0, 3);
 
-  // Top 3 confrontations (triées par gaA+gaB desc, ou écart score si 0 GA)
+  // Top 3 matchs directs (triés par G/A combinés desc, puis écart de score)
   result.versus.best = versusRaw
     .sort((a,b) => {
-      const gaTotal = (b.gaA+b.gaB) - (a.gaA+a.gaB);
+      const gaTotal = (b.gA+b.aA+b.gB+b.aB) - (a.gA+a.aA+a.gB+a.aB);
       if (gaTotal !== 0) return gaTotal;
-      return Math.abs(b.scoresA-b.scoresB) - Math.abs(a.scoresA-a.scoresB);
+      return Math.abs(b.scoreA-b.scoreB) - Math.abs(a.scoreA-a.scoreB);
     })
     .slice(0, 3);
 
@@ -2394,7 +2406,7 @@ function renderRivBody(pA, pB, period) {
       h += `<div class="riv-sess-row">
         <span class="riv-sess-date">${dateStr}</span>
         ${badge(sess.equipe)}
-        <span class="riv-sess-ga">${pA}: ${sess.gaA}G/A · ${pB}: ${sess.gaB}G/A</span>
+        <span class="riv-sess-ga">${pA}: <strong>${sess.gaA}G/A</strong> · ${pB}: <strong>${sess.gaB}G/A</strong></span>
         ${resStr}
       </div>`;
     });
@@ -2403,12 +2415,14 @@ function renderRivBody(pA, pB, period) {
   // Confrontations marquantes
   if (hasVersus && r.versus.best.length > 0) {
     h += `<div class="riv-sessions-title">⚔️ Confrontations marquantes</div>`;
-    r.versus.best.forEach(sess => {
-      const dateStr = new Date(sess.date).toLocaleDateString('fr-FR', {day:'numeric', month:'short'});
+    r.versus.best.forEach(m => {
+      const dateStr = new Date(m.date).toLocaleDateString('fr-FR', {day:'numeric', month:'short'});
+      const gaStrA = `${m.gA}G${m.aA ? ' '+m.aA+'A' : ''}`;
+      const gaStrB = `${m.gB}G${m.aB ? ' '+m.aB+'A' : ''}`;
       h += `<div class="riv-sess-row">
         <span class="riv-sess-date">${dateStr}</span>
-        ${badge(sess.eqA)} <span style="font-weight:700;font-size:12px">${sess.scoresA} – ${sess.scoresB}</span> ${badge(sess.eqB)}
-        <span class="riv-sess-ga">${pA}: ${sess.gaA}G/A · ${pB}: ${sess.gaB}G/A</span>
+        ${badge(m.eqA)}<span style="font-weight:700;font-size:12px;margin:0 2px">${m.scoreA}–${m.scoreB}</span>${badge(m.eqB)}
+        <span class="riv-sess-ga">${pA}: <strong>${gaStrA}</strong> · ${pB}: <strong>${gaStrB}</strong></span>
       </div>`;
     });
   }
