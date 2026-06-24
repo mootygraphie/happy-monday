@@ -2063,7 +2063,7 @@ function renderAchClsBody(acid) {
   const unlocked = rows.filter(r => r.rawLv > 0).sort((a,b) => b.rawLv - a.rawLv || b.val - a.val);
   const locked   = rows.filter(r => r.rawLv === 0).sort((a,b) => b.val - a.val);
 
-  const rankLabel = i => ['🥇','🥈','🥉'][i] ?? `${i+1}.`;
+  const rankLabel = i => `${i+1}.`;
   const makeDots  = (rawLv, color) => maxT > 1
     ? `<div class="ach-cls-dots">${Array.from({length:maxT},(_,j)=>`<div class="ach-cls-dot" style="${j<rawLv?'background:'+color:''}"></div>`).join('')}</div>`
     : '';
