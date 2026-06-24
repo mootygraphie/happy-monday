@@ -842,6 +842,7 @@
   .riv-sess-date { color:var(--text3); min-width:48px; flex-shrink:0; }
   .riv-sess-ga { color:var(--text2); flex:1; }
   .riv-match-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
+  @media (max-width:480px) { .riv-match-grid { grid-template-columns:1fr; } }
   .riv-match-card { background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:14px 10px; }
   .riv-match-date { font-size:11px; color:var(--text3); text-align:center; margin-bottom:10px; }
   .riv-match-score-row { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; }
@@ -852,7 +853,7 @@
   .riv-match-player-ga { font-size:12px; color:var(--text3); }
   .riv-match-player-ga.active { color:#FEDB00; font-weight:700; }
   .riv-card { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:10px 12px; }
-  .riv-col-card { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+  .riv-col-card { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:14px 56px; }
   .riv-no-data-small { font-size:12px; color:var(--text3); text-align:center; padding:20px 0; }
 
   /* ── Centrage mobile ── */
