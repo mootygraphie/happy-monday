@@ -1077,6 +1077,27 @@ async function _fbLoad() {
       if (idx === -1) SESSIONS.push(s); else SESSIONS[idx] = s;
     });
     localStorage.setItem('hmft_sessions', JSON.stringify(SESSIONS));
+
+    // Config : joueurs extra et jokers (Firebase = source de vérité)
+    const cfgSnap = await _db.ref('config').once('value');
+    const cfg = cfgSnap.val() || {};
+
+    if (cfg.extraPlayers) {
+      cfg.extraPlayers.forEach(n => { if (!ALL_PLAYERS.includes(n)) { ALL_PLAYERS.push(n); JOKERS.add(n); } });
+      localStorage.setItem('hmft_extra_players', JSON.stringify(cfg.extraPlayers));
+    } else {
+      // Bootstrap Firebase depuis localStorage (migration automatique one-shot)
+      const localExtra = ALL_PLAYERS.filter(p => !_BASE_PLAYERS.has(p));
+      if (localExtra.length) _db.ref('config/extraPlayers').set(localExtra).catch(() => {});
+    }
+
+    if (cfg.jokers) {
+      JOKERS = new Set(cfg.jokers);
+      localStorage.setItem('hmft_jokers', JSON.stringify(cfg.jokers));
+    } else {
+      // Bootstrap Firebase depuis localStorage
+      _db.ref('config/jokers').set([...JOKERS]).catch(() => {});
+    }
   } catch(e) { console.error('Firebase load error:', e); }
 }
 
@@ -1116,15 +1137,21 @@ const ALL_PLAYERS = [
    Jamais comptés "pas répondu" lors de leurs absences.
 */
 let JOKERS = new Set(JSON.parse(localStorage.getItem('hmft_jokers') || 'null') || ["Hamine","Marius","Harone","Alexi","Godefroy"]);
-function _saveJokers() { localStorage.setItem('hmft_jokers', JSON.stringify([...JOKERS])); }
+function _saveJokers() {
+  const arr = [...JOKERS];
+  localStorage.setItem('hmft_jokers', JSON.stringify(arr));
+  if (_db) _db.ref('config/jokers').set(arr).catch(e => console.error('FB jokers:', e));
+}
 
-/* Joueurs ajoutés via saisie (+1 temp) — persistés dans localStorage */
+/* Joueurs ajoutés via saisie (+1 temp) — localStorage pour rendu instantané, Firebase source de vérité */
 const _BASE_PLAYERS = new Set(ALL_PLAYERS);
 JSON.parse(localStorage.getItem('hmft_extra_players') || '[]').forEach(n => {
   if (!ALL_PLAYERS.includes(n)) { ALL_PLAYERS.push(n); JOKERS.add(n); }
 });
 function _saveExtraPlayers() {
-  localStorage.setItem('hmft_extra_players', JSON.stringify(ALL_PLAYERS.filter(p => !_BASE_PLAYERS.has(p))));
+  const extra = ALL_PLAYERS.filter(p => !_BASE_PLAYERS.has(p));
+  localStorage.setItem('hmft_extra_players', JSON.stringify(extra));
+  if (_db) _db.ref('config/extraPlayers').set(extra).catch(e => console.error('FB extraPlayers:', e));
 }
 
 /* ── Helpers ── */
