@@ -2074,7 +2074,7 @@ function renderAchClsBody(acid) {
     const ts = _achTierStyle(r.rawLv, ach);
     h += `<div class="ach-cls-row">
       <span class="ach-cls-rank">${rankLabel(i)}</span>
-      <span class="ach-cls-name">${r.name}</span>
+      <button class="player-link ach-cls-name" data-player="${r.name}">${r.name}</button>
       <span class="ach-cls-badge" style="background:${ts.bg};border-color:${ts.b};color:${ts.c}">${ts.name}</span>
       <span class="ach-cls-val">${ach.desc(r.val)}</span>
       ${makeDots(r.rawLv, ts.c)}
@@ -2086,7 +2086,7 @@ function renderAchClsBody(acid) {
     locked.forEach(r => {
       h += `<div class="ach-cls-row" style="opacity:.38">
         <span class="ach-cls-rank" style="font-size:10px">—</span>
-        <span class="ach-cls-name">${r.name}</span>
+        <button class="player-link ach-cls-name" data-player="${r.name}">${r.name}</button>
         <span class="ach-cls-val" style="color:var(--text3)">${r.val} / ${ach.tiers[0]}</span>
         ${makeDots(0, '')}
       </div>`;
