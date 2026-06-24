@@ -1923,7 +1923,7 @@ function buildBallonDorHtml() {
         <div class="ballon-dor-title">Ballon d'Or ${_bdYear}</div>
         <div class="ballon-dor-meta">Classement G/A — Janvier à aujourd'hui</div>
       </div>
-      <div class="ballon-dor-formula">10 pts / but &nbsp;·&nbsp; 5 pts / passe</div>
+      <div class="ballon-dor-formula">10 pts / but &nbsp;·&nbsp; 5 pts / assist</div>
     </div>
     <div class="bd-list">`;
   if (_bdTop5.length) {
@@ -1982,7 +1982,7 @@ function buildBallonDePlombHtml() {
         <div class="ballon-dor-title" style="color:var(--text2)">Ballon de Plomb ${_bdYear}</div>
         <div class="ballon-dor-meta">Classement inversé G/A — Janvier à aujourd'hui</div>
       </div>
-      <div class="ballon-dor-formula" style="color:rgba(150,150,160,.5)">10 pts / but &nbsp;·&nbsp; 5 pts / passe</div>
+      <div class="ballon-dor-formula" style="color:rgba(150,150,160,.5)">10 pts / but &nbsp;·&nbsp; 5 pts / assist</div>
     </div>
     <div class="bd-list">`;
   if (_bdBottom5.length) {
@@ -2224,8 +2224,9 @@ function computeRivalites(pA, pB, period) {
   const result = {
     total: sessions.length,
     matchs: sessions.reduce((acc, s) => acc + (s.matchs||[]).length, 0),
-    together: { sessions: 0, wA: 0, dA: 0, lA: 0, gaA: 0, gaB: 0, best: [] },
-    versus:   { sessions: 0, wA: 0, dA: 0, lA: 0, wB: 0, dB: 0, lB: 0, gaA: 0, gaB: 0, best: [] },
+    matchsDirect: 0,
+    together: { sessions: 0, wA: 0, dA: 0, lA: 0, gaA: 0, gaB: 0, gA: 0, aA: 0, gB: 0, aB: 0, best: [] },
+    versus:   { sessions: 0, wA: 0, dA: 0, lA: 0, wB: 0, dB: 0, lB: 0, gaA: 0, gaB: 0, gA: 0, aA: 0, gB: 0, aB: 0, best: [] },
   };
 
   const togetherRaw = [];
@@ -2256,8 +2257,8 @@ function computeRivalites(pA, pB, period) {
 
     if (sameEq) {
       result.together.sessions++;
-      result.together.gaA += gA + aA;
-      result.together.gaB += gB + aB;
+      result.together.gaA += gA + aA; result.together.gA += gA; result.together.aA += aA;
+      result.together.gaB += gB + aB; result.together.gB += gB; result.together.aB += aB;
 
       // W/D/L communs — par match de leur équipe
       let wMatch=0, dMatch=0, lMatch=0;
@@ -2274,8 +2275,8 @@ function computeRivalites(pA, pB, period) {
 
     if (oppEq) {
       result.versus.sessions++;
-      result.versus.gaA += gA + aA;
-      result.versus.gaB += gB + aB;
+      result.versus.gaA += gA + aA; result.versus.gA += gA; result.versus.aA += aA;
+      result.versus.gaB += gB + aB; result.versus.gB += gB; result.versus.aB += aB;
 
       // W/D/L séparés pour pA et pB
       (s.matchs||[]).filter(m => m.eqA===eqA||m.eqB===eqA).forEach(m => {
@@ -2309,6 +2310,8 @@ function computeRivalites(pA, pB, period) {
       });
     }
   });
+
+  result.matchsDirect = versusRaw.length;
 
   // Top 3 sessions ensemble (triées par gaA+gaB desc)
   result.together.best = togetherRaw
@@ -2377,9 +2380,9 @@ function renderRivBody(pA, pB, period) {
         <span style="font-size:20px;font-weight:600;color:var(--text3);line-height:1;padding:0 8px">${v.dA}</span>
         <span style="font-size:40px;font-weight:800;font-style:italic;line-height:1;text-align:right;color:${colB}">${v.wB}</span>
       </div>
-      <div style="border-top:1px solid var(--border);padding-top:8px;display:flex;justify-content:space-between;font-size:12px;color:var(--text3)">
-        <span style="font-weight:600;color:var(--text2)">${v.gaA}<span style="font-weight:400;color:var(--text3)"> G/A</span></span>
-        <span style="font-weight:600;color:var(--text2)">${v.gaB}<span style="font-weight:400;color:var(--text3)"> G/A</span></span>
+      <div style="border-top:1px solid var(--border);padding-top:8px;display:flex;justify-content:space-between;font-size:11px;color:var(--text3)">
+        <span><span style="font-weight:700;color:var(--text2)">${v.gA}</span> but${v.gA>1?'s':''} · <span style="font-weight:700;color:var(--text2)">${v.aA}</span> assist${v.aA>1?'s':''}</span>
+        <span><span style="font-weight:700;color:var(--text2)">${v.gB}</span> but${v.gB>1?'s':''} · <span style="font-weight:700;color:var(--text2)">${v.aB}</span> assist${v.aB>1?'s':''}</span>
       </div>
     </div>`;
   } else {
@@ -2396,8 +2399,8 @@ function renderRivBody(pA, pB, period) {
       <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-top:3px">session${r.total>1?'s':''}</div>
     </div>
     <div>
-      <div style="font-size:26px;font-weight:800;font-style:italic;line-height:1;color:var(--text)">${r.matchs}</div>
-      <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-top:3px">match${r.matchs>1?'s':''}</div>
+      <div style="font-size:26px;font-weight:800;font-style:italic;line-height:1;color:var(--text)">${r.matchsDirect}</div>
+      <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-top:3px">match${r.matchsDirect>1?'s':''}</div>
     </div>
     <div>
       <div style="font-size:26px;font-weight:800;font-style:italic;line-height:1;color:var(--text)">${r.together.sessions}</div>
@@ -2429,10 +2432,10 @@ function renderRivBody(pA, pB, period) {
         <span style="font-size:40px;font-weight:800;font-style:italic;line-height:1;color:var(--text3)">${t.dA}</span>
         <span style="font-size:40px;font-weight:800;font-style:italic;line-height:1;color:${lCol}">${t.lA}</span>
       </div>
-      <div style="border-top:1px solid var(--border);padding-top:8px;font-size:12px;color:var(--text3)">
-        <span style="font-weight:700;color:var(--text)">${pA}</span> <span style="font-weight:600;color:var(--text2)">${t.gaA}</span><span style="color:var(--text3)"> G/A</span>
-        &nbsp;·&nbsp;
-        <span style="font-weight:700;color:var(--text)">${pB}</span> <span style="font-weight:600;color:var(--text2)">${t.gaB}</span><span style="color:var(--text3)"> G/A</span>
+      <div style="border-top:1px solid var(--border);padding-top:8px;font-size:11px;color:var(--text3)">
+        <span style="font-weight:700;color:var(--text)">${pA}</span> : <span style="font-weight:700;color:var(--text2)">${t.gA}</span> but${t.gA>1?'s':''} · <span style="font-weight:700;color:var(--text2)">${t.aA}</span> assist${t.aA>1?'s':''}
+        <br>
+        <span style="font-weight:700;color:var(--text)">${pB}</span> : <span style="font-weight:700;color:var(--text2)">${t.gB}</span> but${t.gB>1?'s':''} · <span style="font-weight:700;color:var(--text2)">${t.aB}</span> assist${t.aB>1?'s':''}
       </div>
     </div>`;
   } else {
@@ -2536,7 +2539,7 @@ function renderStats() {
       ${bt.topScorer || bt.topAssister ? `<div class="kpi-sep" style="margin-top:2px"></div>
       <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--text2)">
         ${bt.topScorer   ? `<span>⚽ ${pLink(bt.topScorer.name)} — ${bt.topScorer.count} but${bt.topScorer.count>1?"s":""}</span>` : ""}
-        ${bt.topAssister ? `<span>🎯 ${pLink(bt.topAssister.name)} — ${bt.topAssister.count} passe${bt.topAssister.count>1?"s":""}</span>` : ""}
+        ${bt.topAssister ? `<span>🎯 ${pLink(bt.topAssister.name)} — ${bt.topAssister.count} assist${bt.topAssister.count>1?"s":""}</span>` : ""}
       </div>` : ""}
     </div>`;
   }
@@ -3126,7 +3129,7 @@ function renderJoueurs() {
     { key:"name",       label:"Joueur"         },
     { key:"taux",       label:"%"              },
     { key:"buts",       label:"Buts"           },
-    { key:"passes",     label:"Passes"         },
+    { key:"passes",     label:"Assists"        },
     { key:"absences",   label:"❌"             },
     { key:"blesses",    label:"🤕"             },
     { key:"pasRepondu", label:"⁉️"             },
@@ -3138,7 +3141,7 @@ function renderJoueurs() {
     { key:"name",       label:"Joueur"         },
     { key:"presences",  label:"✅"             },
     { key:"buts",       label:"Buts"           },
-    { key:"passes",     label:"Passes"         },
+    { key:"passes",     label:"Assists"        },
     { key:"absences",   label:"❌"             },
     { key:"blesses",    label:"🤕"             },
     { key:"pasRepondu", label:"⁉️"             },
@@ -3428,7 +3431,7 @@ function computePlayerDetailStats(playerName) {
 
 const ACH_DEFS = [
   { id:'buteur',   name:'Buteur',          icon:'⚽', tiers:[1,5,15,30,50,100],    hidden:false, key:'buts',           desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''}` },
-  { id:'passeur',  name:'Passeur',         icon:'🎯', tiers:[1,5,15,30,50,100],    hidden:false, key:'passes',         desc:v=>`${v} passe${v>1?'s':''} décisive${v>1?'s':''}` },
+  { id:'passeur',  name:'Passeur',         icon:'🎯', tiers:[1,5,15,30,50,100],    hidden:false, key:'passes',         desc:v=>`${v} assist${v>1?'s':''}` },
   { id:'ga',       name:'G/A',             icon:'📈', tiers:[5,20,50,100,200,350],  hidden:false, key:'gaTotal',        desc:v=>`${v} G/A cumulés` },
   { id:'fidele',   name:'Fidèle',          icon:'📅', tiers:[5,15,30,50,75,100],   hidden:false, key:'presences',      desc:v=>`${v} session${v>1?'s':''} jouée${v>1?'s':''}` },
   { id:'sac',      name:'Porteur de sac',  icon:'🎒', tiers:[1,3,7,15,25,40],      hidden:false, key:'sac',            desc:v=>`Sac amené ${v} fois` },
@@ -3714,7 +3717,7 @@ function openPlayerPanel(playerName) {
       </div>
       <div class="pp-stat-card">
         <div class="pp-stat-val ${st.passesDecisives>0?"blue":"muted"}">${st.passesDecisives}</div>
-        <div class="pp-stat-lbl">Passes dé.</div>
+        <div class="pp-stat-lbl">Assists</div>
         ${st.matchsJoues>0?`<div class="pp-stat-sub">moy. ${(st.passesDecisives/st.matchsJoues).toFixed(2).replace(".",",")} / m</div>`:""}
       </div>
       <div class="pp-stat-card">
@@ -3759,7 +3762,7 @@ function openPlayerPanel(playerName) {
     // Axes : Buteur · Passeur · Présence · Régularité (sessionsAvecGA) · Invincible · Intendant (sac+maillots)
     const _radarAxes = [
       { label: 'Buteur',     val: _achSt.buts },
-      { label: 'Passeur',    val: _achSt.passes },
+      { label: 'Assists',    val: _achSt.passes },
       { label: 'Présence',   val: _achSt.presences },
       { label: 'Régularité', val: _achSt.sessionsAvecGA },
       { label: 'Invincible', val: _achSt.invincible },
@@ -3826,7 +3829,7 @@ function openPlayerPanel(playerName) {
   if (st.bestMatch && (st.bestMatchGoals > 0 || st.bestMatchAssists > 0)) {
     const bmParts = [];
     if (st.bestMatchGoals > 0) bmParts.push(`${st.bestMatchGoals} but${st.bestMatchGoals>1?"s":""}`);
-    if (st.bestMatchAssists > 0) bmParts.push(`${st.bestMatchAssists} passe${st.bestMatchAssists>1?"s":""}`);
+    if (st.bestMatchAssists > 0) bmParts.push(`${st.bestMatchAssists} assist${st.bestMatchAssists>1?"s":""}`);
     h += `<div>
       <div class="pp-section-title">Meilleur match ⚽️</div>
       <div class="pp-match-card">
