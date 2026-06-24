@@ -2844,7 +2844,7 @@ const ACH_DEFS = [
   { id:'fantome',  name:'Fantôme',         icon:'👻', tiers:[3,5,8,12,20,30],      hidden:true,  key:'fantomeStreak',  desc:v=>`${v} sessions de suite sans G/A` },
   { id:'legende',  name:'Légende',         icon:'🏅', tiers:[5,15,30,50], tierOffset:2, hidden:true, key:'legendeCount', desc:v=>`${v} niveaux débloqués` },
   { id:'assidu',   name:'Assidu',          icon:'🗓️', tiers:[1,2,3,4],  tierOffset:2,  hidden:false, key:'assiduAnnes',  desc:v=>v===4?'1 an à ≥90% de présence':v===3?'1 an à ≥80% de présence':v===2?'1 an à ≥70% de présence':'1 an à ≥60% de présence' },
-  { id:'comete',   name:'La Comète',       icon:'🌠', tiers:[1,2,3,4],  tierOffset:2,  hidden:true,  key:'cometeAnnes',  desc:v=>v===4?'1 an à ≤10% de présence':v===3?'1 an à ≤20% de présence':v===2?'1 an à ≤30% de présence':'1 an à ≤40% de présence' },
+  { id:'comete',   name:'La Comète',       icon:'🌠', tiers:[1,2,3,4],  tierOffset:2,  tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'cometeAnnes',  desc:v=>v===4?'1 an à ≤10% de présence':v===3?'1 an à ≤20% de présence':v===2?'1 an à ≤30% de présence':'1 an à ≤40% de présence' },
   { id:'zerovic',  name:'Disette',         icon:'🌵', tiers:[1,5,15,30,50,75],     hidden:true,  key:'zeroVict',       desc:v=>`${v} soirée${v>1?'s':''} sans victoire` },
   { id:'toutnul',  name:'Statu Quo',       icon:'⚖️', tiers:[1,2,5,10,20,35],      hidden:true,  key:'toutNul',        desc:v=>`${v} soirée${v>1?'s':''} 100% nuls` },
 ];
@@ -2976,7 +2976,7 @@ function renderAchievementsGrid(achSt) {
     let tip='';
     if(locked){ tip='Haut fait inconnu'; }
     else {
-      const tn=ACH_TIER_NAMES[lv]||`Niveau ${lv}`;
+      const tn=(ach.tierNames?ach.tierNames[rawLv-1]:null)||ACH_TIER_NAMES[lv]||`Niveau ${lv}`;
       tip=`${ach.name} — ${tn}\n${ach.desc(val)}${!ach.fixedTier&&rawLv<maxT?`\nProchain seuil : ${ach.tiers[rawLv]}`:''}`;
     }
 
@@ -3006,7 +3006,7 @@ function renderAchievementsLegend() {
       ach.tiers.forEach((threshold, i) => {
         const rawNum = i + 1;
         const displayNum = Math.min(6, rawNum + (ach.tierOffset||0));
-        const tierName = ACH_TIER_NAMES[displayNum] || `Niv.${displayNum}`;
+        const tierName = (ach.tierNames?ach.tierNames[i]:null) || ACH_TIER_NAMES[displayNum] || `Niv.${displayNum}`;
         h += `<div class="ach-cell t${displayNum}" style="height:auto;min-height:90px;padding:10px 6px;cursor:default">
           <span class="ach-icon">${ach.icon}</span>
           <span class="ach-label" style="opacity:1;color:currentColor">${tierName}</span>
