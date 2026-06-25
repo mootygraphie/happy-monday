@@ -4017,9 +4017,9 @@ function _loadSessionIntoDraft(session) {
   Object.entries(session.presences).forEach(([p, info]) => {
     if (!ALL_PLAYERS.includes(p)) {
       tempJokers.push(p);
-      presences[p] = { statut: (info.statut === "Présent" || info.statut === "Blessé") ? info.statut : _JOKER_NC, equipe: info.equipe || "", joker: true, temp: true };
+      presences[p] = { statut: info.statut === "Présent" ? "Présent" : _JOKER_NC, equipe: info.equipe || "", joker: true, temp: true };
     } else if (JOKERS.has(p)) {
-      presences[p] = { statut: (info.statut === "Présent" || info.statut === "Blessé") ? info.statut : _JOKER_NC, equipe: info.equipe || "" };
+      presences[p] = { statut: info.statut === "Présent" ? "Présent" : _JOKER_NC, equipe: info.equipe || "" };
     } else {
       presences[p] = { statut: info.statut, equipe: info.equipe || "" };
     }
@@ -4069,8 +4069,7 @@ function _presenceRowHTML(p, statut, isJoker, removable) {
       <span class="saisie-player-name">${p}<span class="joker-tag">+1</span></span>
       <div class="saisie-status-btns">
         <button class="saisie-statut-btn ${statut==="Présent"?"active-present":""}" data-player="${p}" data-statut="Présent">✅</button>
-        <button class="saisie-statut-btn ${statut==="Blessé"?"active-blesse":""}" data-player="${p}" data-statut="Blessé">🤕</button>
-        <button class="saisie-statut-btn ${statut===_JOKER_NC?"active-nc":""}" data-player="${p}" data-statut="${_JOKER_NC}" title="Non convoqué">—</button>
+        <button class="saisie-statut-btn ${statut===_JOKER_NC?"active-nc":""}" data-player="${p}" data-statut="${_JOKER_NC}" title="Non convoqué">🫥</button>
         ${removable ? `<button class="saisie-remove-temp-joker" data-player="${p}" title="Retirer ce joueur" style="background:transparent;border:none;color:var(--fg3);cursor:pointer;font-size:15px;padding:0 4px;margin-left:4px">✕</button>` : ""}
       </div>
     </div>`;
