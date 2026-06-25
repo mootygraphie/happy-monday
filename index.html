@@ -2373,21 +2373,22 @@ function renderRivBody(pA, pB, period) {
   h += `<div class="riv-grid">`;
 
   // Récap (1re carte) — 2×2
+  const matchsTogether = r.together.wA + r.together.dA + r.together.lA;
   h += `<div class="riv-col-card" style="display:grid;grid-template-columns:1fr 1fr;gap:12px 4px;align-content:center;text-align:center;border-color:#FEDB00;border-width:1px">
     <div>
       <div style="font-size:26px;font-weight:800;font-style:italic;line-height:1;color:var(--text)">${r.total}</div>
       <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-top:3px">session${r.total>1?'s':''}</div>
     </div>
     <div>
-      <div style="font-size:26px;font-weight:800;font-style:italic;line-height:1;color:var(--text)">${r.matchsDirect}</div>
-      <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-top:3px">match${r.matchsDirect>1?'s':''}</div>
+      <div style="font-size:26px;font-weight:800;font-style:italic;line-height:1;color:var(--text)">${r.matchs}</div>
+      <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-top:3px">match${r.matchs>1?'s':''}</div>
     </div>
     <div>
-      <div style="font-size:26px;font-weight:800;font-style:italic;line-height:1;color:var(--text)">${r.together.sessions}</div>
+      <div style="font-size:26px;font-weight:800;font-style:italic;line-height:1;color:var(--text)">${matchsTogether}</div>
       <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-top:3px">ensemble</div>
     </div>
     <div>
-      <div style="font-size:26px;font-weight:800;font-style:italic;line-height:1;color:var(--text)">${r.versus.sessions}</div>
+      <div style="font-size:26px;font-weight:800;font-style:italic;line-height:1;color:var(--text)">${r.matchsDirect}</div>
       <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-top:3px">face à face</div>
     </div>
   </div>`;
