@@ -3774,7 +3774,7 @@ function openPlayerPanel(playerName) {
     const _radarAxes = [
       { label: 'Buteur',    val: _achSt.buts },
       { label: 'Défenseur', val: _achSt.cleanSheets },
-      { label: 'Blessures', val: _achSt.injuries },
+      { label: 'Blessures', val: _achSt.sessionsBlesses },
       { label: 'Intendant', val: _achSt.sac + _achSt.maillots },
       { label: 'Présence',  val: _achSt.presences },
       { label: 'Passeur',   val: _achSt.passes },
@@ -3783,7 +3783,7 @@ function openPlayerPanel(playerName) {
     const _radarMaxes = _radarAxes.map((ax, i) => {
       return Math.max(1, ...ALL_PLAYERS.map(p => {
         const s = computeAchievementStats(p);
-        const vals = [s.buts, s.cleanSheets, s.injuries, s.sac+s.maillots, s.presences, s.passes];
+        const vals = [s.buts, s.cleanSheets, s.sessionsBlesses, s.sac+s.maillots, s.presences, s.passes];
         return vals[i];
       }));
     });
