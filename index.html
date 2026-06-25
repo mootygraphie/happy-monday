@@ -2289,14 +2289,12 @@ function computeRivalites(pA, pB, period) {
       result.versus.gaA += gA + aA; result.versus.gA += gA; result.versus.aA += aA;
       result.versus.gaB += gB + aB; result.versus.gB += gB; result.versus.aB += aB;
 
-      // W/D/L séparés pour pA et pB
-      (s.matchs||[]).filter(m => m.eqA===eqA||m.eqB===eqA).forEach(m => {
+      // W/D/L uniquement sur les matchs directs eqA vs eqB
+      (s.matchs||[]).filter(m => (m.eqA===eqA&&m.eqB===eqB)||(m.eqA===eqB&&m.eqB===eqA)).forEach(m => {
         const w = m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
-        if (w===eqA) result.versus.wA++; else if (w===null) result.versus.dA++; else result.versus.lA++;
-      });
-      (s.matchs||[]).filter(m => m.eqA===eqB||m.eqB===eqB).forEach(m => {
-        const w = m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
-        if (w===eqB) result.versus.wB++; else if (w===null) result.versus.dB++; else result.versus.lB++;
+        if (w===eqA)      { result.versus.wA++; result.versus.lB++; }
+        else if (w===eqB) { result.versus.wB++; result.versus.lA++; }
+        else              { result.versus.dA++; result.versus.dB++; }
       });
 
       // Confrontations marquantes : un entry PAR MATCH direct eqA vs eqB
