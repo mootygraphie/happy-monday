@@ -697,6 +697,7 @@
   .saisie-statut-btn.active-absent   { background: #e74c3c25; border-color: #e74c3c; box-shadow: 0 0 0 2px #e74c3c55; }
   .saisie-statut-btn.active-blesse   { background: #f39c1225; border-color: #f39c12; box-shadow: 0 0 0 2px #f39c1255; }
   .saisie-statut-btn.active-nr       { background: #99999925; border-color: #999;    box-shadow: 0 0 0 2px #99999955; }
+  .saisie-statut-btn.active-nc       { background: #44444420; border-color: #666;    box-shadow: 0 0 0 2px #66666640; color: var(--fg3); }
   .saisie-jokers-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--fg3); margin: 14px 0 8px; }
   .saisie-logistique { display: flex; gap: 16px; margin-top: 18px; flex-wrap: wrap; }
   .saisie-logistique-row { display: flex; align-items: center; gap: 10px; }
@@ -3989,12 +3990,12 @@ let _editMode = false;
 
 const _STATUTS_REG  = ["Présent", "Absent", "Blessé", "Pas répondu"];
 const _STATUT_CLS   = { "Présent":"active-present", "Absent":"active-absent", "Blessé":"active-blesse", "Pas répondu":"active-nr" };
-const _JOKER_ABSENT = "_joker_absent";
+const _JOKER_NC = "Non convoqué";
 
 function _newDraft() {
   const presences = {};
   ALL_PLAYERS.forEach(p => {
-    presences[p] = { statut: JOKERS.has(p) ? _JOKER_ABSENT : "Pas répondu", equipe: "" };
+    presences[p] = { statut: JOKERS.has(p) ? _JOKER_NC : "Pas répondu", equipe: "" };
   });
   return { date: "", sac: "", maillots: "", presences, matchs: [], tempJokers: [] };
 }
@@ -4010,15 +4011,15 @@ function _loadDraft() {
 function _loadSessionIntoDraft(session) {
   const presences = {};
   ALL_PLAYERS.forEach(p => {
-    presences[p] = { statut: JOKERS.has(p) ? _JOKER_ABSENT : "Pas répondu", equipe: "" };
+    presences[p] = { statut: JOKERS.has(p) ? _JOKER_NC : "Pas répondu", equipe: "" };
   });
   const tempJokers = [];
   Object.entries(session.presences).forEach(([p, info]) => {
     if (!ALL_PLAYERS.includes(p)) {
       tempJokers.push(p);
-      presences[p] = { statut: info.statut === "Présent" ? "Présent" : _JOKER_ABSENT, equipe: info.equipe || "", joker: true, temp: true };
+      presences[p] = { statut: (info.statut === "Présent" || info.statut === "Blessé") ? info.statut : _JOKER_NC, equipe: info.equipe || "", joker: true, temp: true };
     } else if (JOKERS.has(p)) {
-      presences[p] = { statut: info.statut === "Présent" ? "Présent" : _JOKER_ABSENT, equipe: info.equipe || "" };
+      presences[p] = { statut: (info.statut === "Présent" || info.statut === "Blessé") ? info.statut : _JOKER_NC, equipe: info.equipe || "" };
     } else {
       presences[p] = { statut: info.statut, equipe: info.equipe || "" };
     }
@@ -4064,12 +4065,12 @@ function _playersOfTeam(color) {
 
 function _presenceRowHTML(p, statut, isJoker, removable) {
   if (isJoker) {
-    const on = statut === "Présent";
     return `<div class="saisie-player-row">
       <span class="saisie-player-name">${p}<span class="joker-tag">+1</span></span>
       <div class="saisie-status-btns">
-        <button class="saisie-statut-btn ${on?"active-present":""}" data-player="${p}" data-statut="Présent">✅</button>
-        <button class="saisie-statut-btn ${!on?"active-absent":""}" data-player="${p}" data-statut="${_JOKER_ABSENT}">❌</button>
+        <button class="saisie-statut-btn ${statut==="Présent"?"active-present":""}" data-player="${p}" data-statut="Présent">✅</button>
+        <button class="saisie-statut-btn ${statut==="Blessé"?"active-blesse":""}" data-player="${p}" data-statut="Blessé">🤕</button>
+        <button class="saisie-statut-btn ${statut===_JOKER_NC?"active-nc":""}" data-player="${p}" data-statut="${_JOKER_NC}" title="Non convoqué">—</button>
         ${removable ? `<button class="saisie-remove-temp-joker" data-player="${p}" title="Retirer ce joueur" style="background:transparent;border:none;color:var(--fg3);cursor:pointer;font-size:15px;padding:0 4px;margin-left:4px">✕</button>` : ""}
       </div>
     </div>`;
@@ -4203,7 +4204,7 @@ function renderSaisie() {
       </div>
       <div class="saisie-jokers-title">Joueurs +1</div>
       <div class="saisie-presences-grid">
-        ${jokerPlayers.map(p => _presenceRowHTML(p, _draft.presences[p]?.statut||_JOKER_ABSENT, true, false)).join("")}
+        ${jokerPlayers.map(p => _presenceRowHTML(p, _draft.presences[p]?.statut||_JOKER_NC, true, false)).join("")}
         ${(_draft.tempJokers||[]).map(p => _presenceRowHTML(p, _draft.presences[p]?.statut||"Présent", true, true)).join("")}
       </div>
       <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
@@ -4268,7 +4269,7 @@ async function _commitSession() {
 
   const finalPresences = {};
   Object.entries(_draft.presences).forEach(([p, info]) => {
-    if (info.statut === _JOKER_ABSENT) return;
+    if (info.statut === _JOKER_NC) return;
     finalPresences[p] = { statut: info.statut, equipe: info.equipe || "" };
     if ((JOKERS.has(p) || (_draft.tempJokers||[]).includes(p)) && info.statut === "Présent") finalPresences[p].joker = true;
   });
