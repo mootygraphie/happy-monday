@@ -841,7 +841,11 @@
   .riv-sess-date { color:var(--text3); min-width:48px; flex-shrink:0; }
   .riv-sess-ga { color:var(--text2); flex:1; }
   .riv-match-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
-  @media (max-width:480px) { .riv-match-grid { grid-template-columns:1fr 1fr; } }
+  @media (max-width:600px) {
+    .riv-match-grid { display:flex; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding-bottom:4px; gap:8px; }
+    .riv-match-grid::-webkit-scrollbar { display:none; }
+    .riv-match-card { min-width:160px; flex-shrink:0; }
+  }
   .riv-match-card { background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:14px 10px; }
   .riv-match-date { font-size:11px; color:var(--text3); text-align:center; margin-bottom:10px; }
   .riv-match-score-row { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; }
