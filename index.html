@@ -3493,7 +3493,7 @@ function computeAchievementStats(playerName) {
     const info=s.presences[playerName]; if(!info){inEp=false;return;}
     const yr=new Date(s.date).getFullYear();
     if(!yearMap[yr]) yearMap[yr]={present:0,total:0};
-    yearMap[yr].total++;
+    if(info.statut==="Présent"||info.statut==="Absent") yearMap[yr].total++;
 
     if(info.statut==="Présent") {
       presences++; yearMap[yr].present++; inEp=false;
