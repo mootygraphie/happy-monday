@@ -2257,7 +2257,7 @@ function renderAchievementsClassement() {
 }
 
 function renderAchCollectionneurs() {
-  const PER_PAGE = 5;
+  const PER_PAGE = 10;
   const players = ALL_PLAYERS.map(p => {
     const st = _achClsStats[p] || {};
     const hautsFaits = ACH_DEFS.filter(a => _achLevel(st[a.key] || 0, a.tiers) > 0).length;
@@ -2762,7 +2762,7 @@ function renderStats() {
 
     const _list = container.querySelector('#ach-collect-list');
     if (_list) {
-      const PER_PAGE = 5;
+      const PER_PAGE = 10;
       const MEDALS = ['🥇','🥈','🥉'];
       let _page = 0;
       const _prevBtn = container.querySelector('#ach-collect-prev');
