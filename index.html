@@ -1167,8 +1167,19 @@ async function _fbLoad() {
     const draftSnap = await _db.ref('config/draft').once('value');
     const fbDraft = draftSnap.val();
     if (fbDraft) {
+      // Firebase drops empty arrays — restore them
+      if (!Array.isArray(fbDraft.matchs)) fbDraft.matchs = [];
+      if (!Array.isArray(fbDraft.tempJokers)) fbDraft.tempJokers = [];
+      fbDraft.matchs.forEach(m => {
+        if (!Array.isArray(m.buteursA))  m.buteursA  = [];
+        if (!Array.isArray(m.buteursB))  m.buteursB  = [];
+        if (!Array.isArray(m.passeursA)) m.passeursA = [];
+        if (!Array.isArray(m.passeursB)) m.passeursB = [];
+        if (!Array.isArray(m.gardiensA)) m.gardiensA = ["",""];
+        if (!Array.isArray(m.gardiensB)) m.gardiensB = ["",""];
+      });
       _draft = fbDraft;
-      localStorage.setItem('hmft_draft', JSON.stringify(fbDraft));
+      localStorage.setItem('hmft_draft', JSON.stringify(_draft));
     }
 
     // Config : joueurs extra et jokers (Firebase = source de vérité)
@@ -4248,7 +4259,7 @@ function _buildMatchsSectionHTML() {
   const teams = _activeTeams();
   if (teams.length < 2) return `<p class="saisie-empty">Assignez au moins 2 équipes pour ajouter des matchs.</p>
     <button class="saisie-add-match" id="saisie-add-match" disabled style="opacity:.4;cursor:default">+ Ajouter un match</button>`;
-  return _draft.matchs.map((m, i) => _buildMatchCardHTML(m, i, teams)).join("") +
+  return (_draft.matchs || []).map((m, i) => _buildMatchCardHTML(m, i, teams)).join("") +
     `<button class="saisie-add-match" id="saisie-add-match">+ Ajouter un match</button>`;
 }
 
@@ -4466,6 +4477,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   if (e.target.id === "saisie-commit") { _commitSession(); return; }
   if (e.target.id === "saisie-add-match") {
     const teams = _activeTeams();
+    if (!Array.isArray(_draft.matchs)) _draft.matchs = [];
     _draft.matchs.push({ eqA: teams[0]||"", eqB: teams[1]||"", scoreA: 0, scoreB: 0, buteursA: [], buteursB: [], passeursA: [], passeursB: [], mt1A: 0, mt1B: 0, gardiensA: ["",""], gardiensB: ["",""] });
     _reRenderMatchs(); return;
   }
