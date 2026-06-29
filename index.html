@@ -2260,7 +2260,7 @@ function renderAchCollectionneurs() {
   const PER_PAGE = 5;
   const players = ALL_PLAYERS.map(p => {
     const st = _achClsStats[p] || {};
-    const hautsFaits = ACH_DEFS.filter(a => a.id !== 'legende' && _achLevel(st[a.key] || 0, a.tiers) > 0).length;
+    const hautsFaits = ACH_DEFS.filter(a => _achLevel(st[a.key] || 0, a.tiers) > 0).length;
     const niveaux = ACH_DEFS.reduce((sum, a) => sum + _achLevel(st[a.key] || 0, a.tiers), 0);
     return { name: p, niveaux, hautsFaits };
   }).sort((a, b) => b.niveaux - a.niveaux || a.name.localeCompare(b.name));
