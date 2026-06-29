@@ -2252,7 +2252,50 @@ function renderAchievementsClassement() {
 
   return `<div class="section-label" style="margin-top:2rem">Hauts faits — Classement</div>
     <div class="ach-cls-pills" id="ach-cls-pills">${pillsHtml}</div>
-    <div id="ach-cls-body">${renderAchClsBody('legende')}</div>`;
+    <div id="ach-cls-body">${renderAchClsBody('legende')}</div>
+    ${renderAchCollectionneurs()}`;
+}
+
+function renderAchCollectionneurs() {
+  const PER_PAGE = 5;
+  const players = ALL_PLAYERS.map(p => {
+    const st = _achClsStats[p] || {};
+    const niveaux = st.legendeCount || 0;
+    const hautsFaits = ACH_DEFS.filter(a => _achLevel(st[a.key] || 0, a.tiers) > 0).length;
+    return { name: p, niveaux, hautsFaits };
+  }).sort((a, b) => b.niveaux - a.niveaux || a.name.localeCompare(b.name));
+
+  const total = players.length;
+  const pages = Math.ceil(total / PER_PAGE);
+
+  const rows = players.map((p, i) =>
+    `<div class="ach-cls-row" data-hf="${p.hautsFaits}" data-niv="${p.niveaux}"${i >= PER_PAGE ? ' style="display:none"' : ''}>
+      <span class="ach-cls-rank"></span>
+      <button class="player-link ach-cls-name" data-player="${p.name}">${p.name}</button>
+      <span style="display:flex;gap:14px;align-items:center;margin-left:auto">
+        <span style="font-size:12px"><strong style="color:var(--text)">${p.hautsFaits}</strong> <span style="color:var(--text3)">HF</span></span>
+        <span style="font-size:12px"><strong style="color:var(--text)">${p.niveaux}</strong> <span style="color:var(--text3)">niv.</span></span>
+      </span>
+    </div>`
+  ).join('');
+
+  const pagination = total > PER_PAGE
+    ? `<div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+        <button id="ach-collect-prev" class="saisie-btn secondary" disabled>←</button>
+        <span id="ach-collect-info" style="font-size:12px;color:var(--text3)">1 / ${pages}</span>
+        <button id="ach-collect-next" class="saisie-btn secondary">→</button>
+      </div>`
+    : '';
+
+  return `<div style="display:flex;align-items:center;gap:10px;margin-top:2rem;margin-bottom:.75rem">
+      <span class="section-label" style="margin:0">Collectionneurs</span>
+      <div style="display:flex;gap:4px;margin-left:auto">
+        <button class="pill active" id="ach-sort-niv" style="padding:4px 12px;font-size:12px">Niveaux</button>
+        <button class="pill" id="ach-sort-hf" style="padding:4px 12px;font-size:12px">Hauts faits</button>
+      </div>
+    </div>
+    <div id="ach-collect-list">${rows}</div>
+    ${pagination}`;
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -2716,6 +2759,51 @@ function renderStats() {
       pill.classList.add('active');
       document.getElementById('ach-cls-body').innerHTML = renderAchClsBody(pill.dataset.acid);
     });
+
+    const _list = container.querySelector('#ach-collect-list');
+    if (_list) {
+      const PER_PAGE = 5;
+      const MEDALS = ['🥇','🥈','🥉'];
+      let _page = 0;
+      const _prevBtn = container.querySelector('#ach-collect-prev');
+      const _nextBtn = container.querySelector('#ach-collect-next');
+      const _infoEl  = container.querySelector('#ach-collect-info');
+      const _sortNiv = container.querySelector('#ach-sort-niv');
+      const _sortHF  = container.querySelector('#ach-sort-hf');
+
+      const _updatePage = () => {
+        const children = Array.from(_list.children);
+        const pages = Math.ceil(children.length / PER_PAGE);
+        children.forEach((r, i) => {
+          r.style.display = (i >= _page * PER_PAGE && i < (_page + 1) * PER_PAGE) ? '' : 'none';
+          r.querySelector('.ach-cls-rank').textContent = MEDALS[i] || `${i + 1}.`;
+        });
+        if (_prevBtn) _prevBtn.disabled = _page === 0;
+        if (_nextBtn) _nextBtn.disabled = _page === pages - 1;
+        if (_infoEl) _infoEl.textContent = `${_page + 1} / ${pages}`;
+      };
+
+      const _sortBy = key => {
+        Array.from(_list.children)
+          .sort((a, b) => (+b.dataset[key]) - (+a.dataset[key]) || a.querySelector('.ach-cls-name').textContent.localeCompare(b.querySelector('.ach-cls-name').textContent))
+          .forEach(r => _list.appendChild(r));
+        _page = 0;
+        _updatePage();
+      };
+
+      if (_prevBtn) _prevBtn.addEventListener('click', () => { _page--; _updatePage(); });
+      if (_nextBtn) _nextBtn.addEventListener('click', () => { _page++; _updatePage(); });
+      if (_sortNiv) _sortNiv.addEventListener('click', () => {
+        _sortNiv.classList.add('active'); _sortHF?.classList.remove('active');
+        _sortBy('niv');
+      });
+      if (_sortHF) _sortHF.addEventListener('click', () => {
+        _sortHF.classList.add('active'); _sortNiv?.classList.remove('active');
+        _sortBy('hf');
+      });
+
+      _updatePage();
+    }
   }
 }
 
@@ -3499,7 +3587,7 @@ const ACH_DEFS = [
   { id:'soiree',   name:'Soirée parfaite', icon:'🌟', tiers:[1,2,4,8,15,25],       hidden:false, key:'soireeParfaite', desc:v=>`${v} soirée${v>1?'s':''} parfaite${v>1?'s':''}` },
   { id:'dbl',      name:'Double Double',   icon:'💥', tiers:[1,5,15,30,50,100],    hidden:false, key:'doubleDouble',   desc:v=>`${v} match${v>1?'s':''} avec 1G+1A` },
   { id:'invic',    name:'Invincible',      icon:'🛡️', tiers:[1,5,10,20,35,50],     hidden:false, key:'invincible',     desc:v=>`${v} soirée${v>1?'s':''} sans défaite` },
-  { id:'defenseFer',name:'Défense de Fer',  icon:'🔒', tiers:[1,5,15,30,50,100],    hidden:false, key:'cleanSheets',          desc:v=>`${v} soirée${v>1?'s':''} sans encaisser` },
+  { id:'defenseFer',name:'Défense de Fer',  icon:'🔒', tiers:[1,5,15,30,50,100],    hidden:false, key:'cleanSheets',          desc:v=>`${v} match${v>1?'s':''} sans encaisser` },
   { id:'mur',      name:'Le Mur',          icon:'🧱', tiers:[1,5,15,30,50,100],    hidden:false, key:'gardiensCleanSheets',  desc:v=>`${v} demi-match${v>1?'s':''} gardien sans but encaissé` },
   { id:'passoire', name:'La Passoire',     icon:'🪣', tiers:[5,15,30,50,100,200],  hidden:true,  key:'gardiensButsEncaisses', desc:v=>`${v} but${v>1?'s':''} encaissé${v>1?'s':''} en gardant les buts` },
   { id:'remontada',name:'Remontada',       icon:'🌅', tiers:[1,5,15,30,50,100],    hidden:false, key:'remontadas',           desc:v=>`${v} remontada${v>1?'s':''}` },
@@ -3648,6 +3736,7 @@ function renderAchievementsGrid(achSt) {
     const val=achSt[ach.key]||0;
     const rawLv=_achLevel(val,ach.tiers);
     const locked=rawLv===0;
+    if(ach.hidden&&locked)return;
     const lv=locked?0:ach.fixedTier?ach.fixedTier:Math.min(6,rawLv+(ach.tierOffset||0));
     const maxT=ach.tiers.length;
 
