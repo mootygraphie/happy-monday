@@ -626,6 +626,23 @@
   html.light .ach-cell.ach-bonnet.t4 { background:rgba(120,80,30,.1);   border-color:rgba(120,80,30,.3);   color:#7C4F1A; }
   html.light .ach-cell.ach-bonnet.t5 { background:rgba(55,68,78,.12);   border-color:rgba(55,68,78,.35);   color:#455A64; }
   html.light .ach-cell.ach-bonnet.t6 { background:rgba(30,32,36,.15);   border-color:rgba(30,32,36,.4);    color:#374151; }
+  /* La Passoire — couleurs eau/bleu-froid (négatif) */
+  .ach-cell.ach-passoire.t1 { background:rgba(30,144,200,.12); border:1px solid rgba(30,144,200,.32); color:#5BA8D0; animation:none; }
+  .ach-cell.ach-passoire.t2 { background:rgba(20,120,180,.14); border:1px solid rgba(20,120,180,.38); color:#4A9EC8; animation:none; }
+  .ach-cell.ach-passoire.t3 { background:rgba(10,90,160,.16);  border:1px solid rgba(10,90,160,.42);  color:#3B8EC0; animation:none; }
+  .ach-cell.ach-passoire.t4 { background:rgba(5,60,130,.18);   border:1px solid rgba(5,60,130,.46);   color:#2E7AB8; animation:none; }
+  .ach-cell.ach-passoire.t5 { background:rgba(0,30,90,.22);    border:1px solid rgba(0,80,160,.5);    color:#2266A0; animation:none; }
+  .ach-cell.ach-passoire.t6 { background:rgba(0,10,50,.72);    border:1px solid rgba(0,60,140,.55);   color:#1A4F88; animation:achPassoire 4s ease-in-out infinite; }
+  .ach-cell.ach-passoire.t1::after,.ach-cell.ach-passoire.t2::after,.ach-cell.ach-passoire.t3::after,
+  .ach-cell.ach-passoire.t4::after,.ach-cell.ach-passoire.t5::after { content: none; }
+  .ach-cell.ach-passoire.t6::after { --asd:3s; background:linear-gradient(90deg,transparent,rgba(0,140,255,.18),transparent); }
+  @keyframes achPassoire { 0%,100%{border-color:rgba(0,60,140,.55);color:#1A4F88} 50%{border-color:rgba(0,100,220,.7);color:#2060B0;box-shadow:0 0 10px rgba(0,80,200,.2)} }
+  html.light .ach-cell.ach-passoire.t1 { background:rgba(30,100,200,.08); border-color:rgba(30,100,200,.25); color:#1E64C8; }
+  html.light .ach-cell.ach-passoire.t2 { background:rgba(20,80,180,.1);   border-color:rgba(20,80,180,.3);   color:#1450B4; }
+  html.light .ach-cell.ach-passoire.t3 { background:rgba(10,60,160,.1);   border-color:rgba(10,60,160,.3);   color:#0A3CA0; }
+  html.light .ach-cell.ach-passoire.t4 { background:rgba(5,40,130,.12);   border-color:rgba(5,40,130,.32);   color:#052882; }
+  html.light .ach-cell.ach-passoire.t5 { background:rgba(0,20,90,.1);     border-color:rgba(0,40,120,.28);   color:#001464; }
+  html.light .ach-cell.ach-passoire.t6 { background:rgba(0,10,50,.12);    border-color:rgba(0,30,100,.35);   color:#000A3C; }
   /* ── Hauts faits — classement admin ── */
   .ach-cls-pills { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:12px; }
   .ach-cls-pill {
@@ -731,6 +748,13 @@
   .saisie-add-match:hover { border-color: var(--fg); color: var(--fg); background: var(--bg3); }
   .saisie-empty { color: var(--fg3); font-size: 14px; font-style: italic; margin: 0; }
   .saisie-status { font-size: 12px; }
+  .saisie-mt-section { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; gap: 8px; }
+  .saisie-mt-header { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text3); }
+  .saisie-gardiens-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .saisie-gardien-col { display: flex; flex-direction: column; gap: 5px; }
+  .saisie-gardien-col-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; }
+  .saisie-gardien-mt-row { display: flex; align-items: center; gap: 5px; }
+  .saisie-gardien-mt-row .mt-label { font-size: 10px; font-weight: 700; color: var(--text3); min-width: 26px; text-transform: uppercase; letter-spacing: .04em; }
 
   /* ── Ballon d'Or ── */
   .ballon-dor-card {
@@ -3463,7 +3487,10 @@ const ACH_DEFS = [
   { id:'soiree',   name:'Soirée parfaite', icon:'🌟', tiers:[1,2,4,8,15,25],       hidden:false, key:'soireeParfaite', desc:v=>`${v} soirée${v>1?'s':''} parfaite${v>1?'s':''}` },
   { id:'dbl',      name:'Double Double',   icon:'💥', tiers:[1,5,15,30,50,100],    hidden:false, key:'doubleDouble',   desc:v=>`${v} match${v>1?'s':''} avec 1G+1A` },
   { id:'invic',    name:'Invincible',      icon:'🛡️', tiers:[1,5,10,20,35,50],     hidden:false, key:'invincible',     desc:v=>`${v} soirée${v>1?'s':''} sans défaite` },
-  { id:'mur',      name:'Le Mur',          icon:'🧱', tiers:[1,5,15,30,50,100],    hidden:false, key:'cleanSheets',    desc:v=>`${v} clean sheet${v>1?'s':''}` },
+  { id:'defenseFer',name:'Défense de Fer',  icon:'🔒', tiers:[1,5,15,30,50,100],    hidden:false, key:'cleanSheets',          desc:v=>`${v} soirée${v>1?'s':''} sans encaisser` },
+  { id:'mur',      name:'Le Mur',          icon:'🧱', tiers:[1,5,15,30,50,100],    hidden:false, key:'gardiensCleanSheets',  desc:v=>`${v} demi-match${v>1?'s':''} gardien sans but encaissé` },
+  { id:'passoire', name:'La Passoire',     icon:'🪣', tiers:[5,15,30,50,100,200],  hidden:true,  key:'gardiensButsEncaisses', desc:v=>`${v} but${v>1?'s':''} encaissé${v>1?'s':''} en gardant les buts` },
+  { id:'remontada',name:'Remontada',       icon:'🌅', tiers:[1,5,15,30,50,100],    hidden:false, key:'remontadas',           desc:v=>`${v} remontada${v>1?'s':''}` },
   { id:'duo',      name:'Duo de légende',  icon:'🤝', tiers:[3,7,15,25,40,60],     hidden:false, key:'bestDuo',        desc:v=>`Duo répété ${v} fois` },
   { id:'mvp',      name:'Meilleur joueur', icon:'👑', tiers:[1,3,7,15,25,40],      hidden:false, key:'mvp',            desc:v=>`MVP de soirée ${v} fois` },
   { id:'pois',     name:'Poissard',        icon:'🪨', tiers:[1,2,4,7,12,20],       hidden:true,  key:'csc',            desc:v=>`${v} CSC` },
@@ -3485,6 +3512,7 @@ function computeAchievementStats(playerName) {
   const _ss = [...SESSIONS].sort((a,b)=>new Date(a.date)-new Date(b.date));
   let buts=0,passes=0,presences=0,absences=0,injuries=0,sessionsBlesses=0,sac=0,maillots=0;
   let hattricks=0,doubleDouble=0,cleanSheets=0,mvp=0,soireeParfaite=0,invincible=0,csc=0,zeroVict=0,toutNul=0;
+  let gardiensCleanSheets=0,gardiensButsEncaisses=0,remontadas=0;
   const teamsSet=new Set(), duoMap={};
   let inEp=false, bestStreak=0, curStreak=0, fantomeStreak=0, sessionsAvecGA=0;
   const yearMap={};
@@ -3528,6 +3556,18 @@ function computeAchievementStats(playerName) {
           if(g+a>0){sessWithGA++;curStreak++;if(curStreak>bestStreak)bestStreak=curStreak;}
           else curStreak=0;
           const conceded=m.eqA===myEq?m.scoreB:m.scoreA; if(conceded===0)cleanSheets++;
+          // Gardien stats + remontadas (uniquement si mt1 renseigné)
+          if(m.mt1A!==undefined && m.mt1B!==undefined){
+            const isA=m.eqA===myEq;
+            const gMyEq=isA?(m.gardiensA||[]):(m.gardiensB||[]);
+            const mt1conc=isA?(m.mt1B||0):(m.mt1A||0);
+            const mt2conc=Math.max(0,isA?((m.scoreB||0)-(m.mt1B||0)):((m.scoreA||0)-(m.mt1A||0)));
+            if(gMyEq[0]&&gMyEq[0]===playerName){gardiensButsEncaisses+=mt1conc;if(mt1conc===0)gardiensCleanSheets++;}
+            if(gMyEq[1]&&gMyEq[1]===playerName){gardiensButsEncaisses+=mt2conc;if(mt2conc===0)gardiensCleanSheets++;}
+            const mt1gf=isA?m.mt1A:m.mt1B, mt1ga=isA?m.mt1B:m.mt1A;
+            const fgf=isA?m.scoreA:m.scoreB, fga=isA?m.scoreB:m.scoreA;
+            if(mt1gf<mt1ga&&fgf>fga)remontadas++;
+          }
           const w=m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
           if(w&&w!==myEq)sessInvic=false;
           if(w&&w===myEq)sessWins++;
@@ -3577,7 +3617,8 @@ function computeAchievementStats(playerName) {
   return { buts, passes, gaTotal:buts+passes, presences, absences, injuries, sessionsBlesses,
            sac, maillots, hattricks, bestStreak, soireeParfaite, doubleDouble,
            invincible, cleanSheets, bestDuo, mvp, csc, grandChelem,
-           fantomeStreak, assiduAnnes, cometeAnnes, zeroVict, toutNul, sessionsAvecGA };
+           fantomeStreak, assiduAnnes, cometeAnnes, zeroVict, toutNul, sessionsAvecGA,
+           gardiensCleanSheets, gardiensButsEncaisses, remontadas };
 }
 
 function renderAchievementsGrid(achSt) {
@@ -3608,7 +3649,7 @@ function renderAchievementsGrid(achSt) {
       tip=`${ach.name} — ${tn}\n${ach.desc(val)}${!ach.fixedTier&&rawLv<maxT?`\nProchain seuil : ${ach.tiers[rawLv]}`:''}`;
     }
 
-    html+=`<div class="ach-cell t${lv}${ach.id==='comete'?' ach-comete':''}${ach.id==='bonnet'?' ach-bonnet':''}" data-tip="${tip.replace(/"/g,'&quot;')}">${iconHtml}${nameHtml}${dots}</div>`;
+    html+=`<div class="ach-cell t${lv}${ach.id==='comete'?' ach-comete':''}${ach.id==='bonnet'?' ach-bonnet':''}${ach.id==='passoire'?' ach-passoire':''}" data-tip="${tip.replace(/"/g,'&quot;')}">${iconHtml}${nameHtml}${dots}</div>`;
   });
   html+=`</div>`;
   return html;
@@ -3635,7 +3676,7 @@ function renderAchievementsLegend() {
         const rawNum = i + 1;
         const displayNum = Math.min(6, rawNum + (ach.tierOffset||0));
         const tierName = (ach.tierNames?ach.tierNames[i]:null) || ACH_TIER_NAMES[displayNum] || `Niv.${displayNum}`;
-        h += `<div class="ach-cell t${displayNum}${ach.id==='comete'?' ach-comete':''}${ach.id==='bonnet'?' ach-bonnet':''}" style="height:auto;min-height:90px;padding:10px 6px;cursor:default">
+        h += `<div class="ach-cell t${displayNum}${ach.id==='comete'?' ach-comete':''}${ach.id==='bonnet'?' ach-bonnet':''}${ach.id==='passoire'?' ach-passoire':''}" style="height:auto;min-height:90px;padding:10px 6px;cursor:default">
           <span class="ach-icon">${ach.icon}</span>
           <span class="ach-label" style="opacity:1;color:currentColor">${tierName}</span>
           <span style="font-size:9px;color:var(--text3);text-align:center;line-height:1.35;display:block;padding:0 2px">${ach.desc(threshold)}</span>
@@ -3653,6 +3694,7 @@ function openPlayerPanel(playerName) {
   const isJoker = JOKERS.has(playerName);
   const medals  = ["🥇","🥈","🥉"];
   const nd = `<p class="no-data" style="margin-top:4px">—</p>`;
+  const _achSt = computeAchievementStats(playerName);
   let h = "";
 
   /* Forme récente (5 dernières sessions où le joueur était Présent) */
@@ -3773,12 +3815,23 @@ function openPlayerPanel(playerName) {
         <div class="pp-stat-val ${st.maillots>0?"amber":"muted"}">${st.maillots}</div>
         <div class="pp-stat-lbl">Maillots 👕</div>
       </div>
+      <div class="pp-stat-card">
+        <div class="pp-stat-val ${_achSt.gardiensCleanSheets>0?"green":"muted"}">${_achSt.gardiensCleanSheets}</div>
+        <div class="pp-stat-lbl">Clean sheets 🧱</div>
+      </div>
+      <div class="pp-stat-card">
+        <div class="pp-stat-val ${_achSt.gardiensButsEncaisses>0?"red":"muted"}">${_achSt.gardiensButsEncaisses}</div>
+        <div class="pp-stat-lbl">Buts encaissés 🪣</div>
+      </div>
+      <div class="pp-stat-card">
+        <div class="pp-stat-val ${_achSt.remontadas>0?"blue":"muted"}">${_achSt.remontadas}</div>
+        <div class="pp-stat-lbl">Remontadas 🌅</div>
+      </div>
     </div>
   </div>`;
 
   /* Radar de profil */
   {
-    const _achSt = computeAchievementStats(playerName);
     // Axes (sens horaire depuis le haut) : Buteur · Défenseur · Blessures · Intendant · Présence · Passeur
     const _radarAxes = [
       { label: 'Buteur',    val: _achSt.buts },
@@ -4043,7 +4096,10 @@ function _loadSessionIntoDraft(session) {
       buteursA:  [...(m.buteursA  || [])],
       buteursB:  [...(m.buteursB  || [])],
       passeursA: [...(m.passeursA || [])],
-      passeursB: [...(m.passeursB || [])]
+      passeursB: [...(m.passeursB || [])],
+      mt1A: m.mt1A ?? 0, mt1B: m.mt1B ?? 0,
+      gardiensA: [...(m.gardiensA || ["",""])],
+      gardiensB: [...(m.gardiensB || ["",""])]
     })),
     tempJokers
   };
@@ -4135,6 +4191,14 @@ function _buildMatchCardHTML(m, idx, teams) {
         <select class="saisie-select saisie-passeur-sel" data-match="${idx}" data-side="${side}" data-goal="${j}">${popts}</select>
       </div>`;
     }).join("");
+  const gardienOpts = (val, players) =>
+    ["", ...players].map(p => `<option value="${p}" ${val===p?"selected":""}>${p||"— Gardien (opt.) —"}</option>`).join("");
+  const mt1A = m.mt1A ?? 0;
+  const mt1B = m.mt1B ?? 0;
+  const gardiensA = m.gardiensA || ["",""];
+  const gardiensB = m.gardiensB || ["",""];
+  const lblA = TEAM_LABEL[m.eqA]||m.eqA||"Éq.A";
+  const lblB = TEAM_LABEL[m.eqB]||m.eqB||"Éq.B";
   const showButeurs = m.scoreA > 0 || m.scoreB > 0;
   return `<div class="saisie-match-card">
     <div class="saisie-match-row">
@@ -4146,13 +4210,33 @@ function _buildMatchCardHTML(m, idx, teams) {
       <select class="saisie-select saisie-team-sel" data-match="${idx}" data-side="B">${teamOpts(m.eqB)}</select>
       <button class="saisie-remove-match" data-match="${idx}">✕</button>
     </div>
+    <div class="saisie-mt-section">
+      <div class="saisie-mt-header">
+        🧤 <strong style="font-size:11px;letter-spacing:.04em;color:var(--text2)">MI-TEMPS</strong>
+        <input type="number" class="saisie-score-input saisie-mt1-input" min="0" max="20" data-match="${idx}" data-side="A" value="${mt1A}">
+        <span class="saisie-dash" style="font-size:14px">–</span>
+        <input type="number" class="saisie-score-input saisie-mt1-input" min="0" max="20" data-match="${idx}" data-side="B" value="${mt1B}">
+      </div>
+      <div class="saisie-gardiens-pair">
+        <div class="saisie-gardien-col">
+          <span class="saisie-gardien-col-label">${lblA}</span>
+          <div class="saisie-gardien-mt-row"><span class="mt-label">MT1</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="A" data-mt="0">${gardienOpts(gardiensA[0]||"", pA)}</select></div>
+          <div class="saisie-gardien-mt-row"><span class="mt-label">MT2</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="A" data-mt="1">${gardienOpts(gardiensA[1]||"", pA)}</select></div>
+        </div>
+        <div class="saisie-gardien-col">
+          <span class="saisie-gardien-col-label">${lblB}</span>
+          <div class="saisie-gardien-mt-row"><span class="mt-label">MT1</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="B" data-mt="0">${gardienOpts(gardiensB[0]||"", pB)}</select></div>
+          <div class="saisie-gardien-mt-row"><span class="mt-label">MT2</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="B" data-mt="1">${gardienOpts(gardiensB[1]||"", pB)}</select></div>
+        </div>
+      </div>
+    </div>
     ${showButeurs ? `<div class="saisie-buteurs-row">
       <div class="saisie-buteurs-side">
-        <span class="saisie-buteurs-label">${TEAM_LABEL[m.eqA]||m.eqA||"A"}</span>
+        <span class="saisie-buteurs-label">${lblA}</span>
         <div class="saisie-buteurs-sels">${butSelHTML("A",pA,m.buteursA,m.passeursA||[],m.scoreA,pB)||'<span style="color:var(--fg3);font-size:12px">—</span>'}</div>
       </div>
       <div class="saisie-buteurs-side">
-        <span class="saisie-buteurs-label">${TEAM_LABEL[m.eqB]||m.eqB||"B"}</span>
+        <span class="saisie-buteurs-label">${lblB}</span>
         <div class="saisie-buteurs-sels">${butSelHTML("B",pB,m.buteursB,m.passeursB||[],m.scoreB,pA)||'<span style="color:var(--fg3);font-size:12px">—</span>'}</div>
       </div>
     </div>` : ""}
@@ -4292,7 +4376,10 @@ async function _commitSession() {
       buteursA:  (m.buteursA  || []).filter(b => b),
       buteursB:  (m.buteursB  || []).filter(b => b),
       passeursA: (m.passeursA || []).slice(0, m.scoreA),
-      passeursB: (m.passeursB || []).slice(0, m.scoreB)
+      passeursB: (m.passeursB || []).slice(0, m.scoreB),
+      mt1A: m.mt1A || 0, mt1B: m.mt1B || 0,
+      gardiensA: (m.gardiensA || ["",""]).map(g => g || ""),
+      gardiensB: (m.gardiensB || ["",""]).map(g => g || "")
     }))
   };
 
@@ -4378,7 +4465,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   if (e.target.id === "saisie-commit") { _commitSession(); return; }
   if (e.target.id === "saisie-add-match") {
     const teams = _activeTeams();
-    _draft.matchs.push({ eqA: teams[0]||"", eqB: teams[1]||"", scoreA: 0, scoreB: 0, buteursA: [], buteursB: [], passeursA: [], passeursB: [] });
+    _draft.matchs.push({ eqA: teams[0]||"", eqB: teams[1]||"", scoreA: 0, scoreB: 0, buteursA: [], buteursB: [], passeursA: [], passeursB: [], mt1A: 0, mt1B: 0, gardiensA: ["",""], gardiensB: ["",""] });
     _reRenderMatchs(); return;
   }
   const rmBtn = e.target.closest(".saisie-remove-match");
@@ -4461,6 +4548,22 @@ document.getElementById("saisie-content").addEventListener("change", e => {
     const idx = Number(passeurSel.dataset.match); const side = passeurSel.dataset.side;
     const goal = Number(passeurSel.dataset.goal);
     _draft.matchs[idx][side === "A" ? "passeursA" : "passeursB"][goal] = e.target.value;
+    return;
+  }
+  const mt1Input = e.target.closest(".saisie-mt1-input");
+  if (mt1Input) {
+    const idx = Number(mt1Input.dataset.match); const side = mt1Input.dataset.side;
+    _draft.matchs[idx][side === "A" ? "mt1A" : "mt1B"] = Math.max(0, parseInt(e.target.value) || 0);
+    return;
+  }
+  const gardienSel = e.target.closest(".saisie-gardien-sel");
+  if (gardienSel) {
+    const idx = Number(gardienSel.dataset.match); const side = gardienSel.dataset.side;
+    const mt = Number(gardienSel.dataset.mt);
+    const field = side === "A" ? "gardiensA" : "gardiensB";
+    if (!_draft.matchs[idx][field]) _draft.matchs[idx][field] = ["",""];
+    _draft.matchs[idx][field][mt] = e.target.value;
+    return;
   }
 });
 
