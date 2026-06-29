@@ -2290,8 +2290,8 @@ function renderAchCollectionneurs() {
   return `<div style="display:flex;align-items:center;gap:10px;margin-top:2rem;margin-bottom:.75rem">
       <span class="section-label" style="margin:0">Collectionneurs</span>
       <div style="display:flex;gap:4px;margin-left:auto">
-        <button class="pill active" id="ach-sort-niv" style="padding:4px 12px;font-size:12px">Niveaux</button>
-        <button class="pill" id="ach-sort-hf" style="padding:4px 12px;font-size:12px">Hauts faits</button>
+        <button class="pill active" id="ach-sort-niv" data-key="niv" data-dir="-1" style="padding:4px 12px;font-size:12px">Niveaux <span class="sort-arrow" style="opacity:1">↓</span></button>
+        <button class="pill" id="ach-sort-hf" data-key="hf" data-dir="-1" style="padding:4px 12px;font-size:12px">Hauts faits <span class="sort-arrow" style="opacity:.35">↕</span></button>
       </div>
     </div>
     <div id="ach-collect-list">${rows}</div>
@@ -2783,24 +2783,37 @@ function renderStats() {
         if (_infoEl) _infoEl.textContent = `${_page + 1} / ${pages}`;
       };
 
-      const _sortBy = key => {
+      let _sortKey = 'niv', _sortDir = -1;
+
+      const _applySort = () => {
         Array.from(_list.children)
-          .sort((a, b) => (+b.dataset[key]) - (+a.dataset[key]) || a.querySelector('.ach-cls-name').textContent.localeCompare(b.querySelector('.ach-cls-name').textContent))
+          .sort((a, b) => _sortDir * ((+a.dataset[_sortKey]) - (+b.dataset[_sortKey])) || a.querySelector('.ach-cls-name').textContent.localeCompare(b.querySelector('.ach-cls-name').textContent))
           .forEach(r => _list.appendChild(r));
+        [_sortNiv, _sortHF].forEach(btn => {
+          if (!btn) return;
+          const active = btn.dataset.key === _sortKey;
+          btn.classList.toggle('active', active);
+          const arrow = btn.querySelector('.sort-arrow');
+          if (arrow) { arrow.textContent = active ? (_sortDir === -1 ? '↓' : '↑') : '↕'; arrow.style.opacity = active ? '1' : '.35'; }
+        });
         _page = 0;
         _updatePage();
       };
 
+      const _onSortBtn = btn => {
+        if (btn.dataset.key === _sortKey) {
+          _sortDir *= -1;
+        } else {
+          _sortKey = btn.dataset.key;
+          _sortDir = -1;
+        }
+        _applySort();
+      };
+
       if (_prevBtn) _prevBtn.addEventListener('click', () => { _page--; _updatePage(); });
       if (_nextBtn) _nextBtn.addEventListener('click', () => { _page++; _updatePage(); });
-      if (_sortNiv) _sortNiv.addEventListener('click', () => {
-        _sortNiv.classList.add('active'); _sortHF?.classList.remove('active');
-        _sortBy('niv');
-      });
-      if (_sortHF) _sortHF.addEventListener('click', () => {
-        _sortHF.classList.add('active'); _sortNiv?.classList.remove('active');
-        _sortBy('hf');
-      });
+      if (_sortNiv) _sortNiv.addEventListener('click', () => _onSortBtn(_sortNiv));
+      if (_sortHF)  _sortHF.addEventListener('click',  () => _onSortBtn(_sortHF));
 
       _updatePage();
     }
