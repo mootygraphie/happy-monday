@@ -3563,19 +3563,24 @@ function computeAchievementStats(playerName) {
           });
         });
         buts+=g; passes+=a; sessGA+=g+a;
+        // Gardien stats : hors inMatch car le banquier peut être gardien des deux côtés
+        if(m.mt1A!==undefined && m.mt1B!==undefined){
+          const gA=m.gardiensA||[], gB=m.gardiensB||[];
+          const mt1Ac=m.mt1B||0, mt2Ac=Math.max(0,(m.scoreB||0)-(m.mt1B||0));
+          const mt1Bc=m.mt1A||0, mt2Bc=Math.max(0,(m.scoreA||0)-(m.mt1A||0));
+          if(gA[0]&&gA[0]===playerName){gardiensButsEncaisses+=mt1Ac;if(mt1Ac===0)gardiensCleanSheets++;}
+          if(gA[1]&&gA[1]===playerName){gardiensButsEncaisses+=mt2Ac;if(mt2Ac===0)gardiensCleanSheets++;}
+          if(gB[0]&&gB[0]===playerName){gardiensButsEncaisses+=mt1Bc;if(mt1Bc===0)gardiensCleanSheets++;}
+          if(gB[1]&&gB[1]===playerName){gardiensButsEncaisses+=mt2Bc;if(mt2Bc===0)gardiensCleanSheets++;}
+        }
         if(inMatch){
           sessPlayed++;
           if(g+a>0){sessWithGA++;curStreak++;if(curStreak>bestStreak)bestStreak=curStreak;}
           else curStreak=0;
           const conceded=m.eqA===myEq?m.scoreB:m.scoreA; if(conceded===0)cleanSheets++;
-          // Gardien stats + remontadas (uniquement si mt1 renseigné)
+          // Remontadas : équipe du joueur menait pas à la mi-temps mais gagne
           if(m.mt1A!==undefined && m.mt1B!==undefined){
             const isA=m.eqA===myEq;
-            const gMyEq=isA?(m.gardiensA||[]):(m.gardiensB||[]);
-            const mt1conc=isA?(m.mt1B||0):(m.mt1A||0);
-            const mt2conc=Math.max(0,isA?((m.scoreB||0)-(m.mt1B||0)):((m.scoreA||0)-(m.mt1A||0)));
-            if(gMyEq[0]&&gMyEq[0]===playerName){gardiensButsEncaisses+=mt1conc;if(mt1conc===0)gardiensCleanSheets++;}
-            if(gMyEq[1]&&gMyEq[1]===playerName){gardiensButsEncaisses+=mt2conc;if(mt2conc===0)gardiensCleanSheets++;}
             const mt1gf=isA?m.mt1A:m.mt1B, mt1ga=isA?m.mt1B:m.mt1A;
             const fgf=isA?m.scoreA:m.scoreB, fga=isA?m.scoreB:m.scoreA;
             if(mt1gf<mt1ga&&fgf>fga)remontadas++;
@@ -4211,6 +4216,13 @@ function _buildMatchCardHTML(m, idx, teams) {
   const gardiensB = m.gardiensB || ["",""];
   const lblA = TEAM_LABEL[m.eqA]||m.eqA||"Éq.A";
   const lblB = TEAM_LABEL[m.eqB]||m.eqB||"Éq.B";
+  // 4 joueurs → gardien fourni par le banc ; 5+ → gardien de l'équipe elle-même
+  const benchTeam = ["Rouge","Vert","Bleue"].find(t => t !== m.eqA && t !== m.eqB) || "";
+  const pBench = benchTeam ? _playersOfTeam(benchTeam) : [];
+  const gardienPoolA = pA.length >= 5 || !pBench.length ? pA : pBench;
+  const gardienPoolB = pB.length >= 5 || !pBench.length ? pB : pBench;
+  const gardienLblA = pA.length >= 5 || !pBench.length ? lblA : (TEAM_LABEL[benchTeam]||benchTeam);
+  const gardienLblB = pB.length >= 5 || !pBench.length ? lblB : (TEAM_LABEL[benchTeam]||benchTeam);
   const showButeurs = m.scoreA > 0 || m.scoreB > 0;
   return `<div class="saisie-match-card">
     <div class="saisie-match-row">
@@ -4231,14 +4243,14 @@ function _buildMatchCardHTML(m, idx, teams) {
       </div>
       <div class="saisie-gardiens-pair">
         <div class="saisie-gardien-col">
-          <span class="saisie-gardien-col-label">${lblA}</span>
-          <div class="saisie-gardien-mt-row"><span class="mt-label">MT1</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="A" data-mt="0">${gardienOpts(gardiensA[0]||"", pA)}</select></div>
-          <div class="saisie-gardien-mt-row"><span class="mt-label">MT2</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="A" data-mt="1">${gardienOpts(gardiensA[1]||"", pA)}</select></div>
+          <span class="saisie-gardien-col-label">${gardienLblA}</span>
+          <div class="saisie-gardien-mt-row"><span class="mt-label">MT1</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="A" data-mt="0">${gardienOpts(gardiensA[0]||"", gardienPoolA)}</select></div>
+          <div class="saisie-gardien-mt-row"><span class="mt-label">MT2</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="A" data-mt="1">${gardienOpts(gardiensA[1]||"", gardienPoolA)}</select></div>
         </div>
         <div class="saisie-gardien-col">
-          <span class="saisie-gardien-col-label">${lblB}</span>
-          <div class="saisie-gardien-mt-row"><span class="mt-label">MT1</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="B" data-mt="0">${gardienOpts(gardiensB[0]||"", pB)}</select></div>
-          <div class="saisie-gardien-mt-row"><span class="mt-label">MT2</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="B" data-mt="1">${gardienOpts(gardiensB[1]||"", pB)}</select></div>
+          <span class="saisie-gardien-col-label">${gardienLblB}</span>
+          <div class="saisie-gardien-mt-row"><span class="mt-label">MT1</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="B" data-mt="0">${gardienOpts(gardiensB[0]||"", gardienPoolB)}</select></div>
+          <div class="saisie-gardien-mt-row"><span class="mt-label">MT2</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="B" data-mt="1">${gardienOpts(gardiensB[1]||"", gardienPoolB)}</select></div>
         </div>
       </div>
     </div>
