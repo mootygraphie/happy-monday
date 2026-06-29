@@ -1138,6 +1138,14 @@ async function _fbLoad() {
     });
     localStorage.setItem('hmft_sessions', JSON.stringify(SESSIONS));
 
+    // Brouillon — sync cross-device
+    const draftSnap = await _db.ref('config/draft').once('value');
+    const fbDraft = draftSnap.val();
+    if (fbDraft) {
+      _draft = fbDraft;
+      localStorage.setItem('hmft_draft', JSON.stringify(fbDraft));
+    }
+
     // Config : joueurs extra et jokers (Firebase = source de vérité)
     const cfgSnap = await _db.ref('config').once('value');
     const cfg = cfgSnap.val() || {};
@@ -4046,6 +4054,7 @@ function _saveDraft() {
   _draftSavedAt = new Date().toLocaleTimeString("fr", { hour: "2-digit", minute: "2-digit" });
   const el = document.getElementById("saisie-status");
   if (el) el.innerHTML = `<span style="color:#2ecc71;font-size:12px">✓ Sauvegardé à ${_draftSavedAt}</span>`;
+  if (_db) _db.ref('config/draft').set(_draft).catch(e => console.error('FB draft save:', e));
 }
 
 function _presentList() {
@@ -4322,6 +4331,7 @@ async function _commitSession() {
   _draftSavedAt = null;
   _editMode = false;
   localStorage.removeItem("hmft_draft");
+  if (_db) _db.ref('config/draft').remove().catch(() => {});
 
   // Naviguer vers la session validée
   const dateNav = finalSession.date;
@@ -4359,7 +4369,9 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   if (e.target.id === "saisie-clear") {
     if (confirm("Effacer le brouillon en cours ?")) {
       _draft = _newDraft(); _draftSavedAt = null;
-      localStorage.removeItem("hmft_draft"); renderSaisie();
+      localStorage.removeItem("hmft_draft");
+      if (_db) _db.ref('config/draft').remove().catch(() => {});
+      renderSaisie();
     }
     return;
   }
