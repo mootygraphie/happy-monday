@@ -736,6 +736,7 @@
   .saisie-remove-match { background: transparent; border: none; color: var(--fg3); cursor: pointer; font-size: 14px; padding: 2px 5px; border-radius: 4px; flex-shrink: 0; line-height: 1; }
   .saisie-remove-match:hover { color: #e74c3c; }
   .saisie-score-input { width: 44px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 8px; padding: 5px 2px; color: var(--fg); font-size: 18px; font-weight: 700; text-align: center; flex-shrink: 0; }
+  .saisie-mt1-input { width: 36px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 6px; padding: 3px 2px; color: var(--fg); font-size: 14px; font-weight: 700; text-align: center; flex-shrink: 0; }
   .saisie-dash { font-size: 18px; font-weight: 300; color: var(--fg3); flex-shrink: 0; }
   .saisie-buteurs-row { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
   .saisie-buteurs-side { min-width: 0; }
@@ -4213,9 +4214,9 @@ function _buildMatchCardHTML(m, idx, teams) {
     <div class="saisie-mt-section">
       <div class="saisie-mt-header">
         🧤 <strong style="font-size:11px;letter-spacing:.04em;color:var(--text2)">MI-TEMPS</strong>
-        <input type="number" class="saisie-score-input saisie-mt1-input" min="0" max="20" data-match="${idx}" data-side="A" value="${mt1A}">
+        <input type="number" class="saisie-mt1-input" min="0" max="20" data-match="${idx}" data-side="A" value="${mt1A}">
         <span class="saisie-dash" style="font-size:14px">–</span>
-        <input type="number" class="saisie-score-input saisie-mt1-input" min="0" max="20" data-match="${idx}" data-side="B" value="${mt1B}">
+        <input type="number" class="saisie-mt1-input" min="0" max="20" data-match="${idx}" data-side="B" value="${mt1B}">
       </div>
       <div class="saisie-gardiens-pair">
         <div class="saisie-gardien-col">
