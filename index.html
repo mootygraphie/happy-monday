@@ -1581,6 +1581,16 @@ function buildTopDefCardHTML(sessions, minMatches) {
   </div>`;
 }
 
+function fmtGardiens(gardiensArr) {
+  const gks = (gardiensArr || []).filter(g => g && g.trim());
+  if (!gks.length) return '';
+  const link = n => `<button class="player-link" data-player="${n}" style="font-size:inherit">${n}</button>`;
+  if (gks.length === 1 || gks[0] === gks[1]) {
+    return `<span style="color:var(--text3)">Gardien :</span> ${link(gks[0])}`;
+  }
+  return `<span style="color:var(--text3)">Gardiens :</span> ${link(gks[0])} <span style="color:var(--text3)">•</span> ${link(gks[1])}`;
+}
+
 function fmtGoalsList(buteurs, passeurs) {
   if (!buteurs || !buteurs.length) return "";
   return buteurs.map((p, j) => {
@@ -1883,6 +1893,7 @@ function renderSessionDetail(session) {
       const cA = aW ? "" : bW ? " lose" : " draw";
       const cB = bW ? "" : aW ? " lose" : " draw";
       const bA = fmtGoalsList(m.buteursA, m.passeursA), bB = fmtGoalsList(m.buteursB, m.passeursB);
+      const gA = fmtGardiens(m.gardiensA), gB = fmtGardiens(m.gardiensB);
       h += `<div class="match-card">
         <div class="mc-badges">${badge(m.eqA)}${badge(m.eqB)}</div>
         <div class="mc-scores">
@@ -1890,6 +1901,7 @@ function renderSessionDetail(session) {
           <span class="mc-scores-sep">–</span>
           <span class="mc-score${cB}">${m.scoreB}</span>
         </div>
+        ${gA||gB ? `<div class="mc-buteurs"><div class="mc-but">${gA}</div><div class="mc-but right">${gB}</div></div>` : ""}
         ${bA||bB ? `<div class="mc-buteurs"><div class="mc-but">${bA}</div><div class="mc-but right">${bB}</div></div>` : ""}
       </div>`;
     });
