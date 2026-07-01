@@ -140,7 +140,7 @@
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
 
-  .bonnet-infirm-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 2rem; }
+  .bonnet-infirm-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; }
   .bonnet-infirm-row > div { margin-bottom: 0 !important; }
   @media (max-width: 700px) { .bonnet-infirm-row { grid-template-columns: 1fr; } }
 
@@ -292,9 +292,9 @@
   .kpi-sub { font-size: 12px; color: var(--text2); margin-top: 0; }
 
   /* ── Podium visuel ── */
-  .podium-section { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1rem; }
+  .podium-section { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; }
   @media (max-width: 640px) { .podium-section { grid-template-columns: 1fr; } }
-  .podium-3col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1rem; }
+  .podium-3col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.5rem; }
   @media (max-width: 760px) { .podium-3col { grid-template-columns: 1fr; } }
   .podium-block { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
   .podium-block-header { padding: 13px 18px 11px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
@@ -763,7 +763,7 @@
     border: 1px solid rgba(245,200,66,.3);
     border-radius: var(--radius-lg);
     overflow: hidden;
-    margin-bottom: 2rem;
+    margin-bottom: 0;
     position: relative;
   }
   .ballon-dor-card::before {
@@ -1688,9 +1688,9 @@ function fmtGardiens(gardiensArr) {
   if (!gks.length) return '';
   const link = n => `<button class="player-link" data-player="${n}" style="font-size:inherit">${n}</button>`;
   if (gks.length === 1 || gks[0] === gks[1]) {
-    return `<span style="color:var(--text3)">Gardien :</span> ${link(gks[0])}`;
+    return `<span style="color:var(--text3)">🧤</span> ${link(gks[0])}`;
   }
-  return `<span style="color:var(--text3)">Gardiens :</span> ${link(gks[0])} <span style="color:var(--text3)">•</span> ${link(gks[1])}`;
+  return `<span style="color:var(--text3)">🧤</span> ${link(gks[0])} <span style="color:var(--text3)">•</span> ${link(gks[1])}`;
 }
 
 function fmtGoalsList(buteurs, passeurs) {
@@ -2144,7 +2144,7 @@ function buildBallonDePlombHtml() {
     })
     .sort((a,b) => a.pts-b.pts || a.buts-b.buts || b.presences-a.presences || a.name.localeCompare(b.name,"fr"))
     .slice(0, 5);
-  let html = `<div style="background:var(--bg2);border:1px solid rgba(150,150,160,.25);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:2rem;position:relative">
+  let html = `<div style="background:var(--bg2);border:1px solid rgba(150,150,160,.25);border-radius:var(--radius-lg);overflow:hidden;position:relative">
     <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(150,150,160,.55),transparent);pointer-events:none"></div>
     <div class="ballon-dor-head" style="background:rgba(150,150,160,.04);border-bottom-color:rgba(150,150,160,.1)">
       <span class="ballon-dor-icon">🪨</span>
@@ -2717,7 +2717,7 @@ function renderStats() {
   const allSt = computeStats(SESSIONS);
 
   /* ── Ballon d'Or + Prix Yachine / Ballon de Plomb gardien ── */
-  let h = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:2rem;align-items:start">
+  let h = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem;align-items:start">
     ${buildBallonDorHtml()}
     ${buildYachineHtml(SESSIONS)}
     ${buildBallonDePlombHtml()}
@@ -2735,7 +2735,7 @@ function renderStats() {
     const pillsHtml = bt.players.map(p =>
       `<button class="team-player-pill player-link ${cls}" data-player="${p}" style="text-decoration:none">${p}</button>`
     ).join("");
-    h += `<div class="kpi-card" style="margin-bottom:1rem;border-color:${clsBorder}">
+    h += `<div class="kpi-card" style="margin-bottom:1.5rem;border-color:${clsBorder}">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
         <div class="kpi-lbl" style="margin:0">Meilleure équipe all-time 🏅</div>
         ${badge(bt.team)}
