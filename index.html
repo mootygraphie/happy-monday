@@ -3734,6 +3734,35 @@ const ACH_DEFS = [
   { id:'toutnul',  name:'Statu Quo',       icon:'⚖️', tiers:[1,2,5,10,20,35],      hidden:true,  key:'toutNul',        desc:v=>`${v} soirée${v>1?'s':''} 100% nuls` },
 ];
 const ACH_TIER_NAMES = ['','Plomb','Bronze','Argent','Or','Émeraude','Diamant'];
+const ACH_ABOUT = {
+  buteur:     'Buts marqués',
+  passeur:    'Assists',
+  ga:         'G/A cumulés (buts + passes)',
+  fidele:     'Sessions jouées',
+  sac:        'Sac amené à la session',
+  maillots:   'Maillots amenés à la session',
+  bonnet:     'Absences',
+  infirm:     'Sessions passé blessé',
+  htrick:     'Hat-tricks (3 buts dans un même match)',
+  serie:      'Matchs consécutifs avec au moins 1 G/A',
+  soiree:     'Soirées terminées avec 100 % de victoires',
+  dbl:        'Matchs avec 1 but et 1 passe dans le même match',
+  invic:      'Soirées sans la moindre défaite',
+  defenseFer: 'Matchs joués sans encaisser de but',
+  mur:        'Clean sheets en tant que gardien (1 par match)',
+  passoire:   'Buts encaissés en gardant les buts',
+  remontada:  'Remontadas — perdant à la mi-temps, vainqueur à la fin',
+  duo:        'But + passe répétés avec le même partenaire',
+  mvp:        'Nommé MVP de la soirée',
+  pois:       'Buts contre son camp',
+  chelem:     'Avoir joué dans les 3 couleurs d\'équipe',
+  fantome:    'Sessions consécutives sans aucun G/A',
+  legende:    'Total de niveaux débloqués (tous hauts faits confondus)',
+  assidu:     'Taux de présence annuel élevé (≥ seuil sur une année complète)',
+  comete:     'Taux de présence annuel très faible (≤ seuil sur une année complète)',
+  zerovic:    'Soirées sans aucune victoire',
+  toutnul:    'Soirées où tous les matchs sont nuls',
+};
 
 function _achLevel(val, tiers) {
   let lv=0; for(let i=0;i<tiers.length;i++){if(val>=tiers[i])lv=i+1;else break;} return lv;
@@ -3895,34 +3924,33 @@ function renderAchievementsGrid(achSt) {
 }
 
 function renderAchievementsLegend() {
+  const pillStyle = 'display:inline-flex;align-items:center;gap:5px;height:auto;padding:3px 10px;border-radius:20px;cursor:default;animation:none';
   let h = `<div class="section-label" style="margin-top:2rem">Référence des hauts faits — admin</div>`;
-  h += `<div style="display:flex;flex-direction:column;gap:18px;margin-bottom:2rem">`;
+  h += `<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:2rem">`;
   ACH_DEFS.forEach(ach => {
-    h += `<div>
-      <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.07em">
-        <span style="font-size:16px">${ach.icon}</span>${ach.name}${ach.hidden?`<span style="font-size:10px;color:var(--text3);font-weight:500;text-transform:none;letter-spacing:0;font-style:italic">(masqué)</span>`:''}
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:6px">`;
+    const hiddenTag = ach.hidden ? ` <span style="font-size:10px;color:var(--text3);font-weight:400;font-style:italic">(masqué)</span>` : '';
+    const about = ACH_ABOUT[ach.id] || '';
+    let badges = '';
     if (ach.fixedTier) {
       const tierName = ACH_TIER_NAMES[ach.fixedTier] || `Niv.${ach.fixedTier}`;
-      h += `<div class="ach-cell t${ach.fixedTier}" style="height:auto;min-height:90px;padding:10px 6px;cursor:default">
-        <span class="ach-icon">${ach.icon}</span>
-        <span class="ach-label" style="opacity:1;color:currentColor">${tierName}</span>
-        <span style="font-size:9px;color:var(--text3);text-align:center;line-height:1.35;display:block;padding:0 2px">${ach.desc(ach.tiers[0])}</span>
-      </div>`;
+      badges = `<span class="ach-cell t${ach.fixedTier}" style="${pillStyle}"><strong>${ach.tiers[0]}</strong><span style="font-size:10px;opacity:.8">${tierName}</span></span>`;
     } else {
-      ach.tiers.forEach((threshold, i) => {
-        const rawNum = i + 1;
-        const displayNum = Math.min(6, rawNum + (ach.tierOffset||0));
-        const tierName = (ach.tierNames?ach.tierNames[i]:null) || ACH_TIER_NAMES[displayNum] || `Niv.${displayNum}`;
-        h += `<div class="ach-cell t${displayNum}${ach.id==='comete'?' ach-comete':''}${ach.id==='bonnet'?' ach-bonnet':''}${ach.id==='passoire'?' ach-passoire':''}" style="height:auto;min-height:90px;padding:10px 6px;cursor:default">
-          <span class="ach-icon">${ach.icon}</span>
-          <span class="ach-label" style="opacity:1;color:currentColor">${tierName}</span>
-          <span style="font-size:9px;color:var(--text3);text-align:center;line-height:1.35;display:block;padding:0 2px">${ach.desc(threshold)}</span>
-        </div>`;
-      });
+      badges = ach.tiers.map((threshold, i) => {
+        const displayNum = Math.min(6, (i + 1) + (ach.tierOffset||0));
+        const tierName = (ach.tierNames ? ach.tierNames[i] : null) || ACH_TIER_NAMES[displayNum] || `Niv.${displayNum}`;
+        const extra = ach.id==='comete'?' ach-comete':ach.id==='bonnet'?' ach-bonnet':ach.id==='passoire'?' ach-passoire':'';
+        return `<span class="ach-cell t${displayNum}${extra}" style="${pillStyle}"><strong>${threshold}</strong><span style="font-size:10px;opacity:.8">${tierName}</span></span>`;
+      }).join('');
     }
-    h += `</div></div>`;
+    h += `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;display:flex;flex-direction:column;gap:7px">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span style="font-size:15px">${ach.icon}</span>
+        <span style="font-size:13px;font-weight:700">${ach.name}</span>${hiddenTag}
+        <span style="color:var(--text3);margin:0 2px">—</span>
+        <span style="font-size:12px;color:var(--text2)">${about}</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px">${badges}</div>
+    </div>`;
   });
   h += `</div>`;
   return h;
