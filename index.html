@@ -1581,6 +1581,50 @@ function buildTopDefCardHTML(sessions, minMatches) {
   </div>`;
 }
 
+function computeGardiensRanking(sessions) {
+  const stats = {};
+  sessions.forEach(s => {
+    (s.matchs || []).forEach(m => {
+      if (m.mt1A === undefined || m.mt1B === undefined) return;
+      const gA = m.gardiensA || [], gB = m.gardiensB || [];
+      const mt1Ac = m.mt1B || 0, mt2Ac = Math.max(0, (m.scoreB||0) - (m.mt1B||0));
+      const mt1Bc = m.mt1A || 0, mt2Bc = Math.max(0, (m.scoreA||0) - (m.mt1A||0));
+      const matchMap = {};
+      [[gA[0],mt1Ac],[gA[1],mt2Ac],[gB[0],mt1Bc],[gB[1],mt2Bc]].forEach(([p,c]) => {
+        if (!p || !p.trim()) return;
+        matchMap[p] = (matchMap[p] || 0) + c;
+      });
+      Object.entries(matchMap).forEach(([p, c]) => {
+        if (!stats[p]) stats[p] = { matchs: 0, buts: 0 };
+        stats[p].matchs++;
+        stats[p].buts += c;
+      });
+    });
+  });
+  return Object.entries(stats)
+    .filter(([,s]) => s.matchs > 0)
+    .map(([name, s]) => ({ name, matchs: s.matchs, buts: s.buts, rate: s.buts / s.matchs }));
+}
+
+function _buildGardiensCard(sessions, asc, title) {
+  const ranking = computeGardiensRanking(sessions)
+    .sort((a, b) => asc ? (a.rate - b.rate || b.matchs - a.matchs) : (b.rate - a.rate || b.matchs - a.matchs));
+  if (!ranking.length) return `<div class="kpi-card"><div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">${title}</div><span style="color:var(--text3)">—</span></div>`;
+  const eps = 1e-9, slots = [];
+  let rem = [...ranking];
+  while (slots.length < 3 && rem.length) {
+    const r = rem[0].rate;
+    slots.push({ rank: slots.length, players: rem.filter(d => Math.abs(d.rate - r) < eps) });
+    rem = rem.filter(d => Math.abs(d.rate - r) >= eps);
+  }
+  const body = buildPodiumVizSlots(
+    slots,
+    s => `${s.players[0].rate.toFixed(2).replace('.', ',')} b/m`,
+    s => s.players.map(d => `<button class="player-link" data-player="${d.name}" style="font-size:inherit;font-weight:inherit;color:inherit">${d.name}</button>`).join(", ")
+  );
+  return `<div class="kpi-card"><div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">${title}</div>${body}</div>`;
+}
+
 function fmtGardiens(gardiensArr) {
   const gks = (gardiensArr || []).filter(g => g && g.trim());
   if (!gks.length) return '';
@@ -2712,6 +2756,12 @@ function renderStats() {
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure série 🔥 (all-time)</div>
       ${streakBody}
     </div>
+  </div>`;
+
+  /* ── Ligne 4 : Prix Yachine | Ballon de plomb ── */
+  h += `<div class="podium-section">
+    ${_buildGardiensCard(SESSIONS, true,  'Prix Yachine 🧤 (all-time)')}
+    ${_buildGardiensCard(SESSIONS, false, 'Ballon de Plomb 🪨 (all-time)')}
   </div>`;
 
   /* ── Rivalités ── */
