@@ -2028,7 +2028,7 @@ function buildBallonDorHtml() {
     .sort((a, b) => b.pts - a.pts || b.buts - a.buts || a.name.localeCompare(b.name, "fr"))
     .slice(0, 5);
   const _bdMedals = ["🥇","🥈","🥉"];
-  let html = `<div class="ballon-dor-card" style="margin-bottom:2rem">
+  let html = `<div class="ballon-dor-card">
     <div class="ballon-dor-head">
       <span class="ballon-dor-icon">🏆</span>
       <div>
@@ -2658,8 +2658,14 @@ function renderStats() {
   const container = document.getElementById("panel-stats");
   const allSt = computeStats(SESSIONS);
 
-  /* ── Ballon d'Or ── */
-  let h = buildBallonDorHtml();
+  /* ── Ballon d'Or + Prix Yachine / Ballon de Plomb gardien ── */
+  let h = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:2rem;align-items:start">
+    <div>${buildBallonDorHtml()}</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      ${_buildGardiensCard(SESSIONS, true,  'Prix Yachine 🧤 (all-time)')}
+      ${_buildGardiensCard(SESSIONS, false, 'Ballon de Plomb gardien 🪨 (all-time)')}
+    </div>
+  </div>`;
   h += buildBallonDePlombHtml();
   h += `<div class="bonnet-infirm-row">${buildBonnetDAneHtml()}${buildInfirmeHtml()}</div>`;
 
@@ -2756,12 +2762,6 @@ function renderStats() {
       <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure série 🔥 (all-time)</div>
       ${streakBody}
     </div>
-  </div>`;
-
-  /* ── Ligne 4 : Prix Yachine | Ballon de plomb ── */
-  h += `<div class="podium-section">
-    ${_buildGardiensCard(SESSIONS, true,  'Prix Yachine 🧤 (all-time)')}
-    ${_buildGardiensCard(SESSIONS, false, 'Ballon de Plomb 🪨 (all-time)')}
   </div>`;
 
   /* ── Rivalités ── */
