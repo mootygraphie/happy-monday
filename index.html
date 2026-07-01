@@ -3601,7 +3601,7 @@ const ACH_DEFS = [
   { id:'dbl',      name:'Double Double',   icon:'💥', tiers:[1,5,15,30,50,100],    hidden:false, key:'doubleDouble',   desc:v=>`${v} match${v>1?'s':''} avec 1G+1A` },
   { id:'invic',    name:'Invincible',      icon:'🛡️', tiers:[1,5,10,20,35,50],     hidden:false, key:'invincible',     desc:v=>`${v} soirée${v>1?'s':''} sans défaite` },
   { id:'defenseFer',name:'Défense de Fer',  icon:'🔒', tiers:[1,5,15,30,50,100],    hidden:false, key:'cleanSheets',          desc:v=>`${v} match${v>1?'s':''} sans encaisser` },
-  { id:'mur',      name:'Le Mur',          icon:'🧱', tiers:[1,5,15,30,50,100],    hidden:false, key:'gardiensCleanSheets',  desc:v=>`${v} demi-match${v>1?'s':''} gardien sans but encaissé` },
+  { id:'mur',      name:'Le Mur',          icon:'🧱', tiers:[1,5,15,30,50,100],    hidden:false, key:'gardiensCleanSheets',  desc:v=>`${v} clean sheet${v>1?'s':''} en tant que gardien` },
   { id:'passoire', name:'La Passoire',     icon:'🪣', tiers:[5,15,30,50,100,200],  hidden:true,  key:'gardiensButsEncaisses', desc:v=>`${v} but${v>1?'s':''} encaissé${v>1?'s':''} en gardant les buts` },
   { id:'remontada',name:'Remontada',       icon:'🌅', tiers:[1,5,15,30,50,100],    hidden:false, key:'remontadas',           desc:v=>`${v} remontada${v>1?'s':''}` },
   { id:'duo',      name:'Duo de légende',  icon:'🤝', tiers:[3,7,15,25,40,60],     hidden:false, key:'bestDuo',        desc:v=>`Duo répété ${v} fois` },
@@ -3669,10 +3669,12 @@ function computeAchievementStats(playerName) {
           const gA=m.gardiensA||[], gB=m.gardiensB||[];
           const mt1Ac=m.mt1B||0, mt2Ac=Math.max(0,(m.scoreB||0)-(m.mt1B||0));
           const mt1Bc=m.mt1A||0, mt2Bc=Math.max(0,(m.scoreA||0)-(m.mt1A||0));
-          if(gA[0]&&gA[0]===playerName){gardiensButsEncaisses+=mt1Ac;if(mt1Ac===0)gardiensCleanSheets++;}
-          if(gA[1]&&gA[1]===playerName){gardiensButsEncaisses+=mt2Ac;if(mt2Ac===0)gardiensCleanSheets++;}
-          if(gB[0]&&gB[0]===playerName){gardiensButsEncaisses+=mt1Bc;if(mt1Bc===0)gardiensCleanSheets++;}
-          if(gB[1]&&gB[1]===playerName){gardiensButsEncaisses+=mt2Bc;if(mt2Bc===0)gardiensCleanSheets++;}
+          let _wasGK=false,_gkConc=0;
+          if(gA[0]===playerName){_wasGK=true;gardiensButsEncaisses+=mt1Ac;_gkConc+=mt1Ac;}
+          if(gA[1]===playerName){_wasGK=true;gardiensButsEncaisses+=mt2Ac;_gkConc+=mt2Ac;}
+          if(gB[0]===playerName){_wasGK=true;gardiensButsEncaisses+=mt1Bc;_gkConc+=mt1Bc;}
+          if(gB[1]===playerName){_wasGK=true;gardiensButsEncaisses+=mt2Bc;_gkConc+=mt2Bc;}
+          if(_wasGK&&_gkConc===0)gardiensCleanSheets++;
         }
         if(inMatch){
           sessPlayed++;
@@ -3694,7 +3696,7 @@ function computeAchievementStats(playerName) {
         }
       });
 
-      if(sessPlayed>0&&sessPlayed===sessWithGA)soireeParfaite++;
+      if(sessPlayed>0&&sessWins===sessPlayed)soireeParfaite++;
       if(myEq&&sessInvic)invincible++;
       if(sessPlayed>0&&sessWins===0)zeroVict++;
       const teamMatchs=(s.matchs||[]).filter(m=>myEq&&(m.eqA===myEq||m.eqB===myEq));
