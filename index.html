@@ -3953,7 +3953,7 @@ function renderAchievementsGrid(achSt) {
 }
 
 function renderAchievementsLegend() {
-  const pillStyle = 'display:inline-flex;align-items:center;gap:5px;height:auto;padding:3px 10px;border-radius:20px;cursor:default;animation:none';
+  const pillStyle = 'display:inline-flex;align-items:center;gap:5px;height:auto;padding:3px 10px;border-radius:20px;cursor:default;';
   let h = `<div class="section-label" style="margin-top:2rem">Référence des hauts faits — admin</div>`;
   h += `<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:2rem">`;
   ACH_DEFS.forEach(ach => {
@@ -3962,7 +3962,8 @@ function renderAchievementsLegend() {
     let badges = '';
     if (ach.fixedTier) {
       const tierName = ACH_TIER_NAMES[ach.fixedTier] || `Niv.${ach.fixedTier}`;
-      badges = `<span class="ach-cell t${ach.fixedTier}" style="${pillStyle}"><strong>${ach.tiers[0]}</strong></span>`;
+      const chelemExtra = ach.id==='chelem'?' ach-chelem':'';
+      badges = `<span class="ach-cell t${ach.fixedTier}${chelemExtra}" style="${pillStyle}"><strong>${ach.tiers[0]}</strong></span>`;
     } else {
       badges = ach.tiers.map((threshold, i) => {
         const displayNum = Math.min(6, (i + 1) + (ach.tierOffset||0));
