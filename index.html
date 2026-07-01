@@ -592,6 +592,23 @@
     50%    {border-color:rgba(252,165,165,.45);color:#FCA5A5}
     75%    {border-color:rgba(134,239,172,.45);color:#86EFAC}
   }
+  .ach-cell.ach-chelem.t6 {
+    background: linear-gradient(135deg,rgba(255,80,80,.15),rgba(255,180,0,.1),rgba(60,220,80,.12),rgba(40,160,255,.14),rgba(180,60,255,.13));
+    border: 1px solid rgba(255,100,100,.6);
+    animation: achRainbow 2.5s linear infinite;
+  }
+  .ach-cell.ach-chelem.t6::after { --asd:1.6s; background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent); }
+  @keyframes achRainbow {
+    0%   { border-color:rgba(255, 60, 60,.7); color:#FF5050; }
+    14%  { border-color:rgba(255,165,  0,.7); color:#FFA500; }
+    28%  { border-color:rgba(220,210,  0,.7); color:#DDD200; }
+    43%  { border-color:rgba( 50,210, 70,.7); color:#32D246; }
+    57%  { border-color:rgba(  0,160,255,.7); color:#00A0FF; }
+    71%  { border-color:rgba(150, 50,255,.7); color:#9632FF; }
+    85%  { border-color:rgba(255, 50,200,.7); color:#FF32C8; }
+    100% { border-color:rgba(255, 60, 60,.7); color:#FF5050; }
+  }
+  html.light .ach-cell.ach-chelem.t6 { background:rgba(255,120,80,.08); animation:achRainbow 2.5s linear infinite; }
   html.light .ach-cell { background:rgba(0,0,0,.04); border-color:rgba(0,0,0,.1); }
   html.light .ach-cell.t0 .ach-icon { opacity:.2; }
   html.light .ach-cell.t1 { background:rgba(100,110,120,.1); border-color:rgba(100,110,120,.3); color:#6B7280; }
@@ -3705,31 +3722,37 @@ function computePlayerDetailStats(playerName) {
 ══════════════════════════════════════════════════════════ */
 
 const ACH_DEFS = [
+  // ── Attaque ──
   { id:'buteur',   name:'Buteur',          icon:'⚽', tiers:[1,5,15,30,50,100],    hidden:false, key:'buts',           desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''}` },
   { id:'passeur',  name:'Passeur',         icon:'🎯', tiers:[1,5,15,30,50,100],    hidden:false, key:'passes',         desc:v=>`${v} assist${v>1?'s':''}` },
   { id:'ga',       name:'G/A',             icon:'📈', tiers:[5,20,50,100,200,350],  hidden:false, key:'gaTotal',        desc:v=>`${v} G/A cumulés` },
+  { id:'htrick',   name:'Hat-trick',       icon:'🔥', tiers:[1,2,5,10,20,35],      hidden:false, key:'hattricks',      desc:v=>`${v} hat-trick${v>1?'s':''}` },
+  { id:'dbl',      name:'Double Double',   icon:'💥', tiers:[1,5,15,30,50,100],    hidden:false, key:'doubleDouble',   desc:v=>`${v} match${v>1?'s':''} avec 1G+1A` },
+  { id:'serie',    name:'Série G/A',       icon:'⚡', tiers:[3,5,8,15,25,40],      hidden:false, key:'bestStreak',     desc:v=>`Série de ${v} match${v>1?'s':''} consécutif${v>1?'s':''}` },
+  // ── Défense / Gardien ──
+  { id:'defenseFer',name:'Défense de Fer', icon:'🔒', tiers:[1,5,15,30,50,100],    hidden:false, key:'cleanSheets',           desc:v=>`${v} match${v>1?'s':''} sans encaisser` },
+  { id:'mur',      name:'Le Mur',          icon:'🧱', tiers:[1,5,15,30,50,100],    hidden:false, key:'gardiensCleanSheets',   desc:v=>`${v} clean sheet${v>1?'s':''}` },
+  { id:'passoire', name:'La Passoire',     icon:'🪣', tiers:[5,15,30,50,100,200],  hidden:true,  key:'gardiensButsEncaisses', desc:v=>`${v} but${v>1?'s':''} encaissé${v>1?'s':''} en gardant les buts` },
+  // ── Collectif ──
+  { id:'soiree',   name:'Soirée parfaite', icon:'🌟', tiers:[1,2,4,8,15,25],       hidden:false, key:'soireeParfaite', desc:v=>`${v} soirée${v>1?'s':''} parfaite${v>1?'s':''}` },
+  { id:'invic',    name:'Invincible',      icon:'🛡️', tiers:[1,5,10,20,35,50],     hidden:false, key:'invincible',     desc:v=>`${v} soirée${v>1?'s':''} sans défaite` },
+  { id:'remontada',name:'Remontada',       icon:'🌅', tiers:[1,5,15,30,50,100],    hidden:false, key:'remontadas',     desc:v=>`${v} remontada${v>1?'s':''}` },
+  { id:'duo',      name:'Duo de légende',  icon:'🤝', tiers:[3,7,15,25,40,60],     hidden:false, key:'bestDuo',        desc:v=>`Duo répété ${v} fois` },
+  // ── Présence ──
   { id:'fidele',   name:'Fidèle',          icon:'📅', tiers:[5,15,30,50,75,100],   hidden:false, key:'presences',      desc:v=>`${v} session${v>1?'s':''} jouée${v>1?'s':''}` },
   { id:'sac',      name:'Porteur de sac',  icon:'🎒', tiers:[1,3,7,15,25,40],      hidden:false, key:'sac',            desc:v=>`Sac amené ${v} fois` },
   { id:'maillots', name:'Intendant',       icon:'👕', tiers:[1,3,7,15,25,40],      hidden:false, key:'maillots',       desc:v=>`Maillots amenés ${v} fois` },
-  { id:'bonnet',   name:"Bonnet d'Âne",    icon:'🫏', tiers:[10,30,50,100], tierOffset:2, tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'absences',       desc:v=>`${v} absence${v>1?'s':''}` },
-  { id:'infirm',   name:'Infirmerie',      icon:'🩼', tiers:[1,5,10,20,35,50],     hidden:true,  key:'sessionsBlesses',desc:v=>`${v} session${v>1?'s':''} blessé${v>1?'s':''}` },
-  { id:'htrick',   name:'Hat-trick',       icon:'🔥', tiers:[1,2,5,10,20,35],      hidden:false, key:'hattricks',      desc:v=>`${v} hat-trick${v>1?'s':''}` },
-  { id:'serie',    name:'Série G/A',       icon:'⚡', tiers:[3,5,8,15,25,40],      hidden:false, key:'bestStreak',     desc:v=>`Série de ${v} match${v>1?'s':''} consécutif${v>1?'s':''}` },
-  { id:'soiree',   name:'Soirée parfaite', icon:'🌟', tiers:[1,2,4,8,15,25],       hidden:false, key:'soireeParfaite', desc:v=>`${v} soirée${v>1?'s':''} parfaite${v>1?'s':''}` },
-  { id:'dbl',      name:'Double Double',   icon:'💥', tiers:[1,5,15,30,50,100],    hidden:false, key:'doubleDouble',   desc:v=>`${v} match${v>1?'s':''} avec 1G+1A` },
-  { id:'invic',    name:'Invincible',      icon:'🛡️', tiers:[1,5,10,20,35,50],     hidden:false, key:'invincible',     desc:v=>`${v} soirée${v>1?'s':''} sans défaite` },
-  { id:'defenseFer',name:'Défense de Fer',  icon:'🔒', tiers:[1,5,15,30,50,100],    hidden:false, key:'cleanSheets',          desc:v=>`${v} match${v>1?'s':''} sans encaisser` },
-  { id:'mur',      name:'Le Mur',          icon:'🧱', tiers:[1,5,15,30,50,100],    hidden:false, key:'gardiensCleanSheets',  desc:v=>`${v} clean sheet${v>1?'s':''}` },
-  { id:'passoire', name:'La Passoire',     icon:'🪣', tiers:[5,15,30,50,100,200],  hidden:true,  key:'gardiensButsEncaisses', desc:v=>`${v} but${v>1?'s':''} encaissé${v>1?'s':''} en gardant les buts` },
-  { id:'remontada',name:'Remontada',       icon:'🌅', tiers:[1,5,15,30,50,100],    hidden:false, key:'remontadas',           desc:v=>`${v} remontada${v>1?'s':''}` },
-  { id:'duo',      name:'Duo de légende',  icon:'🤝', tiers:[3,7,15,25,40,60],     hidden:false, key:'bestDuo',        desc:v=>`Duo répété ${v} fois` },
-  { id:'mvp',      name:'Meilleur joueur', icon:'👑', tiers:[1,3,7,15,25,40],      hidden:false, key:'mvp',            desc:v=>`MVP de soirée ${v} fois` },
-  { id:'pois',     name:'Poissard',        icon:'🪨', tiers:[1,2,4,7,12,20],       hidden:true,  key:'csc',            desc:v=>`${v} CSC` },
-  { id:'chelem',   name:'Grand Chelem',    icon:'🎨', tiers:[1], fixedTier:6,       hidden:true,  key:'grandChelem',    desc:_=>`Les 3 couleurs jouées` },
-  { id:'fantome',  name:'Fantôme',         icon:'👻', tiers:[3,5,8,12,20,30],      hidden:true,  key:'fantomeStreak',  desc:v=>`${v} sessions sans G/A` },
-  { id:'legende',  name:'Légende',         icon:'🏅', tiers:[5,15,30,50,100,127],         hidden:true, key:'legendeCount', desc:v=>`${v} niveaux débloqués` },
   { id:'assidu',   name:'Assidu',          icon:'🗓️', tiers:[1,2,3,4],  tierOffset:2,  hidden:false, key:'assiduAnnes',  desc:v=>v===4?'1 an à ≥90% de présence':v===3?'1 an à ≥80% de présence':v===2?'1 an à ≥70% de présence':'1 an à ≥60% de présence' },
   { id:'comete',   name:'La Comète',       icon:'🌠', tiers:[1,2,3,4],  tierOffset:2,  tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'cometeAnnes',  desc:v=>v===4?'1 an à ≤10% de présence':v===3?'1 an à ≤20% de présence':v===2?'1 an à ≤30% de présence':'1 an à ≤40% de présence' },
+  // ── Distinctions ──
+  { id:'mvp',      name:'Meilleur joueur', icon:'👑', tiers:[1,3,7,15,25,40],      hidden:false, key:'mvp',            desc:v=>`MVP de soirée ${v} fois` },
+  { id:'chelem',   name:'Grand Chelem',    icon:'🎨', tiers:[1], fixedTier:6,       hidden:true,  key:'grandChelem',    desc:_=>`Les 3 couleurs jouées` },
+  { id:'legende',  name:'Légende',         icon:'🏅', tiers:[5,15,30,50,100,127],  hidden:true,  key:'legendeCount',   desc:v=>`${v} niveaux débloqués` },
+  // ── Négatifs / Secrets ──
+  { id:'bonnet',   name:"Bonnet d'Âne",    icon:'🫏', tiers:[10,30,50,100], tierOffset:2, tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'absences',       desc:v=>`${v} absence${v>1?'s':''}` },
+  { id:'infirm',   name:'Infirmerie',      icon:'🩼', tiers:[1,5,10,20,35,50],     hidden:true,  key:'sessionsBlesses',desc:v=>`${v} session${v>1?'s':''} blessé${v>1?'s':''}` },
+  { id:'pois',     name:'Poissard',        icon:'🪨', tiers:[1,2,4,7,12,20],       hidden:true,  key:'csc',            desc:v=>`${v} CSC` },
+  { id:'fantome',  name:'Fantôme',         icon:'👻', tiers:[3,5,8,12,20,30],      hidden:true,  key:'fantomeStreak',  desc:v=>`${v} sessions sans G/A` },
   { id:'zerovic',  name:'Disette',         icon:'🌵', tiers:[1,5,15,30,50,75],     hidden:true,  key:'zeroVict',       desc:v=>`${v} soirée${v>1?'s':''} sans victoire` },
   { id:'toutnul',  name:'Statu Quo',       icon:'⚖️', tiers:[1,2,5,10,20,35],      hidden:true,  key:'toutNul',        desc:v=>`${v} soirée${v>1?'s':''} 100% nuls` },
 ];
@@ -3923,7 +3946,7 @@ function renderAchievementsGrid(achSt) {
       tip=`${ach.name} — ${tn}\n${ach.desc(val)}${!ach.fixedTier&&rawLv<maxT?`\nProchain seuil : ${ach.tiers[rawLv]}`:''}`;
     }
 
-    html+=`<div class="ach-cell t${lv}${ach.id==='comete'?' ach-comete':''}${ach.id==='bonnet'?' ach-bonnet':''}${ach.id==='passoire'?' ach-passoire':''}" data-tip="${tip.replace(/"/g,'&quot;')}">${iconHtml}${nameHtml}${dots}</div>`;
+    html+=`<div class="ach-cell t${lv}${ach.id==='comete'?' ach-comete':''}${ach.id==='bonnet'?' ach-bonnet':''}${ach.id==='passoire'?' ach-passoire':''}${ach.id==='chelem'?' ach-chelem':''}" data-tip="${tip.replace(/"/g,'&quot;')}">${iconHtml}${nameHtml}${dots}</div>`;
   });
   html+=`</div>`;
   return html;
