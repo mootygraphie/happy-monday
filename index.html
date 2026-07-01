@@ -3751,7 +3751,7 @@ const ACH_ABOUT = {
   defenseFer: 'Matchs joués sans encaisser de but',
   mur:        'Clean sheets en tant que gardien (1 par match)',
   passoire:   'Buts encaissés en gardant les buts',
-  remontada:  'Remontadas — perdant à la mi-temps, vainqueur à la fin',
+  remontada:  'Remontadas — perdant d\'au moins 2 buts à la mi-temps, vainqueur à la fin',
   duo:        'But + passe répétés avec le même partenaire',
   mvp:        'Nommé MVP de la soirée',
   pois:       'Buts contre son camp',
@@ -3833,7 +3833,7 @@ function computeAchievementStats(playerName) {
             const isA=m.eqA===myEq;
             const mt1gf=isA?m.mt1A:m.mt1B, mt1ga=isA?m.mt1B:m.mt1A;
             const fgf=isA?m.scoreA:m.scoreB, fga=isA?m.scoreB:m.scoreA;
-            if(mt1gf<mt1ga&&fgf>fga)remontadas++;
+            if((mt1ga-mt1gf)>=2&&fgf>fga)remontadas++;
           }
           const w=m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
           if(w&&w!==myEq)sessInvic=false;
@@ -3933,13 +3933,13 @@ function renderAchievementsLegend() {
     let badges = '';
     if (ach.fixedTier) {
       const tierName = ACH_TIER_NAMES[ach.fixedTier] || `Niv.${ach.fixedTier}`;
-      badges = `<span class="ach-cell t${ach.fixedTier}" style="${pillStyle}"><strong>${ach.tiers[0]}</strong><span style="font-size:10px;opacity:.8">${tierName}</span></span>`;
+      badges = `<span class="ach-cell t${ach.fixedTier}" style="${pillStyle}"><strong>${ach.tiers[0]}</strong></span>`;
     } else {
       badges = ach.tiers.map((threshold, i) => {
         const displayNum = Math.min(6, (i + 1) + (ach.tierOffset||0));
         const tierName = (ach.tierNames ? ach.tierNames[i] : null) || ACH_TIER_NAMES[displayNum] || `Niv.${displayNum}`;
         const extra = ach.id==='comete'?' ach-comete':ach.id==='bonnet'?' ach-bonnet':ach.id==='passoire'?' ach-passoire':'';
-        return `<span class="ach-cell t${displayNum}${extra}" style="${pillStyle}"><strong>${threshold}</strong><span style="font-size:10px;opacity:.8">${tierName}</span></span>`;
+        return `<span class="ach-cell t${displayNum}${extra}" style="${pillStyle}"><strong>${threshold}</strong></span>`;
       }).join('');
     }
     h += `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;display:flex;flex-direction:column;gap:7px">
