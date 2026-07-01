@@ -2718,13 +2718,11 @@ function renderStats() {
 
   /* ── Ballon d'Or + Prix Yachine / Ballon de Plomb gardien ── */
   let h = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:2rem;align-items:start">
-    <div>${buildBallonDorHtml()}</div>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      ${buildYachineHtml(SESSIONS)}
-      ${buildCalamityJamesHtml(SESSIONS)}
-    </div>
+    ${buildBallonDorHtml()}
+    ${buildYachineHtml(SESSIONS)}
+    ${buildBallonDePlombHtml()}
+    ${buildCalamityJamesHtml(SESSIONS)}
   </div>`;
-  h += buildBallonDePlombHtml();
   h += `<div class="bonnet-infirm-row">${buildBonnetDAneHtml()}${buildInfirmeHtml()}</div>`;
 
   /* ── Meilleure équipe all-time ── */
