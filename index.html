@@ -3755,7 +3755,7 @@ const ACH_ABOUT = {
   duo:        'But + passe répétés avec le même partenaire',
   mvp:        'Nommé MVP de la soirée',
   pois:       'Buts contre son camp',
-  chelem:     'Avoir joué dans les 3 couleurs d\'équipe',
+  chelem:     'Avoir été meilleure équipe de la soirée dans les 3 couleurs',
   fantome:    'Sessions consécutives sans aucun G/A',
   legende:    'Total de niveaux débloqués (tous hauts faits confondus)',
   assidu:     'Taux de présence annuel élevé (≥ seuil sur une année complète)',
@@ -3773,7 +3773,7 @@ function computeAchievementStats(playerName) {
   let buts=0,passes=0,presences=0,absences=0,injuries=0,sessionsBlesses=0,sac=0,maillots=0;
   let hattricks=0,doubleDouble=0,cleanSheets=0,mvp=0,soireeParfaite=0,invincible=0,csc=0,zeroVict=0,toutNul=0;
   let gardiensCleanSheets=0,gardiensButsEncaisses=0,remontadas=0;
-  const teamsSet=new Set(), duoMap={};
+  const chelemColors=new Set(), duoMap={};
   let inEp=false, bestStreak=0, curStreak=0, fantomeStreak=0, sessionsAvecGA=0;
   const yearMap={};
 
@@ -3787,7 +3787,7 @@ function computeAchievementStats(playerName) {
       presences++; yearMap[yr].present++; inEp=false;
       if(s.sac===playerName) sac++;
       if(s.maillots===playerName) maillots++;
-      const myEq=info.equipe; if(myEq) teamsSet.add(myEq);
+      const myEq=info.equipe;
 
       let sessGA=0,sessPlayed=0,sessWithGA=0,sessInvic=true,sessWins=0;
       const allGA={};
@@ -3849,6 +3849,12 @@ function computeAchievementStats(playerName) {
       const teamMatchs=(s.matchs||[]).filter(m=>myEq&&(m.eqA===myEq||m.eqB===myEq));
       const allDraw=teamMatchs.length>0&&teamMatchs.every(m=>m.scoreA===m.scoreB);
       if(allDraw)toutNul++;
+      if(myEq&&sessPlayed>0){
+        const _tw={};
+        (s.matchs||[]).forEach(m=>{const w=m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;if(w)_tw[w]=(_tw[w]||0)+1;});
+        const _mx=Math.max(0,...Object.values(_tw));
+        if(_mx>0&&(_tw[myEq]||0)===_mx)chelemColors.add(myEq);
+      }
       const pGA=allGA[playerName]||0;
       if(pGA>0&&!Object.values(allGA).some(v=>v>pGA))mvp++;
       if(sessGA===0) fantomeStreak++;
@@ -3863,7 +3869,7 @@ function computeAchievementStats(playerName) {
   });
 
   const bestDuo=Math.max(0,...Object.values(duoMap));
-  const grandChelem=(teamsSet.has("Rouge")&&teamsSet.has("Vert")&&teamsSet.has("Bleue"))?1:0;
+  const grandChelem=(chelemColors.has("Rouge")&&chelemColors.has("Vert")&&chelemColors.has("Bleue"))?1:0;
   const assiduAnnes=(()=>{
     const ys=Object.values(yearMap).filter(y=>y.total>=10);
     if(ys.some(y=>y.present/y.total>=0.9))return 4;
