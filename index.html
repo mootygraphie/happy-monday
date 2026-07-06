@@ -4466,15 +4466,20 @@ function _buildEquipesHTML() {
 }
 
 function _buildMatchCardHTML(m, idx, teams) {
-  const teamOpts = sel => teams.map(t => `<option value="${t}" ${sel===t?"selected":""}>${TEAM_LABEL[t]||t}</option>`).join("");
+  const teamOpts = (sel, exclude) => teams.filter(t => !exclude || t !== exclude).map(t => `<option value="${t}" ${sel===t?"selected":""}>${TEAM_LABEL[t]||t}</option>`).join("");
   const pA = m.eqA ? _playersOfTeam(m.eqA) : [];
   const pB = m.eqB ? _playersOfTeam(m.eqB) : [];
+  const gardiensAArr = (m.gardiensA||[]).filter(g => g && g.trim());
+  const gardiensBArr = (m.gardiensB||[]).filter(g => g && g.trim());
+  const effectivePa = [...new Set([...pA, ...gardiensAArr])].sort((a,b) => a.localeCompare(b,'fr'));
+  const effectivePb = [...new Set([...pB, ...gardiensBArr])].sort((a,b) => a.localeCompare(b,'fr'));
   const butSelHTML = (side, list, buteurs, passeurs, score, otherList) =>
     Array.from({length: score}, (_,j) => {
       const v  = buteurs[j]  || "";
       const pv = passeurs[j] || "";
       const isCSC = v === "CSC";
-      const opts  = ["", "CSC", ...list].map(p => `<option value="${p}" ${v===p?"selected":""}>${p==="CSC"?"CSC (c.s.c.)":p||"— Buteur —"}</option>`).join("");
+      const butList = pv ? list.filter(p => p !== pv) : list;
+      const opts  = ["", "CSC", ...butList].map(p => `<option value="${p}" ${v===p?"selected":""}>${p==="CSC"?"CSC (c.s.c.)":p||"— Buteur —"}</option>`).join("");
       if (isCSC) {
         const aOpts = ["", ...(otherList||[])].map(p => `<option value="${p}" ${pv===p?"selected":""}>${p||"— Auteur du CSC —"}</option>`).join("");
         return `<div class="saisie-goal-row">
@@ -4482,7 +4487,8 @@ function _buildMatchCardHTML(m, idx, teams) {
           <select class="saisie-select saisie-passeur-sel" data-match="${idx}" data-side="${side}" data-goal="${j}" style="opacity:1;font-size:13px">${aOpts}</select>
         </div>`;
       }
-      const popts = ["", ...list].map(p => `<option value="${p}" ${pv===p?"selected":""}>${p||"— Passeur (opt.) —"}</option>`).join("");
+      const pasList = v && v !== "CSC" ? list.filter(p => p !== v) : list;
+      const popts = ["", ...pasList].map(p => `<option value="${p}" ${pv===p?"selected":""}>${p||"— Passeur (opt.) —"}</option>`).join("");
       return `<div class="saisie-goal-row">
         <select class="saisie-select saisie-buteur-sel${v===""?" saisie-buteur-empty":""}" data-match="${idx}" data-side="${side}" data-goal="${j}">${opts}</select>
         <select class="saisie-select saisie-passeur-sel" data-match="${idx}" data-side="${side}" data-goal="${j}">${popts}</select>
@@ -4507,11 +4513,11 @@ function _buildMatchCardHTML(m, idx, teams) {
   return `<div class="saisie-match-card">
     <div class="saisie-match-row">
       <span class="saisie-match-num">#${idx+1}</span>
-      <select class="saisie-select saisie-team-sel" data-match="${idx}" data-side="A">${teamOpts(m.eqA)}</select>
+      <select class="saisie-select saisie-team-sel" data-match="${idx}" data-side="A">${teamOpts(m.eqA, m.eqB)}</select>
       <input type="number" class="saisie-score-input" min="0" max="20" data-match="${idx}" data-side="A" value="${m.scoreA}">
       <span class="saisie-dash">–</span>
       <input type="number" class="saisie-score-input" min="0" max="20" data-match="${idx}" data-side="B" value="${m.scoreB}">
-      <select class="saisie-select saisie-team-sel" data-match="${idx}" data-side="B">${teamOpts(m.eqB)}</select>
+      <select class="saisie-select saisie-team-sel" data-match="${idx}" data-side="B">${teamOpts(m.eqB, m.eqA)}</select>
       <button class="saisie-remove-match" data-match="${idx}">✕</button>
     </div>
     <div class="saisie-mt-section">
@@ -4537,11 +4543,11 @@ function _buildMatchCardHTML(m, idx, teams) {
     ${showButeurs ? `<div class="saisie-buteurs-row">
       <div class="saisie-buteurs-side">
         <span class="saisie-buteurs-label">${lblA}</span>
-        <div class="saisie-buteurs-sels">${butSelHTML("A",pA,m.buteursA,m.passeursA||[],m.scoreA,pB)||'<span style="color:var(--fg3);font-size:12px">—</span>'}</div>
+        <div class="saisie-buteurs-sels">${butSelHTML("A",effectivePa,m.buteursA,m.passeursA||[],m.scoreA,effectivePb)||'<span style="color:var(--fg3);font-size:12px">—</span>'}</div>
       </div>
       <div class="saisie-buteurs-side">
         <span class="saisie-buteurs-label">${lblB}</span>
-        <div class="saisie-buteurs-sels">${butSelHTML("B",pB,m.buteursB,m.passeursB||[],m.scoreB,pA)||'<span style="color:var(--fg3);font-size:12px">—</span>'}</div>
+        <div class="saisie-buteurs-sels">${butSelHTML("B",effectivePb,m.buteursB,m.passeursB||[],m.scoreB,effectivePa)||'<span style="color:var(--fg3);font-size:12px">—</span>'}</div>
       </div>
     </div>` : ""}
   </div>`;
@@ -4819,7 +4825,12 @@ document.getElementById("saisie-content").addEventListener("change", e => {
   const teamSel = e.target.closest(".saisie-team-sel");
   if (teamSel) {
     const idx = Number(teamSel.dataset.match); const side = teamSel.dataset.side;
-    _draft.matchs[idx][side === "A" ? "eqA" : "eqB"] = e.target.value;
+    const thisField = side === "A" ? "eqA" : "eqB";
+    const otherField = side === "A" ? "eqB" : "eqA";
+    const oldThis = _draft.matchs[idx][thisField];
+    const oldOther = _draft.matchs[idx][otherField];
+    _draft.matchs[idx][thisField] = e.target.value;
+    if (e.target.value && e.target.value === oldOther) _draft.matchs[idx][otherField] = oldThis;
     _reRenderMatchs(); return;
   }
   const scoreInput = e.target.closest(".saisie-score-input");
@@ -4840,20 +4851,22 @@ document.getElementById("saisie-content").addEventListener("change", e => {
   if (buteurSel) {
     const idx = Number(buteurSel.dataset.match); const side = buteurSel.dataset.side;
     const goal = Number(buteurSel.dataset.goal);
-    const prevVal = _draft.matchs[idx][side === "A" ? "buteursA" : "buteursB"][goal];
-    _draft.matchs[idx][side === "A" ? "buteursA" : "buteursB"][goal] = e.target.value;
-    if (e.target.value === "CSC" || prevVal === "CSC") {
-      _draft.matchs[idx][side === "A" ? "passeursA" : "passeursB"][goal] = "";
-      _reRenderMatchs();
+    const bField = side === "A" ? "buteursA" : "buteursB";
+    const pField = side === "A" ? "passeursA" : "passeursB";
+    const prevVal = _draft.matchs[idx][bField][goal];
+    _draft.matchs[idx][bField][goal] = e.target.value;
+    const curPasseur = _draft.matchs[idx][pField][goal];
+    if (e.target.value === "CSC" || prevVal === "CSC" || (e.target.value && e.target.value === curPasseur)) {
+      _draft.matchs[idx][pField][goal] = "";
     }
-    return;
+    _reRenderMatchs(); return;
   }
   const passeurSel = e.target.closest(".saisie-passeur-sel");
   if (passeurSel) {
     const idx = Number(passeurSel.dataset.match); const side = passeurSel.dataset.side;
     const goal = Number(passeurSel.dataset.goal);
     _draft.matchs[idx][side === "A" ? "passeursA" : "passeursB"][goal] = e.target.value;
-    return;
+    _reRenderMatchs(); return;
   }
   const mt1Input = e.target.closest(".saisie-mt1-input");
   if (mt1Input) {
