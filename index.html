@@ -592,12 +592,18 @@
     50%    {border-color:rgba(252,165,165,.45);color:#FCA5A5}
     75%    {border-color:rgba(134,239,172,.45);color:#86EFAC}
   }
-  .ach-cell.ach-chelem.t6 {
+  .ach-cell.ach-chelem.t6,
+  .ach-cell.ach-soiree.t6,
+  .ach-cell.ach-remontada.t6,
+  .ach-cell.ach-neuer.t6 {
     background: linear-gradient(135deg,rgba(255,80,80,.15),rgba(255,180,0,.1),rgba(60,220,80,.12),rgba(40,160,255,.14),rgba(180,60,255,.13));
     border: 1px solid rgba(255,100,100,.6);
     animation: achRainbow 2.5s linear infinite;
   }
-  .ach-cell.ach-chelem.t6::after { --asd:1.6s; background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent); }
+  .ach-cell.ach-chelem.t6::after,
+  .ach-cell.ach-soiree.t6::after,
+  .ach-cell.ach-remontada.t6::after,
+  .ach-cell.ach-neuer.t6::after { --asd:1.6s; background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent); }
   @keyframes achRainbow {
     0%   { border-color:rgba(255, 60, 60,.7); color:#FF5050; }
     14%  { border-color:rgba(255,165,  0,.7); color:#FFA500; }
@@ -608,7 +614,13 @@
     85%  { border-color:rgba(255, 50,200,.7); color:#FF32C8; }
     100% { border-color:rgba(255, 60, 60,.7); color:#FF5050; }
   }
-  html.light .ach-cell.ach-chelem.t6 { background:rgba(255,120,80,.08); animation:achRainbow 2.5s linear infinite; }
+  html.light .ach-cell.ach-chelem.t6,
+  html.light .ach-cell.ach-soiree.t6,
+  html.light .ach-cell.ach-remontada.t6,
+  html.light .ach-cell.ach-neuer.t6 { background:rgba(255,120,80,.08); animation:achRainbow 2.5s linear infinite; }
+  .ach-cell.ach-zerovic.t6 { background:rgba(22,22,24,.72); border:1px solid rgba(70,72,78,.55); color:#6A6B72; animation:achCharbon 4s ease-in-out infinite; }
+  .ach-cell.ach-zerovic.t6::after { --asd:3.8s; background:linear-gradient(90deg,transparent,rgba(180,55,8,.22),transparent); }
+  html.light .ach-cell.ach-zerovic.t6 { background:rgba(30,32,36,.15); border-color:rgba(30,32,36,.4); color:#374151; }
   html.light .ach-cell { background:rgba(0,0,0,.04); border-color:rgba(0,0,0,.1); }
   html.light .ach-cell.t0 .ach-icon { opacity:.2; }
   html.light .ach-cell.t1 { background:rgba(100,110,120,.1); border-color:rgba(100,110,120,.3); color:#6B7280; }
@@ -3733,11 +3745,8 @@ const ACH_DEFS = [
   { id:'defenseFer',name:'Défense de Fer', icon:'🔒', tiers:[1,5,15,30,50,100],    hidden:false, key:'cleanSheets',           desc:v=>`${v} match${v>1?'s':''} sans encaisser` },
   { id:'mur',      name:'Le Mur',          icon:'🧱', tiers:[1,5,15,30,50,100],    hidden:false, key:'gardiensCleanSheets',   desc:v=>`${v} clean sheet${v>1?'s':''}` },
   { id:'passoire', name:'La Passoire',     icon:'🪣', tiers:[5,15,30,50,100,200],  hidden:true,  key:'gardiensButsEncaisses', desc:v=>`${v} but${v>1?'s':''} encaissé${v>1?'s':''} en gardant les buts` },
-  { id:'gardienAssist', name:'Le Neuer',   icon:'🧤', tiers:[1], fixedTier:5,       hidden:false, key:'gardienAssist',         desc:_=>`Passe décisive en tant que gardien` },
   // ── Collectif ──
-  { id:'soiree',   name:'Soirée parfaite', icon:'🌟', tiers:[1], fixedTier:4,        hidden:false, key:'soireeParfaite', desc:_=>`Soirée terminée avec 100 % de victoires` },
   { id:'invic',    name:'Invincible',      icon:'🛡️', tiers:[1,5,10,20,35,50],     hidden:false, key:'invincible',     desc:v=>`${v} soirée${v>1?'s':''} sans défaite` },
-  { id:'remontada',name:'Remontada',       icon:'🌅', tiers:[1], fixedTier:4,        hidden:false, key:'remontadas',     desc:_=>`Perdant d'au moins 2 buts à la mi-temps, vainqueur à la fin` },
   { id:'duo',      name:'Duo de légende',  icon:'🤝', tiers:[3,7,15,25,40,60],     hidden:false, key:'bestDuo',        desc:v=>`Duo répété ${v} fois` },
   // ── Présence ──
   { id:'fidele',   name:'Fidèle',          icon:'📅', tiers:[5,15,30,50,75,100],   hidden:false, key:'presences',      desc:v=>`${v} session${v>1?'s':''} jouée${v>1?'s':''}` },
@@ -3746,15 +3755,18 @@ const ACH_DEFS = [
   { id:'assidu',   name:'Assidu',          icon:'🗓️', tiers:[1,2,3,4],  tierOffset:2,  hidden:false, key:'assiduAnnes',  desc:v=>v===4?'1 an à ≥90% de présence':v===3?'1 an à ≥80% de présence':v===2?'1 an à ≥70% de présence':'1 an à ≥60% de présence' },
   { id:'comete',   name:'La Comète',       icon:'🌠', tiers:[1,2,3,4],  tierOffset:2,  tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'cometeAnnes',  desc:v=>v===4?'1 an à ≤10% de présence':v===3?'1 an à ≤20% de présence':v===2?'1 an à ≤30% de présence':'1 an à ≤40% de présence' },
   // ── Distinctions ──
-  { id:'mvp',      name:'Meilleur joueur', icon:'👑', tiers:[1,3,7,15,25,40],      hidden:false, key:'mvp',            desc:v=>`MVP de soirée ${v} fois` },
-  { id:'chelem',   name:'Grand Chelem',    icon:'🎨', tiers:[1], fixedTier:6,       hidden:true,  key:'grandChelem',    desc:_=>`Les 3 couleurs jouées` },
-  { id:'legende',  name:'Légende',         icon:'🏅', tiers:[5,15,30,50,100,127],  hidden:true,  key:'legendeCount',   desc:v=>`${v} niveaux débloqués` },
+  { id:'mvp',          name:'Meilleur joueur', icon:'👑', tiers:[1,3,7,15,25,40],     hidden:false, key:'mvp',          desc:v=>`MVP de soirée ${v} fois` },
+  { id:'soiree',       name:'Soirée parfaite', icon:'🌟', tiers:[1], fixedTier:6,      hidden:false, key:'soireeParfaite', desc:_=>`Soirée terminée avec 100 % de victoires` },
+  { id:'remontada',    name:'Remontada',       icon:'🌅', tiers:[1], fixedTier:6,      hidden:false, key:'remontadas',   desc:_=>`Perdant d'au moins 2 buts à la mi-temps, vainqueur à la fin` },
+  { id:'chelem',       name:'Grand Chelem',    icon:'🎨', tiers:[1], fixedTier:6,      hidden:true,  key:'grandChelem',  desc:_=>`Les 3 couleurs jouées` },
+  { id:'gardienAssist',name:'Neuer',           icon:'🧤', tiers:[1], fixedTier:6,      hidden:false, key:'gardienAssist', desc:_=>`Passe décisive en tant que gardien` },
+  { id:'legende',      name:'Légende',         icon:'🏅', tiers:[5,15,30,50,100,127], hidden:true,  key:'legendeCount', desc:v=>`${v} niveaux débloqués` },
   // ── Négatifs / Secrets ──
   { id:'bonnet',   name:"Bonnet d'Âne",    icon:'🫏', tiers:[10,30,50,100], tierOffset:2, tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'absences',       desc:v=>`${v} absence${v>1?'s':''}` },
   { id:'infirm',   name:'Infirmerie',      icon:'🩼', tiers:[1,5,10,20,35,50],     hidden:true,  key:'sessionsBlesses',desc:v=>`${v} session${v>1?'s':''} blessé${v>1?'s':''}` },
   { id:'pois',     name:'Poissard',        icon:'🪨', tiers:[1,2,4,7,12,20],       hidden:true,  key:'csc',            desc:v=>`${v} CSC` },
   { id:'fantome',  name:'Fantôme',         icon:'👻', tiers:[3,5,8,12,20,30],      hidden:true,  key:'fantomeStreak',  desc:v=>`${v} sessions sans G/A` },
-  { id:'zerovic',  name:'Disette',         icon:'🌵', tiers:[1], fixedTier:1,        hidden:true,  key:'zeroVict',       desc:_=>`Soirée sans la moindre victoire` },
+  { id:'zerovic',  name:'Disette',         icon:'🌵', tiers:[1], fixedTier:6,        hidden:true,  key:'zeroVict',       desc:_=>`Soirée sans la moindre victoire` },
   { id:'toutnul',  name:'Statu Quo',       icon:'⚖️', tiers:[1,2,5,10,20,35],      hidden:true,  key:'toutNul',        desc:v=>`${v} soirée${v>1?'s':''} 100% nuls` },
 ];
 const ACH_TIER_NAMES = ['','Plomb','Bronze','Argent','Or','Émeraude','Diamant'];
@@ -3836,18 +3848,19 @@ function computeAchievementStats(playerName) {
           });
         });
         buts+=g; passes+=a; sessGA+=g+a;
-        // Gardien stats : hors inMatch car le banquier peut être gardien des deux côtés
+        // Gardien assist : indépendant des données mi-temps
+        if(a>0){const _gAr=m.gardiensA||[],_gBr=m.gardiensB||[];if(_gAr.includes(playerName)||_gBr.includes(playerName))gardienAssist=1;}
+        // Gardien stats clean sheets / buts encaissés : nécessite les données mi-temps
         if(m.mt1A!==undefined && m.mt1B!==undefined){
           const gA=m.gardiensA||[], gB=m.gardiensB||[];
           const mt1Ac=m.mt1B||0, mt2Ac=Math.max(0,(m.scoreB||0)-(m.mt1B||0));
           const mt1Bc=m.mt1A||0, mt2Bc=Math.max(0,(m.scoreA||0)-(m.mt1A||0));
-          let _wasAnyGK=false,_wasOwnGK=false,_gkConc=0;
-          if(gA[0]===playerName){_wasAnyGK=true;if(!myEq||myEq===m.eqA){_wasOwnGK=true;gardiensButsEncaisses+=mt1Ac;_gkConc+=mt1Ac;}}
-          if(gA[1]===playerName){_wasAnyGK=true;if(!myEq||myEq===m.eqA){_wasOwnGK=true;gardiensButsEncaisses+=mt2Ac;_gkConc+=mt2Ac;}}
-          if(gB[0]===playerName){_wasAnyGK=true;if(!myEq||myEq===m.eqB){_wasOwnGK=true;gardiensButsEncaisses+=mt1Bc;_gkConc+=mt1Bc;}}
-          if(gB[1]===playerName){_wasAnyGK=true;if(!myEq||myEq===m.eqB){_wasOwnGK=true;gardiensButsEncaisses+=mt2Bc;_gkConc+=mt2Bc;}}
+          let _wasOwnGK=false,_gkConc=0;
+          if(gA[0]===playerName&&(!myEq||myEq===m.eqA)){_wasOwnGK=true;gardiensButsEncaisses+=mt1Ac;_gkConc+=mt1Ac;}
+          if(gA[1]===playerName&&(!myEq||myEq===m.eqA)){_wasOwnGK=true;gardiensButsEncaisses+=mt2Ac;_gkConc+=mt2Ac;}
+          if(gB[0]===playerName&&(!myEq||myEq===m.eqB)){_wasOwnGK=true;gardiensButsEncaisses+=mt1Bc;_gkConc+=mt1Bc;}
+          if(gB[1]===playerName&&(!myEq||myEq===m.eqB)){_wasOwnGK=true;gardiensButsEncaisses+=mt2Bc;_gkConc+=mt2Bc;}
           if(_wasOwnGK&&_gkConc===0)gardiensCleanSheets++;
-          if(_wasAnyGK&&a>0)gardienAssist=1;
         }
         if(inMatch){
           sessPlayed++;
@@ -3949,7 +3962,8 @@ function renderAchievementsGrid(achSt) {
       tip=`${ach.name} — ${tn}\n${ach.desc(val)}${!ach.fixedTier&&rawLv<maxT?`\nProchain seuil : ${ach.tiers[rawLv]}`:''}`;
     }
 
-    html+=`<div class="ach-cell t${lv}${ach.id==='comete'?' ach-comete':''}${ach.id==='bonnet'?' ach-bonnet':''}${ach.id==='passoire'?' ach-passoire':''}${ach.id==='chelem'?' ach-chelem':''}" data-tip="${tip.replace(/"/g,'&quot;')}">${iconHtml}${nameHtml}${dots}</div>`;
+    const _achCls=ach.id==='comete'?' ach-comete':ach.id==='bonnet'?' ach-bonnet':ach.id==='passoire'?' ach-passoire':ach.id==='chelem'?' ach-chelem':ach.id==='soiree'?' ach-soiree':ach.id==='remontada'?' ach-remontada':ach.id==='gardienAssist'?' ach-neuer':ach.id==='zerovic'?' ach-zerovic':'';
+    html+=`<div class="ach-cell t${lv}${_achCls}" data-tip="${tip.replace(/"/g,'&quot;')}">${iconHtml}${nameHtml}${dots}</div>`;
   });
   html+=`</div>`;
   return html;
@@ -3965,7 +3979,7 @@ function renderAchievementsLegend() {
     let badges = '';
     if (ach.fixedTier) {
       const tierName = ACH_TIER_NAMES[ach.fixedTier] || `Niv.${ach.fixedTier}`;
-      const chelemExtra = ach.id==='chelem'?' ach-chelem':'';
+      const chelemExtra = ach.id==='chelem'?' ach-chelem':ach.id==='soiree'?' ach-soiree':ach.id==='remontada'?' ach-remontada':ach.id==='gardienAssist'?' ach-neuer':ach.id==='zerovic'?' ach-zerovic':'';
       badges = `<span class="ach-cell t${ach.fixedTier}${chelemExtra}" style="${pillStyle}"><strong>${ach.tiers[0]}</strong></span>`;
     } else {
       badges = ach.tiers.map((threshold, i) => {
