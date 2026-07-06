@@ -3849,7 +3849,7 @@ function computeAchievementStats(playerName) {
         });
         buts+=g; passes+=a; sessGA+=g+a;
         // Gardien assist : indépendant des données mi-temps
-        if(a>0){const _gAr=m.gardiensA||[],_gBr=m.gardiensB||[];if(_gAr.includes(playerName)||_gBr.includes(playerName))gardienAssist=1;}
+        if(a>0){const _gAr=m.gardiensA||[],_gBr=m.gardiensB||[];if(_gAr.includes(playerName)||_gBr.includes(playerName))gardienAssist+=a;}
         // Gardien stats clean sheets / buts encaissés : nécessite les données mi-temps
         if(m.mt1A!==undefined && m.mt1B!==undefined){
           const gA=m.gardiensA||[], gB=m.gardiensB||[];
@@ -3954,6 +3954,8 @@ function renderAchievementsGrid(achSt) {
       :`<span class="ach-label">${ach.name}</span>`;
 
     const dots=(maxT>1)?`<div class="ach-dots"${locked?' style="opacity:0"':''}>${Array.from({length:maxT},(_,i)=>`<div class="ach-dot${i<rawLv?' on':''}"></div>`).join('')}</div>`:'';
+    const countHtml=(ach.fixedTier&&ach.tiers.length===1&&ach.id!=='chelem'&&!locked&&val>0)
+      ?`<span style="font-size:12px;font-weight:800;opacity:.8;line-height:1;letter-spacing:-.01em">${val}</span>`:'';
 
     let tip='';
     if(locked){ tip='Haut fait inconnu'; }
@@ -3963,7 +3965,7 @@ function renderAchievementsGrid(achSt) {
     }
 
     const _achCls=ach.id==='comete'?' ach-comete':ach.id==='bonnet'?' ach-bonnet':ach.id==='passoire'?' ach-passoire':ach.id==='chelem'?' ach-chelem':ach.id==='soiree'?' ach-soiree':ach.id==='remontada'?' ach-remontada':ach.id==='gardienAssist'?' ach-neuer':ach.id==='zerovic'?' ach-zerovic':'';
-    html+=`<div class="ach-cell t${lv}${_achCls}" data-tip="${tip.replace(/"/g,'&quot;')}">${iconHtml}${nameHtml}${dots}</div>`;
+    html+=`<div class="ach-cell t${lv}${_achCls}" data-tip="${tip.replace(/"/g,'&quot;')}">${iconHtml}${nameHtml}${dots}${countHtml}</div>`;
   });
   html+=`</div>`;
   return html;
