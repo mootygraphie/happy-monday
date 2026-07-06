@@ -3733,10 +3733,11 @@ const ACH_DEFS = [
   { id:'defenseFer',name:'Défense de Fer', icon:'🔒', tiers:[1,5,15,30,50,100],    hidden:false, key:'cleanSheets',           desc:v=>`${v} match${v>1?'s':''} sans encaisser` },
   { id:'mur',      name:'Le Mur',          icon:'🧱', tiers:[1,5,15,30,50,100],    hidden:false, key:'gardiensCleanSheets',   desc:v=>`${v} clean sheet${v>1?'s':''}` },
   { id:'passoire', name:'La Passoire',     icon:'🪣', tiers:[5,15,30,50,100,200],  hidden:true,  key:'gardiensButsEncaisses', desc:v=>`${v} but${v>1?'s':''} encaissé${v>1?'s':''} en gardant les buts` },
+  { id:'gardienAssist', name:'Le Neuer',   icon:'🧤', tiers:[1], fixedTier:5,       hidden:false, key:'gardienAssist',         desc:_=>`Passe décisive en tant que gardien` },
   // ── Collectif ──
-  { id:'soiree',   name:'Soirée parfaite', icon:'🌟', tiers:[1,2,4,8,15,25],       hidden:false, key:'soireeParfaite', desc:v=>`${v} soirée${v>1?'s':''} parfaite${v>1?'s':''}` },
+  { id:'soiree',   name:'Soirée parfaite', icon:'🌟', tiers:[1], fixedTier:4,        hidden:false, key:'soireeParfaite', desc:_=>`Soirée terminée avec 100 % de victoires` },
   { id:'invic',    name:'Invincible',      icon:'🛡️', tiers:[1,5,10,20,35,50],     hidden:false, key:'invincible',     desc:v=>`${v} soirée${v>1?'s':''} sans défaite` },
-  { id:'remontada',name:'Remontada',       icon:'🌅', tiers:[1,5,15,30,50,100],    hidden:false, key:'remontadas',     desc:v=>`${v} remontada${v>1?'s':''}` },
+  { id:'remontada',name:'Remontada',       icon:'🌅', tiers:[1], fixedTier:4,        hidden:false, key:'remontadas',     desc:_=>`Perdant d'au moins 2 buts à la mi-temps, vainqueur à la fin` },
   { id:'duo',      name:'Duo de légende',  icon:'🤝', tiers:[3,7,15,25,40,60],     hidden:false, key:'bestDuo',        desc:v=>`Duo répété ${v} fois` },
   // ── Présence ──
   { id:'fidele',   name:'Fidèle',          icon:'📅', tiers:[5,15,30,50,75,100],   hidden:false, key:'presences',      desc:v=>`${v} session${v>1?'s':''} jouée${v>1?'s':''}` },
@@ -3753,7 +3754,7 @@ const ACH_DEFS = [
   { id:'infirm',   name:'Infirmerie',      icon:'🩼', tiers:[1,5,10,20,35,50],     hidden:true,  key:'sessionsBlesses',desc:v=>`${v} session${v>1?'s':''} blessé${v>1?'s':''}` },
   { id:'pois',     name:'Poissard',        icon:'🪨', tiers:[1,2,4,7,12,20],       hidden:true,  key:'csc',            desc:v=>`${v} CSC` },
   { id:'fantome',  name:'Fantôme',         icon:'👻', tiers:[3,5,8,12,20,30],      hidden:true,  key:'fantomeStreak',  desc:v=>`${v} sessions sans G/A` },
-  { id:'zerovic',  name:'Disette',         icon:'🌵', tiers:[1,5,15,30,50,75],     hidden:true,  key:'zeroVict',       desc:v=>`${v} soirée${v>1?'s':''} sans victoire` },
+  { id:'zerovic',  name:'Disette',         icon:'🌵', tiers:[1], fixedTier:1,        hidden:true,  key:'zeroVict',       desc:_=>`Soirée sans la moindre victoire` },
   { id:'toutnul',  name:'Statu Quo',       icon:'⚖️', tiers:[1,2,5,10,20,35],      hidden:true,  key:'toutNul',        desc:v=>`${v} soirée${v>1?'s':''} 100% nuls` },
 ];
 const ACH_TIER_NAMES = ['','Plomb','Bronze','Argent','Or','Émeraude','Diamant'];
@@ -3772,8 +3773,9 @@ const ACH_ABOUT = {
   dbl:        'Matchs avec 1 but et 1 passe dans le même match',
   invic:      'Soirées sans la moindre défaite',
   defenseFer: 'Matchs joués sans encaisser de but',
-  mur:        'Clean sheets en tant que gardien (1 par match)',
-  passoire:   'Buts encaissés en gardant les buts',
+  mur:          'Clean sheets en tant que gardien (1 par match)',
+  passoire:     'Buts encaissés en gardant les buts',
+  gardienAssist:'Passe décisive en tant que gardien',
   remontada:  'Remontadas — perdant d\'au moins 2 buts à la mi-temps, vainqueur à la fin',
   duo:        'But + passe répétés avec le même partenaire',
   mvp:        'Nommé MVP de la soirée',
@@ -3795,7 +3797,7 @@ function computeAchievementStats(playerName) {
   const _ss = [...SESSIONS].sort((a,b)=>new Date(a.date)-new Date(b.date));
   let buts=0,passes=0,presences=0,absences=0,injuries=0,sessionsBlesses=0,sac=0,maillots=0;
   let hattricks=0,doubleDouble=0,cleanSheets=0,mvp=0,soireeParfaite=0,invincible=0,csc=0,zeroVict=0,toutNul=0;
-  let gardiensCleanSheets=0,gardiensButsEncaisses=0,remontadas=0;
+  let gardiensCleanSheets=0,gardiensButsEncaisses=0,remontadas=0,gardienAssist=0;
   const chelemColors=new Set(), duoMap={};
   let inEp=false, bestStreak=0, curStreak=0, fantomeStreak=0, sessionsAvecGA=0;
   const yearMap={};
@@ -3839,12 +3841,13 @@ function computeAchievementStats(playerName) {
           const gA=m.gardiensA||[], gB=m.gardiensB||[];
           const mt1Ac=m.mt1B||0, mt2Ac=Math.max(0,(m.scoreB||0)-(m.mt1B||0));
           const mt1Bc=m.mt1A||0, mt2Bc=Math.max(0,(m.scoreA||0)-(m.mt1A||0));
-          let _wasGK=false,_gkConc=0;
-          if(gA[0]===playerName){_wasGK=true;gardiensButsEncaisses+=mt1Ac;_gkConc+=mt1Ac;}
-          if(gA[1]===playerName){_wasGK=true;gardiensButsEncaisses+=mt2Ac;_gkConc+=mt2Ac;}
-          if(gB[0]===playerName){_wasGK=true;gardiensButsEncaisses+=mt1Bc;_gkConc+=mt1Bc;}
-          if(gB[1]===playerName){_wasGK=true;gardiensButsEncaisses+=mt2Bc;_gkConc+=mt2Bc;}
-          if(_wasGK&&_gkConc===0)gardiensCleanSheets++;
+          let _wasAnyGK=false,_wasOwnGK=false,_gkConc=0;
+          if(gA[0]===playerName){_wasAnyGK=true;if(!myEq||myEq===m.eqA){_wasOwnGK=true;gardiensButsEncaisses+=mt1Ac;_gkConc+=mt1Ac;}}
+          if(gA[1]===playerName){_wasAnyGK=true;if(!myEq||myEq===m.eqA){_wasOwnGK=true;gardiensButsEncaisses+=mt2Ac;_gkConc+=mt2Ac;}}
+          if(gB[0]===playerName){_wasAnyGK=true;if(!myEq||myEq===m.eqB){_wasOwnGK=true;gardiensButsEncaisses+=mt1Bc;_gkConc+=mt1Bc;}}
+          if(gB[1]===playerName){_wasAnyGK=true;if(!myEq||myEq===m.eqB){_wasOwnGK=true;gardiensButsEncaisses+=mt2Bc;_gkConc+=mt2Bc;}}
+          if(_wasOwnGK&&_gkConc===0)gardiensCleanSheets++;
+          if(_wasAnyGK&&a>0)gardienAssist=1;
         }
         if(inMatch){
           sessPlayed++;
@@ -3914,7 +3917,7 @@ function computeAchievementStats(playerName) {
            sac, maillots, hattricks, bestStreak, soireeParfaite, doubleDouble,
            invincible, cleanSheets, bestDuo, mvp, csc, grandChelem,
            fantomeStreak, assiduAnnes, cometeAnnes, zeroVict, toutNul, sessionsAvecGA,
-           gardiensCleanSheets, gardiensButsEncaisses, remontadas };
+           gardiensCleanSheets, gardiensButsEncaisses, remontadas, gardienAssist };
 }
 
 function renderAchievementsGrid(achSt) {
