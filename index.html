@@ -937,7 +937,91 @@
     .players-present-list { justify-content: center; }
     /* Grille des buts */
     .buts-grid { grid-template-columns: 1fr; }
+    .regl-summary-grid { grid-template-columns: 1fr; }
   }
+
+  /* ── Règlement 2026-2027 ── */
+  .regl-wrap { max-width: 720px; margin: 0 auto; }
+  .regl-hero { text-align: center; padding: 1.5rem 0 2.5rem; }
+  .regl-hero-emoji { font-size: 36px; margin-bottom: .6rem; }
+  .regl-hero-title { font-size: 20px; font-weight: 800; line-height: 1.3; margin-bottom: .4rem; }
+  .regl-hero-sub { font-size: 13.5px; color: var(--text2); }
+  .regl-intro { font-size: 13.5px; line-height: 1.85; color: var(--text2); margin-bottom: 2.5rem; }
+  .regl-section { margin-bottom: 2.5rem; }
+  .regl-rule-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; padding-bottom: .75rem; border-bottom: 1px solid var(--border); }
+  .regl-rule-title { font-size: 15px; font-weight: 800; }
+  .regl-text { font-size: 13.5px; line-height: 1.8; color: var(--text2); margin: 0; }
+  .regl-text ul { margin: .6rem 0 .6rem 1.4rem; padding: 0; }
+  .regl-text li { margin-bottom: .25rem; }
+  .regl-check-row { display: flex; align-items: flex-start; gap: 12px; margin-top: 1.2rem; padding: 12px 16px; background: rgba(16,185,129,.07); border: 1px solid rgba(16,185,129,.18); border-radius: 10px; cursor: pointer; user-select: none; transition: background .15s, border-color .15s; }
+  .regl-check-row.checked { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); }
+  .regl-check-row input[type="checkbox"] { width: 17px; height: 17px; margin-top: 2px; accent-color: #10B981; cursor: pointer; flex-shrink: 0; }
+  .regl-check-label { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.5; }
+  .regl-divider { border: none; border-top: 1px dashed var(--border); margin: 2.5rem 0; }
+  .regl-closing { font-size: 13.5px; line-height: 1.8; color: var(--text2); margin-bottom: 2.5rem; }
+  .regl-statut-title { font-size: 14px; font-weight: 700; margin-bottom: 1.2rem; }
+  .regl-radio-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 2.5rem; }
+  .regl-radio-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; user-select: none; transition: border-color .15s, background .15s; }
+  .regl-radio-row:hover { border-color: rgba(96,165,250,.4); }
+  .regl-radio-row.selected { border-color: rgba(96,165,250,.55); background: rgba(96,165,250,.07); }
+  .regl-radio-row input[type="radio"] { width: 17px; height: 17px; margin-top: 3px; accent-color: #60A5FA; cursor: pointer; flex-shrink: 0; }
+  .regl-radio-label { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+  .regl-radio-desc { font-size: 12.5px; color: var(--text2); line-height: 1.5; margin: 0; }
+  .regl-final-decl { font-size: 13px; color: var(--text2); line-height: 1.75; padding: 14px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 1.5rem; }
+  .regl-submit-zone { display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; }
+  .regl-submit-zone label { font-size: 12px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  .regl-name-sel { flex: 1; min-width: 0; }
+  .regl-submit-btn { padding: 10px 22px; border-radius: 8px; border: none; background: var(--gold); color: #000; font-weight: 800; font-size: 14px; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
+  .regl-submit-btn:disabled { opacity: .3; cursor: not-allowed; }
+  .regl-msg { margin-top: 1rem; padding: 12px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; display: none; }
+  .regl-msg.ok  { display: block; background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.3); color: #10B981; }
+  .regl-msg.err { display: block; background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); color: #EF4444; }
+  /* Admin section */
+  .regl-admin-wrap { margin-top: 3rem; padding-top: 2rem; border-top: 2px solid var(--border); }
+  .regl-admin-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 1.4rem; }
+  .regl-admin-title { font-size: 14px; font-weight: 800; }
+  .regl-view-pills { display: inline-flex; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 3px; gap: 2px; }
+  .regl-view-pill { padding: 5px 14px; border-radius: 6px; border: none; background: transparent; color: var(--text3); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .regl-view-pill.active { background: var(--bg3); color: var(--text); }
+  .regl-respondent-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+  .regl-respondent-hd { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; cursor: pointer; gap: 10px; }
+  .regl-respondent-name { font-size: 13.5px; font-weight: 700; }
+  .regl-respondent-meta { display: flex; align-items: center; gap: 8px; }
+  .regl-respondent-bd { display: none; padding: 12px 16px; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--text2); }
+  .regl-respondent-bd.open { display: block; }
+  .regl-check-line { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+  .regl-badge { padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .regl-badge-actif  { background: rgba(16,185,129,.15); color: #10B981; }
+  .regl-badge-plus1  { background: rgba(96,165,250,.15); color: #60A5FA; }
+  .regl-badge-quitte { background: rgba(239,68,68,.15);  color: #EF4444; }
+  .regl-badge-nc     { background: rgba(107,114,128,.12); color: #9CA3AF; }
+  .regl-summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .regl-sum-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .regl-sum-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin-bottom: 10px; }
+  .regl-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .regl-bar-label { font-size: 12px; color: var(--text2); min-width: 110px; }
+  .regl-bar-wrap { flex: 1; height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .regl-bar-fill { height: 100%; border-radius: 3px; }
+  .regl-bar-fill.green  { background: #10B981; }
+  .regl-bar-fill.blue   { background: #60A5FA; }
+  .regl-bar-fill.red    { background: #EF4444; }
+  .regl-bar-fill.gold   { background: var(--gold); }
+  .regl-bar-count { font-size: 12px; font-weight: 700; min-width: 34px; text-align: right; font-variant-numeric: tabular-nums; }
+  html.light .regl-check-row { background: rgba(16,185,129,.05); }
+  html.light .regl-check-row.checked { background: rgba(16,185,129,.1); }
+  html.light .regl-radio-row.selected { background: rgba(96,165,250,.06); }
+  .regl-admin-btn { padding: 6px 12px; border-radius: 7px; border: 1px solid var(--border); background: var(--bg3); color: var(--text2); font-size: 12px; font-weight: 600; cursor: pointer; transition: background .15s; }
+  .regl-admin-btn:hover { background: var(--bg2); color: var(--text); }
+  .regl-admin-del:hover { border-color: rgba(239,68,68,.4); color: #EF4444; }
+  .regl-merci-wrap { text-align: center; padding: 2.5rem 1.5rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; margin-top: 1.5rem; }
+  .regl-merci-emoji { font-size: 40px; margin-bottom: .75rem; }
+  .regl-merci-title { font-size: 18px; font-weight: 800; margin-bottom: .5rem; }
+  .regl-merci-sub { font-size: 13px; color: var(--text2); margin-bottom: 1.5rem; }
+  .regl-merci-btn { padding: 10px 22px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg3); color: var(--text); font-weight: 700; font-size: 13px; cursor: pointer; transition: background .15s; }
+  .regl-merci-btn:hover { background: var(--bg2); }
+  /* Stats award grid — 2 cols desktop, 1 col mobile */
+  .stats-award-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; align-items: start; }
+  @media (max-width: 640px) { .stats-award-grid { grid-template-columns: 1fr; } }
 </style>
 <script>if(localStorage.getItem('hmft_theme')==='light')document.documentElement.classList.add('light');</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -1001,6 +1085,7 @@
     <button class="main-tab" data-tab="session">Sessions</button>
     <button class="main-tab" data-tab="joueurs">Joueurs</button>
     <button class="main-tab" data-tab="stats">Stats</button>
+    <button class="main-tab" data-tab="reglement" id="tab-reglement" style="display:none">Règlement</button>
   </div>
 
   <!-- ── Onglet Dashboard ── -->
@@ -1042,6 +1127,9 @@
   <!-- ── Onglet Stats ── -->
   <div class="tab-panel" id="panel-stats"></div>
 
+  <!-- ── Onglet Règlement (admin) ── -->
+  <div class="tab-panel" id="panel-reglement"></div>
+
 </div>
 
 <div id="player-panel-overlay"></div>
@@ -1064,9 +1152,10 @@ function applyRole(role) {
   document.getElementById("saisie-nav-btn").style.display     = isAdmin ? "flex" : "none";
   document.getElementById("delete-session-btn").style.display = isAdmin ? "inline-flex" : "none";
   document.getElementById("edit-session-btn").style.display   = isAdmin ? "inline-flex" : "none";
+  document.getElementById("tab-reglement").style.display      = isAdmin ? "inline-flex" : "none";
 }
 
-const HASH_ADMIN = "d12ef5147a4f076dab0c5ae816d718094852541d08135686f96a8c1d8fd0d070";
+const HASH_ADMIN = "cea45f18ea39c9ece6711634075f9402f52b3727a59e08927043c8cca10182c8";
 
 async function _sha256(str) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
@@ -2746,7 +2835,7 @@ function renderStats() {
   const allSt = computeStats(SESSIONS);
 
   /* ── Ballon d'Or + Prix Yachine / Ballon de Plomb gardien ── */
-  let h = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem;align-items:start">
+  let h = `<div class="stats-award-grid">
     ${buildBallonDorHtml()}
     ${buildYachineHtml(SESSIONS)}
     ${buildBallonDePlombHtml()}
@@ -3277,6 +3366,9 @@ document.querySelectorAll(".main-tab").forEach(tab => {
     } else if (tab.dataset.tab === "stats") {
       history.replaceState(null, '', '#stats');
       renderStats();
+    } else if (tab.dataset.tab === "reglement") {
+      history.replaceState(null, '', '#reglement');
+      renderReglement();
     }
   });
 });
@@ -4905,6 +4997,492 @@ document.getElementById("saisie-content").addEventListener("change", e => {
 });
 
 /* ══════════════════════════════════════════════════════════
+   RÈGLEMENT 2026-2027
+══════════════════════════════════════════════════════════ */
+
+let _reglData = null; // cache des réponses chargées
+
+async function _loadReglData() {
+  if (!_db) return {};
+  const snap = await _db.ref('reglement_2026_2027').once('value');
+  _reglData = snap.val() || {};
+  return _reglData;
+}
+
+async function _saveReglResponse(name, payload) {
+  if (!_db) throw new Error('Firebase non disponible');
+  await _db.ref('reglement_2026_2027/' + name).set(payload);
+  if (!_reglData) _reglData = {};
+  _reglData[name] = payload;
+}
+
+const REGL_CHECKS = [
+  "J'ai lu et j'accepte ce point (Article 1 — Implication)",
+  "J'ai lu et j'accepte ce point (Article 2 — État d'esprit)",
+  "J'ai lu et j'accepte ce point (Article 3 — Sondages)",
+  "J'ai lu et j'accepte ce point (Article 4 — Logistique)",
+  "J'ai lu et j'accepte ce point (Article 5 — Priorités)",
+];
+
+const REGL_STATUTS = {
+  actif:  { label: 'Membre actif',           badge: 'regl-badge-actif' },
+  plus1:  { label: '+1',                      badge: 'regl-badge-plus1' },
+  quitte: { label: 'Je quitte l\'association', badge: 'regl-badge-quitte' },
+};
+
+function _reglBadgeHtml(statut) {
+  const s = REGL_STATUTS[statut];
+  if (!s) return `<span class="regl-badge regl-badge-nc">Non précisé</span>`;
+  return `<span class="regl-badge ${s.badge}">${s.label}</span>`;
+}
+
+function renderReglement() {
+  const panel = document.getElementById('panel-reglement');
+  if (!panel) return;
+
+  panel.innerHTML = `<div class="regl-wrap">
+
+  <!-- Héro -->
+  <div class="regl-hero">
+    <div class="regl-hero-emoji">⚽</div>
+    <div class="regl-hero-title">Happy Monday Football Team – Cap sur la nouvelle saison !</div>
+    <div class="regl-hero-sub">Saison 2026-2027</div>
+  </div>
+
+  <!-- Intro -->
+  <div class="regl-intro">
+    Salut les Goléadors ! 👋<br><br>
+    Avant toute chose, un immense merci à chacun d'entre vous.<br><br>
+    Grâce à votre bonne humeur, votre fidélité et votre implication, le Happy Monday Football Team continue de grandir année après année. Le niveau progresse, de nouveaux joueurs nous rejoignent régulièrement, mais ce qui fait avant tout notre force, c'est l'ambiance qui règne chaque lundi soir.<br><br>
+    Place désormais à une petite trêve estivale bien méritée ! ☀️<br><br>
+    Nous avons déjà hâte de vous retrouver à partir du <strong>lundi 24 août</strong> pour lancer ensemble une nouvelle saison pleine de football, de convivialité et de bons moments.<br><br>
+    Avant cela, nous souhaitions rappeler quelques règles essentielles qui permettront à l'association de continuer à fonctionner dans les meilleures conditions.
+  </div>
+
+  <div class="section-label">Nos engagements pour la saison 2026-2027</div>
+
+  <!-- Article 1 -->
+  <div class="regl-section">
+    <div class="regl-rule-header">
+      <span class="regl-rule-title">🤝 1. L'implication de chacun est essentielle</span>
+    </div>
+    <p class="regl-text">
+      Le Happy Monday Football Team ne fonctionne que grâce à l'investissement de ses membres.<br><br>
+      Nous comptons donc sur chacun pour réserver autant que possible son lundi soir afin d'être présent régulièrement.<br><br>
+      Bien entendu, les imprévus existent (vacances, travail, famille, blessures…) et ils sont parfaitement compréhensibles. L'idée est simplement qu'ils restent… des imprévus.
+    </p>
+    <label class="regl-check-row" id="regl-row-0">
+      <input type="checkbox" id="regl-chk-0"> <span class="regl-check-label">${REGL_CHECKS[0]}</span>
+    </label>
+  </div>
+
+  <!-- Article 2 -->
+  <div class="regl-section">
+    <div class="regl-rule-header">
+      <span class="regl-rule-title">❤️ 2. Gardons notre état d'esprit</span>
+    </div>
+    <p class="regl-text">
+      Le niveau de jeu augmente chaque année, et c'est une excellente nouvelle.<br><br>
+      Mais n'oublions jamais une chose : nous sommes avant tout une association de loisirs. Le lundi soir doit rester un moment de plaisir, de partage et de détente.<br><br>
+      Cela implique quelques principes simples :
+      <ul>
+        <li>faire jouer tout le monde ;</li>
+        <li>privilégier le collectif aux exploits individuels ;</li>
+        <li>maîtriser son engagement dans les duels ;</li>
+        <li>respecter les autres joueurs.</li>
+      </ul>
+      Personne ne doit repartir avec le sentiment de n'avoir jamais touché le ballon ou d'avoir risqué une blessure à chaque séance.<br><br>
+      Notre objectif est simple : que chacun ait envie de revenir le lundi suivant.
+    </p>
+    <label class="regl-check-row" id="regl-row-1">
+      <input type="checkbox" id="regl-chk-1"> <span class="regl-check-label">${REGL_CHECKS[1]}</span>
+    </label>
+  </div>
+
+  <!-- Article 3 -->
+  <div class="regl-section">
+    <div class="regl-rule-header">
+      <span class="regl-rule-title">📋 3. Répondez systématiquement au sondage du week-end</span>
+    </div>
+    <p class="regl-text">
+      Que vous soyez présent, absent, blessé ou en vacances, merci de répondre au sondage du week-end.<br><br>
+      Cela nous permet :
+      <ul>
+        <li>d'organiser les séances ;</li>
+        <li>de suivre l'implication de chacun ;</li>
+        <li>de maintenir un roster actif et cohérent.</li>
+      </ul>
+      Une absence de réponse répétée sera considérée comme un manque d'implication et pourra conduire à un retrait du roster principal, voire de l'association.
+    </p>
+    <label class="regl-check-row" id="regl-row-2">
+      <input type="checkbox" id="regl-chk-2"> <span class="regl-check-label">${REGL_CHECKS[2]}</span>
+    </label>
+  </div>
+
+  <!-- Article 4 -->
+  <div class="regl-section">
+    <div class="regl-rule-header">
+      <span class="regl-rule-title">🎽 4. Chacun participe à la vie du club</span>
+    </div>
+    <p class="regl-text">
+      Pour que le fonctionnement reste équitable, chacun devra participer à la logistique.<br><br>
+      Au minimum une fois dans la saison, chaque membre sera amené à s'occuper :
+      <ul>
+        <li>du sac de matériel ;</li>
+        <li>des maillots.</li>
+      </ul>
+      Ces tâches sont indispensables au bon fonctionnement de l'association et ne doivent pas toujours reposer sur les mêmes personnes.
+    </p>
+    <label class="regl-check-row" id="regl-row-3">
+      <input type="checkbox" id="regl-chk-3"> <span class="regl-check-label">${REGL_CHECKS[3]}</span>
+    </label>
+  </div>
+
+  <!-- Article 5 -->
+  <div class="regl-section">
+    <div class="regl-rule-header">
+      <span class="regl-rule-title">⭐ 5. Les membres actifs seront prioritaires</span>
+    </div>
+    <p class="regl-text">
+      Notre priorité sera toujours donnée aux membres réellement investis dans la vie du club.<br><br>
+      En cas de nombre de places limité (on peut rêver 😄) ou lors des soirées spéciales (Beaujolais, Galette des Rois, apéros, événements particuliers…), les places seront réservées :
+      <ul>
+        <li>aux membres actifs ;</li>
+        <li>puis, si des places restent disponibles, aux +1 les plus impliqués, évalués au cas par cas.</li>
+      </ul>
+    </p>
+    <label class="regl-check-row" id="regl-row-4">
+      <input type="checkbox" id="regl-chk-4"> <span class="regl-check-label">${REGL_CHECKS[4]}</span>
+    </label>
+  </div>
+
+  <hr class="regl-divider">
+
+  <!-- Mot de clôture -->
+  <div class="regl-closing">
+    Encore merci à tous pour cette belle saison.<br><br>
+    Nous sommes impatients de vous retrouver dès le <strong>24 août</strong> pour repartir ensemble sur une nouvelle année pleine de football, de bonne humeur… et, on l'espère, de nombreux buts !<br><br>
+    À très bientôt,<br>
+    <strong>L'équipe Happy Monday Football Team ⚽</strong>
+  </div>
+
+  <hr class="regl-divider">
+
+  <!-- Statut saison prochaine -->
+  <div class="regl-statut-title" id="regl-statut-title">Pour la saison prochaine, je souhaite être considéré comme :</div>
+  <div class="regl-radio-group" id="regl-radio-group">
+    <label class="regl-radio-row" id="regl-radio-row-actif">
+      <input type="radio" name="regl-statut" value="actif" id="regl-radio-actif">
+      <div>
+        <div class="regl-radio-label">Membre actif</div>
+        <p class="regl-radio-desc">Je suis certain d'être présent la majeure partie de la saison et je souhaite intégrer le roster principal.</p>
+      </div>
+    </label>
+    <label class="regl-radio-row" id="regl-radio-row-plus1">
+      <input type="radio" name="regl-statut" value="plus1" id="regl-radio-plus1">
+      <div>
+        <div class="regl-radio-label">+1</div>
+        <p class="regl-radio-desc">Je pense pouvoir venir ponctuellement mais pas de manière suffisamment régulière pour être considéré comme membre actif.</p>
+      </div>
+    </label>
+    <label class="regl-radio-row" id="regl-radio-row-quitte">
+      <input type="radio" name="regl-statut" value="quitte" id="regl-radio-quitte">
+      <div>
+        <div class="regl-radio-label">Je quitte l'association</div>
+        <p class="regl-radio-desc">Je ne pense pas revenir cette saison (même si je vous adore ❤️). Vous pouvez me retirer du roster.</p>
+      </div>
+    </label>
+  </div>
+
+  <!-- Déclaration finale + submit -->
+  <div class="regl-check-row" id="regl-final-decl" style="cursor:default;pointer-events:none;background:rgba(96,165,250,.07);border-color:rgba(96,165,250,.3)">
+    <span style="font-size:18px;flex-shrink:0">📜</span>
+    <span class="regl-check-label" style="font-style:italic">En validant ce formulaire, j'affirme avoir lu l'intégralité de ce règlement, je le comprends et j'accepte que tout manquement répété puisse entraîner mon retrait du roster actif, voire de l'association.</span>
+  </div>
+
+  <div class="regl-submit-zone" id="regl-submit-zone">
+    <label for="regl-name-sel">Prénom</label>
+    <select class="saisie-select regl-name-sel" id="regl-name-sel"><option value="">— Sélectionne ton prénom —</option></select>
+    <button class="regl-submit-btn" id="regl-submit-btn" disabled>Valider</button>
+  </div>
+  <div class="regl-msg" id="regl-msg"></div>
+
+  <!-- Merci screen (affiché si déjà répondu) -->
+  <div id="regl-merci-screen" style="display:none">
+    <div class="regl-merci-wrap">
+      <div class="regl-merci-emoji">🎉</div>
+      <div class="regl-merci-title" id="regl-merci-title">Tu as déjà répondu !</div>
+      <p class="regl-merci-sub">Merci et à très bientôt sur le terrain ⚽</p>
+      <button class="regl-merci-btn" id="regl-merci-edit-btn">✏️ Modifier mes réponses</button>
+    </div>
+  </div>
+
+  <!-- Section admin -->
+  <div class="regl-admin-wrap" id="regl-admin-wrap" style="display:none">
+    <div class="regl-admin-bar">
+      <span class="regl-admin-title section-label" style="margin:0">Réponses — admin</span>
+      <div class="regl-view-pills">
+        <button class="regl-view-pill active" id="regl-pill-individuel">Individuel</button>
+        <button class="regl-view-pill" id="regl-pill-recap">Récapitulatif</button>
+      </div>
+    </div>
+    <div id="regl-admin-content"><div style="color:var(--text3);font-size:13px">Chargement…</div></div>
+  </div>
+
+</div>`;
+
+  _initReglForm();
+}
+
+function _reglValidate() {
+  const allChecked = [0,1,2,3,4].every(i => document.getElementById(`regl-chk-${i}`)?.checked);
+  const statut = document.querySelector('input[name="regl-statut"]:checked')?.value;
+  const name = document.getElementById('regl-name-sel')?.value;
+  const btn = document.getElementById('regl-submit-btn');
+  if (!btn) return;
+  btn.disabled = !(allChecked && statut && name);
+  btn.textContent = (_reglData && name && _reglData[name]) ? 'Mettre à jour' : 'Valider';
+}
+
+const _REGL_FORM_IDS = ['regl-radio-group','regl-final-decl','regl-submit-zone','regl-msg'];
+
+function _reglPrefill(existing) {
+  [0,1,2,3,4].forEach(i => {
+    const chk = document.getElementById(`regl-chk-${i}`);
+    const row = document.getElementById(`regl-row-${i}`);
+    if (chk) { chk.checked = !!existing[`check${i+1}`]; row?.classList.toggle('checked', chk.checked); }
+  });
+  ['actif','plus1','quitte'].forEach(v => {
+    const radio = document.getElementById(`regl-radio-${v}`);
+    const row   = document.getElementById(`regl-radio-row-${v}`);
+    if (radio) { radio.checked = existing.statut === v; row?.classList.toggle('selected', radio.checked); }
+  });
+}
+
+function _reglClearForm() {
+  [0,1,2,3,4].forEach(i => {
+    const chk = document.getElementById(`regl-chk-${i}`);
+    if (chk) { chk.checked = false; document.getElementById(`regl-row-${i}`)?.classList.remove('checked'); }
+  });
+  ['actif','plus1','quitte'].forEach(v => {
+    const radio = document.getElementById(`regl-radio-${v}`);
+    if (radio) { radio.checked = false; document.getElementById(`regl-radio-row-${v}`)?.classList.remove('selected'); }
+  });
+}
+
+const _REGL_HIDE_IDS = [..._REGL_FORM_IDS, 'regl-statut-title'];
+
+function _reglShowMerci(name) {
+  const merciScreen = document.getElementById('regl-merci-screen');
+  if (merciScreen) merciScreen.style.display = 'block';
+  const title = document.getElementById('regl-merci-title');
+  if (title) title.textContent = `${name}, tu as déjà répondu pour la saison prochaine, merci et à très bientôt !`;
+  // Hide article sections
+  document.querySelectorAll('#panel-reglement .regl-section, #panel-reglement .regl-divider, #panel-reglement .regl-closing').forEach(el => el.style.display = 'none');
+  _REGL_HIDE_IDS.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+}
+
+function _reglHideMerci() {
+  const merciScreen = document.getElementById('regl-merci-screen');
+  if (merciScreen) merciScreen.style.display = 'none';
+  document.querySelectorAll('#panel-reglement .regl-section, #panel-reglement .regl-divider, #panel-reglement .regl-closing').forEach(el => el.style.display = '');
+  _REGL_HIDE_IDS.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = ''; });
+}
+
+async function _initReglForm() {
+  await _loadReglData();
+  const isAdmin = sessionStorage.getItem('hmft_role') === 'admin';
+
+  // Populate name selector: exclude already-responded players (admins see everyone)
+  const responded = new Set(Object.keys(_reglData || {}));
+  const available = [...ALL_PLAYERS]
+    .sort((a,b) => a.localeCompare(b,'fr'))
+    .filter(p => isAdmin || !responded.has(p));
+  const nameSel = document.getElementById('regl-name-sel');
+  if (nameSel) {
+    nameSel.innerHTML = `<option value="">— Sélectionne ton prénom —</option>` +
+      available.map(p => `<option value="${p}">${p}</option>`).join('');
+  }
+
+  // Show admin section only for admins
+  const adminWrap = document.getElementById('regl-admin-wrap');
+  if (adminWrap) adminWrap.style.display = isAdmin ? 'block' : 'none';
+
+  // Checkboxes
+  [0,1,2,3,4].forEach(i => {
+    const chk = document.getElementById(`regl-chk-${i}`);
+    const row = document.getElementById(`regl-row-${i}`);
+    if (!chk || !row) return;
+    chk.addEventListener('change', () => { row.classList.toggle('checked', chk.checked); _reglValidate(); });
+  });
+
+  // Radios
+  ['actif','plus1','quitte'].forEach(v => {
+    const radio = document.getElementById(`regl-radio-${v}`);
+    const row   = document.getElementById(`regl-radio-row-${v}`);
+    if (!radio || !row) return;
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('.regl-radio-row').forEach(r => r.classList.remove('selected'));
+      row.classList.add('selected');
+      _reglValidate();
+    });
+  });
+
+  // Name selector
+  nameSel?.addEventListener('change', () => {
+    const name = nameSel.value;
+    const existing = (_reglData || {})[name];
+    const msg = document.getElementById('regl-msg');
+    if (msg) { msg.className = 'regl-msg'; msg.textContent = ''; }
+    if (existing && !isAdmin) {
+      _reglPrefill(existing);
+      _reglShowMerci(name);
+    } else {
+      _reglHideMerci();
+      if (existing) { _reglPrefill(existing); } else { _reglClearForm(); }
+      _reglValidate();
+    }
+  });
+
+  // "Modifier mes réponses" button
+  document.getElementById('regl-merci-edit-btn')?.addEventListener('click', () => {
+    _reglHideMerci();
+    _reglValidate();
+  });
+
+  // Submit
+  document.getElementById('regl-submit-btn')?.addEventListener('click', async () => {
+    const name = document.getElementById('regl-name-sel')?.value;
+    const statut = document.querySelector('input[name="regl-statut"]:checked')?.value;
+    if (!name || !statut) return;
+    const payload = {
+      nom: name, statut,
+      check1: !!document.getElementById('regl-chk-0')?.checked,
+      check2: !!document.getElementById('regl-chk-1')?.checked,
+      check3: !!document.getElementById('regl-chk-2')?.checked,
+      check4: !!document.getElementById('regl-chk-3')?.checked,
+      check5: !!document.getElementById('regl-chk-4')?.checked,
+      timestamp: new Date().toISOString(),
+    };
+    const msg = document.getElementById('regl-msg');
+    const btn = document.getElementById('regl-submit-btn');
+    btn.disabled = true; btn.textContent = '…';
+    try {
+      await _saveReglResponse(name, payload);
+      if (!isAdmin) {
+        _reglShowMerci(name);
+      } else {
+        msg.className = 'regl-msg ok';
+        msg.textContent = `✓ Réponse de ${name} enregistrée avec succès !`;
+        _reglValidate();
+      }
+      _renderReglAdmin();
+    } catch(e) {
+      msg.className = 'regl-msg err';
+      msg.textContent = 'Erreur lors de la sauvegarde. Vérifie ta connexion.';
+      btn.disabled = false;
+      _reglValidate();
+    }
+  });
+
+  // Tabs admin
+  document.getElementById('regl-pill-individuel')?.addEventListener('click', () => {
+    document.getElementById('regl-pill-individuel').classList.add('active');
+    document.getElementById('regl-pill-recap').classList.remove('active');
+    _renderReglAdmin('individuel');
+  });
+  document.getElementById('regl-pill-recap')?.addEventListener('click', () => {
+    document.getElementById('regl-pill-recap').classList.add('active');
+    document.getElementById('regl-pill-individuel').classList.remove('active');
+    _renderReglAdmin('recap');
+  });
+
+  if (isAdmin) _renderReglAdmin('individuel');
+}
+
+function _renderReglAdmin(view = 'individuel') {
+  const data = _reglData || {};
+  const entries = Object.values(data).sort((a,b) => (a.nom||'').localeCompare(b.nom||'','fr'));
+  const container = document.getElementById('regl-admin-content');
+  if (!container) return;
+
+  if (entries.length === 0) {
+    container.innerHTML = `<div style="color:var(--text3);font-size:13px;padding:1rem 0">Aucune réponse pour l'instant.</div>`;
+    return;
+  }
+
+  if (view === 'individuel') {
+    const total = ALL_PLAYERS.length;
+    const count = entries.length;
+    let html = `<div style="font-size:13px;color:var(--text3);margin-bottom:1rem">${count} réponse${count>1?'s':''} sur ${total} joueur${total>1?'s':''}</div>`;
+    entries.forEach(r => {
+      const allOk = r.check1 && r.check2 && r.check3 && r.check4 && r.check5;
+      html += `<div class="regl-respondent-card">
+        <div class="regl-respondent-hd" onclick="this.parentElement.querySelector('.regl-respondent-bd').classList.toggle('open')">
+          <span class="regl-respondent-name">${r.nom}</span>
+          <div class="regl-respondent-meta">
+            ${_reglBadgeHtml(r.statut)}
+            ${allOk ? '<span style="font-size:13px">✅</span>' : '<span style="font-size:13px">⚠️</span>'}
+            <span style="font-size:11px;color:var(--text3)">${r.timestamp ? new Date(r.timestamp).toLocaleDateString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : ''}</span>
+          </div>
+        </div>
+        <div class="regl-respondent-bd">
+          ${REGL_CHECKS.map((lbl,i) => {
+            const ok = r[`check${i+1}`];
+            return `<div class="regl-check-line"><span>${ok?'✅':'❌'}</span><span style="color:var(--text2)">${lbl}</span></div>`;
+          }).join('')}
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="regl-admin-btn regl-admin-edit" onclick="_reglAdminEdit('${r.nom}')">✏️ Modifier</button>
+            <button class="regl-admin-btn regl-admin-del" onclick="_reglAdminDelete('${r.nom}')">🗑 Supprimer</button>
+          </div>
+        </div>
+      </div>`;
+    });
+    container.innerHTML = html;
+  } else {
+    const groups = { actif: [], plus1: [], quitte: [] };
+    entries.forEach(r => { if (groups[r.statut]) groups[r.statut].push(r.nom); });
+    const groupDefs = [
+      { key: 'actif',  label: 'Membres actifs',       cls: 'regl-badge-actif',  count: groups.actif.length },
+      { key: 'plus1',  label: '+1',                    cls: 'regl-badge-plus1',  count: groups.plus1.length },
+      { key: 'quitte', label: 'Quittent l\'association', cls: 'regl-badge-quitte', count: groups.quitte.length },
+    ];
+    container.innerHTML = `<div style="display:flex;flex-direction:column;gap:12px">` +
+      groupDefs.map(g => `<div class="regl-sum-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div class="regl-sum-title" style="margin:0">${g.label}</div>
+          <span class="regl-badge ${g.cls}">${g.count}</span>
+        </div>
+        ${groups[g.key].length
+          ? `<div style="display:flex;flex-wrap:wrap;gap:6px">${groups[g.key].map(n => `<span style="font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--bg3);color:var(--text)">${n}</span>`).join('')}</div>`
+          : `<div style="font-size:12px;color:var(--text3)">Aucun</div>`
+        }
+      </div>`).join('') +
+    `</div>`;
+  }
+}
+
+function _reglAdminEdit(name) {
+  const r = (_reglData || {})[name];
+  if (!r) return;
+  const nameSel = document.getElementById('regl-name-sel');
+  if (nameSel) { nameSel.value = name; }
+  _reglHideMerci();
+  _reglPrefill(r);
+  _reglValidate();
+  document.getElementById('regl-submit-zone')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function _reglAdminDelete(name) {
+  if (!confirm(`Supprimer la réponse de ${name} ?`)) return;
+  if (!_db) return;
+  await _db.ref('reglement_2026_2027/' + name).remove();
+  if (_reglData) delete _reglData[name];
+  const pill = document.querySelector('.regl-view-pill.active');
+  _renderReglAdmin(pill && pill.id === 'regl-pill-recap' ? 'recap' : 'individuel');
+}
+
+/* ══════════════════════════════════════════════════════════
    ANIMATIONS
 ══════════════════════════════════════════════════════════ */
 
@@ -5043,7 +5621,7 @@ document.addEventListener("click", e => {
     } else {
       history.replaceState(null, '', '#last');
     }
-  } else if (_hash === "joueurs" || _hash === "sessions" || _hash === "stats") {
+  } else if (_hash === "joueurs" || _hash === "sessions" || _hash === "stats" || _hash === "reglement") {
     const _tabKey = _hash === "sessions" ? "session" : _hash;
     document.querySelectorAll(".main-tab").forEach(t => t.classList.toggle("active", t.dataset.tab === _tabKey));
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === `panel-${_tabKey}`));
@@ -5056,6 +5634,7 @@ document.addEventListener("click", e => {
   populateSessionSelect();
   renderJoueurs();
   if (_hash === "stats") renderStats();
+  if (_hash === "reglement") renderReglement();
   if (_loadSaisie) renderSaisie();
   if (SESSIONS.length) {
     const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
