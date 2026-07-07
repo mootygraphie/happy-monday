@@ -5201,16 +5201,6 @@ function renderReglement() {
   </div>
   <div class="regl-msg" id="regl-msg"></div>
 
-  <!-- Merci screen (affiché si déjà répondu) -->
-  <div id="regl-merci-screen" style="display:none">
-    <div class="regl-merci-wrap">
-      <div class="regl-merci-emoji">🎉</div>
-      <div class="regl-merci-title" id="regl-merci-title">Tu as déjà répondu !</div>
-      <p class="regl-merci-sub">Merci et à très bientôt sur le terrain ⚽</p>
-      <button class="regl-merci-btn" id="regl-merci-edit-btn">✏️ Modifier mes réponses</button>
-    </div>
-  </div>
-
   <!-- Section admin -->
   <div class="regl-admin-wrap" id="regl-admin-wrap" style="display:none">
     <div class="regl-admin-bar">
@@ -5262,8 +5252,6 @@ function _reglValidate() {
   btn.textContent = (_reglData && name && _reglData[name]) ? 'Mettre à jour' : 'Valider';
 }
 
-const _REGL_FORM_IDS = ['regl-radio-group','regl-final-decl','regl-submit-zone','regl-msg'];
-
 function _reglPrefill(existing) {
   const chk = document.getElementById('regl-chk-final');
   if (chk) { chk.checked = !!existing.check; }
@@ -5283,23 +5271,27 @@ function _reglClearForm() {
   });
 }
 
-const _REGL_HIDE_IDS = [..._REGL_FORM_IDS, 'regl-statut-title'];
-
-function _reglShowMerci(name) {
-  const merciScreen = document.getElementById('regl-merci-screen');
-  if (merciScreen) merciScreen.style.display = 'block';
-  const title = document.getElementById('regl-merci-title');
-  if (title) title.textContent = `${name}, tu as déjà répondu pour la saison prochaine, merci et à très bientôt !`;
-  // Hide article sections
-  document.querySelectorAll('#panel-reglement .regl-section, #panel-reglement .regl-divider, #panel-reglement .regl-closing').forEach(el => el.style.display = 'none');
-  _REGL_HIDE_IDS.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
-}
-
-function _reglHideMerci() {
-  const merciScreen = document.getElementById('regl-merci-screen');
-  if (merciScreen) merciScreen.style.display = 'none';
-  document.querySelectorAll('#panel-reglement .regl-section, #panel-reglement .regl-divider, #panel-reglement .regl-closing').forEach(el => el.style.display = '');
-  _REGL_HIDE_IDS.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = ''; });
+function _reglShowThanks(name) {
+  // Griser la section statut
+  ['regl-statut-title','regl-radio-group'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.opacity = '0.35'; el.style.pointerEvents = 'none'; }
+  });
+  // Masquer déclaration et bouton
+  ['regl-final-decl','regl-submit-zone'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  // Message de confirmation
+  const msg = document.getElementById('regl-msg');
+  if (msg) { msg.className = 'regl-msg ok'; msg.textContent = 'Merci d\'avoir répondu et à la saison prochaine ! ⚽'; }
+  // Retirer le nom du sélecteur
+  const nameSel = document.getElementById('regl-name-sel');
+  if (nameSel && name) {
+    const opt = nameSel.querySelector(`option[value="${CSS.escape(name)}"]`) || [...nameSel.options].find(o => o.value === name);
+    if (opt) opt.remove();
+    nameSel.value = '';
+  }
 }
 
 async function _initReglForm() {
@@ -5336,25 +5328,13 @@ async function _initReglForm() {
     });
   });
 
-  // Name selector
+  // Name selector — admins voient tout le monde et peuvent pré-remplir
   nameSel?.addEventListener('change', () => {
     const name = nameSel.value;
     const existing = (_reglData || {})[name];
     const msg = document.getElementById('regl-msg');
     if (msg) { msg.className = 'regl-msg'; msg.textContent = ''; }
-    if (existing && !isAdmin) {
-      _reglPrefill(existing);
-      _reglShowMerci(name);
-    } else {
-      _reglHideMerci();
-      if (existing) { _reglPrefill(existing); } else { _reglClearForm(); }
-      _reglValidate();
-    }
-  });
-
-  // "Modifier mes réponses" button
-  document.getElementById('regl-merci-edit-btn')?.addEventListener('click', () => {
-    _reglHideMerci();
+    if (existing) { _reglPrefill(existing); } else { _reglClearForm(); }
     _reglValidate();
   });
 
@@ -5374,7 +5354,7 @@ async function _initReglForm() {
     try {
       await _saveReglResponse(name, payload);
       if (!isAdmin) {
-        _reglShowMerci(name);
+        _reglShowThanks(name);
       } else {
         msg.className = 'regl-msg ok';
         msg.textContent = `✓ Réponse de ${name} enregistrée avec succès !`;
