@@ -5080,9 +5080,6 @@ function renderReglement() {
       Nous comptons donc sur chacun pour réserver autant que possible son lundi soir afin d'être présent régulièrement.<br><br>
       Bien entendu, les imprévus existent (vacances, travail, famille, blessures…) et ils sont parfaitement compréhensibles. L'idée est simplement qu'ils restent… des imprévus.
     </p>
-    <label class="regl-check-row" id="regl-row-0">
-      <input type="checkbox" id="regl-chk-0"> <span class="regl-check-label">${REGL_CHECKS[0]}</span>
-    </label>
   </div>
 
   <!-- Article 2 -->
@@ -5103,9 +5100,6 @@ function renderReglement() {
       Personne ne doit repartir avec le sentiment de n'avoir jamais touché le ballon ou d'avoir risqué une blessure à chaque séance.<br><br>
       Notre objectif est simple : que chacun ait envie de revenir le lundi suivant.
     </p>
-    <label class="regl-check-row" id="regl-row-1">
-      <input type="checkbox" id="regl-chk-1"> <span class="regl-check-label">${REGL_CHECKS[1]}</span>
-    </label>
   </div>
 
   <!-- Article 3 -->
@@ -5123,9 +5117,6 @@ function renderReglement() {
       </ul>
       Une absence de réponse répétée sera considérée comme un manque d'implication et pourra conduire à un retrait du roster principal, voire de l'association.
     </p>
-    <label class="regl-check-row" id="regl-row-2">
-      <input type="checkbox" id="regl-chk-2"> <span class="regl-check-label">${REGL_CHECKS[2]}</span>
-    </label>
   </div>
 
   <!-- Article 4 -->
@@ -5142,9 +5133,6 @@ function renderReglement() {
       </ul>
       Ces tâches sont indispensables au bon fonctionnement de l'association et ne doivent pas toujours reposer sur les mêmes personnes.
     </p>
-    <label class="regl-check-row" id="regl-row-3">
-      <input type="checkbox" id="regl-chk-3"> <span class="regl-check-label">${REGL_CHECKS[3]}</span>
-    </label>
   </div>
 
   <!-- Article 5 -->
@@ -5160,9 +5148,6 @@ function renderReglement() {
         <li>puis, si des places restent disponibles, aux +1 les plus impliqués, évalués au cas par cas.</li>
       </ul>
     </p>
-    <label class="regl-check-row" id="regl-row-4">
-      <input type="checkbox" id="regl-chk-4"> <span class="regl-check-label">${REGL_CHECKS[4]}</span>
-    </label>
   </div>
 
   <hr class="regl-divider">
@@ -5204,10 +5189,10 @@ function renderReglement() {
   </div>
 
   <!-- Déclaration finale + submit -->
-  <div class="regl-check-row" id="regl-final-decl" style="cursor:default;pointer-events:none;background:rgba(96,165,250,.07);border-color:rgba(96,165,250,.3)">
-    <span style="font-size:18px;flex-shrink:0">📜</span>
+  <label class="regl-check-row" id="regl-final-decl" style="border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.05)">
+    <input type="checkbox" id="regl-chk-final" style="accent-color:#10B981">
     <span class="regl-check-label" style="font-style:italic">En validant ce formulaire, j'affirme avoir lu l'intégralité de ce règlement, je le comprends et j'accepte que tout manquement répété puisse entraîner mon retrait du roster actif, voire de l'association.</span>
-  </div>
+  </label>
 
   <div class="regl-submit-zone" id="regl-submit-zone">
     <label for="regl-name-sel">Prénom</label>
@@ -5244,23 +5229,44 @@ function renderReglement() {
 }
 
 function _reglValidate() {
-  const allChecked = [0,1,2,3,4].every(i => document.getElementById(`regl-chk-${i}`)?.checked);
   const statut = document.querySelector('input[name="regl-statut"]:checked')?.value;
+  const finalChk = document.getElementById('regl-chk-final');
+  const finalChecked = finalChk?.checked;
+  const declRow = document.getElementById('regl-final-decl');
   const name = document.getElementById('regl-name-sel')?.value;
   const btn = document.getElementById('regl-submit-btn');
+
+  // Déclaration: rouge si obligatoire+non cochée, verte si cochée, neutre si quitte
+  if (declRow) {
+    if (statut === 'quitte') {
+      declRow.style.borderColor = 'rgba(107,114,128,.3)';
+      declRow.style.background  = 'rgba(107,114,128,.05)';
+      declRow.style.opacity     = '0.55';
+      if (finalChk) finalChk.disabled = true;
+    } else {
+      if (finalChk) finalChk.disabled = false;
+      declRow.style.opacity = '1';
+      if (finalChecked) {
+        declRow.style.borderColor = 'rgba(16,185,129,.5)';
+        declRow.style.background  = 'rgba(16,185,129,.07)';
+      } else {
+        declRow.style.borderColor = 'rgba(239,68,68,.5)';
+        declRow.style.background  = 'rgba(239,68,68,.05)';
+      }
+    }
+  }
+
   if (!btn) return;
-  btn.disabled = !(allChecked && statut && name);
+  const checkOk = statut === 'quitte' || finalChecked;
+  btn.disabled = !(checkOk && statut && name);
   btn.textContent = (_reglData && name && _reglData[name]) ? 'Mettre à jour' : 'Valider';
 }
 
 const _REGL_FORM_IDS = ['regl-radio-group','regl-final-decl','regl-submit-zone','regl-msg'];
 
 function _reglPrefill(existing) {
-  [0,1,2,3,4].forEach(i => {
-    const chk = document.getElementById(`regl-chk-${i}`);
-    const row = document.getElementById(`regl-row-${i}`);
-    if (chk) { chk.checked = !!existing[`check${i+1}`]; row?.classList.toggle('checked', chk.checked); }
-  });
+  const chk = document.getElementById('regl-chk-final');
+  if (chk) { chk.checked = !!existing.check; }
   ['actif','plus1','quitte'].forEach(v => {
     const radio = document.getElementById(`regl-radio-${v}`);
     const row   = document.getElementById(`regl-radio-row-${v}`);
@@ -5269,10 +5275,8 @@ function _reglPrefill(existing) {
 }
 
 function _reglClearForm() {
-  [0,1,2,3,4].forEach(i => {
-    const chk = document.getElementById(`regl-chk-${i}`);
-    if (chk) { chk.checked = false; document.getElementById(`regl-row-${i}`)?.classList.remove('checked'); }
-  });
+  const chk = document.getElementById('regl-chk-final');
+  if (chk) chk.checked = false;
   ['actif','plus1','quitte'].forEach(v => {
     const radio = document.getElementById(`regl-radio-${v}`);
     if (radio) { radio.checked = false; document.getElementById(`regl-radio-row-${v}`)?.classList.remove('selected'); }
@@ -5317,13 +5321,8 @@ async function _initReglForm() {
   const adminWrap = document.getElementById('regl-admin-wrap');
   if (adminWrap) adminWrap.style.display = isAdmin ? 'block' : 'none';
 
-  // Checkboxes
-  [0,1,2,3,4].forEach(i => {
-    const chk = document.getElementById(`regl-chk-${i}`);
-    const row = document.getElementById(`regl-row-${i}`);
-    if (!chk || !row) return;
-    chk.addEventListener('change', () => { row.classList.toggle('checked', chk.checked); _reglValidate(); });
-  });
+  // Checkbox déclaration finale
+  document.getElementById('regl-chk-final')?.addEventListener('change', _reglValidate);
 
   // Radios
   ['actif','plus1','quitte'].forEach(v => {
@@ -5366,11 +5365,7 @@ async function _initReglForm() {
     if (!name || !statut) return;
     const payload = {
       nom: name, statut,
-      check1: !!document.getElementById('regl-chk-0')?.checked,
-      check2: !!document.getElementById('regl-chk-1')?.checked,
-      check3: !!document.getElementById('regl-chk-2')?.checked,
-      check4: !!document.getElementById('regl-chk-3')?.checked,
-      check5: !!document.getElementById('regl-chk-4')?.checked,
+      check: !!document.getElementById('regl-chk-final')?.checked,
       timestamp: new Date().toISOString(),
     };
     const msg = document.getElementById('regl-msg');
@@ -5425,21 +5420,21 @@ function _renderReglAdmin(view = 'individuel') {
     const count = entries.length;
     let html = `<div style="font-size:13px;color:var(--text3);margin-bottom:1rem">${count} réponse${count>1?'s':''} sur ${total} joueur${total>1?'s':''}</div>`;
     entries.forEach(r => {
-      const allOk = r.check1 && r.check2 && r.check3 && r.check4 && r.check5;
+      const declOk = r.check || r.statut === 'quitte';
+      const declLabel = r.statut === 'quitte'
+        ? 'Déclaration non requise (quitte l\'association)'
+        : 'Déclaration finale lue et acceptée';
       html += `<div class="regl-respondent-card">
         <div class="regl-respondent-hd" onclick="this.parentElement.querySelector('.regl-respondent-bd').classList.toggle('open')">
           <span class="regl-respondent-name">${r.nom}</span>
           <div class="regl-respondent-meta">
             ${_reglBadgeHtml(r.statut)}
-            ${allOk ? '<span style="font-size:13px">✅</span>' : '<span style="font-size:13px">⚠️</span>'}
+            ${declOk ? '<span style="font-size:13px">✅</span>' : '<span style="font-size:13px">⚠️</span>'}
             <span style="font-size:11px;color:var(--text3)">${r.timestamp ? new Date(r.timestamp).toLocaleDateString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : ''}</span>
           </div>
         </div>
         <div class="regl-respondent-bd">
-          ${REGL_CHECKS.map((lbl,i) => {
-            const ok = r[`check${i+1}`];
-            return `<div class="regl-check-line"><span>${ok?'✅':'❌'}</span><span style="color:var(--text2)">${lbl}</span></div>`;
-          }).join('')}
+          <div class="regl-check-line"><span>${declOk?'✅':'❌'}</span><span style="color:var(--text2)">${declLabel}</span></div>
           <div style="display:flex;gap:8px;margin-top:12px">
             <button class="regl-admin-btn regl-admin-edit" onclick="_reglAdminEdit('${r.nom}')">✏️ Modifier</button>
             <button class="regl-admin-btn regl-admin-del" onclick="_reglAdminDelete('${r.nom}')">🗑 Supprimer</button>
