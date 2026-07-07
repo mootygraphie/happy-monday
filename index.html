@@ -1094,7 +1094,7 @@
     <div class="period-bar" id="periods">
       <button class="pill active" data-period="last">Dernière session</button>
       <button class="pill" data-period="month">Ce mois-ci</button>
-      <button class="pill" data-period="year">Cette année</button>
+      <button class="pill" data-period="year">Cette saison</button>
       <button class="pill" data-period="all">All-time</button>
     </div>
     <div class="period-sub" id="period-sub">
@@ -1437,8 +1437,17 @@ function pLink(name, extra) {
    DASHBOARD
 ══════════════════════════════════════════════════════════ */
 let currentPeriod = "last";
-let filterYear  = null;
+let filterYear  = null; // stocke le début de saison (ex: 2024 pour 2024/2025)
 let filterMonth = null;
+
+/* Saison = 15 août → 15 juillet de l'année suivante */
+function _seasonStart(date) {
+  const d = new Date(date);
+  const m = d.getMonth(); // 0-indexed
+  return (m > 7 || (m === 7 && d.getDate() >= 15)) ? d.getFullYear() : d.getFullYear() - 1;
+}
+function _seasonLabel(sy) { return `${sy}/${sy + 1}`; }
+function _currentSeason() { return _seasonStart(new Date()); }
 
 const MONTH_NAMES = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
 
@@ -1448,9 +1457,9 @@ function filterSessions(period) {
   if (period === "last")  return [sorted[0]];
   if (period === "month") return SESSIONS.filter(s => {
     const d = new Date(s.date);
-    return d.getMonth() === filterMonth && d.getFullYear() === filterYear;
+    return d.getMonth() === filterMonth && _seasonStart(d) === filterYear;
   });
-  if (period === "year")  return SESSIONS.filter(s => new Date(s.date).getFullYear() === filterYear);
+  if (period === "year")  return SESSIONS.filter(s => _seasonStart(s.date) === filterYear);
   return SESSIONS;
 }
 
@@ -1465,14 +1474,14 @@ function updateSubFilter(period) {
   }
   sub.style.visibility = "visible";
 
-  /* Années disponibles */
-  const years = [...new Set(SESSIONS.map(s => new Date(s.date).getFullYear()))].sort((a,b)=>b-a);
+  /* Saisons disponibles (triées desc) */
+  const seasons = [...new Set(SESSIONS.map(s => _seasonStart(s.date)))].sort((a,b)=>b-a);
 
-  /* Mois disponibles pour l'année sélectionnée (mode mois) */
-  function monthsForYear(yr) {
+  /* Mois disponibles pour la saison sélectionnée (mode mois) */
+  function monthsForSeason(sy) {
     return [...new Set(
       SESSIONS
-        .filter(s => new Date(s.date).getFullYear() === yr)
+        .filter(s => _seasonStart(s.date) === sy)
         .map(s => new Date(s.date).getMonth())
     )].sort((a,b)=>b-a);
   }
@@ -1480,21 +1489,21 @@ function updateSubFilter(period) {
   if (period === "year") {
     selM.hidden = true;
     selY.hidden = false;
-    selY.innerHTML = years.map(y => `<option value="${y}" ${y===filterYear?"selected":""}>${y}</option>`).join("");
-    if (filterYear === null && years.length) filterYear = years[0];
+    selY.innerHTML = seasons.map(sy => `<option value="${sy}" ${sy===filterYear?"selected":""}>${_seasonLabel(sy)}</option>`).join("");
+    if (filterYear === null && seasons.length) filterYear = seasons[0];
     selY.value = filterYear;
 
   } else {
     selM.hidden = false;
     selY.hidden = false;
 
-    /* Populate years */
-    selY.innerHTML = years.map(y => `<option value="${y}" ${y===filterYear?"selected":""}>${y}</option>`).join("");
-    if (filterYear === null && years.length) filterYear = years[0];
+    /* Populate seasons */
+    selY.innerHTML = seasons.map(sy => `<option value="${sy}" ${sy===filterYear?"selected":""}>${_seasonLabel(sy)}</option>`).join("");
+    if (filterYear === null && seasons.length) filterYear = seasons[0];
     selY.value = filterYear;
 
-    /* Populate months for selected year */
-    const months = monthsForYear(Number(selY.value));
+    /* Populate months for selected season */
+    const months = monthsForSeason(Number(selY.value));
     selM.innerHTML = months.map(m => `<option value="${m}" ${m===filterMonth?"selected":""}>${MONTH_NAMES[m]}</option>`).join("");
     if (filterMonth === null || !months.includes(filterMonth)) filterMonth = months[0] ?? null;
     selM.value = filterMonth;
@@ -1725,8 +1734,8 @@ function computeGardiensRanking(sessions) {
 }
 
 function buildYachineHtml(sessions) {
-  const year = new Date().getFullYear();
-  const ranking = computeGardiensRanking(sessions.filter(s => new Date(s.date).getFullYear() === year))
+  const year = _currentSeason(); const lbl = _seasonLabel(year);
+  const ranking = computeGardiensRanking(sessions.filter(s => _seasonStart(s.date) === year))
     .sort((a, b) => a.rate - b.rate || b.matchs - a.matchs || a.name.localeCompare(b.name, 'fr'))
     .slice(0, 5);
   const medals = ['🥇','🥈','🥉'];
@@ -1735,7 +1744,7 @@ function buildYachineHtml(sessions) {
     <div class="ballon-dor-head" style="background:rgba(0,187,255,.05);border-bottom-color:rgba(0,187,255,.12)">
       <span class="ballon-dor-icon">🧤</span>
       <div>
-        <div class="ballon-dor-title" style="color:var(--bleu)">Prix Yachine ${year}</div>
+        <div class="ballon-dor-title" style="color:var(--bleu)">Prix Yachine ${lbl}</div>
         <div class="ballon-dor-meta">Moins de buts encaissés / match en goal</div>
       </div>
       <div class="ballon-dor-formula" style="color:rgba(0,187,255,.55)">buts / match</div>
@@ -1764,8 +1773,8 @@ function buildYachineHtml(sessions) {
 }
 
 function buildCalamityJamesHtml(sessions) {
-  const year = new Date().getFullYear();
-  const ranking = computeGardiensRanking(sessions.filter(s => new Date(s.date).getFullYear() === year))
+  const year = _currentSeason(); const lbl = _seasonLabel(year);
+  const ranking = computeGardiensRanking(sessions.filter(s => _seasonStart(s.date) === year))
     .sort((a, b) => b.rate - a.rate || b.matchs - a.matchs || a.name.localeCompare(b.name, 'fr'))
     .slice(0, 5);
   let html = `<div style="background:var(--bg2);border:1px solid rgba(150,150,160,.25);border-radius:var(--radius-lg);overflow:hidden;position:relative">
@@ -1773,7 +1782,7 @@ function buildCalamityJamesHtml(sessions) {
     <div class="ballon-dor-head" style="background:rgba(150,150,160,.04);border-bottom-color:rgba(150,150,160,.1)">
       <span class="ballon-dor-icon">🪨</span>
       <div>
-        <div class="ballon-dor-title" style="color:var(--text2)">Calamity James ${year}</div>
+        <div class="ballon-dor-title" style="color:var(--text2)">Calamity James ${lbl}</div>
         <div class="ballon-dor-meta">Plus de buts encaissés / match en goal</div>
       </div>
       <div class="ballon-dor-formula" style="color:rgba(150,150,160,.5)">buts / match</div>
@@ -2184,9 +2193,9 @@ function computeBestAllTimeStreak() {
 }
 
 function buildBallonDorHtml() {
-  const _bdYear = new Date().getFullYear();
+  const _bdYear = _currentSeason(); const _bdLbl = _seasonLabel(_bdYear);
   const _bdPs = {};
-  SESSIONS.filter(s => new Date(s.date).getFullYear() === _bdYear).forEach(s => {
+  SESSIONS.filter(s => _seasonStart(s.date) === _bdYear).forEach(s => {
     (s.matchs || []).forEach(m => {
       ["A","B"].forEach(side => {
         const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
@@ -2208,8 +2217,8 @@ function buildBallonDorHtml() {
     <div class="ballon-dor-head">
       <span class="ballon-dor-icon">🏆</span>
       <div>
-        <div class="ballon-dor-title">Ballon d'Or ${_bdYear}</div>
-        <div class="ballon-dor-meta">Classement G/A — Janvier à aujourd'hui</div>
+        <div class="ballon-dor-title">Ballon d'Or ${_bdLbl}</div>
+        <div class="ballon-dor-meta">Classement G/A — Saison ${_bdLbl}</div>
       </div>
       <div class="ballon-dor-formula">10 pts / but &nbsp;·&nbsp; 5 pts / assist</div>
     </div>
@@ -2229,17 +2238,17 @@ function buildBallonDorHtml() {
       </div>`;
     });
   } else {
-    html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun but ou passe enregistré en ${_bdYear} pour le moment.</div>`;
+    html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun but ou passe enregistré en saison ${_bdLbl} pour le moment.</div>`;
   }
   html += `</div></div>`;
   return html;
 }
 
 function buildBallonDePlombHtml() {
-  const _bdYear = new Date().getFullYear();
+  const _bdYear = _currentSeason(); const _bdLbl = _seasonLabel(_bdYear);
   const _presCount = {};
   const _bdPs = {};
-  SESSIONS.filter(s => new Date(s.date).getFullYear() === _bdYear).forEach(s => {
+  SESSIONS.filter(s => _seasonStart(s.date) === _bdYear).forEach(s => {
     Object.entries(s.presences).forEach(([p, info]) => {
       if (info.statut === "Présent" && !JOKERS.has(p)) _presCount[p] = (_presCount[p]||0)+1;
     });
@@ -2267,8 +2276,8 @@ function buildBallonDePlombHtml() {
     <div class="ballon-dor-head" style="background:rgba(150,150,160,.04);border-bottom-color:rgba(150,150,160,.1)">
       <span class="ballon-dor-icon">🪨</span>
       <div>
-        <div class="ballon-dor-title" style="color:var(--text2)">Ballon de Plomb ${_bdYear}</div>
-        <div class="ballon-dor-meta">Classement inversé G/A — Janvier à aujourd'hui</div>
+        <div class="ballon-dor-title" style="color:var(--text2)">Ballon de Plomb ${_bdLbl}</div>
+        <div class="ballon-dor-meta">Classement inversé G/A — Saison ${_bdLbl}</div>
       </div>
       <div class="ballon-dor-formula" style="color:rgba(150,150,160,.5)">10 pts / but &nbsp;·&nbsp; 5 pts / assist</div>
     </div>
@@ -2289,7 +2298,7 @@ function buildBallonDePlombHtml() {
       </div>`;
     });
   } else {
-    html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun joueur présent en ${_bdYear} pour le moment.</div>`;
+    html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun joueur présent en saison ${_bdLbl} pour le moment.</div>`;
   }
   html += `</div></div>`;
   return html;
@@ -2328,25 +2337,25 @@ function _buildAbsenceRankHtml({ icon, title, subtitle, accentColor, borderColor
 }
 
 function buildBonnetDAneHtml() {
-  const yr = new Date().getFullYear();
+  const yr = _currentSeason(); const lbl = _seasonLabel(yr);
   const absMap = {};
-  SESSIONS.filter(s => new Date(s.date).getFullYear() === yr).forEach(s => {
+  SESSIONS.filter(s => _seasonStart(s.date) === yr).forEach(s => {
     Object.entries(s.presences).forEach(([p, info]) => {
       if (info.statut === "Absent" && !JOKERS.has(p)) absMap[p] = (absMap[p]||0)+1;
     });
   });
   const top5 = Object.entries(absMap).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([name,val])=>({name,val}));
   return _buildAbsenceRankHtml({
-    icon:'🫏', title:`Bonnet d'Âne ${yr}`, subtitle:`Classement absences — Janvier à aujourd'hui`,
+    icon:'🫏', title:`Bonnet d'Âne ${lbl}`, subtitle:`Classement absences — Saison ${lbl}`,
     accentColor:'rgba(239,68,68,.55)', borderColor:'rgba(239,68,68,.22)',
-    players: top5, emptyMsg:`Aucune absence enregistrée en ${yr}.`
+    players: top5, emptyMsg:`Aucune absence enregistrée en saison ${lbl}.`
   });
 }
 
 function buildInfirmeHtml() {
-  const yr = new Date().getFullYear();
+  const yr = _currentSeason(); const lbl = _seasonLabel(yr);
   const injEpMap = {}; const injMatchMap = {}; const injEp = {};
-  const _ss = [...SESSIONS].filter(s=>new Date(s.date).getFullYear()===yr).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const _ss = [...SESSIONS].filter(s=>_seasonStart(s.date)===yr).sort((a,b)=>new Date(a.date)-new Date(b.date));
   _ss.forEach(s => {
     Object.entries(s.presences).forEach(([p, info]) => {
       if (!injEp[p]) injEp[p] = false;
@@ -2364,9 +2373,9 @@ function buildInfirmeHtml() {
       return { name, val, extra: `${ep} blessure${ep>1?'s':''}` };
     });
   return _buildAbsenceRankHtml({
-    icon:'🩼', title:`Infirmerie ${yr}`, subtitle:`Classement matchs manqués — Janvier à aujourd'hui`,
+    icon:'🩼', title:`Infirmerie ${lbl}`, subtitle:`Classement matchs manqués — Saison ${lbl}`,
     accentColor:'rgba(245,158,11,.55)', borderColor:'rgba(245,158,11,.22)',
-    players: top5, emptyMsg:`Aucune blessure enregistrée en ${yr}.`
+    players: top5, emptyMsg:`Aucune blessure enregistrée en saison ${lbl}.`
   });
 }
 
@@ -2538,7 +2547,7 @@ function computeRivalites(pA, pB, period) {
   let sessions = [...SESSIONS];
   const now = new Date();
   if (period === "year") {
-    sessions = sessions.filter(s => new Date(s.date).getFullYear() === now.getFullYear());
+    sessions = sessions.filter(s => _seasonStart(s.date) === _currentSeason());
   } else if (period === "month") {
     sessions = sessions.filter(s => {
       const d = new Date(s.date);
@@ -2956,7 +2965,7 @@ function renderStats() {
       <select id="riv-b">${_rivOpts}</select>
       <select id="riv-period">
         <option value="all">All time</option>
-        <option value="year">Cette année</option>
+        <option value="year">Cette saison</option>
         <option value="month">Ce mois</option>
       </select>
     </div>
@@ -3396,9 +3405,9 @@ document.getElementById("periods").addEventListener("click", e => {
 document.getElementById("filter-year").addEventListener("change", e => {
   filterYear = Number(e.target.value);
   if (currentPeriod === "month") {
-    /* Re-populate months for new year */
+    /* Re-populate months for new season */
     const months = [...new Set(
-      SESSIONS.filter(s => new Date(s.date).getFullYear() === filterYear)
+      SESSIONS.filter(s => _seasonStart(s.date) === filterYear)
                .map(s => new Date(s.date).getMonth())
     )].sort((a,b)=>b-a);
     const selM = document.getElementById("filter-month");
@@ -5161,7 +5170,7 @@ function renderReglement() {
   <!-- Mot de clôture -->
   <div class="regl-closing">
     Encore merci à tous pour cette belle saison.<br><br>
-    Nous sommes impatients de vous retrouver dès le <strong>24 août</strong> pour repartir ensemble sur une nouvelle année pleine de football, de bonne humeur… et, on l'espère, de nombreux buts !<br><br>
+    Nous sommes impatients de vous retrouver dès le <strong style="color:var(--text);font-size:1.08em">24 août</strong> pour repartir ensemble sur une nouvelle année pleine de football, de bonne humeur… et, on l'espère, de nombreux buts !<br><br>
     À très bientôt,<br>
     <strong>L'équipe Happy Monday Football Team ⚽</strong>
   </div>
