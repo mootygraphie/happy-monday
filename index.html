@@ -1011,6 +1011,10 @@
   html.light .regl-check-row { background: rgba(16,185,129,.05); }
   html.light .regl-check-row.checked { background: rgba(16,185,129,.1); }
   html.light .regl-radio-row.selected { background: rgba(96,165,250,.06); }
+  .regl-comment-wrap { margin-bottom: 1.5rem; }
+  .regl-comment-label { display: block; font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 8px; }
+  .regl-comment-area { width: 100%; box-sizing: border-box; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg2); color: var(--text); font-size: 13px; font-family: inherit; resize: vertical; min-height: 72px; transition: border-color .15s; }
+  .regl-comment-area:focus { outline: none; border-color: rgba(96,165,250,.5); }
   .regl-admin-btn { padding: 6px 12px; border-radius: 7px; border: 1px solid var(--border); background: var(--bg3); color: var(--text2); font-size: 12px; font-weight: 600; cursor: pointer; transition: background .15s; }
   .regl-admin-btn:hover { background: var(--bg2); color: var(--text); }
   .regl-admin-del:hover { border-color: rgba(239,68,68,.4); color: #EF4444; }
@@ -5188,6 +5192,12 @@ function renderReglement() {
     </label>
   </div>
 
+  <!-- Commentaire libre -->
+  <div class="regl-comment-wrap" id="regl-comment-wrap">
+    <label class="regl-comment-label" for="regl-comment">💬 Tu souhaites faire un commentaire ou proposer une amélioration ? N'hésite pas !</label>
+    <textarea id="regl-comment" class="regl-comment-area" placeholder="Ton commentaire (facultatif)…" rows="3"></textarea>
+  </div>
+
   <!-- Déclaration finale + submit -->
   <label class="regl-check-row" id="regl-final-decl" style="border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.05)">
     <input type="checkbox" id="regl-chk-final" style="accent-color:#10B981">
@@ -5254,7 +5264,9 @@ function _reglValidate() {
 
 function _reglPrefill(existing) {
   const chk = document.getElementById('regl-chk-final');
-  if (chk) { chk.checked = !!existing.check; }
+  if (chk) chk.checked = !!existing.check;
+  const cmnt = document.getElementById('regl-comment');
+  if (cmnt) cmnt.value = existing.commentaire || '';
   ['actif','plus1','quitte'].forEach(v => {
     const radio = document.getElementById(`regl-radio-${v}`);
     const row   = document.getElementById(`regl-radio-row-${v}`);
@@ -5265,6 +5277,8 @@ function _reglPrefill(existing) {
 function _reglClearForm() {
   const chk = document.getElementById('regl-chk-final');
   if (chk) chk.checked = false;
+  const cmnt = document.getElementById('regl-comment');
+  if (cmnt) cmnt.value = '';
   ['actif','plus1','quitte'].forEach(v => {
     const radio = document.getElementById(`regl-radio-${v}`);
     if (radio) { radio.checked = false; document.getElementById(`regl-radio-row-${v}`)?.classList.remove('selected'); }
@@ -5277,8 +5291,8 @@ function _reglShowThanks(name) {
     const el = document.getElementById(id);
     if (el) { el.style.opacity = '0.35'; el.style.pointerEvents = 'none'; }
   });
-  // Masquer déclaration et bouton
-  ['regl-final-decl','regl-submit-zone'].forEach(id => {
+  // Masquer déclaration, commentaire et bouton
+  ['regl-comment-wrap','regl-final-decl','regl-submit-zone'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
@@ -5343,9 +5357,11 @@ async function _initReglForm() {
     const name = document.getElementById('regl-name-sel')?.value;
     const statut = document.querySelector('input[name="regl-statut"]:checked')?.value;
     if (!name || !statut) return;
+    const commentVal = (document.getElementById('regl-comment')?.value || '').trim();
     const payload = {
       nom: name, statut,
       check: !!document.getElementById('regl-chk-final')?.checked,
+      commentaire: commentVal || null,
       timestamp: new Date().toISOString(),
     };
     const msg = document.getElementById('regl-msg');
@@ -5415,6 +5431,7 @@ function _renderReglAdmin(view = 'individuel') {
         </div>
         <div class="regl-respondent-bd">
           <div class="regl-check-line"><span>${declOk?'✅':'❌'}</span><span style="color:var(--text2)">${declLabel}</span></div>
+          ${r.commentaire ? `<div style="margin-top:10px;padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12.5px;color:var(--text2);font-style:italic;border-left:3px solid rgba(96,165,250,.4)">💬 ${r.commentaire}</div>` : ''}
           <div style="display:flex;gap:8px;margin-top:12px">
             <button class="regl-admin-btn regl-admin-edit" onclick="_reglAdminEdit('${r.nom}')">✏️ Modifier</button>
             <button class="regl-admin-btn regl-admin-del" onclick="_reglAdminDelete('${r.nom}')">🗑 Supprimer</button>
