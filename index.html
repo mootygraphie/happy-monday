@@ -1146,7 +1146,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 20/07/2026 - 09:25</footer>
+<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 30/07/2026 - 13:45</footer>
 
 <script>
 
@@ -1444,14 +1444,38 @@ let currentPeriod = "last";
 let filterYear  = null; // stocke le début de saison (ex: 2024 pour 2024/2025)
 let filterMonth = null;
 
-/* Saison = 15 août → 15 juillet de l'année suivante */
+/* Bornes de saisons avec dates précises (sy = année de début) */
+const SEASON_DEFS = [
+  { sy: 2026, start: '2026-08-24', end: '2027-07-19' },
+  // Ajouter ici les prochaines saisons au fil du temps
+];
+
 function _seasonStart(date) {
   const d = new Date(date);
-  const m = d.getMonth(); // 0-indexed
+  const ds = d.toISOString().slice(0, 10);
+  // Chercher dans les bornes explicites d'abord
+  for (const s of SEASON_DEFS) {
+    if (ds >= s.start && ds <= s.end) return s.sy;
+  }
+  // Fallback : règle du 15 août
+  const m = d.getMonth();
   return (m > 7 || (m === 7 && d.getDate() >= 15)) ? d.getFullYear() : d.getFullYear() - 1;
 }
 function _seasonLabel(sy) { return `${sy}/${sy + 1}`; }
-function _currentSeason() { return _seasonStart(new Date()); }
+
+/* Saison affichée : si on est en off-season avant une saison définie, on affiche déjà cette saison */
+function _currentSeason() {
+  const today = new Date().toISOString().slice(0, 10);
+  // Dans une saison définie ?
+  for (const s of SEASON_DEFS) {
+    if (today >= s.start && today <= s.end) return s.sy;
+  }
+  // Off-season avant une prochaine saison définie → afficher cette prochaine saison
+  const next = [...SEASON_DEFS].sort((a, b) => a.start.localeCompare(b.start)).find(s => today < s.start);
+  if (next) return next.sy;
+  // Fallback
+  return _seasonStart(today);
+}
 
 const MONTH_NAMES = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
 
