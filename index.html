@@ -384,6 +384,7 @@
   .players-table tbody tr:nth-child(even) { background: rgba(255,255,255,.018); }
   .players-table tbody tr:last-child { border-bottom: none; }
   .players-table tbody tr:hover { background: rgba(255,255,255,.065) !important; }
+  .players-table tbody tr.row-highlight { background: rgba(96,165,250,.1) !important; }
   .players-table td { padding: 11px 16px; vertical-align: middle; }
   .players-table td.name { font-weight: 500; font-size: 14px; color: var(--text); border-right: 1px solid var(--border); min-width: 130px; }
   .players-table td.num { color: var(--text2); text-align: center; font-variant-numeric: tabular-nums; }
@@ -1150,7 +1151,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 31/07/2026 - 10:23</footer>
+<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 31/07/2026 - 10:34</footer>
 
 <script>
 
@@ -1336,8 +1337,11 @@ async function _fbLoad() {
       JOKERS = new Set(cfg.jokers);
       localStorage.setItem('hmft_jokers', JSON.stringify(cfg.jokers));
     } else {
-      // Bootstrap Firebase depuis localStorage
       _db.ref('config/jokers').set([...JOKERS]).catch(() => {});
+    }
+    if (cfg.absents) {
+      ABSENTS = new Set(cfg.absents);
+      localStorage.setItem('hmft_absents', JSON.stringify(cfg.absents));
     }
   } catch(e) { console.error('Firebase load error:', e); }
 }
@@ -1377,11 +1381,17 @@ const ALL_PLAYERS = [
 /* Jokers — présents uniquement quand listés en "+1".
    Jamais comptés "pas répondu" lors de leurs absences.
 */
-let JOKERS = new Set(JSON.parse(localStorage.getItem('hmft_jokers') || 'null') || ["Hamine","Marius","Harone","Alexi","Godefroy"]);
+let JOKERS  = new Set(JSON.parse(localStorage.getItem('hmft_jokers')  || 'null') || ["Hamine","Marius","Harone","Alexi","Godefroy"]);
+let ABSENTS = new Set(JSON.parse(localStorage.getItem('hmft_absents') || 'null') || []);
 function _saveJokers() {
   const arr = [...JOKERS];
   localStorage.setItem('hmft_jokers', JSON.stringify(arr));
   if (_db) _db.ref('config/jokers').set(arr).catch(e => console.error('FB jokers:', e));
+}
+function _saveAbsents() {
+  const arr = [...ABSENTS];
+  localStorage.setItem('hmft_absents', JSON.stringify(arr));
+  if (_db) _db.ref('config/absents').set(arr).catch(e => console.error('FB absents:', e));
 }
 
 /* Joueurs ajoutés via saisie (+1 temp) — localStorage pour rendu instantané, Firebase source de vérité */
@@ -1408,7 +1418,7 @@ function teamCard(color, teamMap, icons) {
       <span class="team-card-count">${teamMap[color].length} joueur${teamMap[color].length > 1 ? "s" : ""}</span>
     </div>
     <div class="team-card-players">
-      ${teamMap[color].map(p => `<button class="team-player-pill ${cls} player-link" data-player="${p.name}">${p.name}${p.joker?`<span class="joker-tag">+1</span>`:""}</button>`).join("")}
+      ${teamMap[color].map(p => `<button class="team-player-pill ${cls} player-link" data-player="${p.name}">${p.name}</button>`).join("")}
     </div>
   </div>`;
 }
@@ -2116,7 +2126,7 @@ function renderSessionDetail(session) {
   const TEAM_ICONS = { Rouge: "🔴", Vert: "🟡", Bleue: "🔵" };
   const hasColors  = presentsAll.some(p => p.equipe !== "");
   const _playerChip = p =>
-    `<button class="player-chip player-link" data-player="${p.name}">${p.name}${p.joker?`<span class="joker-tag">+1</span>`:""}</button>`;
+    `<button class="player-chip player-link" data-player="${p.name}">${p.name}</button>`;
 
   if (!hasColors) {
     const rosterP = presentsAll.filter(p => !p.joker);
@@ -3604,7 +3614,7 @@ function renderJoueurs() {
     taux: totalSessions > 0 ? Math.round(r.presences / totalSessions * 100) : 0
   }));
 
-  const rosterRows = rowsWithTaux.filter(r => !JOKERS.has(r.name));
+  const rosterRows = rowsWithTaux.filter(r => !JOKERS.has(r.name) && !ABSENTS.has(r.name));
   const jokerRows  = rowsWithTaux.filter(r =>  JOKERS.has(r.name));
 
   function sortArr(arr, s) {
@@ -3650,7 +3660,7 @@ function renderJoueurs() {
   function buildJokerRow(r) {
     const teamCell = r.favTeam ? `${dot(r.favTeam)}<span style="font-size:12px">${(TEAM_LABEL[r.favTeam]||r.favTeam)[0].toUpperCase()}</span>` : dash_;
     return `<tr>
-      <td class="name"><button class="player-link" data-player="${r.name}">${r.name}<span class="joker-tag">+1</span></button></td>
+      <td class="name"><button class="player-link" data-player="${r.name}">${r.name}</button></td>
       <td class="num ${r.presences > 0 ? "highlight" : "zero"}">${r.presences}</td>
       <td class="num ${r.buts > 0 ? "highlight" : "zero"}">${r.buts}</td>
       <td class="num ${r.passes > 0 ? "highlight" : "zero"}">${r.passes}</td>
@@ -3699,14 +3709,45 @@ function renderJoueurs() {
         ${isAdmin ? '<div class="toggle-btns-col" id="toggle-col-jokers"></div>' : ''}
       </div>` : '';
 
-    const absentSection = absentNames.length > 0 ? `
-      <div class="joueurs-section-label" style="margin-top:2rem">Absents pour la saison (${absentNames.length})</div>
-      <div class="players-table-wrap">
+    // Absents admin-toggle
+    const adminAbsentNames = [...ABSENTS].sort((a,b) => a.localeCompare(b,'fr'));
+    const adminAbsentTbody = adminAbsentNames.map(name =>
+      `<tr><td class="name"><button class="player-link" data-player="${name}">${name}</button></td>
+        <td class="num zero">${d}</td><td class="num zero">${d}</td>
+        <td class="num zero">${d}</td><td class="num zero">${d}</td>
+        <td class="num zero">${d}</td><td class="num zero">${d}</td>
+        <td class="num zero">${d}</td><td class="num zero">${d}</td>
+        <td class="team-cell">${d}</td></tr>`
+    ).join('');
+    // Absents règlement (self-declared) — exclus ceux déjà dans ABSENTS
+    const reglAbsentNames = absentNames.filter(n => !ABSENTS.has(n));
+    const reglAbsentTbody = reglAbsentNames.map(name =>
+      `<tr><td class="name"><button class="player-link" data-player="${name}">${name}</button></td>
+        <td class="num zero">${d}</td><td class="num zero">${d}</td>
+        <td class="num zero">${d}</td><td class="num zero">${d}</td>
+        <td class="num zero">${d}</td><td class="num zero">${d}</td>
+        <td class="num zero">${d}</td><td class="num zero">${d}</td>
+        <td class="team-cell">${d}</td></tr>`
+    ).join('');
+    const totalAbsents = adminAbsentNames.length + reglAbsentNames.length;
+
+    const absentSection = totalAbsents > 0 ? `
+      <div class="joueurs-section-label" style="margin-top:2rem">Absents pour la saison (${totalAbsents})</div>
+      ${adminAbsentNames.length > 0 ? `<div class="table-with-toggle">
+        <div class="players-table-wrap">
+          <table class="players-table" id="absents-admin-table">
+            <thead><tr>${absentThead}</tr></thead>
+            <tbody>${adminAbsentTbody}</tbody>
+          </table>
+        </div>
+        ${isAdmin ? '<div class="toggle-btns-col" id="toggle-col-absents"></div>' : ''}
+      </div>` : ''}
+      ${reglAbsentNames.length > 0 ? `<div class="players-table-wrap" style="${adminAbsentNames.length > 0 ? 'margin-top:8px' : ''}">
         <table class="players-table">
           <thead><tr>${absentThead}</tr></thead>
-          <tbody>${absentTbody}</tbody>
+          <tbody>${reglAbsentTbody}</tbody>
         </table>
-      </div>` : '';
+      </div>` : ''}` : '';
 
     container.innerHTML = `
       <div class="joueurs-section-label">Réguliers (${rosterRows.length})</div>
@@ -3723,22 +3764,41 @@ function renderJoueurs() {
     animateTable();
 
     if (isAdmin) {
-      [['roster-table','toggle-col-roster',true],['jokers-table','toggle-col-jokers',false]].forEach(([tblId,colId,isRoster]) => {
+      // Réguliers → occasionnels
+      const buildToggleCol = (tblId, colId, buildBtns) => {
         const tbl = document.getElementById(tblId);
         const col = document.getElementById(colId);
         if (!tbl || !col) return;
         const theadH = tbl.querySelector('thead').offsetHeight;
         const tRows  = tbl.querySelectorAll('tbody tr');
         let h = `<div style="height:${theadH}px"></div>`;
-        tRows.forEach(tr => {
+        tRows.forEach((tr, i) => {
           const player = tr.querySelector('[data-player]')?.dataset.player || '';
           const rowH   = tr.offsetHeight;
-          h += `<div style="height:${rowH}px;display:flex;align-items:center;padding:0 10px">
-            <button data-action="toggle-roster" data-player="${player}" title="${isRoster?'Passer en occasionnel':'Passer en régulier'}">${isRoster?'🔽':'🔼'}</button>
-          </div>`;
+          const btns   = buildBtns(player);
+          h += `<div data-toggle-idx="${i}" data-toggle-tbl="${tblId}" style="height:${rowH}px;display:flex;align-items:center;gap:4px;padding:0 6px">${btns}</div>`;
         });
         col.innerHTML = h;
-      });
+        // Surlignage de ligne au survol des boutons toggle
+        col.querySelectorAll('[data-toggle-idx]').forEach(wrap => {
+          const idx = +wrap.dataset.toggleIdx;
+          const tbl2 = document.getElementById(wrap.dataset.toggleTbl);
+          const targetRow = tbl2?.querySelectorAll('tbody tr')[idx];
+          if (!targetRow) return;
+          wrap.addEventListener('mouseenter', () => targetRow.classList.add('row-highlight'));
+          wrap.addEventListener('mouseleave', () => targetRow.classList.remove('row-highlight'));
+        });
+      };
+      buildToggleCol('roster-table',  'toggle-col-roster',  p =>
+        `<button data-action="to-joker" data-player="${p}" title="Passer en occasionnel">🔽</button>`
+      );
+      buildToggleCol('jokers-table',  'toggle-col-jokers',  p =>
+        `<button data-action="to-roster" data-player="${p}" title="Passer en régulier">🔼</button>` +
+        `<button data-action="to-absent" data-player="${p}" title="Marquer absent pour la saison">⬇️</button>`
+      );
+      buildToggleCol('absents-admin-table', 'toggle-col-absents', p =>
+        `<button data-action="to-joker" data-player="${p}" title="Passer en occasionnel">🔼</button>`
+      );
     }
 
     document.getElementById("roster-table")?.querySelectorAll("th[data-col]").forEach(th => {
@@ -3762,12 +3822,14 @@ function renderJoueurs() {
 }
 
 document.getElementById("joueurs-content").addEventListener("click", e => {
-  const btn = e.target.closest('[data-action="toggle-roster"]');
-  if (!btn) return;
+  const btn = e.target.closest('[data-action]');
+  if (!btn || !['to-roster','to-joker','to-absent'].includes(btn.dataset.action)) return;
   e.stopPropagation();
   const player = btn.dataset.player;
-  if (JOKERS.has(player)) JOKERS.delete(player); else JOKERS.add(player);
-  _saveJokers();
+  const action = btn.dataset.action;
+  if (action === 'to-roster')  { JOKERS.delete(player); ABSENTS.delete(player); _saveJokers(); _saveAbsents(); }
+  if (action === 'to-joker')   { ABSENTS.delete(player); JOKERS.add(player);    _saveAbsents(); _saveJokers(); }
+  if (action === 'to-absent')  { JOKERS.delete(player); ABSENTS.add(player);    _saveJokers(); _saveAbsents(); }
   renderJoueurs();
 });
 
@@ -4477,7 +4539,7 @@ function openPlayerPanel(playerName) {
     st.top3Teammates.forEach(([name, n], i) => {
       h += `<div class="pp-teammate-row">
         <span class="pp-teammate-rank">${medals[i]}</span>
-        <span class="pp-teammate-name">${name}${JOKERS.has(name)?`<span class="joker-tag">+1</span>`:""}</span>
+        <span class="pp-teammate-name">${name}</span>
         <span class="pp-teammate-val">${n}</span><span class="pp-teammate-unit">session${n>1?"s":""}</span>
       </div>`;
     });
@@ -4503,7 +4565,7 @@ function openPlayerPanel(playerName) {
     st.top3WinTeammates.forEach(([name, n], i) => {
       h += `<div class="pp-teammate-row">
         <span class="pp-teammate-rank">${medals[i]}</span>
-        <span class="pp-teammate-name">${name}${JOKERS.has(name)?`<span class="joker-tag">+1</span>`:""}</span>
+        <span class="pp-teammate-name">${name}</span>
         <span class="pp-teammate-val">${n}</span><span class="pp-teammate-unit">victoire${n>1?"s":""}</span>
       </div>`;
     });
@@ -4515,11 +4577,13 @@ function openPlayerPanel(playerName) {
   h += `<div><div class="pp-section-title">Hauts faits</div>${renderAchievementsGrid(computeAchievementStats(playerName))}</div>`;
 
   document.getElementById("pp-name").textContent = playerName;
-  const _ppReglEntry = (_reglData || {})[playerName];
   const _ppBadgeEl = document.getElementById("pp-statut-badge");
   if (_ppBadgeEl) {
-    const _ppS = _ppReglEntry ? REGL_STATUTS[_ppReglEntry.statut] : null;
-    _ppBadgeEl.innerHTML = _ppS ? `<span class="regl-badge ${_ppS.badge}">${_ppS.label}</span>` : '';
+    (_reglData ? Promise.resolve(_reglData) : _loadReglData()).then(rd => {
+      const entry = (rd || {})[playerName];
+      const s = entry ? REGL_STATUTS[entry.statut] : null;
+      _ppBadgeEl.innerHTML = s ? `<span class="regl-badge ${s.badge}">${s.label}</span>` : '';
+    });
   }
   const ppBody = document.getElementById("pp-body");
   ppBody.innerHTML = h;
@@ -4627,7 +4691,7 @@ function _playersOfTeam(color) {
 function _presenceRowHTML(p, statut, isJoker, removable) {
   if (isJoker) {
     return `<div class="saisie-player-row">
-      <span class="saisie-player-name">${p}<span class="joker-tag">+1</span></span>
+      <span class="saisie-player-name">${p}</span>
       <div class="saisie-status-btns">
         <button class="saisie-statut-btn ${statut==="Présent"?"active-present":""}" data-player="${p}" data-statut="Présent">✅</button>
         <button class="saisie-statut-btn ${statut===_JOKER_NC?"active-nc":""}" data-player="${p}" data-statut="${_JOKER_NC}" title="Non convoqué">🫥</button>
@@ -4658,7 +4722,7 @@ function _buildEquipesHTML() {
       `<button class="saisie-eq-btn ${t.cls}${eq===t.key?" active":""}" data-player="${p}" data-equipe="${t.key}">${t.label}</button>`
     ).join("");
     return `<div class="saisie-equipe-row">
-      <span class="saisie-player-name">${p}${isJoker?'<span class="joker-tag">+1</span>':""}</span>
+      <span class="saisie-player-name">${p}</span>
       <div class="saisie-eq-btns">${btns}</div>
     </div>`;
   }).join("")}</div>`;
