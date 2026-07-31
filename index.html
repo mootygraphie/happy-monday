@@ -1151,7 +1151,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 31/07/2026 - 10:34</footer>
+<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 31/07/2026 - 10:36</footer>
 
 <script>
 
@@ -3673,23 +3673,8 @@ function renderJoueurs() {
     </tr>`;
   }
 
-  (_reglData ? Promise.resolve(_reglData) : _loadReglData()).then(rd => {
-    const absentNames = Object.values(rd || {})
-      .filter(r => r.statut === 'quitte')
-      .map(r => r.nom)
-      .sort((a, b) => a.localeCompare(b, 'fr'));
-
+  {
     const d = `<span style="color:var(--text3)">—</span>`;
-    const absentTbody = absentNames.map(name =>
-      `<tr>
-        <td class="name"><button class="player-link" data-player="${name}">${name}</button></td>
-        <td class="num zero">${d}</td><td class="num zero">${d}</td>
-        <td class="num zero">${d}</td><td class="num zero">${d}</td>
-        <td class="num zero">${d}</td><td class="num zero">${d}</td>
-        <td class="num zero">${d}</td><td class="num zero">${d}</td>
-        <td class="team-cell">${d}</td>
-      </tr>`
-    ).join('');
 
     const rosterThead = buildThead(rosterSort);
     const rosterTbody = sortArr(rosterRows, rosterSort).map(buildRosterRow).join("");
@@ -3709,9 +3694,8 @@ function renderJoueurs() {
         ${isAdmin ? '<div class="toggle-btns-col" id="toggle-col-jokers"></div>' : ''}
       </div>` : '';
 
-    // Absents admin-toggle
-    const adminAbsentNames = [...ABSENTS].sort((a,b) => a.localeCompare(b,'fr'));
-    const adminAbsentTbody = adminAbsentNames.map(name =>
+    const absentNames = [...ABSENTS].sort((a,b) => a.localeCompare(b,'fr'));
+    const absentTbody = absentNames.map(name =>
       `<tr><td class="name"><button class="player-link" data-player="${name}">${name}</button></td>
         <td class="num zero">${d}</td><td class="num zero">${d}</td>
         <td class="num zero">${d}</td><td class="num zero">${d}</td>
@@ -3719,35 +3703,18 @@ function renderJoueurs() {
         <td class="num zero">${d}</td><td class="num zero">${d}</td>
         <td class="team-cell">${d}</td></tr>`
     ).join('');
-    // Absents règlement (self-declared) — exclus ceux déjà dans ABSENTS
-    const reglAbsentNames = absentNames.filter(n => !ABSENTS.has(n));
-    const reglAbsentTbody = reglAbsentNames.map(name =>
-      `<tr><td class="name"><button class="player-link" data-player="${name}">${name}</button></td>
-        <td class="num zero">${d}</td><td class="num zero">${d}</td>
-        <td class="num zero">${d}</td><td class="num zero">${d}</td>
-        <td class="num zero">${d}</td><td class="num zero">${d}</td>
-        <td class="num zero">${d}</td><td class="num zero">${d}</td>
-        <td class="team-cell">${d}</td></tr>`
-    ).join('');
-    const totalAbsents = adminAbsentNames.length + reglAbsentNames.length;
 
-    const absentSection = totalAbsents > 0 ? `
-      <div class="joueurs-section-label" style="margin-top:2rem">Absents pour la saison (${totalAbsents})</div>
-      ${adminAbsentNames.length > 0 ? `<div class="table-with-toggle">
+    const absentSection = absentNames.length > 0 ? `
+      <div class="joueurs-section-label" style="margin-top:2rem">Absents pour la saison (${absentNames.length})</div>
+      <div class="table-with-toggle">
         <div class="players-table-wrap">
           <table class="players-table" id="absents-admin-table">
             <thead><tr>${absentThead}</tr></thead>
-            <tbody>${adminAbsentTbody}</tbody>
+            <tbody>${absentTbody}</tbody>
           </table>
         </div>
         ${isAdmin ? '<div class="toggle-btns-col" id="toggle-col-absents"></div>' : ''}
-      </div>` : ''}
-      ${reglAbsentNames.length > 0 ? `<div class="players-table-wrap" style="${adminAbsentNames.length > 0 ? 'margin-top:8px' : ''}">
-        <table class="players-table">
-          <thead><tr>${absentThead}</tr></thead>
-          <tbody>${reglAbsentTbody}</tbody>
-        </table>
-      </div>` : ''}` : '';
+      </div>` : '';
 
     container.innerHTML = `
       <div class="joueurs-section-label">Réguliers (${rosterRows.length})</div>
@@ -3818,7 +3785,7 @@ function renderJoueurs() {
         renderJoueurs();
       });
     });
-  });
+  }
 }
 
 document.getElementById("joueurs-content").addEventListener("click", e => {
@@ -4579,11 +4546,9 @@ function openPlayerPanel(playerName) {
   document.getElementById("pp-name").textContent = playerName;
   const _ppBadgeEl = document.getElementById("pp-statut-badge");
   if (_ppBadgeEl) {
-    (_reglData ? Promise.resolve(_reglData) : _loadReglData()).then(rd => {
-      const entry = (rd || {})[playerName];
-      const s = entry ? REGL_STATUTS[entry.statut] : null;
-      _ppBadgeEl.innerHTML = s ? `<span class="regl-badge ${s.badge}">${s.label}</span>` : '';
-    });
+    const _ppStatut = ABSENTS.has(playerName) ? 'quitte' : JOKERS.has(playerName) ? 'plus1' : 'actif';
+    const _ppS = REGL_STATUTS[_ppStatut];
+    _ppBadgeEl.innerHTML = `<span class="regl-badge ${_ppS.badge}">${_ppS.label}</span>`;
   }
   const ppBody = document.getElementById("pp-body");
   ppBody.innerHTML = h;
