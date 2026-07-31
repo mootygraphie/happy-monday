@@ -1150,7 +1150,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 31/07/2026 - 09:18</footer>
+<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 31/07/2026 - 09:27</footer>
 
 <script>
 
@@ -3509,6 +3509,7 @@ document.getElementById("edit-session-btn").addEventListener("click", () => {
 
 let rosterSort = { col: "taux",      dir: 1 };
 let jokerSort  = { col: "presences", dir: 1 };
+let _joueurActiveGroup = 'reguliers';
 
 function computePlayerStats() {
   const ps = {};
@@ -3610,12 +3611,11 @@ function renderJoueurs() {
   const dash_ = `<span style="color:var(--text3);font-size:13px">—</span>`;
 
   function buildThead(s, cols) {
-    const base = (cols || colDef).map(c => {
+    return (cols || colDef).map(c => {
       const active = s.col === c.key ? " sorted" : "";
       const arrow  = s.col === c.key ? (s.dir === 1 ? "↑" : "↓") : "↕";
       return `<th data-col="${c.key}" class="${active}">${c.label}<span class="sort-arrow">${arrow}</span></th>`;
     }).join("");
-    return base;
   }
 
   function buildRosterRow(r) {
@@ -3652,103 +3652,129 @@ function renderJoueurs() {
     </tr>`;
   }
 
-  const rosterThead = buildThead(rosterSort);
-  const rosterTbody = sortArr(rosterRows, rosterSort).map(buildRosterRow).join("");
-  const jokerThead  = buildThead(jokerSort, jokerColDef);
-  const jokerTbody  = sortArr(jokerRows,  jokerSort).map(buildJokerRow).join("");
-
-  const jokerSection = jokerRows.length > 0 ? `
-    <div class="joueurs-section-label" style="margin-top:2rem">Occasionnels (${jokerRows.length})</div>
-    <div class="table-with-toggle">
-      <div class="players-table-wrap">
-        <table class="players-table" id="jokers-table">
-          <thead><tr>${jokerThead}</tr></thead>
-          <tbody>${jokerTbody}</tbody>
-        </table>
-      </div>
-      ${isAdmin ? '<div class="toggle-btns-col" id="toggle-col-jokers"></div>' : ''}
-    </div>` : "";
-
-  container.innerHTML = `
-    <div class="joueurs-section-label">Réguliers (${rosterRows.length})</div>
-    <div class="table-with-toggle">
-      <div class="players-table-wrap">
-        <table class="players-table" id="roster-table">
-          <thead><tr>${rosterThead}</tr></thead>
-          <tbody>${rosterTbody}</tbody>
-        </table>
-      </div>
-      ${isAdmin ? '<div class="toggle-btns-col" id="toggle-col-roster"></div>' : ''}
-    </div>${jokerSection}`;
-  animateTable();
-
-  // Section "Absents pour la saison" — depuis les réponses règlement
   (_reglData ? Promise.resolve(_reglData) : _loadReglData()).then(rd => {
     const absentNames = Object.values(rd || {})
       .filter(r => r.statut === 'quitte')
       .map(r => r.nom)
       .sort((a, b) => a.localeCompare(b, 'fr'));
-    if (!absentNames.length) return;
-    const dash = `<span style="color:var(--text3)">—</span>`;
+
+    const d = `<span style="color:var(--text3)">—</span>`;
     const absentTbody = absentNames.map(name =>
       `<tr>
         <td class="name"><button class="player-link" data-player="${name}">${name}</button></td>
-        <td class="num zero">${dash}</td>
-        <td class="num zero">${dash}</td>
-        <td class="num zero">${dash}</td>
-        <td class="num zero">${dash}</td>
-        <td class="num zero">${dash}</td>
-        <td class="num zero">${dash}</td>
-        <td class="num zero">${dash}</td>
-        <td class="num zero">${dash}</td>
-        <td class="team-cell">${dash}</td>
+        <td class="num zero">${d}</td><td class="num zero">${d}</td>
+        <td class="num zero">${d}</td><td class="num zero">${d}</td>
+        <td class="num zero">${d}</td><td class="num zero">${d}</td>
+        <td class="num zero">${d}</td><td class="num zero">${d}</td>
+        <td class="team-cell">${d}</td>
       </tr>`
     ).join('');
-    const absentHead = buildThead(rosterSort);
-    container.insertAdjacentHTML('beforeend', `
-      <div class="joueurs-section-label" style="margin-top:2rem">Absents pour la saison (${absentNames.length})</div>
-      <div class="players-table-wrap">
-        <table class="players-table">
-          <thead><tr>${absentHead}</tr></thead>
-          <tbody>${absentTbody}</tbody>
-        </table>
-      </div>`);
-  });
 
-  if (isAdmin) {
-    [['roster-table','toggle-col-roster',true],['jokers-table','toggle-col-jokers',false]].forEach(([tblId,colId,isRoster]) => {
-      const tbl = document.getElementById(tblId);
-      const col = document.getElementById(colId);
-      if (!tbl || !col) return;
-      const theadH = tbl.querySelector('thead').offsetHeight;
-      const rows   = tbl.querySelectorAll('tbody tr');
-      let h = `<div style="height:${theadH}px"></div>`;
-      rows.forEach(tr => {
-        const player = tr.querySelector('[data-player]')?.dataset.player || '';
-        const rowH   = tr.offsetHeight;
-        h += `<div style="height:${rowH}px;display:flex;align-items:center;padding:0 10px">
-          <button data-action="toggle-roster" data-player="${player}" title="${isRoster?'Passer en occasionnel':'Passer en régulier'}">${isRoster?'🔽':'🔼'}</button>
-        </div>`;
+    const rosterThead = buildThead(rosterSort);
+    const rosterTbody = sortArr(rosterRows, rosterSort).map(buildRosterRow).join("");
+    const jokerThead  = buildThead(jokerSort, jokerColDef);
+    const jokerTbody  = sortArr(jokerRows,  jokerSort).map(buildJokerRow).join("");
+    const absentThead = buildThead(rosterSort);
+
+    const g = _joueurActiveGroup;
+    const vis = grp => grp === g ? '' : 'display:none';
+    const pillCls = grp => grp === g ? 'pill active' : 'pill';
+
+    container.innerHTML = `
+      <div style="display:flex;gap:6px;margin-bottom:1.5rem;flex-wrap:wrap">
+        <button class="${pillCls('reguliers')}" data-group="reguliers">Réguliers (${rosterRows.length})</button>
+        <button class="${pillCls('occasionnels')}" data-group="occasionnels">Occasionnels (${jokerRows.length})</button>
+        <button class="${pillCls('absents')}" data-group="absents">Absents (${absentNames.length})</button>
+      </div>
+
+      <div id="joueurs-group-reguliers" style="${vis('reguliers')}">
+        <div class="table-with-toggle">
+          <div class="players-table-wrap">
+            <table class="players-table" id="roster-table">
+              <thead><tr>${rosterThead}</tr></thead>
+              <tbody>${rosterTbody}</tbody>
+            </table>
+          </div>
+          ${isAdmin ? '<div class="toggle-btns-col" id="toggle-col-roster"></div>' : ''}
+        </div>
+      </div>
+
+      <div id="joueurs-group-occasionnels" style="${vis('occasionnels')}">
+        <div class="table-with-toggle">
+          <div class="players-table-wrap">
+            <table class="players-table" id="jokers-table">
+              <thead><tr>${jokerThead}</tr></thead>
+              <tbody>${jokerTbody}</tbody>
+            </table>
+          </div>
+          ${isAdmin ? '<div class="toggle-btns-col" id="toggle-col-jokers"></div>' : ''}
+        </div>
+      </div>
+
+      <div id="joueurs-group-absents" style="${vis('absents')}">
+        ${absentNames.length
+          ? `<div class="players-table-wrap">
+               <table class="players-table">
+                 <thead><tr>${absentThead}</tr></thead>
+                 <tbody>${absentTbody}</tbody>
+               </table>
+             </div>`
+          : `<div style="color:var(--text3);font-size:13px;padding:1rem 0">Aucun joueur absent déclaré pour cette saison.</div>`
+        }
+      </div>`;
+
+    animateTable();
+
+    function setupToggles() {
+      [['roster-table','toggle-col-roster',true],['jokers-table','toggle-col-jokers',false]].forEach(([tblId,colId,isRoster]) => {
+        const tbl = document.getElementById(tblId);
+        const col = document.getElementById(colId);
+        if (!tbl || !col) return;
+        const theadH = tbl.querySelector('thead').offsetHeight;
+        const tRows  = tbl.querySelectorAll('tbody tr');
+        let h = `<div style="height:${theadH}px"></div>`;
+        tRows.forEach(tr => {
+          const player = tr.querySelector('[data-player]')?.dataset.player || '';
+          const rowH   = tr.offsetHeight;
+          h += `<div style="height:${rowH}px;display:flex;align-items:center;padding:0 10px">
+            <button data-action="toggle-roster" data-player="${player}" title="${isRoster?'Passer en occasionnel':'Passer en régulier'}">${isRoster?'🔽':'🔼'}</button>
+          </div>`;
+        });
+        col.innerHTML = h;
       });
-      col.innerHTML = h;
-    });
-  }
+    }
 
-  document.getElementById("roster-table")?.querySelectorAll("th[data-col]").forEach(th => {
-    th.addEventListener("click", () => {
-      const col = th.dataset.col;
-      if (rosterSort.col === col) { rosterSort.dir *= -1; }
-      else { rosterSort.col = col; rosterSort.dir = col === "name" ? 1 : -1; }
-      renderJoueurs();
-    });
-  });
+    if (isAdmin) setupToggles();
 
-  document.getElementById("jokers-table")?.querySelectorAll("th[data-col]").forEach(th => {
-    th.addEventListener("click", () => {
-      const col = th.dataset.col;
-      if (jokerSort.col === col) { jokerSort.dir *= -1; }
-      else { jokerSort.col = col; jokerSort.dir = col === "name" ? 1 : -1; }
-      renderJoueurs();
+    container.querySelectorAll('[data-group]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        _joueurActiveGroup = btn.dataset.group;
+        container.querySelectorAll('[data-group]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        ['reguliers','occasionnels','absents'].forEach(grp => {
+          const el = document.getElementById(`joueurs-group-${grp}`);
+          if (el) el.style.display = grp === _joueurActiveGroup ? '' : 'none';
+        });
+        if (isAdmin) setupToggles();
+      });
+    });
+
+    document.getElementById("roster-table")?.querySelectorAll("th[data-col]").forEach(th => {
+      th.addEventListener("click", () => {
+        const col = th.dataset.col;
+        if (rosterSort.col === col) rosterSort.dir *= -1;
+        else { rosterSort.col = col; rosterSort.dir = col === "name" ? 1 : -1; }
+        renderJoueurs();
+      });
+    });
+
+    document.getElementById("jokers-table")?.querySelectorAll("th[data-col]").forEach(th => {
+      th.addEventListener("click", () => {
+        const col = th.dataset.col;
+        if (jokerSort.col === col) jokerSort.dir *= -1;
+        else { jokerSort.col = col; jokerSort.dir = col === "name" ? 1 : -1; }
+        renderJoueurs();
+      });
     });
   });
 }
