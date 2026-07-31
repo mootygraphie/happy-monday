@@ -1150,7 +1150,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 31/07/2026 - 09:27</footer>
+<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 31/07/2026 - 09:33</footer>
 
 <script>
 
@@ -2240,7 +2240,7 @@ function buildBallonDorHtml() {
     });
   });
   const _bdTop5 = Object.entries(_bdPs)
-    .map(([name, p]) => ({ name, buts: p.buts, passes: p.passes, pts: p.buts * 10 + p.passes * 5 }))
+    .map(([name, p]) => ({ name, buts: p.buts, passes: p.passes, pts: p.buts * 5 + p.passes * 10 }))
     .filter(p => p.pts > 0)
     .sort((a, b) => b.pts - a.pts || b.buts - a.buts || a.name.localeCompare(b.name, "fr"))
     .slice(0, 5);
@@ -2252,7 +2252,7 @@ function buildBallonDorHtml() {
         <div class="ballon-dor-title">Ballon d'Or ${_bdLbl}</div>
         <div class="ballon-dor-meta">Classement G/A — Saison ${_bdLbl}</div>
       </div>
-      <div class="ballon-dor-formula">10 pts / but &nbsp;·&nbsp; 5 pts / assist</div>
+      <div class="ballon-dor-formula">5 pts / but &nbsp;·&nbsp; 10 pts / assist</div>
     </div>
     <div class="bd-list">`;
   if (_bdTop5.length) {
@@ -2299,7 +2299,7 @@ function buildBallonDePlombHtml() {
     .filter(([name]) => !JOKERS.has(name))
     .map(([name, presences]) => {
       const p = _bdPs[name]||{buts:0,passes:0};
-      return { name, buts: p.buts, passes: p.passes, pts: p.buts*10+p.passes*5, presences };
+      return { name, buts: p.buts, passes: p.passes, pts: p.buts*5+p.passes*10, presences };
     })
     .sort((a,b) => a.pts-b.pts || a.buts-b.buts || b.presences-a.presences || a.name.localeCompare(b.name,"fr"))
     .slice(0, 5);
@@ -2311,7 +2311,7 @@ function buildBallonDePlombHtml() {
         <div class="ballon-dor-title" style="color:var(--text2)">Ballon de Plomb ${_bdLbl}</div>
         <div class="ballon-dor-meta">Classement inversé G/A — Saison ${_bdLbl}</div>
       </div>
-      <div class="ballon-dor-formula" style="color:rgba(150,150,160,.5)">10 pts / but &nbsp;·&nbsp; 5 pts / assist</div>
+      <div class="ballon-dor-formula" style="color:rgba(150,150,160,.5)">5 pts / but &nbsp;·&nbsp; 10 pts / assist</div>
     </div>
     <div class="bd-list">`;
   if (_bdBottom5.length) {
