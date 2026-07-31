@@ -1092,7 +1092,7 @@
   <div class="main-tabs">
     <button class="main-tab active" data-tab="dashboard">Dashboard</button>
     <button class="main-tab" data-tab="session">Sessions</button>
-    <button class="main-tab" data-tab="joueurs">Joueurs</button>
+    <button class="main-tab" data-tab="joueurs">Effectif</button>
     <button class="main-tab" data-tab="stats">Stats</button>
     <button class="main-tab" data-tab="reglement" id="tab-reglement" style="display:none">Règlement 26/27</button>
   </div>
@@ -1150,7 +1150,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 30/07/2026 - 16:29</footer>
+<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 31/07/2026 - 08:32</footer>
 
 <script>
 
@@ -2110,10 +2110,10 @@ function renderSessionDetail(session) {
   if (!hasColors) {
     const rosterP = presentsAll.filter(p => !p.joker);
     const jokerP  = presentsAll.filter(p =>  p.joker);
-    h += `<div class="section-label">Roster (${rosterP.length})</div>
+    h += `<div class="section-label">Effectif (${rosterP.length})</div>
     <div class="players-present-list">${rosterP.map(_playerChip).join("")}</div>`;
     if (jokerP.length)
-      h += `<div class="section-label" style="margin-top:1rem">Joueurs +1 (${jokerP.length})</div>
+      h += `<div class="section-label" style="margin-top:1rem">Occasionnels (${jokerP.length})</div>
       <div class="players-present-list">${jokerP.map(_playerChip).join("")}</div>`;
   } else {
     const teamMap = { Rouge:[], Vert:[], Bleue:[] };
@@ -3658,7 +3658,7 @@ function renderJoueurs() {
   const jokerTbody  = sortArr(jokerRows,  jokerSort).map(buildJokerRow).join("");
 
   const jokerSection = jokerRows.length > 0 ? `
-    <div class="joueurs-section-label" style="margin-top:2rem">Joueurs +1 (${jokerRows.length})</div>
+    <div class="joueurs-section-label" style="margin-top:2rem">Occasionnels (${jokerRows.length})</div>
     <div class="table-with-toggle">
       <div class="players-table-wrap">
         <table class="players-table" id="jokers-table">
@@ -3670,7 +3670,7 @@ function renderJoueurs() {
     </div>` : "";
 
   container.innerHTML = `
-    <div class="joueurs-section-label">Roster (${rosterRows.length})</div>
+    <div class="joueurs-section-label">Réguliers (${rosterRows.length})</div>
     <div class="table-with-toggle">
       <div class="players-table-wrap">
         <table class="players-table" id="roster-table">
@@ -3681,6 +3681,39 @@ function renderJoueurs() {
       ${isAdmin ? '<div class="toggle-btns-col" id="toggle-col-roster"></div>' : ''}
     </div>${jokerSection}`;
   animateTable();
+
+  // Section "Absents pour la saison" — depuis les réponses règlement
+  (_reglData ? Promise.resolve(_reglData) : _loadReglData()).then(rd => {
+    const absentNames = Object.values(rd || {})
+      .filter(r => r.statut === 'quitte')
+      .map(r => r.nom)
+      .sort((a, b) => a.localeCompare(b, 'fr'));
+    if (!absentNames.length) return;
+    const dash = `<span style="color:var(--text3)">—</span>`;
+    const absentTbody = absentNames.map(name =>
+      `<tr>
+        <td class="name"><button class="player-link" data-player="${name}">${name}</button></td>
+        <td class="num zero">${dash}</td>
+        <td class="num zero">${dash}</td>
+        <td class="num zero">${dash}</td>
+        <td class="num zero">${dash}</td>
+        <td class="num zero">${dash}</td>
+        <td class="num zero">${dash}</td>
+        <td class="num zero">${dash}</td>
+        <td class="num zero">${dash}</td>
+        <td class="team-cell">${dash}</td>
+      </tr>`
+    ).join('');
+    const absentHead = buildThead(rosterSort);
+    container.insertAdjacentHTML('beforeend', `
+      <div class="joueurs-section-label" style="margin-top:2rem">Absents pour la saison (${absentNames.length})</div>
+      <div class="players-table-wrap">
+        <table class="players-table">
+          <thead><tr>${absentHead}</tr></thead>
+          <tbody>${absentTbody}</tbody>
+        </table>
+      </div>`);
+  });
 
   if (isAdmin) {
     [['roster-table','toggle-col-roster',true],['jokers-table','toggle-col-jokers',false]].forEach(([tblId,colId,isRoster]) => {
@@ -3694,7 +3727,7 @@ function renderJoueurs() {
         const player = tr.querySelector('[data-player]')?.dataset.player || '';
         const rowH   = tr.offsetHeight;
         h += `<div style="height:${rowH}px;display:flex;align-items:center;padding:0 10px">
-          <button data-action="toggle-roster" data-player="${player}" title="${isRoster?'Passer en +1':'Passer en roster'}">${isRoster?'🔽':'🔼'}</button>
+          <button data-action="toggle-roster" data-player="${player}" title="${isRoster?'Passer en occasionnel':'Passer en régulier'}">${isRoster?'🔽':'🔼'}</button>
         </div>`;
       });
       col.innerHTML = h;
@@ -5066,9 +5099,9 @@ const REGL_CHECKS = [
 ];
 
 const REGL_STATUTS = {
-  actif:  { label: 'Membre actif',           badge: 'regl-badge-actif' },
-  plus1:  { label: '+1',                      badge: 'regl-badge-plus1' },
-  quitte: { label: 'Je quitte l\'association', badge: 'regl-badge-quitte' },
+  actif:  { label: 'Régulier',              badge: 'regl-badge-actif' },
+  plus1:  { label: 'Occasionnel',           badge: 'regl-badge-plus1' },
+  quitte: { label: 'Absent pour la saison', badge: 'regl-badge-quitte' },
 };
 
 function _reglBadgeHtml(statut) {
@@ -5146,9 +5179,9 @@ function renderReglement() {
       <ul>
         <li>d'organiser les séances ;</li>
         <li>de suivre l'implication de chacun ;</li>
-        <li>de maintenir un roster actif et cohérent.</li>
+        <li>de maintenir un effectif actif et cohérent.</li>
       </ul>
-      Une absence de réponse répétée sera considérée comme un manque d'implication et pourra conduire à un retrait du roster principal, voire de l'association.
+      Une absence de réponse répétée sera considérée comme un manque d'implication et pourra conduire à un retrait de l'effectif, voire de l'association.
     </div>
   </div>
 
@@ -5201,36 +5234,36 @@ function renderReglement() {
     <label class="regl-radio-row" id="regl-radio-row-actif">
       <input type="radio" name="regl-statut" value="actif" id="regl-radio-actif">
       <div>
-        <div class="regl-radio-label">Membre actif</div>
-        <p class="regl-radio-desc">Je suis certain d'être présent la majeure partie de la saison et je souhaite intégrer le roster principal.</p>
+        <div class="regl-radio-label">Régulier</div>
+        <p class="regl-radio-desc">Je serai présent tous les lundis sauf imprévus. (moyenne : 3 à 4 fois/mois)</p>
       </div>
     </label>
     <label class="regl-radio-row" id="regl-radio-row-plus1">
       <input type="radio" name="regl-statut" value="plus1" id="regl-radio-plus1">
       <div>
-        <div class="regl-radio-label">+1</div>
-        <p class="regl-radio-desc">Je pense pouvoir venir ponctuellement mais pas de manière suffisamment régulière pour être considéré comme membre actif.</p>
+        <div class="regl-radio-label">Occasionnel</div>
+        <p class="regl-radio-desc">Je pourrai venir ponctuellement selon dispos/pour dépanner (moyenne : moins d'une fois/mois)</p>
       </div>
     </label>
     <label class="regl-radio-row" id="regl-radio-row-quitte">
       <input type="radio" name="regl-statut" value="quitte" id="regl-radio-quitte">
       <div>
-        <div class="regl-radio-label">Je quitte l'association</div>
-        <p class="regl-radio-desc">Je ne pense pas revenir cette saison (même si je vous adore ❤️). Vous pouvez me retirer du roster.</p>
+        <div class="regl-radio-label">Absent pour la saison</div>
+        <p class="regl-radio-desc">Je ne pense pas revenir cette saison (même si je vous adore ❤️). Je comprends que je pourrai être retiré du groupe WhatsApp pour cette année.</p>
       </div>
     </label>
   </div>
 
   <!-- Commentaire libre -->
   <div class="regl-comment-wrap" id="regl-comment-wrap">
-    <label class="regl-comment-label" for="regl-comment">💬 Tu souhaites faire un commentaire ou proposer une amélioration ? N'hésite pas !</label>
+    <label class="regl-comment-label" for="regl-comment">💬 Tu peux nous laisser un commentaire pour commenter ton vote ou nous faire part d'une requête. N'hésite pas à nous contacter si tu as la moindre hésitation ou besoin de précisions !</label>
     <textarea id="regl-comment" class="regl-comment-area" placeholder="Ton commentaire (facultatif)…" rows="3"></textarea>
   </div>
 
   <!-- Déclaration finale + submit -->
   <label class="regl-check-row" id="regl-final-decl" style="border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.05)">
     <input type="checkbox" id="regl-chk-final" style="accent-color:#10B981">
-    <span class="regl-check-label" style="font-style:italic">En validant ce formulaire, j'affirme avoir lu l'intégralité de ce règlement, je le comprends et j'accepte que tout manquement répété puisse entraîner mon retrait du roster actif, voire de l'association.</span>
+    <span class="regl-check-label" style="font-style:italic">En validant ce formulaire, j'affirme avoir lu l'intégralité de ce règlement, je le comprends et j'accepte que tout manquement répété puisse entraîner mon retrait de l'effectif, voire de l'association.</span>
   </label>
 
   <div class="regl-submit-zone" id="regl-submit-zone">
@@ -5447,7 +5480,7 @@ function _renderReglAdmin(view = 'individuel') {
     entries.forEach(r => {
       const declOk = r.check || r.statut === 'quitte';
       const declLabel = r.statut === 'quitte'
-        ? 'Déclaration non requise (quitte l\'association)'
+        ? 'Déclaration non requise (absent pour la saison)'
         : 'Déclaration finale lue et acceptée';
       html += `<div class="regl-respondent-card">
         <div class="regl-respondent-hd" onclick="this.parentElement.querySelector('.regl-respondent-bd').classList.toggle('open')">
@@ -5473,9 +5506,9 @@ function _renderReglAdmin(view = 'individuel') {
     const groups = { actif: [], plus1: [], quitte: [] };
     entries.forEach(r => { if (groups[r.statut]) groups[r.statut].push(r.nom); });
     const groupDefs = [
-      { key: 'actif',  label: 'Membres actifs',       cls: 'regl-badge-actif',  count: groups.actif.length },
-      { key: 'plus1',  label: '+1',                    cls: 'regl-badge-plus1',  count: groups.plus1.length },
-      { key: 'quitte', label: 'Quittent l\'association', cls: 'regl-badge-quitte', count: groups.quitte.length },
+      { key: 'actif',  label: 'Réguliers',             cls: 'regl-badge-actif',  count: groups.actif.length },
+      { key: 'plus1',  label: 'Occasionnels',          cls: 'regl-badge-plus1',  count: groups.plus1.length },
+      { key: 'quitte', label: 'Absents pour la saison', cls: 'regl-badge-quitte', count: groups.quitte.length },
     ];
     container.innerHTML = `<div style="display:flex;flex-direction:column;gap:12px">` +
       groupDefs.map(g => `<div class="regl-sum-card">
