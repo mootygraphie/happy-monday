@@ -1150,7 +1150,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 31/07/2026 - 09:33</footer>
+<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 31/07/2026 - 09:44</footer>
 
 <script>
 
@@ -1160,7 +1160,18 @@ function applyRole(role) {
   document.getElementById("saisie-nav-btn").style.display     = isAdmin ? "flex" : "none";
   document.getElementById("delete-session-btn").style.display = isAdmin ? "inline-flex" : "none";
   document.getElementById("edit-session-btn").style.display   = isAdmin ? "inline-flex" : "none";
-  document.getElementById("tab-reglement").style.display      = isAdmin ? "inline-flex" : "none";
+  document.getElementById("tab-reglement").style.display      = "inline-flex";
+
+  // Non-admin : règlement comme page d'accueil (sauf si hash explicite vers autre tab)
+  if (!isAdmin) {
+    const activePanel = document.querySelector(".tab-panel.active");
+    if (activePanel && activePanel.id === "panel-dashboard") {
+      document.querySelectorAll(".main-tab").forEach(t => t.classList.toggle("active", t.dataset.tab === "reglement"));
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === "panel-reglement"));
+      renderReglement();
+      history.replaceState(null, '', '#reglement');
+    }
+  }
 }
 
 const HASH_ADMIN = "cea45f18ea39c9ece6711634075f9402f52b3727a59e08927043c8cca10182c8";
