@@ -991,8 +991,9 @@
   .regl-view-pills { display: inline-flex; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 3px; gap: 2px; }
   .regl-view-pill { padding: 5px 14px; border-radius: 6px; border: none; background: transparent; color: var(--text3); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; }
   .regl-view-pill.active { background: var(--bg3); color: var(--text); }
-  #regl-admin-content { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  @media (max-width: 640px) { #regl-admin-content { grid-template-columns: 1fr; } }
+  #regl-admin-content { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  #regl-admin-content.two-col { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 640px) { #regl-admin-content.two-col { grid-template-columns: 1fr; } }
   .regl-respondent-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; align-self: start; }
   .regl-respondent-hd { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; cursor: pointer; gap: 10px; }
   .regl-respondent-name { font-size: 13.5px; font-weight: 700; }
@@ -5514,16 +5515,23 @@ async function _initReglForm() {
 
 function _renderReglAdmin(view = 'individuel') {
   const data = _reglData || {};
-  const entries = Object.values(data).sort((a,b) => (a.nom||'').localeCompare(b.nom||'','fr'));
+  const STATUT_ORDER = { actif: 0, plus1: 1, quitte: 2 };
+  const entries = Object.values(data).sort((a,b) => {
+    const sa = STATUT_ORDER[a.statut] ?? 99, sb = STATUT_ORDER[b.statut] ?? 99;
+    if (sa !== sb) return sa - sb;
+    return (a.nom||'').localeCompare(b.nom||'','fr');
+  });
   const container = document.getElementById('regl-admin-content');
   if (!container) return;
 
   if (entries.length === 0) {
+    container.classList.remove('two-col');
     container.innerHTML = `<div style="color:var(--text3);font-size:13px;padding:1rem 0">Aucune réponse pour l'instant.</div>`;
     return;
   }
 
   if (view === 'individuel') {
+    container.classList.add('two-col');
     const total = ALL_PLAYERS.length;
     const count = entries.length;
     let html = `<div style="font-size:13px;color:var(--text3);margin-bottom:1rem;grid-column:1/-1">${count} réponse${count>1?'s':''} sur ${total} joueur${total>1?'s':''}</div>`;
@@ -5553,6 +5561,7 @@ function _renderReglAdmin(view = 'individuel') {
     });
     container.innerHTML = html;
   } else {
+    container.classList.remove('two-col');
     const groups = { actif: [], plus1: [], quitte: [] };
     entries.forEach(r => { if (groups[r.statut]) groups[r.statut].push(r.nom); });
     const groupDefs = [
