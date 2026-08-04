@@ -5526,7 +5526,7 @@ function _renderReglAdmin(view = 'individuel') {
   if (view === 'individuel') {
     const total = ALL_PLAYERS.length;
     const count = entries.length;
-    let html = `<div style="font-size:13px;color:var(--text3);margin-bottom:1rem">${count} réponse${count>1?'s':''} sur ${total} joueur${total>1?'s':''}</div>`;
+    let html = `<div style="font-size:13px;color:var(--text3);margin-bottom:1rem;grid-column:1/-1">${count} réponse${count>1?'s':''} sur ${total} joueur${total>1?'s':''}</div>`;
     entries.forEach(r => {
       const declOk = r.check || r.statut === 'quitte';
       const declLabel = r.statut === 'quitte'
