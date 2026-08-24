@@ -1156,7 +1156,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 24/08/2026 - 23:10</footer>
+<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 24/08/2026 - 23:13</footer>
 
 <script>
 
@@ -4660,8 +4660,8 @@ function _playersOfTeam(color) {
 }
 
 const _TEAM_ORDER = ["Rouge", "Vert", "Bleue"];
-function _teamColorVar(equipe) {
-  return equipe === "Rouge" ? "var(--rouge)" : equipe === "Vert" ? "var(--vert)" : equipe === "Bleue" ? "var(--bleu)" : "";
+function _teamDotEmoji(equipe) {
+  return equipe === "Rouge" ? "🔴" : equipe === "Vert" ? "🟡" : equipe === "Bleue" ? "🔵" : "";
 }
 function _sortByTeamThenName(players) {
   return [...players].sort((a, b) => {
@@ -4672,8 +4672,8 @@ function _sortByTeamThenName(players) {
 }
 function _playerOptionHTML(p, isSelected, placeholder) {
   if (!p) return `<option value="" ${isSelected ? "selected" : ""}>${placeholder || ""}</option>`;
-  const color = _teamColorVar(_draft.presences[p]?.equipe || "");
-  return `<option value="${p}" ${isSelected ? "selected" : ""}${color ? ` style="color:${color}"` : ""}>${color ? "● " : ""}${p}</option>`;
+  const dot = _teamDotEmoji(_draft.presences[p]?.equipe || "");
+  return `<option value="${p}" ${isSelected ? "selected" : ""}>${dot ? dot + " " : ""}${p}</option>`;
 }
 
 function _presenceRowHTML(p, statut, isJoker, removable) {
