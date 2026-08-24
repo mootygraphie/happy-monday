@@ -1156,7 +1156,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 24/08/2026 - 22:51</footer>
+<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 24/08/2026 - 23:02</footer>
 
 <script>
 
@@ -4015,7 +4015,7 @@ function computeAchievementStats(playerName) {
   const _ss = [...SESSIONS].sort((a,b)=>new Date(a.date)-new Date(b.date));
   let buts=0,passes=0,presences=0,absences=0,injuries=0,sessionsBlesses=0,sac=0,maillots=0;
   let hattricks=0,doubleDouble=0,cleanSheets=0,mvp=0,soireeParfaite=0,invincible=0,csc=0,zeroVict=0,toutNul=0;
-  let gardiensCleanSheets=0,gardiensButsEncaisses=0,remontadas=0,gardienAssist=0;
+  let gardiensCleanSheets=0,gardiensButsEncaisses=0,gardiensMatchs=0,remontadas=0,gardienAssist=0;
   const chelemColors=new Set(), duoMap={};
   let inEp=false, bestStreak=0, curStreak=0, fantomeStreak=0, sessionsAvecGA=0;
   const yearMap={};
@@ -4066,7 +4066,7 @@ function computeAchievementStats(playerName) {
           if(gA[1]===playerName){_wasOwnGK=true;gardiensButsEncaisses+=mt2Ac;_gkConc+=mt2Ac;}
           if(gB[0]===playerName){_wasOwnGK=true;gardiensButsEncaisses+=mt1Bc;_gkConc+=mt1Bc;}
           if(gB[1]===playerName){_wasOwnGK=true;gardiensButsEncaisses+=mt2Bc;_gkConc+=mt2Bc;}
-          if(_wasOwnGK&&_gkConc===0)gardiensCleanSheets++;
+          if(_wasOwnGK){gardiensMatchs++;if(_gkConc===0)gardiensCleanSheets++;}
         }
         if(inMatch){
           sessPlayed++;
@@ -4132,11 +4132,14 @@ function computeAchievementStats(playerName) {
     return 0;
   })();
 
+  // Note gardien : taux de clean sheets, à partir de 3 matchs gardés (sinon pas assez de données)
+  const gardienRate = gardiensMatchs>=3 ? Math.round(gardiensCleanSheets/gardiensMatchs*100) : 0;
+
   return { buts, passes, gaTotal:buts+passes, presences, absences, injuries, sessionsBlesses,
            sac, maillots, hattricks, bestStreak, soireeParfaite, doubleDouble,
            invincible, cleanSheets, bestDuo, mvp, csc, grandChelem,
            fantomeStreak, assiduAnnes, cometeAnnes, zeroVict, toutNul, sessionsAvecGA,
-           gardiensCleanSheets, gardiensButsEncaisses, remontadas, gardienAssist };
+           gardiensCleanSheets, gardiensButsEncaisses, gardiensMatchs, gardienRate, remontadas, gardienAssist };
 }
 
 function renderAchievementsGrid(achSt) {
@@ -4354,11 +4357,11 @@ function openPlayerPanel(playerName) {
 
   /* Radar de profil */
   {
-    // Axes (sens horaire depuis le haut) : Buteur · Défenseur · Blessures · Intendant · Présence · Passeur
+    // Axes (sens horaire depuis le haut) : Buteur · Défenseur · Gardien · Intendant · Présence · Passeur
     const _radarAxes = [
       { label: 'Buteur',    val: _achSt.buts },
       { label: 'Défenseur', val: _achSt.cleanSheets },
-      { label: 'Blessures', val: _achSt.sessionsBlesses },
+      { label: 'Gardien',   val: _achSt.gardienRate },
       { label: 'Intendant', val: _achSt.sac + _achSt.maillots },
       { label: 'Présence',  val: _achSt.presences },
       { label: 'Passeur',   val: _achSt.passes },
@@ -4367,7 +4370,7 @@ function openPlayerPanel(playerName) {
     const _radarMaxes = _radarAxes.map((ax, i) => {
       return Math.max(1, ...ALL_PLAYERS.map(p => {
         const s = computeAchievementStats(p);
-        const vals = [s.buts, s.cleanSheets, s.sessionsBlesses, s.sac+s.maillots, s.presences, s.passes];
+        const vals = [s.buts, s.cleanSheets, s.gardienRate, s.sac+s.maillots, s.presences, s.passes];
         return vals[i];
       }));
     });
