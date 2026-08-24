@@ -1156,7 +1156,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 24/08/2026 - 22:39</footer>
+<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 24/08/2026 - 22:51</footer>
 
 <script>
 
@@ -4062,10 +4062,10 @@ function computeAchievementStats(playerName) {
           const mt1Ac=m.mt1B||0, mt2Ac=Math.max(0,(m.scoreB||0)-(m.mt1B||0));
           const mt1Bc=m.mt1A||0, mt2Bc=Math.max(0,(m.scoreA||0)-(m.mt1A||0));
           let _wasOwnGK=false,_gkConc=0;
-          if(gA[0]===playerName&&(!myEq||myEq===m.eqA)){_wasOwnGK=true;gardiensButsEncaisses+=mt1Ac;_gkConc+=mt1Ac;}
-          if(gA[1]===playerName&&(!myEq||myEq===m.eqA)){_wasOwnGK=true;gardiensButsEncaisses+=mt2Ac;_gkConc+=mt2Ac;}
-          if(gB[0]===playerName&&(!myEq||myEq===m.eqB)){_wasOwnGK=true;gardiensButsEncaisses+=mt1Bc;_gkConc+=mt1Bc;}
-          if(gB[1]===playerName&&(!myEq||myEq===m.eqB)){_wasOwnGK=true;gardiensButsEncaisses+=mt2Bc;_gkConc+=mt2Bc;}
+          if(gA[0]===playerName){_wasOwnGK=true;gardiensButsEncaisses+=mt1Ac;_gkConc+=mt1Ac;}
+          if(gA[1]===playerName){_wasOwnGK=true;gardiensButsEncaisses+=mt2Ac;_gkConc+=mt2Ac;}
+          if(gB[0]===playerName){_wasOwnGK=true;gardiensButsEncaisses+=mt1Bc;_gkConc+=mt1Bc;}
+          if(gB[1]===playerName){_wasOwnGK=true;gardiensButsEncaisses+=mt2Bc;_gkConc+=mt2Bc;}
           if(_wasOwnGK&&_gkConc===0)gardiensCleanSheets++;
         }
         if(inMatch){
