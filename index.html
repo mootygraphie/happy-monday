@@ -1156,7 +1156,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 24/08/2026 - 23:02</footer>
+<footer>Happy Monday Football Team &mdash; Divodurum Mediomatricorum &mdash; 24/08/2026 - 23:10</footer>
 
 <script>
 
@@ -1637,7 +1637,7 @@ function computeStats(sessions) {
   const top3Pres    = Object.entries(ps).filter(([n,p])=>p.presences>0&&!JOKERS.has(n)).sort((a,b)=>b[1].presences-a[1].presences||byAlpha(a,b)).slice(0,3);
   const top3Abs     = Object.entries(ps).filter(([n,p])=>p.absences>0&&!JOKERS.has(n))
     .sort((a,b)=>b[1].absences-a[1].absences||byAlpha(a,b)).slice(0,3);
-  const top3Bles    = Object.entries(ps).filter(([n,p])=>p.episodesBlessures>0&&!JOKERS.has(n))
+  const top3Bles    = Object.entries(ps).filter(([,p])=>p.episodesBlessures>0)
     .sort((a,b)=>b[1].episodesBlessures-a[1].episodesBlessures||b[1].matchsBlessures-a[1].matchsBlessures||byAlpha(a,b)).slice(0,3);
   const buteursRank  = Object.entries(ps).filter(([,p])=>p.buts>0).sort((a,b)=>b[1].buts-a[1].buts||byAlpha(a,b));
   const passeursRank = Object.entries(ps).filter(([,p])=>p.passes>0).sort((a,b)=>b[1].passes-a[1].passes||byAlpha(a,b));
@@ -2415,7 +2415,7 @@ function buildInfirmeHtml() {
   _ss.forEach(s => {
     Object.entries(s.presences).forEach(([p, info]) => {
       if (!injEp[p]) injEp[p] = false;
-      if (info.statut === "Blessé" && !JOKERS.has(p)) {
+      if (info.statut === "Blessé") {
         if (!injEp[p]) { injEpMap[p] = (injEpMap[p]||0)+1; injEp[p]=true; }
         injMatchMap[p] = (injMatchMap[p]||0)+1;
       } else { injEp[p] = false; }
@@ -4659,12 +4659,30 @@ function _playersOfTeam(color) {
     .filter(([,v]) => v.statut === "Présent" && v.equipe === color).map(([k]) => k).sort((a, b) => a.localeCompare(b, "fr"));
 }
 
+const _TEAM_ORDER = ["Rouge", "Vert", "Bleue"];
+function _teamColorVar(equipe) {
+  return equipe === "Rouge" ? "var(--rouge)" : equipe === "Vert" ? "var(--vert)" : equipe === "Bleue" ? "var(--bleu)" : "";
+}
+function _sortByTeamThenName(players) {
+  return [...players].sort((a, b) => {
+    const ia = _TEAM_ORDER.indexOf(_draft.presences[a]?.equipe || "");
+    const ib = _TEAM_ORDER.indexOf(_draft.presences[b]?.equipe || "");
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || a.localeCompare(b, "fr");
+  });
+}
+function _playerOptionHTML(p, isSelected, placeholder) {
+  if (!p) return `<option value="" ${isSelected ? "selected" : ""}>${placeholder || ""}</option>`;
+  const color = _teamColorVar(_draft.presences[p]?.equipe || "");
+  return `<option value="${p}" ${isSelected ? "selected" : ""}${color ? ` style="color:${color}"` : ""}>${color ? "● " : ""}${p}</option>`;
+}
+
 function _presenceRowHTML(p, statut, isJoker, removable) {
   if (isJoker) {
     return `<div class="saisie-player-row">
       <span class="saisie-player-name">${p}</span>
       <div class="saisie-status-btns">
         <button class="saisie-statut-btn ${statut==="Présent"?"active-present":""}" data-player="${p}" data-statut="Présent">✅</button>
+        <button class="saisie-statut-btn ${statut==="Blessé"?"active-blesse":""}" data-player="${p}" data-statut="Blessé">🤕</button>
         <button class="saisie-statut-btn ${statut===_JOKER_NC?"active-nc":""}" data-player="${p}" data-statut="${_JOKER_NC}" title="Non convoqué">🫥</button>
         ${removable ? `<button class="saisie-remove-temp-joker" data-player="${p}" title="Retirer ce joueur" style="background:transparent;border:none;color:var(--fg3);cursor:pointer;font-size:15px;padding:0 4px;margin-left:4px">✕</button>` : ""}
       </div>
@@ -4706,35 +4724,35 @@ function _buildMatchCardHTML(m, idx, teams) {
   // Avec 3 équipes, l'équipe qui ne joue pas ce match peut dépanner (gardien, buteur ou passeur) pour les deux équipes en jeu
   const benchTeam = teams.length >= 3 ? (teams.find(t => t !== m.eqA && t !== m.eqB) || "") : "";
   const pBench = benchTeam ? _playersOfTeam(benchTeam) : [];
-  const poolA = [...new Set([...pA, ...pBench])].sort((a,b) => a.localeCompare(b,'fr'));
-  const poolB = [...new Set([...pB, ...pBench])].sort((a,b) => a.localeCompare(b,'fr'));
+  const poolA = _sortByTeamThenName([...new Set([...pA, ...pBench])]);
+  const poolB = _sortByTeamThenName([...new Set([...pB, ...pBench])]);
   const gardiensAArr = (m.gardiensA||[]).filter(g => g && g.trim());
   const gardiensBArr = (m.gardiensB||[]).filter(g => g && g.trim());
-  const effectivePa = [...new Set([...poolA, ...gardiensAArr])].sort((a,b) => a.localeCompare(b,'fr'));
-  const effectivePb = [...new Set([...poolB, ...gardiensBArr])].sort((a,b) => a.localeCompare(b,'fr'));
+  const effectivePa = _sortByTeamThenName([...new Set([...poolA, ...gardiensAArr])]);
+  const effectivePb = _sortByTeamThenName([...new Set([...poolB, ...gardiensBArr])]);
   const butSelHTML = (side, list, buteurs, passeurs, score, otherList) =>
     Array.from({length: score}, (_,j) => {
       const v  = buteurs[j]  || "";
       const pv = passeurs[j] || "";
       const isCSC = v === "CSC";
       const butList = pv ? list.filter(p => p !== pv) : list;
-      const opts  = ["", "CSC", ...butList].map(p => `<option value="${p}" ${v===p?"selected":""}>${p==="CSC"?"CSC (c.s.c.)":p||"— Buteur —"}</option>`).join("");
+      const opts  = [_playerOptionHTML("", v==="", "— Buteur —"), `<option value="CSC" ${v==="CSC"?"selected":""}>CSC (c.s.c.)</option>`, ...butList.map(p => _playerOptionHTML(p, v===p))].join("");
       if (isCSC) {
-        const aOpts = ["", ...(otherList||[])].map(p => `<option value="${p}" ${pv===p?"selected":""}>${p||"— Auteur du CSC —"}</option>`).join("");
+        const aOpts = [_playerOptionHTML("", pv==="", "— Auteur du CSC —"), ...(otherList||[]).map(p => _playerOptionHTML(p, pv===p))].join("");
         return `<div class="saisie-goal-row">
           <select class="saisie-select saisie-buteur-sel" data-match="${idx}" data-side="${side}" data-goal="${j}">${opts}</select>
           <select class="saisie-select saisie-passeur-sel" data-match="${idx}" data-side="${side}" data-goal="${j}" style="opacity:1;font-size:13px">${aOpts}</select>
         </div>`;
       }
       const pasList = v && v !== "CSC" ? list.filter(p => p !== v) : list;
-      const popts = ["", ...pasList].map(p => `<option value="${p}" ${pv===p?"selected":""}>${p||"— Passeur (opt.) —"}</option>`).join("");
+      const popts = [_playerOptionHTML("", pv==="", "— Passeur (opt.) —"), ...pasList.map(p => _playerOptionHTML(p, pv===p))].join("");
       return `<div class="saisie-goal-row">
         <select class="saisie-select saisie-buteur-sel${v===""?" saisie-buteur-empty":""}" data-match="${idx}" data-side="${side}" data-goal="${j}">${opts}</select>
         <select class="saisie-select saisie-passeur-sel" data-match="${idx}" data-side="${side}" data-goal="${j}">${popts}</select>
       </div>`;
     }).join("");
   const gardienOpts = (val, players) =>
-    ["", ...players].map(p => `<option value="${p}" ${val===p?"selected":""}>${p||"— Gardien (opt.) —"}</option>`).join("");
+    [_playerOptionHTML("", val==="", "— Gardien (opt.) —"), ...players.map(p => _playerOptionHTML(p, val===p))].join("");
   const mt1A = m.mt1A ?? 0;
   const mt1B = m.mt1B ?? 0;
   const gardiensA = m.gardiensA || ["",""];
@@ -4796,11 +4814,11 @@ function _buildMatchsSectionHTML() {
 function renderSaisie() {
   if (!_draft) _loadDraft();
   const presents = _presentList();
-  const regularPlayers = ALL_PLAYERS.filter(p => !JOKERS.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
+  const regularPlayers = ALL_PLAYERS.filter(p => !JOKERS.has(p) && !ABSENTS.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
   const jokerPlayers   = ALL_PLAYERS.filter(p =>  JOKERS.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
   const countPresents = Object.values(_draft.presences).filter(v => v.statut === "Présent").length;
   const countAbsents  = Object.entries(_draft.presences).filter(([k, v]) => !JOKERS.has(k) && !(_draft.tempJokers||[]).includes(k) && v.statut === "Absent").length;
-  const countBlesses  = Object.entries(_draft.presences).filter(([k, v]) => !JOKERS.has(k) && !(_draft.tempJokers||[]).includes(k) && v.statut === "Blessé").length;
+  const countBlesses  = Object.entries(_draft.presences).filter(([, v]) => v.statut === "Blessé").length;
   const sacOpts    = ["", ...presents].map(p => `<option value="${p}" ${_draft.sac===p?"selected":""}>${p||"— non défini —"}</option>`).join("");
   const mailOpts   = ["", ...presents].map(p => `<option value="${p}" ${_draft.maillots===p?"selected":""}>${p||"— non défini —"}</option>`).join("");
   const statusTxt  = _draftSavedAt
