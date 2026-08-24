@@ -4700,10 +4700,15 @@ function _buildMatchCardHTML(m, idx, teams) {
   const teamOpts = (sel, exclude) => teams.filter(t => !exclude || t !== exclude).map(t => `<option value="${t}" ${sel===t?"selected":""}>${TEAM_LABEL[t]||t}</option>`).join("");
   const pA = m.eqA ? _playersOfTeam(m.eqA) : [];
   const pB = m.eqB ? _playersOfTeam(m.eqB) : [];
+  // Avec 3 équipes, l'équipe qui ne joue pas ce match peut dépanner (gardien, buteur ou passeur) pour les deux équipes en jeu
+  const benchTeam = teams.length >= 3 ? (teams.find(t => t !== m.eqA && t !== m.eqB) || "") : "";
+  const pBench = benchTeam ? _playersOfTeam(benchTeam) : [];
+  const poolA = [...new Set([...pA, ...pBench])].sort((a,b) => a.localeCompare(b,'fr'));
+  const poolB = [...new Set([...pB, ...pBench])].sort((a,b) => a.localeCompare(b,'fr'));
   const gardiensAArr = (m.gardiensA||[]).filter(g => g && g.trim());
   const gardiensBArr = (m.gardiensB||[]).filter(g => g && g.trim());
-  const effectivePa = [...new Set([...pA, ...gardiensAArr])].sort((a,b) => a.localeCompare(b,'fr'));
-  const effectivePb = [...new Set([...pB, ...gardiensBArr])].sort((a,b) => a.localeCompare(b,'fr'));
+  const effectivePa = [...new Set([...poolA, ...gardiensAArr])].sort((a,b) => a.localeCompare(b,'fr'));
+  const effectivePb = [...new Set([...poolB, ...gardiensBArr])].sort((a,b) => a.localeCompare(b,'fr'));
   const butSelHTML = (side, list, buteurs, passeurs, score, otherList) =>
     Array.from({length: score}, (_,j) => {
       const v  = buteurs[j]  || "";
@@ -4733,13 +4738,6 @@ function _buildMatchCardHTML(m, idx, teams) {
   const gardiensB = m.gardiensB || ["",""];
   const lblA = TEAM_LABEL[m.eqA]||m.eqA||"Éq.A";
   const lblB = TEAM_LABEL[m.eqB]||m.eqB||"Éq.B";
-  // 4 joueurs → gardien fourni par le banc ; 5+ → gardien de l'équipe elle-même
-  const benchTeam = ["Rouge","Vert","Bleue"].find(t => t !== m.eqA && t !== m.eqB) || "";
-  const pBench = benchTeam ? _playersOfTeam(benchTeam) : [];
-  const gardienPoolA = pA.length >= 5 || !pBench.length ? pA : pBench;
-  const gardienPoolB = pB.length >= 5 || !pBench.length ? pB : pBench;
-  const gardienLblA = pA.length >= 5 || !pBench.length ? lblA : (TEAM_LABEL[benchTeam]||benchTeam);
-  const gardienLblB = pB.length >= 5 || !pBench.length ? lblB : (TEAM_LABEL[benchTeam]||benchTeam);
   const showButeurs = m.scoreA > 0 || m.scoreB > 0;
   return `<div class="saisie-match-card">
     <div class="saisie-match-row">
@@ -4760,14 +4758,14 @@ function _buildMatchCardHTML(m, idx, teams) {
       </div>
       <div class="saisie-gardiens-pair">
         <div class="saisie-gardien-col">
-          <span class="saisie-gardien-col-label">${gardienLblA}</span>
-          <div class="saisie-gardien-mt-row"><span class="mt-label">MT1</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="A" data-mt="0">${gardienOpts(gardiensA[0]||"", gardienPoolA)}</select></div>
-          <div class="saisie-gardien-mt-row"><span class="mt-label">MT2</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="A" data-mt="1">${gardienOpts(gardiensA[1]||"", gardienPoolA)}</select></div>
+          <span class="saisie-gardien-col-label">${lblA}</span>
+          <div class="saisie-gardien-mt-row"><span class="mt-label">MT1</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="A" data-mt="0">${gardienOpts(gardiensA[0]||"", poolA)}</select></div>
+          <div class="saisie-gardien-mt-row"><span class="mt-label">MT2</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="A" data-mt="1">${gardienOpts(gardiensA[1]||"", poolA)}</select></div>
         </div>
         <div class="saisie-gardien-col">
-          <span class="saisie-gardien-col-label">${gardienLblB}</span>
-          <div class="saisie-gardien-mt-row"><span class="mt-label">MT1</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="B" data-mt="0">${gardienOpts(gardiensB[0]||"", gardienPoolB)}</select></div>
-          <div class="saisie-gardien-mt-row"><span class="mt-label">MT2</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="B" data-mt="1">${gardienOpts(gardiensB[1]||"", gardienPoolB)}</select></div>
+          <span class="saisie-gardien-col-label">${lblB}</span>
+          <div class="saisie-gardien-mt-row"><span class="mt-label">MT1</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="B" data-mt="0">${gardienOpts(gardiensB[0]||"", poolB)}</select></div>
+          <div class="saisie-gardien-mt-row"><span class="mt-label">MT2</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="B" data-mt="1">${gardienOpts(gardiensB[1]||"", poolB)}</select></div>
         </div>
       </div>
     </div>
