@@ -1543,7 +1543,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 20:51</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 21:02</footer>
 
 <script>
 
@@ -2792,6 +2792,27 @@ function _sfmPickSpotlights(matchs) {
 
 function _sfmPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
+/* Ne credite un gardien de "cage inviolee" que s il a garde SEUL tout le
+   match (pas de rotation a la mi-temps) et n a rien encaisse. Un gardien
+   qui n a joue qu une mi-temps sans encaisser ne compte pas comme clean
+   sheet de match, meme si son propre compteur "buts" affiche 0. */
+function _sfmFindFullCleanSheet(matchs) {
+  const names = [];
+  matchs.forEach(m => {
+    const checkSide = (gardiens, conceded) => {
+      const uniq = [...new Set((gardiens || []).filter(Boolean))];
+      if (uniq.length === 1 && conceded === 0) names.push(uniq[0]);
+    };
+    checkSide(m.gardiensA, m.scoreB);
+    checkSide(m.gardiensB, m.scoreA);
+  });
+  if (!names.length) return null;
+  const count = {};
+  names.forEach(n => { count[n] = (count[n]||0) + 1; });
+  const [name, times] = Object.entries(count).sort((a,b) => b[1]-a[1])[0];
+  return { name, times };
+}
+
 function _sfmSpotlightMeta(m, kind) {
   const eyebrows = { opener: "🎩 Ouverture des hostilités", blowout: "💥 Correction en règle", thriller: "🥶 Frisson du soir" };
   const top = _sfmTopScorerInMatch(m);
@@ -2900,12 +2921,18 @@ function _sfmRecapSentence(session, matchs, totalButs, buteursRanked, passeursRa
     ]));
   }
 
-  if (gkRanking && gkRanking.length) {
-    const cleanKeeper = gkRanking.filter(g => g.buts === 0).sort((a,b) => b.matchs - a.matchs)[0];
-    if (cleanKeeper) {
+  const fullCleanSheet = _sfmFindFullCleanSheet(matchs);
+  if (fullCleanSheet) {
+    parts.push(_sfmPick([
+      `${fullCleanSheet.name} a verrouillé sa cage sur tout le match${fullCleanSheet.times>1?`, à ${fullCleanSheet.times} reprises`:""} — porte blindée, code changé.`,
+      `Derrière, ${fullCleanSheet.name} n'a rien laissé filtrer sur l'intégralité d'un match : soirée tranquille dans ses buts.`,
+    ]));
+  } else if (gkRanking && gkRanking.length) {
+    const best = [...gkRanking].filter(g => g.matchs >= 2).sort((a,b) => a.rate - b.rate)[0];
+    if (best && best.buts > 0) {
       parts.push(_sfmPick([
-        `${cleanKeeper.name} a verrouillé sa cage toute la soirée — porte blindée, code changé.`,
-        `Derrière, ${cleanKeeper.name} n'a rien laissé filtrer : soirée tranquille pour son gardien.`,
+        `${best.name} n'a craqué que ${best.buts} fois sur ses ${best.matchs} passages dans les buts — pas parfait, mais solide.`,
+        `Dans les cages, ${best.name} affiche le meilleur bilan de la soirée (${best.buts} encaissé${best.buts>1?"s":""} en ${best.matchs} passages).`,
       ]));
     }
   }
@@ -2942,13 +2969,26 @@ function _sfmStatStripHTML(presentsCount, matchsCount, totalButs, avgButs) {
   </div>`;
 }
 
-function _sfmHeroHTML(session, matchs, presentsCount, teamsPlayedCount, recapSentence, tickerHtml, statStripHtml) {
+function _sfmHeroGradient(teamsPlayed) {
+  const order = ["Rouge","Vert","Bleue"];
+  const active = order.filter(c => teamsPlayed.includes(c));
+  if (active.length < 2) {
+    const c = active[0];
+    return c ? `linear-gradient(120deg, var(--${teamCls(c)}-bg), transparent 75%)` : "";
+  }
+  const stops = active.map(c => `var(--${teamCls(c)}-bg)`).join(", ");
+  return `linear-gradient(120deg, ${stops})`;
+}
+
+function _sfmHeroHTML(session, matchs, presentsCount, teamsPlayed, recapSentence, tickerHtml, statStripHtml) {
   const dateHtml = _sfmHeroDate(session.date);
+  const teamsPlayedCount = teamsPlayed.length;
   const metaParts = [`${presentsCount} présent${presentsCount>1?"s":""}`];
   if (matchs.length) metaParts.push(`${matchs.length} match${matchs.length>1?"s":""}`);
   const metaLine1 = metaParts.join(" <b>·</b> ");
   const metaLine2 = teamsPlayedCount ? `${teamsPlayedCount} équipe${teamsPlayedCount>1?"s":""} en rotation` : "";
-  return `<div class="sfm-hero sfm-fade-up">
+  const heroBg = _sfmHeroGradient(teamsPlayed);
+  return `<div class="sfm-hero sfm-fade-up"${heroBg ? ` style="background:${heroBg}"` : ""}>
     <div class="sfm-hero-top">
       <div>
         <div class="sfm-eyebrow">Compte-rendu de soirée</div>
@@ -3113,7 +3153,7 @@ function renderSessionDetailV2(session) {
   const tickerHtml      = matchs.length ? _sfmTickerHTML(matchs, spotlightIdxSet) : "";
   const statStripHtml   = matchs.length ? _sfmStatStripHTML(presentsCount, matchs.length, totalButs, avgButs) : "";
 
-  let h = _sfmHeroHTML(session, matchs, presentsCount, standings.length, recapSentence, tickerHtml, statStripHtml);
+  let h = _sfmHeroHTML(session, matchs, presentsCount, standings.map(s => s.team), recapSentence, tickerHtml, statStripHtml);
 
   if (!matchs.length) {
     h += `<div class="sfm-no-data-card sfm-fade-up">
