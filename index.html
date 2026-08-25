@@ -1400,7 +1400,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 16:56</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 16:58</footer>
 
 <script>
 
@@ -1636,21 +1636,14 @@ const _BASE_PLAYERS = new Set(ALL_PLAYERS);
 JSON.parse(localStorage.getItem('hmft_extra_players') || '[]').forEach(n => {
   if (!ALL_PLAYERS.includes(n)) { ALL_PLAYERS.push(n); JOKERS.add(n); }
 });
-/* Initiales d avatar : 2 lettres minimum, on n en ajoute que pour distinguer
-   des joueurs qui entreraient sinon en collision. Pierre-Olivier -> PO
-   (initiales des 2 mots, tiret traite comme un espace). Raph P / Raph L
-   (memes prenoms) -> RAP / RAL (on developpe le prenom commun plutot que
-   de sauter aux initiales des 2 mots, pour garder le lien visuel entre eux). */
+/* Initiales d avatar : exactement 2 lettres pour les noms composes (espace
+   ou tiret) — Pierre-Olivier -> PO, Raph P / Raph L -> RP / RL. Pour les
+   noms simples : 2 lettres minimum, davantage seulement si besoin pour
+   distinguer des joueurs qui entreraient sinon en collision. */
 function computeAllInitials(players) {
   const parts = {};
-  const firstWordCount = {};
   players.forEach(p => {
-    const ps = p.trim().split(/[\s-]+/).filter(Boolean);
-    parts[p] = ps;
-    if (ps.length > 1) {
-      const key = ps[0].toLowerCase();
-      firstWordCount[key] = (firstWordCount[key] || 0) + 1;
-    }
+    parts[p] = p.trim().split(/[\s-]+/).filter(Boolean);
   });
 
   const cands = {};
@@ -1658,11 +1651,7 @@ function computeAllInitials(players) {
     const ps = parts[p];
     const list = [];
     if (ps.length > 1) {
-      const w1 = ps[0], w2 = ps[1];
-      const hasSibling = firstWordCount[w1.toLowerCase()] > 1;
-      if (!hasSibling) list.push(w1[0] + w2[0]);
-      for (let i = 2; i <= w1.length; i++) list.push(w1.slice(0, i) + w2[0]);
-      list.push(ps.join(''));
+      list.push(ps[0][0] + ps[1][0]);
     } else {
       for (let i = 2; i <= Math.max(2, p.length); i++) list.push(p.slice(0, Math.min(i, p.length)));
     }
