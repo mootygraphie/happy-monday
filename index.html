@@ -361,8 +361,9 @@
   .top10-val { font-weight: 800; font-variant-numeric: tabular-nums; flex-shrink: 0; }
 
   /* ── Récompenses : classement complet dépliable ── */
-  .award-row.award-more-row { display: none; }
-  .award-row.award-more-row.show { display: flex; }
+  .award-row.award-more-row, .award-bar-wrap.award-more-row { display: none; }
+  .award-row.award-more-row.show { display: grid; }
+  .award-bar-wrap.award-more-row.show { display: block; }
   .award-toggle { width: 100%; text-align: center; background: none; border: none; border-top: 1px solid var(--border); padding: 9px 0; font-size: 11.5px; font-weight: 700; color: var(--text2); cursor: pointer; }
   .award-toggle:hover { color: var(--text); }
 
@@ -715,50 +716,135 @@
   html.light .ach-cell.ach-passoire.t4 { background:rgba(5,40,130,.12);   border-color:rgba(5,40,130,.32);   color:#052882; }
   html.light .ach-cell.ach-passoire.t5 { background:rgba(0,20,90,.1);     border-color:rgba(0,40,120,.28);   color:#001464; }
   html.light .ach-cell.ach-passoire.t6 { background:rgba(0,10,50,.12);    border-color:rgba(0,30,100,.35);   color:#000A3C; }
-  /* ── Hauts faits — classement admin ── */
-  .ach-cls-pills { display:flex; gap:6px; overflow-x:auto; margin-bottom:12px; scrollbar-width:none; }
-  .ach-cls-pills::-webkit-scrollbar { display:none; }
-  .ach-cls-pill {
-    flex-shrink:0; width:34px; height:34px; border-radius:50%;
-    font-size:16px; padding:0; cursor:pointer;
-    border:1.5px solid var(--border2); background:var(--bg3);
-    display:flex; align-items:center; justify-content:center;
-    transition:border-color .12s, background .12s;
-    user-select:none; line-height:1;
+  /* ── Hauts faits — matrice admin (mhf-*) ── */
+  :root {
+    --mhf-t0-bg: rgba(255,255,255,.03); --mhf-t0-b: rgba(255,255,255,.07);
+    --mhf-t1-bg: rgba(107,114,128,.14); --mhf-t1-b: rgba(107,114,128,.38); --mhf-t1-c: #9CA3AF;
+    --mhf-t2-bg: rgba(205,127,50,.16);  --mhf-t2-b: rgba(205,127,50,.48);  --mhf-t2-c: #D4863A;
+    --mhf-t3-bg: rgba(148,163,184,.16); --mhf-t3-b: rgba(148,163,184,.5);  --mhf-t3-c: #94A3B8;
+    --mhf-t4-bg: rgba(245,158,11,.18);  --mhf-t4-b: rgba(245,158,11,.55);  --mhf-t4-c: #FBBF24;
+    --mhf-t5-bg: rgba(16,185,129,.15);  --mhf-t5-b: rgba(16,185,129,.5);   --mhf-t5-c: #34D399;
+    --mhf-t6-bg: linear-gradient(135deg,rgba(167,243,255,.13),rgba(196,181,255,.13),rgba(252,165,165,.1));
+    --mhf-t6-b: rgba(167,243,255,.45); --mhf-t6-c: #A5F3FC;
   }
-  .ach-cls-pill:hover { border-color:var(--gold-border); }
-  .ach-cls-pill.active { border-color:var(--gold); background:var(--gold-bg); }
-  .ach-cls-row {
-    display:flex; align-items:center; gap:10px; padding:7px 10px;
-    border-radius:10px; margin-bottom:4px; background:var(--bg2); border:1px solid var(--border);
+  html.light {
+    --mhf-t0-bg: rgba(0,0,0,.025); --mhf-t0-b: rgba(0,0,0,.07);
+    --mhf-t1-bg: rgba(100,110,120,.1); --mhf-t1-b: rgba(100,110,120,.3); --mhf-t1-c: #6B7280;
+    --mhf-t2-bg: rgba(205,127,50,.1);  --mhf-t2-b: rgba(205,127,50,.35); --mhf-t2-c: #B45309;
+    --mhf-t3-bg: rgba(100,116,139,.1); --mhf-t3-b: rgba(100,116,139,.35);--mhf-t3-c: #475569;
+    --mhf-t4-bg: rgba(217,119,6,.13);  --mhf-t4-b: rgba(217,119,6,.42);  --mhf-t4-c: #B45309;
+    --mhf-t5-bg: rgba(5,150,105,.1);   --mhf-t5-b: rgba(5,150,105,.35);  --mhf-t5-c: #065F46;
+    --mhf-t6-bg: rgba(6,182,212,.1);   --mhf-t6-b: rgba(6,182,212,.38);  --mhf-t6-c: #0891B2;
   }
-  .ach-cls-rank { font-size:12px; color:var(--text3); min-width:22px; text-align:center; flex-shrink:0; }
-  .ach-cls-name { flex:1; font-size:13px; font-weight:600; min-width:0; }
-  .ach-cls-badge {
-    font-size:10px; font-weight:700; padding:2px 9px; border-radius:999px;
-    border:1px solid; letter-spacing:.03em; white-space:nowrap; flex-shrink:0;
-  }
-  .ach-cls-val { font-size:11px; color:var(--text2); text-align:right; white-space:nowrap; flex-shrink:0; }
-  .ach-cls-dots { display:flex; gap:3px; flex-shrink:0; }
-  .ach-cls-dot { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.12); }
-  details.ach-cls-locked { margin-top:6px; }
-  details.ach-cls-locked > summary {
-    font-size:11px; color:var(--text3); cursor:pointer; padding:5px 0;
-    list-style:none; display:flex; align-items:center; gap:5px; user-select:none;
-  }
-  details.ach-cls-locked > summary::marker, details.ach-cls-locked > summary::-webkit-details-marker { display:none; }
-  details.ach-cls-locked > summary::before { content:'▶'; font-size:9px; transition:transform .15s; }
-  details.ach-cls-locked[open] > summary::before { transform:rotate(90deg); }
-  html.light .ach-cls-dot { background:rgba(0,0,0,.1); }
+  .mhf-t6-anim { animation: achDiamond 5s linear infinite; }
+  html.light .mhf-t6-anim { animation: none; }
 
-  /* ── Admin : pagination / tri Collectionneurs ── */
-  .coll-sort { display:flex; gap:4px; margin-left:auto; }
-  .coll-sort button { font-size:11px; font-weight:700; border-radius:999px; padding:5px 11px; border:1px solid var(--border2); background:var(--bg3); cursor:pointer; }
-  .coll-sort button.active { background:var(--gold-bg); border-color:var(--gold); color:var(--gold); }
-  .coll-pager { display:flex; align-items:center; gap:10px; margin-top:8px; }
-  .coll-pager button { border-radius:8px; border:1px solid var(--border2); background:var(--bg3); padding:5px 11px; font-weight:700; cursor:pointer; }
-  .coll-pager button:disabled { opacity:.35; cursor:default; }
-  .coll-pager span { font-size:11.5px; color:var(--text3); }
+  .mhf-rarity-list { display:flex; flex-direction:column; gap:6px; margin-bottom:2rem; }
+  .mhf-rarity-row {
+    display:grid; grid-template-columns:24px 1fr 120px 92px; align-items:center; gap:12px;
+    padding:8px 14px; background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius);
+    cursor:pointer; transition:border-color .12s, background .12s;
+  }
+  .mhf-rarity-row:hover { border-color:var(--border2); background:var(--bg3); }
+  .mhf-rarity-row.selected { border-color:var(--gold); background:var(--gold-bg); }
+  .mhf-rarity-ic { font-size:16px; text-align:center; }
+  .mhf-rarity-name { display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; min-width:0; }
+  .mhf-rarity-name span.n { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .mhf-rarity-secret { font-size:9px; font-weight:700; color:var(--text3); border:1px solid var(--border2); border-radius:5px; padding:1px 4px; letter-spacing:.03em; flex-shrink:0; }
+  .mhf-rarity-track { height:7px; border-radius:4px; background:var(--bg3); overflow:hidden; }
+  .mhf-rarity-fill { height:100%; border-radius:4px; }
+  .mhf-rarity-stat { font-size:12px; color:var(--text2); text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .mhf-rarity-stat b { color:var(--text); font-weight:700; }
+
+  .mhf-tier-legend { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+  .mhf-tier-legend .lbl { font-size:10.5px; color:var(--text3); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-style:italic; margin-right:4px; }
+  .mhf-tier-pill { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; }
+  .mhf-tier-pill .dot { width:7px; height:7px; border-radius:50%; background:currentColor; flex-shrink:0; }
+  .mhf-dr-ladder .mhf-tier-pill { padding:5px 12px; font-size:11.5px; }
+
+  .mhf-toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+  .mhf-search { position:relative; flex-shrink:0; }
+  .mhf-search input {
+    background:var(--bg2); border:1px solid var(--border2); color:var(--text);
+    border-radius:20px; padding:8px 14px 8px 30px; font-size:13px; width:180px; outline:none;
+  }
+  .mhf-search input:focus { border-color:var(--gold-border); }
+  .mhf-search .ic { position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:12px; color:var(--text3); pointer-events:none; }
+  .mhf-chip-row { display:flex; gap:6px; flex-wrap:wrap; }
+  .mhf-toggle-hidden { margin-left:auto; display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text2); cursor:pointer; user-select:none; flex-shrink:0; }
+  .mhf-toggle-track { width:32px; height:18px; border-radius:20px; background:var(--bg3); border:1px solid var(--border2); position:relative; transition:background .15s; }
+  .mhf-toggle-dot { position:absolute; top:1px; left:1px; width:14px; height:14px; border-radius:50%; background:var(--text3); transition:transform .15s, background .15s; }
+  .mhf-toggle-hidden.on .mhf-toggle-track { background:var(--gold-bg); border-color:var(--gold-border); }
+  .mhf-toggle-hidden.on .mhf-toggle-dot { transform:translateX(14px); background:var(--gold); }
+
+  .mhf-matrix-scroll { overflow:auto; max-height:65vh; border:1px solid var(--border); border-radius:var(--radius-lg); background:var(--bg2); margin-bottom:2rem; }
+  .mhf-matrix { display:grid; width:max-content; }
+  .mhf-mcell { display:flex; align-items:center; padding:0 4px; min-height:36px; border-bottom:1px solid var(--border); }
+  .mhf-mcell.grp-start { border-left:1px solid var(--border2); }
+  .mhf-mh { position:sticky; top:0; z-index:5; background:var(--bg2); border-bottom:1px solid var(--border2); flex-direction:column; justify-content:center; align-items:center; padding:8px 2px 6px; gap:5px; cursor:pointer; }
+  .mhf-mh .ic { font-size:15px; line-height:1; }
+  .mhf-mh .lock { font-size:8px; color:var(--text3); position:absolute; top:4px; right:4px; }
+  .mhf-mh:hover { background:var(--bg3); }
+  .mhf-mh-txt { position:sticky; top:0; z-index:6; background:var(--bg2); font-size:10px; font-weight:700; color:var(--text3); text-transform:uppercase; letter-spacing:.05em; align-items:center; justify-content:center; cursor:pointer; border-right:1px solid var(--border2); border-bottom:1px solid var(--border2); }
+  .mhf-mh-corner.mhf-mh-txt { left:0; }
+  .mhf-mh-txt:hover { color:var(--text); }
+  .mhf-mh-txt.sorted { color:var(--gold); }
+  .mhf-mh-corner { position:sticky; left:0; top:0; z-index:7; background:var(--bg2); border-right:1px solid var(--border2); border-bottom:1px solid var(--border2); }
+  .mhf-mname { position:sticky; left:0; z-index:2; background:var(--bg2); border-right:1px solid var(--border2); gap:8px; cursor:pointer; padding-left:10px; }
+  .mhf-mrow-odd { background:var(--bg2); }
+  .mhf-mrow-even { background:var(--bg3); }
+  .mhf-mname:hover { background:var(--bg3); }
+  .mhf-mavatar { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:800; flex-shrink:0; background:var(--bg3); color:var(--text2); }
+  .mhf-mname-txt { font-size:12.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .mhf-mrank { width:16px; font-size:10px; font-weight:800; text-align:center; flex-shrink:0; color:var(--text3); }
+  .mhf-mrank.gold { color:var(--gold); } .mhf-mrank.silver { color:var(--silver); } .mhf-mrank.bronze { color:var(--bronze); }
+  .mhf-msum { justify-content:center; font-size:11.5px; font-weight:700; color:var(--text2); font-variant-numeric:tabular-nums; cursor:pointer; }
+  .mhf-msum:hover { background:var(--bg3); }
+  .mhf-msum.sorted { color:var(--gold); }
+  .mhf-mcell.mval { justify-content:center; }
+  .mhf-tier-box { width:22px; height:22px; border-radius:7px; border:1px solid var(--mhf-t0-b); background:var(--mhf-t0-bg); flex-shrink:0; }
+  .mhf-tier-box.filled { border-width:1.5px; }
+
+  /* ── Hauts faits — tiroir détail achievement (mhf-drawer) ── */
+  #mhf-drawer-overlay { position:fixed; inset:0; z-index:999; background:rgba(0,0,0,.6); opacity:0; pointer-events:none; transition:opacity .22s; }
+  #mhf-drawer-overlay.open { opacity:1; pointer-events:all; }
+  #mhf-drawer { position:fixed; top:0; right:0; bottom:0; z-index:1000; width:min(440px,100vw); background:var(--bg2); border-left:1px solid var(--border2); overflow-y:auto; overflow-x:hidden; transform:translateX(100%); transition:transform .28s cubic-bezier(.4,0,.2,1); }
+  #mhf-drawer.open { transform:translateX(0); }
+  .mhf-dr-header { display:flex; align-items:center; gap:14px; padding:22px 22px 18px; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--bg2); z-index:2; }
+  .mhf-dr-icon { font-size:24px; width:46px; height:46px; border-radius:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:var(--bg3); }
+  .mhf-dr-title { font-size:17px; font-weight:700; }
+  .mhf-dr-cat { font-size:11.5px; color:var(--text3); margin-top:2px; }
+  .mhf-dr-close { width:34px; height:34px; border-radius:8px; flex-shrink:0; background:var(--bg3); border:1px solid var(--border); color:var(--text2); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; line-height:1; transition:background .12s, color .12s; }
+  .mhf-dr-close:hover { background:rgba(255,255,255,.1); color:var(--text); }
+  .mhf-dr-body { padding:20px 22px 40px; }
+  .mhf-dr-about { font-size:13px; color:var(--text2); line-height:1.5; }
+  .mhf-dr-ladder { display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
+  .mhf-dr-completion { margin-top:18px; background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:13px 15px; }
+  .mhf-dr-completion .top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; font-size:12.5px; color:var(--text2); }
+  .mhf-dr-completion .top b { color:var(--text); font-size:15px; }
+  .mhf-dr-bar-track { height:8px; border-radius:5px; background:var(--bg2); overflow:hidden; }
+  .mhf-dr-bar-fill { height:100%; border-radius:5px; }
+  .mhf-dr-list { margin-top:18px; display:flex; flex-direction:column; gap:5px; }
+  .mhf-dr-row { display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:9px; background:var(--bg3); border:1px solid var(--border); }
+  .mhf-dr-rank { width:18px; font-size:11px; font-weight:800; color:var(--text3); text-align:center; flex-shrink:0; }
+  .mhf-dr-rank.gold { color:var(--gold); } .mhf-dr-rank.silver { color:var(--silver); } .mhf-dr-rank.bronze { color:var(--bronze); }
+  .mhf-dr-pname { flex:1; font-size:12.5px; font-weight:600; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:left; background:none; border:none; padding:0; cursor:pointer; color:inherit; font-family:inherit; }
+  .mhf-dr-pname:hover { text-decoration:underline; }
+  .mhf-dr-badge { font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:20px; flex-shrink:0; white-space:nowrap; }
+  .mhf-dr-val { font-size:11px; color:var(--text2); flex-shrink:0; white-space:nowrap; }
+  details.mhf-dr-locked { margin-top:8px; }
+  details.mhf-dr-locked > summary { list-style:none; cursor:pointer; font-size:11.5px; color:var(--text3); font-weight:600; display:flex; align-items:center; gap:6px; padding:6px 2px; }
+  details.mhf-dr-locked > summary::-webkit-details-marker { display:none; }
+  details.mhf-dr-locked > summary::before { content:'▶'; font-size:8px; transition:transform .15s; }
+  details.mhf-dr-locked[open] > summary::before { transform:rotate(90deg); }
+  .mhf-dr-locked-row { display:flex; align-items:center; gap:9px; padding:6px 10px; font-size:12px; color:var(--text3); opacity:.7; }
+  .mhf-dr-locked-row .mhf-dr-pname { color:var(--text2); }
+  .mhf-dr-progress-hint { margin-left:auto; font-size:10.5px; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:760px) {
+    .mhf-rarity-row { grid-template-columns:20px 1fr 90px 70px; gap:8px; }
+    #mhf-drawer { width:100vw; max-width:100vw; }
+  }
   /* Tooltip hauts faits */
   #ach-tip {
     position:fixed; z-index:10000; pointer-events:none;
@@ -950,35 +1036,36 @@
   }
   .award-list { padding: 10px 0 4px; }
   .award-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 22px;
+    display: grid; grid-template-columns: 22px 1fr 56px auto; align-items: center; gap: 10px;
+    padding: 7px 22px 2px;
     transition: background .12s;
   }
   .award-row:hover { background: color-mix(in srgb, var(--award-color, var(--gold)) 8%, transparent); }
-  .award-row.award-first { padding: 12px 22px; }
-  .award-rank { min-width: 26px; font-size: 18px; text-align: center; flex-shrink: 0; }
-  .award-rank.num { font-size: 13px; font-weight: 700; color: var(--text3); }
-  .award-name { flex: 1; font-size: 14px; font-weight: 600; min-width: 0; }
-  .award-first .award-name { font-size: 16px; font-weight: 700; }
+  .award-row.award-first { padding: 10px 22px 3px; }
+  .award-rank { font-size: 15px; text-align: center; }
+  .award-rank.num { font-size: 12px; font-weight: 700; color: var(--text3); }
+  .award-first .award-rank { font-size: 18px; }
+  .award-name { font-size: 13.5px; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .award-first .award-name { font-size: 15.5px; font-weight: 700; }
   .award-bar-wrap {
-    flex: 2; height: 4px; background: var(--border);
-    border-radius: 2px; overflow: hidden; flex-shrink: 0;
+    height: 3px; background: var(--border); border-radius: 2px; overflow: hidden;
+    margin: 0 22px 8px 32px;
   }
-  .award-first .award-bar-wrap { height: 5px; }
+  .award-row.award-first + .award-bar-wrap { height: 4px; margin-bottom: 10px; }
   .award-bar {
     height: 100%; border-radius: 2px;
     background: linear-gradient(90deg, var(--award-color, var(--gold)) 0%, color-mix(in srgb, var(--award-color, var(--gold)) 40%, transparent) 100%);
   }
   .award-pts {
-    font-size: 14px; font-weight: 800; color: var(--award-color, var(--gold));
-    min-width: 44px; text-align: right; flex-shrink: 0;
+    font-size: 13.5px; font-weight: 800; color: var(--award-color, var(--gold));
+    text-align: right; font-variant-numeric: tabular-nums;
   }
-  .award-first .award-pts { font-size: 18px; }
+  .award-first .award-pts { font-size: 17px; }
   .award-detail {
-    font-size: 11px; color: var(--text3); min-width: 68px;
-    text-align: right; flex-shrink: 0;
+    font-size: 10.5px; color: var(--text3); min-width: 64px;
+    text-align: right;
   }
-  .award-first .award-detail { font-size: 12px; color: var(--text2); }
+  .award-first .award-detail { font-size: 11.5px; color: var(--text2); }
 
 
   /* ── Rivalités ── */
@@ -1292,7 +1379,20 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 15:45</footer>
+<div id="mhf-drawer-overlay"></div>
+<div id="mhf-drawer">
+  <div class="mhf-dr-header">
+    <div class="mhf-dr-icon" id="mhf-dr-icon"></div>
+    <div style="min-width:0;flex:1">
+      <div class="mhf-dr-title" id="mhf-dr-title"></div>
+      <div class="mhf-dr-cat" id="mhf-dr-cat"></div>
+    </div>
+    <button class="mhf-dr-close" id="mhf-dr-close" aria-label="Fermer">✕</button>
+  </div>
+  <div class="mhf-dr-body" id="mhf-dr-body"></div>
+</div>
+
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 16:14</footer>
 
 <script>
 
@@ -2048,10 +2148,10 @@ function buildYachineHtml(sessions) {
       html += `<div class="award-row${isFirst?' award-first':''}${i>=5?' award-more-row':''}" ${i>=5?'data-award-id="yachine"':''}>
         ${rank}
         <span class="award-name">${pLink(p.name)}</span>
-        <div class="award-bar-wrap"><div class="award-bar" style="width:${bar}%"></div></div>
         <span class="award-pts">${p.rate.toFixed(2).replace('.',',')}</span>
         <span class="award-detail">${detail}</span>
-      </div>`;
+      </div>
+      <div class="award-bar-wrap${i>=5?' award-more-row':''}" ${i>=5?'data-award-id="yachine"':''}><div class="award-bar" style="width:${bar}%"></div></div>`;
     });
     if (ranking.length > 5) html += `<button class="award-toggle" data-award-toggle="yachine">Voir le classement complet (${ranking.length}) ›</button>`;
   } else {
@@ -2083,10 +2183,10 @@ function buildCalamityJamesHtml(sessions) {
       html += `<div class="award-row${isFirst?' award-first':''}${i>=5?' award-more-row':''}" ${i>=5?'data-award-id="calamity"':''}>
         <span class="award-rank num">${i+1}</span>
         <span class="award-name">${pLink(p.name)}</span>
-        <div class="award-bar-wrap"><div class="award-bar" style="width:${bar}%"></div></div>
         <span class="award-pts">${p.rate.toFixed(2).replace('.',',')}</span>
         <span class="award-detail">${detail}</span>
-      </div>`;
+      </div>
+      <div class="award-bar-wrap${i>=5?' award-more-row':''}" ${i>=5?'data-award-id="calamity"':''}><div class="award-bar" style="width:${bar}%"></div></div>`;
     });
     if (ranking.length > 5) html += `<button class="award-toggle" data-award-toggle="calamity">Voir le classement complet (${ranking.length}) ›</button>`;
   } else {
@@ -2515,10 +2615,10 @@ function buildBallonDorHtml() {
       html += `<div class="award-row${i===0?" award-first":""}${i>=5?" award-more-row":""}" ${i>=5?'data-award-id="ballondor"':''}>
         ${_bdRank}
         <span class="award-name">${pLink(p.name)}</span>
-        <div class="award-bar-wrap"><div class="award-bar" style="width:${_bdBar}%"></div></div>
         <span class="award-pts">${p.pts}</span>
         <span class="award-detail">${_bdGa}</span>
-      </div>`;
+      </div>
+      <div class="award-bar-wrap${i>=5?" award-more-row":""}" ${i>=5?'data-award-id="ballondor"':''}><div class="award-bar" style="width:${_bdBar}%"></div></div>`;
     });
     if (_bdFull.length > 5) html += `<button class="award-toggle" data-award-toggle="ballondor">Voir le classement complet (${_bdFull.length}) ›</button>`;
   } else {
@@ -2572,10 +2672,10 @@ function buildBallonDePlombHtml() {
       html += `<div class="award-row${isFirst?' award-first':''}${i>=5?' award-more-row':''}" ${i>=5?'data-award-id="ballondeplomb"':''}>
         <span class="award-rank num">${i+1}</span>
         <span class="award-name">${pLink(p.name)}</span>
-        <div class="award-bar-wrap"><div class="award-bar" style="width:${_bdBar}%"></div></div>
         <span class="award-pts">${p.pts}</span>
         <span class="award-detail">${_gaStr}</span>
-      </div>`;
+      </div>
+      <div class="award-bar-wrap${i>=5?' award-more-row':''}" ${i>=5?'data-award-id="ballondeplomb"':''}><div class="award-bar" style="width:${_bdBar}%"></div></div>`;
     });
     if (_bdBottomAll.length > 5) html += `<button class="award-toggle" data-award-toggle="ballondeplomb">Voir le classement complet (${_bdBottomAll.length}) ›</button>`;
   } else {
@@ -2604,10 +2704,10 @@ function _buildAbsenceRankHtml({ icon, title, subtitle, accentColor, borderColor
       html += `<div class="award-row${isFirst?' award-first':''}">
         <span class="award-rank num">${i+1}</span>
         <span class="award-name">${pLink(p.name)}</span>
-        <div class="award-bar-wrap"><div class="award-bar" style="width:${bar}%"></div></div>
         <span class="award-pts">${p.val}</span>
         <span class="award-detail">${p.extra !== undefined ? p.extra : '×'}</span>
-      </div>`;
+      </div>
+      <div class="award-bar-wrap"><div class="award-bar" style="width:${bar}%"></div></div>`;
     });
   } else {
     html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">${emptyMsg}</div>`;
@@ -2693,130 +2793,285 @@ function computeBestTeamAllTime() {
   return best;
 }
 
-let _achClsStats = null;
+/* ══════════════════════════════════════════════════════════
+   HAUTS FAITS — MATRICE ROSTER × HAUTS FAITS (admin)
+══════════════════════════════════════════════════════════ */
 
-function _achTierStyle(rawLv, ach) {
-  const lv = ach.fixedTier ? ach.fixedTier : Math.min(6, rawLv + (ach.tierOffset||0));
-  const S = [null,
-    {bg:'rgba(107,114,128,.18)',b:'rgba(107,114,128,.38)',c:'#9CA3AF'},
-    {bg:'rgba(205,127,50,.18)', b:'rgba(205,127,50,.45)', c:'#D4863A'},
-    {bg:'rgba(148,163,184,.18)',b:'rgba(148,163,184,.45)',c:'#94A3B8'},
-    {bg:'rgba(245,158,11,.18)', b:'rgba(245,158,11,.5)',  c:'#FBBF24'},
-    {bg:'rgba(16,185,129,.16)', b:'rgba(16,185,129,.48)', c:'#34D399'},
-    {bg:'rgba(167,243,255,.14)',b:'rgba(167,243,255,.42)',c:'#A5F3FC'},
-  ];
-  const t = S[lv] || S[1];
-  const name = (ach.tierNames ? ach.tierNames[rawLv-1] : null) || ACH_TIER_NAMES[lv] || `Niv.${lv}`;
-  return { ...t, name };
-}
+const MHF_CATS = ['Attaque','Défense','Collectif','Présence','Distinctions','Secrets'];
+const MHF_CAT_BY_ID = {
+  buteur:'Attaque', passeur:'Attaque', ga:'Attaque', htrick:'Attaque', dbl:'Attaque', serie:'Attaque',
+  defenseFer:'Défense', mur:'Défense', passoire:'Défense',
+  invic:'Collectif', duo:'Collectif',
+  fidele:'Présence', sac:'Présence', maillots:'Présence', assidu:'Présence', comete:'Présence',
+  mvp:'Distinctions', soiree:'Distinctions', remontada:'Distinctions', chelem:'Distinctions',
+  gardienAssist:'Distinctions', mercenaire:'Distinctions', legende:'Distinctions',
+  bonnet:'Secrets', infirm:'Secrets', pois:'Secrets', fantome:'Secrets', zerovic:'Secrets', toutnul:'Secrets',
+};
 
-function renderAchClsBody(acid) {
-  const ach = ACH_DEFS.find(a => a.id === acid);
-  if (!ach || !_achClsStats) return '';
-  const maxT = ach.tiers.length;
+let _mhf = null;
+let _mhfState = { search:'', activeCats:new Set(MHF_CATS), showHidden:true, sortKey:'niveaux', sortDir:-1, selectedAch:null };
 
-  const rows = Object.entries(_achClsStats).map(([name, s]) => {
-    const val = s[ach.key] || 0;
-    const rawLv = _achLevel(val, ach.tiers);
-    return { name, val, rawLv };
-  });
+function _mhfDisplayLevel(ach, rawLv) { return ach.fixedTier ? ach.fixedTier : Math.min(6, rawLv + (ach.tierOffset||0)); }
+function _mhfTierName(ach, rawLv) { const dl = _mhfDisplayLevel(ach, rawLv); return (ach.tierNames && ach.tierNames[rawLv-1]) || ACH_TIER_NAMES[dl] || `Niveau ${dl}`; }
+// Pilules (légende / tiroir) : couleur pleine, copiée telle quelle depuis .ach-cell.tN.
+function _mhfTierStyleAttr(dl) { return dl>0 ? `background:var(--mhf-t${dl}-bg);border:1px solid var(--mhf-t${dl}-b);color:var(--mhf-t${dl}-c);` : ''; }
+// Cases de la matrice : ne redéfinit que fond + couleur de bordure, la largeur/épaisseur vient de .mhf-tier-box(.filled).
+function _mhfCellStyleAttr(dl) { return dl>0 ? `background:var(--mhf-t${dl}-bg);border-color:var(--mhf-t${dl}-b);` : ''; }
 
-  const unlocked = rows.filter(r => r.rawLv > 0).sort((a,b) => b.rawLv - a.rawLv || b.val - a.val);
-  const locked   = rows.filter(r => r.rawLv === 0).sort((a,b) => b.val - a.val);
-
-  const rankLabel = i => `${i+1}.`;
-  const makeDots  = (rawLv, color) => maxT > 1
-    ? `<div class="ach-cls-dots">${Array.from({length:maxT},(_,j)=>`<div class="ach-cls-dot" style="${j<rawLv?'background:'+color:''}"></div>`).join('')}</div>`
-    : '';
-
-  let h = `<div style="margin-bottom:8px;font-size:12px;color:var(--text2)">${ach.icon} <strong>${ach.name}</strong> &mdash; <span style="color:var(--text);font-weight:700">${unlocked.length}</span> joueur${unlocked.length!==1?'s':''} débloqué${unlocked.length!==1?'s':''}</div>`;
-
-  unlocked.forEach((r, i) => {
-    const ts = _achTierStyle(r.rawLv, ach);
-    h += `<div class="ach-cls-row">
-      <span class="ach-cls-rank">${rankLabel(i)}</span>
-      <button class="player-link ach-cls-name" data-player="${r.name}">${r.name}</button>
-      <span class="ach-cls-badge" style="background:${ts.bg};border-color:${ts.b};color:${ts.c}">${ts.name}</span>
-      <span class="ach-cls-val">${ach.desc(r.val)}</span>
-      ${makeDots(r.rawLv, ts.c)}
-    </div>`;
-  });
-
-  if (locked.length) {
-    h += `<details class="ach-cls-locked"><summary>${locked.length} non débloqué${locked.length!==1?'s':''}</summary>`;
-    locked.forEach(r => {
-      h += `<div class="ach-cls-row" style="opacity:.38">
-        <span class="ach-cls-rank" style="font-size:10px">—</span>
-        <button class="player-link ach-cls-name" data-player="${r.name}">${r.name}</button>
-        <span class="ach-cls-val" style="color:var(--text3)">${r.val} / ${ach.tiers[0]}</span>
-        ${makeDots(0, '')}
-      </div>`;
-    });
-    h += `</details>`;
-  }
-  return h;
-}
-
-function renderAchievementsClassement() {
-  _achClsStats = {};
-  ALL_PLAYERS.forEach(p => {
+function computeMhfData() {
+  const players = ALL_PLAYERS.slice();
+  const achs = ACH_DEFS.map(a => ({ ...a, cat: MHF_CAT_BY_ID[a.id] || 'Distinctions' }));
+  const statsByPlayer = {};
+  players.forEach(p => {
     const s = computeAchievementStats(p);
     let lc = 0;
     ACH_DEFS.filter(a => a.id !== 'legende').forEach(a => { lc += _achLevel(s[a.key]||0, a.tiers); });
     s.legendeCount = lc;
-    _achClsStats[p] = s;
+    statsByPlayer[p] = s;
   });
-
-  const pillsHtml = ACH_DEFS.map(a =>
-    `<button class="ach-cls-pill${a.id==='legende'?' active':''}" data-acid="${a.id}" title="${a.name}">${a.icon}</button>`
-  ).join('');
-
-  return `<div class="section-label" style="margin-top:2rem">Hauts faits — Classement</div>
-    <div class="ach-cls-pills" id="ach-cls-pills">${pillsHtml}</div>
-    <div id="ach-cls-body">${renderAchClsBody('legende')}</div>
-    ${renderAchCollectionneurs()}`;
+  const levels = {};
+  players.forEach(p => {
+    levels[p] = {};
+    achs.forEach(a => { const val = statsByPlayer[p][a.key] || 0; levels[p][a.id] = { raw: _achLevel(val, a.tiers), val }; });
+  });
+  const completion = {};
+  achs.forEach(a => {
+    let unlocked = 0;
+    players.forEach(p => { if (levels[p][a.id].raw > 0) unlocked++; });
+    completion[a.id] = { unlocked, rate: players.length ? unlocked/players.length : 0 };
+  });
+  const summary = {};
+  players.forEach(p => {
+    let niveaux = 0, hautsFaits = 0;
+    achs.forEach(a => { const raw = levels[p][a.id].raw; niveaux += raw; if (raw>0) hautsFaits++; });
+    summary[p] = { niveaux, hautsFaits };
+  });
+  return { players, achs, statsByPlayer, levels, completion, summary };
 }
 
-function renderAchCollectionneurs() {
-  const PER_PAGE = 10;
-  const players = ALL_PLAYERS.map(p => {
-    const st = _achClsStats[p] || {};
-    const hautsFaits = ACH_DEFS.filter(a => _achLevel(st[a.key] || 0, a.tiers) > 0).length;
-    const niveaux = ACH_DEFS.reduce((sum, a) => sum + _achLevel(st[a.key] || 0, a.tiers), 0);
-    return { name: p, niveaux, hautsFaits };
-  }).sort((a, b) => b.niveaux - a.niveaux || a.name.localeCompare(b.name));
+function _mhfVisibleAch() {
+  return _mhf.achs.filter(a => _mhfState.activeCats.has(a.cat) && (_mhfState.showHidden || !a.hidden));
+}
+function _mhfVisiblePlayers() {
+  const q = _mhfState.search.trim().toLowerCase();
+  const list = q ? _mhf.players.filter(p => p.toLowerCase().includes(q)) : _mhf.players.slice();
+  list.sort((a,b) => {
+    if (_mhfState.sortKey === 'name') return _mhfState.sortDir * a.localeCompare(b,'fr');
+    const va = _mhfState.sortKey === 'hautsFaits' ? _mhf.summary[a].hautsFaits : _mhf.summary[a].niveaux;
+    const vb = _mhfState.sortKey === 'hautsFaits' ? _mhf.summary[b].hautsFaits : _mhf.summary[b].niveaux;
+    if (va === vb) return a.localeCompare(b,'fr');
+    return _mhfState.sortDir * (va - vb);
+  });
+  return list;
+}
 
-  const total = players.length;
-  const pages = Math.ceil(total / PER_PAGE);
+function _mhfRenderRarityHtml() {
+  const rows = [..._mhf.achs].sort((a,b) => _mhf.completion[a.id].rate - _mhf.completion[b.id].rate);
+  return rows.map(a => {
+    const c = _mhf.completion[a.id];
+    const pct = Math.round(c.rate*100);
+    const color = pct<=15 ? 'var(--bad)' : pct<=45 ? 'var(--gold)' : 'var(--good)';
+    return `<div class="mhf-rarity-row${_mhfState.selectedAch===a.id?' selected':''}" data-acid="${a.id}">
+      <span class="mhf-rarity-ic">${a.icon}</span>
+      <span class="mhf-rarity-name"><span class="n">${a.name}</span>${a.hidden?'<span class="mhf-rarity-secret">SECRET</span>':''}</span>
+      <span class="mhf-rarity-track"><span class="mhf-rarity-fill" style="width:${pct}%;background:${color}"></span></span>
+      <span class="mhf-rarity-stat"><b>${c.unlocked}</b>/${_mhf.players.length} &middot; ${pct}%</span>
+    </div>`;
+  }).join('');
+}
 
-  const rows = players.map((p, i) =>
-    `<div class="ach-cls-row" data-hf="${p.hautsFaits}" data-niv="${p.niveaux}"${i >= PER_PAGE ? ' style="display:none"' : ''}>
-      <span class="ach-cls-rank"></span>
-      <button class="player-link ach-cls-name" data-player="${p.name}">${p.name}</button>
-      <span style="display:flex;gap:14px;align-items:center;margin-left:auto">
-        <span style="font-size:12px"><strong style="color:var(--text)">${p.hautsFaits}</strong> <span style="color:var(--text3)">HF</span></span>
-        <span style="font-size:12px"><strong style="color:var(--text)">${p.niveaux}</strong> <span style="color:var(--text3)">niv.</span></span>
-      </span>
-    </div>`
-  ).join('');
+function _mhfRenderChipsHtml() {
+  let h = `<button class="pill${_mhfState.activeCats.size===MHF_CATS.length?' active':''}" data-cat="__all">Tous</button>`;
+  h += MHF_CATS.map(c => `<button class="pill${_mhfState.activeCats.has(c)&&_mhfState.activeCats.size<MHF_CATS.length?' active':''}" data-cat="${c}">${c}</button>`).join('');
+  return h;
+}
 
-  const pagination = total > PER_PAGE
-    ? `<div class="coll-pager">
-        <button id="ach-collect-prev" disabled>←</button>
-        <span id="ach-collect-info">1 / ${pages}</span>
-        <button id="ach-collect-next">→</button>
-      </div>`
-    : '';
+function renderMhfMatrixHtml() {
+  const achs = _mhfVisibleAch();
+  const players = _mhfVisiblePlayers();
+  if (!achs.length) return `<div class="mhf-matrix" id="mhf-matrix"><div class="mhf-mcell" style="padding:16px;color:var(--text3)">Aucun haut fait visible avec ces filtres.</div></div>`;
+  if (!players.length) return `<div class="mhf-matrix" id="mhf-matrix"><div class="mhf-mcell" style="padding:16px;color:var(--text3)">Aucun joueur ne correspond à la recherche.</div></div>`;
 
-  return `<div style="display:flex;align-items:center;gap:10px;margin-top:2rem;margin-bottom:.75rem">
-      <span class="section-label" style="margin:0">Collectionneurs</span>
-      <div class="coll-sort">
-        <button class="active" id="ach-sort-niv" data-key="niv" data-dir="-1">Niveaux <span class="sort-arrow" style="opacity:1">↓</span></button>
-        <button id="ach-sort-hf" data-key="hf" data-dir="-1">Hauts faits <span class="sort-arrow" style="opacity:.35">↕</span></button>
-      </div>
-    </div>
-    <div id="ach-collect-list">${rows}</div>
-    ${pagination}`;
+  const firstOfCat = {};
+  achs.forEach(a => { if (!(a.cat in firstOfCat)) firstOfCat[a.cat] = a.id; });
+
+  let h = `<div class="mhf-matrix" id="mhf-matrix" style="grid-template-columns:176px 60px 60px repeat(${achs.length},34px)">`;
+  h += `<div class="mhf-mcell mhf-mh-corner mhf-mh-txt${_mhfState.sortKey==='name'?' sorted':''}" data-sort="name" title="Trier par nom" style="justify-content:flex-start;padding-left:10px">Joueur</div>`;
+  h += `<div class="mhf-mcell mhf-msum mhf-mh-txt${_mhfState.sortKey==='hautsFaits'?' sorted':''}" data-sort="hautsFaits" title="Trier par nombre de hauts faits débloqués">HF</div>`;
+  h += `<div class="mhf-mcell mhf-msum mhf-mh-txt${_mhfState.sortKey==='niveaux'?' sorted':''}" data-sort="niveaux" title="Trier par total de niveaux cumulés">NIV</div>`;
+  achs.forEach(a => {
+    const grp = firstOfCat[a.cat]===a.id ? ' grp-start' : '';
+    const c = _mhf.completion[a.id];
+    const tip = `${a.icon} ${a.name}\n${c.unlocked}/${_mhf.players.length} joueurs &middot; ${Math.round(c.rate*100)}%\n${ACH_ABOUT[a.id]||''}`.replace(/"/g,'&quot;');
+    h += `<div class="mhf-mcell mhf-mh${grp}" data-ach="${a.id}" data-tip="${tip}">
+      <span class="ic">${a.icon}</span>${a.hidden?'<span class="lock">&#9679;</span>':''}
+    </div>`;
+  });
+
+  players.forEach((p,i) => {
+    const rowCls = i%2===0 ? 'mhf-mrow-odd' : 'mhf-mrow-even';
+    const rank = i+1;
+    const rankCls = _mhfState.sortKey!=='name' && rank<=3 ? (rank===1?'gold':rank===2?'silver':'bronze') : '';
+    const jokerTag = JOKERS.has(p) ? ' <span style="color:var(--text3);font-size:10px">[+1]</span>' : '';
+    h += `<div class="mhf-mcell mhf-mname player-link ${rowCls}" data-player="${p}">
+      <span class="mhf-mrank ${rankCls}">${rank}</span>
+      <span class="mhf-mavatar">${p.slice(0,2).toUpperCase()}</span>
+      <span class="mhf-mname-txt">${p}${jokerTag}</span>
+    </div>`;
+    h += `<div class="mhf-mcell mhf-msum ${rowCls}${_mhfState.sortKey==='hautsFaits'?' sorted':''}">${_mhf.summary[p].hautsFaits}</div>`;
+    h += `<div class="mhf-mcell mhf-msum ${rowCls}${_mhfState.sortKey==='niveaux'?' sorted':''}">${_mhf.summary[p].niveaux}</div>`;
+    achs.forEach(a => {
+      const grp = firstOfCat[a.cat]===a.id ? ' grp-start' : '';
+      const L = _mhf.levels[p][a.id];
+      const dl = L.raw>0 ? _mhfDisplayLevel(a,L.raw) : 0;
+      const anim = dl===6 ? ' mhf-t6-anim' : '';
+      let line1, line2 = '';
+      if (L.raw>0) {
+        line1 = `${_mhfTierName(a,L.raw)} &middot; ${a.desc(L.val)}`;
+        if (!a.fixedTier && L.raw < a.tiers.length) line2 = `Prochain seuil : ${a.tiers[L.raw]}`;
+      } else {
+        line1 = `Non débloqué &middot; ${a.desc(L.val)}`;
+        line2 = `Seuil requis : ${a.tiers[0]}`;
+      }
+      const tip = `${a.icon} ${a.name} — ${p}\n${line1}\n${line2}`.replace(/"/g,'&quot;');
+      h += `<div class="mhf-mcell mval ${rowCls}${grp}" data-tip="${tip}">
+        <div class="mhf-tier-box${dl>0?' filled':''}${anim}" style="${_mhfCellStyleAttr(dl)}"></div>
+      </div>`;
+    });
+  });
+
+  h += `</div>`;
+  return h;
+}
+
+function renderAchievementsMatrix() {
+  _mhf = computeMhfData();
+
+  let kpiHtml = '';
+  if (_mhf.players.length) {
+    const totalCells = _mhf.players.length * _mhf.achs.length;
+    let filledCells = 0;
+    _mhf.players.forEach(p => _mhf.achs.forEach(a => { if (_mhf.levels[p][a.id].raw > 0) filledCells++; }));
+    const avgRate = totalCells ? filledCells/totalCells : 0;
+    const sortedByRate = [..._mhf.achs].sort((a,b) => _mhf.completion[a.id].rate - _mhf.completion[b.id].rate);
+    const rarest = sortedByRate[0], common = sortedByRate[sortedByRate.length-1];
+    const topCollector = [..._mhf.players].sort((a,b) => _mhf.summary[b].niveaux - _mhf.summary[a].niveaux)[0];
+    const cards = [
+      { lbl:'Taux de complétion roster', num: Math.round(avgRate*100)+'%', size:28,
+        sub:`${filledCells} / ${totalCells} cases débloquées` },
+      { lbl:'Haut fait le plus rare', num: `${rarest.icon} ${rarest.name}`, size:17,
+        sub:`${_mhf.completion[rarest.id].unlocked}/${_mhf.players.length} joueurs (${Math.round(_mhf.completion[rarest.id].rate*100)}%)` },
+      { lbl:'Haut fait le plus commun', num: `${common.icon} ${common.name}`, size:17,
+        sub:`${_mhf.completion[common.id].unlocked}/${_mhf.players.length} joueurs (${Math.round(_mhf.completion[common.id].rate*100)}%)` },
+      { lbl:'Meilleur collectionneur', num: topCollector, size:17,
+        sub:`${_mhf.summary[topCollector].niveaux} niveaux &middot; ${_mhf.summary[topCollector].hautsFaits} HF` },
+    ];
+    kpiHtml = `<div class="kpi-grid">` + cards.map(c => `
+      <div class="kpi-card">
+        <div class="kpi-lbl" style="margin-top:0">${c.lbl}</div>
+        <div class="kpi-num" style="font-size:${c.size}px;letter-spacing:0">${c.num}</div>
+        <div class="kpi-sub">${c.sub}</div>
+      </div>`).join('') + `</div>`;
+  }
+
+  let legendHtml = `<span class="lbl">Niveaux</span>`;
+  for (let i=1;i<=6;i++) legendHtml += `<span class="mhf-tier-pill${i===6?' mhf-t6-anim':''}" style="${_mhfTierStyleAttr(i)}"><span class="dot"></span>${ACH_TIER_NAMES[i]}</span>`;
+
+  let h = `<div class="section-label" style="margin-top:2rem">Hauts faits — Matrice</div>`;
+  h += kpiHtml;
+  h += `<div class="section-label" style="margin-top:2.4rem">Rareté des hauts faits (${_mhf.achs.length})</div>`;
+  h += `<div class="mhf-rarity-list" id="mhf-rarity-list">${_mhfRenderRarityHtml()}</div>`;
+  h += `<div class="section-label" style="margin-top:2.4rem">Roster &times; Hauts faits</div>`;
+  h += `<div class="mhf-tier-legend" id="mhf-tier-legend">${legendHtml}</div>`;
+  h += `<div class="mhf-toolbar">
+    <div class="mhf-search"><span class="ic">&#128269;</span><input type="text" id="mhf-search-input" placeholder="Chercher un joueur…" value="${_mhfState.search}"></div>
+    <div class="mhf-chip-row" id="mhf-cat-chips">${_mhfRenderChipsHtml()}</div>
+    <label class="mhf-toggle-hidden${_mhfState.showHidden?' on':''}" id="mhf-hidden-toggle">
+      <span class="mhf-toggle-track"><span class="mhf-toggle-dot"></span></span>
+      Hauts faits secrets
+    </label>
+  </div>`;
+  h += `<div class="mhf-matrix-scroll" id="mhf-matrix-scroll">${renderMhfMatrixHtml()}</div>`;
+  return h;
+}
+
+function _mhfRerenderMatrix() {
+  const el = document.getElementById('mhf-matrix-scroll');
+  if (el) el.innerHTML = renderMhfMatrixHtml();
+}
+
+function openMhfAchievementDrawer(acid) {
+  const a = _mhf.achs.find(x => x.id === acid);
+  if (!a) return;
+  const c = _mhf.completion[acid];
+  const unlocked = _mhf.players.filter(p => _mhf.levels[p][acid].raw > 0)
+    .sort((x,y) => _mhf.levels[y][acid].raw - _mhf.levels[x][acid].raw || _mhf.levels[y][acid].val - _mhf.levels[x][acid].val || x.localeCompare(y,'fr'));
+  const locked = _mhf.players.filter(p => _mhf.levels[p][acid].raw === 0)
+    .sort((x,y) => _mhf.levels[y][acid].val - _mhf.levels[x][acid].val || x.localeCompare(y,'fr'));
+
+  let ladder = '';
+  if (a.fixedTier) {
+    ladder = `<span class="mhf-tier-pill${a.fixedTier===6?' mhf-t6-anim':''}" style="${_mhfTierStyleAttr(a.fixedTier)}"><span class="dot"></span>Déblocage en 1 fois — ${ACH_TIER_NAMES[a.fixedTier]}</span>`;
+  } else {
+    ladder = a.tiers.map((th,i) => {
+      const dl = _mhfDisplayLevel(a, i+1);
+      const tn = (a.tierNames && a.tierNames[i]) || ACH_TIER_NAMES[dl];
+      return `<span class="mhf-tier-pill${dl===6?' mhf-t6-anim':''}" style="${_mhfTierStyleAttr(dl)}"><span class="dot"></span>${tn} &middot; ${th}</span>`;
+    }).join('');
+  }
+
+  const rateColor = c.rate<=0.15 ? 'var(--bad)' : c.rate<=0.45 ? 'var(--gold)' : 'var(--good)';
+
+  let body = `<div class="mhf-dr-about">${ACH_ABOUT[a.id] || ''}</div>`;
+  body += `<div class="mhf-dr-ladder">${ladder}</div>`;
+  body += `<div class="mhf-dr-completion">
+    <div class="top"><span>Complétion roster</span><b>${c.unlocked}/${_mhf.players.length}</b></div>
+    <div class="mhf-dr-bar-track"><div class="mhf-dr-bar-fill" style="width:${Math.round(c.rate*100)}%;background:${rateColor}"></div></div>
+  </div>`;
+  body += `<div class="mhf-dr-list">`;
+  unlocked.forEach((p,i) => {
+    const L = _mhf.levels[p][acid];
+    const dl = _mhfDisplayLevel(a, L.raw);
+    const tn = (a.tierNames && a.tierNames[L.raw-1]) || ACH_TIER_NAMES[dl];
+    const rank = i+1;
+    const rc = rank===1?'gold':rank===2?'silver':rank===3?'bronze':'';
+    body += `<div class="mhf-dr-row">
+      <span class="mhf-dr-rank ${rc}">${rank}</span>
+      <button class="mhf-dr-pname player-link" data-player="${p}">${p}</button>
+      <span class="mhf-dr-badge" style="${_mhfTierStyleAttr(dl)}">${tn}</span>
+      <span class="mhf-dr-val">${a.desc(L.val)}</span>
+    </div>`;
+  });
+  body += `</div>`;
+  if (locked.length) {
+    body += `<details class="mhf-dr-locked"><summary>${locked.length} joueur${locked.length>1?'s':''} non débloqué${locked.length>1?'s':''}</summary>`;
+    locked.forEach(p => {
+      const L = _mhf.levels[p][acid];
+      body += `<div class="mhf-dr-locked-row">
+        <button class="mhf-dr-pname player-link" data-player="${p}">${p}</button>
+        <span class="mhf-dr-progress-hint">${L.val} / ${a.tiers[0]}</span>
+      </div>`;
+    });
+    body += `</details>`;
+  }
+
+  document.getElementById('mhf-dr-icon').setAttribute('style', `font-size:24px;width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;${_mhfTierStyleAttr(a.hidden?1:3)}`);
+  document.getElementById('mhf-dr-icon').textContent = a.icon;
+  document.getElementById('mhf-dr-title').innerHTML = `${a.name}${a.hidden?' <span class="mhf-rarity-secret" style="vertical-align:middle">SECRET</span>':''}`;
+  document.getElementById('mhf-dr-cat').textContent = a.cat;
+  document.getElementById('mhf-dr-body').innerHTML = body;
+  document.getElementById('mhf-drawer').classList.add('open');
+  document.getElementById('mhf-drawer-overlay').classList.add('open');
+
+  _mhfState.selectedAch = acid;
+  const rl = document.getElementById('mhf-rarity-list');
+  if (rl) rl.innerHTML = _mhfRenderRarityHtml();
+}
+
+function closeMhfDrawer() {
+  const d = document.getElementById('mhf-drawer'), o = document.getElementById('mhf-drawer-overlay');
+  if (d) d.classList.remove('open');
+  if (o) o.classList.remove('open');
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -3227,8 +3482,7 @@ function renderStats() {
 
   const isAdmin = sessionStorage.getItem("hmft_role") === "admin";
   if (isAdmin) {
-    h += renderAchievementsClassement();
-    h += renderAchievementsLegend();
+    h += renderAchievementsMatrix();
   }
 
   container.innerHTML = h;
@@ -3262,70 +3516,67 @@ function renderStats() {
   }
 
   if (isAdmin) {
-    container.querySelector('#ach-cls-pills').addEventListener('click', e => {
-      const pill = e.target.closest('.ach-cls-pill');
-      if (!pill) return;
-      container.querySelectorAll('.ach-cls-pill').forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-      document.getElementById('ach-cls-body').innerHTML = renderAchClsBody(pill.dataset.acid);
-    });
-
-    const _list = container.querySelector('#ach-collect-list');
-    if (_list) {
-      const PER_PAGE = 10;
-      const MEDALS = ['🥇','🥈','🥉'];
-      let _page = 0;
-      const _prevBtn = container.querySelector('#ach-collect-prev');
-      const _nextBtn = container.querySelector('#ach-collect-next');
-      const _infoEl  = container.querySelector('#ach-collect-info');
-      const _sortNiv = container.querySelector('#ach-sort-niv');
-      const _sortHF  = container.querySelector('#ach-sort-hf');
-
-      const _updatePage = () => {
-        const children = Array.from(_list.children);
-        const pages = Math.ceil(children.length / PER_PAGE);
-        children.forEach((r, i) => {
-          r.style.display = (i >= _page * PER_PAGE && i < (_page + 1) * PER_PAGE) ? '' : 'none';
-          r.querySelector('.ach-cls-rank').textContent = MEDALS[i] || `${i + 1}.`;
-        });
-        if (_prevBtn) _prevBtn.disabled = _page === 0;
-        if (_nextBtn) _nextBtn.disabled = _page === pages - 1;
-        if (_infoEl) _infoEl.textContent = `${_page + 1} / ${pages}`;
-      };
-
-      let _sortKey = 'niv', _sortDir = -1;
-
-      const _applySort = () => {
-        Array.from(_list.children)
-          .sort((a, b) => _sortDir * ((+a.dataset[_sortKey]) - (+b.dataset[_sortKey])) || a.querySelector('.ach-cls-name').textContent.localeCompare(b.querySelector('.ach-cls-name').textContent))
-          .forEach(r => _list.appendChild(r));
-        [_sortNiv, _sortHF].forEach(btn => {
-          if (!btn) return;
-          const active = btn.dataset.key === _sortKey;
-          btn.classList.toggle('active', active);
-          const arrow = btn.querySelector('.sort-arrow');
-          if (arrow) { arrow.textContent = active ? (_sortDir === -1 ? '↓' : '↑') : '↕'; arrow.style.opacity = active ? '1' : '.35'; }
-        });
-        _page = 0;
-        _updatePage();
-      };
-
-      const _onSortBtn = btn => {
-        if (btn.dataset.key === _sortKey) {
-          _sortDir *= -1;
-        } else {
-          _sortKey = btn.dataset.key;
-          _sortDir = -1;
+    const _mhfWrap = container.querySelector('#mhf-matrix-scroll');
+    if (_mhfWrap) {
+      _mhfWrap.addEventListener('click', e => {
+        const achEl  = e.target.closest('.mhf-mh[data-ach]');
+        const sortEl = e.target.closest('[data-sort]');
+        if (achEl) { openMhfAchievementDrawer(achEl.dataset.ach); return; }
+        if (sortEl) {
+          const key = sortEl.dataset.sort;
+          if (_mhfState.sortKey === key) _mhfState.sortDir *= -1; else { _mhfState.sortKey = key; _mhfState.sortDir = -1; }
+          _mhfRerenderMatrix();
         }
-        _applySort();
-      };
+      });
+      const _mhfTip = document.getElementById('ach-tip');
+      _mhfWrap.addEventListener('pointermove', e => {
+        const cell = e.target.closest('[data-tip]');
+        if (!cell) { _mhfTip.classList.remove('show'); return; }
+        const [l0, ...lines] = (cell.dataset.tip || '').split('\n');
+        _mhfTip.innerHTML = `<div class="atn">${l0}</div>${lines.map((l,i) => `<div class="${i===0?'atv':'atn2'}">${l}</div>`).join('')}`;
+        const tw = _mhfTip.offsetWidth||180, th = _mhfTip.offsetHeight||55;
+        _mhfTip.style.left = Math.min(e.clientX+14, window.innerWidth-tw-8)+'px';
+        _mhfTip.style.top  = Math.max(e.clientY-th-10, 8)+'px';
+        _mhfTip.classList.add('show');
+      });
+      _mhfWrap.addEventListener('pointerleave', () => { _mhfTip.classList.remove('show'); });
+    }
 
-      if (_prevBtn) _prevBtn.addEventListener('click', () => { _page--; _updatePage(); });
-      if (_nextBtn) _nextBtn.addEventListener('click', () => { _page++; _updatePage(); });
-      if (_sortNiv) _sortNiv.addEventListener('click', () => _onSortBtn(_sortNiv));
-      if (_sortHF)  _sortHF.addEventListener('click',  () => _onSortBtn(_sortHF));
+    const _mhfRarity = container.querySelector('#mhf-rarity-list');
+    if (_mhfRarity) {
+      _mhfRarity.addEventListener('click', e => {
+        const row = e.target.closest('.mhf-rarity-row');
+        if (row) openMhfAchievementDrawer(row.dataset.acid);
+      });
+    }
 
-      _updatePage();
+    const _mhfSearch = container.querySelector('#mhf-search-input');
+    if (_mhfSearch) {
+      _mhfSearch.addEventListener('input', e => { _mhfState.search = e.target.value; _mhfRerenderMatrix(); });
+    }
+
+    const _mhfChips = container.querySelector('#mhf-cat-chips');
+    if (_mhfChips) {
+      _mhfChips.addEventListener('click', e => {
+        const chip = e.target.closest('.pill');
+        if (!chip) return;
+        const cat = chip.dataset.cat;
+        if (cat === '__all') { _mhfState.activeCats = new Set(MHF_CATS); }
+        else if (_mhfState.activeCats.size === MHF_CATS.length) { _mhfState.activeCats = new Set([cat]); }
+        else if (_mhfState.activeCats.has(cat)) { _mhfState.activeCats.delete(cat); if (!_mhfState.activeCats.size) _mhfState.activeCats = new Set(MHF_CATS); }
+        else { _mhfState.activeCats.add(cat); }
+        _mhfChips.innerHTML = _mhfRenderChipsHtml();
+        _mhfRerenderMatrix();
+      });
+    }
+
+    const _mhfHiddenToggle = container.querySelector('#mhf-hidden-toggle');
+    if (_mhfHiddenToggle) {
+      _mhfHiddenToggle.addEventListener('click', () => {
+        _mhfState.showHidden = !_mhfState.showHidden;
+        _mhfHiddenToggle.classList.toggle('on', _mhfState.showHidden);
+        _mhfRerenderMatrix();
+      });
     }
   }
 }
@@ -4319,40 +4570,6 @@ function renderAchievementsGrid(achSt) {
   html+=`</div>`;
   if (!unlockedCount) return `<p class="no-data" style="margin-top:4px">Aucun haut fait débloqué pour l'instant.</p>`;
   return html;
-}
-
-function renderAchievementsLegend() {
-  const pillStyle = 'display:inline-flex;align-items:center;gap:5px;height:auto;padding:3px 10px;border-radius:20px;cursor:default;';
-  let h = `<div class="section-label" style="margin-top:2rem">Référence des hauts faits — admin</div>`;
-  h += `<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:2rem">`;
-  ACH_DEFS.forEach(ach => {
-    const hiddenTag = ach.hidden ? ` <span style="font-size:10px;color:var(--text3);font-weight:400;font-style:italic">(masqué)</span>` : '';
-    const about = ACH_ABOUT[ach.id] || '';
-    let badges = '';
-    if (ach.fixedTier) {
-      const tierName = ACH_TIER_NAMES[ach.fixedTier] || `Niv.${ach.fixedTier}`;
-      const chelemExtra = ach.id==='chelem'?' ach-chelem':ach.id==='soiree'?' ach-soiree':ach.id==='remontada'?' ach-remontada':ach.id==='gardienAssist'?' ach-neuer':ach.id==='zerovic'?' ach-zerovic':'';
-      badges = `<span class="ach-cell t${ach.fixedTier}${chelemExtra}" style="${pillStyle}"><strong>${ach.tiers[0]}</strong></span>`;
-    } else {
-      badges = ach.tiers.map((threshold, i) => {
-        const displayNum = Math.min(6, (i + 1) + (ach.tierOffset||0));
-        const tierName = (ach.tierNames ? ach.tierNames[i] : null) || ACH_TIER_NAMES[displayNum] || `Niv.${displayNum}`;
-        const extra = ach.id==='comete'?' ach-comete':ach.id==='bonnet'?' ach-bonnet':ach.id==='passoire'?' ach-passoire':'';
-        return `<span class="ach-cell t${displayNum}${extra}" style="${pillStyle}"><strong>${threshold}</strong></span>`;
-      }).join('');
-    }
-    h += `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;display:flex;flex-direction:column;gap:7px">
-      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-        <span style="font-size:15px">${ach.icon}</span>
-        <span style="font-size:13px;font-weight:700">${ach.name}</span>${hiddenTag}
-        <span style="color:var(--text3);margin:0 2px">—</span>
-        <span style="font-size:12px;color:var(--text2)">${about}</span>
-      </div>
-      <div style="display:flex;flex-wrap:wrap;gap:5px">${badges}</div>
-    </div>`;
-  });
-  h += `</div>`;
-  return h;
 }
 
 function openPlayerPanel(playerName) {
@@ -5970,7 +6187,9 @@ function animateView(root) {
 /* ── Événements globaux ── */
 document.getElementById("player-panel-overlay").addEventListener("click", closePlayerPanel);
 document.getElementById("pp-close").addEventListener("click", closePlayerPanel);
-document.addEventListener("keydown", e => { if (e.key === "Escape") closePlayerPanel(); });
+document.getElementById("mhf-drawer-overlay").addEventListener("click", closeMhfDrawer);
+document.getElementById("mhf-dr-close").addEventListener("click", closeMhfDrawer);
+document.addEventListener("keydown", e => { if (e.key === "Escape") { closePlayerPanel(); closeMhfDrawer(); } });
 document.addEventListener("click", e => {
   const btn = e.target.closest(".player-link");
   if (btn && btn.dataset.player) openPlayerPanel(btn.dataset.player);
