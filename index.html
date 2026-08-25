@@ -739,6 +739,13 @@
   .mhf-t6-anim { animation: achDiamond 5s linear infinite; }
   html.light .mhf-t6-anim { animation: none; }
 
+  .mhf-kpi-grid { grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); }
+  .mhf-kpi-card { display: flex; flex-direction: column; }
+  .mhf-kpi-head { display: flex; align-items: flex-start; gap: 7px; }
+  .mhf-kpi-ico { font-size: 15px; line-height: 1.3; flex-shrink: 0; }
+  .mhf-kpi-head .kpi-lbl { margin-top: 0; }
+  .mhf-kpi-num { font-size: 20px; font-weight: 700; letter-spacing: 0; margin-top: 9px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
   .mhf-rarity-list { display:flex; flex-direction:column; gap:6px; margin-bottom:2rem; }
   .mhf-rarity-row {
     display:grid; grid-template-columns:24px 1fr 120px 92px; align-items:center; gap:12px;
@@ -1392,7 +1399,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 16:14</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 16:23</footer>
 
 <script>
 
@@ -2685,7 +2692,7 @@ function buildBallonDePlombHtml() {
   return html;
 }
 
-function _buildAbsenceRankHtml({ icon, title, subtitle, accentColor, borderColor, bgColor, players, emptyMsg }) {
+function _buildAbsenceRankHtml({ id, icon, title, subtitle, accentColor, borderColor, bgColor, players, emptyMsg }) {
   const bg = bgColor || borderColor;
   let html = `<div class="award-card" style="--award-color:${accentColor};--award-bg:${bg};--award-border:${borderColor}">
     <div class="award-head">
@@ -2701,14 +2708,15 @@ function _buildAbsenceRankHtml({ icon, title, subtitle, accentColor, borderColor
     players.forEach((p, i) => {
       const isFirst = i === 0;
       const bar = Math.round((p.val / maxVal) * 100);
-      html += `<div class="award-row${isFirst?' award-first':''}">
+      html += `<div class="award-row${isFirst?' award-first':''}${i>=5?' award-more-row':''}" ${i>=5?`data-award-id="${id}"`:''}>
         <span class="award-rank num">${i+1}</span>
         <span class="award-name">${pLink(p.name)}</span>
         <span class="award-pts">${p.val}</span>
         <span class="award-detail">${p.extra !== undefined ? p.extra : '×'}</span>
       </div>
-      <div class="award-bar-wrap"><div class="award-bar" style="width:${bar}%"></div></div>`;
+      <div class="award-bar-wrap${i>=5?' award-more-row':''}" ${i>=5?`data-award-id="${id}"`:''}><div class="award-bar" style="width:${bar}%"></div></div>`;
     });
+    if (players.length > 5) html += `<button class="award-toggle" data-award-toggle="${id}">Voir le classement complet (${players.length}) ›</button>`;
   } else {
     html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">${emptyMsg}</div>`;
   }
@@ -2721,14 +2729,14 @@ function buildBonnetDAneHtml() {
   const absMap = {};
   SESSIONS.filter(s => _seasonStart(s.date) === yr).forEach(s => {
     Object.entries(s.presences).forEach(([p, info]) => {
-      if (info.statut === "Absent" && !JOKERS.has(p)) absMap[p] = (absMap[p]||0)+1;
+      if (info.statut === "Absent") absMap[p] = (absMap[p]||0)+1;
     });
   });
-  const top5 = Object.entries(absMap).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([name,val])=>({name,val}));
+  const ranked = Object.entries(absMap).sort((a,b)=>b[1]-a[1]).map(([name,val])=>({name,val}));
   return _buildAbsenceRankHtml({
-    icon:'🫏', title:`Bonnet d'Âne ${lbl}`, subtitle:`Classement absences — Saison ${lbl}`,
+    id:'bonnet', icon:'🫏', title:`Bonnet d'Âne ${lbl}`, subtitle:`Classement absences — Saison ${lbl}`,
     accentColor:'var(--bad)', borderColor:'var(--bad-border)', bgColor:'var(--bad-bg)',
-    players: top5, emptyMsg:`Aucune absence enregistrée en saison ${lbl}.`
+    players: ranked, emptyMsg:`Aucune absence enregistrée en saison ${lbl}.`
   });
 }
 
@@ -2745,17 +2753,16 @@ function buildInfirmeHtml() {
       } else { injEp[p] = false; }
     });
   });
-  const top5 = Object.entries(injMatchMap)
+  const ranked = Object.entries(injMatchMap)
     .sort((a,b)=>b[1]-a[1]||((injEpMap[b[0]]||0)-(injEpMap[a[0]]||0)))
-    .slice(0,5)
     .map(([name,val])=>{
       const ep = injEpMap[name]||0;
       return { name, val, extra: `${ep} blessure${ep>1?'s':''}` };
     });
   return _buildAbsenceRankHtml({
-    icon:'🩼', title:`Infirmerie ${lbl}`, subtitle:`Classement matchs manqués — Saison ${lbl}`,
+    id:'infirm', icon:'🩼', title:`Infirmerie ${lbl}`, subtitle:`Classement matchs manqués — Saison ${lbl}`,
     accentColor:'#ffa726', borderColor:'rgba(245,158,11,.28)', bgColor:'rgba(245,158,11,.1)',
-    players: top5, emptyMsg:`Aucune blessure enregistrée en saison ${lbl}.`
+    players: ranked, emptyMsg:`Aucune blessure enregistrée en saison ${lbl}.`
   });
 }
 
@@ -2957,19 +2964,19 @@ function renderAchievementsMatrix() {
     const rarest = sortedByRate[0], common = sortedByRate[sortedByRate.length-1];
     const topCollector = [..._mhf.players].sort((a,b) => _mhf.summary[b].niveaux - _mhf.summary[a].niveaux)[0];
     const cards = [
-      { lbl:'Taux de complétion roster', num: Math.round(avgRate*100)+'%', size:28,
+      { ico:'📊', lbl:'Taux de complétion roster', num: Math.round(avgRate*100)+'%',
         sub:`${filledCells} / ${totalCells} cases débloquées` },
-      { lbl:'Haut fait le plus rare', num: `${rarest.icon} ${rarest.name}`, size:17,
+      { ico: rarest.icon, lbl:'Haut fait le plus rare', num: rarest.name,
         sub:`${_mhf.completion[rarest.id].unlocked}/${_mhf.players.length} joueurs (${Math.round(_mhf.completion[rarest.id].rate*100)}%)` },
-      { lbl:'Haut fait le plus commun', num: `${common.icon} ${common.name}`, size:17,
+      { ico: common.icon, lbl:'Haut fait le plus commun', num: common.name,
         sub:`${_mhf.completion[common.id].unlocked}/${_mhf.players.length} joueurs (${Math.round(_mhf.completion[common.id].rate*100)}%)` },
-      { lbl:'Meilleur collectionneur', num: topCollector, size:17,
+      { ico:'👑', lbl:'Meilleur collectionneur', num: topCollector,
         sub:`${_mhf.summary[topCollector].niveaux} niveaux &middot; ${_mhf.summary[topCollector].hautsFaits} HF` },
     ];
-    kpiHtml = `<div class="kpi-grid">` + cards.map(c => `
-      <div class="kpi-card">
-        <div class="kpi-lbl" style="margin-top:0">${c.lbl}</div>
-        <div class="kpi-num" style="font-size:${c.size}px;letter-spacing:0">${c.num}</div>
+    kpiHtml = `<div class="kpi-grid mhf-kpi-grid">` + cards.map(c => `
+      <div class="kpi-card mhf-kpi-card">
+        <div class="mhf-kpi-head"><span class="mhf-kpi-ico">${c.ico}</span><span class="kpi-lbl" style="margin-top:0">${c.lbl}</span></div>
+        <div class="kpi-num mhf-kpi-num">${c.num}</div>
         <div class="kpi-sub">${c.sub}</div>
       </div>`).join('') + `</div>`;
   }
