@@ -1242,7 +1242,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 11:53</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 11:56</footer>
 
 <script>
 
@@ -4046,6 +4046,7 @@ const ACH_DEFS = [
   { id:'remontada',    name:'Remontada',       icon:'🌅', tiers:[1], fixedTier:6,      hidden:false, key:'remontadas',   desc:_=>`Perdant d'au moins 2 buts à la mi-temps, vainqueur à la fin` },
   { id:'chelem',       name:'Grand Chelem',    icon:'🎨', tiers:[1], fixedTier:6,      hidden:true,  key:'grandChelem',  desc:_=>`Les 3 couleurs jouées` },
   { id:'gardienAssist',name:'Neuer',           icon:'🧤', tiers:[1], fixedTier:6,      hidden:false, key:'gardienAssist', desc:_=>`Passe décisive en tant que gardien` },
+  { id:'mercenaire',   name:'Mercenaire',      icon:'👺', tiers:[1,3,7,15,25,40],     hidden:false, key:'mercenaireCount', desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''} pour l'équipe dépannée` },
   { id:'legende',      name:'Légende',         icon:'🏅', tiers:[5,15,30,50,100,127], hidden:true,  key:'legendeCount', desc:v=>`${v} niveaux débloqués` },
   // ── Négatifs / Secrets ──
   { id:'bonnet',   name:"Bonnet d'Âne",    icon:'🫏', tiers:[10,30,50,100], tierOffset:2, tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'absences',       desc:v=>`${v} absence${v>1?'s':''}` },
@@ -4074,6 +4075,7 @@ const ACH_ABOUT = {
   mur:          'Clean sheets en tant que gardien (1 par match)',
   passoire:     'Buts encaissés en gardant les buts',
   gardienAssist:'Passe décisive en tant que gardien',
+  mercenaire: 'Buts marqués pour l\'équipe dépannée plutôt que la sienne',
   remontada:  'Remontadas — perdant d\'au moins 2 buts à la mi-temps, vainqueur à la fin',
   duo:        'But + passe répétés avec le même partenaire',
   mvp:        'Nommé MVP de la soirée',
@@ -4095,7 +4097,7 @@ function computeAchievementStats(playerName) {
   const _ss = [...SESSIONS].sort((a,b)=>new Date(a.date)-new Date(b.date));
   let buts=0,passes=0,presences=0,absences=0,injuries=0,sessionsBlesses=0,sac=0,maillots=0;
   let hattricks=0,doubleDouble=0,cleanSheets=0,mvp=0,soireeParfaite=0,invincible=0,csc=0,zeroVict=0,toutNul=0;
-  let gardiensCleanSheets=0,gardiensButsEncaisses=0,gardiensMatchs=0,remontadas=0,gardienAssist=0;
+  let gardiensCleanSheets=0,gardiensButsEncaisses=0,gardiensMatchs=0,remontadas=0,gardienAssist=0,mercenaireCount=0;
   const chelemColors=new Set(), duoMap={};
   let inEp=false, bestStreak=0, curStreak=0, fantomeStreak=0, sessionsAvecGA=0;
   const yearMap={};
@@ -4125,7 +4127,11 @@ function computeAchievementStats(playerName) {
             if(!b)return;
             if(!allGA[b])allGA[b]=0; allGA[b]++;
             if(p&&p!=="CSC"){if(!allGA[p])allGA[p]=0; allGA[p]++;}
-            if(b===playerName)g++;
+            if(b===playerName){
+              g++;
+              const sideEq = side==="A" ? m.eqA : m.eqB;
+              if(myEq && sideEq && sideEq!==myEq) mercenaireCount++;
+            }
             if(p&&p!=="CSC"&&p===playerName)a++;
             if(p&&p!=="CSC"){
               if(b===playerName)duoMap[p]=(duoMap[p]||0)+1;
@@ -4219,7 +4225,7 @@ function computeAchievementStats(playerName) {
            sac, maillots, hattricks, bestStreak, soireeParfaite, doubleDouble,
            invincible, cleanSheets, bestDuo, mvp, csc, grandChelem,
            fantomeStreak, assiduAnnes, cometeAnnes, zeroVict, toutNul, sessionsAvecGA,
-           gardiensCleanSheets, gardiensButsEncaisses, gardiensMatchs, gardienRate, remontadas, gardienAssist };
+           gardiensCleanSheets, gardiensButsEncaisses, gardiensMatchs, gardienRate, remontadas, gardienAssist, mercenaireCount };
 }
 
 function renderAchievementsGrid(achSt) {
