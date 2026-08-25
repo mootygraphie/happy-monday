@@ -80,6 +80,8 @@
   .refresh-btn:hover svg { transform: rotate(180deg); }
 
   .container { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+  /* Effectif et Récompenses : mise en page plus étroite, plus homogène (cartes) */
+  #panel-joueurs, #panel-stats { max-width: 760px; margin: 0 auto; }
 
   /* ── Onglets principaux ── */
   .main-tabs { display: inline-flex; background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 4px; margin-bottom: 2rem; gap: 3px; }
@@ -335,19 +337,20 @@
   .pv-slot.pv-empty .pv-platform { opacity: 0.2; }
 
   /* ── Récompenses : podium gradient (buteurs/passeurs/défenseurs/gardien) ── */
-  .podium { display: flex; align-items: flex-end; justify-content: center; gap: 8px; margin: 4px 0 14px; }
-  .pod-slot { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; min-width: 0; }
-  .pod-plat { width: 100%; border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; font-weight: 800; }
-  .pod-slot.gold .pod-plat { height: 64px; background: linear-gradient(180deg, var(--gold), color-mix(in srgb, var(--gold) 55%, transparent)); }
-  .pod-slot.silver .pod-plat { height: 46px; background: linear-gradient(180deg, var(--silver), color-mix(in srgb, var(--silver) 50%, transparent)); }
-  .pod-slot.bronze .pod-plat { height: 36px; background: linear-gradient(180deg, var(--bronze), color-mix(in srgb, var(--bronze) 50%, transparent)); }
-  .pod-medal { font-size: 20px; line-height: 1; }
-  .pod-name { font-size: 12.5px; font-weight: 700; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
-  .pod-name .player-link { font-size: inherit !important; font-weight: inherit !important; color: inherit !important; }
-  .pod-val { font-size: 11px; color: var(--text3); font-weight: 700; }
-  .pod-val.pct { color: var(--good); }
-  .pod-slot.pod-empty .pod-name, .pod-slot.pod-empty .pod-val { opacity: 0; }
-  .pod-slot.pod-empty .pod-plat { opacity: .2; }
+  /* Préfixe rp- pour ne jamais entrer en collision avec .podium (liste verticale, plus haut) */
+  .rp-podium { display: flex; flex-direction: row; align-items: flex-end; justify-content: center; gap: 8px; margin: 4px 0 14px; }
+  .rp-pod-slot { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+  .rp-pod-plat { width: 100%; border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+  .rp-pod-slot.gold .rp-pod-plat { height: 64px; background: linear-gradient(180deg, var(--gold), color-mix(in srgb, var(--gold) 55%, transparent)); }
+  .rp-pod-slot.silver .rp-pod-plat { height: 46px; background: linear-gradient(180deg, var(--silver), color-mix(in srgb, var(--silver) 50%, transparent)); }
+  .rp-pod-slot.bronze .rp-pod-plat { height: 36px; background: linear-gradient(180deg, var(--bronze), color-mix(in srgb, var(--bronze) 50%, transparent)); }
+  .rp-pod-medal { font-size: 20px; line-height: 1; }
+  .rp-pod-name { font-size: 12.5px; font-weight: 700; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+  .rp-pod-name .player-link { font-size: inherit !important; font-weight: inherit !important; color: inherit !important; }
+  .rp-pod-val { font-size: 11px; color: var(--text3); font-weight: 700; }
+  .rp-pod-val.pct { color: var(--good); }
+  .rp-pod-slot.rp-pod-empty .rp-pod-name, .rp-pod-slot.rp-pod-empty .rp-pod-val { opacity: 0; }
+  .rp-pod-slot.rp-pod-empty .rp-pod-plat { opacity: .2; }
 
   /* ── Top 10 : podium + liste 4-10 ── */
   .top10-list { display: flex; flex-direction: column; gap: 2px; margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--border); }
@@ -418,7 +421,8 @@
   .roster-sub { font-size: 11.5px; color: var(--text3); }
   .roster-sub b { color: var(--text2); font-variant-numeric: tabular-nums; }
   .roster-chips { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; max-width: 130px; }
-  .roster-chip { display: inline-flex; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 3px 8px; background: var(--bg3); color: var(--text2); }
+  .roster-chip { display: inline-flex; align-items: center; font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 3px 8px; background: var(--bg3); color: var(--text2); }
+  .roster-chip-ico { font-size: 15px; font-weight: 500; line-height: 1; }
   .roster-chip.danger { color: var(--bad); background: var(--bad-bg); }
   .roster-chip.warn { color: #ffa726; background: rgba(255,167,38,.12); }
   .roster-actions { display: flex; gap: 3px; flex-shrink: 0; }
@@ -944,19 +948,13 @@
     border-bottom: 1px solid var(--award-border, var(--gold-border));
     display: flex; align-items: center; gap: 14px;
   }
-  .award-ico { font-size: 32px; line-height: 1; flex-shrink: 0; }
+  .award-ico { font-size: 26px; line-height: 1; flex-shrink: 0; }
   .award-title {
-    font-size: 14px; font-weight: 800; letter-spacing: .14em;
-    text-transform: uppercase; color: var(--award-color, var(--gold)); line-height: 1;
+    font-size: 14.5px; font-weight: 800;
+    color: var(--award-color, var(--gold)); line-height: 1.2;
   }
   .award-meta {
-    font-size: 11px; color: var(--text3); margin-top: 4px;
-    letter-spacing: .04em;
-  }
-  .award-formula {
-    margin-left: auto; font-size: 11px; color: var(--award-color, var(--gold)); opacity: .65;
-    text-align: right; white-space: nowrap; flex-shrink: 0;
-    font-weight: 600; letter-spacing: .04em;
+    font-size: 11px; color: var(--text3); margin-top: 3px;
   }
   .award-list { padding: 10px 0 4px; }
   .award-row {
@@ -1307,7 +1305,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 15:15</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 15:32</footer>
 
 <script>
 
@@ -1868,14 +1866,14 @@ function buildPodiumVizSlotsV2(slots, valueFn, nameFn, pctClass) {
     { cls: 'gold',   emoji: '🥇' },
     { cls: 'bronze', emoji: '🥉' },
   ];
-  return `<div class="podium">` + order.map((si, pos) => {
+  return `<div class="rp-podium">` + order.map((si, pos) => {
     const cfg  = cfgs[pos];
     const slot = slots[si];
-    if (!slot) return `<div class="pod-slot ${cfg.cls} pod-empty"><span class="pod-name"></span><span class="pod-val"></span><div class="pod-plat"><span class="pod-medal">${cfg.emoji}</span></div></div>`;
-    return `<div class="pod-slot ${cfg.cls}">
-      <span class="pod-name">${nameFn(slot)}</span>
-      <span class="pod-val${pctClass?' pct':''}">${valueFn(slot)}</span>
-      <div class="pod-plat"><span class="pod-medal">${cfg.emoji}</span></div>
+    if (!slot) return `<div class="rp-pod-slot ${cfg.cls} rp-pod-empty"><span class="rp-pod-name"></span><span class="rp-pod-val"></span><div class="rp-pod-plat"><span class="rp-pod-medal">${cfg.emoji}</span></div></div>`;
+    return `<div class="rp-pod-slot ${cfg.cls}">
+      <span class="rp-pod-name">${nameFn(slot)}</span>
+      <span class="rp-pod-val${pctClass?' pct':''}">${valueFn(slot)}</span>
+      <div class="rp-pod-plat"><span class="rp-pod-medal">${cfg.emoji}</span></div>
     </div>`;
   }).join('') + `</div>`;
 }
@@ -1997,7 +1995,7 @@ function buildGardienTop3HTML() {
     return { name: p, matchs: s.gardiensMatchs, rate: s.gardienRate };
   }).filter(r => r.matchs >= 3).sort((a,b) => b.rate - a.rate || b.matchs - a.matchs || a.name.localeCompare(b.name,'fr'));
   if (!ranked.length) return `<div class="kpi-card" data-card="top-gardien">
-    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 3 Gardien 🧤</div>
+    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 3 Gardien 🧤 (% clean sheets)</div>
     <span style="color:var(--text3)">—</span>
   </div>`;
   const slots = []; let rem = [...ranked];
@@ -2008,7 +2006,7 @@ function buildGardienTop3HTML() {
   }
   const body = buildPodiumVizSlotsV2(slots, s => `${ranked.find(r=>r.name===s.players[0]).rate}%`, s => s.players.map(n => pLink(n)).join(", "), true);
   return `<div class="kpi-card" data-card="top-gardien">
-    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 3 Gardien 🧤</div>
+    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 3 Gardien 🧤 (% clean sheets)</div>
     ${body}
     <div style="font-size:11px;color:var(--text3);margin-top:10px;text-align:center">Minimum 3 matchs gardés</div>
   </div>`;
@@ -2051,7 +2049,6 @@ function buildYachineHtml(sessions) {
         <div class="award-title">Prix Yachine ${lbl}</div>
         <div class="award-meta">Moins de buts encaissés / match en goal</div>
       </div>
-      <div class="award-formula">buts / match</div>
     </div>
     <div class="award-list">`;
   if (ranking.length) {
@@ -2088,7 +2085,6 @@ function buildCalamityJamesHtml(sessions) {
         <div class="award-title">Calamity James ${lbl}</div>
         <div class="award-meta">Plus de buts encaissés / match en goal</div>
       </div>
-      <div class="award-formula">buts / match</div>
     </div>
     <div class="award-list">`;
   if (ranking.length) {
@@ -2519,9 +2515,8 @@ function buildBallonDorHtml() {
       <span class="award-ico">🏆</span>
       <div>
         <div class="award-title">Ballon d'Or ${_bdLbl}</div>
-        <div class="award-meta">Classement G/A — Saison ${_bdLbl}</div>
+        <div class="award-meta">5 pts / but &middot; 10 pts / assist</div>
       </div>
-      <div class="award-formula">5 pts / but &nbsp;·&nbsp; 10 pts / assist</div>
     </div>
     <div class="award-list">`;
   if (_bdFull.length) {
@@ -2577,9 +2572,8 @@ function buildBallonDePlombHtml() {
       <span class="award-ico">🪨</span>
       <div>
         <div class="award-title">Ballon de Plomb ${_bdLbl}</div>
-        <div class="award-meta">Classement inversé G/A — Saison ${_bdLbl}</div>
+        <div class="award-meta">5 pts / but &middot; 10 pts / assist (classement inversé)</div>
       </div>
-      <div class="award-formula">5 pts / but &nbsp;·&nbsp; 10 pts / assist</div>
     </div>
     <div class="award-list">`;
   if (_bdBottomAll.length) {
@@ -3136,7 +3130,7 @@ function renderStats() {
     const pillsHtml = bt.players.map(p =>
       `<button class="team-hero-pill player-link" data-player="${p}" style="background:${varBg};color:${varColor};border-color:${varBorder}">${p}</button>`
     ).join("");
-    h += `<div class="section-label" style="margin-top:0">Meilleure équipe all-time 🏅</div>`;
+    h += `<div class="section-label" style="margin-top:0">Meilleure équipe all-time</div>`;
     h += `<div class="team-hero" style="background:linear-gradient(150deg, ${varBg}, transparent 70%)">
       <div class="team-hero-top">
         <span class="team-hero-badge" style="background:${varBg};color:${varColor};border-color:${varBorder}">${dot(bt.team)}${TEAM_LABEL[bt.team] || bt.team}</span>
@@ -3878,7 +3872,7 @@ function renderJoueurs() {
 
   function chip(icon, val, cls) {
     if (!val) return "";
-    return `<span class="roster-chip ${cls || ""}">${icon}${val}</span>`;
+    return `<span class="roster-chip ${cls || ""}"><span class="roster-chip-ico">${icon}</span> ${val}</span>`;
   }
 
   function buildRosterCard(r) {
