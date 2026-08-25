@@ -1399,7 +1399,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 16:39</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 16:44</footer>
 
 <script>
 
@@ -1635,24 +1635,39 @@ const _BASE_PLAYERS = new Set(ALL_PLAYERS);
 JSON.parse(localStorage.getItem('hmft_extra_players') || '[]').forEach(n => {
   if (!ALL_PLAYERS.includes(n)) { ALL_PLAYERS.push(n); JOKERS.add(n); }
 });
-/* Initiales d avatar : le moins de lettres possible, juste assez pour
-   distinguer chaque joueur des autres (ex: Raph P / Raph L -> RP / RL). */
-function _initialCandidates(name) {
-  const parts = name.trim().split(/\s+/);
-  const cands = [];
-  if (parts.length > 1) {
-    const w1 = parts[0], w2 = parts[1];
-    cands.push(w1[0]);
-    cands.push(w1[0] + w2[0]);
-    for (let i = 2; i <= w1.length; i++) cands.push(w1.slice(0, i) + w2[0]);
-  } else {
-    for (let i = 1; i <= name.length; i++) cands.push(name.slice(0, i));
-  }
-  return cands.map(s => s.toUpperCase());
-}
+/* Initiales d avatar : 2 lettres minimum, on n en ajoute que pour distinguer
+   des joueurs qui entreraient sinon en collision. Pierre-Olivier -> PO
+   (initiales des 2 mots, tiret traite comme un espace). Raph P / Raph L
+   (memes prenoms) -> RAP / RAL (on developpe le prenom commun plutot que
+   de sauter aux initiales des 2 mots, pour garder le lien visuel entre eux). */
 function computeAllInitials(players) {
+  const parts = {};
+  const firstWordCount = {};
+  players.forEach(p => {
+    const ps = p.trim().split(/[\s-]+/).filter(Boolean);
+    parts[p] = ps;
+    if (ps.length > 1) {
+      const key = ps[0].toLowerCase();
+      firstWordCount[key] = (firstWordCount[key] || 0) + 1;
+    }
+  });
+
   const cands = {};
-  players.forEach(p => { cands[p] = _initialCandidates(p); });
+  players.forEach(p => {
+    const ps = parts[p];
+    const list = [];
+    if (ps.length > 1) {
+      const w1 = ps[0], w2 = ps[1];
+      const hasSibling = firstWordCount[w1.toLowerCase()] > 1;
+      if (!hasSibling) list.push(w1[0] + w2[0]);
+      for (let i = 2; i <= w1.length; i++) list.push(w1.slice(0, i) + w2[0]);
+      list.push(ps.join(''));
+    } else {
+      for (let i = 2; i <= Math.max(2, p.length); i++) list.push(p.slice(0, Math.min(i, p.length)));
+    }
+    cands[p] = [...new Set(list.map(s => s.toUpperCase()))];
+  });
+
   const result = {};
   let active = new Set(players);
   let level = 0;
@@ -2966,7 +2981,7 @@ function renderMhfMatrixHtml() {
     const jokerTag = JOKERS.has(p) ? ' <span style="color:var(--text3);font-size:10px">[+1]</span>' : '';
     h += `<div class="mhf-mcell mhf-mname player-link ${rowCls}" data-player="${p}">
       <span class="mhf-mrank ${rankCls}">${rank}</span>
-      <span class="mhf-mavatar">${_mhfInitials[p] || p.slice(0,1).toUpperCase()}</span>
+      <span class="mhf-mavatar">${_mhfInitials[p] || p.slice(0,2).toUpperCase()}</span>
       <span class="mhf-mname-txt">${p}${jokerTag}</span>
     </div>`;
     h += `<div class="mhf-mcell mhf-msum ${rowCls}${_mhfState.sortKey==='hautsFaits'?' sorted':''}">${_mhf.summary[p].hautsFaits}</div>`;
@@ -3008,7 +3023,7 @@ function renderAchievementsMatrix() {
     const rarest = sortedByRate[0], common = sortedByRate[sortedByRate.length-1];
     const topCollector = [..._mhf.players].sort((a,b) => _mhf.summary[b].niveaux - _mhf.summary[a].niveaux)[0];
     const cards = [
-      { ico:'📊', lbl:'Taux de complétion roster', num: Math.round(avgRate*100)+'%',
+      { ico:'📊', lbl:'Complétion roster', num: Math.round(avgRate*100)+'%',
         sub:`${filledCells} / ${totalCells} cases débloquées` },
       { ico: rarest.icon, lbl:'Haut fait le plus rare', num: rarest.name,
         sub:`${_mhf.completion[rarest.id].unlocked}/${_mhf.players.length} joueurs (${Math.round(_mhf.completion[rarest.id].rate*100)}%)` },
@@ -4143,7 +4158,7 @@ function renderJoueurs() {
     });
   }
 
-  function initials(n) { return _initialsMap[n] || n.slice(0,1).toUpperCase(); }
+  function initials(n) { return _initialsMap[n] || n.slice(0,2).toUpperCase(); }
 
   function buildSortRow(id, cols, state) {
     return `<div class="roster-sort-row" id="${id}">${cols.map(c => {
