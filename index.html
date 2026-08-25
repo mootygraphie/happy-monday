@@ -1693,7 +1693,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 21:38</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 21:47</footer>
 
 <script>
 
@@ -4130,10 +4130,12 @@ function _dbxComputeAgg(sessions) {
     .filter(([n,p]) => p.presences>0 && !JOKERS.has(n))
     .sort((a,b) => b[1].presences-a[1].presences || byAlpha(a,b)).slice(0,5);
   const goalsBySession = sorted.map(s => ({ date: s.date, goals: (s.matchs||[]).reduce((a,m) => a+m.scoreA+m.scoreB, 0) }));
+  /* Points façon Ballon d Or (5 pts / but, 10 pts / assist), memes regles que Recompenses : CSC exclu. */
+  const totalPts = Object.values(st.ps).reduce((a,p) => a + p.buts*5 + p.passes*10, 0);
   return {
     allMatchs: allMatchsChrono, ps: st.ps, colorWins: st.colorWins, draws,
     goalsFor: st.goalsPerTeam, goalsAgainst, totalGoals, leaders, maxWins,
-    topScorers, topAssists, topPresence, totalPres, totalAbs, totalBles,
+    topScorers, topAssists, topPresence, totalPres, totalAbs, totalBles, totalPts,
     mostGoals: st.mostGoals, biggestAmp: st.biggestAmp, results, goalsBySession,
     sessionsCount: sessions.length
   };
@@ -4169,8 +4171,7 @@ function _dbxRenderHero(agg) {
   const leaderHtml = agg.leaders.length
     ? agg.leaders.map(t => `${dot(t)}<span class="dbx-txt ${t.toLowerCase()}">${TEAM_LABEL[t]}</span>`).join(" &amp; ")
     : "—";
-  const totalPresences = agg.totalPres + agg.totalAbs;
-  const presRate = totalPresences ? Math.round(agg.totalPres/totalPresences*100) : 0;
+  const avgPts = agg.allMatchs.length ? (agg.totalPts/agg.allMatchs.length).toFixed(1) : "—";
   const sparkVals = agg.goalsBySession.slice(-10).map(g=>g.goals);
   return `<div class="dbx-hero-grid">
     <div class="dbx-hero-card">
@@ -4190,9 +4191,9 @@ function _dbxRenderHero(agg) {
       <div class="dbx-hero-sub">${agg.maxWins} victoire${agg.maxWins!==1?"s":""}</div>
     </div>
     <div class="dbx-hero-card">
-      <div class="dbx-hero-lbl">Taux de présence</div>
-      <div class="dbx-hero-num">${presRate}%</div>
-      <div class="dbx-hero-sub">${agg.totalPres} présence${agg.totalPres>1?"s":""} au total</div>
+      <div class="dbx-hero-lbl">Points totaux</div>
+      <div class="dbx-hero-num">${agg.totalPts}</div>
+      <div class="dbx-hero-sub">${avgPts} pts / match en moy.</div>
     </div>
   </div>`;
 }
