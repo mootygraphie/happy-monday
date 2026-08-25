@@ -1269,6 +1269,122 @@
   .moment-big { font-size: 26px; font-weight: 800; margin: 4px 0 2px; line-height: 1.2; }
   .moment-sub { font-size: 12.5px; color: var(--text2); }
   .status-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; border-radius: 999px; padding: 3px 10px; margin-top: 10px; border: 1px solid; }
+
+  /* ── Sessions V2 : « feuille de match » (préfixe sfm-) — redesign de l'onglet Sessions
+     uniquement (renderSessionDetailV2 / renderSessionResults). Le Dashboard continue
+     d'utiliser renderSessionDetail() d'origine et n'affiche aucune de ces classes. ── */
+  .sfm-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-style: italic; color: var(--text3); }
+  .sfm-count-n { color: var(--text2); font-weight: 400; font-style: normal; text-transform: none; letter-spacing: 0; }
+
+  .sfm-hero { position: relative; margin: 1.6rem 0 2rem; padding: 2rem 2rem 1.7rem; border-radius: 22px; border: 1px solid var(--border); background: var(--bg2); overflow: hidden; }
+  .sfm-hero-top { position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .sfm-hero-date { font-size: clamp(24px,4vw,38px); font-weight: 700; letter-spacing: -.02em; line-height: 1.1; margin-top: 6px; }
+  .sfm-hero-meta { font-size: 12.5px; color: var(--text2); text-align: right; line-height: 1.7; }
+  .sfm-hero-meta b { color: var(--text); font-weight: 700; }
+  .sfm-hero-recap { position: relative; margin-top: 16px; max-width: 70ch; font-size: 15px; color: var(--text2); line-height: 1.65; }
+  .sfm-hero-recap b { font-weight: 700; }
+
+  .sfm-ticker-wrap { position: relative; margin-top: 22px; }
+  .sfm-ticker { position: relative; display: flex; gap: 10px; overflow-x: auto; padding: 6px 2px 2px; scrollbar-width: none; }
+  .sfm-ticker::-webkit-scrollbar { display: none; }
+  .sfm-t-stop { position: relative; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .sfm-t-num { font-size: 10px; color: var(--text3); font-variant-numeric: tabular-nums; }
+  .sfm-t-chip { display: flex; align-items: center; padding: 6px 12px; border-radius: 20px; background: var(--bg); border: 1px solid var(--border2); font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums; transition: all .15s; cursor: pointer; }
+  .sfm-t-chip:hover { background: var(--bg3); transform: translateY(-1px); }
+  .sfm-t-chip.sfm-spot { background: var(--gold-bg); border-color: var(--gold-border); box-shadow: 0 0 0 1px var(--gold-border) inset; }
+
+  .sfm-stat-strip { position: relative; display: flex; gap: 0; margin-top: 22px; flex-wrap: wrap; }
+  .sfm-stat-item { padding: 0 22px 0 0; margin-right: 22px; border-right: 1px solid var(--border); }
+  .sfm-stat-item:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+  .sfm-stat-item .v { font-size: 26px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .sfm-stat-item .l { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; font-style: italic; margin-top: 2px; }
+  @media (max-width: 640px) { .sfm-stat-item { padding-right: 14px; margin-right: 14px; } .sfm-stat-item .v { font-size: 21px; } }
+
+  .sfm-sb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 12px; }
+  .sfm-sb-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .sfm-sb-accent { height: 4px; }
+  .sfm-sb-accent.rouge { background: linear-gradient(90deg,var(--rouge),#FF85C2); }
+  .sfm-sb-accent.vert { background: linear-gradient(90deg,var(--vert),#EAFF80); }
+  .sfm-sb-accent.bleu { background: linear-gradient(90deg,var(--bleu),#80DEFF); }
+  .sfm-sb-body { padding: 16px 18px 15px; }
+  .sfm-sb-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .sfm-sb-rank { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; font-style: italic; }
+  .sfm-sb-rank.first { color: var(--gold); }
+  .sfm-sb-name { display: flex; align-items: center; font-size: 17px; font-weight: 700; margin-top: 3px; }
+  .sfm-sb-name.rouge { color: var(--rouge); } .sfm-sb-name.vert { color: var(--vert); } .sfm-sb-name.bleu { color: var(--bleu); }
+  .sfm-sb-pts { text-align: right; }
+  .sfm-sb-pts .v { font-size: 28px; font-weight: 700; letter-spacing: -.02em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .sfm-sb-pts .l { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
+  .sfm-sb-sep { height: 1px; background: var(--border); margin: 13px 0 11px; }
+  .sfm-sb-wdl { display: flex; gap: 6px; margin-bottom: 11px; }
+  .sfm-sb-wdl span { flex: 1; text-align: center; padding: 5px 0; border-radius: 7px; font-size: 11.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .sfm-sb-wdl .v { background: var(--good); color: #08240f; }
+  html.light .sfm-sb-wdl .v { color: #fff; }
+  .sfm-sb-wdl .n { background: var(--bg3); color: var(--text2); }
+  .sfm-sb-wdl .d { background: var(--bad-bg); color: var(--bad); }
+  .sfm-sb-gf { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); font-variant-numeric: tabular-nums; }
+  .sfm-sb-gf .diff { font-weight: 700; }
+  .sfm-sb-gf .diff.pos { color: var(--good); } .sfm-sb-gf .diff.neg { color: var(--bad); }
+
+  .sfm-spot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 12px; }
+  .sfm-spot-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; display: flex; flex-direction: column; }
+  .sfm-spot-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; font-style: italic; color: var(--text3); margin-bottom: 14px; }
+  .sfm-spot-score { display: flex; align-items: center; justify-content: center; gap: 14px; }
+  .sfm-spot-side { flex: 1; text-align: center; }
+  .sfm-spot-num { font-size: 34px; font-weight: 700; line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .sfm-spot-lbl { margin-top: 7px; font-size: 11.5px; font-weight: 700; }
+  .sfm-spot-lbl.rouge { color: var(--rouge); } .sfm-spot-lbl.vert { color: var(--vert); } .sfm-spot-lbl.bleu { color: var(--bleu); }
+  .sfm-spot-vs { color: var(--text3); font-size: 15px; font-weight: 300; }
+  .sfm-spot-mt { text-align: center; font-size: 11px; color: var(--text3); margin-top: 9px; }
+  .sfm-spot-caption { font-size: 13px; color: var(--text2); font-style: italic; margin-top: 13px; line-height: 1.55; }
+  .sfm-spot-sep { height: 1px; background: var(--border); margin: 13px 0 11px; }
+  .sfm-spot-goals { display: flex; gap: 10px; font-size: 11.5px; color: var(--text2); }
+  .sfm-spot-goals > div { flex: 1; line-height: 1.7; }
+  .sfm-spot-goals > div.r { text-align: right; }
+  .sfm-spot-goals em { color: var(--text3); font-style: italic; }
+
+  .sfm-perf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 12px; }
+  .sfm-perf-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 15px; display: flex; gap: 12px; align-items: flex-start; }
+  .sfm-perf-av { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; background: var(--bg3); color: var(--text2); }
+  .sfm-perf-av.rouge { background: var(--rouge-bg); color: var(--rouge); } .sfm-perf-av.vert { background: var(--vert-bg); color: var(--vert); } .sfm-perf-av.bleu { background: var(--bleu-bg); color: var(--bleu); }
+  .sfm-perf-role { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-style: italic; color: var(--text3); }
+  .sfm-perf-name { font-size: 14.5px; font-weight: 700; margin-top: 2px; }
+  .sfm-perf-name .player-link { font-size: inherit !important; font-weight: inherit !important; color: inherit !important; }
+  .sfm-perf-stat { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+
+  .sfm-lineup-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 12px; }
+  .sfm-lu-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .sfm-lu-accent { height: 4px; }
+  .sfm-lu-accent.rouge { background: linear-gradient(90deg,var(--rouge),#FF85C2); }
+  .sfm-lu-accent.vert { background: linear-gradient(90deg,var(--vert),#EAFF80); }
+  .sfm-lu-accent.bleu { background: linear-gradient(90deg,var(--bleu),#80DEFF); }
+  .sfm-lu-head { display: flex; align-items: center; gap: 9px; padding: 13px 16px 11px; border-bottom: 1px solid var(--border); }
+  .sfm-lu-ico { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  .sfm-lu-ico.rouge { background: var(--rouge-bg); } .sfm-lu-ico.vert { background: var(--vert-bg); } .sfm-lu-ico.bleu { background: var(--bleu-bg); }
+  .sfm-lu-title { font-size: 14.5px; font-weight: 700; text-transform: uppercase; font-style: italic; letter-spacing: .03em; }
+  .sfm-lu-title.rouge { color: var(--rouge); } .sfm-lu-title.vert { color: var(--vert); } .sfm-lu-title.bleu { color: var(--bleu); }
+  .sfm-lu-count { margin-left: auto; font-size: 11px; font-weight: 600; color: var(--text3); background: var(--bg3); padding: 3px 9px; border-radius: 20px; }
+  .sfm-lu-players { padding: 12px 16px 14px; display: flex; flex-wrap: wrap; gap: 5px; }
+  .sfm-lu-pill { display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 9px; font-size: 11.5px; font-weight: 500; }
+  .sfm-lu-pill.rouge { background: var(--rouge-bg); color: var(--text); border: 1px solid var(--rouge-border); }
+  .sfm-lu-pill.vert { background: var(--vert-bg); color: var(--text); border: 1px solid var(--vert-border); }
+  .sfm-lu-pill.bleu { background: var(--bleu-bg); color: var(--text); border: 1px solid var(--bleu-border); }
+  .sfm-lu-pill .player-link { font-size: inherit !important; font-weight: inherit !important; color: inherit !important; text-decoration: none !important; }
+  .sfm-gk { font-size: 10px; opacity: .75; }
+
+  .sfm-logistics { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 12px; padding: 13px 18px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); font-size: 12.5px; color: var(--text2); }
+  .sfm-logistics b { color: var(--text); font-weight: 600; }
+  .sfm-logistics b .player-link { font-size: inherit !important; font-weight: inherit !important; color: inherit !important; }
+  .sfm-sep { color: var(--text3); }
+
+  .sfm-no-data-card { text-align: center; padding: 3.2rem 1.5rem; color: var(--text3); font-size: 13.5px; font-style: italic; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-top: 1.6rem; }
+  .sfm-no-data-card .big { font-size: 30px; margin-bottom: 10px; font-style: normal; }
+
+  .sfm-flash { background: var(--gold-bg); border-color: var(--gold-border); transition: background .6s ease, border-color .6s ease; }
+
+  .sfm-fade-up { opacity: 0; transform: translateY(10px); animation: sfmFadeUp .5s cubic-bezier(.2,.7,.3,1) forwards; }
+  @keyframes sfmFadeUp { to { opacity: 1; transform: translateY(0); } }
+  @media (prefers-reduced-motion: reduce) { .sfm-fade-up { animation: none; opacity: 1; transform: none; } }
 </style>
 <script>if(localStorage.getItem('hmft_theme')==='light')document.documentElement.classList.add('light');</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -1400,7 +1516,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 17:26</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 17:41</footer>
 
 <script>
 
@@ -2545,6 +2661,427 @@ function renderSessionDetail(session) {
   }
 
   return h;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SESSIONS V2 — « Feuille de match »
+   Nouvelle mise en page utilisée UNIQUEMENT par renderSessionResults()
+   (onglet Sessions). renderSessionDetail() ci-dessus reste inchangée et
+   continue d'alimenter le Dashboard ("Dernière session") sans modification.
+══════════════════════════════════════════════════════════ */
+
+function _sfmGoalsPhrase(n) {
+  if (n === 1) return "1 but";
+  if (n === 2) return "un doublé";
+  if (n === 3) return "un triplé";
+  if (n === 4) return "un quadruplé";
+  if (n === 5) return "un quintuplé";
+  return `${n} buts`;
+}
+
+function _sfmHeroDate(dateStr) {
+  const days = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
+  const dt = new Date(dateStr + "T12:00:00");
+  const day = isNaN(dt.getTime()) ? "" : days[dt.getDay()];
+  return `${day ? day + " " : ""}${fmtDate(dateStr)}`;
+}
+
+function _sfmGoalkeepersSet(matchs) {
+  const set = new Set();
+  matchs.forEach(m => {
+    (m.gardiensA||[]).forEach(g => g && set.add(g));
+    (m.gardiensB||[]).forEach(g => g && set.add(g));
+  });
+  return set;
+}
+
+function _sfmStandings(matchs) {
+  const goalsFor = {}, goalsAgainst = {}, wins = {}, drawsPerTeam = {}, matchesPerTeam = {};
+  matchs.forEach(m => {
+    goalsFor[m.eqA]     = (goalsFor[m.eqA]||0)     + m.scoreA;
+    goalsFor[m.eqB]     = (goalsFor[m.eqB]||0)     + m.scoreB;
+    goalsAgainst[m.eqA] = (goalsAgainst[m.eqA]||0) + m.scoreB;
+    goalsAgainst[m.eqB] = (goalsAgainst[m.eqB]||0) + m.scoreA;
+    matchesPerTeam[m.eqA] = (matchesPerTeam[m.eqA]||0) + 1;
+    matchesPerTeam[m.eqB] = (matchesPerTeam[m.eqB]||0) + 1;
+    if (m.scoreA > m.scoreB) wins[m.eqA] = (wins[m.eqA]||0) + 1;
+    else if (m.scoreB > m.scoreA) wins[m.eqB] = (wins[m.eqB]||0) + 1;
+    else { drawsPerTeam[m.eqA] = (drawsPerTeam[m.eqA]||0) + 1; drawsPerTeam[m.eqB] = (drawsPerTeam[m.eqB]||0) + 1; }
+  });
+  const teamsPlayed = [...new Set(matchs.flatMap(m => [m.eqA, m.eqB]))];
+  return teamsPlayed.map(t => {
+    const pj = matchesPerTeam[t]||0, v = wins[t]||0, n = drawsPerTeam[t]||0, d = pj-v-n;
+    return { team: t, pj, v, n, d, pts: v*3+n, gf: goalsFor[t]||0, ga: goalsAgainst[t]||0, diff: (goalsFor[t]||0)-(goalsAgainst[t]||0) };
+  }).sort((a,b) => b.pts-a.pts || b.diff-a.diff || b.gf-a.gf);
+}
+
+function _sfmTopScorerInMatch(m) {
+  const c = {};
+  (m.buteursA||[]).forEach(b => { if (b && b !== "CSC") c[b] = (c[b]||0)+1; });
+  (m.buteursB||[]).forEach(b => { if (b && b !== "CSC") c[b] = (c[b]||0)+1; });
+  const ranked = Object.entries(c).sort((a,b) => b[1]-a[1]);
+  return ranked.length ? { name: ranked[0][0], count: ranked[0][1] } : null;
+}
+
+// Choisit jusqu'à 3 matchs « temps forts » distincts : ouverture, plus gros écart, plus tendu.
+function _sfmPickSpotlights(matchs) {
+  if (!matchs.length) return [];
+  const used = new Set();
+  const spots = [];
+  spots.push({ i: 0, kind: "opener" }); used.add(0);
+
+  let blowoutI = -1, blowoutMargin = -1;
+  matchs.forEach((m,i) => {
+    if (used.has(i)) return;
+    const mg = Math.abs(m.scoreA - m.scoreB);
+    if (mg > blowoutMargin) { blowoutMargin = mg; blowoutI = i; }
+  });
+  if (blowoutI !== -1 && blowoutMargin > 0) { spots.push({ i: blowoutI, kind: "blowout" }); used.add(blowoutI); }
+
+  let thrillI = -1, thrillGoals = Infinity;
+  matchs.forEach((m,i) => {
+    if (used.has(i)) return;
+    const tg = m.scoreA + m.scoreB;
+    if (tg < thrillGoals) { thrillGoals = tg; thrillI = i; }
+  });
+  if (thrillI !== -1) { spots.push({ i: thrillI, kind: "thriller" }); used.add(thrillI); }
+
+  return spots.sort((a,b) => a.i - b.i);
+}
+
+function _sfmSpotlightMeta(m, kind) {
+  const eyebrows = { opener: "🎩 Ouverture", blowout: "💥 Démonstration", thriller: "🥶 Frisson du soir" };
+  const top = _sfmTopScorerInMatch(m);
+  let caption = "";
+  if (kind === "blowout" && top && top.count >= 2) {
+    caption = `${top.name} porte l'estocade avec ${_sfmGoalsPhrase(top.count)}.`;
+  } else if (kind === "thriller") {
+    if (m.scoreA + m.scoreB === 0) {
+      caption = `0–0 : aucune des deux défenses ne cède.`;
+    } else if (m.scoreA === m.scoreB) {
+      caption = `Un match nul disputé, ${m.scoreA}–${m.scoreB}.`;
+    } else if (m.scoreA === 0 || m.scoreB === 0) {
+      const gk = m.scoreA === 0 ? (m.gardiensA||[])[0] : (m.gardiensB||[])[0];
+      caption = gk ? `${gk} garde sa cage inviolée.` : `Une seule frappe dans la rencontre.`;
+    } else {
+      caption = `Un seul but a fait la différence.`;
+    }
+  } else if (kind === "opener" && top) {
+    caption = top.count >= 2 ? `${top.name} lance la soirée avec ${_sfmGoalsPhrase(top.count)}.` : `Coup d'envoi de la soirée.`;
+  } else if (top) {
+    caption = `${top.name} se distingue avec ${_sfmGoalsPhrase(top.count)}.`;
+  }
+  return { eyebrow: eyebrows[kind] || "⭐ Temps fort", caption };
+}
+
+function _sfmSpotlightCardHTML(m, kind, delay) {
+  const meta = _sfmSpotlightMeta(m, kind);
+  const clA = teamCls(m.eqA), clB = teamCls(m.eqB);
+  const sc = scoreColors(m);
+  const mt = (m.mt1A !== undefined && m.mt1B !== undefined) ? `<div class="sfm-spot-mt">mi-temps ${m.mt1A}–${m.mt1B}</div>` : "";
+  const goalsA = fmtGoalsList(m.buteursA, m.passeursA) || `<span style="color:var(--text3)">—</span>`;
+  const goalsB = fmtGoalsList(m.buteursB, m.passeursB) || `<span style="color:var(--text3)">—</span>`;
+  return `<div class="sfm-spot-card sfm-fade-up" style="animation-delay:${delay}s">
+    <div class="sfm-spot-eyebrow">${meta.eyebrow}</div>
+    <div class="sfm-spot-score">
+      <div class="sfm-spot-side"><div class="sfm-spot-num" style="color:${sc.a}">${m.scoreA}</div><div class="sfm-spot-lbl ${clA}">${TEAM_LABEL[m.eqA]||m.eqA}</div></div>
+      <span class="sfm-spot-vs">–</span>
+      <div class="sfm-spot-side"><div class="sfm-spot-num" style="color:${sc.b}">${m.scoreB}</div><div class="sfm-spot-lbl ${clB}">${TEAM_LABEL[m.eqB]||m.eqB}</div></div>
+    </div>
+    ${mt}
+    ${meta.caption ? `<p class="sfm-spot-caption">${meta.caption}</p>` : ""}
+    <div class="sfm-spot-sep"></div>
+    <div class="sfm-spot-goals">
+      <div>⚽ ${goalsA}</div>
+      <div class="r">${goalsB}</div>
+    </div>
+  </div>`;
+}
+
+function _sfmRecapSentence(session, matchs, totalButs, buteursRanked, passeursRanked, gkRanking) {
+  if (!matchs.length) return "";
+  const parts = [];
+  parts.push(`${matchs.length} match${matchs.length>1?"s":""}, ${totalButs} but${totalButs>1?"s":""} inscrit${totalButs>1?"s":""} sous les projecteurs.`);
+
+  const topScorerName = buteursRanked.length ? buteursRanked[0][0] : null;
+  if (buteursRanked.length) {
+    const [name, count] = buteursRanked[0];
+    const eq = (session.presences && session.presences[name]) ? session.presences[name].equipe : "";
+    const cls = eq ? teamCls(eq) : "";
+    const nameHtml = cls ? `<b style="color:var(--${cls})">${name}</b>` : `<b>${name}</b>`;
+    const teamHtml = cls ? ` pour les <b style="color:var(--${cls})">${TEAM_LABEL[eq]||eq}</b>` : "";
+    parts.push(`${nameHtml} régale avec ${_sfmGoalsPhrase(count)}${teamHtml}.`);
+  }
+
+  if (gkRanking && gkRanking.length) {
+    const cleanKeeper = gkRanking.filter(g => g.buts === 0).sort((a,b) => b.matchs - a.matchs)[0];
+    if (cleanKeeper) parts.push(`${cleanKeeper.name} garde une cage inviolée dans les buts.`);
+  }
+
+  if (passeursRanked.length) {
+    const [name, count] = passeursRanked[0];
+    if (name !== topScorerName) {
+      parts.push(`${name} distribue le plus de caviars avec ${count} passe${count>1?"s":""} décisive${count>1?"s":""}.`);
+    }
+  }
+
+  return parts.join(" ");
+}
+
+function _sfmTickerHTML(matchs, spotlightIdxSet) {
+  const chips = matchs.map((m, i) => {
+    const spot = spotlightIdxSet.has(i) ? " sfm-spot" : "";
+    return `<div class="sfm-t-stop"><span class="sfm-t-num">#${i+1}</span>
+      <button class="sfm-t-chip${spot}" data-sfm-goto="sfm-m${i}">${dot(m.eqA)}${m.scoreA}–${m.scoreB}${dot(m.eqB)}</button>
+    </div>`;
+  }).join("");
+  return `<div class="sfm-ticker-wrap"><div class="sfm-ticker">${chips}</div></div>`;
+}
+
+function _sfmStatStripHTML(presentsCount, matchsCount, totalButs, avgButs) {
+  return `<div class="sfm-stat-strip">
+    <div class="sfm-stat-item"><div class="v">${presentsCount}</div><div class="l">Présents</div></div>
+    <div class="sfm-stat-item"><div class="v">${matchsCount}</div><div class="l">Matchs</div></div>
+    <div class="sfm-stat-item"><div class="v">${totalButs}</div><div class="l">Buts marqués</div></div>
+    <div class="sfm-stat-item"><div class="v">${avgButs}</div><div class="l">Buts / match</div></div>
+  </div>`;
+}
+
+function _sfmHeroHTML(session, matchs, presentsCount, teamsPlayedCount, recapSentence, tickerHtml, statStripHtml) {
+  const dateHtml = _sfmHeroDate(session.date);
+  const metaParts = [`${presentsCount} présent${presentsCount>1?"s":""}`];
+  if (matchs.length) metaParts.push(`${matchs.length} match${matchs.length>1?"s":""}`);
+  const metaLine1 = metaParts.join(" <b>·</b> ");
+  const metaLine2 = teamsPlayedCount ? `${teamsPlayedCount} équipe${teamsPlayedCount>1?"s":""} en rotation` : "";
+  return `<div class="sfm-hero sfm-fade-up">
+    <div class="sfm-hero-top">
+      <div>
+        <div class="sfm-eyebrow">Compte-rendu de soirée</div>
+        <div class="sfm-hero-date">${dateHtml}</div>
+      </div>
+      <div class="sfm-hero-meta">${metaLine1}${metaLine2?`<br>${metaLine2}`:""}</div>
+    </div>
+    ${recapSentence ? `<p class="sfm-hero-recap">${recapSentence}</p>` : ""}
+    ${tickerHtml}
+    ${statStripHtml}
+  </div>`;
+}
+
+function _sfmScoreboardHTML(standings) {
+  if (standings.length < 2) return "";
+  const ranks = ["1re place","2e place","3e place","4e place","5e place"];
+  const cards = standings.map((row, i) => {
+    const cls = teamCls(row.team);
+    const diffSign = row.diff > 0 ? "+" : "";
+    const diffCls  = row.diff > 0 ? "pos" : row.diff < 0 ? "neg" : "";
+    return `<div class="sfm-sb-card sfm-fade-up" style="animation-delay:${(i*0.05).toFixed(2)}s">
+      <div class="sfm-sb-accent ${cls}"></div>
+      <div class="sfm-sb-body">
+        <div class="sfm-sb-head">
+          <div><div class="sfm-sb-rank${i===0?" first":""}">${ranks[i]||(i+1)+"e place"}</div><div class="sfm-sb-name ${cls}">${dot(row.team)}${TEAM_LABEL[row.team]||row.team}</div></div>
+          <div class="sfm-sb-pts"><div class="v">${row.pts}</div><div class="l">Pts</div></div>
+        </div>
+        <div class="sfm-sb-sep"></div>
+        <div class="sfm-sb-wdl"><span class="v">${row.v}V</span><span class="n">${row.n}N</span><span class="d">${row.d}D</span></div>
+        <div class="sfm-sb-gf"><span>${row.gf} pour · ${row.ga} contre</span><span class="diff ${diffCls}">${diffSign}${row.diff}</span></div>
+      </div>
+    </div>`;
+  }).join("");
+  const hasTie = standings.some((s,i) => i>0 && s.pts === standings[i-1].pts);
+  const tieNote = hasTie ? `<p style="font-size:11.5px;color:var(--text3);margin-top:9px;font-style:italic">Égalité de points — départagée à la différence de buts, puis aux buts marqués.</p>` : "";
+  return `<div class="section-label">Classement de la soirée</div><div class="sfm-sb-grid">${cards}</div>${tieNote}`;
+}
+
+function _sfmPerfCard(role, name, cls, statLine, delay) {
+  const initials = name.slice(0,2).toUpperCase();
+  return `<div class="sfm-perf-card sfm-fade-up" style="animation-delay:${delay}s">
+    <div class="sfm-perf-av ${cls}">${initials}</div>
+    <div>
+      <div class="sfm-perf-role">${role}</div>
+      <div class="sfm-perf-name">${pLink(name)}</div>
+      <div class="sfm-perf-stat">${statLine}</div>
+    </div>
+  </div>`;
+}
+
+function _sfmBuildPerformers(session, matchs, buteursCount, passeursCount, gkRanking) {
+  const cards = [];
+  let delay = 0;
+  const teamOf = name => (session.presences && session.presences[name]) ? (session.presences[name].equipe||"") : "";
+
+  const buteursRanked  = Object.entries(buteursCount).sort((a,b) => b[1]-a[1]);
+  const passeursRanked = Object.entries(passeursCount).sort((a,b) => b[1]-a[1]);
+
+  if (buteursRanked.length) {
+    const [name, count] = buteursRanked[0];
+    cards.push(_sfmPerfCard("Étoile de la soirée", name, teamCls(teamOf(name)),
+      `${count} but${count>1?"s":""} inscrit${count>1?"s":""} durant la soirée`, (delay+=0.05).toFixed(2)));
+  }
+  if (passeursRanked.length) {
+    const [name, count] = passeursRanked[0];
+    cards.push(_sfmPerfCard("Passeur en chef", name, teamCls(teamOf(name)),
+      `${count} passe${count>1?"s":""} décisive${count>1?"s":""}`, (delay+=0.05).toFixed(2)));
+  }
+  if (gkRanking && gkRanking.length) {
+    const best = [...gkRanking].sort((a,b) => a.rate-b.rate || b.matchs-a.matchs || a.name.localeCompare(b.name,"fr"))[0];
+    const stat = best.buts === 0
+      ? `0 but encaissé dans les buts (${best.matchs} mi-temps${best.matchs>1?"s":""})`
+      : `${best.buts} but${best.buts>1?"s":""} encaissé${best.buts>1?"s":""} en ${best.matchs} mi-temps${best.matchs>1?"s":""}`;
+    cards.push(_sfmPerfCard("Mur infranchissable", best.name, teamCls(teamOf(best.name)), stat, (delay+=0.05).toFixed(2)));
+  }
+
+  let bestSingle = null;
+  matchs.forEach((m, i) => {
+    const c = {};
+    (m.buteursA||[]).forEach(b => { if (b && b!=="CSC") c[b]=(c[b]||0)+1; });
+    (m.buteursB||[]).forEach(b => { if (b && b!=="CSC") c[b]=(c[b]||0)+1; });
+    Object.entries(c).forEach(([name, count]) => {
+      if (!bestSingle || count > bestSingle.count) bestSingle = { name, count, idx: i, m };
+    });
+  });
+  if (bestSingle && bestSingle.count >= 2) {
+    cards.push(_sfmPerfCard("Festival offensif", bestSingle.name, teamCls(teamOf(bestSingle.name)),
+      `${_sfmGoalsPhrase(bestSingle.count)} lors du match #${bestSingle.idx+1} (${bestSingle.m.scoreA}-${bestSingle.m.scoreB})`, (delay+=0.05).toFixed(2)));
+  }
+
+  return cards;
+}
+
+function _sfmLineupCardHTML(color, players, gkSet, delay) {
+  const cls  = teamCls(color);
+  const icon = color === "Rouge" ? "🔴" : color === "Vert" ? "🟡" : "🔵";
+  const pills = players.map(p => {
+    const gk = gkSet.has(p.name) ? ` <span class="sfm-gk">🧤</span>` : "";
+    return `<span class="sfm-lu-pill ${cls}">${pLink(p.name)}${gk}</span>`;
+  }).join("");
+  return `<div class="sfm-lu-card sfm-fade-up" style="animation-delay:${delay}s">
+    <div class="sfm-lu-accent ${cls}"></div>
+    <div class="sfm-lu-head">
+      <div class="sfm-lu-ico ${cls}">${icon}</div>
+      <span class="sfm-lu-title ${cls}">${TEAM_LABEL[color]||color}</span>
+      <span class="sfm-lu-count">${players.length} joueur${players.length>1?"s":""}</span>
+    </div>
+    <div class="sfm-lu-players">${pills}</div>
+  </div>`;
+}
+
+function _sfmLogisticsHTML(session) {
+  const parts = [];
+  if (session.sac)      parts.push(`<span>🎒 Sac : <b>${pLink(session.sac)}</b></span>`);
+  if (session.maillots) parts.push(`<span>👕 Maillots : <b>${pLink(session.maillots)}</b></span>`);
+  const byStatut = statut => Object.entries(session.presences||{})
+    .filter(([,i]) => i.statut === statut).map(([n]) => n).sort((a,b)=>a.localeCompare(b,"fr"));
+  const blesses    = byStatut("Blessé");
+  const absents    = byStatut("Absent");
+  const pasRepondu = byStatut("Pas répondu");
+  if (blesses.length)    parts.push(`<span>🩹 Blessé${blesses.length>1?"s":""} : <b>${blesses.map(n=>pLink(n)).join(", ")}</b></span>`);
+  if (absents.length)    parts.push(`<span>❌ Absent${absents.length>1?"s":""} : <b>${absents.map(n=>pLink(n)).join(", ")}</b></span>`);
+  if (pasRepondu.length) parts.push(`<span>❓ Pas répondu : <b>${pasRepondu.map(n=>pLink(n)).join(", ")}</b></span>`);
+  if (!parts.length) return "";
+  return `<div class="sfm-logistics sfm-fade-up">${parts.join(`<span class="sfm-sep">·</span>`)}</div>`;
+}
+
+function renderSessionDetailV2(session) {
+  const matchs = session.matchs || [];
+
+  const presentsAll = Object.entries(session.presences || {})
+    .filter(([, info]) => info.statut === "Présent")
+    .map(([name, info]) => ({ name, equipe: info.equipe || "" }))
+    .sort((a, b) => a.name.localeCompare(b.name, "fr"));
+  const presentsCount = presentsAll.length;
+
+  let totalButs = 0;
+  const buteursCount = {}, passeursCount = {};
+  matchs.forEach(m => {
+    totalButs += m.scoreA + m.scoreB;
+    ["A","B"].forEach(side => {
+      const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
+      buts.forEach((b,i) => {
+        if (!b || b==="CSC") return;
+        buteursCount[b] = (buteursCount[b]||0)+1;
+        const p = passes[i]; if (p && p!=="CSC") passeursCount[p] = (passeursCount[p]||0)+1;
+      });
+    });
+  });
+  const buteursRanked  = Object.entries(buteursCount).sort((a,b)=>b[1]-a[1]);
+  const passeursRanked = Object.entries(passeursCount).sort((a,b)=>b[1]-a[1]);
+  const standings  = _sfmStandings(matchs);
+  const gkRanking  = computeGardiensRanking([session]);
+  const avgButs    = matchs.length ? (totalButs/matchs.length).toFixed(1).replace(".", ",") : "—";
+
+  const recapSentence   = matchs.length ? _sfmRecapSentence(session, matchs, totalButs, buteursRanked, passeursRanked, gkRanking) : "";
+  const spotlights      = _sfmPickSpotlights(matchs);
+  const spotlightIdxSet = new Set(spotlights.map(s => s.i));
+  const tickerHtml      = matchs.length ? _sfmTickerHTML(matchs, spotlightIdxSet) : "";
+  const statStripHtml   = matchs.length ? _sfmStatStripHTML(presentsCount, matchs.length, totalButs, avgButs) : "";
+
+  let h = _sfmHeroHTML(session, matchs, presentsCount, standings.length, recapSentence, tickerHtml, statStripHtml);
+
+  if (!matchs.length) {
+    h += `<div class="sfm-no-data-card sfm-fade-up">
+      <div class="big">🌒</div>
+      Aucun match enregistré pour cette soirée pour le moment.
+    </div>`;
+  } else {
+    h += _sfmScoreboardHTML(standings);
+
+    const spotCards = spotlights.map((s,i) => _sfmSpotlightCardHTML(matchs[s.i], s.kind, (i*0.05).toFixed(2)));
+    if (spotCards.length) {
+      h += `<div class="section-label">Temps forts</div><div class="sfm-spot-grid">${spotCards.join("")}</div>`;
+    }
+
+    const perfCards = _sfmBuildPerformers(session, matchs, buteursCount, passeursCount, gkRanking);
+    if (perfCards.length) {
+      h += `<div class="section-label">Performances individuelles</div><div class="sfm-perf-grid">${perfCards.join("")}</div>`;
+    }
+  }
+
+  /* ── Compositions & coulisses ── */
+  const gkSet = _sfmGoalkeepersSet(matchs);
+  const teamMap = { Rouge: [], Vert: [], Bleue: [] };
+  const noTeam = [];
+  presentsAll.forEach(p => { teamMap[p.equipe] !== undefined ? teamMap[p.equipe].push(p) : noTeam.push(p); });
+  const activeColors = ["Rouge","Vert","Bleue"].filter(c => teamMap[c].length > 0);
+  const logisticsHtml = _sfmLogisticsHTML(session);
+
+  if (activeColors.length) {
+    h += `<div class="section-label">Compositions &amp; coulisses</div><div class="sfm-lineup-grid">`;
+    h += activeColors.map((c,i) => _sfmLineupCardHTML(c, teamMap[c], gkSet, (i*0.05).toFixed(2))).join("");
+    h += `</div>`;
+    if (noTeam.length) {
+      h += `<div class="no-team-section"><div class="no-team-label">Sans équipe assignée</div>
+        <div class="players-present-list">${noTeam.map(p => `<button class="player-chip player-link" data-player="${p.name}">${p.name}</button>`).join("")}</div></div>`;
+    }
+    h += logisticsHtml;
+  } else if (presentsAll.length) {
+    h += `<div class="section-label">Effectif (${presentsAll.length})</div>
+      <div class="players-present-list">${presentsAll.map(p => `<button class="player-chip player-link" data-player="${p.name}">${p.name}</button>`).join("")}</div>`;
+    h += logisticsHtml;
+  } else if (logisticsHtml) {
+    h += logisticsHtml;
+  }
+
+  /* ── Tous les matchs ── */
+  if (matchs.length) {
+    h += `<div class="section-label">Tous les matchs <span class="sfm-count-n">— ${matchs.length} match${matchs.length>1?"s":""}</span></div><div class="matches-recap-list">`;
+    matchs.forEach((m,i) => { h += `<div id="sfm-m${i}">${buildMatchRecapRowHTML(m, i)}</div>`; });
+    h += `</div>`;
+  }
+
+  return h;
+}
+
+function _sfmBindTicker(container) {
+  container.querySelectorAll('[data-sfm-goto]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const wrap = container.querySelector(`#${btn.dataset.sfmGoto}`);
+      if (!wrap) return;
+      const row = wrap.querySelector('.match-recap-row') || wrap;
+      wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      row.classList.add('sfm-flash');
+      setTimeout(() => row.classList.remove('sfm-flash'), 1200);
+    });
+  });
 }
 
 function buildAggTop3(ranked, unitS, unitP) {
@@ -3890,8 +4427,9 @@ function renderSessionResults(date) {
     container.innerHTML = `<p class="no-data" style="margin-top:1rem">Aucune donnée pour cette session.</p>`;
     return;
   }
-  container.innerHTML = renderSessionDetail(session);
+  container.innerHTML = renderSessionDetailV2(session);
   animateView(container);
+  _sfmBindTicker(container);
 }
 
 /* ══════════════════════════════════════════════════════════
