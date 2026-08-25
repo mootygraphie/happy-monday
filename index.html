@@ -1400,7 +1400,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 16:58</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 17:07</footer>
 
 <script>
 
@@ -1636,50 +1636,16 @@ const _BASE_PLAYERS = new Set(ALL_PLAYERS);
 JSON.parse(localStorage.getItem('hmft_extra_players') || '[]').forEach(n => {
   if (!ALL_PLAYERS.includes(n)) { ALL_PLAYERS.push(n); JOKERS.add(n); }
 });
-/* Initiales d avatar : exactement 2 lettres pour les noms composes (espace
-   ou tiret) — Pierre-Olivier -> PO, Raph P / Raph L -> RP / RL. Pour les
-   noms simples : 2 lettres minimum, davantage seulement si besoin pour
-   distinguer des joueurs qui entreraient sinon en collision. */
+/* Initiales d avatar : toujours exactement 2 lettres. Noms composes (espace
+   ou tiret) -> initiale de chaque mot (Pierre-Olivier -> PO, Raph P -> RP).
+   Noms simples -> 2 premieres lettres. Pas de gestion de collision : deux
+   joueurs peuvent partager les memes initiales. */
 function computeAllInitials(players) {
-  const parts = {};
-  players.forEach(p => {
-    parts[p] = p.trim().split(/[\s-]+/).filter(Boolean);
-  });
-
-  const cands = {};
-  players.forEach(p => {
-    const ps = parts[p];
-    const list = [];
-    if (ps.length > 1) {
-      list.push(ps[0][0] + ps[1][0]);
-    } else {
-      for (let i = 2; i <= Math.max(2, p.length); i++) list.push(p.slice(0, Math.min(i, p.length)));
-    }
-    cands[p] = [...new Set(list.map(s => s.toUpperCase()))];
-  });
-
   const result = {};
-  let active = new Set(players);
-  let level = 0;
-  while (active.size && level < 40) {
-    const groups = {};
-    active.forEach(p => {
-      const idx = Math.min(level, cands[p].length - 1);
-      const key = cands[p][idx];
-      (groups[key] = groups[key] || []).push(p);
-    });
-    Object.values(groups).forEach(group => {
-      const maxed = group.filter(p => Math.min(level, cands[p].length - 1) === cands[p].length - 1);
-      const growable = group.filter(p => Math.min(level, cands[p].length - 1) < cands[p].length - 1);
-      if (group.length === 1 || growable.length === 0) {
-        group.forEach(p => { result[p] = cands[p][Math.min(level, cands[p].length - 1)]; active.delete(p); });
-      } else if (maxed.length > 0) {
-        maxed.forEach(p => { result[p] = cands[p][cands[p].length - 1]; active.delete(p); });
-      }
-    });
-    level++;
-  }
-  active.forEach(p => { result[p] = cands[p][cands[p].length - 1]; });
+  players.forEach(p => {
+    const ps = p.trim().split(/[\s-]+/).filter(Boolean);
+    result[p] = (ps.length > 1 ? ps[0][0] + ps[1][0] : p.slice(0, 2)).toUpperCase();
+  });
   return result;
 }
 
