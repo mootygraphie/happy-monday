@@ -1342,6 +1342,7 @@
   .sfm-spot-goals > div { flex: 1; line-height: 1.7; }
   .sfm-spot-goals > div.r { text-align: right; }
   .sfm-spot-goals em { color: var(--text3); font-style: italic; }
+  .sfm-spot-gk { display: inline-block; margin-left: 8px; font-size: 10px; color: var(--text3); white-space: nowrap; }
 
   .sfm-perf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 12px; }
   .sfm-perf-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 15px; display: flex; gap: 12px; align-items: flex-start; }
@@ -1516,7 +1517,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 17:41</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 19:32</footer>
 
 <script>
 
@@ -2670,6 +2671,20 @@ function renderSessionDetail(session) {
    continue d'alimenter le Dashboard ("Dernière session") sans modification.
 ══════════════════════════════════════════════════════════ */
 
+function _sfmGoalsGrouped(buteurs) {
+  if (!buteurs || !buteurs.length) return `<span style="color:var(--text3)">—</span>`;
+  const c = {};
+  buteurs.forEach(p => { if (p) c[p] = (c[p]||0) + 1; });
+  return Object.entries(c).map(([p, n]) => {
+    const d = p === "CSC" ? `<em>CSC</em>` : pLink(p);
+    return n > 1 ? `${d} ×${n}` : d;
+  }).join(", ");
+}
+function _sfmGkLineHTML(gardiens) {
+  const names = (gardiens || []).filter(Boolean);
+  if (!names.length) return "";
+  return `<span class="sfm-spot-gk">🧤 ${names.map(n => pLink(n)).join(" / ")}</span>`;
+}
 function _sfmGoalsPhrase(n) {
   if (n === 1) return "1 but";
   if (n === 2) return "un doublé";
@@ -2779,8 +2794,10 @@ function _sfmSpotlightCardHTML(m, kind, delay) {
   const clA = teamCls(m.eqA), clB = teamCls(m.eqB);
   const sc = scoreColors(m);
   const mt = (m.mt1A !== undefined && m.mt1B !== undefined) ? `<div class="sfm-spot-mt">mi-temps ${m.mt1A}–${m.mt1B}</div>` : "";
-  const goalsA = fmtGoalsList(m.buteursA, m.passeursA) || `<span style="color:var(--text3)">—</span>`;
-  const goalsB = fmtGoalsList(m.buteursB, m.passeursB) || `<span style="color:var(--text3)">—</span>`;
+  const goalsA = _sfmGoalsGrouped(m.buteursA);
+  const goalsB = _sfmGoalsGrouped(m.buteursB);
+  const gkA = _sfmGkLineHTML(m.gardiensA);
+  const gkB = _sfmGkLineHTML(m.gardiensB);
   return `<div class="sfm-spot-card sfm-fade-up" style="animation-delay:${delay}s">
     <div class="sfm-spot-eyebrow">${meta.eyebrow}</div>
     <div class="sfm-spot-score">
@@ -2792,8 +2809,8 @@ function _sfmSpotlightCardHTML(m, kind, delay) {
     ${meta.caption ? `<p class="sfm-spot-caption">${meta.caption}</p>` : ""}
     <div class="sfm-spot-sep"></div>
     <div class="sfm-spot-goals">
-      <div>⚽ ${goalsA}</div>
-      <div class="r">${goalsB}</div>
+      <div>⚽ ${goalsA}${gkA}</div>
+      <div class="r">${goalsB}${gkB}</div>
     </div>
   </div>`;
 }
