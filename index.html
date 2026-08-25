@@ -430,7 +430,7 @@
   .roster-actions button:hover { background: var(--border2); }
   @media (max-width: 460px) { .roster-chips { display: none; } }
 
-  .joueurs-section-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-style: italic; color: var(--text3); margin: 2rem 0 .75rem; }
+  .joueurs-section-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); margin: 2rem 0 .75rem; }
 
   /* ── Lock screen ── */
   #lock-screen {
@@ -929,23 +929,15 @@
 
   /* ── Récompenses : award-card (Ballon d'Or / Yachine / Ballon de Plomb / Calamity James) ── */
   .award-card {
-    background: var(--bg2);
+    background: var(--award-bg, var(--gold-bg));
     border: 1px solid var(--award-border, var(--gold-border));
     border-radius: var(--radius-lg);
     overflow: hidden;
     margin-bottom: 0;
-    position: relative;
     box-shadow: var(--shadow);
-  }
-  .award-card::before {
-    content: "";
-    position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, transparent 0%, var(--award-color, var(--gold)) 40%, color-mix(in srgb, var(--award-color, var(--gold)) 50%, transparent) 60%, transparent 100%);
   }
   .award-head {
     padding: 16px 22px 14px;
-    background: var(--award-bg, var(--gold-bg));
-    border-bottom: 1px solid var(--award-border, var(--gold-border));
     display: flex; align-items: center; gap: 14px;
   }
   .award-ico { font-size: 26px; line-height: 1; flex-shrink: 0; }
@@ -962,13 +954,8 @@
     padding: 10px 22px;
     transition: background .12s;
   }
-  .award-row:hover { background: var(--bg3); }
-  .award-row.award-first {
-    padding: 14px 22px;
-    background: var(--award-bg, var(--gold-bg));
-    border-bottom: 1px solid var(--award-border, var(--gold-border));
-  }
-  .award-row.award-first:hover { background: color-mix(in srgb, var(--award-color, var(--gold)) 12%, transparent); }
+  .award-row:hover { background: color-mix(in srgb, var(--award-color, var(--gold)) 8%, transparent); }
+  .award-row.award-first { padding: 12px 22px; }
   .award-rank { min-width: 26px; font-size: 18px; text-align: center; flex-shrink: 0; }
   .award-rank.num { font-size: 13px; font-weight: 700; color: var(--text3); }
   .award-name { flex: 1; font-size: 14px; font-weight: 600; min-width: 0; }
@@ -1305,7 +1292,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 15:32</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 15:45</footer>
 
 <script>
 
@@ -2078,7 +2065,7 @@ function buildCalamityJamesHtml(sessions) {
   const year = _currentSeason(); const lbl = _seasonLabel(year);
   const ranking = computeGardiensRanking(sessions.filter(s => _seasonStart(s.date) === year))
     .sort((a, b) => b.rate - a.rate || b.matchs - a.matchs || a.name.localeCompare(b.name, 'fr'));
-  let html = `<div class="award-card" style="--award-color:var(--bad);--award-bg:var(--bad-bg);--award-border:var(--bad-border)">
+  let html = `<div class="award-card" style="--award-color:var(--neutral);--award-bg:var(--neutral-bg);--award-border:var(--neutral-border)">
     <div class="award-head">
       <span class="award-ico">🌪️</span>
       <div>
