@@ -1693,7 +1693,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 21:47</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 21:49</footer>
 
 <script>
 
@@ -4130,8 +4130,10 @@ function _dbxComputeAgg(sessions) {
     .filter(([n,p]) => p.presences>0 && !JOKERS.has(n))
     .sort((a,b) => b[1].presences-a[1].presences || byAlpha(a,b)).slice(0,5);
   const goalsBySession = sorted.map(s => ({ date: s.date, goals: (s.matchs||[]).reduce((a,m) => a+m.scoreA+m.scoreB, 0) }));
-  /* Points façon Ballon d Or (5 pts / but, 10 pts / assist), memes regles que Recompenses : CSC exclu. */
-  const totalPts = Object.values(st.ps).reduce((a,p) => a + p.buts*5 + p.passes*10, 0);
+  /* Points de classement (victoire = 3, nul = 1, defaite = 0), memes regles que le
+     classement de soiree de l onglet Sessions (_sfmStandings). Chaque match decisif
+     distribue 3 points au total, chaque nul en distribue 2 (1 de chaque cote). */
+  const totalPts = allMatchsChrono.length*3 - draws;
   return {
     allMatchs: allMatchsChrono, ps: st.ps, colorWins: st.colorWins, draws,
     goalsFor: st.goalsPerTeam, goalsAgainst, totalGoals, leaders, maxWins,
