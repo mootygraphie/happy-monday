@@ -1242,7 +1242,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 11:56</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 12:17</footer>
 
 <script>
 
@@ -3600,6 +3600,7 @@ document.getElementById("edit-session-btn").addEventListener("click", () => {
   _editMode = true;
   _draft = _loadSessionIntoDraft(session);
   _draftSavedAt = null;
+  _resetSaisieUiState();
   document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
   document.getElementById("panel-saisie").classList.add("active");
@@ -4670,12 +4671,31 @@ const _STATUTS_REG  = ["Présent", "Absent", "Blessé", "Pas répondu"];
 const _STATUT_CLS   = { "Présent":"active-present", "Absent":"active-absent", "Blessé":"active-blesse", "Pas répondu":"active-nr" };
 const _JOKER_NC = "Non convoqué";
 
+let _saisieStep = "presences";      // "presences" | "matchs" | "logistique"
+let _saisieFocusedMatch = undefined; // index dans _draft.matchs actuellement en édition ; null = réduit explicitement, undefined = pas encore décidé
+let _saisiePicker = null;            // { key } — sélecteur (gardien/buteur/passeur) ouvert
+let _saisieTeamSwap = null;          // "{idx}-{side}" — sélecteur d'équipe ouvert
+let _saisieMtOpen = {};              // { [matchIdx]: true } — mi-temps dépliée
+const _SAISIE_STEPS = [
+  { key: "presences",  label: "Présences",  icon: "👥" },
+  { key: "matchs",     label: "Matchs",     icon: "⚽" },
+  { key: "logistique", label: "Logistique", icon: "🎒" },
+];
+
 function _newDraft() {
   const presences = {};
   ALL_PLAYERS.forEach(p => {
     presences[p] = { statut: JOKERS.has(p) ? _JOKER_NC : "Pas répondu", equipe: "" };
   });
   return { date: "", sac: "", maillots: "", presences, matchs: [], tempJokers: [] };
+}
+
+function _resetSaisieUiState() {
+  _saisieStep = "presences";
+  _saisieFocusedMatch = undefined;
+  _saisiePicker = null;
+  _saisieTeamSwap = null;
+  _saisieMtOpen = {};
 }
 
 function _loadDraft() {
@@ -4745,9 +4765,6 @@ function _playersOfTeam(color) {
     .filter(([,v]) => v.statut === "Présent" && v.equipe === color).map(([k]) => k).sort((a, b) => a.localeCompare(b, "fr"));
 }
 
-function _teamDotEmoji(equipe) {
-  return equipe === "Rouge" ? "🔴" : equipe === "Vert" ? "🟡" : equipe === "Bleue" ? "🔵" : "";
-}
 // Buteurs/passeurs : équipe sur le terrain d'abord, équipe de dépanne ensuite
 function _teamPoolOrdered(eq, benchEq) {
   return [..._playersOfTeam(eq), ...(benchEq ? _playersOfTeam(benchEq) : [])];
@@ -4758,242 +4775,342 @@ function _gardienPoolOrdered(eq, benchEq) {
   if (own.length >= 5 || !benchEq) return own;
   return [..._playersOfTeam(benchEq), ...own];
 }
-function _playerOptionHTML(p, isSelected, placeholder) {
-  if (!p) return `<option value="" ${isSelected ? "selected" : ""}>${placeholder || ""}</option>`;
-  const dot = _teamDotEmoji(_draft.presences[p]?.equipe || "");
-  return `<option value="${p}" ${isSelected ? "selected" : ""}>${dot ? dot + " " : ""}${p}</option>`;
+function _saisieBenchTeam(eqA, eqB, teams) {
+  return teams.length >= 3 ? (teams.find(t => t !== eqA && t !== eqB) || "") : "";
 }
 
-function _presenceRowHTML(p, statut, isJoker, removable) {
-  if (isJoker) {
-    return `<div class="saisie-player-row">
-      <span class="saisie-player-name">${p}</span>
-      <div class="saisie-status-btns">
-        <button class="saisie-statut-btn ${statut==="Présent"?"active-present":""}" data-player="${p}" data-statut="Présent">✅</button>
-        <button class="saisie-statut-btn ${statut==="Blessé"?"active-blesse":""}" data-player="${p}" data-statut="Blessé">🤕</button>
-        <button class="saisie-statut-btn ${statut===_JOKER_NC?"active-nc":""}" data-player="${p}" data-statut="${_JOKER_NC}" title="Non convoqué">🫥</button>
-        ${removable ? `<button class="saisie-remove-temp-joker" data-player="${p}" title="Retirer ce joueur" style="background:transparent;border:none;color:var(--fg3);cursor:pointer;font-size:15px;padding:0 4px;margin-left:4px">✕</button>` : ""}
+/* ── Présences : chips groupées par statut ── */
+function _saisieTeamDotsHTML(p, eq) {
+  return `<span class="saisie-team-dots">${["Rouge","Vert","Bleue"].map(t =>
+    `<button class="saisie-team-dot ${t.toLowerCase()}${eq===t?" active":""}" data-act="saisie-team" data-player="${p}" data-equipe="${t}" title="${TEAM_LABEL[t]}"></button>`
+  ).join("")}</span>`;
+}
+function _saisieRegChipHTML(p) {
+  const statut = _draft.presences[p]?.statut || "Pas répondu";
+  const eq = _draft.presences[p]?.equipe || "";
+  const stCls = statut === "Présent" ? "st-present" : statut === "Absent" ? "st-absent" : statut === "Blessé" ? "st-blesse" : "st-nr";
+  const teamCls = statut === "Présent" && eq ? ` team-${eq.toLowerCase()}` : "";
+  const btns = _STATUTS_REG.map(s => `<button class="saisie-chip-btn" data-act="saisie-status" data-player="${p}" data-statut="${s}" title="${s}">${{"Présent":"✅","Absent":"❌","Blessé":"🤕","Pas répondu":"❓"}[s]}</button>`).join("");
+  const dots = statut === "Présent" ? _saisieTeamDotsHTML(p, eq) : "";
+  return `<span class="saisie-chip ${stCls}${teamCls}">
+    <span class="saisie-chip-name">${p}</span>
+    ${dots}
+    <span class="saisie-chip-btns">${btns}</span>
+  </span>`;
+}
+function _saisieJokerChipHTML(p, removable) {
+  const statut = _draft.presences[p]?.statut || _JOKER_NC;
+  const eq = _draft.presences[p]?.equipe || "";
+  const stCls = statut === "Présent" ? "st-present" : statut === "Blessé" ? "st-blesse" : "st-nr";
+  const teamCls = statut === "Présent" && eq ? ` team-${eq.toLowerCase()}` : "";
+  const dots = statut === "Présent" ? _saisieTeamDotsHTML(p, eq) : "";
+  const btns = `
+    <button class="saisie-chip-btn" data-act="saisie-status" data-player="${p}" data-statut="Présent" title="Présent">✅</button>
+    <button class="saisie-chip-btn" data-act="saisie-status" data-player="${p}" data-statut="Blessé" title="Blessé">🤕</button>
+    <button class="saisie-chip-btn" data-act="saisie-status" data-player="${p}" data-statut="${_JOKER_NC}" title="Non convoqué">🫥</button>
+    ${removable ? `<button class="saisie-chip-btn" data-act="saisie-remove-temp-joker" data-player="${p}" title="Retirer">✕</button>` : ""}
+  `;
+  return `<span class="saisie-chip ${stCls}${teamCls}">
+    <span class="saisie-chip-name">${p} <span class="saisie-chip-badge">+1</span></span>
+    ${dots}
+    <span class="saisie-chip-btns">${btns}</span>
+  </span>`;
+}
+function _sortPresentFirst(list) {
+  const order = ["Rouge","Vert","Bleue"];
+  return [...list].sort((a, b) => {
+    const ea = _draft.presences[a]?.equipe || "", eb = _draft.presences[b]?.equipe || "";
+    const ia = order.indexOf(ea), ib = order.indexOf(eb);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || a.localeCompare(b, "fr");
+  });
+}
+function _buildPresencesScreenHTML() {
+  const regularPlayers = ALL_PLAYERS.filter(p => !JOKERS.has(p) && !ABSENTS.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
+  const jokerPlayers = ALL_PLAYERS.filter(p => JOKERS.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
+  const tempJokers = _draft.tempJokers || [];
+  const byStatut = (list, s) => list.filter(p => (_draft.presences[p]?.statut || "Pas répondu") === s);
+
+  const countPresents = Object.values(_draft.presences).filter(v => v.statut === "Présent").length;
+  const countAbsents  = Object.entries(_draft.presences).filter(([k, v]) => !JOKERS.has(k) && !tempJokers.includes(k) && v.statut === "Absent").length;
+  const countBlesses  = Object.entries(_draft.presences).filter(([, v]) => v.statut === "Blessé").length;
+  const countNR       = Object.entries(_draft.presences).filter(([k, v]) => !JOKERS.has(k) && !tempJokers.includes(k) && v.statut === "Pas répondu").length;
+
+  const group = (label, icon, list) => !list.length ? "" : `<div class="saisie-pres-block">
+      <div class="saisie-pres-label">${icon} ${label} <span class="n">(${list.length})</span></div>
+      <div class="saisie-chip-row">${list.map(_saisieRegChipHTML).join("")}</div>
+    </div>`;
+  const jokerGroup = (label, icon, list) => !list.length ? "" : `<div class="saisie-pres-block">
+      <div class="saisie-pres-label">${icon} ${label} <span class="n">(${list.length})</span></div>
+      <div class="saisie-chip-row">${list.map(p => _saisieJokerChipHTML(p, tempJokers.includes(p))).join("")}</div>
+    </div>`;
+
+  const allJokers = [...jokerPlayers, ...tempJokers];
+  const jkPresents = _sortPresentFirst(allJokers.filter(p => (_draft.presences[p]?.statut || _JOKER_NC) === "Présent"));
+  const jkBlesses  = allJokers.filter(p => _draft.presences[p]?.statut === "Blessé");
+  const jkNC       = allJokers.filter(p => (_draft.presences[p]?.statut || _JOKER_NC) === _JOKER_NC);
+
+  return `<div class="saisie-section">
+    <div class="saisie-section-title">👥 Présences</div>
+    <div class="saisie-pres-summary">
+      <span>✅ ${countPresents} présent${countPresents>1?"s":""}</span>
+      <span>❌ ${countAbsents} absent${countAbsents>1?"s":""}</span>
+      <span>🤕 ${countBlesses} blessé${countBlesses>1?"s":""}</span>
+      <span>❓ ${countNR} n'${countNR>1?"ont":"a"} pas répondu</span>
+    </div>
+    ${group("Présents", "✅", _sortPresentFirst(byStatut(regularPlayers, "Présent")))}
+    ${group("Absents", "❌", byStatut(regularPlayers, "Absent"))}
+    ${group("Blessés", "🤕", byStatut(regularPlayers, "Blessé"))}
+    ${group("Pas répondu", "❓", byStatut(regularPlayers, "Pas répondu"))}
+    <div class="saisie-jokers-title">Joueurs +1</div>
+    ${jokerGroup("Présents", "✅", jkPresents)}
+    ${jokerGroup("Blessés", "🤕", jkBlesses)}
+    ${jokerGroup("Non convoqués", "🫥", jkNC)}
+    <div class="saisie-joker-add">
+      <input type="text" id="saisie-new-joker-input" placeholder="Nom du +1" class="saisie-date-input">
+      <button class="saisie-btn secondary" data-act="saisie-add-temp-joker">+ Ajouter</button>
+    </div>
+  </div>`;
+}
+
+/* ── Matchs : éditeur focalisé + récap ── */
+function _saisieFieldBtnHTML(value, placeholder, key, emptyWarn) {
+  const info = value === "CSC" ? { name: "CSC (c.s.c.)", team: null } : (value ? { name: value, team: _draft.presences[value]?.equipe || null } : null);
+  const isOpen = _saisiePicker && _saisiePicker.key === key;
+  const cls = ["saisie-field-btn", info ? "filled" : "", isOpen ? "open" : "", (!info && emptyWarn) ? "empty" : ""].filter(Boolean).join(" ");
+  const dotEl = info && info.team ? `<span class="fdot ${info.team.toLowerCase()}"></span>` : "";
+  return `<button class="${cls}" data-act="saisie-open-picker" data-key="${key}">${dotEl}<span>${info ? info.name : placeholder}</span><span class="chev2">▾</span></button>`;
+}
+function _saisiePickerHTML(key, title, options, includeCSC, allowNone) {
+  if (!_saisiePicker || _saisiePicker.key !== key) return "";
+  const chips = [];
+  if (includeCSC) chips.push(`<button class="saisie-pchip muted" data-act="saisie-pick" data-key="${key}" data-val="CSC">CSC (c.s.c.)</button>`);
+  if (allowNone !== false) chips.push(`<button class="saisie-pchip muted" data-act="saisie-pick" data-key="${key}" data-val="">— aucun —</button>`);
+  options.forEach(p => {
+    const eq = (_draft.presences[p]?.equipe || "").toLowerCase();
+    chips.push(`<button class="saisie-pchip ${eq}" data-act="saisie-pick" data-key="${key}" data-val="${p}"><span class="pdot"></span>${p}</button>`);
+  });
+  return `<div class="saisie-picker">
+    <div class="saisie-picker-hdr"><span>${title}</span><button data-act="saisie-close-picker">✕</button></div>
+    <div class="saisie-picker-grid">${chips.join("")}</div>
+  </div>`;
+}
+function _saisieGoalRowsHTML(idx, side, eq, otherEq, benchTeam) {
+  const m = _draft.matchs[idx];
+  const score = side === "A" ? m.scoreA : m.scoreB;
+  const buteurs = side === "A" ? m.buteursA : m.buteursB;
+  const passeurs = side === "A" ? m.passeursA : m.passeursB;
+  const pool = _teamPoolOrdered(eq, benchTeam);
+  const otherPool = _teamPoolOrdered(otherEq, benchTeam);
+  let rows = "";
+  for (let j = 0; j < score; j++) {
+    const bKey = `but-${idx}-${side}-${j}`, pKey = `pas-${idx}-${side}-${j}`;
+    const bv = buteurs[j] || "", pv = passeurs[j] || "";
+    const isCSC = bv === "CSC";
+    rows += `<div class="saisie-goal-row">
+        <span class="saisie-goal-num">${j+1}</span>
+        ${_saisieFieldBtnHTML(bv, "— Buteur —", bKey, true)}
+        ${_saisieFieldBtnHTML(pv, isCSC ? "— Auteur du CSC —" : "— Passeur —", pKey, false)}
       </div>
+      ${_saisiePickerHTML(bKey, `But n°${j+1} — Buteur`, pool.filter(p => p !== pv), true, true)}
+      ${isCSC
+        ? _saisiePickerHTML(pKey, `But n°${j+1} — Auteur du CSC (équipe adverse)`, otherPool, false, true)
+        : _saisiePickerHTML(pKey, `But n°${j+1} — Passeur`, pool.filter(p => p !== bv), false, true)}`;
+  }
+  return rows || `<div class="saisie-empty">Aucun but pour l'instant.</div>`;
+}
+function _saisieTeamPickHTML(idx, side, eq, otherEq, teams) {
+  const swapKey = `${idx}-${side}`;
+  const isOpen = _saisieTeamSwap === swapKey;
+  const opts = teams.filter(t => t !== otherEq);
+  return `<button class="saisie-team-pick ${eq.toLowerCase()}" data-act="saisie-team-swap" data-swapkey="${swapKey}">${TEAM_LABEL[eq]||eq}<span class="chev">▾</span></button>
+    ${isOpen ? `<div class="saisie-team-swap-picker"><div class="saisie-picker-grid">
+      ${opts.map(t => `<button class="saisie-pchip ${t.toLowerCase()}" data-act="saisie-pick-team" data-match="${idx}" data-side="${side}" data-val="${t}"><span class="pdot"></span>${TEAM_LABEL[t]||t}</button>`).join("")}
+    </div></div>` : ""}`;
+}
+function _saisieGkColHTML(idx, side, eq, gardienPool) {
+  const m = _draft.matchs[idx];
+  const g = side === "A" ? m.gardiensA : m.gardiensB;
+  const k0 = `gk-${idx}-${side}-0`, k1 = `gk-${idx}-${side}-1`;
+  return `<div class="saisie-gk-col">
+    <div class="saisie-gk-col-label">Gardien · ${TEAM_LABEL[eq]||eq}</div>
+    <div class="saisie-gk-mt"><span class="saisie-gk-mt-tag">MT1</span>${_saisieFieldBtnHTML(g[0]||"", "— Gardien —", k0, false)}</div>
+    ${_saisiePickerHTML(k0, `Gardien MT1 — ${TEAM_LABEL[eq]||eq}`, gardienPool, false, false)}
+    <div class="saisie-gk-mt"><span class="saisie-gk-mt-tag">MT2</span>${_saisieFieldBtnHTML(g[1]||"", "— Gardien —", k1, false)}</div>
+    ${_saisiePickerHTML(k1, `Gardien MT2 — ${TEAM_LABEL[eq]||eq}`, gardienPool, false, false)}
+  </div>`;
+}
+function _saisieMatchEditorHTML(idx) {
+  const m = _draft.matchs[idx];
+  const teams = _activeTeams();
+  const eqA = m.eqA, eqB = m.eqB;
+  const benchTeam = _saisieBenchTeam(eqA, eqB, teams);
+  const gardienPoolA = _gardienPoolOrdered(eqA, benchTeam);
+  const gardienPoolB = _gardienPoolOrdered(eqB, benchTeam);
+
+  // Un gardien doit toujours être renseigné : on pré-remplit avec le premier joueur du pool si vide
+  if (!m.gardiensA) m.gardiensA = ["",""];
+  if (!m.gardiensB) m.gardiensB = ["",""];
+  [0,1].forEach(mt => {
+    if (!m.gardiensA[mt] && gardienPoolA.length) m.gardiensA[mt] = gardienPoolA[0];
+    if (!m.gardiensB[mt] && gardienPoolB.length) m.gardiensB[mt] = gardienPoolB[0];
+  });
+
+  const mtOpen = !!_saisieMtOpen[idx] || (m.mt1A > 0 || m.mt1B > 0);
+  const eqAVar = eqA === "Bleue" ? "bleu" : eqA.toLowerCase();
+  const eqBVar = eqB === "Bleue" ? "bleu" : eqB.toLowerCase();
+
+  return `<div class="saisie-match-editor">
+    <div class="saisie-me-teams">
+      ${_saisieTeamPickHTML(idx, "A", eqA, eqB, teams)}
+      <div class="saisie-vs">VS${benchTeam ? `<div class="bench-note">${TEAM_LABEL[benchTeam]||benchTeam} dépanne</div>` : ""}</div>
+      ${_saisieTeamPickHTML(idx, "B", eqB, eqA, teams)}
+    </div>
+
+    <div class="saisie-score-row">
+      <div class="saisie-score-side">
+        <button class="saisie-stepper-btn" data-act="saisie-score" data-match="${idx}" data-side="A" data-delta="-1">–</button>
+        <span class="saisie-score-num">${m.scoreA}</span>
+        <button class="saisie-stepper-btn" data-act="saisie-score" data-match="${idx}" data-side="A" data-delta="1">+</button>
+      </div>
+      <span class="saisie-score-dash">–</span>
+      <div class="saisie-score-side">
+        <button class="saisie-stepper-btn" data-act="saisie-score" data-match="${idx}" data-side="B" data-delta="-1">–</button>
+        <span class="saisie-score-num">${m.scoreB}</span>
+        <button class="saisie-stepper-btn" data-act="saisie-score" data-match="${idx}" data-side="B" data-delta="1">+</button>
+      </div>
+    </div>
+    <div class="saisie-mt-row">
+      ${mtOpen
+        ? `<button data-act="saisie-toggle-mt" data-match="${idx}">− masquer la mi-temps</button>
+           <div class="saisie-mt-inputs">
+             <input type="number" min="0" max="${m.scoreA}" data-act="saisie-mt-input" data-match="${idx}" data-side="A" value="${m.mt1A||0}">
+             <span>–</span>
+             <input type="number" min="0" max="${m.scoreB}" data-act="saisie-mt-input" data-match="${idx}" data-side="B" value="${m.mt1B||0}">
+             <span>à la mi-temps</span>
+           </div>`
+        : `<button data-act="saisie-toggle-mt" data-match="${idx}">+ renseigner la mi-temps</button>`}
+    </div>
+
+    <div class="saisie-gk-grid">
+      ${_saisieGkColHTML(idx, "A", eqA, gardienPoolA)}
+      ${_saisieGkColHTML(idx, "B", eqB, gardienPoolB)}
+    </div>
+
+    <div class="saisie-goals-title">Buteurs &amp; passeurs</div>
+    <div class="saisie-goal-side">
+      <span class="saisie-goal-side-label" style="color:var(--${eqAVar})">${TEAM_LABEL[eqA]||eqA}</span>
+      ${_saisieGoalRowsHTML(idx, "A", eqA, eqB, benchTeam)}
+    </div>
+    <div class="saisie-goal-side">
+      <span class="saisie-goal-side-label" style="color:var(--${eqBVar})">${TEAM_LABEL[eqB]||eqB}</span>
+      ${_saisieGoalRowsHTML(idx, "B", eqB, eqA, benchTeam)}
+    </div>
+
+    <div class="saisie-me-actions">
+      <button class="saisie-btn danger" data-act="saisie-remove-match" data-match="${idx}">Supprimer ce match</button>
+      <button class="saisie-btn secondary" data-act="saisie-collapse-match">Réduire</button>
+    </div>
+  </div>`;
+}
+function _buildMatchsScreenHTML() {
+  const teams = _activeTeams();
+  if (teams.length < 2) {
+    return `<div class="saisie-section">
+      <div class="saisie-section-title">⚽ Matchs</div>
+      <p class="saisie-empty">Assignez au moins 2 équipes pour ajouter des matchs.</p>
     </div>`;
   }
-  return `<div class="saisie-player-row">
-    <span class="saisie-player-name">${p}</span>
-    <div class="saisie-status-btns">
-      ${_STATUTS_REG.map(s => `<button class="saisie-statut-btn ${statut===s?_STATUT_CLS[s]:""}" data-player="${p}" data-statut="${s}">${{"Présent":"✅","Absent":"❌","Blessé":"🤕","Pas répondu":"❓"}[s]}</button>`).join("")}
-    </div>
+  if (!Array.isArray(_draft.matchs)) _draft.matchs = [];
+  if (_saisieFocusedMatch === undefined && _draft.matchs.length) _saisieFocusedMatch = _draft.matchs.length - 1;
+  if (_saisieFocusedMatch !== undefined && _saisieFocusedMatch !== null && !_draft.matchs[_saisieFocusedMatch]) _saisieFocusedMatch = _draft.matchs.length ? _draft.matchs.length - 1 : null;
+
+  const editorHTML = _saisieFocusedMatch != null ? _saisieMatchEditorHTML(_saisieFocusedMatch) : "";
+  const recapRows = _draft.matchs.map((m, i) => {
+    if (i === _saisieFocusedMatch) return "";
+    return `<button class="match-recap-row clickable" data-act="saisie-focus-match" data-match="${i}">
+      <span class="mrr-num">#${i+1}</span>
+      <span class="mrr-teams">${dot(m.eqA)}<span class="mrr-score">${m.scoreA}–${m.scoreB}</span>${dot(m.eqB)}</span>
+      <span class="mrr-sep"></span>
+      <span class="mrr-goals">${[_recapSideSummary(m,"A"), _recapSideSummary(m,"B")].filter(Boolean).join(' <span style="color:var(--border2)">|</span> ') || "—"}</span>
+      <span class="mrr-edit">Modifier ›</span>
+    </button>`;
+  }).join("");
+
+  return `<div class="saisie-section">
+    <div class="saisie-section-title">⚽ Matchs</div>
+    ${editorHTML}
+    <button class="saisie-add-match" data-act="saisie-add-match">+ Ajouter un match</button>
+    ${_draft.matchs.length > 1 ? `<div class="saisie-recap-title"><h4>Autres matchs de la soirée</h4></div><div class="matches-recap-list">${recapRows}</div>` : ""}
   </div>`;
-}
-
-function _buildEquipesHTML() {
-  const presents = _presentList();
-  if (!presents.length) return `<p class="saisie-empty">Aucun joueur marqué comme Présent.</p>`;
-  const TEAM_BTNS = [
-    { key: "Rouge", label: "R", cls: "eq-btn-rouge" },
-    { key: "Vert",  label: "J", cls: "eq-btn-vert"  },
-    { key: "Bleue", label: "B", cls: "eq-btn-bleue"  },
-  ];
-  return `<div class="saisie-equipes-grid">${presents.map(p => {
-    const eq = _draft.presences[p]?.equipe || "";
-    const isJoker = JOKERS.has(p) || (_draft.tempJokers||[]).includes(p);
-    const btns = TEAM_BTNS.map(t =>
-      `<button class="saisie-eq-btn ${t.cls}${eq===t.key?" active":""}" data-player="${p}" data-equipe="${t.key}">${t.label}</button>`
-    ).join("");
-    return `<div class="saisie-equipe-row">
-      <span class="saisie-player-name">${p}</span>
-      <div class="saisie-eq-btns">${btns}</div>
-    </div>`;
-  }).join("")}</div>`;
-}
-
-function _buildMatchCardHTML(m, idx, teams) {
-  const teamOpts = (sel, exclude) => teams.filter(t => !exclude || t !== exclude).map(t => `<option value="${t}" ${sel===t?"selected":""}>${TEAM_LABEL[t]||t}</option>`).join("");
-  // Avec 3 équipes, l'équipe qui ne joue pas ce match peut dépanner (gardien, buteur ou passeur) pour les deux équipes en jeu
-  const benchTeam = teams.length >= 3 ? (teams.find(t => t !== m.eqA && t !== m.eqB) || "") : "";
-  const poolA = _teamPoolOrdered(m.eqA, benchTeam);
-  const poolB = _teamPoolOrdered(m.eqB, benchTeam);
-  const gardienPoolA = _gardienPoolOrdered(m.eqA, benchTeam);
-  const gardienPoolB = _gardienPoolOrdered(m.eqB, benchTeam);
-  const gardiensAArr = (m.gardiensA||[]).filter(g => g && g.trim());
-  const gardiensBArr = (m.gardiensB||[]).filter(g => g && g.trim());
-  const effectivePa = [...poolA, ...gardiensAArr.filter(g => !poolA.includes(g))];
-  const effectivePb = [...poolB, ...gardiensBArr.filter(g => !poolB.includes(g))];
-  const butSelHTML = (side, list, buteurs, passeurs, score, otherList) =>
-    Array.from({length: score}, (_,j) => {
-      const v  = buteurs[j]  || "";
-      const pv = passeurs[j] || "";
-      const isCSC = v === "CSC";
-      const butList = pv ? list.filter(p => p !== pv) : list;
-      const opts  = [_playerOptionHTML("", v==="", "— Buteur —"), `<option value="CSC" ${v==="CSC"?"selected":""}>CSC (c.s.c.)</option>`, ...butList.map(p => _playerOptionHTML(p, v===p))].join("");
-      if (isCSC) {
-        const aOpts = [_playerOptionHTML("", pv==="", "— Auteur du CSC —"), ...(otherList||[]).map(p => _playerOptionHTML(p, pv===p))].join("");
-        return `<div class="saisie-goal-row">
-          <select class="saisie-select saisie-buteur-sel" data-match="${idx}" data-side="${side}" data-goal="${j}">${opts}</select>
-          <select class="saisie-select saisie-passeur-sel" data-match="${idx}" data-side="${side}" data-goal="${j}" style="opacity:1;font-size:13px">${aOpts}</select>
-        </div>`;
-      }
-      const pasList = v && v !== "CSC" ? list.filter(p => p !== v) : list;
-      const popts = [_playerOptionHTML("", pv==="", "— Passeur (opt.) —"), ...pasList.map(p => _playerOptionHTML(p, pv===p))].join("");
-      return `<div class="saisie-goal-row">
-        <select class="saisie-select saisie-buteur-sel${v===""?" saisie-buteur-empty":""}" data-match="${idx}" data-side="${side}" data-goal="${j}">${opts}</select>
-        <select class="saisie-select saisie-passeur-sel" data-match="${idx}" data-side="${side}" data-goal="${j}">${popts}</select>
-      </div>`;
-    }).join("");
-  const gardienOpts = (val, players) =>
-    players.map(p => _playerOptionHTML(p, val===p)).join("");
-  const mt1A = m.mt1A ?? 0;
-  const mt1B = m.mt1B ?? 0;
-  // Un gardien doit toujours être renseigné : on pré-remplit avec le premier joueur du pool si vide
-  const gardiensA = m.gardiensA = m.gardiensA || ["",""];
-  const gardiensB = m.gardiensB = m.gardiensB || ["",""];
-  [0,1].forEach(mt => {
-    if (!gardiensA[mt] && gardienPoolA.length) gardiensA[mt] = gardienPoolA[0];
-    if (!gardiensB[mt] && gardienPoolB.length) gardiensB[mt] = gardienPoolB[0];
-  });
-  const lblA = TEAM_LABEL[m.eqA]||m.eqA||"Éq.A";
-  const lblB = TEAM_LABEL[m.eqB]||m.eqB||"Éq.B";
-  const showButeurs = m.scoreA > 0 || m.scoreB > 0;
-  return `<div class="saisie-match-card">
-    <div class="saisie-match-row">
-      <span class="saisie-match-num">#${idx+1}</span>
-      <select class="saisie-select saisie-team-sel" data-match="${idx}" data-side="A">${teamOpts(m.eqA, m.eqB)}</select>
-      <input type="number" class="saisie-score-input" min="0" max="20" data-match="${idx}" data-side="A" value="${m.scoreA}">
-      <span class="saisie-dash">–</span>
-      <input type="number" class="saisie-score-input" min="0" max="20" data-match="${idx}" data-side="B" value="${m.scoreB}">
-      <select class="saisie-select saisie-team-sel" data-match="${idx}" data-side="B">${teamOpts(m.eqB, m.eqA)}</select>
-      <button class="saisie-remove-match" data-match="${idx}">✕</button>
-    </div>
-    <div class="saisie-mt-section">
-      <div class="saisie-mt-header">
-        🧤 <strong style="font-size:11px;letter-spacing:.04em;color:var(--text2)">MI-TEMPS</strong>
-        <input type="number" class="saisie-mt1-input" min="0" max="20" data-match="${idx}" data-side="A" value="${mt1A}">
-        <span class="saisie-dash" style="font-size:14px">–</span>
-        <input type="number" class="saisie-mt1-input" min="0" max="20" data-match="${idx}" data-side="B" value="${mt1B}">
-      </div>
-      <div class="saisie-gardiens-pair">
-        <div class="saisie-gardien-col">
-          <span class="saisie-gardien-col-label">${lblA}</span>
-          <div class="saisie-gardien-mt-row"><span class="mt-label">MT1</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="A" data-mt="0">${gardienOpts(gardiensA[0]||"", gardienPoolA)}</select></div>
-          <div class="saisie-gardien-mt-row"><span class="mt-label">MT2</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="A" data-mt="1">${gardienOpts(gardiensA[1]||"", gardienPoolA)}</select></div>
-        </div>
-        <div class="saisie-gardien-col">
-          <span class="saisie-gardien-col-label">${lblB}</span>
-          <div class="saisie-gardien-mt-row"><span class="mt-label">MT1</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="B" data-mt="0">${gardienOpts(gardiensB[0]||"", gardienPoolB)}</select></div>
-          <div class="saisie-gardien-mt-row"><span class="mt-label">MT2</span><select class="saisie-select saisie-gardien-sel" style="flex:1;min-width:0;font-size:12px" data-match="${idx}" data-side="B" data-mt="1">${gardienOpts(gardiensB[1]||"", gardienPoolB)}</select></div>
-        </div>
-      </div>
-    </div>
-    ${showButeurs ? `<div class="saisie-buteurs-row">
-      <div class="saisie-buteurs-side">
-        <span class="saisie-buteurs-label">${lblA}</span>
-        <div class="saisie-buteurs-sels">${butSelHTML("A",effectivePa,m.buteursA,m.passeursA||[],m.scoreA,effectivePb)||'<span style="color:var(--fg3);font-size:12px">—</span>'}</div>
-      </div>
-      <div class="saisie-buteurs-side">
-        <span class="saisie-buteurs-label">${lblB}</span>
-        <div class="saisie-buteurs-sels">${butSelHTML("B",effectivePb,m.buteursB,m.passeursB||[],m.scoreB,effectivePa)||'<span style="color:var(--fg3);font-size:12px">—</span>'}</div>
-      </div>
-    </div>` : ""}
-  </div>`;
-}
-
-function _buildMatchsSectionHTML() {
-  const teams = _activeTeams();
-  if (teams.length < 2) return `<p class="saisie-empty">Assignez au moins 2 équipes pour ajouter des matchs.</p>
-    <button class="saisie-add-match" id="saisie-add-match" disabled style="opacity:.4;cursor:default">+ Ajouter un match</button>`;
-  return (_draft.matchs || []).map((m, i) => _buildMatchCardHTML(m, i, teams)).join("") +
-    `<button class="saisie-add-match" id="saisie-add-match">+ Ajouter un match</button>`;
 }
 
 function renderSaisie() {
   if (!_draft) _loadDraft();
-  const presents = _presentList();
-  const regularPlayers = ALL_PLAYERS.filter(p => !JOKERS.has(p) && !ABSENTS.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
-  const jokerPlayers   = ALL_PLAYERS.filter(p =>  JOKERS.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
-  const countPresents = Object.values(_draft.presences).filter(v => v.statut === "Présent").length;
-  const countAbsents  = Object.entries(_draft.presences).filter(([k, v]) => !JOKERS.has(k) && !(_draft.tempJokers||[]).includes(k) && v.statut === "Absent").length;
-  const countBlesses  = Object.entries(_draft.presences).filter(([, v]) => v.statut === "Blessé").length;
-  const sacOpts    = ["", ...presents].map(p => `<option value="${p}" ${_draft.sac===p?"selected":""}>${p||"— non défini —"}</option>`).join("");
-  const mailOpts   = ["", ...presents].map(p => `<option value="${p}" ${_draft.maillots===p?"selected":""}>${p||"— non défini —"}</option>`).join("");
-  const statusTxt  = _draftSavedAt
+  const statusTxt = _draftSavedAt
     ? `<span style="color:#2ecc71;font-size:12px">✓ Sauvegardé à ${_draftSavedAt}</span>`
-    : `<span style="color:var(--fg3);font-size:12px">Brouillon non sauvegardé</span>`;
+    : `<span style="color:var(--text3);font-size:12px">Brouillon non sauvegardé</span>`;
+
+  const doneIdx = _SAISIE_STEPS.findIndex(s => s.key === _saisieStep);
+  const stepperHTML = _SAISIE_STEPS.map((s, i) => {
+    const cls = ["saisie-step-pill", s.key === _saisieStep ? "active" : "", i < doneIdx ? "done" : ""].filter(Boolean).join(" ");
+    const sep = i < _SAISIE_STEPS.length - 1 ? `<div class="saisie-step-line ${i < doneIdx ? "done" : ""}"></div>` : "";
+    return `<button class="${cls}" data-act="saisie-go-step" data-step="${s.key}">
+      <span class="num">${i < doneIdx ? "" : (i+1)}</span><span class="lbl">${s.icon} ${s.label}</span>
+    </button>${sep}`;
+  }).join("");
+
+  const presents = _presentList();
+  const sacOpts  = ["", ...presents].map(p => `<option value="${p}" ${_draft.sac===p?"selected":""}>${p||"— non défini —"}</option>`).join("");
+  const mailOpts = ["", ...presents].map(p => `<option value="${p}" ${_draft.maillots===p?"selected":""}>${p||"— non défini —"}</option>`).join("");
 
   document.getElementById("saisie-content").innerHTML = `<div class="saisie-wrap">
 
     ${_editMode ? `<div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;padding:10px 14px;background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.2);border-radius:10px;font-size:13px;color:var(--gold)">✏️&ensp;<strong>Mode édition</strong>&ensp;<span style="color:var(--text2)">— Session du ${fmtDate(_draft.date)}</span></div>` : ""}
+
     <div class="saisie-bar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <label for="saisie-date" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3)">Session du</label>
+        <input type="date" class="saisie-date-input" id="saisie-date" value="${_draft.date}"${_editMode ? ' readonly style="opacity:.55;cursor:not-allowed"' : ''}>
+      </div>
       <span id="saisie-status" class="saisie-status">${_editMode ? "" : statusTxt}</span>
       <div class="saisie-actions">
         ${_editMode ? "" : `<button class="saisie-btn secondary" id="saisie-save">Enregistrer</button>`}
         ${_editMode
           ? `<button class="saisie-btn secondary" id="saisie-cancel-edit">Annuler</button>`
           : `<button class="saisie-btn danger" id="saisie-clear">Effacer</button>`}
+      </div>
+    </div>
+
+    <div class="saisie-stepper">${stepperHTML}</div>
+
+    <div class="saisie-screen${_saisieStep==="presences"?" active":""}" data-screen="presences">
+      ${_buildPresencesScreenHTML()}
+      <div class="saisie-screen-nav"><span></span><button class="saisie-btn primary" data-act="saisie-go-step" data-step="matchs">Matchs →</button></div>
+    </div>
+
+    <div class="saisie-screen${_saisieStep==="matchs"?" active":""}" data-screen="matchs">
+      ${_buildMatchsScreenHTML()}
+      <div class="saisie-screen-nav">
+        <button class="saisie-btn secondary" data-act="saisie-go-step" data-step="presences">← Présences</button>
+        <button class="saisie-btn primary" data-act="saisie-go-step" data-step="logistique">Logistique →</button>
+      </div>
+    </div>
+
+    <div class="saisie-screen${_saisieStep==="logistique"?" active":""}" data-screen="logistique">
+      <div class="saisie-section">
+        <div class="saisie-section-title">🎒 Logistique</div>
+        <div class="saisie-logistique">
+          <div class="saisie-logistique-row"><label>🎒 Sac</label><select class="saisie-select" id="saisie-sac">${sacOpts}</select></div>
+          <div class="saisie-logistique-row"><label>👕 Maillots</label><select class="saisie-select" id="saisie-maillots">${mailOpts}</select></div>
+        </div>
+      </div>
+      <div class="saisie-screen-nav">
+        <button class="saisie-btn secondary" data-act="saisie-go-step" data-step="matchs">← Matchs</button>
         <button class="saisie-btn primary" id="saisie-commit">${_editMode ? "Mettre à jour ✓" : "Valider ✓"}</button>
       </div>
     </div>
 
-    <div class="saisie-section">
-      <div class="saisie-section-title">📅 Date de la session</div>
-      <input type="date" class="saisie-date-input" id="saisie-date" value="${_draft.date}"${_editMode ? ' readonly style="opacity:.55;cursor:not-allowed"' : ''}>
-    </div>
-
-    <div class="saisie-section">
-      <div class="saisie-section-title">👥 Présences</div>
-      <div style="display:flex;gap:16px;margin-bottom:14px;font-size:13px;font-weight:600">
-        <span style="color:#66bb6a">✅ ${countPresents} présent${countPresents>1?"s":""}</span>
-        <span style="color:#ef5350">❌ ${countAbsents} absent${countAbsents>1?"s":""}</span>
-        <span style="color:#ffa726">🤕 ${countBlesses} blessé${countBlesses>1?"s":""}</span>
-      </div>
-      <div class="saisie-presences-grid">
-        ${regularPlayers.map(p => _presenceRowHTML(p, _draft.presences[p]?.statut||"Pas répondu", false)).join("")}
-      </div>
-      <div class="saisie-jokers-title">Joueurs +1</div>
-      <div class="saisie-presences-grid">
-        ${jokerPlayers.map(p => _presenceRowHTML(p, _draft.presences[p]?.statut||_JOKER_NC, true, false)).join("")}
-        ${(_draft.tempJokers||[]).map(p => _presenceRowHTML(p, _draft.presences[p]?.statut||"Présent", true, true)).join("")}
-      </div>
-      <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
-        <input type="text" id="saisie-new-joker-input" placeholder="Nom du +1" class="saisie-date-input" style="font-size:13px;padding:6px 10px;flex:1;max-width:220px">
-        <button class="saisie-btn secondary" id="saisie-add-temp-joker">+ Ajouter</button>
-      </div>
-    </div>
-
-    <div class="saisie-section">
-      <div class="saisie-section-title">🎒 Logistique</div>
-      <div class="saisie-logistique">
-        <div class="saisie-logistique-row">
-          <label>🎒 Sac</label>
-          <select class="saisie-select" id="saisie-sac">${sacOpts}</select>
-        </div>
-        <div class="saisie-logistique-row">
-          <label>👕 Maillots</label>
-          <select class="saisie-select" id="saisie-maillots">${mailOpts}</select>
-        </div>
-      </div>
-    </div>
-
-    <div class="saisie-section" id="saisie-equipes-section">
-      <div class="saisie-section-title">🎽 Équipes</div>
-      ${_buildEquipesHTML()}
-    </div>
-
-    <div class="saisie-section" id="saisie-matchs-section">
-      <div class="saisie-section-title">⚽ Matchs</div>
-      ${_buildMatchsSectionHTML()}
-    </div>
-
   </div>`;
-}
-
-function _reRenderEquipes() {
-  const sec = document.getElementById("saisie-equipes-section");
-  if (!sec) return;
-  sec.innerHTML = `<div class="saisie-section-title">🎽 Équipes</div>${_buildEquipesHTML()}`;
-}
-
-function _reRenderMatchs() {
-  const sec = document.getElementById("saisie-matchs-section");
-  if (!sec) return;
-  sec.innerHTML = `<div class="saisie-section-title">⚽ Matchs</div>${_buildMatchsSectionHTML()}`;
 }
 
 async function _commitSession() {
@@ -5069,6 +5186,7 @@ async function _commitSession() {
   _draft = null;
   _draftSavedAt = null;
   _editMode = false;
+  _resetSaisieUiState();
   localStorage.removeItem("hmft_draft");
   if (_db) _db.ref('config/draft').remove().catch(() => {});
 
@@ -5087,18 +5205,32 @@ async function _commitSession() {
 document.getElementById("saisie-content").addEventListener("click", e => {
   if (!_draft) return;
 
-  const statBtn = e.target.closest(".saisie-statut-btn");
-  if (statBtn) {
-    const p = statBtn.dataset.player; const s = statBtn.dataset.statut;
+  const stepBtn = e.target.closest('[data-act="saisie-go-step"]');
+  if (stepBtn) {
+    _saisieStep = stepBtn.dataset.step; _saisiePicker = null; _saisieTeamSwap = null;
+    renderSaisie(); window.scrollTo({top:0, behavior:"smooth"}); return;
+  }
+
+  const statusBtn = e.target.closest('[data-act="saisie-status"]');
+  if (statusBtn) {
+    const p = statusBtn.dataset.player; const s = statusBtn.dataset.statut;
     if (!_draft.presences[p]) _draft.presences[p] = { statut: s, equipe: "" };
     _draft.presences[p].statut = s;
     if (s !== "Présent") _draft.presences[p].equipe = "";
     renderSaisie(); return;
   }
+  const teamBtn = e.target.closest('[data-act="saisie-team"]');
+  if (teamBtn) {
+    const p = teamBtn.dataset.player; const eq = teamBtn.dataset.equipe;
+    if (_draft.presences[p]) _draft.presences[p].equipe = _draft.presences[p].equipe === eq ? "" : eq;
+    renderSaisie(); return;
+  }
+
   if (e.target.id === "saisie-save")   { _saveDraft(); return; }
   if (e.target.id === "saisie-cancel-edit") {
     _editMode = false;
     _draft = null;
+    _resetSaisieUiState();
     document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
     document.querySelector(".main-tab[data-tab='session']").classList.add("active");
@@ -5108,6 +5240,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   if (e.target.id === "saisie-clear") {
     if (confirm("Effacer le brouillon en cours ?")) {
       _draft = _newDraft(); _draftSavedAt = null;
+      _resetSaisieUiState();
       localStorage.removeItem("hmft_draft");
       if (_db) _db.ref('config/draft').remove().catch(() => {});
       renderSaisie();
@@ -5115,14 +5248,95 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     return;
   }
   if (e.target.id === "saisie-commit") { _commitSession(); return; }
-  if (e.target.id === "saisie-add-match") {
+
+  if (e.target.closest('[data-act="saisie-add-match"]')) {
     const teams = _activeTeams();
     if (!Array.isArray(_draft.matchs)) _draft.matchs = [];
     _draft.matchs.push({ eqA: teams[0]||"", eqB: teams[1]||"", scoreA: 0, scoreB: 0, buteursA: [], buteursB: [], passeursA: [], passeursB: [], mt1A: 0, mt1B: 0, gardiensA: ["",""], gardiensB: ["",""] });
-    _reRenderMatchs(); return;
+    _saisieFocusedMatch = _draft.matchs.length - 1;
+    _saisiePicker = null; _saisieTeamSwap = null;
+    renderSaisie(); return;
   }
-  const rmBtn = e.target.closest(".saisie-remove-match");
-  if (rmBtn) { _draft.matchs.splice(Number(rmBtn.dataset.match), 1); _reRenderMatchs(); return; }
+  const rmBtn = e.target.closest('[data-act="saisie-remove-match"]');
+  if (rmBtn) {
+    const idx = Number(rmBtn.dataset.match);
+    if (confirm("Supprimer ce match ?")) {
+      _draft.matchs.splice(idx, 1);
+      _saisieFocusedMatch = _draft.matchs.length ? Math.min(idx, _draft.matchs.length - 1) : null;
+      renderSaisie();
+    }
+    return;
+  }
+  if (e.target.closest('[data-act="saisie-collapse-match"]')) { _saisieFocusedMatch = null; renderSaisie(); return; }
+  const focusBtn = e.target.closest('[data-act="saisie-focus-match"]');
+  if (focusBtn) {
+    _saisieFocusedMatch = Number(focusBtn.dataset.match);
+    _saisiePicker = null; _saisieTeamSwap = null;
+    renderSaisie(); return;
+  }
+
+  const scoreBtn = e.target.closest('[data-act="saisie-score"]');
+  if (scoreBtn) {
+    const idx = Number(scoreBtn.dataset.match); const side = scoreBtn.dataset.side; const delta = Number(scoreBtn.dataset.delta);
+    const field  = side === "A" ? "scoreA"    : "scoreB";
+    const bfield = side === "A" ? "buteursA"  : "buteursB";
+    const pfield = side === "A" ? "passeursA" : "passeursB";
+    const val = Math.max(0, (_draft.matchs[idx][field]||0) + delta);
+    _draft.matchs[idx][field]  = val;
+    _draft.matchs[idx][bfield] = (_draft.matchs[idx][bfield] || []).slice(0, val);
+    while (_draft.matchs[idx][bfield].length < val) _draft.matchs[idx][bfield].push("");
+    _draft.matchs[idx][pfield] = (_draft.matchs[idx][pfield] || []).slice(0, val);
+    while (_draft.matchs[idx][pfield].length < val) _draft.matchs[idx][pfield].push("");
+    renderSaisie(); return;
+  }
+  const mtToggle = e.target.closest('[data-act="saisie-toggle-mt"]');
+  if (mtToggle) { _saisieMtOpen[Number(mtToggle.dataset.match)] = !_saisieMtOpen[Number(mtToggle.dataset.match)]; renderSaisie(); return; }
+
+  const teamSwapBtn = e.target.closest('[data-act="saisie-team-swap"]');
+  if (teamSwapBtn) {
+    const key = teamSwapBtn.dataset.swapkey;
+    _saisieTeamSwap = _saisieTeamSwap === key ? null : key;
+    renderSaisie(); return;
+  }
+  const pickTeamBtn = e.target.closest('[data-act="saisie-pick-team"]');
+  if (pickTeamBtn) {
+    const idx = Number(pickTeamBtn.dataset.match); const side = pickTeamBtn.dataset.side; const val = pickTeamBtn.dataset.val;
+    const thisField = side === "A" ? "eqA" : "eqB"; const otherField = side === "A" ? "eqB" : "eqA";
+    const oldThis = _draft.matchs[idx][thisField]; const oldOther = _draft.matchs[idx][otherField];
+    _draft.matchs[idx][thisField] = val;
+    if (val === oldOther) _draft.matchs[idx][otherField] = oldThis;
+    _saisieTeamSwap = null;
+    renderSaisie(); return;
+  }
+
+  const pickerOpenBtn = e.target.closest('[data-act="saisie-open-picker"]');
+  if (pickerOpenBtn) {
+    const key = pickerOpenBtn.dataset.key;
+    _saisiePicker = (_saisiePicker && _saisiePicker.key === key) ? null : { key };
+    renderSaisie(); return;
+  }
+  if (e.target.closest('[data-act="saisie-close-picker"]')) { _saisiePicker = null; renderSaisie(); return; }
+  const pickBtn = e.target.closest('[data-act="saisie-pick"]');
+  if (pickBtn) {
+    const key = pickBtn.dataset.key; const val = pickBtn.dataset.val;
+    const parts = key.split("-");
+    const kind = parts[0]; const idx = Number(parts[1]); const side = parts[2]; const n = Number(parts[3]);
+    if (kind === "but") {
+      const bField = side === "A" ? "buteursA" : "buteursB"; const pField = side === "A" ? "passeursA" : "passeursB";
+      const prevVal = _draft.matchs[idx][bField][n];
+      _draft.matchs[idx][bField][n] = val;
+      const curPasseur = _draft.matchs[idx][pField][n];
+      if (val === "CSC" || prevVal === "CSC" || (val && val === curPasseur)) _draft.matchs[idx][pField][n] = "";
+    } else if (kind === "pas") {
+      _draft.matchs[idx][side === "A" ? "passeursA" : "passeursB"][n] = val;
+    } else if (kind === "gk") {
+      const field = side === "A" ? "gardiensA" : "gardiensB";
+      if (!_draft.matchs[idx][field]) _draft.matchs[idx][field] = ["",""];
+      _draft.matchs[idx][field][n] = val;
+    }
+    _saisiePicker = null;
+    renderSaisie(); return;
+  }
 
   if (e.target.id === "saisie-add-temp-joker") {
     const input = document.getElementById("saisie-new-joker-input");
@@ -5140,21 +5354,12 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     renderSaisie(); return;
   }
 
-  const rmTempBtn = e.target.closest(".saisie-remove-temp-joker");
+  const rmTempBtn = e.target.closest('[data-act="saisie-remove-temp-joker"]');
   if (rmTempBtn) {
     const name = rmTempBtn.dataset.player;
     _draft.tempJokers = (_draft.tempJokers||[]).filter(p => p !== name);
     delete _draft.presences[name];
     renderSaisie(); return;
-  }
-
-  const eqBtn = e.target.closest(".saisie-eq-btn");
-  if (eqBtn) {
-    const p = eqBtn.dataset.player; const eq = eqBtn.dataset.equipe;
-    if (_draft.presences[p]) {
-      _draft.presences[p].equipe = _draft.presences[p].equipe === eq ? "" : eq;
-    }
-    _reRenderEquipes(); _reRenderMatchs(); return;
   }
 });
 
@@ -5163,66 +5368,10 @@ document.getElementById("saisie-content").addEventListener("change", e => {
   if (e.target.id === "saisie-date")     { _draft.date = e.target.value; return; }
   if (e.target.id === "saisie-sac")      { _draft.sac = e.target.value; return; }
   if (e.target.id === "saisie-maillots") { _draft.maillots = e.target.value; return; }
-
-  const teamSel = e.target.closest(".saisie-team-sel");
-  if (teamSel) {
-    const idx = Number(teamSel.dataset.match); const side = teamSel.dataset.side;
-    const thisField = side === "A" ? "eqA" : "eqB";
-    const otherField = side === "A" ? "eqB" : "eqA";
-    const oldThis = _draft.matchs[idx][thisField];
-    const oldOther = _draft.matchs[idx][otherField];
-    _draft.matchs[idx][thisField] = e.target.value;
-    if (e.target.value && e.target.value === oldOther) _draft.matchs[idx][otherField] = oldThis;
-    _reRenderMatchs(); return;
-  }
-  const scoreInput = e.target.closest(".saisie-score-input");
-  if (scoreInput) {
-    const idx = Number(scoreInput.dataset.match); const side = scoreInput.dataset.side;
-    const val = Math.max(0, parseInt(e.target.value) || 0);
-    const field  = side === "A" ? "scoreA"    : "scoreB";
-    const bfield = side === "A" ? "buteursA"  : "buteursB";
-    const pfield = side === "A" ? "passeursA" : "passeursB";
-    _draft.matchs[idx][field]  = val;
-    _draft.matchs[idx][bfield] = (_draft.matchs[idx][bfield] || []).slice(0, val);
-    while (_draft.matchs[idx][bfield].length < val) _draft.matchs[idx][bfield].push("");
-    _draft.matchs[idx][pfield] = (_draft.matchs[idx][pfield] || []).slice(0, val);
-    while (_draft.matchs[idx][pfield].length < val) _draft.matchs[idx][pfield].push("");
-    _reRenderMatchs(); return;
-  }
-  const buteurSel = e.target.closest(".saisie-buteur-sel");
-  if (buteurSel) {
-    const idx = Number(buteurSel.dataset.match); const side = buteurSel.dataset.side;
-    const goal = Number(buteurSel.dataset.goal);
-    const bField = side === "A" ? "buteursA" : "buteursB";
-    const pField = side === "A" ? "passeursA" : "passeursB";
-    const prevVal = _draft.matchs[idx][bField][goal];
-    _draft.matchs[idx][bField][goal] = e.target.value;
-    const curPasseur = _draft.matchs[idx][pField][goal];
-    if (e.target.value === "CSC" || prevVal === "CSC" || (e.target.value && e.target.value === curPasseur)) {
-      _draft.matchs[idx][pField][goal] = "";
-    }
-    _reRenderMatchs(); return;
-  }
-  const passeurSel = e.target.closest(".saisie-passeur-sel");
-  if (passeurSel) {
-    const idx = Number(passeurSel.dataset.match); const side = passeurSel.dataset.side;
-    const goal = Number(passeurSel.dataset.goal);
-    _draft.matchs[idx][side === "A" ? "passeursA" : "passeursB"][goal] = e.target.value;
-    _reRenderMatchs(); return;
-  }
-  const mt1Input = e.target.closest(".saisie-mt1-input");
-  if (mt1Input) {
-    const idx = Number(mt1Input.dataset.match); const side = mt1Input.dataset.side;
+  const mtInput = e.target.closest('[data-act="saisie-mt-input"]');
+  if (mtInput) {
+    const idx = Number(mtInput.dataset.match); const side = mtInput.dataset.side;
     _draft.matchs[idx][side === "A" ? "mt1A" : "mt1B"] = Math.max(0, parseInt(e.target.value) || 0);
-    return;
-  }
-  const gardienSel = e.target.closest(".saisie-gardien-sel");
-  if (gardienSel) {
-    const idx = Number(gardienSel.dataset.match); const side = gardienSel.dataset.side;
-    const mt = Number(gardienSel.dataset.mt);
-    const field = side === "A" ? "gardiensA" : "gardiensB";
-    if (!_draft.matchs[idx][field]) _draft.matchs[idx][field] = ["",""];
-    _draft.matchs[idx][field][mt] = e.target.value;
     return;
   }
 });
