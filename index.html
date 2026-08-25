@@ -720,72 +720,159 @@
   #ach-tip .atn2 { font-size:10px; color:var(--text3); margin-top:2px; font-style:italic; }
 
   /* ── Saisie ── */
-  .saisie-wrap { max-width: 760px; }
-  .saisie-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px; }
+  .saisie-wrap { max-width: 820px; }
+  .saisie-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 10px; }
   .saisie-actions { display: flex; gap: 8px; flex-wrap: nowrap; }
-  .saisie-btn { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border2); font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s, opacity .15s; white-space: nowrap; }
-  .saisie-btn.secondary { background: var(--bg2); color: var(--fg); }
+  .saisie-btn { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border2); font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s, opacity .15s; white-space: nowrap; background: var(--bg3); color: var(--text); }
+  .saisie-btn.secondary { background: var(--bg2); color: var(--text); }
   .saisie-btn.secondary:hover { background: var(--bg3); }
   .saisie-btn.danger { background: transparent; color: #e74c3c; border-color: #e74c3c44; }
   .saisie-btn.danger:hover { background: #e74c3c15; }
   .saisie-btn.primary { background: var(--green,#2ecc71); color: #111; border-color: transparent; }
   .saisie-btn.primary:hover { opacity: .9; }
+  .saisie-btn.sm { padding: 5px 10px; font-size: 12px; }
+  .saisie-date-input { background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 8px 12px; color: var(--text); font-size: 15px; cursor: pointer; }
+
+  /* Stepper 3 écrans */
+  .saisie-stepper { display: flex; align-items: center; justify-content: center; margin-bottom: 1.2rem; }
+  .saisie-step-pill { display: flex; align-items: center; gap: 9px; background: none; border: none; cursor: pointer; padding: 8px 4px; font: inherit; color: var(--text3); }
+  .saisie-step-pill .num { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border2); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12.5px; flex-shrink: 0; transition: all .18s; }
+  .saisie-step-pill .lbl { font-weight: 700; font-size: 13px; white-space: nowrap; }
+  .saisie-step-pill.active { color: var(--text); }
+  .saisie-step-pill.active .num { border-color: var(--gold); background: rgba(245,200,66,.14); color: var(--gold); }
+  .saisie-step-pill.done .num { border-color: #2ecc71; background: rgba(46,204,113,.14); color: #2ecc71; }
+  .saisie-step-pill.done .num::after { content: '✓'; }
+  .saisie-step-line { flex: 0 0 auto; width: clamp(20px, 6vw, 56px); height: 2px; background: var(--border2); margin: 0 6px; }
+  .saisie-step-line.done { background: #2ecc71; }
+  @media (max-width: 560px) { .saisie-step-pill .lbl { display: none; } }
+
+  .saisie-screen { display: none; }
+  .saisie-screen.active { display: block; }
+  .saisie-screen-nav { display: flex; justify-content: space-between; margin-top: 18px; }
+
   .saisie-section { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; }
-  .saisie-section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--fg2); margin-bottom: 16px; }
-  .saisie-date-input { background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 8px 12px; color: var(--fg); font-size: 15px; cursor: pointer; }
-  .saisie-presences-grid { display: flex; flex-direction: column; gap: 4px; }
-  .saisie-player-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--border); }
-  .saisie-player-row:last-child { border-bottom: none; }
-  .saisie-player-name { font-size: 14px; font-weight: 500; min-width: 120px; flex-shrink: 0; }
-  .saisie-status-btns { display: flex; gap: 4px; flex-wrap: wrap; }
-  .saisie-statut-btn { padding: 6px 0; width: 44px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg3); color: var(--fg2); font-size: 18px; line-height: 1; cursor: pointer; transition: all .12s; text-align: center; }
-  .saisie-statut-btn:hover { border-color: var(--fg2); }
-  .saisie-statut-btn.active-present  { background: #2ecc7130; border-color: #2ecc71; box-shadow: 0 0 0 2px #2ecc7155; }
-  .saisie-statut-btn.active-absent   { background: #e74c3c25; border-color: #e74c3c; box-shadow: 0 0 0 2px #e74c3c55; }
-  .saisie-statut-btn.active-blesse   { background: #f39c1225; border-color: #f39c12; box-shadow: 0 0 0 2px #f39c1255; }
-  .saisie-statut-btn.active-nr       { background: #99999925; border-color: #999;    box-shadow: 0 0 0 2px #99999955; }
-  .saisie-statut-btn.active-nc       { background: #44444420; border-color: #666;    box-shadow: 0 0 0 2px #66666640; color: var(--fg3); }
-  .saisie-jokers-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--fg3); margin: 14px 0 8px; }
-  .saisie-logistique { display: flex; gap: 16px; margin-top: 18px; flex-wrap: wrap; }
+  .saisie-section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text2); margin-bottom: 16px; }
+
+  /* Présences groupées */
+  .saisie-pres-summary { display: flex; gap: 14px; margin-bottom: 16px; font-size: 12.5px; font-weight: 600; color: var(--text2); flex-wrap: wrap; }
+  .saisie-pres-block + .saisie-pres-block { margin-top: 18px; }
+  .saisie-pres-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin-bottom: 8px; display: flex; align-items: center; gap: 7px; }
+  .saisie-pres-label .n { font-variant-numeric: tabular-nums; color: var(--text2); }
+  .saisie-chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
+  .saisie-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 999px; padding: 5px 6px 5px 12px; font-size: 13.5px; font-weight: 600; transition: border-color .15s, background .15s; }
+  .saisie-chip-name { white-space: nowrap; }
+  .saisie-chip-badge { font-size: 10px; font-weight: 700; background: rgba(245,200,66,.14); color: var(--gold); border-radius: 999px; padding: 1px 6px; letter-spacing: .02em; }
+  .saisie-chip-btns { display: inline-flex; gap: 3px; }
+  .saisie-chip-btn { width: 26px; height: 26px; border-radius: 50%; border: none; background: transparent; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; opacity: .55; transition: opacity .15s, background .15s; }
+  .saisie-chip-btn:hover { opacity: 1; background: var(--border); }
+  .saisie-chip.st-present { border-color: rgba(46,204,113,.4); background: rgba(46,204,113,.08); }
+  .saisie-chip.st-absent  { border-color: rgba(231,76,60,.4); background: rgba(231,76,60,.08); }
+  .saisie-chip.st-blesse  { border-color: rgba(243,156,18,.4); background: rgba(243,156,18,.08); }
+  .saisie-chip.st-nr      { border-color: var(--border2); background: var(--bg3); color: var(--text3); }
+  .saisie-undo { font-size: 11px; color: var(--text3); background: transparent; border: none; cursor: pointer; padding: 2px 6px; border-radius: 999px; opacity: .6; }
+  .saisie-undo:hover { opacity: 1; background: var(--border); }
+  .saisie-team-dots { display: inline-flex; gap: 4px; margin-left: 2px; }
+  .saisie-team-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding: 0; transition: transform .12s, border-color .12s; }
+  .saisie-team-dot::after { content: ''; width: 10px; height: 10px; border-radius: 50%; display: block; }
+  .saisie-team-dot.rouge::after { background: var(--rouge); } .saisie-team-dot.vert::after { background: var(--vert); } .saisie-team-dot.bleue::after { background: var(--bleu); }
+  .saisie-team-dot:hover { transform: scale(1.12); }
+  .saisie-team-dot.active.rouge { border-color: var(--rouge); }
+  .saisie-team-dot.active.vert  { border-color: var(--vert); }
+  .saisie-team-dot.active.bleue { border-color: var(--bleu); }
+  .saisie-chip.team-rouge { background: var(--rouge-bg); border-color: var(--rouge-border); }
+  .saisie-chip.team-vert  { background: var(--vert-bg);  border-color: var(--vert-border); }
+  .saisie-chip.team-bleue { background: var(--bleu-bg);  border-color: var(--bleu-border); }
+  .saisie-jokers-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin: 18px 0 8px; }
+  .saisie-joker-add { display: flex; gap: 8px; margin-top: 12px; }
+  .saisie-joker-add input { flex: 1; max-width: 220px; }
+
+  /* Logistique */
+  .saisie-logistique { display: flex; gap: 16px; margin-top: 4px; flex-wrap: wrap; }
   .saisie-logistique-row { display: flex; align-items: center; gap: 10px; }
-  .saisie-logistique-row label { font-size: 14px; font-weight: 600; color: var(--fg2); }
-  .saisie-select { background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 6px 10px; color: var(--fg); font-size: 13px; cursor: pointer; }
-  .saisie-buteur-empty { border-color: #e74c3c !important; }
-  .saisie-equipes-grid { display: flex; flex-direction: column; gap: 6px; }
-  .saisie-equipe-row { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
-  .saisie-eq-btns { display: flex; gap: 5px; }
-  .saisie-eq-btn { width: 32px; height: 28px; border-radius: 6px; border: 1px solid var(--border2); background: var(--bg3); color: var(--fg2); font-size: 12px; font-weight: 700; cursor: pointer; transition: all .12s; }
-  .saisie-eq-btn:hover { border-color: var(--fg2); }
-  .eq-btn-rouge.active { background: #FF2D95; border-color: #FF2D95; color: #fff; }
-  .eq-btn-vert.active  { background: #D4FF00; border-color: #D4FF00; color: #111; }
-  .eq-btn-bleue.active { background: #00BBFF; border-color: #00BBFF; color: #111; }
-  .saisie-match-card { background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; }
-  .saisie-match-row { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
-  .saisie-match-num { font-size: 11px; font-weight: 700; color: var(--fg3); flex-shrink: 0; }
-  .saisie-match-row .saisie-team-sel { flex: 1; min-width: 0; }
-  .saisie-remove-match { background: transparent; border: none; color: var(--fg3); cursor: pointer; font-size: 14px; padding: 2px 5px; border-radius: 4px; flex-shrink: 0; line-height: 1; }
-  .saisie-remove-match:hover { color: #e74c3c; }
-  .saisie-score-input { width: 44px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 8px; padding: 5px 2px; color: var(--fg); font-size: 18px; font-weight: 700; text-align: center; flex-shrink: 0; }
-  .saisie-mt1-input { width: 36px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 6px; padding: 3px 2px; color: var(--fg); font-size: 14px; font-weight: 700; text-align: center; flex-shrink: 0; }
-  .saisie-dash { font-size: 18px; font-weight: 300; color: var(--fg3); flex-shrink: 0; }
-  .saisie-buteurs-row { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
-  .saisie-buteurs-side { min-width: 0; }
-  .saisie-buteurs-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--fg3); display: block; margin-bottom: 6px; }
-  .saisie-buteurs-sels { display: flex; flex-direction: column; gap: 6px; }
-  .saisie-goal-row { display: flex; align-items: center; gap: 4px; }
-  .saisie-goal-row .saisie-buteur-sel { flex: 1.2; }
-  .saisie-goal-row .saisie-passeur-sel { flex: 1; font-size: 11px; color: var(--fg3); opacity: .85; }
-  .saisie-add-match { width: 100%; padding: 10px; background: transparent; border: 2px dashed var(--border2); border-radius: 10px; color: var(--fg2); font-size: 14px; cursor: pointer; transition: all .15s; }
-  .saisie-add-match:hover { border-color: var(--fg); color: var(--fg); background: var(--bg3); }
-  .saisie-empty { color: var(--fg3); font-size: 14px; font-style: italic; margin: 0; }
+  .saisie-logistique-row label { font-size: 14px; font-weight: 600; color: var(--text2); }
+  .saisie-select { background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 6px 10px; color: var(--text); font-size: 13px; cursor: pointer; }
+
+  .saisie-empty { color: var(--text3); font-size: 14px; font-style: italic; margin: 0; }
   .saisie-status { font-size: 12px; }
-  .saisie-mt-section { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; gap: 8px; }
-  .saisie-mt-header { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text3); }
-  .saisie-gardiens-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .saisie-gardien-col { display: flex; flex-direction: column; gap: 5px; }
-  .saisie-gardien-col-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; }
-  .saisie-gardien-mt-row { display: flex; align-items: center; gap: 5px; }
-  .saisie-gardien-mt-row .mt-label { font-size: 10px; font-weight: 700; color: var(--text3); min-width: 26px; text-transform: uppercase; letter-spacing: .04em; }
+
+  /* Match : éditeur focalisé */
+  .saisie-match-editor { background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 20px; }
+  .saisie-me-teams { display: grid; grid-template-columns: 1fr auto 1fr; align-items: start; gap: 14px; margin-bottom: 18px; }
+  .saisie-team-pick { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 10px; border: 1.5px solid var(--border2); background: var(--bg2); font-weight: 800; font-size: 15px; cursor: pointer; width: 100%; font-family: inherit; }
+  .saisie-team-pick.rouge { border-color: var(--rouge-border); color: var(--rouge); }
+  .saisie-team-pick.vert  { border-color: var(--vert-border); color: var(--vert); }
+  .saisie-team-pick.bleue { border-color: var(--bleu-border); color: var(--bleu); }
+  .saisie-team-pick .chev { font-size: 10px; opacity: .6; margin-left: 3px; }
+  .saisie-vs { font-weight: 800; color: var(--text3); font-size: 13px; text-align: center; padding-top: 12px; }
+  .saisie-vs .bench-note { font-weight: 400; color: var(--text3); margin-top: 2px; font-size: 11px; }
+  .saisie-team-swap-picker { grid-column: 1 / -1; background: var(--bg2); border: 1.5px solid var(--gold); border-radius: 10px; padding: 10px; margin-top: -4px; }
+
+  .saisie-score-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 18px; margin-bottom: 6px; }
+  .saisie-score-side { display: flex; align-items: center; justify-content: center; gap: 14px; }
+  .saisie-score-num { font-size: 64px; font-weight: 800; font-variant-numeric: tabular-nums; min-width: 1.3ch; text-align: center; }
+  .saisie-stepper-btn { width: 46px; height: 46px; border-radius: 50%; border: 1.5px solid var(--border2); background: var(--bg2); color: var(--text); font-size: 22px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: background .12s, transform .1s; }
+  .saisie-stepper-btn:hover { background: var(--bg); }
+  .saisie-stepper-btn:active { transform: scale(.92); }
+  .saisie-score-dash { font-size: 26px; color: var(--text3); font-weight: 300; text-align: center; }
+
+  .saisie-mt-row { text-align: center; color: var(--text3); font-size: 12px; margin-bottom: 16px; }
+  .saisie-mt-row button { font: inherit; font-size: 12px; color: var(--text2); background: none; border: none; text-decoration: underline; text-decoration-color: transparent; cursor: pointer; }
+  .saisie-mt-row button:hover { text-decoration-color: currentColor; }
+  .saisie-mt-inputs { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; }
+  .saisie-mt-inputs input { width: 52px; text-align: center; background: var(--bg2); border: 1px solid var(--border2); border-radius: 8px; padding: 7px; color: var(--text); font: inherit; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .saisie-mt-inputs span { color: var(--text3); font-size: 13px; }
+
+  .saisie-gk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .saisie-gk-col { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+  .saisie-gk-col-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin-bottom: 8px; }
+  .saisie-gk-mt { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .saisie-gk-mt:last-child { margin-bottom: 0; }
+  .saisie-gk-mt-tag { font-size: 10px; font-weight: 700; color: var(--text3); width: 26px; flex-shrink: 0; }
+
+  .saisie-field-btn { flex: 1; text-align: left; background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 9px 12px; font: inherit; font-size: 13px; font-weight: 600; color: var(--text2); cursor: pointer; display: flex; align-items: center; gap: 7px; min-height: 40px; transition: border-color .15s, background .15s; }
+  .saisie-field-btn:hover { border-color: var(--text3); }
+  .saisie-field-btn.filled { color: var(--text); background: var(--bg2); }
+  .saisie-field-btn.empty { border-color: #e74c3c; }
+  .saisie-field-btn .fdot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .saisie-field-btn .fdot.rouge { background: var(--rouge); } .saisie-field-btn .fdot.vert { background: var(--vert); } .saisie-field-btn .fdot.bleue { background: var(--bleu); }
+  .saisie-field-btn.open { border-color: var(--gold); }
+  .saisie-field-btn .chev2 { margin-left: auto; font-size: 10px; opacity: .5; }
+
+  .saisie-goals-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin: 4px 0 10px; }
+  .saisie-goal-row { display: grid; grid-template-columns: 22px 1fr 1fr; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .saisie-goal-side { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .saisie-goal-side-label { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+  .saisie-goal-num { font-size: 11px; color: var(--text3); text-align: center; font-variant-numeric: tabular-nums; }
+
+  .saisie-picker { grid-column: 1 / -1; background: var(--bg2); border: 1.5px solid var(--gold); border-radius: 10px; padding: 12px; margin: -2px 0 6px; }
+  .saisie-picker-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 9px; }
+  .saisie-picker-hdr span { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); }
+  .saisie-picker-hdr button { background: none; border: none; color: var(--text3); font-size: 16px; cursor: pointer; line-height: 1; padding: 2px 4px; }
+  .saisie-picker-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+  .saisie-pchip { border: 1.5px solid var(--border2); background: var(--bg3); border-radius: 999px; padding: 9px 15px; font: inherit; font-weight: 700; font-size: 13.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: transform .1s, border-color .15s; min-height: 40px; }
+  .saisie-pchip:hover { transform: translateY(-1px); }
+  .saisie-pchip:active { transform: scale(.96); }
+  .saisie-pchip .pdot { width: 9px; height: 9px; border-radius: 50%; }
+  .saisie-pchip.rouge { border-color: var(--rouge-border); color: var(--rouge); } .saisie-pchip.rouge .pdot { background: var(--rouge); }
+  .saisie-pchip.vert  { border-color: var(--vert-border);  color: var(--vert); }  .saisie-pchip.vert .pdot  { background: var(--vert); }
+  .saisie-pchip.bleue { border-color: var(--bleu-border);  color: var(--bleu); }  .saisie-pchip.bleue .pdot { background: var(--bleu); }
+  .saisie-pchip.muted { color: var(--text3); font-weight: 600; }
+
+  .saisie-me-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+  .saisie-add-match { width: 100%; padding: 10px; background: transparent; border: 2px dashed var(--border2); border-radius: 10px; color: var(--text2); font-size: 14px; cursor: pointer; transition: all .15s; margin-top: 14px; }
+  .saisie-add-match:hover { border-color: var(--text); color: var(--text); background: var(--bg3); }
+
+  .saisie-recap-title { display: flex; align-items: baseline; justify-content: space-between; margin: 20px 0 10px; }
+  .saisie-recap-title h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin: 0; }
+  .match-recap-row.clickable { cursor: pointer; width: 100%; text-align: left; font: inherit; }
+  .match-recap-row.clickable:hover { border-color: var(--gold); background: var(--bg3); }
+  .mrr-edit { font-size: 11px; color: var(--text3); flex-shrink: 0; }
+
+  @media (max-width: 620px) {
+    .saisie-score-num { font-size: 46px; }
+    .saisie-stepper-btn { width: 40px; height: 40px; font-size: 19px; }
+    .saisie-gk-grid { grid-template-columns: 1fr; }
+  }
 
   /* ── Ballon d'Or ── */
   .ballon-dor-card {
@@ -1153,7 +1240,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 11:45</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 11:50</footer>
 
 <script>
 
@@ -1867,23 +1954,14 @@ function _recapSideSummary(m, side) {
   const eq = side === "A" ? m.eqA : m.eqB;
   const buteurs = (side === "A" ? m.buteursA : m.buteursB) || [];
   const passeurs = (side === "A" ? m.passeursA : m.passeursB) || [];
-  const gardiens = [...new Set(((side === "A" ? m.gardiensA : m.gardiensB) || []).filter(g => g && g.trim()))];
-  const link = (n, color) => `<button class="player-link" data-player="${n}" style="font-size:inherit;color:${color}">${n}</button>`;
-  const parts = [];
-  if (gardiens.length) {
-    parts.push(`🧤 ${gardiens.map(g => link(g, "var(--text2)")).join(" · ")}`);
-  }
-  if (buteurs.length) {
-    const goals = buteurs.map((b, j) => {
-      const passeur = passeurs[j];
-      const bHtml = b === "CSC" ? `<em>CSC</em>` : link(b, "var(--text3)");
-      const pHtml = passeur ? ` (${link(passeur, "var(--text2)")})` : "";
-      return bHtml + pHtml;
-    }).join(", ");
-    parts.push(`⚽️ ${goals}`);
-  }
-  if (!parts.length) return "";
-  return `<strong style="color:var(--text2);font-weight:700">${TEAM_LABEL[eq]||eq}</strong> : ${parts.join(" • ")}`;
+  if (!buteurs.length) return "";
+  const goals = buteurs.map((b, j) => {
+    const passeur = passeurs[j];
+    const bHtml = b === "CSC" ? `<em>CSC</em>` : `<span style="color:var(--text2)">${b}</span>`;
+    const pHtml = passeur ? ` <span style="color:var(--text3)">(${passeur})</span>` : "";
+    return bHtml + pHtml;
+  }).join(", ");
+  return `<strong style="color:var(--text2);font-weight:700">${TEAM_LABEL[eq]||eq}</strong> : ⚽️ ${goals}`;
 }
 
 function buildMatchRecapRowHTML(m, idx) {
