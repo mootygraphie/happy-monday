@@ -1400,7 +1400,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 17:07</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 17:09</footer>
 
 <script>
 
@@ -2244,9 +2244,10 @@ function _recapSideSummary(m, side) {
 function buildMatchRecapRowHTML(m, idx) {
   const sideA = _recapSideSummary(m, "A"), sideB = _recapSideSummary(m, "B");
   const summary = [sideA, sideB].filter(Boolean).join(` <span style="color:var(--border2)">|</span> `);
+  const sc = scoreColors(m);
   return `<div class="match-recap-row">
     <span class="mrr-num">#${idx+1}</span>
-    <span class="mrr-teams">${dot(m.eqA)}<span class="mrr-score">${m.scoreA}–${m.scoreB}</span>${dot(m.eqB)}</span>
+    <span class="mrr-teams">${dot(m.eqA)}<span class="mrr-score"><span style="color:${sc.a}">${m.scoreA}</span>–<span style="color:${sc.b}">${m.scoreB}</span></span>${dot(m.eqB)}</span>
     <span class="mrr-sep"></span>
     <span class="mrr-goals">${summary || "—"}</span>
   </div>`;
@@ -5310,9 +5311,10 @@ function _buildMatchsScreenHTML() {
   const editorHTML = _saisieFocusedMatch != null ? _saisieMatchEditorHTML(_saisieFocusedMatch) : "";
   const recapRows = _draft.matchs.map((m, i) => {
     if (i === _saisieFocusedMatch) return "";
+    const sc = scoreColors(m);
     return `<button class="match-recap-row clickable" data-act="saisie-focus-match" data-match="${i}">
       <span class="mrr-num">#${i+1}</span>
-      <span class="mrr-teams">${dot(m.eqA)}<span class="mrr-score">${m.scoreA}–${m.scoreB}</span>${dot(m.eqB)}</span>
+      <span class="mrr-teams">${dot(m.eqA)}<span class="mrr-score"><span style="color:${sc.a}">${m.scoreA}</span>–<span style="color:${sc.b}">${m.scoreB}</span></span>${dot(m.eqB)}</span>
       <span class="mrr-sep"></span>
       <span class="mrr-goals">${[_recapSideSummary(m,"A"), _recapSideSummary(m,"B")].filter(Boolean).join(' <span style="color:var(--border2)">|</span> ') || "—"}</span>
       <span class="mrr-edit">Modifier ›</span>
