@@ -422,13 +422,14 @@
   .roster-sub { font-size: 11.5px; color: var(--text3); }
   .roster-sub b { color: var(--text2); font-variant-numeric: tabular-nums; }
   .roster-chips { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; max-width: 130px; }
-  .roster-chip { display: inline-flex; align-items: center; font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 3px 8px; background: var(--bg3); color: var(--text2); }
-  .roster-chip-ico { font-size: 15px; font-weight: 500; line-height: 1; }
+  .roster-chip { display: inline-flex; align-items: center; font-size: 15px; font-weight: 500; border-radius: 999px; padding: 3px 8px; background: var(--bg3); color: var(--text2); }
+  .roster-chip-ico { font-size: 15px; font-weight: 500; line-height: 1; padding-right: 5px; }
   .roster-chip.danger { color: var(--bad); background: var(--bad-bg); }
   .roster-chip.warn { color: #ffa726; background: rgba(255,167,38,.12); }
   .roster-actions { display: flex; gap: 3px; flex-shrink: 0; }
-  .roster-actions button { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border2); background: var(--bg3); font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); }
+  .roster-actions button { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border2); background: #1A1A1F; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); }
   .roster-actions button:hover { background: var(--border2); }
+  html.light .roster-actions button { background: #f4f4f8; }
   @media (max-width: 460px) { .roster-chips { display: none; } }
 
   .joueurs-section-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-style: italic; color: var(--text3); margin: 2rem 0 .75rem; }
@@ -1399,7 +1400,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 16:44</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 16:56</footer>
 
 <script>
 
