@@ -47,7 +47,7 @@
   html.light .player-link { text-decoration-color: rgba(0,0,0,.18); }
   html.light .player-link:hover { color: #000; text-decoration-color: rgba(0,0,0,.5); }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  button, input, select, textarea, optgroup { font-family: inherit; }
+  button, input, select, textarea, optgroup { font-family: inherit; color: inherit; }
   body { background: var(--bg); color: var(--text); font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.5; min-height: 100vh; }
 
   header { padding: 1.5rem 2rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 14px; position: sticky; top: 0; z-index: 500; background: var(--bg); }
@@ -222,9 +222,9 @@
   .matches-recap-list { display: flex; flex-direction: column; gap: 8px; }
   .match-recap-row { display: flex; align-items: center; gap: 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; }
   .mrr-num { font-size: 11px; color: var(--text3); width: 20px; flex-shrink: 0; }
-  .mrr-teams { display: flex; align-items: center; gap: 4px; font-weight: 700; font-size: 13.5px; flex-shrink: 0; white-space: nowrap; }
+  .mrr-teams { display: flex; align-items: center; gap: 4px; font-weight: 700; font-size: 13.5px; flex-shrink: 0; white-space: nowrap; color: var(--text); }
   .mrr-teams .cdot { margin-right: 0; }
-  .mrr-score { font-weight: 800; margin: 0 4px; }
+  .mrr-score { font-weight: 800; margin: 0 4px; color: var(--text); }
   .mrr-sep { width: 1px; height: 18px; background: var(--border2); flex-shrink: 0; }
   .mrr-goals { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text2); font-size: 12px; }
   @media (max-width: 640px) { .match-recap-row { flex-wrap: wrap; } .mrr-goals { flex-basis: 100%; white-space: normal; } .mrr-sep { display: none; } }
@@ -1242,7 +1242,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 12:17</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 12:23</footer>
 
 <script>
 
