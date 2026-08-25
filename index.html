@@ -1026,6 +1026,17 @@
     .saisie-gk-grid { grid-template-columns: 1fr; }
   }
 
+  /* ── Saisie : optimisation tablette en paysage (≥900px large, ≥600px haut, orientation paysage — exclut portrait tablette/mobile et paysage téléphone) ── */
+  @media (min-width: 900px) and (min-height: 600px) and (orientation: landscape) {
+    .saisie-wrap { max-width: 100%; }
+    .saisie-section { padding: 18px 26px; }
+    .saisie-match-editor { padding: 18px 26px; }
+    .saisie-pres-block + .saisie-pres-block { margin-top: 12px; }
+    .saisie-gk-grid { gap: 20px; }
+    .sqtb-goal-cols { display: flex; gap: 26px; align-items: flex-start; }
+    .sqtb-goal-cols > .saisie-goal-side { flex: 1 1 0; min-width: 0; margin-bottom: 0; }
+  }
+
   /* ── Récompenses : award-card (Ballon d'Or / Yachine / Ballon de Plomb / Calamity James) ── */
   .award-card {
     background: var(--award-bg, var(--gold-bg));
@@ -1682,7 +1693,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 21:33</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 21:38</footer>
 
 <script>
 
@@ -5801,13 +5812,15 @@ function _saisieMatchEditorHTML(idx) {
     </div>
 
     <div class="saisie-goals-title">Buteurs &amp; passeurs</div>
-    <div class="saisie-goal-side">
-      <span class="saisie-goal-side-label" style="color:var(--${eqAVar})">${TEAM_LABEL[eqA]||eqA}</span>
-      ${_saisieGoalRowsHTML(idx, "A", eqA, eqB, benchTeam)}
-    </div>
-    <div class="saisie-goal-side">
-      <span class="saisie-goal-side-label" style="color:var(--${eqBVar})">${TEAM_LABEL[eqB]||eqB}</span>
-      ${_saisieGoalRowsHTML(idx, "B", eqB, eqA, benchTeam)}
+    <div class="sqtb-goal-cols">
+      <div class="saisie-goal-side">
+        <span class="saisie-goal-side-label" style="color:var(--${eqAVar})">${TEAM_LABEL[eqA]||eqA}</span>
+        ${_saisieGoalRowsHTML(idx, "A", eqA, eqB, benchTeam)}
+      </div>
+      <div class="saisie-goal-side">
+        <span class="saisie-goal-side-label" style="color:var(--${eqBVar})">${TEAM_LABEL[eqB]||eqB}</span>
+        ${_saisieGoalRowsHTML(idx, "B", eqB, eqA, benchTeam)}
+      </div>
     </div>
 
     <div class="saisie-me-actions">
