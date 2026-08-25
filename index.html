@@ -509,15 +509,6 @@
     font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
     color: var(--text3); font-style: italic; margin-bottom: 10px;
   }
-  .pp-stats-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr);
-    gap: 1px; background: var(--border);
-    border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
-  }
-  .pp-stat-card {
-    background: var(--bg2); padding: 9px 13px;
-    display: flex; align-items: center; gap: 10px;
-  }
   .pp-stat-val { font-size: 20px; font-weight: 700; line-height: 1; flex-shrink: 0; min-width: 18px; }
   .pp-stat-val.green { color: #66bb6a; }
   .pp-stat-val.red   { color: #ef5350; }
@@ -530,6 +521,36 @@
     background: var(--bg3); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 14px 16px;
   }
+  /* Hero : 4 chiffres clés en un coup d'œil, sans scroller */
+  .pph-top-grid { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--border); gap: 1px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .pph-top-cell { background: var(--bg3); padding: 12px 4px 10px; text-align: center; }
+  .pph-top-num { font-size: 21px; font-weight: 800; line-height: 1; }
+  .pph-top-lbl { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin-top: 4px; }
+  /* Forme récente v2 : pastille résultat basée sur la majorité V/D/N de la soirée */
+  .pph-forme-row { display: flex; gap: 8px; }
+  .pph-forme-pill { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 9px 4px; border-radius: var(--radius); background: var(--bg3); border: 1px solid var(--border); }
+  .pph-forme-date { font-size: 9.5px; color: var(--text3); font-weight: 600; }
+  .pph-forme-result { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #fff; }
+  .pph-forme-result.w { background: #2ecc71; } .pph-forme-result.d { background: var(--text3); } .pph-forme-result.l { background: #e74c3c; }
+  .pph-forme-vdn { font-size: 10px; color: var(--text2); font-weight: 700; }
+  .pph-forme-ga { font-size: 9px; color: var(--text3); font-weight: 600; }
+  @media (max-width: 400px) { .pph-forme-row { flex-wrap: wrap; } .pph-forme-pill { flex: 1 1 30%; } }
+  /* Statistiques : tuiles défilables + liste */
+  .pph-stat-scroller { display: flex; gap: 10px; overflow-x: auto; margin: 0 -22px; padding: 0 22px 4px; scrollbar-width: none; }
+  .pph-stat-scroller::-webkit-scrollbar { display: none; }
+  .pph-stat-tile { flex-shrink: 0; min-width: 88px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
+  .pph-stat-tile .pp-stat-lbl { margin-top: 5px; }
+  .pph-stat-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .pph-stat-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; background: var(--bg3); border-radius: var(--radius); font-size: 12.5px; }
+  .pph-stat-row .lbl { color: var(--text2); font-weight: 600; }
+  .pph-stat-row .val { font-weight: 800; font-size: 14px; }
+  .pph-stat-row .val.green { color: #66bb6a; } .pph-stat-row .val.red { color: #ef5350; } .pph-stat-row .val.amber { color: var(--gold); } .pph-stat-row .val.blue { color: var(--bleu); }
+  /* Meilleurs moments : carrousel horizontal */
+  .pph-moments-scroller { display: flex; gap: 10px; overflow-x: auto; margin: 0 -22px; padding: 0 22px 4px; scrollbar-width: none; }
+  .pph-moments-scroller::-webkit-scrollbar { display: none; }
+  .pph-moments-scroller .pp-match-card { flex-shrink: 0; width: 200px; }
+  /* Profil : radar encadré */
+  .pph-radar-card { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; display: flex; justify-content: center; }
   .pp-match-score { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
   .pp-color-pill {
     display: inline-flex; align-items: center; gap: 7px;
@@ -952,14 +973,6 @@
   html.light .ballon-dor-formula { color: rgba(160,120,0,.55); }
   html.light .bd-row.bd-first { background: rgba(200,168,0,.05); border-bottom-color: rgba(200,168,0,.12); }
 
-  /* ── Radar de profil ── */
-  .radar-wrap { display:flex; justify-content:center; margin:8px 0 4px; }
-
-  /* ── Forme récente ── */
-  .forme-row { display:flex; align-items:center; gap:8px; font-size:12px; padding:5px 8px; border-radius:8px; background:var(--bg2); border:1px solid var(--border); }
-  .forme-date { color:var(--text3); min-width:55px; font-size:11px; }
-  .forme-ga { min-width:45px; font-size:12px; font-weight:600; }
-  .forme-result { font-size:14px; margin-left:auto; font-weight:700; }
 
   /* ── Rivalités ── */
   .riv-selects { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; align-items:center; }
@@ -1242,7 +1255,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 12:23</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 12:31</footer>
 
 <script>
 
@@ -4309,6 +4322,14 @@ function openPlayerPanel(playerName) {
   const _achSt = computeAchievementStats(playerName);
   let h = "";
 
+  /* Hero : chiffres clés visibles sans scroller */
+  h += `<div class="pph-top-grid">
+    <div class="pph-top-cell"><div class="pph-top-num" style="color:#66bb6a">${st.presences}</div><div class="pph-top-lbl">Présences</div></div>
+    <div class="pph-top-cell"><div class="pph-top-num">${st.matchsJoues}</div><div class="pph-top-lbl">Matchs</div></div>
+    <div class="pph-top-cell"><div class="pph-top-num" style="color:var(--bleu)">${st.buts}</div><div class="pph-top-lbl">Buts</div></div>
+    <div class="pph-top-cell"><div class="pph-top-num" style="color:var(--bleu)">${st.passesDecisives}</div><div class="pph-top-lbl">Assists</div></div>
+  </div>`;
+
   /* Forme récente (5 dernières sessions où le joueur était Présent) */
   {
     const _sortedSess = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
@@ -4321,7 +4342,7 @@ function openPlayerPanel(playerName) {
     if (_recent.length === 0) {
       h += `<p class="no-data" style="margin-top:4px">—</p>`;
     } else {
-      h += `<div style="display:flex;flex-direction:column;gap:5px">`;
+      h += `<div class="pph-forme-row">`;
       _recent.forEach(s => {
         const info = s.presences[playerName];
         const myEq = info.equipe || null;
@@ -4340,7 +4361,7 @@ function openPlayerPanel(playerName) {
             });
           });
         });
-        // Résultat : W/D/L
+        // Résultat : majorité V/D/N de la soirée (plusieurs matchs possibles à 3 équipes)
         let wins=0, losses=0, draws=0;
         if (myEq) {
           (s.matchs||[]).filter(m => m.eqA===myEq||m.eqB===myEq).forEach(m => {
@@ -4348,23 +4369,18 @@ function openPlayerPanel(playerName) {
             if (w===myEq) wins++; else if (w===null) draws++; else losses++;
           });
         }
-        let resultStr, resultColor;
-        if (!myEq || (wins===0 && losses===0 && draws===0)) {
-          resultStr = '='; resultColor = 'var(--text3)';
-        } else if (wins > losses) {
-          resultStr = '✓'; resultColor = '#34A853';
-        } else if (losses > wins) {
-          resultStr = '✗'; resultColor = '#ea4335';
-        } else {
-          resultStr = '='; resultColor = 'var(--text3)';
-        }
+        const maxVdn = Math.max(wins, losses, draws);
+        let resultCls, resultChar;
+        if (!myEq || maxVdn === 0) { resultCls = 'd'; resultChar = '='; }
+        else if (wins === maxVdn) { resultCls = 'w'; resultChar = '✓'; }
+        else if (losses === maxVdn) { resultCls = 'l'; resultChar = '✗'; }
+        else { resultCls = 'd'; resultChar = '='; }
         const gaStr = gSess+aSess > 0 ? `${gSess}G ${aSess}A` : `0 G/A`;
-        const badgeHtml = myEq ? badge(myEq) : '';
-        h += `<div class="forme-row">
-          <span class="forme-date">${dateStr}</span>
-          ${badgeHtml}
-          <span class="forme-ga">${gaStr}</span>
-          <span class="forme-result" style="color:${resultColor}">${resultStr}</span>
+        h += `<div class="pph-forme-pill">
+          <span class="pph-forme-date">${dateStr}</span>
+          <span class="pph-forme-result ${resultCls}">${resultChar}</span>
+          <span class="pph-forme-vdn">${wins}V ${losses}D ${draws}N</span>
+          <span class="pph-forme-ga">${gaStr}</span>
         </div>`;
       });
       h += `</div>`;
@@ -4375,70 +4391,34 @@ function openPlayerPanel(playerName) {
   /* Statistiques */
   h += `<div>
     <div class="pp-section-title">Statistiques</div>
-    <div class="pp-stats-grid">
-      <div class="pp-stat-card">
-        <div class="pp-stat-val green">${st.presences}</div>
-        <div class="pp-stat-lbl">Présences</div>
-      </div>
-      <div class="pp-stat-card">
-        <div class="pp-stat-val muted">${st.matchsJoues}</div>
-        <div class="pp-stat-lbl">Matchs</div>
-      </div>
-      <div class="pp-stat-card">
+    <div class="pph-stat-scroller">
+      <div class="pph-stat-tile">
         <div class="pp-stat-val ${st.buts>0?"blue":"muted"}">${st.buts}</div>
         <div class="pp-stat-lbl">Buts</div>
         ${st.matchsJoues>0?`<div class="pp-stat-sub">moy. ${(st.buts/st.matchsJoues).toFixed(2).replace(".",",")} / m</div>`:""}
       </div>
-      <div class="pp-stat-card">
+      <div class="pph-stat-tile">
         <div class="pp-stat-val ${st.passesDecisives>0?"blue":"muted"}">${st.passesDecisives}</div>
         <div class="pp-stat-lbl">Assists</div>
         ${st.matchsJoues>0?`<div class="pp-stat-sub">moy. ${(st.passesDecisives/st.matchsJoues).toFixed(2).replace(".",",")} / m</div>`:""}
       </div>
-      <div class="pp-stat-card">
+      <div class="pph-stat-tile">
         <div class="pp-stat-val ${st.victoires>0?"green":"muted"}">${st.victoires}</div>
         <div class="pp-stat-lbl">Victoires</div>
       </div>
-      <div class="pp-stat-card">
+      <div class="pph-stat-tile">
         <div class="pp-stat-val ${st.defaites>0?"red":"muted"}">${st.defaites}</div>
         <div class="pp-stat-lbl">Défaites</div>
       </div>
-      <div class="pp-stat-card">
-        <div class="pp-stat-val ${st.absences>0?"red":"muted"}">${st.absences}</div>
-        <div class="pp-stat-lbl">Absences</div>
-      </div>
-      <div class="pp-stat-card">
-        <div class="pp-stat-val muted">${st.pasRepondu}</div>
-        <div class="pp-stat-lbl">Pas répondu</div>
-      </div>
-      <div class="pp-stat-card" style="grid-column: 1 / -1; gap: 8px;">
-        <div class="pp-stat-val ${st.episodesBlessures>0?"amber":"muted"}">${st.episodesBlessures}</div>
-        <div class="pp-stat-lbl">Blessure${st.episodesBlessures>1?"s":""}</div>
-        <div style="margin:0 4px;color:var(--border2);font-size:16px;font-weight:300;flex-shrink:0">/</div>
-        <div class="pp-stat-val ${st.blesses>0?"amber":"muted"}">${st.blesses}</div>
-        <div class="pp-stat-lbl">Session${st.blesses>1?"s":""} manquée${st.blesses>1?"s":""}</div>
-        <div style="flex:1"></div>
-        <div class="pp-stat-lbl" style="opacity:.45;font-size:10px">Blessures</div>
-      </div>
-      <div class="pp-stat-card">
-        <div class="pp-stat-val ${st.sac>0?"amber":"muted"}">${st.sac}</div>
-        <div class="pp-stat-lbl">Sac 🎒</div>
-      </div>
-      <div class="pp-stat-card">
-        <div class="pp-stat-val ${st.maillots>0?"amber":"muted"}">${st.maillots}</div>
-        <div class="pp-stat-lbl">Maillots 👕</div>
-      </div>
-      <div class="pp-stat-card">
-        <div class="pp-stat-val ${_achSt.gardiensCleanSheets>0?"green":"muted"}">${_achSt.gardiensCleanSheets}</div>
-        <div class="pp-stat-lbl">Clean sheets 🧱</div>
-      </div>
-      <div class="pp-stat-card">
-        <div class="pp-stat-val ${_achSt.gardiensButsEncaisses>0?"red":"muted"}">${_achSt.gardiensButsEncaisses}</div>
-        <div class="pp-stat-lbl">Buts encaissés 🪣</div>
-      </div>
-      <div class="pp-stat-card">
-        <div class="pp-stat-val ${_achSt.remontadas>0?"blue":"muted"}">${_achSt.remontadas}</div>
-        <div class="pp-stat-lbl">Remontadas 🌅</div>
-      </div>
+    </div>
+    <div class="pph-stat-list">
+      <div class="pph-stat-row"><span class="lbl">Absences</span><span class="val ${st.absences>0?"red":""}">${st.absences}</span></div>
+      <div class="pph-stat-row"><span class="lbl">Pas répondu</span><span class="val">${st.pasRepondu}</span></div>
+      <div class="pph-stat-row"><span class="lbl">Blessures</span><span class="val ${st.episodesBlessures>0?"amber":""}">${st.episodesBlessures} / ${st.blesses} séance${st.blesses>1?"s":""}</span></div>
+      <div class="pph-stat-row"><span class="lbl">Sac 🎒 · Maillots 👕</span><span class="val">${st.sac} · ${st.maillots}</span></div>
+      <div class="pph-stat-row"><span class="lbl">Clean sheets 🧱</span><span class="val ${_achSt.gardiensCleanSheets>0?"green":""}">${_achSt.gardiensCleanSheets}</span></div>
+      <div class="pph-stat-row"><span class="lbl">Buts encaissés 🪣</span><span class="val ${_achSt.gardiensButsEncaisses>0?"red":""}">${_achSt.gardiensButsEncaisses}</span></div>
+      <div class="pph-stat-row"><span class="lbl">Remontadas 🌅</span><span class="val ${_achSt.remontadas>0?"blue":""}">${_achSt.remontadas}</span></div>
     </div>
   </div>`;
 
@@ -4503,83 +4483,83 @@ function openPlayerPanel(playerName) {
 
     h += `<div>
       <div class="pp-section-title">Profil</div>
-      <div class="radar-wrap">
+      <div class="pph-radar-card">
         <svg viewBox="0 0 220 220" width="220" height="220" style="overflow:visible">${svgG}</svg>
       </div>
     </div>`;
   }
 
-  /* Meilleur match */
-  if (st.bestMatch && (st.bestMatchGoals > 0 || st.bestMatchAssists > 0)) {
-    const bmParts = [];
-    if (st.bestMatchGoals > 0) bmParts.push(`${st.bestMatchGoals} but${st.bestMatchGoals>1?"s":""}`);
-    if (st.bestMatchAssists > 0) bmParts.push(`${st.bestMatchAssists} assist${st.bestMatchAssists>1?"s":""}`);
-    h += `<div>
-      <div class="pp-section-title">Meilleur match ⚽️</div>
-      <div class="pp-match-card">
-        <div style="font-size:13px;color:var(--text2)">${fmtDate(st.bestMatch.date)}</div>
-        <div style="font-size:24px;font-weight:700;margin:6px 0;color:var(--gold)">${bmParts.join(" · ")}</div>
+  /* Meilleurs moments : carrousel (meilleur match, link-up, meilleure série) */
+  {
+    const _moments = [];
+
+    if (st.bestMatch && (st.bestMatchGoals > 0 || st.bestMatchAssists > 0)) {
+      const bmParts = [];
+      if (st.bestMatchGoals > 0) bmParts.push(`${st.bestMatchGoals} but${st.bestMatchGoals>1?"s":""}`);
+      if (st.bestMatchAssists > 0) bmParts.push(`${st.bestMatchAssists} assist${st.bestMatchAssists>1?"s":""}`);
+      _moments.push(`<div class="pp-match-card">
+        <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3)">⚽️ Meilleur match</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:6px">${fmtDate(st.bestMatch.date)}</div>
+        <div style="font-size:22px;font-weight:700;margin:6px 0;color:var(--gold)">${bmParts.join(" · ")}</div>
         <div class="pp-match-score">
           ${badge(st.bestMatch.eqA)}<span style="font-size:15px;font-weight:700">${st.bestMatch.scoreA}–${st.bestMatch.scoreB}</span>${badge(st.bestMatch.eqB)}
         </div>
-      </div>
-    </div>`;
-  }
+      </div>`);
+    }
 
-  /* Meilleur Link-Up all-time */
-  const _luAll = computeLinkUpStats(SESSIONS).filter(d => d.p1 === playerName || d.p2 === playerName);
-  h += `<div><div class="pp-section-title">Meilleur Link-Up ⚡</div>`;
-  if (_luAll.length) {
-    const _luBest = _luAll[0];
-    const _luPartner = _luBest.p1 === playerName ? _luBest.p2 : _luBest.p1;
-    h += `<div class="pp-match-card">
-      <div style="font-size:13px;color:var(--text2)">All-time</div>
-      <div style="font-size:22px;font-weight:700;margin:6px 0;font-style:italic">
-        <button class="player-link" data-player="${_luPartner}" style="font-size:inherit">${_luPartner}</button>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:5px">
-        <span style="font-size:22px;font-weight:700;color:var(--gold)">${_luBest.connexions}</span>
-        <span style="font-size:13px;color:var(--text2)">but${_luBest.connexions>1?"s":""}</span>
-      </div>
-      ${(()=>{const _ip1=_luBest.p1===playerName;const _mG=_ip1?_luBest.p1Goals:_luBest.p2Goals;const _mA=_ip1?_luBest.p2Goals:_luBest.p1Goals;const _pG=_ip1?_luBest.p2Goals:_luBest.p1Goals;const _pA=_ip1?_luBest.p1Goals:_luBest.p2Goals;return`<div style="display:flex;gap:10px;margin-top:8px;font-size:11px;color:var(--text3);flex-wrap:wrap"><span><strong style="color:var(--text2)">${playerName}</strong> ${_mG}G · ${_mA}A</span><span><strong style="color:var(--text2)">${_luPartner}</strong> ${_pG}G · ${_pA}A</span></div>`;})()}
-    </div>`;
-  } else { h += nd; }
-  h += `</div>`;
-
-  /* Meilleure série */
-  h += `<div><div class="pp-section-title">Meilleure série 🔥</div>`;
-  {
-    const _cur  = st.currentStreak;
-    const _best = st.bestHistoricalStreak;
-    const _curBetter = (c, b) => c.count > b.count || (c.count === b.count && (c.g+c.a) >= (b.g+b.a));
-    if (!_cur && !_best) {
-      h += nd;
-    } else {
-      const primary  = (_cur && (!_best || _curBetter(_cur, _best))) ? _cur : _best;
-      const isActive = primary === _cur;
-      const ga = primary.g + primary.a;
-      const dateStr = isActive
-        ? `Depuis le ${fmtDate(primary.start)}`
-        : `${fmtDate(primary.start)} — ${fmtDate(primary.end)}`;
-      h += `<div class="pp-match-card">
-        <div style="font-size:13px;color:var(--text2)">${dateStr}</div>
-        <div style="margin:8px 0 4px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
-          <span style="font-size:28px;font-weight:700;color:var(--text1);line-height:1">${ga} G/A</span>
-          <span style="font-size:12px;color:var(--text2)">(${primary.g}G + ${primary.a}A)</span>
-          <span style="font-size:13px;color:var(--text1)">· ${primary.count} match${primary.count>1?"s":""}</span>
+    const _luAll = computeLinkUpStats(SESSIONS).filter(d => d.p1 === playerName || d.p2 === playerName);
+    if (_luAll.length) {
+      const _luBest = _luAll[0];
+      const _luPartner = _luBest.p1 === playerName ? _luBest.p2 : _luBest.p1;
+      _moments.push(`<div class="pp-match-card">
+        <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3)">⚡ Meilleur Link-Up</div>
+        <div style="font-size:20px;font-weight:700;margin:8px 0 2px">
+          <button class="player-link" data-player="${_luPartner}" style="font-size:inherit">${_luPartner}</button>
         </div>
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:${isActive?"#34A853":"var(--text3)"}">${isActive?"En cours":"Terminée"}</div>
-      </div>`;
-      if (!isActive && _cur) {
-        const cga = _cur.g + _cur.a;
-        h += `<div style="margin-top:8px;padding:8px 14px;background:rgba(52,168,83,.08);border:1px solid rgba(52,168,83,.2);border-radius:var(--radius);display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#34A853">En cours</span>
-          <span style="font-size:12px;color:var(--text2)">${cga} G/A (${_cur.g}G + ${_cur.a}A) · ${_cur.count} match${_cur.count>1?"s":""}</span>
+        <div style="display:flex;align-items:baseline;gap:5px">
+          <span style="font-size:20px;font-weight:700;color:var(--gold)">${_luBest.connexions}</span>
+          <span style="font-size:13px;color:var(--text2)">but${_luBest.connexions>1?"s":""}</span>
+        </div>
+        ${(()=>{const _ip1=_luBest.p1===playerName;const _mG=_ip1?_luBest.p1Goals:_luBest.p2Goals;const _mA=_ip1?_luBest.p2Goals:_luBest.p1Goals;const _pG=_ip1?_luBest.p2Goals:_luBest.p1Goals;const _pA=_ip1?_luBest.p1Goals:_luBest.p2Goals;return`<div style="display:flex;gap:10px;margin-top:8px;font-size:11px;color:var(--text3);flex-wrap:wrap"><span><strong style="color:var(--text2)">${playerName}</strong> ${_mG}G · ${_mA}A</span><span><strong style="color:var(--text2)">${_luPartner}</strong> ${_pG}G · ${_pA}A</span></div>`;})()}
+      </div>`);
+    }
+
+    {
+      const _cur  = st.currentStreak;
+      const _best = st.bestHistoricalStreak;
+      const _curBetter = (c, b) => c.count > b.count || (c.count === b.count && (c.g+c.a) >= (b.g+b.a));
+      if (_cur || _best) {
+        const primary  = (_cur && (!_best || _curBetter(_cur, _best))) ? _cur : _best;
+        const isActive = primary === _cur;
+        const ga = primary.g + primary.a;
+        const dateStr = isActive
+          ? `Depuis le ${fmtDate(primary.start)}`
+          : `${fmtDate(primary.start)} — ${fmtDate(primary.end)}`;
+        let card = `<div class="pp-match-card">
+          <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3)">🔥 Meilleure série</div>
+          <div style="font-size:13px;color:var(--text2);margin-top:6px">${dateStr}</div>
+          <div style="margin:8px 0 4px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+            <span style="font-size:24px;font-weight:700;color:var(--text);line-height:1">${ga} G/A</span>
+            <span style="font-size:12px;color:var(--text2)">(${primary.g}G + ${primary.a}A)</span>
+          </div>
+          <div style="font-size:12px;color:var(--text2)">· ${primary.count} match${primary.count>1?"s":""}</div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:6px;color:${isActive?"#34A853":"var(--text3)"}">${isActive?"En cours":"Terminée"}</div>
         </div>`;
+        if (!isActive && _cur) {
+          const cga = _cur.g + _cur.a;
+          card += `<div style="margin-top:8px;padding:8px 14px;background:rgba(52,168,83,.08);border:1px solid rgba(52,168,83,.2);border-radius:var(--radius);font-size:11px;color:var(--text2)">
+            <strong style="color:#34A853;text-transform:uppercase;letter-spacing:.06em;font-size:10px">En cours</strong><br>
+            ${cga} G/A (${_cur.g}G + ${_cur.a}A) · ${_cur.count} match${_cur.count>1?"s":""}
+          </div>`;
+        }
+        _moments.push(card);
       }
     }
+
+    h += `<div><div class="pp-section-title">Meilleurs moments</div>${
+      _moments.length ? `<div class="pph-moments-scroller">${_moments.join("")}</div>` : nd
+    }</div>`;
   }
-  h += `</div>`;
 
   /* Couleur récurrente */
   h += `<div><div class="pp-section-title">Couleur récurrente</div>`;
@@ -5895,7 +5875,7 @@ function animateCounters(root) {
 }
 
 function animateCards(root) {
-  const sel = '.kpi-card, .match-card, .record-card, .top-scorer-hero, .team-card, .buts-row, .pp-stat-card, .pp-match-card';
+  const sel = '.kpi-card, .match-recap-row, .record-card, .top-scorer-hero, .team-card, .buts-row, .pph-stat-tile, .pp-match-card';
   [...(root || document).querySelectorAll(sel)].forEach((el, i) => {
     el.style.opacity    = '0';
     el.style.transform  = 'translateY(8px)';
