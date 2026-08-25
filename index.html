@@ -222,10 +222,12 @@
   .matches-recap-list { display: flex; flex-direction: column; gap: 8px; }
   .match-recap-row { display: flex; align-items: center; gap: 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; }
   .mrr-num { font-size: 11px; color: var(--text3); width: 20px; flex-shrink: 0; }
-  .mrr-teams { display: flex; align-items: center; gap: 7px; font-weight: 700; font-size: 13.5px; flex-shrink: 0; white-space: nowrap; }
-  .mrr-score { font-weight: 800; }
+  .mrr-teams { display: flex; align-items: center; gap: 4px; font-weight: 700; font-size: 13.5px; flex-shrink: 0; white-space: nowrap; }
+  .mrr-teams .cdot { margin-right: 0; }
+  .mrr-score { font-weight: 800; margin: 0 4px; }
+  .mrr-sep { width: 1px; height: 18px; background: var(--border2); flex-shrink: 0; }
   .mrr-goals { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text2); font-size: 12px; }
-  @media (max-width: 640px) { .match-recap-row { flex-wrap: wrap; } .mrr-goals { flex-basis: 100%; white-space: normal; } }
+  @media (max-width: 640px) { .match-recap-row { flex-wrap: wrap; } .mrr-goals { flex-basis: 100%; white-space: normal; } .mrr-sep { display: none; } }
   .mc-buteurs { display: flex; gap: 8px; font-size: 11px; color: var(--text2); align-items: flex-start; }
   .mc-but { flex: 1; line-height: 1.7; }
   .mc-but.right { align-items: flex-end; text-align: right; }
@@ -1240,7 +1242,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 11:50</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 11:53</footer>
 
 <script>
 
@@ -1969,7 +1971,8 @@ function buildMatchRecapRowHTML(m, idx) {
   const summary = [sideA, sideB].filter(Boolean).join(` <span style="color:var(--border2)">|</span> `);
   return `<div class="match-recap-row">
     <span class="mrr-num">#${idx+1}</span>
-    <span class="mrr-teams">${teamTag(m.eqA)}<span class="mrr-score">${m.scoreA}–${m.scoreB}</span>${teamTag(m.eqB)}</span>
+    <span class="mrr-teams">${dot(m.eqA)}<span class="mrr-score">${m.scoreA}–${m.scoreB}</span>${dot(m.eqB)}</span>
+    <span class="mrr-sep"></span>
     <span class="mrr-goals">${summary || "—"}</span>
   </div>`;
 }
