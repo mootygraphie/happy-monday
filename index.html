@@ -522,6 +522,10 @@
     border-radius: var(--radius); padding: 14px 16px;
   }
   /* Hero : 4 chiffres clés en un coup d'œil, sans scroller */
+  .pph-hero { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
+  .pph-avatar { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; }
+  .pph-hero-name { font-size: 26px; font-weight: 800; margin-top: 14px; text-wrap: balance; }
+  .pph-freq-pill { display: inline-flex; align-items: center; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 4px 12px; margin-top: 8px; background: var(--bg2); border: 1px solid var(--border2); color: var(--text2); }
   .pph-top-grid { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--border); gap: 1px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
   .pph-top-cell { background: var(--bg3); padding: 12px 4px 10px; text-align: center; }
   .pph-top-num { font-size: 21px; font-weight: 800; line-height: 1; }
@@ -1255,7 +1259,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 13:01</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 13:58</footer>
 
 <script>
 
@@ -1977,7 +1981,7 @@ function _recapSideSummary(m, side) {
     const pHtml = passeur ? ` <span style="color:var(--text3)">(${passeur})</span>` : "";
     return bHtml + pHtml;
   }).join(", ");
-  return `<strong style="color:var(--text2);font-weight:700">${TEAM_LABEL[eq]||eq}</strong> : ⚽️ ${goals}`;
+  return `${dot(eq)} : ⚽️ ${goals}`;
 }
 
 function buildMatchRecapRowHTML(m, idx) {
@@ -4248,36 +4252,31 @@ function renderAchievementsGrid(achSt) {
   ACH_DEFS.filter(a=>a.id!=='legende').forEach(a=>{ legendeCount+=_achLevel(achSt[a.key]||0,a.tiers); });
   achSt.legendeCount=legendeCount;
 
+  let unlockedCount=0;
   let html=`<div class="ach-grid">`;
   ACH_DEFS.forEach(ach=>{
     const val=achSt[ach.key]||0;
     const rawLv=_achLevel(val,ach.tiers);
-    const locked=rawLv===0;
-    if(ach.hidden&&locked)return;
-    const lv=locked?0:ach.fixedTier?ach.fixedTier:Math.min(6,rawLv+(ach.tierOffset||0));
+    if(rawLv===0)return;
+    const lv=ach.fixedTier?ach.fixedTier:Math.min(6,rawLv+(ach.tierOffset||0));
     const maxT=ach.tiers.length;
 
-    const iconHtml=locked
-      ?`<span class="ach-icon" style="font-weight:600;color:var(--text3)">?</span>`
-      :`<span class="ach-icon">${ach.icon}</span>`;
-    const nameHtml=locked?`<span class="ach-label" style="opacity:.18">???</span>`
-      :`<span class="ach-label">${ach.name}</span>`;
+    const iconHtml=`<span class="ach-icon">${ach.icon}</span>`;
+    const nameHtml=`<span class="ach-label">${ach.name}</span>`;
 
-    const dots=(maxT>1)?`<div class="ach-dots"${locked?' style="opacity:0"':''}>${Array.from({length:maxT},(_,i)=>`<div class="ach-dot${i<rawLv?' on':''}"></div>`).join('')}</div>`:'';
-    const countHtml=(ach.fixedTier&&ach.tiers.length===1&&ach.id!=='chelem'&&!locked&&val>0)
+    const dots=(maxT>1)?`<div class="ach-dots">${Array.from({length:maxT},(_,i)=>`<div class="ach-dot${i<rawLv?' on':''}"></div>`).join('')}</div>`:'';
+    const countHtml=(ach.fixedTier&&ach.tiers.length===1&&ach.id!=='chelem'&&val>0)
       ?`<span style="font-size:12px;font-weight:800;opacity:.8;line-height:1;letter-spacing:-.01em">${val}</span>`:'';
 
-    let tip='';
-    if(locked){ tip='Haut fait inconnu'; }
-    else {
-      const tn=(ach.tierNames?ach.tierNames[rawLv-1]:null)||ACH_TIER_NAMES[lv]||`Niveau ${lv}`;
-      tip=`${ach.name} — ${tn}\n${ach.desc(val)}${!ach.fixedTier&&rawLv<maxT?`\nProchain seuil : ${ach.tiers[rawLv]}`:''}`;
-    }
+    const tn=(ach.tierNames?ach.tierNames[rawLv-1]:null)||ACH_TIER_NAMES[lv]||`Niveau ${lv}`;
+    const tip=`${ach.name} — ${tn}\n${ach.desc(val)}${!ach.fixedTier&&rawLv<maxT?`\nProchain seuil : ${ach.tiers[rawLv]}`:''}`;
 
     const _achCls=ach.id==='comete'?' ach-comete':ach.id==='bonnet'?' ach-bonnet':ach.id==='passoire'?' ach-passoire':ach.id==='chelem'?' ach-chelem':ach.id==='soiree'?' ach-soiree':ach.id==='remontada'?' ach-remontada':ach.id==='gardienAssist'?' ach-neuer':ach.id==='zerovic'?' ach-zerovic':'';
     html+=`<div class="ach-cell t${lv}${_achCls}" data-tip="${tip.replace(/"/g,'&quot;')}">${iconHtml}${nameHtml}${dots}${countHtml}</div>`;
+    unlockedCount++;
   });
   html+=`</div>`;
+  if (!unlockedCount) return `<p class="no-data" style="margin-top:4px">Aucun haut fait débloqué pour l'instant.</p>`;
   return html;
 }
 
@@ -4322,6 +4321,27 @@ function openPlayerPanel(playerName) {
   const nd = `<p class="no-data" style="margin-top:4px">—</p>`;
   const _achSt = computeAchievementStats(playerName);
   let h = "";
+
+  /* Hero : avatar + prénom, teinté par la couleur préférée (celle avec laquelle il gagne le plus) */
+  {
+    const _prefColor = st.prefWinColor;
+    const _colorVar = _prefColor === "Bleue" ? "bleu" : _prefColor ? _prefColor.toLowerCase() : null;
+    const _heroBg = _colorVar ? `linear-gradient(150deg, var(--${_colorVar}-bg), transparent 70%)` : "var(--bg3)";
+    const _avatarBg = _colorVar ? `var(--${_colorVar})` : "var(--text3)";
+    const _avatarFg = _colorVar === "vert" ? "#111" : "#fff";
+    const _initials = playerName.slice(0, 2).toUpperCase();
+    const _totalExpected = st.presences + st.absences;
+    let _freqLabel = null;
+    if (_totalExpected >= 3) {
+      const _rate = st.presences / _totalExpected;
+      _freqLabel = _rate >= 0.75 ? "Régulier" : _rate >= 0.4 ? "Occasionnel" : "Rare";
+    }
+    h += `<div class="pph-hero" style="background:${_heroBg}">
+      <div class="pph-avatar" style="background:${_avatarBg};color:${_avatarFg}">${_initials}</div>
+      <div class="pph-hero-name">${playerName}</div>
+      ${_freqLabel ? `<span class="pph-freq-pill">${_freqLabel}</span>` : ""}
+    </div>`;
+  }
 
   /* Hero : chiffres clés visibles sans scroller */
   h += `<div class="pph-top-grid">
@@ -4413,13 +4433,10 @@ function openPlayerPanel(playerName) {
       </div>
     </div>
     <div class="pph-stat-list">
-      <div class="pph-stat-row"><span class="lbl">Absences</span><span class="val ${st.absences>0?"red":""}">${st.absences}</span></div>
-      <div class="pph-stat-row"><span class="lbl">Pas répondu</span><span class="val">${st.pasRepondu}</span></div>
+      <div class="pph-stat-row"><span class="lbl">Absences · Pas répondu</span><span class="val ${st.absences>0?"red":""}">${st.absences} · ${st.pasRepondu}</span></div>
       <div class="pph-stat-row"><span class="lbl">Blessures</span><span class="val ${st.episodesBlessures>0?"amber":""}">${st.episodesBlessures} / ${st.blesses} séance${st.blesses>1?"s":""}</span></div>
       <div class="pph-stat-row"><span class="lbl">Sac 🎒 · Maillots 👕</span><span class="val">${st.sac} · ${st.maillots}</span></div>
-      <div class="pph-stat-row"><span class="lbl">Clean sheets 🧱</span><span class="val ${_achSt.gardiensCleanSheets>0?"green":""}">${_achSt.gardiensCleanSheets}</span></div>
-      <div class="pph-stat-row"><span class="lbl">Buts encaissés 🪣</span><span class="val ${_achSt.gardiensButsEncaisses>0?"red":""}">${_achSt.gardiensButsEncaisses}</span></div>
-      <div class="pph-stat-row"><span class="lbl">Remontadas 🌅</span><span class="val ${_achSt.remontadas>0?"blue":""}">${_achSt.remontadas}</span></div>
+      <div class="pph-stat-row"><span class="lbl">Clean sheets 🧱 · Buts encaissés 🪣</span><span class="val ${_achSt.gardiensCleanSheets>0?"green":_achSt.gardiensButsEncaisses>0?"red":""}">${_achSt.gardiensCleanSheets} · ${_achSt.gardiensButsEncaisses}</span></div>
     </div>
   </div>`;
 
