@@ -1255,7 +1255,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 12:31</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 13:01</footer>
 
 <script>
 
@@ -1534,7 +1534,8 @@ function kpiTeamCard(teams) {
   return teams.length === 1 ? `accent-${teamCls(teams[0])}` : "accent-amber";
 }
 function scoreColors(m) {
-  if (!m || m.scoreA === m.scoreB) return { a: "var(--text3)", b: "var(--text3)" };
+  if (!m) return { a: "var(--text3)", b: "var(--text3)" };
+  if (m.scoreA === m.scoreB) return { a: "var(--text)", b: "var(--text)" };
   return m.scoreA > m.scoreB
     ? { a: "var(--text)", b: "var(--text2)" }
     : { a: "var(--text2)", b: "var(--text)" };
