@@ -1507,7 +1507,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 22:10</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 22:13</footer>
 
 <script>
 
@@ -3954,7 +3954,6 @@ function _dbxRenderHero(agg) {
   const leaderHtml = agg.leaders.length
     ? agg.leaders.map(t => `${dot(t)}<span class="dbx-txt ${t.toLowerCase()}">${TEAM_LABEL[t]}</span>`).join(" &amp; ")
     : "—";
-  const csRate = agg.allMatchs.length ? Math.round(agg.totalCleanSheets/(agg.allMatchs.length*2)*100) : 0;
   const sparkVals = agg.goalsBySession.slice(-10).map(g=>g.goals);
   return `<div class="dbx-hero-grid">
     <div class="dbx-hero-card">
@@ -3976,7 +3975,7 @@ function _dbxRenderHero(agg) {
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Clean sheets</div>
       <div class="dbx-hero-num">${agg.totalCleanSheets}</div>
-      <div class="dbx-hero-sub">${csRate}% des équipes sur le match</div>
+      <div class="dbx-hero-sub">${agg.totalCleanSheets} / ${agg.allMatchs.length} match${agg.allMatchs.length>1?"s":""}</div>
     </div>
   </div>`;
 }
