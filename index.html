@@ -100,21 +100,10 @@
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
 
-  /* ── Filtres période (dashboard) ── */
-  .period-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+  /* ── Filtres (Hauts Faits — pilules génériques, partagées) ── */
   .pill { padding: 7px 18px; border-radius: 20px; border: 1px solid var(--border2); font-size: 13px; cursor: pointer; background: transparent; color: var(--text2); transition: all .15s; }
   .pill.active { background: #fff; color: #0f0f13; border-color: #fff; font-weight: 500; }
   .pill:hover:not(.active) { background: var(--bg3); color: var(--text); }
-
-  .period-sub { display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem; min-height: 38px; }
-  .period-sub select {
-    background: var(--bg2); color: var(--text); border: 1px solid var(--border2);
-    border-radius: var(--radius); padding: 7px 28px 7px 12px; font-size: 13px; cursor: pointer; outline: none;
-    appearance: none; -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239898aa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 10px center;
-  }
-  .period-sub select:focus { border-color: rgba(255,255,255,.25); }
 
   /* ── Sélecteur de session ── */
   .session-selector { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 2rem; }
@@ -1159,11 +1148,6 @@
     .container { padding-left: 1rem; padding-right: 1rem; }
     .main-tabs { display: flex; flex-wrap: wrap; width: 100%; }
     .main-tabs .main-tab { flex: 1; }
-    /* Filtres période — scroll horizontal sur une ligne */
-    .period-bar { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; justify-content: flex-start; padding-bottom: 2px; }
-    .period-bar::-webkit-scrollbar { display: none; }
-    .period-bar .pill { flex-shrink: 0; padding: 6px 14px; font-size: 12px; }
-    .period-sub { justify-content: center; }
     /* Sélecteur de session */
     .session-selector { justify-content: center; flex-wrap: wrap; }
     /* Liste de joueurs présents (chips) */
@@ -1287,8 +1271,8 @@
   .status-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; border-radius: 999px; padding: 3px 10px; margin-top: 10px; border: 1px solid; }
 
   /* ── Sessions V2 : « feuille de match » (préfixe sfm-) — redesign de l'onglet Sessions
-     uniquement (renderSessionDetailV2 / renderSessionResults). Le Dashboard continue
-     d'utiliser renderSessionDetail() d'origine et n'affiche aucune de ces classes. ── */
+     uniquement (renderSessionDetailV2 / renderSessionResults). Le Dashboard (préfixe dbx-,
+     voir plus bas) affiche ses propres stats agrégées et n'affiche aucune de ces classes. ── */
   .sfm-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-style: italic; color: var(--text3); }
   .sfm-count-n { color: var(--text2); font-weight: 400; font-style: normal; text-transform: none; letter-spacing: 0; }
 
@@ -1404,6 +1388,161 @@
   .sfm-fade-up { opacity: 0; transform: translateY(10px); animation: sfmFadeUp .5s cubic-bezier(.2,.7,.3,1) forwards; }
   @keyframes sfmFadeUp { to { opacity: 1; transform: translateY(0); } }
   @media (prefers-reduced-motion: reduce) { .sfm-fade-up { animation: none; opacity: 1; transform: none; } }
+
+  /* ══════════════════════════════════════════════════════════
+     DASHBOARD v2 (préfixe dbx-) — filtre segmenté + stats pures,
+     recopié du prototype approuvé. N'affecte que l'onglet Dashboard.
+  ══════════════════════════════════════════════════════════ */
+
+  /* ── Barre de filtre ── */
+  .dbx-filterbar {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 14px 16px; margin-bottom: 1.75rem; display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+    box-shadow: var(--shadow);
+  }
+  .dbx-seg { position: relative; display: inline-flex; background: var(--bg3); border-radius: 11px; padding: 3px; gap: 2px; flex-shrink: 0; }
+  .dbx-seg-hi {
+    position: absolute; top: 3px; bottom: 3px; left: 3px; width: 0;
+    background: var(--text); border-radius: 8px; transition: left .25s cubic-bezier(.4,0,.2,1), width .25s cubic-bezier(.4,0,.2,1);
+    z-index: 0;
+  }
+  .dbx-seg-btn {
+    position: relative; z-index: 1; border: none; background: transparent; cursor: pointer;
+    font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text2);
+    padding: 8px 15px; border-radius: 8px; transition: color .2s; white-space: nowrap;
+  }
+  .dbx-seg-btn.active { color: var(--bg); }
+  html.light .dbx-seg-btn.active { color: #fff; }
+  .dbx-seg-btn:hover:not(.active) { color: var(--text); }
+
+  .dbx-fb-sub { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .dbx-fb-select {
+    appearance: none; -webkit-appearance: none; background: var(--bg3) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6"><path d="M1 1l4 4 4-4" stroke="%239898aa" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>') no-repeat right 10px center;
+    color: var(--text); border: 1px solid var(--border2); border-radius: var(--radius);
+    padding: 8px 30px 8px 12px; font-size: 13px; font-family: inherit; font-weight: 600; cursor: pointer; outline: none;
+  }
+  .dbx-fb-select:focus { border-color: var(--border2); box-shadow: 0 0 0 3px var(--gold-bg); }
+  .dbx-fb-meta { margin-left: auto; font-size: 12px; color: var(--text3); text-align: right; }
+  .dbx-fb-meta b { color: var(--text2); font-weight: 600; }
+
+  /* ── En-têtes de section ── */
+  .dbx-sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 2.1rem 0 .8rem; }
+  .dbx-sec-title { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-style: italic; color: var(--text3); }
+  .dbx-sec-note { font-size: 12px; color: var(--text3); }
+  .dbx-sec-head:first-of-type { margin-top: 0; }
+
+  /* ── Hero KPI strip ── */
+  .dbx-hero-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+  @media (min-width: 720px) { .dbx-hero-grid { grid-template-columns: repeat(4,1fr); } }
+  .dbx-hero-card {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 18px 19px; position: relative; overflow: hidden; min-height: 118px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .dbx-hero-lbl { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; font-style: italic; color: var(--text3); }
+  .dbx-hero-num { font-size: 38px; font-weight: 700; letter-spacing: -.03em; line-height: 1; margin-top: 10px; font-variant-numeric: tabular-nums; }
+  .dbx-hero-num.dbx-team { font-size: 21px; display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+  .dbx-hero-sub { font-size: 12px; color: var(--text2); margin-top: 6px; }
+  .dbx-hero-spark { position: absolute; right: 14px; bottom: 14px; opacity: .9; }
+
+  /* ── Cartes partagées ── */
+  .dbx-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+
+  /* ── Comparatif équipes ── */
+  .dbx-cmp-card { padding: 18px 20px 16px; margin-bottom: 12px; }
+  .dbx-cmp-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .dbx-cmp-row:last-child { margin-bottom: 0; }
+  .dbx-cmp-label { width: 82px; flex-shrink: 0; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
+  .dbx-cmp-track { flex: 1; height: 10px; background: var(--bg3); border-radius: 6px; overflow: hidden; }
+  .dbx-cmp-fill { height: 100%; border-radius: 6px; transition: width .4s ease; }
+  .dbx-cmp-val { width: 34px; text-align: right; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+
+  .dbx-txt.rouge { color: var(--rouge); } .dbx-txt.vert { color: var(--vert); } .dbx-txt.bleue { color: var(--bleu); }
+
+  .dbx-team-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  @media (min-width: 780px) { .dbx-team-grid { grid-template-columns: repeat(3,1fr); } }
+  .dbx-team-card { overflow: hidden; }
+  .dbx-team-top { padding: 15px 18px 13px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+  .dbx-team-accent { height: 4px; }
+  .dbx-team-accent.rouge { background: linear-gradient(90deg,var(--rouge),#FF85C2); }
+  .dbx-team-accent.vert  { background: linear-gradient(90deg,var(--vert),#EAFF80); }
+  .dbx-team-accent.bleue { background: linear-gradient(90deg,var(--bleu),#80DEFF); }
+  .dbx-team-name { font-size: 15px; font-weight: 700; flex: 1; }
+  .dbx-team-crown { font-size: 15px; }
+  .dbx-team-wins { font-size: 12px; color: var(--text3); font-weight: 600; }
+  .dbx-team-body { padding: 15px 18px 17px; }
+  .dbx-wdl { display: flex; gap: 5px; margin-bottom: 13px; }
+  .dbx-wdl span { flex: 1; text-align: center; padding: 6px 0; border-radius: 7px; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .dbx-wdl .w { background: var(--good); color: #08240f; }
+  html.light .dbx-wdl .w { color: #fff; }
+  .dbx-wdl .n { background: var(--bg3); color: var(--text2); }
+  .dbx-wdl .l { background: var(--bad-bg); color: var(--bad); }
+  .dbx-team-gf { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--text2); font-variant-numeric: tabular-nums; margin-bottom: 12px; }
+  .dbx-team-gf .diff { font-weight: 700; }
+  .dbx-team-gf .diff.pos { color: var(--good); } .dbx-team-gf .diff.neg { color: var(--bad); }
+  .dbx-form-lbl { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; font-style: italic; color: var(--text3); margin-bottom: 7px; }
+  .dbx-form-row { display: flex; gap: 5px; }
+  .dbx-form-chip { width: 22px; height: 22px; border-radius: 6px; font-size: 10.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .dbx-form-chip.w { background: var(--good); color: #08240f; }
+  html.light .dbx-form-chip.w { color: #fff; }
+  .dbx-form-chip.n { background: var(--bg3); color: var(--text2); }
+  .dbx-form-chip.l { background: var(--bad-bg); color: var(--bad); }
+
+  /* ── Graphique de tendance ── */
+  .dbx-trend-card { padding: 20px 22px 14px; }
+  .dbx-trend-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; flex-wrap: wrap; gap: 6px; }
+  .dbx-trend-top-lbl { font-size: 13px; font-weight: 700; }
+  .dbx-trend-top-val { font-size: 12px; color: var(--text2); }
+  .dbx-trend-top-val b { color: var(--text); font-variant-numeric: tabular-nums; }
+  .dbx-trend-svg-wrap { width: 100%; overflow-x: auto; }
+  .dbx-trend-bar { cursor: default; }
+  .dbx-trend-bar rect { transition: opacity .12s; }
+  .dbx-trend-bar:hover rect { opacity: .75; }
+
+  /* ── Cartes matchs marquants ── */
+  .dbx-hl-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  @media (min-width: 640px) { .dbx-hl-grid { grid-template-columns: 1fr 1fr; } }
+  .dbx-hl-card { padding: 16px 18px; }
+  .dbx-hl-lbl { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; font-style: italic; color: var(--text3); margin-bottom: 12px; }
+  .dbx-hl-score { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .dbx-hl-side { flex: 1; text-align: center; }
+  .dbx-hl-side .n { font-size: 34px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+  .dbx-hl-side .t { margin-top: 7px; }
+  .dbx-hl-dash { color: var(--text3); font-size: 18px; font-weight: 300; }
+  .dbx-hl-date { margin-top: 12px; font-size: 11.5px; color: var(--text3); text-align: center; }
+  .dbx-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+  .dbx-tag.rouge { background: var(--rouge-bg); color: var(--rouge); border: 1px solid var(--rouge-border); }
+  .dbx-tag.vert  { background: var(--vert-bg);  color: var(--vert);  border: 1px solid var(--vert-border); }
+  .dbx-tag.bleue { background: var(--bleu-bg);  color: var(--bleu);  border: 1px solid var(--bleu-border); }
+
+  /* ── Classements ── */
+  .dbx-lead-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  @media (min-width: 780px) { .dbx-lead-grid { grid-template-columns: repeat(3,1fr); } }
+  .dbx-lead-card { padding: 16px 18px 12px; }
+  .dbx-lead-head { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+  .dbx-lead-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid var(--border); }
+  .dbx-lead-row:first-of-type { border-top: none; }
+  .dbx-lead-rank { width: 16px; flex-shrink: 0; font-size: 12px; font-weight: 800; color: var(--text3); text-align: center; }
+  .dbx-lead-row.r1 .dbx-lead-rank { color: var(--gold); } .dbx-lead-row.r2 .dbx-lead-rank { color: var(--silver); } .dbx-lead-row.r3 .dbx-lead-rank { color: var(--bronze); }
+  .dbx-lead-name { flex: 1; min-width: 0; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dbx-lead-bar-wrap { flex-shrink: 0; width: 70px; height: 6px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+  .dbx-lead-bar { height: 100%; border-radius: 4px; background: var(--gold); opacity: .55; }
+  .dbx-lead-row.r1 .dbx-lead-bar { opacity: 1; }
+  .dbx-lead-val { width: 20px; text-align: right; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+  .dbx-lead-empty { font-size: 12.5px; color: var(--text3); font-style: italic; padding: 6px 0 10px; }
+
+  /* ── Bandeau assiduité ── */
+  .dbx-assid-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+  @media (min-width: 720px) { .dbx-assid-grid { grid-template-columns: repeat(4,1fr); } }
+  .dbx-assid-card { padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+  .dbx-assid-num { font-size: 24px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .dbx-assid-lbl { font-size: 11px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; font-style: italic; }
+
+  /* Override responsive intentionnel (mobile) des règles .dbx-filterbar / .dbx-fb-meta ci-dessus */
+  @media (max-width: 640px) {
+    .dbx-filterbar { padding: 12px; gap: 10px; }
+    .dbx-fb-meta { margin-left: 0; text-align: left; }
+  }
 </style>
 <script>if(localStorage.getItem('hmft_theme')==='light')document.documentElement.classList.add('light');</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -1471,15 +1610,16 @@
 
   <!-- ── Onglet Dashboard ── -->
   <div class="tab-panel active" id="panel-dashboard">
-    <div class="period-bar" id="periods">
-      <button class="pill active" data-period="last">Dernière session</button>
-      <button class="pill" data-period="month">Ce mois-ci</button>
-      <button class="pill" data-period="year">Cette saison</button>
-      <button class="pill" data-period="all">All-time</button>
-    </div>
-    <div class="period-sub" id="period-sub">
-      <select id="filter-month" hidden></select>
-      <select id="filter-year"></select>
+    <div class="dbx-filterbar">
+      <div class="dbx-seg" id="dbx-seg">
+        <div class="dbx-seg-hi" id="dbx-seg-hi"></div>
+        <button class="dbx-seg-btn" data-period="session">Session</button>
+        <button class="dbx-seg-btn" data-period="month">Mois</button>
+        <button class="dbx-seg-btn" data-period="year">Saison</button>
+        <button class="dbx-seg-btn" data-period="all">All-time</button>
+      </div>
+      <div class="dbx-fb-sub" id="dbx-fb-sub"></div>
+      <div class="dbx-fb-meta" id="dbx-fb-meta"></div>
     </div>
     <div id="dash"></div>
   </div>
@@ -1542,7 +1682,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 21:07</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 21:24</footer>
 
 <script>
 
@@ -1800,20 +1940,6 @@ function _saveExtraPlayers() {
 /* ── Helpers ── */
 const TEAM_LABEL = { Rouge: "Roses", Vert: "Jaunes", Bleue: "Bleus" };
 
-function teamCard(color, teamMap, icons) {
-  const cls = color.toLowerCase();
-  return `<div class="team-card">
-    <div class="team-card-accent ${cls}"></div>
-    <div class="team-card-header">
-      <div class="team-card-icon ${cls}">${icons[color]}</div>
-      <span class="team-card-title ${cls}">${TEAM_LABEL[color] || color}</span>
-      <span class="team-card-count">${teamMap[color].length} joueur${teamMap[color].length > 1 ? "s" : ""}</span>
-    </div>
-    <div class="team-card-players">
-      ${teamMap[color].map(p => `<button class="team-player-pill ${cls} player-link" data-player="${p.name}">${p.name}</button>`).join("")}
-    </div>
-  </div>`;
-}
 function badge(color) {
   const cls = color.toLowerCase();
   return `<span class="badge ${cls}">${TEAM_LABEL[color] || color}</span>`;
@@ -1826,24 +1952,12 @@ function teamTag(color) {
   return `<span style="white-space:nowrap">${dot(color)}<span style="color:var(--text)">${TEAM_LABEL[color] || color}</span></span>`;
 }
 function teamCls(t) { return t === "Bleue" ? "bleu" : t ? t.toLowerCase() : ""; }
-function teamTagColored(t) {
-  return `<span style="white-space:nowrap">${dot(t)}<span style="color:var(--text)">${TEAM_LABEL[t]||t}</span></span>`;
-}
-function kpiTeamCard(teams) {
-  if (!teams || teams.length === 0) return "";
-  return teams.length === 1 ? `accent-${teamCls(teams[0])}` : "accent-amber";
-}
 function scoreColors(m) {
   if (!m) return { a: "var(--text3)", b: "var(--text3)" };
   if (m.scoreA === m.scoreB) return { a: "var(--text)", b: "var(--text)" };
   return m.scoreA > m.scoreB
     ? { a: "var(--text)", b: "var(--text2)" }
     : { a: "var(--text2)", b: "var(--text)" };
-}
-function matchAccent(m) {
-  if (!m) return "";
-  if (m.scoreA === m.scoreB) return "accent-amber";
-  return `accent-${teamCls(m.scoreA > m.scoreB ? m.eqA : m.eqB)}`;
 }
 function fmtDate(d) {
   const [y,m,j] = d.split("-");
@@ -1858,9 +1972,10 @@ function pLink(name, extra) {
 /* ══════════════════════════════════════════════════════════
    DASHBOARD
 ══════════════════════════════════════════════════════════ */
-let currentPeriod = "last";
+let currentPeriod = "session"; // "session" | "month" | "year" | "all"
 let filterYear  = null; // stocke le début de saison (ex: 2024 pour 2024/2025)
 let filterMonth = null;
+let filterSessionDate = null; // date de la session choisie en mode "session"
 
 /* Bornes de saisons avec dates précises (sy = année de début) */
 const SEASON_DEFS = [
@@ -1900,7 +2015,10 @@ const MONTH_NAMES = ["janvier","février","mars","avril","mai","juin","juillet",
 function filterSessions(period) {
   if (!SESSIONS.length) return [];
   const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
-  if (period === "last")  return [sorted[0]];
+  if (period === "session") {
+    const found = SESSIONS.find(s => s.date === filterSessionDate);
+    return found ? [found] : [sorted[0]];
+  }
   if (period === "month") return SESSIONS.filter(s => {
     const d = new Date(s.date);
     return d.getMonth() === filterMonth && _seasonStart(d) === filterYear;
@@ -1909,51 +2027,88 @@ function filterSessions(period) {
   return SESSIONS;
 }
 
+/* Saisons disponibles (triées desc) — logique de scoping partagée */
+function _dbxSeasonsAvailable() {
+  return [...new Set(SESSIONS.map(s => _seasonStart(s.date)))].sort((a,b)=>b-a);
+}
+/* Mois disponibles pour une saison donnée (mode mois) */
+function _dbxMonthsForSeason(sy) {
+  return [...new Set(
+    SESSIONS
+      .filter(s => _seasonStart(s.date) === sy)
+      .map(s => new Date(s.date).getMonth())
+  )].sort((a,b)=>b-a);
+}
+
+/* Reconstruit le sous-filtre contextuel (droite du segment) selon le mode actif :
+   session → sélecteur de session (motif sess-dd existant) ; mois → saison + mois ;
+   saison → saison seule ; all-time → rien. Pilote toujours currentPeriod/filterYear/
+   filterMonth/filterSessionDate et déclenche renderDashboard(), comme l'ancien filtre. */
 function updateSubFilter(period) {
-  const sub   = document.getElementById("period-sub");
-  const selM  = document.getElementById("filter-month");
-  const selY  = document.getElementById("filter-year");
+  const sub = document.getElementById("dbx-fb-sub");
+  if (!sub) return;
 
-  if (period !== "month" && period !== "year") {
-    sub.style.visibility = "hidden";
-    return;
-  }
-  sub.style.visibility = "visible";
+  if (period === "session") {
+    const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
+    if (!sorted.length) { sub.innerHTML = ""; return; }
+    if (filterSessionDate === null || !sorted.some(s => s.date === filterSessionDate)) filterSessionDate = sorted[0].date;
+    sub.innerHTML = `
+      <div class="sess-dd" id="dbx-sess-dd">
+        <button type="button" class="sess-dd-btn" id="dbx-sess-dd-btn">
+          <span id="dbx-sess-dd-label">${fmtDate(filterSessionDate)}</span>
+          <svg width="11" height="7" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+        </button>
+        <div class="sess-dd-panel" id="dbx-sess-dd-panel">${sorted.map(s =>
+          `<button type="button" class="sess-dd-opt${s.date===filterSessionDate?" active":""}" data-date="${s.date}">${fmtDate(s.date)}</button>`
+        ).join("")}</div>
+      </div>`;
+    document.getElementById("dbx-sess-dd-btn").addEventListener("click", e => {
+      e.stopPropagation();
+      document.getElementById("dbx-sess-dd").classList.toggle("open");
+    });
+    document.getElementById("dbx-sess-dd-panel").addEventListener("click", e => {
+      const btn = e.target.closest(".sess-dd-opt");
+      if (!btn) return;
+      filterSessionDate = btn.dataset.date;
+      document.getElementById("dbx-sess-dd").classList.remove("open");
+      renderDashboard();
+    });
 
-  /* Saisons disponibles (triées desc) */
-  const seasons = [...new Set(SESSIONS.map(s => _seasonStart(s.date)))].sort((a,b)=>b-a);
+  } else if (period === "month") {
+    const seasons = _dbxSeasonsAvailable();
+    if (filterYear === null || !seasons.includes(filterYear)) filterYear = seasons[0] ?? null;
+    const months = _dbxMonthsForSeason(filterYear);
+    if (filterMonth === null || !months.includes(filterMonth)) filterMonth = months[0] ?? null;
+    sub.innerHTML = `
+      <select class="dbx-fb-select" id="dbx-sel-year">${seasons.map(sy => `<option value="${sy}" ${sy===filterYear?"selected":""}>${_seasonLabel(sy)}</option>`).join("")}</select>
+      <select class="dbx-fb-select" id="dbx-sel-month">${months.map(m => `<option value="${m}" ${m===filterMonth?"selected":""}>${MONTH_NAMES[m][0].toUpperCase()+MONTH_NAMES[m].slice(1)}</option>`).join("")}</select>`;
+    document.getElementById("dbx-sel-year").addEventListener("change", e => {
+      filterYear = Number(e.target.value);
+      const ms = _dbxMonthsForSeason(filterYear);
+      filterMonth = ms[0] ?? null;
+      updateSubFilter("month");
+      renderDashboard();
+    });
+    document.getElementById("dbx-sel-month").addEventListener("change", e => {
+      filterMonth = Number(e.target.value);
+      renderDashboard();
+    });
 
-  /* Mois disponibles pour la saison sélectionnée (mode mois) */
-  function monthsForSeason(sy) {
-    return [...new Set(
-      SESSIONS
-        .filter(s => _seasonStart(s.date) === sy)
-        .map(s => new Date(s.date).getMonth())
-    )].sort((a,b)=>b-a);
-  }
-
-  if (period === "year") {
-    selM.hidden = true;
-    selY.hidden = false;
-    selY.innerHTML = seasons.map(sy => `<option value="${sy}" ${sy===filterYear?"selected":""}>${_seasonLabel(sy)}</option>`).join("");
-    if (filterYear === null && seasons.length) filterYear = seasons[0];
-    selY.value = filterYear;
+  } else if (period === "year") {
+    const seasons = _dbxSeasonsAvailable();
+    if (filterYear === null || !seasons.includes(filterYear)) filterYear = seasons[0] ?? null;
+    sub.innerHTML = `<select class="dbx-fb-select" id="dbx-sel-year2">${seasons.map(sy => `<option value="${sy}" ${sy===filterYear?"selected":""}>Saison ${_seasonLabel(sy)}</option>`).join("")}</select>`;
+    document.getElementById("dbx-sel-year2").addEventListener("change", e => {
+      filterYear = Number(e.target.value);
+      renderDashboard();
+    });
 
   } else {
-    selM.hidden = false;
-    selY.hidden = false;
-
-    /* Populate seasons */
-    selY.innerHTML = seasons.map(sy => `<option value="${sy}" ${sy===filterYear?"selected":""}>${_seasonLabel(sy)}</option>`).join("");
-    if (filterYear === null && seasons.length) filterYear = seasons[0];
-    selY.value = filterYear;
-
-    /* Populate months for selected season */
-    const months = monthsForSeason(Number(selY.value));
-    selM.innerHTML = months.map(m => `<option value="${m}" ${m===filterMonth?"selected":""}>${MONTH_NAMES[m]}</option>`).join("");
-    if (filterMonth === null || !months.includes(filterMonth)) filterMonth = months[0] ?? null;
-    selM.value = filterMonth;
+    sub.innerHTML = "";
   }
+
+  document.getElementById("dbx-fb-meta").innerHTML =
+    `${SESSIONS.length} session${SESSIONS.length>1?"s":""} au total &middot; ${_dbxSeasonsAvailable().length} saison${_dbxSeasonsAvailable().length>1?"s":""}`;
 }
 
 function computeStats(sessions) {
@@ -2128,29 +2283,6 @@ function buildPodiumVizSlotsV2(slots, valueFn, nameFn, pctClass) {
   }).join('') + `</div>`;
 }
 
-function buildLinkUpCardHTML(sessions) {
-  const duos = computeLinkUpStats(sessions);
-  if (!duos.length) return `<div class="kpi-card" data-card="meilleur-link-up">
-    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleur Link-Up ⚡</div>
-    <span style="color:var(--text3)">—</span>
-  </div>`;
-  const best = duos[0];
-  const p1 = `<button class="player-link" data-player="${best.p1}" style="font-size:inherit;font-weight:700">${best.p1}</button>`;
-  const p2 = `<button class="player-link" data-player="${best.p2}" style="font-size:inherit;font-weight:700">${best.p2}</button>`;
-  return `<div class="kpi-card" data-card="meilleur-link-up">
-    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleur Link-Up ⚡</div>
-    <div style="display:flex;align-items:center;gap:6px;font-size:24px;flex-wrap:wrap">${p1}<span style="color:var(--text3);font-weight:300">–</span>${p2}</div>
-    <div class="kpi-sep"></div>
-    <div style="display:flex;align-items:baseline;gap:5px"><span style="font-size:22px;font-weight:700">${best.connexions}</span><span class="kpi-sub" style="margin:0">but${best.connexions>1?"s":""}</span></div>
-    <div style="display:flex;gap:10px;margin-top:8px;font-size:11px;color:var(--text3);flex-wrap:wrap">
-      <span><strong style="color:var(--text2)">${best.p1}</strong> ${best.p1Goals}G · ${best.p2Goals}A</span>
-      <span><strong style="color:var(--text2)">${best.p2}</strong> ${best.p2Goals}G · ${best.p1Goals}A</span>
-    </div>
-  </div>`;
-}
-
-// Variante Récompenses de buildLinkUpCardHTML — utilisée uniquement dans renderStats(),
-// pour ne pas changer le rendu de la fiche session / du dashboard qui appellent buildLinkUpCardHTML.
 function buildLinkUpCardHTMLv2(sessions) {
   const duos = computeLinkUpStats(sessions);
   if (!duos.length) return `<div class="kpi-card" data-card="meilleur-link-up">
@@ -2181,20 +2313,6 @@ function buildTop10Slots(items, sameValue) {
 }
 
 // items : [{name, value}], déjà triés du meilleur au moins bon
-function buildTop10HTML(items, valueFmt, sameValue) {
-  if (!items.length) return `<span class="no-data">—</span>`;
-  const cmp = sameValue || ((a,b) => a === b);
-  const { slots, rest } = buildTop10Slots(items, cmp);
-  const podiumHtml = buildPodiumVizSlots(slots, s => valueFmt(s.value), s => s.players.map(n => pLink(n)).join(", "));
-  const shownCount = slots.reduce((sum,s) => sum + s.players.length, 0);
-  const restRows = rest.slice(0, Math.max(0, 10 - shownCount));
-  const listHtml = restRows.length ? `<div class="top10-list">${restRows.map((it, i) => `
-    <div class="top10-row"><span class="top10-rank">${shownCount + i + 1}</span><span class="top10-name">${pLink(it.name)}</span><span class="top10-val">${valueFmt(it.value)}</span></div>
-  `).join('')}</div>` : '';
-  return podiumHtml + listHtml;
-}
-
-// Variante Récompenses (podium gradient) de buildTop10HTML — utilisée uniquement dans renderStats().
 function buildTop10HTMLv2(items, valueFmt, sameValue) {
   if (!items.length) return `<span class="no-data">—</span>`;
   const cmp = sameValue || ((a,b) => a === b);
@@ -2208,22 +2326,6 @@ function buildTop10HTMLv2(items, valueFmt, sameValue) {
   return podiumHtml + listHtml;
 }
 
-function buildTopDefCardHTML(sessions, minMatches) {
-  const defs = computeTopDefendersStats(sessions, minMatches);
-  if (!defs.length) return `<div class="kpi-card" data-card="top-defenseurs">
-    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 10 Défenseurs 🔒</div>
-    <span style="color:var(--text3)">—</span>
-  </div>`;
-  const items = defs.map(d => ({ name: d.name, value: d.avg }));
-  const body = buildTop10HTML(items, v => `${v.toFixed(1).replace(".",",")} b.c./m`, (a,b) => Math.abs(a-b) < 1e-9);
-  return `<div class="kpi-card" data-card="top-defenseurs">
-    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 10 Défenseurs 🔒</div>
-    ${body}
-  </div>`;
-}
-
-// Variante Récompenses de buildTopDefCardHTML — utilisée uniquement dans renderStats(),
-// pour ne pas changer le rendu de la fiche session / du dashboard qui appellent buildTopDefCardHTML.
 function buildTopDefCardHTMLv2(sessions, minMatches) {
   const defs = computeTopDefendersStats(sessions, minMatches);
   if (!defs.length) return `<div class="kpi-card" data-card="top-defenseurs">
@@ -2359,16 +2461,6 @@ function buildCalamityJamesHtml(sessions) {
   return html;
 }
 
-function fmtGoalsList(buteurs, passeurs) {
-  if (!buteurs || !buteurs.length) return "";
-  return buteurs.map((p, j) => {
-    const passeur = passeurs && passeurs[j] ? passeurs[j] : null;
-    const bHtml = p === "CSC" ? `<em>CSC</em>` : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
-    const pHtml = passeur ? ` <span style="color:var(--text3);font-size:10px;white-space:nowrap">(<button class="player-link" data-player="${passeur}" style="font-size:inherit;color:inherit">${passeur}</button>)</span>` : "";
-    return `<span class="mc-goal-line" style="white-space:nowrap">${bHtml}${pHtml}</span>`;
-  }).join(` <span style="color:var(--text3)">•</span> `);
-}
-
 function _recapSideSummary(m, side) {
   const eq = side === "A" ? m.eqA : m.eqB;
   const buteurs = (side === "A" ? m.buteursA : m.buteursB) || [];
@@ -2395,305 +2487,11 @@ function buildMatchRecapRowHTML(m, idx) {
   </div>`;
 }
 
-function renderSessionDetail(session) {
-  const matchs = session.matchs || [];
-  const isAdmin = sessionStorage.getItem("hmft_role") === "admin";
-  let h = "";
-
-  /* Calculs */
-  const colorWins    = {Rouge:0, Vert:0, Bleue:0};
-  const goalsFor     = {Rouge:0, Vert:0, Bleue:0};
-  const goalsAgainst = {Rouge:0, Vert:0, Bleue:0};
-  let draws = 0, totalButs = 0;
-  const buteursCount = {}, passeursCount = {};
-
-  matchs.forEach(m => {
-    totalButs += m.scoreA + m.scoreB;
-    goalsFor[m.eqA]      = (goalsFor[m.eqA]||0)      + m.scoreA;
-    goalsFor[m.eqB]      = (goalsFor[m.eqB]||0)      + m.scoreB;
-    goalsAgainst[m.eqA]  = (goalsAgainst[m.eqA]||0)  + m.scoreB;
-    goalsAgainst[m.eqB]  = (goalsAgainst[m.eqB]||0)  + m.scoreA;
-    if      (m.scoreA > m.scoreB) colorWins[m.eqA]++;
-    else if (m.scoreB > m.scoreA) colorWins[m.eqB]++;
-    else draws++;
-    ["A","B"].forEach(side => {
-      const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
-      buts.forEach((b,i) => {
-        if (!b || b==="CSC") return;
-        buteursCount[b] = (buteursCount[b]||0)+1;
-        const p = passes[i]; if (p && p!=="CSC") passeursCount[p] = (passeursCount[p]||0)+1;
-      });
-    });
-  });
-
-  const maxWins       = Math.max(0, ...Object.values(colorWins));
-  const winnerTeams   = Object.entries(colorWins).filter(([,v]) => v === maxWins && maxWins > 0).map(([k]) => k);
-  const buteursRanked = Object.entries(buteursCount).sort((a,b) => b[1]-a[1]);
-  const teamsPlayed   = [...new Set(matchs.flatMap(m => [m.eqA, m.eqB]))];
-  const maxGoalsFor   = teamsPlayed.length ? Math.max(...teamsPlayed.map(t => goalsFor[t]||0)) : 0;
-  const bestAtkTeams  = teamsPlayed.filter(t => (goalsFor[t]||0) === maxGoalsFor && maxGoalsFor > 0);
-  const maxGoalsAgst  = teamsPlayed.length ? Math.max(...teamsPlayed.map(t => goalsAgainst[t]||0)) : 0;
-  const worstDefTeams = teamsPlayed.filter(t => (goalsAgainst[t]||0) === maxGoalsAgst && maxGoalsAgst > 0);
-  const minGoalsAgst  = teamsPlayed.length ? Math.min(...teamsPlayed.map(t => goalsAgainst[t]||0)) : 0;
-  const bestDefTeams  = teamsPlayed.filter(t => (goalsAgainst[t]||0) === minGoalsAgst);
-  const matchGros    = matchs.reduce((b,m) => { const t=m.scoreA+m.scoreB; return (!b||t>b.total)?{...m,total:t}:b; }, null);
-  const matchLarge   = matchs.reduce((b,m) => { const a=Math.abs(m.scoreA-m.scoreB); return (!b||a>b.amp)?{...m,amp:a}:b; }, null);
-
-  const matchesPerTeam = {};
-  const drawsPerTeam = {};
-  matchs.forEach(m => {
-    matchesPerTeam[m.eqA] = (matchesPerTeam[m.eqA]||0) + 1;
-    matchesPerTeam[m.eqB] = (matchesPerTeam[m.eqB]||0) + 1;
-    if (m.scoreA === m.scoreB) {
-      drawsPerTeam[m.eqA] = (drawsPerTeam[m.eqA]||0) + 1;
-      drawsPerTeam[m.eqB] = (drawsPerTeam[m.eqB]||0) + 1;
-    }
-  });
-
-  const fmtBut = arr => {
-    if (!arr || !arr.length) return "";
-    const c = {};
-    arr.forEach(p => { c[p]=(c[p]||0)+1; });
-    return Object.entries(c).sort((a,b)=>a[0].localeCompare(b[0],"fr")).map(([p,n]) => {
-      const d = p==="CSC" ? p : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
-      return n>1 ? `${d} ×${n}` : d;
-    }).join(", ");
-  };
-
-  /* ── Rangée 1 : 4 KPI ── */
-  const victSub = ["Rouge","Vert","Bleue"].filter(c => colorWins[c] > 0)
-    .map(c => `${dot(c)}${colorWins[c]}`).join(" · ");
-  const matchSub = [victSub, draws > 0 ? `<span class="cdot gris"></span>${draws}` : ""].filter(Boolean).join(" · ");
-
-  /* Top 3 buteurs / passeurs — groupés par score, égalités incluses */
-  const _medS = ["🥇","🥈","🥉"];
-  function _buildTop3Html(ranked, unitSingle, unitPlural, nameKey) {
-    const slots = []; let rem = [...ranked];
-    while (rem.length > 0 && slots.length < 3) {
-      const topN = rem[0][1];
-      slots.push({ rank: slots.length, names: rem.filter(([,n])=>n===topN).map(([n])=>n), count: topN });
-      rem = rem.filter(([,n]) => n < topN);
-    }
-    if (slots.length === 0) return `<span class="no-data">—</span>`;
-    return buildPodiumVizSlots(
-      slots,
-      s => `${s.count} ${s.count > 1 ? unitPlural : unitSingle}`,
-      s => s.names.map(n => `<button class="player-link" data-player="${n}" style="font-size:inherit;font-weight:inherit;color:inherit">${n}</button>`).join(", ")
-    );
-  }
-  const passeursRanked = Object.entries(passeursCount).sort((a,b) => b[1]-a[1]);
-  const top3ButeursHtml  = _buildTop3Html(buteursRanked,  "but",  "buts",  "buts");
-  const top3PasseursHtml = _buildTop3Html(passeursRanked, "passe","passes","passes");
-
-  /* KPI cards — pré-calcul */
-  const avgButs        = matchs.length > 0 ? (totalButs / matchs.length).toFixed(1) : "—";
-  const atkGoals       = maxGoalsFor;
-  const defGoals       = maxGoalsAgst;
-  const bestTeamsHtml  = winnerTeams.length===0?"—":winnerTeams.slice(0,2).map(t=>teamTagColored(t)).join(" &middot; ");
-  const atkTeamHtml    = bestAtkTeams.length===0?"—":bestAtkTeams.slice(0,2).map(t=>teamTagColored(t)).join(" &middot; ");
-  const defTeamHtml    = worstDefTeams.length===0?"—":worstDefTeams.slice(0,2).map(t=>teamTagColored(t)).join(" &middot; ");
-  const bestAccent     = kpiTeamCard(winnerTeams);
-  const atkAccent      = kpiTeamCard(bestAtkTeams);
-  const defAccent      = kpiTeamCard(worstDefTeams);
-  const grosAcc        = matchGros  ? matchAccent(matchGros)  : "";
-  const largeAcc       = matchLarge ? matchAccent(matchLarge) : "";
-  const grosCol        = scoreColors(matchGros);
-  const largeCol       = scoreColors(matchLarge);
-  const grosScoreBody  = matchGros ? `
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
-      <div style="flex:1;text-align:left">
-        <div style="font-size:36px;font-weight:700;line-height:1;color:${grosCol.a}">${matchGros.scoreA}</div>
-        <div style="margin-top:5px">${badge(matchGros.eqA)}</div>
-      </div>
-      <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
-      <div style="flex:1;text-align:right">
-        <div style="font-size:36px;font-weight:700;line-height:1;color:${grosCol.b}">${matchGros.scoreB}</div>
-        <div style="margin-top:5px">${badge(matchGros.eqB)}</div>
-      </div>
-    </div>
-    <div class="kpi-sep"></div>
-    <div class="mc-buteurs" style="font-size:11px;color:var(--text2)">
-      <div class="mc-but">${fmtGoalsList(matchGros.buteursA, matchGros.passeursA)||"<span style='color:var(--text3)'>—</span>"}</div>
-      <div class="mc-but right">${fmtGoalsList(matchGros.buteursB, matchGros.passeursB)}</div>
-    </div>` : `<span style="color:var(--text3)">—</span>`;
-  const largeScoreBody = matchLarge ? `
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
-      <div style="flex:1;text-align:left">
-        <div style="font-size:36px;font-weight:700;line-height:1;color:${largeCol.a}">${matchLarge.scoreA}</div>
-        <div style="margin-top:5px">${badge(matchLarge.eqA)}</div>
-      </div>
-      <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
-      <div style="flex:1;text-align:right">
-        <div style="font-size:36px;font-weight:700;line-height:1;color:${largeCol.b}">${matchLarge.scoreB}</div>
-        <div style="margin-top:5px">${badge(matchLarge.eqB)}</div>
-      </div>
-    </div>
-    <div class="kpi-sep"></div>
-    <div class="mc-buteurs" style="font-size:11px;color:var(--text2)">
-      <div class="mc-but">${fmtGoalsList(matchLarge.buteursA, matchLarge.passeursA)||"<span style='color:var(--text3)'>—</span>"}</div>
-      <div class="mc-but right">${fmtGoalsList(matchLarge.buteursB, matchLarge.passeursB)}</div>
-    </div>` : `<span style="color:var(--text3)">—</span>`;
-
-  h += `<div class="kpi-grid kpi-grid--main" style="margin-bottom:2rem">
-    <div class="kpi-card accent-amber" data-card="matchs">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Matchs</div>
-      <div class="kpi-num amber">${matchs.length}</div>
-      ${matchSub ? `<div class="kpi-sep"></div><div class="kpi-sub">${matchSub}</div>` : ""}
-    </div>
-    <div class="kpi-card ${bestAccent}" data-card="meilleure-equipe">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure équipe</div>
-      <div style="font-size:24px;font-weight:700;line-height:1.2">${bestTeamsHtml}</div>
-      <div class="kpi-sep"></div>
-      <div class="kpi-sub">${maxWins > 0 ? `${maxWins} victoire${maxWins>1?"s":""}` : "0 victoire"}</div>
-    </div>
-    <div class="kpi-card accent-amber" data-card="buts-marques">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Buts marqués</div>
-      <div class="kpi-num amber">${totalButs}</div>
-      <div class="kpi-avg-desktop"><div class="kpi-sep"></div><div class="kpi-sub">${avgButs} buts / match en moy.</div></div>
-    </div>
-    <div class="kpi-card accent-amber" data-card="avg-standalone">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Moy. buts / match</div>
-      <div class="kpi-num amber">${avgButs}</div>
-    </div>
-  </div>`;
-
-  /* ── Classement de la soirée ── */
-  if (teamsPlayed.length >= 2 && matchs.length > 0) {
-    const _standings = teamsPlayed.map(t => {
-      const wins = colorWins[t]||0, drawsT = drawsPerTeam[t]||0, pj = matchesPerTeam[t]||0;
-      return { team: t, pj, v: wins, n: drawsT, d: pj-wins-drawsT, pts: wins*3+drawsT, gf: goalsFor[t]||0, ga: goalsAgainst[t]||0, diff:(goalsFor[t]||0)-(goalsAgainst[t]||0) };
-    }).sort((a,b) => b.pts-a.pts || b.diff-a.diff || b.gf-a.gf);
-    h += `<div class="section-label">Classement de la soirée</div>
-    <div style="overflow-x:auto;margin-bottom:2rem">
-      <table style="width:100%;border-collapse:collapse;font-size:13px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;min-width:360px">
-        <thead><tr style="background:var(--bg3)">
-          <th style="padding:10px 16px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)">Équipe</th>
-          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Matchs joués">PJ</th>
-          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Victoires">V</th>
-          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Nuls">N</th>
-          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Défaites">D</th>
-          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)">Pts</th>
-          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Buts pour">BP</th>
-          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)" title="Buts contre">BC</th>
-          <th style="padding:10px 10px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;border-bottom:2px solid var(--border2)">Diff</th>
-        </tr></thead>
-        <tbody>${_standings.map((row,i) => {
-          const diffColor = row.diff>0?"#66bb6a":row.diff<0?"#ef5350":"var(--text2)";
-          const diffSign  = row.diff>0?"+":"";
-          return `<tr style="border-top:1px solid var(--border)${i===0?";background:rgba(255,255,255,.015)":""}">
-            <td style="padding:12px 16px">${badge(row.team)}</td>
-            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.pj}</td>
-            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.v}</td>
-            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.n}</td>
-            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.d}</td>
-            <td style="padding:12px 10px;text-align:center;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums">${row.pts}</td>
-            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.gf}</td>
-            <td style="padding:12px 10px;text-align:center;color:var(--text2);font-variant-numeric:tabular-nums">${row.ga}</td>
-            <td style="padding:12px 10px;text-align:center;font-weight:600;color:${diffColor};font-variant-numeric:tabular-nums">${diffSign}${row.diff}</td>
-          </tr>`;
-        }).join('')}</tbody>
-      </table>
-    </div>`;
-  }
-
-  h += `<div class="kpi-grid kpi-grid--main" style="margin-bottom:2rem">
-    <div class="kpi-card ${atkAccent}" data-card="meilleure-attaque">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure attaque</div>
-      <div style="font-size:24px;font-weight:700;line-height:1.2">${atkTeamHtml}</div>
-      <div class="kpi-sep"></div>
-      <div class="kpi-sub">${atkGoals} but${atkGoals!==1?"s":""}</div>
-    </div>
-    <div class="kpi-card" data-card="top-buteurs">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top buteurs</div>
-      ${top3ButeursHtml}
-    </div>
-    <div class="kpi-card ${defAccent}" data-card="meilleure-defense">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Pire défense</div>
-      <div style="font-size:24px;font-weight:700;line-height:1.2">${defTeamHtml}</div>
-      <div class="kpi-sep"></div>
-      <div class="kpi-sub">${defGoals} but${defGoals!==1?"s":""} conc.</div>
-    </div>
-    ${buildTopDefCardHTML([session])}
-    <div class="kpi-card" data-card="top-passeurs">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top passeurs</div>
-      ${top3PasseursHtml}
-    </div>
-    ${buildLinkUpCardHTML([session])}
-    <div class="kpi-card ${grosAcc}" data-card="plus-gros-score">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Plus gros score</div>
-      ${grosScoreBody}
-    </div>
-    <div class="kpi-card ${largeAcc}" data-card="plus-grand-ecart">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Plus grand écart</div>
-      ${largeScoreBody}
-    </div>
-  </div>`;
-
-  /* ── Compositions d'équipes ── */
-  const presentsAll = Object.entries(session.presences)
-    .filter(([, info]) => info.statut === "Présent")
-    .map(([name, info]) => ({ name, equipe: info.equipe || "", joker: !!info.joker }))
-    .sort((a, b) => a.name.localeCompare(b.name, "fr"));
-
-  const TEAM_ICONS = { Rouge: "🔴", Vert: "🟡", Bleue: "🔵" };
-  const hasColors  = presentsAll.some(p => p.equipe !== "");
-  const _playerChip = p =>
-    `<button class="player-chip player-link" data-player="${p.name}">${p.name}</button>`;
-
-  if (!hasColors) {
-    const rosterP = presentsAll.filter(p => !p.joker);
-    const jokerP  = presentsAll.filter(p =>  p.joker);
-    h += `<div class="section-label">Effectif (${rosterP.length})</div>
-    <div class="players-present-list">${rosterP.map(_playerChip).join("")}</div>`;
-    if (jokerP.length)
-      h += `<div class="section-label" style="margin-top:1rem">Occasionnels (${jokerP.length})</div>
-      <div class="players-present-list">${jokerP.map(_playerChip).join("")}</div>`;
-  } else {
-    const teamMap = { Rouge:[], Vert:[], Bleue:[] };
-    const noTeam  = [];
-    presentsAll.forEach(p => { teamMap[p.equipe]!==undefined ? teamMap[p.equipe].push(p) : noTeam.push(p); });
-    const activeColors = ["Rouge","Vert","Bleue"].filter(c => teamMap[c].length > 0);
-
-    h += `<div class="section-label">Composition des équipes</div><div class="teams-section">`;
-    if (activeColors.length === 2) {
-      h += `<div class="teams-vs-layout" style="grid-template-columns:1fr auto 1fr">`;
-      h += teamCard(activeColors[0], teamMap, TEAM_ICONS);
-      h += `<div class="teams-vs-divider"><span class="teams-vs-badge">VS</span></div>`;
-      h += teamCard(activeColors[1], teamMap, TEAM_ICONS);
-      h += `</div>`;
-    } else {
-      const cols = activeColors.map(() => "1fr").join(" auto ");
-      h += `<div class="teams-vs-layout" style="grid-template-columns:${cols}">`;
-      activeColors.forEach((color, i) => {
-        h += teamCard(color, teamMap, TEAM_ICONS);
-        if (i < activeColors.length - 1) h += `<div class="teams-vs-divider"><span class="teams-vs-badge">VS</span></div>`;
-      });
-      h += `</div>`;
-    }
-    if (noTeam.length > 0) {
-      h += `<div class="no-team-section"><div class="no-team-label">Sans équipe assignée</div>
-        <div class="players-present-list">
-          ${noTeam.map(_playerChip).join("")}
-        </div></div>`;
-    }
-    h += `</div>`;
-  }
-
-  /* ── Matchs ── */
-  if (matchs.length > 0) {
-    h += `<div class="section-label">Tous les matchs</div><div class="matches-recap-list">`;
-    matchs.forEach((m, i) => { h += buildMatchRecapRowHTML(m, i); });
-    h += `</div>`;
-  }
-
-  return h;
-}
-
 /* ══════════════════════════════════════════════════════════
    SESSIONS V2 — « Feuille de match »
-   Nouvelle mise en page utilisée UNIQUEMENT par renderSessionResults()
-   (onglet Sessions). renderSessionDetail() ci-dessus reste inchangée et
-   continue d'alimenter le Dashboard ("Dernière session") sans modification.
+   Nouvelle mise en page utilisée par renderSessionResults() (onglet
+   Sessions). Le Dashboard (préfixe dbx-) a son propre rendu agrégé
+   et n'utilise pas ces fonctions.
 ══════════════════════════════════════════════════════════ */
 
 function _sfmGoalsGrouped(buteurs) {
@@ -3219,21 +3017,6 @@ function _sfmBindTicker(container) {
       setTimeout(() => row.classList.remove('sfm-flash'), 1200);
     });
   });
-}
-
-function buildAggTop3(ranked, unitS, unitP) {
-  const slots = []; let rem = [...ranked];
-  while (rem.length > 0 && slots.length < 3) {
-    const topN = rem[0][1];
-    slots.push({ rank: slots.length, players: rem.filter(([,n])=>n===topN).map(([n])=>n), count: topN });
-    rem = rem.filter(([,n]) => n < topN);
-  }
-  if (slots.length === 0) return `<span class="no-data">—</span>`;
-  return buildPodiumVizSlots(
-    slots,
-    s => `${s.count} ${s.count > 1 ? unitP : unitS}`,
-    s => s.players.map(n => pLink(n)).join(", ")
-  );
 }
 
 function buildPresencePodium(entries) {
@@ -4281,6 +4064,226 @@ function renderStats() {
   }
 }
 
+/* ══════════════════════════════════════════════════════════
+   DASHBOARD v2 (préfixe dbx-) — recopié du prototype approuvé.
+   Agrégation étendue + rendu des sections (hero, comparatif,
+   tendance, matchs marquants, classements, assiduité).
+══════════════════════════════════════════════════════════ */
+
+/* Étend computeStats() avec les données chronologiques nécessaires
+   au nouveau design : buts contre par équipe, forme récente (W/N/L),
+   et répartition des buts par session pour le graphique de tendance. */
+function _dbxComputeAgg(sessions) {
+  const st = computeStats(sessions);
+  const sorted = [...sessions].sort((a,b) => new Date(a.date)-new Date(b.date));
+  const allMatchsChrono = sorted.flatMap(s => (s.matchs||[]).map(m => ({...m, date:s.date})));
+  const goalsAgainst = {Rouge:0, Vert:0, Bleue:0};
+  const results = {Rouge:[], Vert:[], Bleue:[]};
+  let draws = 0;
+  allMatchsChrono.forEach(m => {
+    goalsAgainst[m.eqA] = (goalsAgainst[m.eqA]||0) + m.scoreB;
+    goalsAgainst[m.eqB] = (goalsAgainst[m.eqB]||0) + m.scoreA;
+    let winner = null;
+    if (m.scoreA > m.scoreB) winner = m.eqA;
+    else if (m.scoreB > m.scoreA) winner = m.eqB;
+    else draws++;
+    results[m.eqA].push(winner===m.eqA ? "w" : winner ? "l" : "n");
+    results[m.eqB].push(winner===m.eqB ? "w" : winner ? "l" : "n");
+  });
+  const totalGoals = allMatchsChrono.reduce((a,m) => a+m.scoreA+m.scoreB, 0);
+  const maxWins = Math.max(0, st.colorWins.Rouge, st.colorWins.Vert, st.colorWins.Bleue);
+  const leaders = ["Rouge","Vert","Bleue"].filter(t => st.colorWins[t]===maxWins && maxWins>0);
+  const totalPres = sessions.reduce((a,s) => a + Object.values(s.presences).filter(p=>p.statut==="Présent").length, 0);
+  const totalAbs  = sessions.reduce((a,s) => a + Object.values(s.presences).filter(p=>p.statut==="Absent").length, 0);
+  const totalBles = sessions.reduce((a,s) => a + Object.values(s.presences).filter(p=>p.statut==="Blessé").length, 0);
+  const byAlpha = (a,b) => a[0].localeCompare(b[0], "fr");
+  const topScorers  = st.buteursRank.slice(0,5);
+  const topAssists  = st.passeursRank.slice(0,5);
+  const topPresence = Object.entries(st.ps)
+    .filter(([n,p]) => p.presences>0 && !JOKERS.has(n))
+    .sort((a,b) => b[1].presences-a[1].presences || byAlpha(a,b)).slice(0,5);
+  const goalsBySession = sorted.map(s => ({ date: s.date, goals: (s.matchs||[]).reduce((a,m) => a+m.scoreA+m.scoreB, 0) }));
+  return {
+    allMatchs: allMatchsChrono, ps: st.ps, colorWins: st.colorWins, draws,
+    goalsFor: st.goalsPerTeam, goalsAgainst, totalGoals, leaders, maxWins,
+    topScorers, topAssists, topPresence, totalPres, totalAbs, totalBles,
+    mostGoals: st.mostGoals, biggestAmp: st.biggestAmp, results, goalsBySession,
+    sessionsCount: sessions.length
+  };
+}
+
+function _dbxSparkSvg(values, color) {
+  if (values.length < 2) return "";
+  const w=110, h=32, pad=3;
+  const max = Math.max(...values), min = Math.min(...values);
+  const range = (max-min)||1;
+  const pts = values.map((v,i) => [pad+(i*(w-2*pad)/(values.length-1)), h-pad-((v-min)/range)*(h-2*pad)]);
+  const line = pts.map(p=>p.join(",")).join(" ");
+  const area = `${pad},${h-pad} ${line} ${w-pad},${h-pad}`;
+  const last = pts[pts.length-1];
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+    <polygon points="${area}" fill="${color}" opacity=".14"/>
+    <polyline points="${line}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="2.6" fill="${color}"/>
+  </svg>`;
+}
+
+function _dbxFmtDateShort(d) {
+  const [,m,j] = d.split("-");
+  return `${parseInt(j)} ${MONTH_NAMES[parseInt(m)-1].slice(0,3)}`;
+}
+
+function _dbxTag(t) {
+  return `<span class="dbx-tag ${t.toLowerCase()}">${dot(t)}${TEAM_LABEL[t]||t}</span>`;
+}
+
+function _dbxRenderHero(agg) {
+  const avgGoals = agg.allMatchs.length ? (agg.totalGoals/agg.allMatchs.length).toFixed(1) : "—";
+  const leaderHtml = agg.leaders.length
+    ? agg.leaders.map(t => `${dot(t)}<span class="dbx-txt ${t.toLowerCase()}">${TEAM_LABEL[t]}</span>`).join(" &amp; ")
+    : "—";
+  const totalPresences = agg.totalPres + agg.totalAbs;
+  const presRate = totalPresences ? Math.round(agg.totalPres/totalPresences*100) : 0;
+  const sparkVals = agg.goalsBySession.slice(-10).map(g=>g.goals);
+  return `<div class="dbx-hero-grid">
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Matchs joués</div>
+      <div class="dbx-hero-num">${agg.allMatchs.length}</div>
+      <div class="dbx-hero-sub">${agg.sessionsCount} session${agg.sessionsCount>1?"s":""}</div>
+    </div>
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Buts marqués</div>
+      <div class="dbx-hero-num">${agg.totalGoals}</div>
+      <div class="dbx-hero-sub">${avgGoals} buts / match en moy.</div>
+      ${sparkVals.length>1?`<div class="dbx-hero-spark">${_dbxSparkSvg(sparkVals,'#f5c842')}</div>`:""}
+    </div>
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Équipe en tête</div>
+      <div class="dbx-hero-num dbx-team">${leaderHtml}</div>
+      <div class="dbx-hero-sub">${agg.maxWins} victoire${agg.maxWins!==1?"s":""}</div>
+    </div>
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Taux de présence</div>
+      <div class="dbx-hero-num">${presRate}%</div>
+      <div class="dbx-hero-sub">${agg.totalPres} présence${agg.totalPres>1?"s":""} au total</div>
+    </div>
+  </div>`;
+}
+
+function _dbxRenderCompare(agg) {
+  const T3 = ["Rouge","Vert","Bleue"];
+  const maxW = Math.max(1, ...T3.map(t=>agg.colorWins[t]||0));
+  const bars = T3.map(t => `
+    <div class="dbx-cmp-row">
+      <div class="dbx-cmp-label">${dot(t)}${TEAM_LABEL[t]}</div>
+      <div class="dbx-cmp-track"><div class="dbx-cmp-fill" style="width:${(agg.colorWins[t]||0)/maxW*100}%;background:var(--${teamCls(t)})"></div></div>
+      <div class="dbx-cmp-val">${agg.colorWins[t]||0}</div>
+    </div>`).join("");
+
+  const teamCards = T3.map(t => {
+    const w = agg.colorWins[t]||0, gf = agg.goalsFor[t]||0, ga = agg.goalsAgainst[t]||0, diff = gf-ga;
+    const played = agg.results[t].length;
+    const losses = agg.results[t].filter(r=>r==="l").length;
+    const nuls = agg.results[t].filter(r=>r==="n").length;
+    const isLeader = agg.leaders.includes(t) && agg.maxWins>0;
+    const cls = t.toLowerCase();
+    const form = agg.results[t].slice(-5).map(r => `<span class="dbx-form-chip ${r}">${r==="w"?"V":r==="n"?"N":"D"}</span>`).join("");
+    return `<div class="dbx-card dbx-team-card">
+      <div class="dbx-team-accent ${cls}"></div>
+      <div class="dbx-team-top">
+        <span class="dbx-team-name dbx-txt ${cls}">${dot(t)}${TEAM_LABEL[t]}</span>
+        ${isLeader?'<span class="dbx-team-crown">👑</span>':""}
+        <span class="dbx-team-wins">${played} match${played>1?"s":""}</span>
+      </div>
+      <div class="dbx-team-body">
+        <div class="dbx-wdl"><span class="w">${w} V</span><span class="n">${nuls} N</span><span class="l">${losses} D</span></div>
+        <div class="dbx-team-gf"><span>${gf} pour &middot; ${ga} contre</span><span class="diff ${diff>=0?"pos":"neg"}">${diff>0?"+":""}${diff}</span></div>
+        ${played?`<div class="dbx-form-lbl">Forme</div><div class="dbx-form-row">${form}</div>`:""}
+      </div>
+    </div>`;
+  }).join("");
+
+  return `<div class="dbx-card dbx-cmp-card">${bars}</div><div class="dbx-team-grid">${teamCards}</div>`;
+}
+
+function _dbxTrendChart(agg) {
+  const data = agg.goalsBySession;
+  const single = data.length <= 1;
+  const points = single
+    ? agg.allMatchs.map(m => ({ label: `${(TEAM_LABEL[m.eqA]||m.eqA).slice(0,3)}-${(TEAM_LABEL[m.eqB]||m.eqB).slice(0,3)}`, goals: m.scoreA+m.scoreB }))
+    : data.map(d => ({ label: _dbxFmtDateShort(d.date), goals: d.goals }));
+  if (!points.length) return `<div class="dbx-card dbx-trend-card"><p style="color:var(--text3);font-size:13px;font-style:italic;margin:0">Aucune donnée.</p></div>`;
+
+  const w = Math.max(360, points.length*46), h = 130, padB = 22, padT = 10;
+  const max = Math.max(...points.map(p=>p.goals), 1);
+  const barW = Math.min(28, (w/points.length)*0.55);
+  const step = w/points.length;
+  const avg = points.reduce((a,p)=>a+p.goals,0)/points.length;
+
+  const bars = points.map((p,i) => {
+    const x = i*step + (step-barW)/2;
+    const bh = Math.max(2, (p.goals/max)*(h-padB-padT));
+    const y = h-padB-bh;
+    return `<g class="dbx-trend-bar">
+      <rect x="${x}" y="${y}" width="${barW}" height="${bh}" rx="4" fill="var(--gold)" opacity=".82"/>
+      <text x="${x+barW/2}" y="${h-6}" text-anchor="middle" font-size="9.5" fill="var(--text3)" font-family="inherit">${p.label}</text>
+      <title>${p.label} — ${p.goals} but${p.goals>1?"s":""}</title>
+    </g>`;
+  }).join("");
+
+  const avgY = h-padB-(avg/max)*(h-padB-padT);
+  const avgLine = points.length>1 ? `<line x1="0" y1="${avgY}" x2="${w}" y2="${avgY}" stroke="var(--text3)" stroke-width="1" stroke-dasharray="3,3" opacity=".6"/>` : "";
+
+  return `<div class="dbx-card dbx-trend-card">
+    <div class="dbx-trend-top">
+      <span class="dbx-trend-top-lbl">${single?"Répartition par match":"Buts marqués par session"}</span>
+      <span class="dbx-trend-top-val">Moyenne <b>${avg.toFixed(1)}</b> buts</span>
+    </div>
+    <div class="dbx-trend-svg-wrap">
+      <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${avgLine}${bars}</svg>
+    </div>
+  </div>`;
+}
+
+function _dbxHighlightCards(agg) {
+  function card(lbl, m) {
+    if (!m) return `<div class="dbx-card dbx-hl-card"><div class="dbx-hl-lbl">${lbl}</div><p style="color:var(--text3);font-size:12.5px;font-style:italic;margin:0">—</p></div>`;
+    return `<div class="dbx-card dbx-hl-card">
+      <div class="dbx-hl-lbl">${lbl}</div>
+      <div class="dbx-hl-score">
+        <div class="dbx-hl-side"><div class="n">${m.scoreA}</div><div class="t">${_dbxTag(m.eqA)}</div></div>
+        <div class="dbx-hl-dash">–</div>
+        <div class="dbx-hl-side"><div class="n">${m.scoreB}</div><div class="t">${_dbxTag(m.eqB)}</div></div>
+      </div>
+      <div class="dbx-hl-date">${fmtDate(m.date)}</div>
+    </div>`;
+  }
+  return `<div class="dbx-hl-grid">${card("Plus gros score", agg.mostGoals)}${card("Plus grand écart", agg.biggestAmp)}</div>`;
+}
+
+function _dbxLeaderCol(title, icon, entries, unit) {
+  if (!entries.length) return `<div class="dbx-card dbx-lead-card"><div class="dbx-lead-head">${icon} ${title}</div><div class="dbx-lead-empty">Aucune donnée</div></div>`;
+  const max = entries[0][1][unit];
+  const rows = entries.map(([name,p],i) => `
+    <div class="dbx-lead-row r${i+1}">
+      <div class="dbx-lead-rank">${i+1}</div>
+      <div class="dbx-lead-name">${p.bestColor?dot(p.bestColor):""}${pLink(name)}</div>
+      <div class="dbx-lead-bar-wrap"><div class="dbx-lead-bar" style="width:${max?p[unit]/max*100:0}%"></div></div>
+      <div class="dbx-lead-val">${p[unit]}</div>
+    </div>`).join("");
+  return `<div class="dbx-card dbx-lead-card"><div class="dbx-lead-head">${icon} ${title}</div>${rows}</div>`;
+}
+
+function _dbxRenderAssiduity(agg) {
+  const avgPres = agg.sessionsCount ? (agg.totalPres/agg.sessionsCount).toFixed(1) : "—";
+  return `<div class="dbx-assid-grid">
+    <div class="dbx-card dbx-assid-card"><div class="dbx-assid-num">${agg.sessionsCount}</div><div class="dbx-assid-lbl">Sessions</div></div>
+    <div class="dbx-card dbx-assid-card"><div class="dbx-assid-num">${avgPres}</div><div class="dbx-assid-lbl">Moy. présents / session</div></div>
+    <div class="dbx-card dbx-assid-card"><div class="dbx-assid-num">${agg.totalAbs}</div><div class="dbx-assid-lbl">Absences</div></div>
+    <div class="dbx-card dbx-assid-card"><div class="dbx-assid-num">${agg.totalBles}</div><div class="dbx-assid-lbl">Blessures</div></div>
+  </div>`;
+}
+
 function renderDashboard() {
   const sessions = filterSessions(currentPeriod);
   const dash = document.getElementById("dash");
@@ -4295,241 +4298,29 @@ function renderDashboard() {
     return;
   }
 
-  if (currentPeriod === "last") {
-    dash.innerHTML = renderSessionDetail(sessions[0]);
-    animateView(dash);
-    return;
-  }
-
-  const st = computeStats(sessions);
+  const agg = _dbxComputeAgg(sessions);
   let h = "";
 
-  /* ── Palmarès Ballon d'Or par année (All-Time) — à implémenter quand on aura les données des années précédentes ── */
+  h += _dbxRenderHero(agg);
 
-  /* ── Calculs agrégés ── */
-  let draws = 0;
-  const goalsAgainst = {Rouge:0, Vert:0, Bleue:0};
-  st.allMatchs.forEach(m => {
-    if (m.scoreA === m.scoreB) draws++;
-    goalsAgainst[m.eqA] = (goalsAgainst[m.eqA]||0) + m.scoreB;
-    goalsAgainst[m.eqB] = (goalsAgainst[m.eqB]||0) + m.scoreA;
-  });
-  const totalButs    = st.allMatchs.reduce((acc,m) => acc + m.scoreA + m.scoreB, 0);
-  const teamsActive  = [...new Set(st.allMatchs.flatMap(m => [m.eqA, m.eqB]))];
-  const maxGoalsPT   = teamsActive.length ? Math.max(...teamsActive.map(t => st.goalsPerTeam[t]||0)) : 0;
-  const bestAtkTeams = teamsActive.filter(t => (st.goalsPerTeam[t]||0) === maxGoalsPT && maxGoalsPT > 0);
-  const maxGoalsAg   = teamsActive.length ? Math.max(...teamsActive.map(t => goalsAgainst[t]||0)) : 0;
-  const worstDefTeams = teamsActive.filter(t => (goalsAgainst[t]||0) === maxGoalsAg && maxGoalsAg > 0);
-  const minGoalsAgAgg   = teamsActive.length ? Math.min(...teamsActive.map(t => goalsAgainst[t]||0)) : 0;
-  const bestDefTeamsAgg = teamsActive.filter(t => (goalsAgainst[t]||0) === minGoalsAgAgg);
-  const maxWinsAgg   = Math.max(0, ...Object.values(st.colorWins));
-  const winnerTeamsAgg = Object.entries(st.colorWins).filter(([,v]) => v === maxWinsAgg && maxWinsAgg > 0).map(([k]) => k);
-  const atkGoals     = maxGoalsPT;
-  const defGoals     = maxGoalsAg;
-  const medals       = ["🥇","🥈","🥉"];
-  const _fmtBut      = arr => {
-    if (!arr || !arr.length) return "";
-    const c = {}; arr.forEach(p => { c[p]=(c[p]||0)+1; });
-    return Object.entries(c).sort((a,b)=>a[0].localeCompare(b[0],"fr")).map(([p,n]) => {
-      const d = p==="CSC" ? p : `<button class="player-link" data-player="${p}" style="font-size:inherit">${p}</button>`;
-      return n>1 ? `${d} ×${n}` : d;
-    }).join(", ");
-  };
+  h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Comparatif équipes</span><span class="dbx-sec-note">Victoires, forme et différentiel</span></div>`;
+  h += _dbxRenderCompare(agg);
 
-  /* ── Section 1 : 8 cartes match (2 × 4) ── */
-  const victSubAgg = ["Rouge","Vert","Bleue"].filter(c => st.colorWins[c] > 0)
-    .map(c => `${dot(c)}${st.colorWins[c]}`).join(" · ");
-  const matchSubAgg = [victSubAgg, draws > 0 ? `<span class="cdot gris"></span>${draws}` : ""].filter(Boolean).join(" · ");
+  h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Tendance</span></div>`;
+  h += _dbxTrendChart(agg);
 
-  const top3Html      = buildAggTop3(st.buteursRank.map(([n,p])=>[n,p.buts]),   "but",   "buts");
-  const top3PassHtml  = buildAggTop3(st.passeursRank.map(([n,p])=>[n,p.passes]),"passe","passes");
+  h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Matchs marquants</span></div>`;
+  h += _dbxHighlightCards(agg);
 
-  /* KPI cards agrégées — pré-calcul */
-  const avgButsAgg       = st.allMatchs.length > 0 ? (totalButs / st.allMatchs.length).toFixed(1) : "—";
-  const bestTeamsHtmlAgg = winnerTeamsAgg.length===0?"—":winnerTeamsAgg.slice(0,2).map(t=>teamTagColored(t)).join(" &middot; ");
-  const atkTeamHtmlAgg   = bestAtkTeams.length===0?"—":bestAtkTeams.slice(0,2).map(t=>teamTagColored(t)).join(" &middot; ");
-  const defTeamHtmlAgg   = worstDefTeams.length===0?"—":worstDefTeams.slice(0,2).map(t=>teamTagColored(t)).join(" &middot; ");
-  const bestAccentAgg    = kpiTeamCard(winnerTeamsAgg);
-  const atkAccentAgg     = kpiTeamCard(bestAtkTeams);
-  const defAccentAgg     = kpiTeamCard(worstDefTeams);
-  const grosAccAgg       = st.mostGoals  ? matchAccent(st.mostGoals)  : "";
-  const largeAccAgg      = st.biggestAmp ? matchAccent(st.biggestAmp) : "";
-  const grosColAgg       = scoreColors(st.mostGoals);
-  const largeColAgg      = scoreColors(st.biggestAmp);
-  const grosBodyAgg = st.mostGoals ? `
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
-      <div style="flex:1;text-align:left">
-        <div style="font-size:36px;font-weight:700;line-height:1;color:${grosColAgg.a}">${st.mostGoals.scoreA}</div>
-        <div style="margin-top:5px">${badge(st.mostGoals.eqA)}</div>
-      </div>
-      <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
-      <div style="flex:1;text-align:right">
-        <div style="font-size:36px;font-weight:700;line-height:1;color:${grosColAgg.b}">${st.mostGoals.scoreB}</div>
-        <div style="margin-top:5px">${badge(st.mostGoals.eqB)}</div>
-      </div>
-    </div>
-    <div class="kpi-sep"></div>
-    <div class="mc-buteurs" style="font-size:11px;color:var(--text2)">
-      <div class="mc-but">${fmtGoalsList(st.mostGoals.buteursA, st.mostGoals.passeursA)||"<span style='color:var(--text3)'>—</span>"}</div>
-      <div class="mc-but right">${fmtGoalsList(st.mostGoals.buteursB, st.mostGoals.passeursB)}</div>
-    </div>
-    <div style="margin-top:6px;font-size:11px;color:var(--text3)">${fmtDate(st.mostGoals.date)}</div>` : `<span style="color:var(--text3)">—</span>`;
-  const largeBodyAgg = st.biggestAmp ? `
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
-      <div style="flex:1;text-align:left">
-        <div style="font-size:36px;font-weight:700;line-height:1;color:${largeColAgg.a}">${st.biggestAmp.scoreA}</div>
-        <div style="margin-top:5px">${badge(st.biggestAmp.eqA)}</div>
-      </div>
-      <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
-      <div style="flex:1;text-align:right">
-        <div style="font-size:36px;font-weight:700;line-height:1;color:${largeColAgg.b}">${st.biggestAmp.scoreB}</div>
-        <div style="margin-top:5px">${badge(st.biggestAmp.eqB)}</div>
-      </div>
-    </div>
-    <div class="kpi-sep"></div>
-    <div class="mc-buteurs" style="font-size:11px;color:var(--text2)">
-      <div class="mc-but">${fmtGoalsList(st.biggestAmp.buteursA, st.biggestAmp.passeursA)||"<span style='color:var(--text3)'>—</span>"}</div>
-      <div class="mc-but right">${fmtGoalsList(st.biggestAmp.buteursB, st.biggestAmp.passeursB)}</div>
-    </div>
-    <div style="margin-top:6px;font-size:11px;color:var(--text3)">${fmtDate(st.biggestAmp.date)}</div>` : `<span style="color:var(--text3)">—</span>`;
-
-  h += `<div class="kpi-grid kpi-grid--main" style="margin-bottom:2rem">
-    <div class="kpi-card accent-amber" data-card="matchs">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Matchs</div>
-      <div class="kpi-num amber">${st.allMatchs.length}</div>
-      ${matchSubAgg ? `<div class="kpi-sep"></div><div class="kpi-sub">${matchSubAgg}</div>` : ""}
-    </div>
-    <div class="kpi-card ${bestAccentAgg}" data-card="meilleure-equipe">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure équipe</div>
-      <div style="font-size:24px;font-weight:700;line-height:1.2">${bestTeamsHtmlAgg}</div>
-      <div class="kpi-sep"></div>
-      <div class="kpi-sub">${maxWinsAgg > 0 ? `${maxWinsAgg} victoire${maxWinsAgg>1?"s":""}` : "0 victoire"}</div>
-    </div>
-    <div class="kpi-card accent-amber" data-card="buts-marques">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Buts marqués</div>
-      <div class="kpi-num amber">${totalButs}</div>
-      <div class="kpi-avg-desktop"><div class="kpi-sep"></div><div class="kpi-sub">${avgButsAgg} buts / match en moy.</div></div>
-    </div>
-    <div class="kpi-card accent-amber" data-card="avg-standalone">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Moy. buts / match</div>
-      <div class="kpi-num amber">${avgButsAgg}</div>
-    </div>
-    <div class="kpi-card ${atkAccentAgg}" data-card="meilleure-attaque">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure attaque</div>
-      <div style="font-size:24px;font-weight:700;line-height:1.2">${atkTeamHtmlAgg}</div>
-      <div class="kpi-sep"></div>
-      <div class="kpi-sub">${atkGoals} but${atkGoals!==1?"s":""}</div>
-    </div>
-    <div class="kpi-card" data-card="top-buteurs">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top buteurs</div>
-      ${top3Html}
-    </div>
-    <div class="kpi-card ${defAccentAgg}" data-card="meilleure-defense">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Pire défense</div>
-      <div style="font-size:24px;font-weight:700;line-height:1.2">${defTeamHtmlAgg}</div>
-      <div class="kpi-sep"></div>
-      <div class="kpi-sub">${defGoals} but${defGoals!==1?"s":""} conc.</div>
-    </div>
-    ${buildTopDefCardHTML(sessions)}
-    <div class="kpi-card" data-card="top-passeurs">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top passeurs</div>
-      ${top3PassHtml}
-    </div>
-    ${buildLinkUpCardHTML(sessions)}
-    <div class="kpi-card ${grosAccAgg}" data-card="plus-gros-score">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Plus gros score</div>
-      ${grosBodyAgg}
-    </div>
-    <div class="kpi-card ${largeAccAgg}" data-card="plus-grand-ecart">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Plus grand écart</div>
-      ${largeBodyAgg}
-    </div>
+  h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Classements</span><span class="dbx-sec-note">Sur la période sélectionnée</span></div>`;
+  h += `<div class="dbx-lead-grid">
+    ${_dbxLeaderCol("Buteurs","⚽",agg.topScorers,"buts")}
+    ${_dbxLeaderCol("Passeurs","🎯",agg.topAssists,"passes")}
+    ${_dbxLeaderCol("Présences","✅",agg.topPresence,"presences")}
   </div>`;
 
-  /* ── Section 2 : ligne sessions / présences ── */
-  const totalPres         = sessions.reduce((acc,s) => acc + Object.values(s.presences).filter(p=>p.statut==="Présent").length, 0);
-  const totalAbs          = sessions.reduce((acc,s) => acc + Object.values(s.presences).filter(p=>p.statut==="Absent").length, 0);
-  const totalBlesEpisodes = Object.values(st.ps).reduce((acc,p) => acc + p.episodesBlessures, 0);
-  const uniqueBlesPlayers = Object.values(st.ps).filter(p => p.blesses > 0).length;
-  const sessionsBlessees  = sessions.filter(s => Object.values(s.presences).some(p => p.statut === "Blessé")).length;
-  const avgPres           = (totalPres / sessions.length).toFixed(1).replace(".",",");
-
-  h += `<div class="kpi-grid" style="margin-bottom:2rem">
-    <div class="kpi-card">
-      <div class="kpi-num">${sessions.length}</div>
-      <div class="kpi-lbl">Session${sessions.length>1?"s":""}</div>
-    </div>
-    <div class="kpi-card accent-green">
-      <div class="kpi-num green">${avgPres}</div>
-      <div class="kpi-lbl">Moy. présents / session</div>
-      <div class="kpi-sub">${totalPres} présence${totalPres>1?"s":""} au total</div>
-    </div>
-    <div class="kpi-card accent-red">
-      <div class="kpi-num red">${totalAbs}</div>
-      <div class="kpi-lbl">Total absences</div>
-    </div>
-    ${uniqueBlesPlayers > 0 ? `<div class="kpi-card accent-amber">
-      <div class="kpi-num amber">${uniqueBlesPlayers}</div>
-      <div class="kpi-lbl">Blessé${uniqueBlesPlayers>1?"s":""}</div>
-      <div class="kpi-sub">${sessionsBlessees} session${sessionsBlessees>1?"s":""} concernée${sessionsBlessees>1?"s":""}</div>
-    </div>` : ""}
-  </div>`;
-
-  /* ── Section 3 : podiums sur 3 colonnes ── */
-  function _podViz(entries, getCount, getUnit) {
-    const order = [1, 0, 2];
-    const cfgs = [
-      { cls: 'silver', emoji: '🥈', rank: '2' },
-      { cls: 'gold',   emoji: '🥇', rank: '1' },
-      { cls: 'bronze', emoji: '🥉', rank: '3' },
-    ];
-    return `<div class="pv-wrap">` + order.map((idx, pos) => {
-      const cfg = cfgs[pos];
-      const entry = entries[idx];
-      if (!entry) return `<div class="pv-slot ${cfg.cls} pv-empty"><div class="pv-top"></div><div class="pv-platform">${cfg.rank}</div></div>`;
-      const [name, stats] = entry;
-      const count = getCount(stats);
-      return `<div class="pv-slot ${cfg.cls}">
-        <div class="pv-top">
-          <div class="pv-medal">${cfg.emoji}</div>
-          <div class="pv-nm">${pLink(name)}</div>
-          <div class="pv-ct">${count} ${getUnit(count)}</div>
-        </div>
-        <div class="pv-platform">${cfg.rank}</div>
-      </div>`;
-    }).join('') + `</div>`;
-  }
-
-  h += `<div class="podium-3col">`;
-
-  h += `<div class="podium-block">
-    <div class="podium-block-header"><span style="font-size:15px">✅</span>&ensp;<span class="ph-title">Top présences</span></div>`;
-  if (!st.top3Pres.length) {
-    h += `<div style="padding:16px 18px"><p class="no-data">—</p></div>`;
-  } else {
-    h += _podViz(st.top3Pres, ps => ps.presences, () => 'sess.');
-  }
-  h += `</div>`;
-
-  h += `<div class="podium-block">
-    <div class="podium-block-header"><span style="font-size:15px">❌</span>&ensp;<span class="ph-title">Top absences</span></div>`;
-  if (!st.top3Abs.length) {
-    h += `<div style="padding:16px 18px"><p class="no-data">Personne absent</p></div>`;
-  } else {
-    h += _podViz(st.top3Abs, ps => ps.absences, () => 'abs.');
-  }
-  h += `</div>`;
-
-  h += `<div class="podium-block">
-    <div class="podium-block-header"><span style="font-size:15px">🩹</span>&ensp;<span class="ph-title">Blessés récurrents</span></div>`;
-  if (!st.top3Bles.length) {
-    h += `<div style="padding:16px 18px"><p class="no-data">—</p></div>`;
-  } else {
-    h += _podViz(st.top3Bles, ps => ps.episodesBlessures, n => n > 1 ? 'blessures' : 'blessure');
-  }
-  h += `</div>`;
-
-  h += `</div>`;
+  h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Assiduité</span></div>`;
+  h += _dbxRenderAssiduity(agg);
 
   dash.innerHTML = h;
   animateView(dash);
@@ -4647,36 +4438,39 @@ document.getElementById("saisie-nav-btn").addEventListener("click", () => {
   renderSaisie();
 });
 
-document.getElementById("periods").addEventListener("click", e => {
-  const pill = e.target.closest(".pill");
-  if (!pill) return;
-  document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
-  pill.classList.add("active");
-  currentPeriod = pill.dataset.period;
-  history.replaceState(null, '', '#' + currentPeriod);
-  updateSubFilter(currentPeriod);
-  renderDashboard();
-});
+/* Segment « Session / Mois / Saison / All-time » — highlight glissant.
+   Mesure uniquement la position/largeur de son propre bouton actif
+   (pas de couplage avec un autre élément indépendant). */
+function _dbxPlaceSegHi(btn) {
+  const hi = document.getElementById("dbx-seg-hi");
+  if (!hi || !btn) return;
+  hi.style.left = btn.offsetLeft + "px";
+  hi.style.width = btn.offsetWidth + "px";
+}
+(function _dbxInitSeg() {
+  const seg = document.getElementById("dbx-seg");
+  if (!seg) return;
+  seg.querySelectorAll(".dbx-seg-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.period === currentPeriod);
+    btn.addEventListener("click", () => {
+      seg.querySelectorAll(".dbx-seg-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      _dbxPlaceSegHi(btn);
+      currentPeriod = btn.dataset.period;
+      history.replaceState(null, '', '#' + currentPeriod);
+      updateSubFilter(currentPeriod);
+      renderDashboard();
+    });
+  });
+  requestAnimationFrame(() => _dbxPlaceSegHi(seg.querySelector(".dbx-seg-btn.active")));
+  window.addEventListener("resize", () => _dbxPlaceSegHi(seg.querySelector(".dbx-seg-btn.active")));
+})();
 
-document.getElementById("filter-year").addEventListener("change", e => {
-  filterYear = Number(e.target.value);
-  if (currentPeriod === "month") {
-    /* Re-populate months for new season */
-    const months = [...new Set(
-      SESSIONS.filter(s => _seasonStart(s.date) === filterYear)
-               .map(s => new Date(s.date).getMonth())
-    )].sort((a,b)=>b-a);
-    const selM = document.getElementById("filter-month");
-    selM.innerHTML = months.map(m => `<option value="${m}">${MONTH_NAMES[m]}</option>`).join("");
-    filterMonth = months[0] ?? null;
-    if (selM.value) filterMonth = Number(selM.value);
-  }
-  renderDashboard();
-});
-
-document.getElementById("filter-month").addEventListener("change", e => {
-  filterMonth = Number(e.target.value);
-  renderDashboard();
+/* Fermeture du sélecteur de session du Dashboard au clic extérieur
+   (motif sess-dd existant, espace de noms dbx- dédié). */
+document.addEventListener("click", e => {
+  const dd = document.getElementById("dbx-sess-dd");
+  if (dd && dd.classList.contains("open") && !dd.contains(e.target)) dd.classList.remove("open");
 });
 
 document.getElementById("session-date").addEventListener("change", e => {
@@ -6969,15 +6763,17 @@ document.addEventListener("click", e => {
       document.getElementById("panel-saisie").classList.add("active");
       _loadSaisie = true;
     } else {
-      history.replaceState(null, '', '#last');
+      history.replaceState(null, '', '#session');
     }
   } else if (_hash === "joueurs" || _hash === "sessions" || _hash === "stats" || _hash === "reglement") {
     const _tabKey = _hash === "sessions" ? "session" : _hash;
     document.querySelectorAll(".main-tab").forEach(t => t.classList.toggle("active", t.dataset.tab === _tabKey));
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === `panel-${_tabKey}`));
-  } else if (["last","month","year","all"].includes(_hash)) {
-    currentPeriod = _hash;
-    document.querySelectorAll(".pill").forEach(p => p.classList.toggle("active", p.dataset.period === currentPeriod));
+  } else if (_hash === "last" || ["session","month","year","all"].includes(_hash)) {
+    currentPeriod = _hash === "last" ? "session" : _hash; // "last" = ancien lien, alias de "session"
+    const segBtn = document.querySelector(`.dbx-seg-btn[data-period="${currentPeriod}"]`);
+    document.querySelectorAll(".dbx-seg-btn").forEach(b => b.classList.toggle("active", b === segBtn));
+    if (segBtn) requestAnimationFrame(() => _dbxPlaceSegHi(segBtn));
   }
   updateSubFilter(currentPeriod);
   renderDashboard();
