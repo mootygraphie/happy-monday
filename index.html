@@ -1399,7 +1399,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 16:27</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 16:33</footer>
 
 <script>
 
@@ -1635,6 +1635,49 @@ const _BASE_PLAYERS = new Set(ALL_PLAYERS);
 JSON.parse(localStorage.getItem('hmft_extra_players') || '[]').forEach(n => {
   if (!ALL_PLAYERS.includes(n)) { ALL_PLAYERS.push(n); JOKERS.add(n); }
 });
+/* Initiales d avatar : le moins de lettres possible, juste assez pour
+   distinguer chaque joueur des autres (ex: Raph P / Raph L -> RP / RL). */
+function _initialCandidates(name) {
+  const parts = name.trim().split(/\s+/);
+  const cands = [];
+  if (parts.length > 1) {
+    const w1 = parts[0], w2 = parts[1];
+    cands.push(w1[0]);
+    cands.push(w1[0] + w2[0]);
+    for (let i = 2; i <= w1.length; i++) cands.push(w1.slice(0, i) + w2[0]);
+  } else {
+    for (let i = 1; i <= name.length; i++) cands.push(name.slice(0, i));
+  }
+  return cands.map(s => s.toUpperCase());
+}
+function computeAllInitials(players) {
+  const cands = {};
+  players.forEach(p => { cands[p] = _initialCandidates(p); });
+  const result = {};
+  let active = new Set(players);
+  let level = 0;
+  while (active.size && level < 40) {
+    const groups = {};
+    active.forEach(p => {
+      const idx = Math.min(level, cands[p].length - 1);
+      const key = cands[p][idx];
+      (groups[key] = groups[key] || []).push(p);
+    });
+    Object.values(groups).forEach(group => {
+      const maxed = group.filter(p => Math.min(level, cands[p].length - 1) === cands[p].length - 1);
+      const growable = group.filter(p => Math.min(level, cands[p].length - 1) < cands[p].length - 1);
+      if (group.length === 1 || growable.length === 0) {
+        group.forEach(p => { result[p] = cands[p][Math.min(level, cands[p].length - 1)]; active.delete(p); });
+      } else if (maxed.length > 0) {
+        maxed.forEach(p => { result[p] = cands[p][cands[p].length - 1]; active.delete(p); });
+      }
+    });
+    level++;
+  }
+  active.forEach(p => { result[p] = cands[p][cands[p].length - 1]; });
+  return result;
+}
+
 function _saveExtraPlayers() {
   const extra = ALL_PLAYERS.filter(p => !_BASE_PLAYERS.has(p));
   localStorage.setItem('hmft_extra_players', JSON.stringify(extra));
@@ -2915,6 +2958,7 @@ function renderMhfMatrixHtml() {
     </div>`;
   });
 
+  const _mhfInitials = computeAllInitials([...new Set([...ALL_PLAYERS, ...players])]);
   players.forEach((p,i) => {
     const rowCls = i%2===0 ? 'mhf-mrow-odd' : 'mhf-mrow-even';
     const rank = i+1;
@@ -2922,7 +2966,7 @@ function renderMhfMatrixHtml() {
     const jokerTag = JOKERS.has(p) ? ' <span style="color:var(--text3);font-size:10px">[+1]</span>' : '';
     h += `<div class="mhf-mcell mhf-mname player-link ${rowCls}" data-player="${p}">
       <span class="mhf-mrank ${rankCls}">${rank}</span>
-      <span class="mhf-mavatar">${p.slice(0,2).toUpperCase()}</span>
+      <span class="mhf-mavatar">${_mhfInitials[p] || p.slice(0,1).toUpperCase()}</span>
       <span class="mhf-mname-txt">${p}${jokerTag}</span>
     </div>`;
     h += `<div class="mhf-mcell mhf-msum ${rowCls}${_mhfState.sortKey==='hautsFaits'?' sorted':''}">${_mhf.summary[p].hautsFaits}</div>`;
@@ -3404,6 +3448,7 @@ function renderStats() {
   }
 
   /* ── Ballon d'Or + Prix Yachine / Ballon de Plomb gardien ── */
+  h += `<div class="section-label">Récompenses individuelles</div>`;
   h += `<div class="stats-award-grid">
     ${buildBallonDorHtml()}
     ${buildYachineHtml(SESSIONS)}
@@ -3413,6 +3458,7 @@ function renderStats() {
   h += `<div class="bonnet-infirm-row">${buildBonnetDAneHtml()}${buildInfirmeHtml()}</div>`;
 
   /* ── Ligne 1 : Buteurs | Passeurs (Top 10) ── */
+  h += `<div class="section-label">Top 10 meilleurs joueurs</div>`;
   const top10Buteurs  = buildTop10HTMLv2(allSt.buteursRank.map(([n,p])=>({name:n, value:p.buts})),   v => `${v} but${v>1?"s":""}`);
   const top10Passeurs = buildTop10HTMLv2(allSt.passeursRank.map(([n,p])=>({name:n, value:p.passes})), v => `${v} assist${v>1?"s":""}`);
 
@@ -3437,6 +3483,7 @@ function renderStats() {
   </div>`;
 
   /* ── Ligne 3 : Meilleur Link-Up | Meilleure série ── */
+  h += `<div class="section-label">Autres récompenses</div>`;
   const linkUpCard = buildLinkUpCardHTMLv2(SESSIONS);
   const streak = computeBestAllTimeStreak();
   let streakBody;
@@ -4082,6 +4129,8 @@ function renderJoueurs() {
   const rosterRows = rowsWithTaux.filter(r => !JOKERS.has(r.name) && !ABSENTS.has(r.name));
   const jokerRows  = rowsWithTaux.filter(r =>  JOKERS.has(r.name));
 
+  const _initialsMap = computeAllInitials([...new Set([...ALL_PLAYERS, ...rowsWithTaux.map(r => r.name), ...ABSENTS])]);
+
   function sortArr(arr, s) {
     return [...arr].sort((a, b) => {
       const av = a[s.col] ?? ""; const bv = b[s.col] ?? "";
@@ -4094,7 +4143,7 @@ function renderJoueurs() {
     });
   }
 
-  function initials(n) { return n.slice(0,2).toUpperCase(); }
+  function initials(n) { return _initialsMap[n] || n.slice(0,1).toUpperCase(); }
 
   function buildSortRow(id, cols, state) {
     return `<div class="roster-sort-row" id="${id}">${cols.map(c => {
@@ -4122,7 +4171,7 @@ function renderJoueurs() {
 
   function buildRosterCard(r) {
     const tCls = r.taux >= 75 ? "high" : r.taux >= 40 ? "mid" : "low";
-    const chips = chip("❌", r.absences, "danger") + chip("🤕", r.blesses, "warn") + chip("🎒", r.sac) + chip("👕", r.maillots);
+    const chips = chip("❌", r.absences, "danger") + chip("🤕", r.blesses, "warn") + chip("⁉️", r.pasRepondu, "warn") + chip("🎒", r.sac) + chip("👕", r.maillots);
     const action = isAdmin ? `<div class="roster-actions"><button data-action="to-joker" data-player="${r.name}" title="Passer en occasionnel">🔽</button></div>` : "";
     return `<div class="roster-card">
       <div class="roster-avatar">${initials(r.name)}</div>
@@ -4594,7 +4643,7 @@ function openPlayerPanel(playerName) {
     const _heroBg = _colorVar ? `linear-gradient(150deg, var(--${_colorVar}-bg), transparent 70%)` : "var(--bg3)";
     const _avatarBg = _colorVar ? `var(--${_colorVar})` : "var(--text3)";
     const _avatarFg = _colorVar === "vert" ? "#111" : "#fff";
-    const _initials = playerName.slice(0, 2).toUpperCase();
+    const _initials = computeAllInitials([...new Set([...ALL_PLAYERS, playerName])])[playerName];
     const _totalExpected = st.presences + st.absences;
     let _freqLabel = null;
     if (_totalExpected >= 3) {
