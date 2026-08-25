@@ -1682,19 +1682,24 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 21:24</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 21:33</footer>
 
 <script>
 
 /* ── Authentification ── */
 function applyRole(role) {
-  const isAdmin = role === "admin";
-  document.getElementById("saisie-nav-btn").style.display     = isAdmin ? "flex" : "none";
+  const isAdmin  = role === "admin";
+  const isSaisie = role === "saisie";
+  document.getElementById("saisie-nav-btn").style.display     = (isAdmin || isSaisie) ? "flex" : "none";
   document.getElementById("delete-session-btn").style.display = isAdmin ? "inline-flex" : "none";
   document.getElementById("edit-session-btn").style.display   = isAdmin ? "inline-flex" : "none";
+  document.querySelector(".main-tabs").style.display = isSaisie ? "none" : "";
 }
 
-const HASH_ADMIN = "cea45f18ea39c9ece6711634075f9402f52b3727a59e08927043c8cca10182c8";
+const HASH_ADMIN  = "cea45f18ea39c9ece6711634075f9402f52b3727a59e08927043c8cca10182c8";
+/* Compte "saisie" : accede uniquement a l ecran de saisie (creation d une
+   nouvelle session), pour une utilisation sans risque le lundi soir. */
+const HASH_SAISIE = "af7fbef617fad5abac74887f303c51a22a65f54f7b6961a4b6959b7169a9bfbd";
 
 async function _sha256(str) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
@@ -1704,24 +1709,27 @@ async function _sha256(str) {
 function updateAdminBtn() {
   const btn = document.getElementById("admin-btn");
   if (!btn) return;
-  const isAdmin = sessionStorage.getItem("hmft_role") === "admin";
+  const role = sessionStorage.getItem("hmft_role");
+  const loggedIn = role === "admin" || role === "saisie";
   const LOCK   = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6.5" width="10" height="6.5" rx="1.5"/><path d="M4.5 6.5V5a2.5 2.5 0 0 1 5 0v1.5"/></svg>`;
   const UNLOCK = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6.5" width="10" height="6.5" rx="1.5"/><path d="M4.5 6.5V5A2.5 2.5 0 0 1 9.5 5"/></svg>`;
-  btn.innerHTML = isAdmin ? UNLOCK : LOCK;
-  btn.title = isAdmin ? "Quitter le mode admin" : "Connexion admin";
-  btn.style.color = isAdmin ? "var(--gold)" : "";
+  btn.innerHTML = loggedIn ? UNLOCK : LOCK;
+  btn.title = role === "admin" ? "Quitter le mode admin" : role === "saisie" ? "Quitter le mode saisie" : "Connexion admin";
+  btn.style.color = loggedIn ? "var(--gold)" : "";
 }
 
 async function tryAdminUnlock() {
   const val = document.getElementById("pwd-input").value;
   const hash = await _sha256(val);
-  if (hash === HASH_ADMIN) {
-    sessionStorage.setItem("hmft_role", "admin");
+  const role = hash === HASH_ADMIN ? "admin" : hash === HASH_SAISIE ? "saisie" : null;
+  if (role) {
+    sessionStorage.setItem("hmft_role", role);
     document.getElementById("lock-screen").style.display = "none";
     document.getElementById("pwd-input").value = "";
     document.getElementById("pwd-err").textContent = "";
-    applyRole("admin");
+    applyRole(role);
     updateAdminBtn();
+    if (role === "saisie") _goToSaisie();
   } else {
     const inp = document.getElementById("pwd-input");
     const err = document.getElementById("pwd-err");
@@ -1762,10 +1770,18 @@ document.getElementById("refresh-btn").addEventListener("click", () => {
 });
 
 document.getElementById("admin-btn").addEventListener("click", () => {
-  if (sessionStorage.getItem("hmft_role") === "admin") {
+  const role = sessionStorage.getItem("hmft_role");
+  if (role === "admin" || role === "saisie") {
     sessionStorage.removeItem("hmft_role");
     applyRole("user");
     updateAdminBtn();
+    if (role === "saisie") {
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+      document.getElementById("panel-dashboard").classList.add("active");
+      document.querySelector('.main-tab[data-tab="dashboard"]').classList.add("active");
+      history.replaceState(null, '', '#dashboard');
+      renderDashboard();
+    }
   } else {
     document.getElementById("pwd-input").value = "";
     document.getElementById("pwd-err").textContent = "";
@@ -4429,14 +4445,15 @@ document.getElementById("footer-reglement-btn").addEventListener("click", () => 
   renderReglement();
 });
 
-document.getElementById("saisie-nav-btn").addEventListener("click", () => {
+function _goToSaisie() {
   _editMode = false;
   document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
   document.getElementById("panel-saisie").classList.add("active");
   history.replaceState(null, '', '#saisie');
   renderSaisie();
-});
+}
+document.getElementById("saisie-nav-btn").addEventListener("click", _goToSaisie);
 
 /* Segment « Session / Mois / Saison / All-time » — highlight glissant.
    Mesure uniquement la position/largeur de son propre bouton actif
@@ -6755,9 +6772,10 @@ document.addEventListener("click", e => {
   await _fbLoad();
 
   const _hash = location.hash.slice(1);
+  const _storedRole = sessionStorage.getItem("hmft_role");
   let _loadSaisie = false;
   if (_hash === "saisie") {
-    if (sessionStorage.getItem("hmft_role") === "admin") {
+    if (_storedRole === "admin" || _storedRole === "saisie") {
       document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
       document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
       document.getElementById("panel-saisie").classList.add("active");
@@ -6790,7 +6808,8 @@ document.addEventListener("click", e => {
       `<p class="no-data" style="margin-top:1rem">Aucune session enregistrée.</p>`;
   }
 
-  applyRole(sessionStorage.getItem("hmft_role") === "admin" ? "admin" : "user");
+  applyRole(_storedRole === "admin" ? "admin" : _storedRole === "saisie" ? "saisie" : "user");
+  if (_storedRole === "saisie") _goToSaisie();
   updateAdminBtn();
   document.getElementById("loading-screen").style.display = "none";
 })();
