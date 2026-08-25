@@ -1153,7 +1153,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 11:42</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 11:45</footer>
 
 <script>
 
@@ -1863,13 +1863,36 @@ function fmtGoalsList(buteurs, passeurs) {
   }).join(` <span style="color:var(--text3)">•</span> `);
 }
 
+function _recapSideSummary(m, side) {
+  const eq = side === "A" ? m.eqA : m.eqB;
+  const buteurs = (side === "A" ? m.buteursA : m.buteursB) || [];
+  const passeurs = (side === "A" ? m.passeursA : m.passeursB) || [];
+  const gardiens = [...new Set(((side === "A" ? m.gardiensA : m.gardiensB) || []).filter(g => g && g.trim()))];
+  const link = (n, color) => `<button class="player-link" data-player="${n}" style="font-size:inherit;color:${color}">${n}</button>`;
+  const parts = [];
+  if (gardiens.length) {
+    parts.push(`🧤 ${gardiens.map(g => link(g, "var(--text2)")).join(" · ")}`);
+  }
+  if (buteurs.length) {
+    const goals = buteurs.map((b, j) => {
+      const passeur = passeurs[j];
+      const bHtml = b === "CSC" ? `<em>CSC</em>` : link(b, "var(--text3)");
+      const pHtml = passeur ? ` (${link(passeur, "var(--text2)")})` : "";
+      return bHtml + pHtml;
+    }).join(", ");
+    parts.push(`⚽️ ${goals}`);
+  }
+  if (!parts.length) return "";
+  return `<strong style="color:var(--text2);font-weight:700">${TEAM_LABEL[eq]||eq}</strong> : ${parts.join(" • ")}`;
+}
+
 function buildMatchRecapRowHTML(m, idx) {
-  const bA = fmtGoalsList(m.buteursA, m.passeursA), bB = fmtGoalsList(m.buteursB, m.passeursB);
-  const goals = [bA, bB].filter(Boolean).join(`  <span style="color:var(--text3)">·</span>  `);
+  const sideA = _recapSideSummary(m, "A"), sideB = _recapSideSummary(m, "B");
+  const summary = [sideA, sideB].filter(Boolean).join(` <span style="color:var(--border2)">|</span> `);
   return `<div class="match-recap-row">
     <span class="mrr-num">#${idx+1}</span>
     <span class="mrr-teams">${teamTag(m.eqA)}<span class="mrr-score">${m.scoreA}–${m.scoreB}</span>${teamTag(m.eqB)}</span>
-    <span class="mrr-goals">${goals || "—"}</span>
+    <span class="mrr-goals">${summary || "—"}</span>
   </div>`;
 }
 
