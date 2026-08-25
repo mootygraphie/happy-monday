@@ -218,16 +218,13 @@
     .teams-vs-divider { display: none; }
     .team-card-players { gap: 4px; }
   }
-  .matches-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  @media (max-width: 860px) { .matches-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 500px) { .matches-grid { grid-template-columns: 1fr; } }
-  .match-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
-  .mc-badges { display: flex; align-items: center; justify-content: space-between; }
-  .mc-scores { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-  .mc-score { flex: 1; text-align: center; font-size: 38px; font-weight: 700; line-height: 1; color: var(--text); }
-  .mc-score.lose { color: var(--text3); font-weight: 300; font-size: 30px; }
-  .mc-score.draw { color: var(--text2); }
-  .mc-scores-sep { color: var(--text3); font-size: 16px; font-weight: 300; flex-shrink: 0; }
+  .matches-recap-list { display: flex; flex-direction: column; gap: 8px; }
+  .match-recap-row { display: flex; align-items: center; gap: 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; }
+  .mrr-num { font-size: 11px; color: var(--text3); width: 20px; flex-shrink: 0; }
+  .mrr-teams { display: flex; align-items: center; gap: 7px; font-weight: 700; font-size: 13.5px; flex-shrink: 0; white-space: nowrap; }
+  .mrr-score { font-weight: 800; }
+  .mrr-goals { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text2); font-size: 12px; }
+  @media (max-width: 640px) { .match-recap-row { flex-wrap: wrap; } .mrr-goals { flex-basis: 100%; white-space: normal; } }
   .mc-buteurs { display: flex; gap: 8px; font-size: 11px; color: var(--text2); align-items: flex-start; }
   .mc-but { flex: 1; line-height: 1.7; }
   .mc-but.right { align-items: flex-end; text-align: right; }
@@ -1155,7 +1152,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 11:35</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 11:38</footer>
 
 <script>
 
@@ -1855,16 +1852,6 @@ function buildCalamityJamesHtml(sessions) {
   return html;
 }
 
-function fmtGardiens(gardiensArr) {
-  const gks = (gardiensArr || []).filter(g => g && g.trim());
-  if (!gks.length) return '';
-  const link = n => `<button class="player-link" data-player="${n}" style="font-size:inherit">${n}</button>`;
-  if (gks.length === 1 || gks[0] === gks[1]) {
-    return `<span style="color:var(--text3)">🧤</span> ${link(gks[0])}`;
-  }
-  return `<span style="color:var(--text3)">🧤</span> ${link(gks[0])} <span style="color:var(--text3)">•</span> ${link(gks[1])}`;
-}
-
 function fmtGoalsList(buteurs, passeurs) {
   if (!buteurs || !buteurs.length) return "";
   return buteurs.map((p, j) => {
@@ -1873,6 +1860,16 @@ function fmtGoalsList(buteurs, passeurs) {
     const pHtml = passeur ? ` <span style="color:var(--text3);font-size:10px;white-space:nowrap">(<button class="player-link" data-player="${passeur}" style="font-size:inherit;color:inherit">${passeur}</button>)</span>` : "";
     return `<span class="mc-goal-line" style="white-space:nowrap">${bHtml}${pHtml}</span>`;
   }).join(` <span style="color:var(--text3)">•</span> `);
+}
+
+function buildMatchRecapRowHTML(m, idx) {
+  const bA = fmtGoalsList(m.buteursA, m.passeursA), bB = fmtGoalsList(m.buteursB, m.passeursB);
+  const goals = [bA, bB].filter(Boolean).join(`  <span style="color:var(--text3)">·</span>  `);
+  return `<div class="match-recap-row">
+    <span class="mrr-num">#${idx+1}</span>
+    <span class="mrr-teams">${teamTag(m.eqA)}<span class="mrr-score">${m.scoreA}–${m.scoreB}</span>${teamTag(m.eqB)}</span>
+    <span class="mrr-goals">${goals || "—"}</span>
+  </div>`;
 }
 
 function renderSessionDetail(session) {
@@ -2161,24 +2158,8 @@ function renderSessionDetail(session) {
 
   /* ── Matchs ── */
   if (matchs.length > 0) {
-    h += `<div class="section-label">Tous les matchs</div><div class="matches-grid">`;
-    matchs.forEach(m => {
-      const aW = m.scoreA>m.scoreB, bW = m.scoreB>m.scoreA;
-      const cA = aW ? "" : bW ? " lose" : " draw";
-      const cB = bW ? "" : aW ? " lose" : " draw";
-      const bA = fmtGoalsList(m.buteursA, m.passeursA), bB = fmtGoalsList(m.buteursB, m.passeursB);
-      const gA = fmtGardiens(m.gardiensA), gB = fmtGardiens(m.gardiensB);
-      h += `<div class="match-card">
-        <div class="mc-badges">${badge(m.eqA)}${badge(m.eqB)}</div>
-        <div class="mc-scores">
-          <span class="mc-score${cA}">${m.scoreA}</span>
-          <span class="mc-scores-sep">–</span>
-          <span class="mc-score${cB}">${m.scoreB}</span>
-        </div>
-        ${gA||gB ? `<div class="mc-buteurs"><div class="mc-but">${gA}</div><div class="mc-but right">${gB}</div></div>` : ""}
-        ${bA||bB ? `<div class="mc-buteurs"><div class="mc-but">${bA}</div><div class="mc-but right">${bB}</div></div>` : ""}
-      </div>`;
-    });
+    h += `<div class="section-label">Tous les matchs</div><div class="matches-recap-list">`;
+    matchs.forEach((m, i) => { h += buildMatchRecapRowHTML(m, i); });
     h += `</div>`;
   }
 
