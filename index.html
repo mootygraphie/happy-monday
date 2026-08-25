@@ -330,6 +330,20 @@
   .pv-slot.pv-empty .pv-top { pointer-events: none; opacity: 0; }
   .pv-slot.pv-empty .pv-platform { opacity: 0.2; }
 
+  /* ── Top 10 : podium + liste 4-10 ── */
+  .top10-list { display: flex; flex-direction: column; gap: 2px; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .top10-row { display: flex; align-items: center; gap: 10px; padding: 5px 4px; border-radius: 8px; font-size: 12.5px; }
+  .top10-row:hover { background: var(--bg3); }
+  .top10-rank { width: 18px; font-size: 11px; font-weight: 700; color: var(--text3); text-align: center; flex-shrink: 0; }
+  .top10-name { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .top10-val { font-weight: 800; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+
+  /* ── Récompenses : classement complet dépliable ── */
+  .bd-row.bd-more-row { display: none; }
+  .bd-row.bd-more-row.show { display: flex; }
+  .bd-toggle { width: 100%; text-align: center; background: none; border: none; border-top: 1px solid var(--border); padding: 9px 0; font-size: 11.5px; font-weight: 700; color: var(--text2); cursor: pointer; }
+  .bd-toggle:hover { color: var(--text); }
+
   /* ── Palmarès équipes ── */
   .palmares-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   @media (max-width: 500px) { .palmares-grid { grid-template-columns: 1fr; } }
@@ -1259,7 +1273,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 14:20</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 14:31</footer>
 
 <script>
 
@@ -1832,29 +1846,67 @@ function buildLinkUpCardHTML(sessions) {
   </div>`;
 }
 
+// Regroupe les entrées ex-æquo dans les 3 premiers slots (podium), reste = liste ordonnée
+function buildTop10Slots(items, sameValue) {
+  const slots = []; let rem = [...items];
+  while (rem.length && slots.length < 3) {
+    const top = rem[0].value;
+    const tied = rem.filter(it => sameValue(it.value, top));
+    slots.push({ rank: slots.length, players: tied.map(it => it.name), value: top });
+    rem = rem.filter(it => !sameValue(it.value, top));
+  }
+  return { slots, rest: rem };
+}
+
+// items : [{name, value}], déjà triés du meilleur au moins bon
+function buildTop10HTML(items, valueFmt, sameValue) {
+  if (!items.length) return `<span class="no-data">—</span>`;
+  const cmp = sameValue || ((a,b) => a === b);
+  const { slots, rest } = buildTop10Slots(items, cmp);
+  const podiumHtml = buildPodiumVizSlots(slots, s => valueFmt(s.value), s => s.players.map(n => pLink(n)).join(", "));
+  const shownCount = slots.reduce((sum,s) => sum + s.players.length, 0);
+  const restRows = rest.slice(0, Math.max(0, 10 - shownCount));
+  const listHtml = restRows.length ? `<div class="top10-list">${restRows.map((it, i) => `
+    <div class="top10-row"><span class="top10-rank">${shownCount + i + 1}</span><span class="top10-name">${pLink(it.name)}</span><span class="top10-val">${valueFmt(it.value)}</span></div>
+  `).join('')}</div>` : '';
+  return podiumHtml + listHtml;
+}
+
 function buildTopDefCardHTML(sessions, minMatches) {
   const defs = computeTopDefendersStats(sessions, minMatches);
-  const medals = ["🥇","🥈","🥉"];
   if (!defs.length) return `<div class="kpi-card" data-card="top-defenseurs">
-    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top défenseurs</div>
+    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 10 Défenseurs 🔒</div>
     <span style="color:var(--text3)">—</span>
   </div>`;
-  const slots = [];
-  let rem = [...defs];
-  while (slots.length < 3 && rem.length) {
-    const topAvg = rem[0].avg;
-    const eps = 1e-9;
-    slots.push({rank:slots.length, players:rem.filter(d => Math.abs(d.avg-topAvg)<eps)});
-    rem = rem.filter(d => Math.abs(d.avg-topAvg)>=eps);
-  }
-  const body = buildPodiumVizSlots(
-    slots,
-    s => `${s.players[0].avg.toFixed(1).replace(".",",")} b.c./m`,
-    s => s.players.map(d => `<button class="player-link" data-player="${d.name}" style="font-size:inherit;font-weight:inherit;color:inherit">${d.name}</button>`).join(", ")
-  );
+  const items = defs.map(d => ({ name: d.name, value: d.avg }));
+  const body = buildTop10HTML(items, v => `${v.toFixed(1).replace(".",",")} b.c./m`, (a,b) => Math.abs(a-b) < 1e-9);
   return `<div class="kpi-card" data-card="top-defenseurs">
-    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top défenseurs</div>
+    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 10 Défenseurs 🔒</div>
     ${body}
+  </div>`;
+}
+
+// Top 3 gardien : taux de clean sheets (%), minimum 3 matchs gardés
+function buildGardienTop3HTML() {
+  const ranked = ALL_PLAYERS.map(p => {
+    const s = computeAchievementStats(p);
+    return { name: p, matchs: s.gardiensMatchs, rate: s.gardienRate };
+  }).filter(r => r.matchs >= 3).sort((a,b) => b.rate - a.rate || b.matchs - a.matchs || a.name.localeCompare(b.name,'fr'));
+  if (!ranked.length) return `<div class="kpi-card" data-card="top-gardien">
+    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 3 Gardien 🧤</div>
+    <span style="color:var(--text3)">—</span>
+  </div>`;
+  const slots = []; let rem = [...ranked];
+  while (rem.length && slots.length < 3) {
+    const top = rem[0].rate;
+    slots.push({ rank: slots.length, players: rem.filter(r => r.rate === top).map(r => r.name) });
+    rem = rem.filter(r => r.rate !== top);
+  }
+  const body = buildPodiumVizSlots(slots, s => `${ranked.find(r=>r.name===s.players[0]).rate}%`, s => s.players.map(n => pLink(n)).join(", "));
+  return `<div class="kpi-card" data-card="top-gardien">
+    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 3 Gardien 🧤</div>
+    ${body}
+    <div style="font-size:11px;color:var(--text3);margin-top:10px;text-align:center">Minimum 3 matchs gardés</div>
   </div>`;
 }
 
@@ -1886,8 +1938,7 @@ function computeGardiensRanking(sessions) {
 function buildYachineHtml(sessions) {
   const year = _currentSeason(); const lbl = _seasonLabel(year);
   const ranking = computeGardiensRanking(sessions.filter(s => _seasonStart(s.date) === year))
-    .sort((a, b) => a.rate - b.rate || b.matchs - a.matchs || a.name.localeCompare(b.name, 'fr'))
-    .slice(0, 5);
+    .sort((a, b) => a.rate - b.rate || b.matchs - a.matchs || a.name.localeCompare(b.name, 'fr'));
   const medals = ['🥇','🥈','🥉'];
   let html = `<div class="ballon-dor-card" style="border-color:rgba(0,187,255,.3)">
     <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 0%,var(--bleu) 40%,rgba(0,187,255,.5) 60%,transparent 100%);pointer-events:none"></div>
@@ -1907,7 +1958,7 @@ function buildYachineHtml(sessions) {
       const rank = i < 3 ? `<span class="bd-rank">${medals[i]}</span>` : `<span class="bd-rank num">${i+1}</span>`;
       const bar = Math.round((p.rate / maxRate) * 100);
       const detail = `${p.buts} but${p.buts!==1?'s':''} / ${p.matchs} m.`;
-      html += `<div class="bd-row${isFirst?' bd-first':''}" style="${isFirst?'background:rgba(0,187,255,.04);border-bottom-color:rgba(0,187,255,.1)':''}">
+      html += `<div class="bd-row${isFirst?' bd-first':''}${i>=5?' bd-more-row':''}" ${i>=5?'data-award-id="yachine"':''} style="${isFirst?'background:rgba(0,187,255,.04);border-bottom-color:rgba(0,187,255,.1)':''}">
         ${rank}
         <span class="bd-name">${pLink(p.name)}</span>
         <div class="bd-bar-wrap"><div class="bd-bar" style="width:${bar}%;background:linear-gradient(90deg,var(--bleu),rgba(0,187,255,.35))"></div></div>
@@ -1915,6 +1966,7 @@ function buildYachineHtml(sessions) {
         <span class="bd-ga">${detail}</span>
       </div>`;
     });
+    if (ranking.length > 5) html += `<button class="bd-toggle" data-award-toggle="yachine">Voir le classement complet (${ranking.length}) ›</button>`;
   } else {
     html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun gardien enregistré en ${year}.</div>`;
   }
@@ -1925,8 +1977,7 @@ function buildYachineHtml(sessions) {
 function buildCalamityJamesHtml(sessions) {
   const year = _currentSeason(); const lbl = _seasonLabel(year);
   const ranking = computeGardiensRanking(sessions.filter(s => _seasonStart(s.date) === year))
-    .sort((a, b) => b.rate - a.rate || b.matchs - a.matchs || a.name.localeCompare(b.name, 'fr'))
-    .slice(0, 5);
+    .sort((a, b) => b.rate - a.rate || b.matchs - a.matchs || a.name.localeCompare(b.name, 'fr'));
   let html = `<div style="background:var(--bg2);border:1px solid rgba(150,150,160,.25);border-radius:var(--radius-lg);overflow:hidden;position:relative">
     <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(150,150,160,.55),transparent);pointer-events:none"></div>
     <div class="ballon-dor-head" style="background:rgba(150,150,160,.04);border-bottom-color:rgba(150,150,160,.1)">
@@ -1945,7 +1996,7 @@ function buildCalamityJamesHtml(sessions) {
       const bar = Math.round((p.rate / maxRate) * 100);
       const detail = `${p.buts} but${p.buts!==1?'s':''} / ${p.matchs} m.`;
       const rowStyle = isFirst ? ' style="padding:14px 22px;background:rgba(150,150,160,.04);border-bottom:1px solid rgba(150,150,160,.08)"' : '';
-      html += `<div class="bd-row"${rowStyle}>
+      html += `<div class="bd-row${i>=5?' bd-more-row':''}"${rowStyle} ${i>=5?'data-award-id="calamity"':''}>
         <span class="bd-rank num">${i+1}</span>
         <span class="bd-name"${isFirst?' style="font-size:16px;font-weight:700"':''}>${pLink(p.name)}</span>
         <div class="bd-bar-wrap"><div class="bd-bar" style="width:${bar}%;background:linear-gradient(90deg,rgba(150,150,160,.6),rgba(150,150,160,.2))"></div></div>
@@ -1953,6 +2004,7 @@ function buildCalamityJamesHtml(sessions) {
         <span class="bd-ga"${isFirst?' style="color:var(--text2)"':''}>${detail}</span>
       </div>`;
     });
+    if (ranking.length > 5) html += `<button class="bd-toggle" data-award-toggle="calamity">Voir le classement complet (${ranking.length}) ›</button>`;
   } else {
     html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun gardien enregistré en ${year}.</div>`;
   }
@@ -2356,11 +2408,10 @@ function buildBallonDorHtml() {
       });
     });
   });
-  const _bdTop5 = Object.entries(_bdPs)
+  const _bdFull = Object.entries(_bdPs)
     .map(([name, p]) => ({ name, buts: p.buts, passes: p.passes, pts: p.buts * 5 + p.passes * 10 }))
     .filter(p => p.pts > 0)
-    .sort((a, b) => b.pts - a.pts || b.buts - a.buts || a.name.localeCompare(b.name, "fr"))
-    .slice(0, 5);
+    .sort((a, b) => b.pts - a.pts || b.buts - a.buts || a.name.localeCompare(b.name, "fr"));
   const _bdMedals = ["🥇","🥈","🥉"];
   let html = `<div class="ballon-dor-card">
     <div class="ballon-dor-head">
@@ -2372,13 +2423,13 @@ function buildBallonDorHtml() {
       <div class="ballon-dor-formula">5 pts / but &nbsp;·&nbsp; 10 pts / assist</div>
     </div>
     <div class="bd-list">`;
-  if (_bdTop5.length) {
-    const _bdMax = _bdTop5[0].pts;
-    _bdTop5.forEach((p, i) => {
+  if (_bdFull.length) {
+    const _bdMax = _bdFull[0].pts;
+    _bdFull.forEach((p, i) => {
       const _bdRank = i < 3 ? `<span class="bd-rank">${_bdMedals[i]}</span>` : `<span class="bd-rank num">${i+1}</span>`;
       const _bdGa = [p.buts > 0 ? `${p.buts}G` : null, p.passes > 0 ? `${p.passes}A` : null].filter(Boolean).join(" · ");
       const _bdBar = Math.round((p.pts / _bdMax) * 100);
-      html += `<div class="bd-row${i===0?" bd-first":""}">
+      html += `<div class="bd-row${i===0?" bd-first":""}${i>=5?" bd-more-row":""}" ${i>=5?'data-award-id="ballondor"':''}>
         ${_bdRank}
         <span class="bd-name">${pLink(p.name)}</span>
         <div class="bd-bar-wrap"><div class="bd-bar" style="width:${_bdBar}%"></div></div>
@@ -2386,6 +2437,7 @@ function buildBallonDorHtml() {
         <span class="bd-ga">${_bdGa}</span>
       </div>`;
     });
+    if (_bdFull.length > 5) html += `<button class="bd-toggle" data-award-toggle="ballondor">Voir le classement complet (${_bdFull.length}) ›</button>`;
   } else {
     html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun but ou passe enregistré en saison ${_bdLbl} pour le moment.</div>`;
   }
@@ -2412,14 +2464,13 @@ function buildBallonDePlombHtml() {
       });
     });
   });
-  const _bdBottom5 = Object.entries(_presCount)
+  const _bdBottomAll = Object.entries(_presCount)
     .filter(([name]) => !JOKERS.has(name))
     .map(([name, presences]) => {
       const p = _bdPs[name]||{buts:0,passes:0};
       return { name, buts: p.buts, passes: p.passes, pts: p.buts*5+p.passes*10, presences };
     })
-    .sort((a,b) => a.pts-b.pts || a.buts-b.buts || b.presences-a.presences || a.name.localeCompare(b.name,"fr"))
-    .slice(0, 5);
+    .sort((a,b) => a.pts-b.pts || a.buts-b.buts || b.presences-a.presences || a.name.localeCompare(b.name,"fr"));
   let html = `<div style="background:var(--bg2);border:1px solid rgba(150,150,160,.25);border-radius:var(--radius-lg);overflow:hidden;position:relative">
     <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(150,150,160,.55),transparent);pointer-events:none"></div>
     <div class="ballon-dor-head" style="background:rgba(150,150,160,.04);border-bottom-color:rgba(150,150,160,.1)">
@@ -2431,14 +2482,14 @@ function buildBallonDePlombHtml() {
       <div class="ballon-dor-formula" style="color:rgba(150,150,160,.5)">5 pts / but &nbsp;·&nbsp; 10 pts / assist</div>
     </div>
     <div class="bd-list">`;
-  if (_bdBottom5.length) {
-    const _bdMax = Math.max(..._bdBottom5.map(p => p.pts), 1);
-    _bdBottom5.forEach((p, i) => {
+  if (_bdBottomAll.length) {
+    const _bdMax = Math.max(..._bdBottomAll.map(p => p.pts), 1);
+    _bdBottomAll.forEach((p, i) => {
       const _gaStr = [p.buts>0?`${p.buts}G`:null, p.passes>0?`${p.passes}A`:null].filter(Boolean).join(" · ")||"0 G/A";
       const _bdBar = Math.round((p.pts / _bdMax) * 100);
       const isFirst = i===0;
       const rowStyle = isFirst ? ' style="padding:14px 22px;background:rgba(150,150,160,.04);border-bottom:1px solid rgba(150,150,160,.08)"' : '';
-      html += `<div class="bd-row"${rowStyle}>
+      html += `<div class="bd-row${i>=5?' bd-more-row':''}"${rowStyle} ${i>=5?'data-award-id="ballondeplomb"':''}>
         <span class="bd-rank num">${i+1}</span>
         <span class="bd-name"${isFirst?' style="font-size:16px;font-weight:700"':''}>${pLink(p.name)}</span>
         <div class="bd-bar-wrap"><div class="bd-bar" style="width:${_bdBar}%;background:linear-gradient(90deg,rgba(150,150,160,.6),rgba(150,150,160,.2))"></div></div>
@@ -2446,6 +2497,7 @@ function buildBallonDePlombHtml() {
         <span class="bd-ga"${isFirst?' style="font-size:12px;color:var(--text2)"':''}>${_gaStr}</span>
       </div>`;
     });
+    if (_bdBottomAll.length > 5) html += `<button class="bd-toggle" data-award-toggle="ballondeplomb">Voir le classement complet (${_bdBottomAll.length}) ›</button>`;
   } else {
     html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun joueur présent en saison ${_bdLbl} pour le moment.</div>`;
   }
@@ -2992,16 +3044,8 @@ function renderStats() {
   const container = document.getElementById("panel-stats");
   const allSt = computeStats(SESSIONS);
 
-  /* ── Ballon d'Or + Prix Yachine / Ballon de Plomb gardien ── */
-  let h = `<div class="stats-award-grid">
-    ${buildBallonDorHtml()}
-    ${buildYachineHtml(SESSIONS)}
-    ${buildBallonDePlombHtml()}
-    ${buildCalamityJamesHtml(SESSIONS)}
-  </div>`;
-  h += `<div class="bonnet-infirm-row">${buildBonnetDAneHtml()}${buildInfirmeHtml()}</div>`;
-
-  /* ── Meilleure équipe all-time ── */
+  /* ── Meilleure équipe all-time (en premier) ── */
+  let h = "";
   const bt = computeBestTeamAllTime();
   if (bt) {
     const cls = teamCls(bt.team);
@@ -3037,31 +3081,37 @@ function renderStats() {
     </div>`;
   }
 
-  /* ── Ligne 1 : Buteurs | Passeurs ── */
-  const top3Buteurs  = buildAggTop3(allSt.buteursRank.map(([n,p])=>[n,p.buts]), "but", "buts");
-  const top3Passeurs = buildAggTop3(allSt.passeursRank.map(([n,p])=>[n,p.passes]), "passe", "passes");
+  /* ── Ballon d'Or + Prix Yachine / Ballon de Plomb gardien ── */
+  h += `<div class="stats-award-grid">
+    ${buildBallonDorHtml()}
+    ${buildYachineHtml(SESSIONS)}
+    ${buildBallonDePlombHtml()}
+    ${buildCalamityJamesHtml(SESSIONS)}
+  </div>`;
+  h += `<div class="bonnet-infirm-row">${buildBonnetDAneHtml()}${buildInfirmeHtml()}</div>`;
+
+  /* ── Ligne 1 : Buteurs | Passeurs (Top 10) ── */
+  const top10Buteurs  = buildTop10HTML(allSt.buteursRank.map(([n,p])=>({name:n, value:p.buts})),   v => `${v} but${v>1?"s":""}`);
+  const top10Passeurs = buildTop10HTML(allSt.passeursRank.map(([n,p])=>({name:n, value:p.passes})), v => `${v} assist${v>1?"s":""}`);
 
   h += `<div class="podium-section">
     <div class="kpi-card">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 3 Buteurs ⚽ (all-time)</div>
-      ${top3Buteurs}
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 10 Buteurs ⚽ (all-time)</div>
+      ${top10Buteurs}
     </div>
     <div class="kpi-card">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 3 Passeurs 🎯 (all-time)</div>
-      ${top3Passeurs}
+      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 10 Passeurs 🎯 (all-time)</div>
+      ${top10Passeurs}
     </div>
   </div>`;
 
-  /* ── Ligne 2 : Défenseurs | Top Présences ── */
-  const defCard      = buildTopDefCardHTML(SESSIONS);
-  const top3PresHtml = buildPresencePodium(allSt.top3Pres);
+  /* ── Ligne 2 : Défenseurs (Top 10) | Gardien (Top 3) ── */
+  const defCard     = buildTopDefCardHTML(SESSIONS);
+  const gardienCard = buildGardienTop3HTML();
 
   h += `<div class="podium-section">
     ${defCard}
-    <div class="kpi-card">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top présences ✅</div>
-      ${top3PresHtml}
-    </div>
+    ${gardienCard}
   </div>`;
 
   /* ── Ligne 3 : Meilleur Link-Up | Meilleure série ── */
@@ -3129,6 +3179,18 @@ function renderStats() {
 
   container.innerHTML = h;
   animateView(container);
+
+  /* ── Récompenses : dépliage du classement complet ── */
+  container.querySelectorAll('[data-award-toggle]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.awardToggle;
+      const rows = container.querySelectorAll(`[data-award-id="${id}"]`);
+      const willShow = rows.length > 0 && !rows[0].classList.contains('show');
+      rows.forEach(r => r.classList.toggle('show', willShow));
+      const total = rows.length + 5;
+      btn.textContent = willShow ? 'Réduire ‹' : `Voir le classement complet (${total}) ›`;
+    });
+  });
 
   /* ── Rivalités — init et listeners ── */
   const _rivSelA = container.querySelector('#riv-a');
