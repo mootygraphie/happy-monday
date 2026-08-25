@@ -117,16 +117,33 @@
   .period-sub select:focus { border-color: rgba(255,255,255,.25); }
 
   /* ── Sélecteur de session ── */
-  .session-selector { display: flex; align-items: center; gap: 12px; margin-bottom: 2rem; }
+  .session-selector { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 2rem; }
   .session-selector label { font-size: 13px; color: var(--text2); }
-  .session-selector select {
-    background: var(--bg2); color: var(--text); border: 1px solid var(--border2);
-    border-radius: var(--radius); padding: 8px 14px; font-size: 14px; cursor: pointer; outline: none;
-    appearance: none; -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239898aa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px;
+
+  .sess-dd { position: relative; }
+  .sess-dd-btn {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    min-width: 190px; background: var(--bg2); color: var(--text); border: 1px solid var(--border2);
+    border-radius: 999px; padding: 9px 16px; font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
   }
-  .session-selector select:focus { border-color: var(--border2); }
+  .sess-dd-btn:hover { background: var(--bg3); }
+  .sess-dd-btn svg { flex-shrink: 0; opacity: .55; color: var(--text2); transition: transform .15s; }
+  .sess-dd.open .sess-dd-btn svg { transform: rotate(180deg); }
+  .sess-dd-panel {
+    display: none; position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    min-width: 220px; max-height: 320px; overflow-y: auto; z-index: 40;
+    background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 6px;
+  }
+  .sess-dd.open .sess-dd-panel { display: block; }
+  .sess-dd-opt {
+    display: block; width: 100%; text-align: left; background: none; border: none;
+    color: var(--text2); font-size: 13.5px; font-family: inherit; padding: 9px 11px;
+    border-radius: 8px; cursor: pointer;
+  }
+  .sess-dd-opt:hover { background: var(--bg3); color: var(--text); }
+  .sess-dd-opt.active { background: var(--gold-bg); color: var(--gold); font-weight: 700; }
 
   .section-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-style: italic; color: var(--text3); margin: 2rem 0 .75rem; }
 
@@ -1302,6 +1319,8 @@
 
   .sfm-sb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 12px; }
   .sfm-sb-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .sfm-sb-card.sfm-sb-lead { border-color: var(--gold-border); box-shadow: 0 0 0 1px var(--gold-border); }
+  .sfm-sb-medal { font-size: 34px; line-height: 1; flex-shrink: 0; }
   .sfm-sb-accent { height: 4px; }
   .sfm-sb-accent.rouge { background: linear-gradient(90deg,var(--rouge),#FF85C2); }
   .sfm-sb-accent.vert { background: linear-gradient(90deg,var(--vert),#EAFF80); }
@@ -1475,7 +1494,14 @@
   <div class="tab-panel" id="panel-session">
     <div class="session-selector">
       <label for="session-date">Session :</label>
-      <select id="session-date"></select>
+      <div class="sess-dd" id="sess-dd">
+        <button type="button" class="sess-dd-btn" id="sess-dd-btn">
+          <span id="sess-dd-label">—</span>
+          <svg width="11" height="7" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+        </button>
+        <div class="sess-dd-panel" id="sess-dd-panel"></div>
+      </div>
+      <select id="session-date" style="display:none"></select>
       <button id="delete-session-btn" title="Supprimer cette session" style="display:none;background:transparent;border:1px solid #e74c3c44;color:#e74c3c;border-radius:8px;padding:7px 11px;font-size:16px;cursor:pointer;line-height:1;transition:background .15s;" onmouseover="this.style.background='#e74c3c18'" onmouseout="this.style.background='transparent'">🗑️</button>
       <button id="edit-session-btn" title="Modifier cette session" style="display:none;background:transparent;border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:7px 11px;font-size:16px;cursor:pointer;line-height:1;transition:background .15s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">✏️</button>
     </div>
@@ -1517,7 +1543,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 19:32</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 20:51</footer>
 
 <script>
 
@@ -2764,27 +2790,53 @@ function _sfmPickSpotlights(matchs) {
   return spots.sort((a,b) => a.i - b.i);
 }
 
+function _sfmPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
 function _sfmSpotlightMeta(m, kind) {
-  const eyebrows = { opener: "🎩 Ouverture", blowout: "💥 Démonstration", thriller: "🥶 Frisson du soir" };
+  const eyebrows = { opener: "🎩 Ouverture des hostilités", blowout: "💥 Correction en règle", thriller: "🥶 Frisson du soir" };
   const top = _sfmTopScorerInMatch(m);
   let caption = "";
   if (kind === "blowout" && top && top.count >= 2) {
-    caption = `${top.name} porte l'estocade avec ${_sfmGoalsPhrase(top.count)}.`;
+    const ph = _sfmGoalsPhrase(top.count);
+    caption = _sfmPick([
+      `${top.name} n'a pas fait dans la dentelle : ${ph}, et l'adversaire n'a rien vu venir.`,
+      `${top.name} a décidé que le match était plié — ${ph}, sans même forcer le ton.`,
+      `Quand ${top.name} s'y met (${ph}), la défense d'en face ferait mieux de checker les horaires du dernier bus.`,
+    ]);
   } else if (kind === "thriller") {
     if (m.scoreA + m.scoreB === 0) {
-      caption = `0–0 : aucune des deux défenses ne cède.`;
+      caption = _sfmPick([
+        `0–0 : les deux défenses ont pris la soirée très au sérieux.`,
+        `0–0, personne n'a voulu prendre le moindre risque — remboursez les organisateurs.`,
+      ]);
     } else if (m.scoreA === m.scoreB) {
-      caption = `Un match nul disputé, ${m.scoreA}–${m.scoreB}.`;
+      caption = _sfmPick([
+        `Nul et non avenu, ${m.scoreA}–${m.scoreB} : les deux équipes repartent avec leur fierté et pas grand-chose d'autre.`,
+        `${m.scoreA}–${m.scoreB}, un partage des points aussi juste qu'ennuyeux à raconter.`,
+      ]);
     } else if (m.scoreA === 0 || m.scoreB === 0) {
       const gk = m.scoreA === 0 ? (m.gardiensA||[])[0] : (m.gardiensB||[])[0];
-      caption = gk ? `${gk} garde sa cage inviolée.` : `Une seule frappe dans la rencontre.`;
+      caption = gk
+        ? _sfmPick([
+            `${gk} n'a rien laissé passer ce soir-là : cage fermée à double tour.`,
+            `${gk} a passé la rencontre les mains dans les poches — enfin, façon de parler.`,
+          ])
+        : `Une seule frappe dans toute la rencontre.`;
     } else {
-      caption = `Un seul but a fait la différence.`;
+      caption = _sfmPick([
+        `Un but d'écart, l'équivalent footballistique d'un cheveu sur la soupe.`,
+        `Un seul but a fait la différence — de quoi discuter jusqu'à la prochaine session.`,
+      ]);
     }
   } else if (kind === "opener" && top) {
-    caption = top.count >= 2 ? `${top.name} lance la soirée avec ${_sfmGoalsPhrase(top.count)}.` : `Coup d'envoi de la soirée.`;
+    caption = top.count >= 2
+      ? _sfmPick([
+          `${top.name} lance les hostilités avec ${_sfmGoalsPhrase(top.count)} — la soirée commence fort, tant pis pour les autres.`,
+          `Coup d'envoi, et déjà ${top.name} qui sort le grand jeu : ${_sfmGoalsPhrase(top.count)}.`,
+        ])
+      : `Coup d'envoi de la soirée, tout le monde est encore frais.`;
   } else if (top) {
-    caption = `${top.name} se distingue avec ${_sfmGoalsPhrase(top.count)}.`;
+    caption = `${top.name} se distingue avec ${_sfmGoalsPhrase(top.count)}, notez-le quelque part.`;
   }
   return { eyebrow: eyebrows[kind] || "⭐ Temps fort", caption };
 }
@@ -2818,7 +2870,20 @@ function _sfmSpotlightCardHTML(m, kind, delay) {
 function _sfmRecapSentence(session, matchs, totalButs, buteursRanked, passeursRanked, gkRanking) {
   if (!matchs.length) return "";
   const parts = [];
-  parts.push(`${matchs.length} match${matchs.length>1?"s":""}, ${totalButs} but${totalButs>1?"s":""} inscrit${totalButs>1?"s":""} sous les projecteurs.`);
+  const avgButs = totalButs / matchs.length;
+  if (avgButs >= 3) {
+    parts.push(_sfmPick([
+      `Une soirée à ${totalButs} buts en ${matchs.length} match${matchs.length>1?"s":""} — les défenses ont visiblement pris congé.`,
+      `${totalButs} buts en ${matchs.length} match${matchs.length>1?"s":""} : on a plus vu de célébrations que de tacles ce soir-là.`,
+    ]));
+  } else if (avgButs <= 1.2) {
+    parts.push(_sfmPick([
+      `${totalButs} but${totalButs>1?"s":""} en ${matchs.length} match${matchs.length>1?"s":""} : soirée cadenassée, les gardiens ont fait le plus dur.`,
+      `${matchs.length} match${matchs.length>1?"s":""}, ${totalButs} but${totalButs>1?"s":""} au compteur — plus de tacles que de caviars ce soir.`,
+    ]));
+  } else {
+    parts.push(`${matchs.length} match${matchs.length>1?"s":""}, ${totalButs} but${totalButs>1?"s":""} inscrit${totalButs>1?"s":""} sous les projecteurs.`);
+  }
 
   const topScorerName = buteursRanked.length ? buteursRanked[0][0] : null;
   if (buteursRanked.length) {
@@ -2827,18 +2892,31 @@ function _sfmRecapSentence(session, matchs, totalButs, buteursRanked, passeursRa
     const cls = eq ? teamCls(eq) : "";
     const nameHtml = cls ? `<b style="color:var(--${cls})">${name}</b>` : `<b>${name}</b>`;
     const teamHtml = cls ? ` pour les <b style="color:var(--${cls})">${TEAM_LABEL[eq]||eq}</b>` : "";
-    parts.push(`${nameHtml} régale avec ${_sfmGoalsPhrase(count)}${teamHtml}.`);
+    const ph = _sfmGoalsPhrase(count);
+    parts.push(_sfmPick([
+      `${nameHtml} s'est chargé du service après-vente offensif avec ${ph}${teamHtml} — pas franchement discret.`,
+      `${nameHtml} régale avec ${ph}${teamHtml}, les autres n'avaient plus qu'à applaudir.`,
+      `Ce soir-là, ${nameHtml} a fait le travail tout seul ou presque : ${ph}${teamHtml}.`,
+    ]));
   }
 
   if (gkRanking && gkRanking.length) {
     const cleanKeeper = gkRanking.filter(g => g.buts === 0).sort((a,b) => b.matchs - a.matchs)[0];
-    if (cleanKeeper) parts.push(`${cleanKeeper.name} garde une cage inviolée dans les buts.`);
+    if (cleanKeeper) {
+      parts.push(_sfmPick([
+        `${cleanKeeper.name} a verrouillé sa cage toute la soirée — porte blindée, code changé.`,
+        `Derrière, ${cleanKeeper.name} n'a rien laissé filtrer : soirée tranquille pour son gardien.`,
+      ]));
+    }
   }
 
   if (passeursRanked.length) {
     const [name, count] = passeursRanked[0];
     if (name !== topScorerName) {
-      parts.push(`${name} distribue le plus de caviars avec ${count} passe${count>1?"s":""} décisive${count>1?"s":""}.`);
+      parts.push(_sfmPick([
+        `${name} a plus donné de ballons que le facteur : ${count} passe${count>1?"s":""} décisive${count>1?"s":""} au compteur.`,
+        `${name} s'est chargé de la distribution avec ${count} passe${count>1?"s":""} décisive${count>1?"s":""} — service cinq étoiles.`,
+      ]));
     }
   }
 
@@ -2887,15 +2965,18 @@ function _sfmHeroHTML(session, matchs, presentsCount, teamsPlayedCount, recapSen
 function _sfmScoreboardHTML(standings) {
   if (standings.length < 2) return "";
   const ranks = ["1re place","2e place","3e place","4e place","5e place"];
+  const medals = ["🥇","🥈","🥉"];
   const cards = standings.map((row, i) => {
     const cls = teamCls(row.team);
     const diffSign = row.diff > 0 ? "+" : "";
     const diffCls  = row.diff > 0 ? "pos" : row.diff < 0 ? "neg" : "";
-    return `<div class="sfm-sb-card sfm-fade-up" style="animation-delay:${(i*0.05).toFixed(2)}s">
+    const medal = medals[i] ? `<div class="sfm-sb-medal">${medals[i]}</div>` : "";
+    return `<div class="sfm-sb-card sfm-fade-up${i===0?" sfm-sb-lead":""}" style="animation-delay:${(i*0.05).toFixed(2)}s">
       <div class="sfm-sb-accent ${cls}"></div>
       <div class="sfm-sb-body">
         <div class="sfm-sb-head">
-          <div><div class="sfm-sb-rank${i===0?" first":""}">${ranks[i]||(i+1)+"e place"}</div><div class="sfm-sb-name ${cls}">${dot(row.team)}${TEAM_LABEL[row.team]||row.team}</div></div>
+          ${medal}
+          <div style="flex:1;min-width:0"><div class="sfm-sb-rank${i===0?" first":""}">${ranks[i]||(i+1)+"e place"}</div><div class="sfm-sb-name ${cls}">${dot(row.team)}${TEAM_LABEL[row.team]||row.team}</div></div>
           <div class="sfm-sb-pts"><div class="v">${row.pts}</div><div class="l">Pts</div></div>
         </div>
         <div class="sfm-sb-sep"></div>
@@ -4421,9 +4502,13 @@ function renderDashboard() {
 
 function populateSessionSelect() {
   const sel = document.getElementById("session-date");
+  const ddLabel = document.getElementById("sess-dd-label");
+  const ddPanel = document.getElementById("sess-dd-panel");
   sel.innerHTML = "";
   if (!SESSIONS.length) {
     sel.innerHTML = `<option value="">Aucune session disponible</option>`;
+    if (ddLabel) ddLabel.textContent = "Aucune session";
+    if (ddPanel) ddPanel.innerHTML = "";
     return;
   }
   const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
@@ -4434,7 +4519,37 @@ function populateSessionSelect() {
     if (i === 0) opt.selected = true;
     sel.appendChild(opt);
   });
+  if (ddPanel) {
+    ddPanel.innerHTML = sorted.map((s, i) =>
+      `<button type="button" class="sess-dd-opt${i===0?" active":""}" data-date="${s.date}">${fmtDate(s.date)}</button>`
+    ).join("");
+  }
+  _syncSessDd(sorted[0].date);
 }
+
+function _syncSessDd(date) {
+  const ddLabel = document.getElementById("sess-dd-label");
+  const btn = document.querySelector(`.sess-dd-opt[data-date="${date}"]`);
+  if (ddLabel) ddLabel.textContent = btn ? btn.textContent : fmtDate(date);
+  document.querySelectorAll(".sess-dd-opt").forEach(o => o.classList.toggle("active", o === btn));
+}
+
+document.getElementById("sess-dd-btn").addEventListener("click", () => {
+  document.getElementById("sess-dd").classList.toggle("open");
+});
+document.getElementById("sess-dd-panel").addEventListener("click", e => {
+  const btn = e.target.closest(".sess-dd-opt");
+  if (!btn) return;
+  const sel = document.getElementById("session-date");
+  sel.value = btn.dataset.date;
+  _syncSessDd(btn.dataset.date);
+  document.getElementById("sess-dd").classList.remove("open");
+  sel.dispatchEvent(new Event("change"));
+});
+document.addEventListener("click", e => {
+  const dd = document.getElementById("sess-dd");
+  if (dd.classList.contains("open") && !dd.contains(e.target)) dd.classList.remove("open");
+});
 
 
 function renderSessionResults(date) {
@@ -6038,6 +6153,7 @@ async function _commitSession() {
   document.getElementById("panel-session").classList.add("active");
   populateSessionSelect();
   document.getElementById("session-date").value = dateNav;
+  _syncSessDd(dateNav);
   renderSessionResults(dateNav);
 }
 
