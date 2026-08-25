@@ -6,7 +6,7 @@
 <title>🔴⚫️ Happy Monday Football Team — Dashboard ⚽️</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Google+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0f0f13;
@@ -48,7 +48,6 @@
   html.light .player-link:hover { color: #000; text-decoration-color: rgba(0,0,0,.5); }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.5; min-height: 100vh; }
-  .kpi-num, .pe-count, .rc-num, .ts-num, .pp-stat-val, .mc-score, .taux-val, .regl-bar-count, [style*="tabular-nums"] { font-family: 'Oswald', 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
 
   header { padding: 1.5rem 2rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 14px; position: sticky; top: 0; z-index: 500; background: var(--bg); }
   .header-main { display: flex; align-items: center; gap: 14px; }
@@ -225,7 +224,7 @@
   .match-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
   .mc-badges { display: flex; align-items: center; justify-content: space-between; }
   .mc-scores { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-  .mc-score { flex: 1; text-align: center; font-size: 38px; font-weight: 700; line-height: 1; font-style: italic; color: var(--text); }
+  .mc-score { flex: 1; text-align: center; font-size: 38px; font-weight: 700; line-height: 1; color: var(--text); }
   .mc-score.lose { color: var(--text3); font-weight: 300; font-size: 30px; }
   .mc-score.draw { color: var(--text2); }
   .mc-scores-sep { color: var(--text3); font-size: 16px; font-weight: 300; flex-shrink: 0; }
@@ -281,7 +280,7 @@
   .kpi-card.accent-rouge::after  { background: radial-gradient(circle at top left, rgba(255,45,149,.15),  transparent 65%); }
   .kpi-card.accent-vert::after   { background: radial-gradient(circle at top left, rgba(212,255,0,.15),   transparent 65%); }
   .kpi-card.accent-bleu::after   { background: radial-gradient(circle at top left, rgba(0,187,255,.15),   transparent 65%); }
-  .kpi-num { font-size: 46px; font-weight: 700; line-height: 1; letter-spacing: -.03em; font-style: italic; }
+  .kpi-num { font-size: 46px; font-weight: 700; line-height: 1; letter-spacing: -.03em; }
   .kpi-num.green  { color: #66bb6a; }
   .kpi-num.red    { color: #ef5350; }
   .kpi-num.amber  { color: var(--text); }
@@ -305,7 +304,7 @@
   .podium-entry.first { background: rgba(245,200,66,.03); border-left: 2px solid rgba(245,200,66,.3); }
   .pe-rank { font-size: 18px; min-width: 28px; }
   .pe-name { flex: 1; font-size: 15px; font-weight: 500; }
-  .pe-count { font-size: 28px; font-weight: 700; line-height: 1; font-style: italic; }
+  .pe-count { font-size: 28px; font-weight: 700; line-height: 1; }
   .pe-count.green  { color: #66bb6a; }
   .pe-count.red    { color: #ef5350; }
   .pe-count.amber  { color: #ffa726; }
@@ -351,7 +350,7 @@
   .record-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; }
   .rc-icon { font-size: 22px; margin-bottom: 10px; }
   .rc-lbl { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; font-weight: 600; font-style: italic; margin-bottom: 8px; }
-  .rc-num { font-size: 42px; font-weight: 700; line-height: 1; letter-spacing: -.03em; font-style: italic; margin-bottom: 10px; }
+  .rc-num { font-size: 42px; font-weight: 700; line-height: 1; letter-spacing: -.03em; margin-bottom: 10px; }
   .rc-match { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
   .rc-match .sc { font-size: 14px; font-weight: 600; }
   .rc-match .da { color: var(--text3); }
@@ -360,7 +359,7 @@
   /* ── Top buteur hero ── */
   .top-scorer-hero { display: flex; align-items: center; gap: 20px; background: var(--bg2); border: 1px solid rgba(245,200,66,.25); border-radius: var(--radius-lg); padding: 22px 26px; margin-bottom: 12px; position: relative; overflow: hidden; }
   .top-scorer-hero::before { content:""; position:absolute; inset:0; background: radial-gradient(circle at left, rgba(245,200,66,.08), transparent 60%); pointer-events:none; }
-  .ts-num { font-size: 64px; font-weight: 700; color: var(--gold); line-height: 1; letter-spacing: -.04em; font-style: italic; }
+  .ts-num { font-size: 64px; font-weight: 700; color: var(--gold); line-height: 1; letter-spacing: -.04em; }
   .ts-info .ts-name { font-size: 24px; font-weight: 600; }
   .ts-info .ts-lbl { font-size: 12px; color: var(--text2); margin-top: 4px; }
 
@@ -458,8 +457,8 @@
   }
 
   footer { text-align: center; padding: 2rem; color: var(--text3); font-size: 12px; border-top: 1px solid var(--border); }
-  footer .footer-link-btn { background: none; border: none; padding: 0; margin: 0; color: inherit; font: inherit; cursor: pointer; text-decoration: underline; text-decoration-color: transparent; transition: text-decoration-color .15s, color .15s; }
-  footer .footer-link-btn:hover { text-decoration-color: currentColor; color: var(--text2); }
+  footer .footer-link-btn { background: var(--bg2); border: 1px solid var(--border2); border-radius: 999px; padding: 3px 11px; margin: 0 2px; color: var(--text3); font: inherit; font-size: 11px; cursor: pointer; vertical-align: 1px; transition: color .15s, border-color .15s, background .15s; }
+  footer .footer-link-btn:hover { color: var(--text2); border-color: var(--text3); background: var(--bg3); }
 
   /* ── Noms cliquables ── */
   .player-link {
@@ -519,7 +518,7 @@
     background: var(--bg2); padding: 9px 13px;
     display: flex; align-items: center; gap: 10px;
   }
-  .pp-stat-val { font-size: 20px; font-weight: 700; line-height: 1; font-style: italic; flex-shrink: 0; min-width: 18px; }
+  .pp-stat-val { font-size: 20px; font-weight: 700; line-height: 1; flex-shrink: 0; min-width: 18px; }
   .pp-stat-val.green { color: #66bb6a; }
   .pp-stat-val.red   { color: #ef5350; }
   .pp-stat-val.amber { color: var(--gold); }
@@ -913,7 +912,7 @@
   .riv-match-card { background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:14px 10px; }
   .riv-match-date { font-size:11px; color:var(--text3); text-align:center; margin-bottom:10px; }
   .riv-match-score-row { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; }
-  .riv-match-score { font-size:30px; font-weight:800; font-style:italic; letter-spacing:-.02em; }
+  .riv-match-score { font-size:30px; font-weight:800; letter-spacing:-.02em; }
   .riv-match-players { display:grid; grid-template-columns:1fr 1fr; }
   .riv-match-player { text-align:center; padding:4px; }
   .riv-match-player-name { font-size:12px; font-weight:700; margin-bottom:3px; }
@@ -1156,7 +1155,7 @@
   <div class="pp-body" id="pp-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 11:27</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 11:35</footer>
 
 <script>
 
@@ -1720,7 +1719,7 @@ function buildLinkUpCardHTML(sessions) {
     <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleur Link-Up ⚡</div>
     <div style="display:flex;align-items:center;gap:6px;font-size:24px;flex-wrap:wrap">${p1}<span style="color:var(--text3);font-weight:300">–</span>${p2}</div>
     <div class="kpi-sep"></div>
-    <div style="display:flex;align-items:baseline;gap:5px"><span style="font-size:22px;font-weight:700;font-style:italic">${best.connexions}</span><span class="kpi-sub" style="margin:0">but${best.connexions>1?"s":""}</span></div>
+    <div style="display:flex;align-items:baseline;gap:5px"><span style="font-size:22px;font-weight:700">${best.connexions}</span><span class="kpi-sub" style="margin:0">but${best.connexions>1?"s":""}</span></div>
     <div style="display:flex;gap:10px;margin-top:8px;font-size:11px;color:var(--text3);flex-wrap:wrap">
       <span><strong style="color:var(--text2)">${best.p1}</strong> ${best.p1Goals}G · ${best.p2Goals}A</span>
       <span><strong style="color:var(--text2)">${best.p2}</strong> ${best.p2Goals}G · ${best.p1Goals}A</span>
@@ -1983,12 +1982,12 @@ function renderSessionDetail(session) {
   const grosScoreBody  = matchGros ? `
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
       <div style="flex:1;text-align:left">
-        <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1;color:${grosCol.a}">${matchGros.scoreA}</div>
+        <div style="font-size:36px;font-weight:700;line-height:1;color:${grosCol.a}">${matchGros.scoreA}</div>
         <div style="margin-top:5px">${badge(matchGros.eqA)}</div>
       </div>
       <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
       <div style="flex:1;text-align:right">
-        <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1;color:${grosCol.b}">${matchGros.scoreB}</div>
+        <div style="font-size:36px;font-weight:700;line-height:1;color:${grosCol.b}">${matchGros.scoreB}</div>
         <div style="margin-top:5px">${badge(matchGros.eqB)}</div>
       </div>
     </div>
@@ -2000,12 +1999,12 @@ function renderSessionDetail(session) {
   const largeScoreBody = matchLarge ? `
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
       <div style="flex:1;text-align:left">
-        <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1;color:${largeCol.a}">${matchLarge.scoreA}</div>
+        <div style="font-size:36px;font-weight:700;line-height:1;color:${largeCol.a}">${matchLarge.scoreA}</div>
         <div style="margin-top:5px">${badge(matchLarge.eqA)}</div>
       </div>
       <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
       <div style="flex:1;text-align:right">
-        <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1;color:${largeCol.b}">${matchLarge.scoreB}</div>
+        <div style="font-size:36px;font-weight:700;line-height:1;color:${largeCol.b}">${matchLarge.scoreB}</div>
         <div style="margin-top:5px">${badge(matchLarge.eqB)}</div>
       </div>
     </div>
@@ -2752,19 +2751,19 @@ function renderRivBody(pA, pB, period) {
   const matchsTotal = matchsTogether + r.matchsDirect;
   h += `<div class="riv-col-card" style="display:grid;grid-template-columns:1fr 1fr;gap:12px 4px;align-content:center;text-align:center;border-color:#FEDB00;border-width:1px">
     <div>
-      <div style="font-size:26px;font-weight:800;font-style:italic;line-height:1;color:var(--text)">${r.total}</div>
+      <div style="font-size:26px;font-weight:800;line-height:1;color:var(--text)">${r.total}</div>
       <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-top:3px">session${r.total>1?'s':''}</div>
     </div>
     <div>
-      <div style="font-size:26px;font-weight:800;font-style:italic;line-height:1;color:var(--text)">${matchsTotal}</div>
+      <div style="font-size:26px;font-weight:800;line-height:1;color:var(--text)">${matchsTotal}</div>
       <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-top:3px">match${matchsTotal>1?'s':''}</div>
     </div>
     <div>
-      <div style="font-size:26px;font-weight:800;font-style:italic;line-height:1;color:var(--text)">${matchsTogether}</div>
+      <div style="font-size:26px;font-weight:800;line-height:1;color:var(--text)">${matchsTogether}</div>
       <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-top:3px">ensemble</div>
     </div>
     <div>
-      <div style="font-size:26px;font-weight:800;font-style:italic;line-height:1;color:var(--text)">${r.matchsDirect}</div>
+      <div style="font-size:26px;font-weight:800;line-height:1;color:var(--text)">${r.matchsDirect}</div>
       <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-top:3px">face à face</div>
     </div>
   </div>`;
@@ -2782,9 +2781,9 @@ function renderRivBody(pA, pB, period) {
         <span style="font-size:12px;font-weight:700;text-align:right">${pB}</span>
       </div>
       <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:baseline;margin-bottom:12px">
-        <span style="font-size:40px;font-weight:800;font-style:italic;line-height:1;color:${colA}">${v.wA}</span>
+        <span style="font-size:40px;font-weight:800;line-height:1;color:${colA}">${v.wA}</span>
         <span style="font-size:20px;font-weight:600;color:var(--text3);line-height:1;padding:0 8px">${v.dA}</span>
-        <span style="font-size:40px;font-weight:800;font-style:italic;line-height:1;text-align:right;color:${colB}">${v.wB}</span>
+        <span style="font-size:40px;font-weight:800;line-height:1;text-align:right;color:${colB}">${v.wB}</span>
       </div>
       <div style="border-top:1px solid var(--border);padding-top:8px;display:flex;justify-content:space-between;font-size:11px;color:var(--text3)">
         <span><span style="font-weight:700;color:var(--text2)">${v.gA}</span> but${v.gA>1?'s':''} · <span style="font-weight:700;color:var(--text2)">${v.aA}</span> <span class="assist-full">assist${v.aA>1?'s':''}</span><span class="assist-short">ass.</span></span>
@@ -2814,9 +2813,9 @@ function renderRivBody(pA, pB, period) {
         <span style="font-size:9px;color:${lCol};font-weight:700;text-transform:uppercase;letter-spacing:.06em">D</span>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;text-align:center;margin-bottom:12px">
-        <span style="font-size:40px;font-weight:800;font-style:italic;line-height:1;color:${wCol}">${t.wA}</span>
-        <span style="font-size:40px;font-weight:800;font-style:italic;line-height:1;color:var(--text3)">${t.dA}</span>
-        <span style="font-size:40px;font-weight:800;font-style:italic;line-height:1;color:${lCol}">${t.lA}</span>
+        <span style="font-size:40px;font-weight:800;line-height:1;color:${wCol}">${t.wA}</span>
+        <span style="font-size:40px;font-weight:800;line-height:1;color:var(--text3)">${t.dA}</span>
+        <span style="font-size:40px;font-weight:800;line-height:1;color:${lCol}">${t.lA}</span>
       </div>
       <div style="border-top:1px solid var(--border);padding-top:8px;font-size:11px;color:var(--text3)">
         <span style="font-weight:700;color:var(--text)">${pA}</span> : <span style="font-weight:700;color:var(--text2)">${t.gA}</span> but${t.gA>1?'s':''} · <span style="font-weight:700;color:var(--text2)">${t.aA}</span> <span class="assist-full">assist${t.aA>1?'s':''}</span><span class="assist-short">ass.</span>
@@ -2915,7 +2914,7 @@ function renderStats() {
         <span style="margin-left:auto;font-size:11px;color:var(--text3)">${fmtDate(bt.session.date)}</span>
       </div>
       <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-        <span style="font-size:36px;font-weight:700;font-style:italic;line-height:1">${bt.wins}</span>
+        <span style="font-size:36px;font-weight:700;line-height:1">${bt.wins}</span>
         <span style="font-size:13px;color:var(--text2)">victoire${bt.wins>1?"s":""}</span>
         <span style="margin-left:6px;font-size:15px;font-weight:600;color:var(--text2)">${bt.goalsFor} buts</span>
         <span style="color:var(--text3)">·</span>
@@ -2976,7 +2975,7 @@ function renderStats() {
       <div style="font-size:24px;font-weight:700;line-height:1.2">${pLink(streak.player)}</div>
       <div class="kpi-sep"></div>
       <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap">
-        <span style="font-size:28px;font-weight:700;font-style:italic">${streak.count}</span>
+        <span style="font-size:28px;font-weight:700">${streak.count}</span>
         <span class="kpi-sub" style="margin:0">match${streak.count>1?"s":""} consécutif${streak.count>1?"s":""}</span>
         <span style="color:var(--text3)">·</span>
         <span style="font-weight:600">${ga} G/A</span>
@@ -3189,12 +3188,12 @@ function renderDashboard() {
   const grosBodyAgg = st.mostGoals ? `
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
       <div style="flex:1;text-align:left">
-        <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1;color:${grosColAgg.a}">${st.mostGoals.scoreA}</div>
+        <div style="font-size:36px;font-weight:700;line-height:1;color:${grosColAgg.a}">${st.mostGoals.scoreA}</div>
         <div style="margin-top:5px">${badge(st.mostGoals.eqA)}</div>
       </div>
       <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
       <div style="flex:1;text-align:right">
-        <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1;color:${grosColAgg.b}">${st.mostGoals.scoreB}</div>
+        <div style="font-size:36px;font-weight:700;line-height:1;color:${grosColAgg.b}">${st.mostGoals.scoreB}</div>
         <div style="margin-top:5px">${badge(st.mostGoals.eqB)}</div>
       </div>
     </div>
@@ -3207,12 +3206,12 @@ function renderDashboard() {
   const largeBodyAgg = st.biggestAmp ? `
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
       <div style="flex:1;text-align:left">
-        <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1;color:${largeColAgg.a}">${st.biggestAmp.scoreA}</div>
+        <div style="font-size:36px;font-weight:700;line-height:1;color:${largeColAgg.a}">${st.biggestAmp.scoreA}</div>
         <div style="margin-top:5px">${badge(st.biggestAmp.eqA)}</div>
       </div>
       <span style="color:var(--text3);font-size:20px;font-weight:300;padding-top:6px">–</span>
       <div style="flex:1;text-align:right">
-        <div style="font-size:36px;font-weight:700;font-style:italic;line-height:1;color:${largeColAgg.b}">${st.biggestAmp.scoreB}</div>
+        <div style="font-size:36px;font-weight:700;line-height:1;color:${largeColAgg.b}">${st.biggestAmp.scoreB}</div>
         <div style="margin-top:5px">${badge(st.biggestAmp.eqB)}</div>
       </div>
     </div>
@@ -4426,7 +4425,7 @@ function openPlayerPanel(playerName) {
       <div class="pp-section-title">Meilleur match ⚽️</div>
       <div class="pp-match-card">
         <div style="font-size:13px;color:var(--text2)">${fmtDate(st.bestMatch.date)}</div>
-        <div style="font-size:24px;font-weight:700;margin:6px 0;color:var(--gold);font-style:italic">${bmParts.join(" · ")}</div>
+        <div style="font-size:24px;font-weight:700;margin:6px 0;color:var(--gold)">${bmParts.join(" · ")}</div>
         <div class="pp-match-score">
           ${badge(st.bestMatch.eqA)}<span style="font-size:15px;font-weight:700">${st.bestMatch.scoreA}–${st.bestMatch.scoreB}</span>${badge(st.bestMatch.eqB)}
         </div>
@@ -4446,7 +4445,7 @@ function openPlayerPanel(playerName) {
         <button class="player-link" data-player="${_luPartner}" style="font-size:inherit">${_luPartner}</button>
       </div>
       <div style="display:flex;align-items:baseline;gap:5px">
-        <span style="font-size:22px;font-weight:700;color:var(--gold);font-style:italic">${_luBest.connexions}</span>
+        <span style="font-size:22px;font-weight:700;color:var(--gold)">${_luBest.connexions}</span>
         <span style="font-size:13px;color:var(--text2)">but${_luBest.connexions>1?"s":""}</span>
       </div>
       ${(()=>{const _ip1=_luBest.p1===playerName;const _mG=_ip1?_luBest.p1Goals:_luBest.p2Goals;const _mA=_ip1?_luBest.p2Goals:_luBest.p1Goals;const _pG=_ip1?_luBest.p2Goals:_luBest.p1Goals;const _pA=_ip1?_luBest.p1Goals:_luBest.p2Goals;return`<div style="display:flex;gap:10px;margin-top:8px;font-size:11px;color:var(--text3);flex-wrap:wrap"><span><strong style="color:var(--text2)">${playerName}</strong> ${_mG}G · ${_mA}A</span><span><strong style="color:var(--text2)">${_luPartner}</strong> ${_pG}G · ${_pA}A</span></div>`;})()}
@@ -4472,7 +4471,7 @@ function openPlayerPanel(playerName) {
       h += `<div class="pp-match-card">
         <div style="font-size:13px;color:var(--text2)">${dateStr}</div>
         <div style="margin:8px 0 4px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
-          <span style="font-size:28px;font-weight:700;font-style:italic;color:var(--text1);line-height:1">${ga} G/A</span>
+          <span style="font-size:28px;font-weight:700;color:var(--text1);line-height:1">${ga} G/A</span>
           <span style="font-size:12px;color:var(--text2)">(${primary.g}G + ${primary.a}A)</span>
           <span style="font-size:13px;color:var(--text1)">· ${primary.count} match${primary.count>1?"s":""}</span>
         </div>
