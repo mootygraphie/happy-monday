@@ -147,7 +147,7 @@
   .bonnet-infirm-row > div { margin-bottom: 0 !important; }
   @media (max-width: 700px) { .bonnet-infirm-row { grid-template-columns: 1fr; } }
 
-  .cdot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+  .cdot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; margin-left: 5px; vertical-align: middle; }
   .cdot.rouge { background: var(--rouge); }
   .cdot.vert  { background: var(--vert); }
   .cdot.bleu, .cdot.bleue  { background: var(--bleu); }
@@ -1331,7 +1331,10 @@
   .dbx-hl-side .n { font-size: 34px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
   .dbx-hl-side .t { margin-top: 7px; }
   .dbx-hl-dash { color: var(--text3); font-size: 18px; font-weight: 300; }
-  .dbx-hl-date { margin-top: 12px; font-size: 11.5px; color: var(--text3); text-align: center; }
+  .dbx-hl-goals { display: flex; gap: 10px; font-size: 11.5px; color: var(--text2); margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .dbx-hl-goals > div { flex: 1; line-height: 1.6; }
+  .dbx-hl-goals > div.r { text-align: right; }
+  .dbx-hl-date { margin-top: 10px; font-size: 11.5px; color: var(--text3); text-align: center; }
   .dbx-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
   .dbx-tag.rouge { background: var(--rouge-bg); color: var(--rouge); border: 1px solid var(--rouge-border); }
   .dbx-tag.vert  { background: var(--vert-bg);  color: var(--vert);  border: 1px solid var(--vert-border); }
@@ -1504,7 +1507,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 22:03</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 22:10</footer>
 
 <script>
 
@@ -3909,14 +3912,13 @@ function _dbxComputeAgg(sessions) {
     .filter(([n,p]) => p.presences>0 && !JOKERS.has(n))
     .sort((a,b) => b[1].presences-a[1].presences || byAlpha(a,b)).slice(0,5);
   const goalsBySession = sorted.map(s => ({ date: s.date, goals: (s.matchs||[]).reduce((a,m) => a+m.scoreA+m.scoreB, 0) }));
-  /* Points de classement (victoire = 3, nul = 1, defaite = 0), memes regles que le
-     classement de soiree de l onglet Sessions (_sfmStandings). Chaque match decisif
-     distribue 3 points au total, chaque nul en distribue 2 (1 de chaque cote). */
-  const totalPts = allMatchsChrono.length*3 - draws;
+  /* Clean sheets : une equipe garde sa cage inviolee des qu elle ne concede aucun
+     but sur un match (un nul 0-0 compte pour les 2 equipes). */
+  const totalCleanSheets = allMatchsChrono.reduce((a,m) => a + (m.scoreB===0?1:0) + (m.scoreA===0?1:0), 0);
   return {
     allMatchs: allMatchsChrono, ps: st.ps, colorWins: st.colorWins, draws,
     goalsFor: st.goalsPerTeam, goalsAgainst, totalGoals, leaders, maxWins,
-    topScorers, topAssists, topPresence, totalPres, totalAbs, totalBles, totalPts,
+    topScorers, topAssists, topPresence, totalPres, totalAbs, totalBles, totalCleanSheets,
     mostGoals: st.mostGoals, biggestAmp: st.biggestAmp, results, goalsBySession,
     sessionsCount: sessions.length
   };
@@ -3952,7 +3954,7 @@ function _dbxRenderHero(agg) {
   const leaderHtml = agg.leaders.length
     ? agg.leaders.map(t => `${dot(t)}<span class="dbx-txt ${t.toLowerCase()}">${TEAM_LABEL[t]}</span>`).join(" &amp; ")
     : "—";
-  const avgPts = agg.allMatchs.length ? (agg.totalPts/agg.allMatchs.length).toFixed(1) : "—";
+  const csRate = agg.allMatchs.length ? Math.round(agg.totalCleanSheets/(agg.allMatchs.length*2)*100) : 0;
   const sparkVals = agg.goalsBySession.slice(-10).map(g=>g.goals);
   return `<div class="dbx-hero-grid">
     <div class="dbx-hero-card">
@@ -3972,9 +3974,9 @@ function _dbxRenderHero(agg) {
       <div class="dbx-hero-sub">${agg.maxWins} victoire${agg.maxWins!==1?"s":""}</div>
     </div>
     <div class="dbx-hero-card">
-      <div class="dbx-hero-lbl">Points totaux</div>
-      <div class="dbx-hero-num">${agg.totalPts}</div>
-      <div class="dbx-hero-sub">${avgPts} pts / match en moy.</div>
+      <div class="dbx-hero-lbl">Clean sheets</div>
+      <div class="dbx-hero-num">${agg.totalCleanSheets}</div>
+      <div class="dbx-hero-sub">${csRate}% des équipes sur le match</div>
     </div>
   </div>`;
 }
@@ -4057,6 +4059,8 @@ function _dbxTrendChart(agg) {
 function _dbxHighlightCards(agg) {
   function card(lbl, m) {
     if (!m) return `<div class="dbx-card dbx-hl-card"><div class="dbx-hl-lbl">${lbl}</div><p style="color:var(--text3);font-size:12.5px;font-style:italic;margin:0">—</p></div>`;
+    const goalsA = _sfmGoalsGrouped(m.buteursA);
+    const goalsB = _sfmGoalsGrouped(m.buteursB);
     return `<div class="dbx-card dbx-hl-card">
       <div class="dbx-hl-lbl">${lbl}</div>
       <div class="dbx-hl-score">
@@ -4064,6 +4068,7 @@ function _dbxHighlightCards(agg) {
         <div class="dbx-hl-dash">–</div>
         <div class="dbx-hl-side"><div class="n">${m.scoreB}</div><div class="t">${_dbxTag(m.eqB)}</div></div>
       </div>
+      <div class="dbx-hl-goals"><div>⚽ ${goalsA}</div><div class="r">${goalsB}</div></div>
       <div class="dbx-hl-date">${fmtDate(m.date)}</div>
     </div>`;
   }
@@ -4076,7 +4081,7 @@ function _dbxLeaderCol(title, icon, entries, unit) {
   const rows = entries.map(([name,p],i) => `
     <div class="dbx-lead-row r${i+1}">
       <div class="dbx-lead-rank">${i+1}</div>
-      <div class="dbx-lead-name">${p.bestColor?dot(p.bestColor):""}${pLink(name)}</div>
+      <div class="dbx-lead-name">${pLink(name)}</div>
       <div class="dbx-lead-bar-wrap"><div class="dbx-lead-bar" style="width:${max?p[unit]/max*100:0}%"></div></div>
       <div class="dbx-lead-val">${p[unit]}</div>
     </div>`).join("");
