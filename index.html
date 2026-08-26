@@ -198,7 +198,7 @@
   .bonnet-infirm-row > div { margin-bottom: 0 !important; }
   @media (max-width: 700px) { .bonnet-infirm-row { grid-template-columns: 1fr; } }
 
-  .cdot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; vertical-align: middle; }
+  .cdot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin: 0 3px; vertical-align: middle; }
   .cdot.rouge { background: var(--rouge); }
   .cdot.vert  { background: var(--vert); }
   .cdot.bleu, .cdot.bleue  { background: var(--bleu); }
@@ -215,7 +215,6 @@
   .match-recap-row { display: flex; align-items: center; gap: 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; }
   .mrr-num { font-size: 11px; color: var(--text3); width: 20px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
   .mrr-teams { display: flex; align-items: center; gap: 2px; font-weight: 700; font-size: 13.5px; flex-shrink: 0; white-space: nowrap; color: var(--text); }
-  .mrr-teams .cdot { margin-right: 0; }
   .mrr-score { font-weight: 800; margin: 0 4px; color: var(--text); }
   .mrr-sep { width: 1px; height: 18px; background: var(--border2); flex-shrink: 0; }
   .mrr-goals { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text2); font-size: 12px; }
@@ -1175,7 +1174,6 @@
   .sfm-t-stop { position: relative; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .sfm-t-num { font-size: 10px; color: var(--text3); font-variant-numeric: tabular-nums; }
   .sfm-t-chip { display: flex; align-items: center; padding: 6px 12px; border-radius: 20px; background: var(--bg); border: 1px solid var(--border2); font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums; transition: all .15s; cursor: pointer; }
-  .sfm-t-score { margin: 0 3px; }
   .sfm-t-chip:hover { background: var(--bg3); transform: translateY(-1px); }
   .sfm-t-chip.sfm-spot { background: var(--gold-bg); border-color: var(--gold-border); box-shadow: 0 0 0 1px var(--gold-border) inset; }
 
@@ -1608,7 +1606,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 17:08</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 17:11</footer>
 
 <script>
 
@@ -2794,7 +2792,7 @@ function _sfmTickerHTML(matchs, spotlightIdxSet) {
   const chips = matchs.map((m, i) => {
     const spot = spotlightIdxSet.has(i) ? " sfm-spot" : "";
     return `<div class="sfm-t-stop"><span class="sfm-t-num">#${i+1}</span>
-      <button class="sfm-t-chip${spot}" data-sfm-goto="sfm-m${i}">${dot(m.eqA)}<span class="sfm-t-score">${m.scoreA}–${m.scoreB}</span>${dot(m.eqB)}</button>
+      <button class="sfm-t-chip${spot}" data-sfm-goto="sfm-m${i}">${dot(m.eqA)}${m.scoreA}–${m.scoreB}${dot(m.eqB)}</button>
     </div>`;
   }).join("");
   return `<div class="sfm-ticker-wrap"><div class="sfm-ticker">${chips}</div></div>`;
