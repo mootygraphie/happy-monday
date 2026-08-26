@@ -18,7 +18,7 @@
     --text2: #9898aa;
     --text3: #5a5a6a;
     --rouge: #FF2D95; --rouge-bg: rgba(255,45,149,.15); --rouge-border: rgba(255,45,149,.3);
-    --vert:  #D4FF00; --vert-bg:  rgba(212,255,0,.15);  --vert-border:  rgba(212,255,0,.3);
+    --vert:  #edff00; --vert-bg:  rgba(237,255,0,.15);  --vert-border:  rgba(237,255,0,.3);
     --bleu:  #00BBFF; --bleu-bg:  rgba(0,187,255,.15);  --bleu-border:  rgba(0,187,255,.3);
     --gold: #f5c842; --silver: #aab0bc; --bronze: #c47c3a;
     --gold-bg: rgba(245,200,66,.14); --gold-border: rgba(245,200,66,.3);
@@ -32,8 +32,8 @@
     --bg: #f4f4f8; --bg2: #ffffff; --bg3: #ebebf2;
     --border: rgba(0,0,0,.09); --border2: rgba(0,0,0,.15);
     --text: #111118; --text2: #55556a; --text3: #9898aa;
-    --rouge: #CC0073; --rouge-bg: rgba(204,0,115,.1);  --rouge-border: rgba(204,0,115,.22);
-    --vert:  #7A9200; --vert-bg:  rgba(122,146,0,.1);  --vert-border:  rgba(122,146,0,.22);
+    --rouge: #ff0090; --rouge-bg: rgba(255,0,144,.1);  --rouge-border: rgba(255,0,144,.22);
+    --vert:  #eecd00; --vert-bg:  rgba(238,205,0,.1);  --vert-border:  rgba(238,205,0,.22);
     --bleu:  #0088CC; --bleu-bg:  rgba(0,136,204,.1);  --bleu-border:  rgba(0,136,204,.22);
     --gold-bg: rgba(181,134,10,.1); --gold-border: rgba(181,134,10,.28);
     --good: #1a8a4a; --bad: #d1364a; --bad-bg: rgba(209,54,74,.1); --bad-border: rgba(209,54,74,.24);
@@ -1175,6 +1175,7 @@
   .sfm-t-stop { position: relative; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .sfm-t-num { font-size: 10px; color: var(--text3); font-variant-numeric: tabular-nums; }
   .sfm-t-chip { display: flex; align-items: center; padding: 6px 12px; border-radius: 20px; background: var(--bg); border: 1px solid var(--border2); font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums; transition: all .15s; cursor: pointer; }
+  .sfm-t-score { margin: 0 3px; }
   .sfm-t-chip:hover { background: var(--bg3); transform: translateY(-1px); }
   .sfm-t-chip.sfm-spot { background: var(--gold-bg); border-color: var(--gold-border); box-shadow: 0 0 0 1px var(--gold-border) inset; }
 
@@ -1607,7 +1608,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 16:57</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 17:07</footer>
 
 <script>
 
@@ -2793,7 +2794,7 @@ function _sfmTickerHTML(matchs, spotlightIdxSet) {
   const chips = matchs.map((m, i) => {
     const spot = spotlightIdxSet.has(i) ? " sfm-spot" : "";
     return `<div class="sfm-t-stop"><span class="sfm-t-num">#${i+1}</span>
-      <button class="sfm-t-chip${spot}" data-sfm-goto="sfm-m${i}">${dot(m.eqA)}${m.scoreA}–${m.scoreB}${dot(m.eqB)}</button>
+      <button class="sfm-t-chip${spot}" data-sfm-goto="sfm-m${i}">${dot(m.eqA)}<span class="sfm-t-score">${m.scoreA}–${m.scoreB}</span>${dot(m.eqB)}</button>
     </div>`;
   }).join("");
   return `<div class="sfm-ticker-wrap"><div class="sfm-ticker">${chips}</div></div>`;
