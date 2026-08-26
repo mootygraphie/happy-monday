@@ -83,7 +83,7 @@
   #panel-joueurs, #panel-stats { max-width: 760px; margin: 0 auto; }
 
   /* ── Onglets principaux ── */
-  .main-tabs { display: inline-flex; background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 4px; margin-bottom: 2rem; gap: 3px; }
+  .main-tabs { display: inline-flex; background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 4px; margin-bottom: 2rem; gap: 3px; position: sticky; top: calc(var(--hmft-header-h, 84px) + 10px); z-index: 400; }
   .main-tab {
     padding: 9px 10px; border-radius: 9px; font-size: 12px; font-weight: 600;
     cursor: pointer; background: transparent; color: var(--text3); border: none;
@@ -1106,7 +1106,11 @@
   .sfm-hero-recap b { font-weight: 700; }
 
   .sfm-ticker-wrap { position: relative; margin-top: 22px; }
-  .sfm-ticker { position: relative; display: flex; gap: 10px; overflow-x: auto; padding: 6px 2px 2px; scrollbar-width: none; }
+  .sfm-ticker {
+    position: relative; display: flex; gap: 10px; overflow-x: auto; padding: 6px 2px 2px; scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(to right, transparent, black 14px, black calc(100% - 14px), transparent);
+    mask-image: linear-gradient(to right, transparent, black 14px, black calc(100% - 14px), transparent);
+  }
   .sfm-ticker::-webkit-scrollbar { display: none; }
   .sfm-t-stop { position: relative; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .sfm-t-num { font-size: 10px; color: var(--text3); font-variant-numeric: tabular-nums; }
@@ -1119,7 +1123,13 @@
   .sfm-stat-item:last-child { border-right: none; margin-right: 0; padding-right: 0; }
   .sfm-stat-item .v { font-size: 26px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
   .sfm-stat-item .l { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; font-style: italic; margin-top: 2px; }
-  @media (max-width: 640px) { .sfm-stat-item { padding-right: 14px; margin-right: 14px; } .sfm-stat-item .v { font-size: 21px; } }
+  .sfm-stat-item .l .short { display: none; }
+  @media (max-width: 640px) {
+    .sfm-stat-item { padding-right: 14px; margin-right: 14px; }
+    .sfm-stat-item .v { font-size: 21px; }
+    .sfm-stat-item .l .full { display: none; }
+    .sfm-stat-item .l .short { display: inline; }
+  }
 
   .sfm-sb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 12px; }
   .sfm-sb-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
@@ -1506,7 +1516,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 25/08/2026 - 22:21</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 12:23</footer>
 
 <script>
 
@@ -1586,6 +1596,20 @@ document.getElementById("pwd-input").addEventListener("keydown", e => {
     localStorage.setItem('hmft_theme', document.documentElement.classList.contains('light') ? 'light' : 'dark');
     updateThemeBtn();
   });
+})();
+
+/* ── Onglets principaux collants sous le header : hauteur du header
+   suivie en continu (ResizeObserver, pas une mesure figee au chargement)
+   pour ne jamais se desynchroniser (police chargee en differe, resize). ── */
+(function() {
+  const headerEl = document.querySelector("header");
+  if (!headerEl) return;
+  function syncHeaderH() {
+    document.documentElement.style.setProperty("--hmft-header-h", headerEl.offsetHeight + "px");
+  }
+  syncHeaderH();
+  if (window.ResizeObserver) new ResizeObserver(syncHeaderH).observe(headerEl);
+  else window.addEventListener("resize", syncHeaderH);
 })();
 
 /* ── Bouton Actualiser — le hash URL persiste le contexte au reload ── */
@@ -2570,8 +2594,8 @@ function _sfmStatStripHTML(presentsCount, matchsCount, totalButs, avgButs) {
   return `<div class="sfm-stat-strip">
     <div class="sfm-stat-item"><div class="v">${presentsCount}</div><div class="l">Présents</div></div>
     <div class="sfm-stat-item"><div class="v">${matchsCount}</div><div class="l">Matchs</div></div>
-    <div class="sfm-stat-item"><div class="v">${totalButs}</div><div class="l">Buts marqués</div></div>
-    <div class="sfm-stat-item"><div class="v">${avgButs}</div><div class="l">Buts / match</div></div>
+    <div class="sfm-stat-item"><div class="v">${totalButs}</div><div class="l"><span class="full">Buts marqués</span><span class="short">Buts</span></div></div>
+    <div class="sfm-stat-item"><div class="v">${avgButs}</div><div class="l"><span class="full">Buts / match</span><span class="short">Buts/m.</span></div></div>
   </div>`;
 }
 
