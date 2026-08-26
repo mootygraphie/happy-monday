@@ -609,6 +609,15 @@
   .mhf-rarity-track { height:7px; border-radius:4px; background:var(--bg3); overflow:hidden; }
   .mhf-rarity-fill { height:100%; border-radius:4px; }
   .mhf-rarity-stat { font-size:12px; color:var(--text2); text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .mhf-rarity-levels { display:inline-flex; align-items:center; gap:3px; flex-shrink:0; }
+  .mhf-rarity-levels .dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+  .mhf-rarity-more.show { display:flex; flex-direction:column; gap:6px; }
+  .mhf-rarity-more { display:none; margin-top:6px; }
+  .mhf-rarity-toggle {
+    width:100%; text-align:center; background:none; border:none; border-top:1px solid var(--border);
+    margin-top:8px; padding-top:9px; font-size:11.5px; font-weight:700; color:var(--text2); cursor:pointer;
+  }
+  .mhf-rarity-toggle:hover { color:var(--text); }
   .mhf-rarity-stat b { color:var(--text); font-weight:700; }
 
   .mhf-tier-legend { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
@@ -1518,7 +1527,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 12:55</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 13:03</footer>
 
 <script>
 
@@ -3183,7 +3192,8 @@ function _mhfVisibleAch() {
 }
 function _mhfVisiblePlayers() {
   const q = _mhfState.search.trim().toLowerCase();
-  const list = q ? _mhf.players.filter(p => p.toLowerCase().includes(q)) : _mhf.players.slice();
+  let list = q ? _mhf.players.filter(p => p.toLowerCase().includes(q)) : _mhf.players.slice();
+  list = list.filter(p => _mhf.summary[p].hautsFaits > 0);
   list.sort((a,b) => {
     if (_mhfState.sortKey === 'name') return _mhfState.sortDir * a.localeCompare(b,'fr');
     const va = _mhfState.sortKey === 'hautsFaits' ? _mhf.summary[a].hautsFaits : _mhf.summary[a].niveaux;
@@ -3194,19 +3204,37 @@ function _mhfVisiblePlayers() {
   return list;
 }
 
+// Points colores representant les niveaux possibles d un haut fait (t1..t6).
+function _mhfLevelDotsHTML(a) {
+  const levels = a.fixedTier
+    ? [a.fixedTier]
+    : a.tiers.map((_, i) => Math.min(6, i + 1 + (a.tierOffset || 0)));
+  return `<span class="mhf-rarity-levels">${levels.map(lv =>
+    `<span class="dot" style="background:var(--mhf-t${lv}-c)"></span>`
+  ).join('')}</span>`;
+}
+
 function _mhfRenderRarityHtml() {
-  const rows = [..._mhf.achs].sort((a,b) => _mhf.completion[a.id].rate - _mhf.completion[b.id].rate);
-  return rows.map(a => {
+  const RARITY_PAGE = 10;
+  const rows = [..._mhf.achs].sort((a,b) => _mhf.completion[b.id].rate - _mhf.completion[a.id].rate);
+  const rowHtml = a => {
     const c = _mhf.completion[a.id];
     const pct = Math.round(c.rate*100);
     const color = pct<=15 ? 'var(--bad)' : pct<=45 ? 'var(--gold)' : 'var(--good)';
     return `<div class="mhf-rarity-row${_mhfState.selectedAch===a.id?' selected':''}" data-acid="${a.id}">
       <span class="mhf-rarity-ic">${a.icon}</span>
-      <span class="mhf-rarity-name"><span class="n">${a.name}</span>${a.hidden?'<span class="mhf-rarity-secret">SECRET</span>':''}</span>
+      <span class="mhf-rarity-name"><span class="n">${a.name}</span>${_mhfLevelDotsHTML(a)}${a.hidden?'<span class="mhf-rarity-secret">SECRET</span>':''}</span>
       <span class="mhf-rarity-track"><span class="mhf-rarity-fill" style="width:${pct}%;background:${color}"></span></span>
       <span class="mhf-rarity-stat"><b>${c.unlocked}</b>/${_mhf.players.length} &middot; ${pct}%</span>
     </div>`;
-  }).join('');
+  };
+  const visible = rows.slice(0, RARITY_PAGE).map(rowHtml).join('');
+  const rest = rows.slice(RARITY_PAGE);
+  const restHtml = rest.length
+    ? `<div class="mhf-rarity-more" id="mhf-rarity-more">${rest.map(rowHtml).join('')}</div>
+       <button class="mhf-rarity-toggle" id="mhf-rarity-toggle" data-label="Voir tout (${rows.length}) ›">Voir tout (${rows.length}) ›</button>`
+    : '';
+  return visible + restHtml;
 }
 
 function _mhfRenderChipsHtml() {
@@ -3878,6 +3906,15 @@ function renderStats() {
     const _mhfRarity = container.querySelector('#mhf-rarity-list');
     if (_mhfRarity) {
       _mhfRarity.addEventListener('click', e => {
+        const toggleBtn = e.target.closest('#mhf-rarity-toggle');
+        if (toggleBtn) {
+          const more = _mhfRarity.querySelector('#mhf-rarity-more');
+          if (!more) return;
+          const willShow = !more.classList.contains('show');
+          more.classList.toggle('show', willShow);
+          toggleBtn.textContent = willShow ? 'Réduire ‹' : toggleBtn.dataset.label;
+          return;
+        }
         const row = e.target.closest('.mhf-rarity-row');
         if (row) openMhfAchievementDrawer(row.dataset.acid);
       });
