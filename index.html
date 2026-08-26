@@ -53,20 +53,71 @@
   button, input, select, textarea, optgroup { font-family: inherit; color: inherit; }
   body { background: var(--bg); color: var(--text); font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.5; min-height: 100vh; }
 
-  header { padding: 1.5rem 2rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 14px; position: sticky; top: 0; z-index: 500; background: var(--bg); }
+  header { padding: 1.5rem 2rem 1rem; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; position: sticky; top: 0; z-index: 500; background: var(--bg); }
+  .hnav-toprow { display: flex; align-items: center; gap: 14px; width: 100%; }
+  .hnav-tabsrow { display: flex; justify-content: center; width: 100%; }
   .header-main { display: flex; align-items: center; gap: 14px; }
   .header-actions { display: flex; align-items: center; gap: 8px; }
   header .logo { font-size: 26px; }
   header h1 { font-size: 20px; font-weight: 700; text-transform: uppercase; font-style: italic; letter-spacing: .04em; }
   header .spacer { flex: 1; }
   #header-sub { display: none; }
+  .hnav-burger { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border2); background: transparent; color: var(--text2); cursor: pointer; flex-shrink: 0; }
+  .hnav-burger:hover { background: var(--bg3); color: var(--text); }
   @media (max-width: 640px) {
-    header { flex-direction: column; align-items: center; padding: 12px 16px 10px; gap: 6px; }
+    header { align-items: center; padding: 12px 16px 10px; gap: 6px; }
     header .spacer { display: none; }
+    .hnav-toprow { justify-content: center; position: relative; }
     .header-main { justify-content: center; }
-    .header-actions { justify-content: center; }
+    .header-actions { display: none; }
+    .hnav-tabsrow { display: none; }
+    .hnav-burger { display: flex; position: absolute; right: 0; top: 50%; transform: translateY(-50%); }
     header h1 { font-size: 16px; }
     #header-sub { display: block; font-size: 11px; color: var(--text3); text-align: center; }
+  }
+  /* ── Menu mobile (burger + tiroir) ── */
+  .hnav-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 900;
+    opacity: 0; pointer-events: none; transition: opacity .15s;
+  }
+  .hnav-overlay.open { opacity: 1; pointer-events: all; }
+  .hnav-drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(84vw, 320px);
+    background: var(--bg2); border-left: 1px solid var(--border2); z-index: 901;
+    display: flex; flex-direction: column; padding: 18px 16px 24px;
+    transform: translateX(100%); transition: transform .2s ease; box-shadow: -8px 0 24px rgba(0,0,0,.3);
+    overflow-y: auto;
+  }
+  .hnav-drawer.open { transform: translateX(0); }
+  .hnav-drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .hnav-drawer-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text2); }
+  .hnav-drawer-close {
+    display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;
+    border-radius: 8px; border: 1px solid var(--border2); background: transparent; color: var(--text2); cursor: pointer;
+  }
+  .hnav-drawer-close:hover { background: var(--bg3); color: var(--text); }
+  .hnav-drawer-tabs { display: flex; flex-direction: column; gap: 4px; }
+  .hnav-tab {
+    display: flex; align-items: center; padding: 13px 14px; border-radius: 10px; border: none;
+    background: transparent; color: var(--text2); font-size: 14px; font-weight: 600; text-align: left;
+    cursor: pointer; letter-spacing: .02em; width: 100%;
+  }
+  .hnav-tab.active { background: rgba(255,255,255,.11); color: var(--text); }
+  html.light .hnav-tab.active { background: rgba(0,0,0,.08); color: #111118; }
+  .hnav-drawer-divider { height: 1px; background: var(--border); margin: 14px 0; }
+  .hnav-drawer-actions { display: flex; flex-direction: column; gap: 4px; }
+  .hnav-action-row {
+    display: flex; align-items: center; gap: 10px; padding: 13px 14px; border-radius: 10px; border: none;
+    background: transparent; color: var(--text2); font-size: 14px; font-weight: 600; text-align: left;
+    cursor: pointer; width: 100%;
+  }
+  .hnav-action-row:hover, .hnav-tab:hover:not(.active) { background: var(--bg3); color: var(--text); }
+  .hnav-action-row svg { flex-shrink: 0; opacity: .8; }
+  @media (prefers-reduced-motion: reduce) {
+    .hnav-drawer, .hnav-overlay { transition: none; }
+  }
+  @media (min-width: 641px) {
+    .hnav-overlay, .hnav-drawer { display: none; }
   }
   .refresh-btn {
     display: flex; align-items: center; gap: 7px;
@@ -83,7 +134,7 @@
   #panel-joueurs, #panel-stats { max-width: 760px; margin: 0 auto; }
 
   /* ── Onglets principaux ── */
-  .main-tabs { display: inline-flex; background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 4px; margin-bottom: 2rem; gap: 3px; position: sticky; top: calc(var(--hmft-header-h, 84px) + 10px); z-index: 400; }
+  .main-tabs { display: inline-flex; background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 4px; gap: 3px; }
   .main-tab {
     padding: 9px 10px; border-radius: 9px; font-size: 12px; font-weight: 600;
     cursor: pointer; background: transparent; color: var(--text3); border: none;
@@ -996,8 +1047,6 @@
   /* ── Centrage mobile ── */
   @media (max-width: 640px) {
     .container { padding-left: 1rem; padding-right: 1rem; }
-    .main-tabs { display: flex; flex-wrap: wrap; width: 100%; }
-    .main-tabs .main-tab { flex: 1; }
     /* Sélecteur de session */
     .session-selector { justify-content: center; flex-wrap: wrap; }
     /* Liste de joueurs présents (chips) */
@@ -1419,39 +1468,70 @@
 </div>
 
 <header>
-  <div class="header-main">
-    <span class="logo">⚽</span>
-    <h1>Happy Monday Football Team</h1>
+  <div class="hnav-toprow">
+    <div class="header-main">
+      <span class="logo">⚽</span>
+      <h1>Happy Monday Football Team</h1>
+    </div>
+    <span class="spacer"></span>
+    <div class="header-actions">
+      <button class="refresh-btn" id="saisie-nav-btn" title="Saisie" style="display:none">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9.5 1.5l2 2L4 11H2v-2L9.5 1.5z"/>
+        </svg>
+        Saisie
+      </button>
+      <button class="refresh-btn" id="refresh-btn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 2v4H9"/><path d="M1 12V8h4"/>
+          <path d="M2.5 5a5.5 5.5 0 0 1 9.1-1.4L13 6M1 8l1.4 2.4A5.5 5.5 0 0 0 11.5 9"/>
+        </svg>
+        Actualiser
+      </button>
+      <button class="refresh-btn" id="theme-btn" style="padding:8px 10px"></button>
+      <button class="refresh-btn" id="admin-btn" style="padding:8px 10px"></button>
+    </div>
+    <button class="hnav-burger" id="hnav-burger-btn" title="Menu" aria-label="Ouvrir le menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <path d="M3 5.5h14M3 10h14M3 14.5h14"/>
+      </svg>
+    </button>
   </div>
-  <span class="spacer"></span>
-  <div class="header-actions">
-    <button class="refresh-btn" id="saisie-nav-btn" title="Saisie" style="display:none">
-      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9.5 1.5l2 2L4 11H2v-2L9.5 1.5z"/>
-      </svg>
-      Saisie
-    </button>
-    <button class="refresh-btn" id="refresh-btn">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M13 2v4H9"/><path d="M1 12V8h4"/>
-        <path d="M2.5 5a5.5 5.5 0 0 1 9.1-1.4L13 6M1 8l1.4 2.4A5.5 5.5 0 0 0 11.5 9"/>
-      </svg>
-      Actualiser
-    </button>
-    <button class="refresh-btn" id="theme-btn" style="padding:8px 10px"></button>
-    <button class="refresh-btn" id="admin-btn" style="padding:8px 10px"></button>
+  <div class="hnav-tabsrow">
+    <div class="main-tabs">
+      <button class="main-tab" data-tab="session">Sessions</button>
+      <button class="main-tab active" data-tab="dashboard">Dashboard</button>
+      <button class="main-tab" data-tab="joueurs">Effectif</button>
+      <button class="main-tab" data-tab="stats">Récompenses</button>
+    </div>
   </div>
   <p id="header-sub"></p>
 </header>
 
-<div class="container">
-
-  <div class="main-tabs">
-    <button class="main-tab" data-tab="session">Sessions</button>
-    <button class="main-tab active" data-tab="dashboard">Dashboard</button>
-    <button class="main-tab" data-tab="joueurs">Effectif</button>
-    <button class="main-tab" data-tab="stats">Récompenses</button>
+<div class="hnav-overlay" id="hnav-overlay"></div>
+<div class="hnav-drawer" id="hnav-drawer" role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="hnav-drawer-head">
+    <span class="hnav-drawer-title">Menu</span>
+    <button class="hnav-drawer-close" id="hnav-drawer-close" aria-label="Fermer le menu">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 3l10 10M13 3L3 13"/></svg>
+    </button>
   </div>
+  <div class="hnav-drawer-tabs" id="hnav-drawer-tabs">
+    <button class="hnav-tab" data-tab="session">Sessions</button>
+    <button class="hnav-tab" data-tab="dashboard">Dashboard</button>
+    <button class="hnav-tab" data-tab="joueurs">Effectif</button>
+    <button class="hnav-tab" data-tab="stats">Récompenses</button>
+  </div>
+  <div class="hnav-drawer-divider"></div>
+  <div class="hnav-drawer-actions">
+    <button class="hnav-action-row" id="hnav-refresh-row"></button>
+    <button class="hnav-action-row" id="hnav-saisie-row" style="display:none"></button>
+    <button class="hnav-action-row" id="hnav-theme-row"></button>
+    <button class="hnav-action-row" id="hnav-admin-row"></button>
+  </div>
+</div>
+
+<div class="container">
 
   <!-- ── Onglet Dashboard ── -->
   <div class="tab-panel active" id="panel-dashboard">
@@ -1527,7 +1607,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 13:03</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 13:54</footer>
 
 <script>
 
@@ -1539,6 +1619,8 @@ function applyRole(role) {
   document.getElementById("delete-session-btn").style.display = isAdmin ? "inline-flex" : "none";
   document.getElementById("edit-session-btn").style.display   = isAdmin ? "inline-flex" : "none";
   document.querySelector(".main-tabs").style.display = isSaisie ? "none" : "";
+  const hnavSaisieRow = document.getElementById("hnav-saisie-row");
+  if (hnavSaisieRow) hnavSaisieRow.style.display = (isAdmin || isSaisie) ? "flex" : "none";
 }
 
 const HASH_ADMIN  = "cea45f18ea39c9ece6711634075f9402f52b3727a59e08927043c8cca10182c8";
@@ -1609,18 +1691,78 @@ document.getElementById("pwd-input").addEventListener("keydown", e => {
   });
 })();
 
-/* ── Onglets principaux collants sous le header : hauteur du header
-   suivie en continu (ResizeObserver, pas une mesure figee au chargement)
-   pour ne jamais se desynchroniser (police chargee en differe, resize). ── */
+/* ── Menu mobile (burger + tiroir) : les onglets et boutons du tiroir
+   delèguent aux vrais boutons (.main-tab / #refresh-btn / #saisie-nav-btn /
+   #theme-btn / #admin-btn) via .click() — le tiroir ne réimplémente aucune
+   logique, il se contente de refléter leur état à chaque ouverture. ── */
 (function() {
-  const headerEl = document.querySelector("header");
-  if (!headerEl) return;
-  function syncHeaderH() {
-    document.documentElement.style.setProperty("--hmft-header-h", headerEl.offsetHeight + "px");
+  const burgerBtn = document.getElementById("hnav-burger-btn");
+  const drawer     = document.getElementById("hnav-drawer");
+  const overlay    = document.getElementById("hnav-overlay");
+  const closeBtn   = document.getElementById("hnav-drawer-close");
+  if (!burgerBtn || !drawer || !overlay) return;
+
+  function mirrorRow(srcId, dstId, iconOnly) {
+    const src = document.getElementById(srcId);
+    const dst = document.getElementById(dstId);
+    if (!src || !dst) return;
+    dst.innerHTML = iconOnly ? (src.innerHTML + `<span>${src.title}</span>`) : src.innerHTML;
+    dst.style.display = src.style.display === "none" ? "none" : "";
   }
-  syncHeaderH();
-  if (window.ResizeObserver) new ResizeObserver(syncHeaderH).observe(headerEl);
-  else window.addEventListener("resize", syncHeaderH);
+
+  function renderDrawer() {
+    const activeTab = document.querySelector(".main-tab.active");
+    const activeKey = activeTab ? activeTab.dataset.tab : null;
+    document.querySelectorAll(".hnav-tab").forEach(t => {
+      t.classList.toggle("active", t.dataset.tab === activeKey);
+    });
+    mirrorRow("refresh-btn", "hnav-refresh-row", false);
+    mirrorRow("saisie-nav-btn", "hnav-saisie-row", false);
+    mirrorRow("theme-btn", "hnav-theme-row", true);
+    mirrorRow("admin-btn", "hnav-admin-row", true);
+  }
+
+  function openDrawer() {
+    renderDrawer();
+    drawer.classList.add("open");
+    overlay.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+  function closeDrawer() {
+    drawer.classList.remove("open");
+    overlay.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  burgerBtn.addEventListener("click", openDrawer);
+  overlay.addEventListener("click", closeDrawer);
+  closeBtn.addEventListener("click", closeDrawer);
+
+  document.querySelectorAll(".hnav-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      const key = tab.dataset.tab;
+      closeDrawer();
+      const real = document.querySelector(`.main-tab[data-tab="${key}"]`);
+      if (real) real.click();
+    });
+  });
+
+  document.getElementById("hnav-refresh-row").addEventListener("click", () => {
+    closeDrawer();
+    document.getElementById("refresh-btn").click();
+  });
+  document.getElementById("hnav-saisie-row").addEventListener("click", () => {
+    closeDrawer();
+    document.getElementById("saisie-nav-btn").click();
+  });
+  document.getElementById("hnav-theme-row").addEventListener("click", () => {
+    closeDrawer();
+    document.getElementById("theme-btn").click();
+  });
+  document.getElementById("hnav-admin-row").addEventListener("click", () => {
+    closeDrawer();
+    document.getElementById("admin-btn").click();
+  });
 })();
 
 /* ── Bouton Actualiser — le hash URL persiste le contexte au reload ── */
