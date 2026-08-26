@@ -1607,7 +1607,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 16:53</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 16:57</footer>
 
 <script>
 
@@ -1621,6 +1621,10 @@ function applyRole(role) {
   document.querySelector(".main-tabs").style.display = isSaisie ? "none" : "";
   const hnavSaisieRow = document.getElementById("hnav-saisie-row");
   if (hnavSaisieRow) hnavSaisieRow.style.display = (isAdmin || isSaisie) ? "flex" : "none";
+  /* Mode saisie : le tiroir mobile ne doit donner acces qu'au theme, a l'actualisation
+     et a la sortie du mode — pas aux autres onglets (Sessions/Dashboard/Effectif/Recompenses). */
+  const hnavDrawerTabs = document.getElementById("hnav-drawer-tabs");
+  if (hnavDrawerTabs) hnavDrawerTabs.style.display = isSaisie ? "none" : "";
 }
 
 const HASH_ADMIN  = "cea45f18ea39c9ece6711634075f9402f52b3727a59e08927043c8cca10182c8";
@@ -1718,6 +1722,9 @@ document.getElementById("pwd-input").addEventListener("keydown", e => {
     });
     mirrorRow("refresh-btn", "hnav-refresh-row", false);
     mirrorRow("saisie-nav-btn", "hnav-saisie-row", false);
+    if (sessionStorage.getItem("hmft_role") === "saisie") {
+      document.getElementById("hnav-saisie-row").style.display = "none";
+    }
     mirrorRow("theme-btn", "hnav-theme-row", true);
     mirrorRow("admin-btn", "hnav-admin-row", true);
   }
