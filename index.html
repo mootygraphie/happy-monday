@@ -1518,7 +1518,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 12:46</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 12:51</footer>
 
 <script>
 
@@ -2304,7 +2304,7 @@ function buildCalamityJamesHtml(sessions) {
 // même si un but d'un autre joueur s'intercale entre deux de ses buts.
 // Ex : buteur1 (passeur1), buteur1 (passeur1) → buteur1 ×2 (passeur1 ×2)
 //      buteur1 (passeur1), buteur1 (passeur2) → buteur1 ×2 (passeur1, passeur2)
-//      buteur1 (—), buteur1 (passeur1)        → buteur1 ×2 (Ø, passeur1)
+//      buteur1 (—), buteur1 (passeur1)        → buteur1 ×2 (ø, passeur1)
 // À partir de 3 occurrences groupées, le fragment est mis en avant (gras + effet diamant).
 function _matchGoalsRecapHTML(buteurs, passeurs) {
   if (!buteurs || !buteurs.length) return "";
@@ -2327,13 +2327,13 @@ function _matchGoalsRecapHTML(buteurs, passeurs) {
     if (!isCsc && g.passeurs.some(p => p)) {
       const aOrder = [], aCounts = {};
       g.passeurs.forEach(p => {
-        const key = p || "Ø";
+        const key = p || "ø";
         if (!aCounts[key]) { aCounts[key] = 0; aOrder.push(key); }
         aCounts[key]++;
       });
       const aParts = aOrder.map(key => {
         const n = aCounts[key];
-        const disp = key === "Ø" ? "Ø" : `<span style="color:var(--text2)">${key}</span>`;
+        const disp = key === "ø" ? "ø" : `<span style="color:var(--text2)">${key}</span>`;
         let part = n > 1 ? `${disp} ×${n}` : disp;
         if (n >= 3) part = `<span class="mgr-highlight">${part}</span>`;
         return part;
@@ -3128,12 +3128,12 @@ function computeBestTeamAllTime() {
 
 const MHF_CATS = ['Attaque','Défense','Collectif','Présence','Distinctions','Secrets'];
 const MHF_CAT_BY_ID = {
-  buteur:'Attaque', passeur:'Attaque', ga:'Attaque', htrick:'Attaque', dbl:'Attaque', serie:'Attaque',
+  buteur:'Attaque', passeur:'Attaque', ga:'Attaque', dbl:'Attaque', serie:'Attaque',
   defenseFer:'Défense', mur:'Défense', passoire:'Défense',
   invic:'Collectif', duo:'Collectif',
   fidele:'Présence', sac:'Présence', maillots:'Présence', assidu:'Présence', comete:'Présence',
   mvp:'Distinctions', soiree:'Distinctions', remontada:'Distinctions', chelem:'Distinctions',
-  gardienAssist:'Distinctions', willgrigg:'Distinctions', mesutozil:'Distinctions', mercenaire:'Distinctions', legende:'Distinctions',
+  gardienAssist:'Distinctions', willgrigg:'Distinctions', mesutozil:'Distinctions', patron:'Distinctions', mercenaire:'Distinctions', legende:'Distinctions',
   bonnet:'Secrets', infirm:'Secrets', pois:'Secrets', fantome:'Secrets', zerovic:'Secrets', toutnul:'Secrets',
 };
 
@@ -3287,7 +3287,7 @@ function renderAchievementsMatrix() {
     const rarest = sortedByRate[0], common = sortedByRate[sortedByRate.length-1];
     const topCollector = [..._mhf.players].sort((a,b) => _mhf.summary[b].niveaux - _mhf.summary[a].niveaux)[0];
     const cards = [
-      { ico:'📊', lbl:'Complétion roster', num: Math.round(avgRate*100)+'%',
+      { ico:'📊', lbl:'Complétion Hauts Faits', num: Math.round(avgRate*100)+'%',
         sub:`${filledCells} / ${totalCells} cases débloquées` },
       { ico: rarest.icon, lbl:'Haut fait le plus rare', num: rarest.name,
         sub:`${_mhf.completion[rarest.id].unlocked}/${_mhf.players.length} joueurs (${Math.round(_mhf.completion[rarest.id].rate*100)}%)` },
@@ -4720,7 +4720,6 @@ const ACH_DEFS = [
   { id:'buteur',   name:'Buteur',          icon:'⚽', tiers:[1,5,15,30,50,100],    hidden:false, key:'buts',           desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''}` },
   { id:'passeur',  name:'Passeur',         icon:'🎯', tiers:[1,5,15,30,50,100],    hidden:false, key:'passes',         desc:v=>`${v} assist${v>1?'s':''}` },
   { id:'ga',       name:'G/A',             icon:'📈', tiers:[5,20,50,100,200,350],  hidden:false, key:'gaTotal',        desc:v=>`${v} G/A cumulés` },
-  { id:'htrick',   name:'Hat-trick',       icon:'🔥', tiers:[1,2,5,10,20,35],      hidden:false, key:'hattricks',      desc:v=>`${v} hat-trick${v>1?'s':''}` },
   { id:'dbl',      name:'Double Double',   icon:'💥', tiers:[1,5,15,30,50,100],    hidden:false, key:'doubleDouble',   desc:v=>`${v} match${v>1?'s':''} avec 1G+1A` },
   { id:'serie',    name:'Série G/A',       icon:'⚡', tiers:[3,5,8,15,25,40],      hidden:false, key:'bestStreak',     desc:v=>`Série de ${v} match${v>1?'s':''} consécutif${v>1?'s':''}` },
   // ── Défense / Gardien ──
@@ -4737,15 +4736,16 @@ const ACH_DEFS = [
   { id:'assidu',   name:'Assidu',          icon:'🗓️', tiers:[1,2,3,4],  tierOffset:2,  hidden:false, key:'assiduAnnes',  desc:v=>v===4?'1 an à ≥90% de présence':v===3?'1 an à ≥80% de présence':v===2?'1 an à ≥70% de présence':'1 an à ≥60% de présence' },
   { id:'comete',   name:'La Comète',       icon:'🌠', tiers:[1,2,3,4],  tierOffset:2,  tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'cometeAnnes',  desc:v=>v===4?'1 an à ≤10% de présence':v===3?'1 an à ≤20% de présence':v===2?'1 an à ≤30% de présence':'1 an à ≤40% de présence' },
   // ── Distinctions ──
-  { id:'mvp',          name:'Meilleur joueur', icon:'👑', tiers:[1,3,7,15,25,40],     hidden:false, key:'mvp',          desc:v=>`MVP de soirée ${v} fois` },
+  { id:'mvp',          name:'Meilleur joueur', icon:'🏅', tiers:[1,3,7,15,25,40],     hidden:false, key:'mvp',          desc:v=>`MVP de soirée ${v} fois` },
   { id:'soiree',       name:'Soirée parfaite', icon:'🌟', tiers:[1], fixedTier:6,      hidden:false, key:'soireeParfaite', desc:_=>`Soirée terminée avec 100 % de victoires` },
   { id:'remontada',    name:'Remontada',       icon:'🌅', tiers:[1], fixedTier:6,      hidden:false, key:'remontadas',   desc:_=>`Perdant d'au moins 2 buts à la mi-temps, vainqueur à la fin` },
   { id:'chelem',       name:'Grand Chelem',    icon:'🎨', tiers:[1], fixedTier:6,      hidden:true,  key:'grandChelem',  desc:_=>`Les 3 couleurs jouées` },
   { id:'gardienAssist',name:'Neuer',           icon:'🧤', tiers:[1], fixedTier:6,      hidden:false, key:'gardienAssist', desc:_=>`Passe décisive en tant que gardien` },
-  { id:'willgrigg',    name:'Will Grigg',      icon:'🔥', tiers:[1], fixedTier:6,      hidden:false, key:'hattricks',    desc:v=>`${v} fois avec au moins 3 buts dans un même match` },
-  { id:'mesutozil',    name:'Mesut Özil',      icon:'🪄', tiers:[1], fixedTier:6,      hidden:false, key:'assistHattricks', desc:v=>`${v} fois avec au moins 3 passes décisives dans un même match` },
+  { id:'willgrigg',    name:'Archie Thompson', icon:'🔥', tiers:[1], fixedTier:6,      hidden:true,  key:'hattricks',    desc:v=>`${v} fois avec au moins 3 buts dans un même match` },
+  { id:'mesutozil',    name:'Mesut Özil',      icon:'🪄', tiers:[1], fixedTier:6,      hidden:true,  key:'assistHattricks', desc:v=>`${v} fois avec au moins 3 passes décisives dans un même match` },
+  { id:'patron',       name:'Patron',          icon:'💼', tiers:[1], fixedTier:6,      hidden:true,  key:'patronCount',  desc:v=>`${v} fois impliqué sur 100% des buts de son équipe (min. 4 buts)` },
   { id:'mercenaire',   name:'Mercenaire',      icon:'👺', tiers:[1,3,7,15,25,40],     hidden:false, key:'mercenaireCount', desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''} pour l'équipe dépannée` },
-  { id:'legende',      name:'Légende',         icon:'🏅', tiers:[5,15,30,50,100,127], hidden:true,  key:'legendeCount', desc:v=>`${v} niveaux débloqués` },
+  { id:'legende',      name:'Légende',         icon:'🐐', tiers:[5,15,30,50,100,127], hidden:true,  key:'legendeCount', desc:v=>`${v} niveaux débloqués` },
   // ── Négatifs / Secrets ──
   { id:'bonnet',   name:"Bonnet d'Âne",    icon:'🫏', tiers:[10,30,50,100], tierOffset:2, tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'absences',       desc:v=>`${v} absence${v>1?'s':''}` },
   { id:'infirm',   name:'Infirmerie',      icon:'🩼', tiers:[1,5,10,20,35,50],     hidden:true,  key:'sessionsBlesses',desc:v=>`${v} session${v>1?'s':''} blessé${v>1?'s':''}` },
@@ -4764,7 +4764,6 @@ const ACH_ABOUT = {
   maillots:   'Maillots amenés à la session',
   bonnet:     'Absences',
   infirm:     'Sessions passé blessé',
-  htrick:     'Hat-tricks (3 buts dans un même match)',
   serie:      'Matchs consécutifs avec au moins 1 G/A',
   soiree:     'Soirées terminées avec 100 % de victoires',
   dbl:        'Matchs avec 1 but et 1 passe dans le même match',
@@ -4775,6 +4774,7 @@ const ACH_ABOUT = {
   gardienAssist:'Passe décisive en tant que gardien',
   willgrigg:  'Au moins 3 buts dans un même match',
   mesutozil:  'Au moins 3 passes décisives dans un même match',
+  patron:     'Implique (but ou passe) sur 100% des buts de son équipe, minimum 4 buts',
   mercenaire: 'Buts marqués pour l\'équipe dépannée plutôt que la sienne',
   remontada:  'Remontadas — perdant d\'au moins 2 buts à la mi-temps, vainqueur à la fin',
   duo:        'But + passe répétés avec le même partenaire',
@@ -4796,7 +4796,7 @@ function _achLevel(val, tiers) {
 function computeAchievementStats(playerName) {
   const _ss = [...SESSIONS].sort((a,b)=>new Date(a.date)-new Date(b.date));
   let buts=0,passes=0,presences=0,absences=0,injuries=0,sessionsBlesses=0,sac=0,maillots=0;
-  let hattricks=0,assistHattricks=0,doubleDouble=0,cleanSheets=0,mvp=0,soireeParfaite=0,invincible=0,csc=0,zeroVict=0,toutNul=0;
+  let hattricks=0,assistHattricks=0,patronCount=0,doubleDouble=0,cleanSheets=0,mvp=0,soireeParfaite=0,invincible=0,csc=0,zeroVict=0,toutNul=0;
   let gardiensCleanSheets=0,gardiensButsEncaisses=0,gardiensMatchs=0,remontadas=0,gardienAssist=0,mercenaireCount=0;
   const chelemColors=new Set(), duoMap={};
   let inEp=false, bestStreak=0, curStreak=0, fantomeStreak=0, sessionsAvecGA=0;
@@ -4872,6 +4872,19 @@ function computeAchievementStats(playerName) {
           if(g>=3)hattricks++;
           if(a>=3)assistHattricks++;
           if(g>=1&&a>=1)doubleDouble++;
+          // Patron : implique (but ou passe) sur 100% des buts de son equipe, min. 4 buts.
+          // Un CSC ne peut etre credite a personne, donc invalide l implication totale.
+          {
+            const mySide = m.eqA===myEq ? "A" : "B";
+            const myButeurs = m[`buteurs${mySide}`]||[];
+            const myPasseurs = m[`passeurs${mySide}`]||[];
+            const involvedAll = myButeurs.length>0 && myButeurs.every((b,i) => {
+              if(b==="CSC") return false;
+              const p = myPasseurs[i];
+              return b===playerName || (p && p!=="CSC" && p===playerName);
+            });
+            if(myButeurs.length>=4 && involvedAll) patronCount++;
+          }
         }
       });
 
@@ -4923,7 +4936,7 @@ function computeAchievementStats(playerName) {
   const gardienRate = gardiensMatchs>=3 ? Math.round(gardiensCleanSheets/gardiensMatchs*100) : 0;
 
   return { buts, passes, gaTotal:buts+passes, presences, absences, injuries, sessionsBlesses,
-           sac, maillots, hattricks, assistHattricks, bestStreak, soireeParfaite, doubleDouble,
+           sac, maillots, hattricks, assistHattricks, patronCount, bestStreak, soireeParfaite, doubleDouble,
            invincible, cleanSheets, bestDuo, mvp, csc, grandChelem,
            fantomeStreak, assiduAnnes, cometeAnnes, zeroVict, toutNul, sessionsAvecGA,
            gardiensCleanSheets, gardiensButsEncaisses, gardiensMatchs, gardienRate, remontadas, gardienAssist, mercenaireCount };
