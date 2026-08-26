@@ -1607,7 +1607,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 13:56</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 15:56</footer>
 
 <script>
 
@@ -3444,7 +3444,9 @@ function renderMhfMatrixHtml() {
   return h;
 }
 
-function renderAchievementsMatrix() {
+// Section publique (4 cases KPI) : accessible hors admin. Les hauts faits secrets ne
+// doivent jamais y être nommés (rare/commun), même si leur taux les qualifierait.
+function _mhfKpiSectionHtml() {
   _mhf = computeMhfData();
 
   let kpiHtml = '';
@@ -3453,7 +3455,8 @@ function renderAchievementsMatrix() {
     let filledCells = 0;
     _mhf.players.forEach(p => _mhf.achs.forEach(a => { if (_mhf.levels[p][a.id].raw > 0) filledCells++; }));
     const avgRate = totalCells ? filledCells/totalCells : 0;
-    const sortedByRate = [..._mhf.achs].sort((a,b) => _mhf.completion[a.id].rate - _mhf.completion[b.id].rate);
+    const publicAchs = _mhf.achs.filter(a => !a.hidden);
+    const sortedByRate = [...publicAchs].sort((a,b) => _mhf.completion[a.id].rate - _mhf.completion[b.id].rate);
     const rarest = sortedByRate[0], common = sortedByRate[sortedByRate.length-1];
     const topCollector = [..._mhf.players].sort((a,b) => _mhf.summary[b].niveaux - _mhf.summary[a].niveaux)[0];
     const cards = [
@@ -3474,11 +3477,15 @@ function renderAchievementsMatrix() {
       </div>`).join('') + `</div>`;
   }
 
+  return `<div class="section-label" style="margin-top:2rem">Hauts faits — Matrice</div>` + kpiHtml;
+}
+
+function renderAchievementsMatrix() {
+  let h = _mhfKpiSectionHtml();
+
   let legendHtml = `<span class="lbl">Niveaux</span>`;
   for (let i=1;i<=6;i++) legendHtml += `<span class="mhf-tier-pill${i===6?' mhf-t6-anim':''}" style="${_mhfTierStyleAttr(i)}"><span class="dot"></span>${ACH_TIER_NAMES[i]}</span>`;
 
-  let h = `<div class="section-label" style="margin-top:2rem">Hauts faits — Matrice</div>`;
-  h += kpiHtml;
   h += `<div class="section-label" style="margin-top:2.4rem">Rareté des hauts faits (${_mhf.achs.length})</div>`;
   h += `<div class="mhf-rarity-list" id="mhf-rarity-list">${_mhfRenderRarityHtml()}</div>`;
   h += `<div class="section-label" style="margin-top:2.4rem">Roster &times; Hauts faits</div>`;
@@ -3984,9 +3991,7 @@ function renderStats() {
   </div>`;
 
   const isAdmin = sessionStorage.getItem("hmft_role") === "admin";
-  if (isAdmin) {
-    h += renderAchievementsMatrix();
-  }
+  h += isAdmin ? renderAchievementsMatrix() : _mhfKpiSectionHtml();
 
   container.innerHTML = h;
   animateView(container);
