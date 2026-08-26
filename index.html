@@ -1607,7 +1607,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 16:34</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 26/08/2026 - 16:53</footer>
 
 <script>
 
@@ -1813,6 +1813,8 @@ try {
   }
 } catch(e) { console.warn('Firebase init failed:', e); }
 
+let _fbLoadTimedOut = false;
+
 async function _fbLoad() {
   // 1. localStorage d'abord — instantané, filet de sécurité hors-ligne
   try {
@@ -1820,66 +1822,78 @@ async function _fbLoad() {
     local.forEach(s => { if (!SESSIONS.find(e => e.date === s.date)) SESSIONS.push(s); });
   } catch(e) {}
 
-  // 2. Firebase = source de vérité quand disponible
+  // 2. Firebase = source de vérité quand disponible — avec timeout : si l'app est
+  //    rouverte sans réseau (ex: iPad relancé pendant une soirée hors-ligne), on ne
+  //    bloque pas indéfiniment le démarrage, on continue avec le cache local ci-dessus.
   if (!_db) return;
   try {
-    const sessSnap = await _db.ref('sessions').once('value');
-    const fbSessions = sessSnap.val() || {};
-    const fbDates = new Set(Object.keys(fbSessions));
-    // Retirer du cache les sessions absentes de Firebase (supprimées)
-    for (let i = SESSIONS.length - 1; i >= 0; i--) {
-      if (!fbDates.has(SESSIONS[i].date)) SESSIONS.splice(i, 1);
-    }
-    // Ajouter / mettre à jour depuis Firebase
-    Object.values(fbSessions).forEach(s => {
-      const idx = SESSIONS.findIndex(e => e.date === s.date);
-      if (idx === -1) SESSIONS.push(s); else SESSIONS[idx] = s;
+    await Promise.race([
+      _fbLoadFromNetwork(),
+      new Promise((_, reject) => setTimeout(() => { _fbLoadTimedOut = true; reject(new Error('offline_timeout')); }, 5000))
+    ]);
+  } catch(e) { console.warn('Firebase indisponible au démarrage, utilisation du cache local:', e); }
+}
+
+async function _fbLoadFromNetwork() {
+  const sessSnap = await _db.ref('sessions').once('value');
+  if (_fbLoadTimedOut) return;
+  const fbSessions = sessSnap.val() || {};
+  const fbDates = new Set(Object.keys(fbSessions));
+  // Retirer du cache les sessions absentes de Firebase (supprimées)
+  for (let i = SESSIONS.length - 1; i >= 0; i--) {
+    if (!fbDates.has(SESSIONS[i].date)) SESSIONS.splice(i, 1);
+  }
+  // Ajouter / mettre à jour depuis Firebase
+  Object.values(fbSessions).forEach(s => {
+    const idx = SESSIONS.findIndex(e => e.date === s.date);
+    if (idx === -1) SESSIONS.push(s); else SESSIONS[idx] = s;
+  });
+  localStorage.setItem('hmft_sessions', JSON.stringify(SESSIONS));
+
+  // Brouillon — sync cross-device
+  const draftSnap = await _db.ref('config/draft').once('value');
+  if (_fbLoadTimedOut) return;
+  const fbDraft = draftSnap.val();
+  if (fbDraft) {
+    // Firebase drops empty arrays — restore them
+    if (!Array.isArray(fbDraft.matchs)) fbDraft.matchs = [];
+    if (!Array.isArray(fbDraft.tempJokers)) fbDraft.tempJokers = [];
+    fbDraft.matchs.forEach(m => {
+      if (!Array.isArray(m.buteursA))  m.buteursA  = [];
+      if (!Array.isArray(m.buteursB))  m.buteursB  = [];
+      if (!Array.isArray(m.passeursA)) m.passeursA = [];
+      if (!Array.isArray(m.passeursB)) m.passeursB = [];
+      if (!Array.isArray(m.gardiensA)) m.gardiensA = ["",""];
+      if (!Array.isArray(m.gardiensB)) m.gardiensB = ["",""];
     });
-    localStorage.setItem('hmft_sessions', JSON.stringify(SESSIONS));
+    _draft = fbDraft;
+    localStorage.setItem('hmft_draft', JSON.stringify(_draft));
+  }
 
-    // Brouillon — sync cross-device
-    const draftSnap = await _db.ref('config/draft').once('value');
-    const fbDraft = draftSnap.val();
-    if (fbDraft) {
-      // Firebase drops empty arrays — restore them
-      if (!Array.isArray(fbDraft.matchs)) fbDraft.matchs = [];
-      if (!Array.isArray(fbDraft.tempJokers)) fbDraft.tempJokers = [];
-      fbDraft.matchs.forEach(m => {
-        if (!Array.isArray(m.buteursA))  m.buteursA  = [];
-        if (!Array.isArray(m.buteursB))  m.buteursB  = [];
-        if (!Array.isArray(m.passeursA)) m.passeursA = [];
-        if (!Array.isArray(m.passeursB)) m.passeursB = [];
-        if (!Array.isArray(m.gardiensA)) m.gardiensA = ["",""];
-        if (!Array.isArray(m.gardiensB)) m.gardiensB = ["",""];
-      });
-      _draft = fbDraft;
-      localStorage.setItem('hmft_draft', JSON.stringify(_draft));
-    }
+  // Config : joueurs extra et jokers (Firebase = source de vérité)
+  const cfgSnap = await _db.ref('config').once('value');
+  if (_fbLoadTimedOut) return;
+  const cfg = cfgSnap.val() || {};
 
-    // Config : joueurs extra et jokers (Firebase = source de vérité)
-    const cfgSnap = await _db.ref('config').once('value');
-    const cfg = cfgSnap.val() || {};
+  if (cfg.extraPlayers) {
+    cfg.extraPlayers.forEach(n => { if (!ALL_PLAYERS.includes(n)) { ALL_PLAYERS.push(n); JOKERS.add(n); } });
+    localStorage.setItem('hmft_extra_players', JSON.stringify(cfg.extraPlayers));
+  } else {
+    // Bootstrap Firebase depuis localStorage (migration automatique one-shot)
+    const localExtra = ALL_PLAYERS.filter(p => !_BASE_PLAYERS.has(p));
+    if (localExtra.length) _db.ref('config/extraPlayers').set(localExtra).catch(() => {});
+  }
 
-    if (cfg.extraPlayers) {
-      cfg.extraPlayers.forEach(n => { if (!ALL_PLAYERS.includes(n)) { ALL_PLAYERS.push(n); JOKERS.add(n); } });
-      localStorage.setItem('hmft_extra_players', JSON.stringify(cfg.extraPlayers));
-    } else {
-      // Bootstrap Firebase depuis localStorage (migration automatique one-shot)
-      const localExtra = ALL_PLAYERS.filter(p => !_BASE_PLAYERS.has(p));
-      if (localExtra.length) _db.ref('config/extraPlayers').set(localExtra).catch(() => {});
-    }
-
-    if (cfg.jokers) {
-      JOKERS = new Set(cfg.jokers);
-      localStorage.setItem('hmft_jokers', JSON.stringify(cfg.jokers));
-    } else {
-      _db.ref('config/jokers').set([...JOKERS]).catch(() => {});
-    }
-    if (cfg.absents) {
-      ABSENTS = new Set(cfg.absents);
-      localStorage.setItem('hmft_absents', JSON.stringify(cfg.absents));
-    }
-  } catch(e) { console.error('Firebase load error:', e); }
+  if (cfg.jokers) {
+    JOKERS = new Set(cfg.jokers);
+    localStorage.setItem('hmft_jokers', JSON.stringify(cfg.jokers));
+  } else {
+    _db.ref('config/jokers').set([...JOKERS]).catch(() => {});
+  }
+  if (cfg.absents) {
+    ABSENTS = new Set(cfg.absents);
+    localStorage.setItem('hmft_absents', JSON.stringify(cfg.absents));
+  }
 }
 
 async function _fbSaveSession(session) {
@@ -1892,7 +1906,13 @@ async function _fbSaveSession(session) {
   } catch(e) {}
 
   if (!_db) { throw new Error('Firebase non initialisé (_db est null)'); }
-  await _db.ref('sessions/' + session.date).set(session);
+  // Timeout : si le réseau est absent au moment de valider, on ne bloque pas
+  // l'utilisateur indéfiniment — la session est déjà sauvée en local ci-dessus,
+  // et l'écriture Firebase, déjà lancée, se synchronisera d'elle-même à la reconnexion.
+  await Promise.race([
+    _db.ref('sessions/' + session.date).set(session),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('OFFLINE_TIMEOUT')), 6000))
+  ]);
 }
 
 async function _fbDeleteSession(date) {
@@ -6008,17 +6028,25 @@ async function _commitSession() {
     SESSIONS.push(finalSession);
   }
 
+  let _offlineSaved = false;
   try {
     await _fbSaveSession(finalSession);
   } catch(err) {
-    if (overlay) overlay.style.display = "none";
-    window.onbeforeunload = null;
-    alert('⚠️ Firebase — erreur de synchronisation :\n' + (err?.message || err?.code || String(err)));
-    return;
+    if (err?.message === 'OFFLINE_TIMEOUT') {
+      _offlineSaved = true;
+    } else {
+      if (overlay) overlay.style.display = "none";
+      window.onbeforeunload = null;
+      alert('⚠️ Firebase — erreur de synchronisation :\n' + (err?.message || err?.code || String(err)));
+      return;
+    }
   }
 
   if (overlay) overlay.style.display = "none";
   window.onbeforeunload = null;
+  if (_offlineSaved) {
+    alert('📴 Pas de connexion — session sauvegardée localement.\nElle sera automatiquement synchronisée dès que le réseau revient.');
+  }
 
   /* Persister les nouveaux temp jokers dans ALL_PLAYERS + JOKERS */
   const _newJokers = (_draft.tempJokers || []).filter(n => !ALL_PLAYERS.includes(n));
