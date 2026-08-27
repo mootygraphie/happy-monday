@@ -1456,10 +1456,6 @@
     padding: 3px 2px; font-size: 11.5px; font-weight: 600; color: var(--text3); cursor: pointer; outline: none;
   }
   .dbx2-period-select-mini:hover { color: var(--text2); }
-  .dbx2-date-input {
-    background: transparent; border: none; border-bottom: 1px dashed var(--border2);
-    padding: 3px 2px; font-size: 11.5px; font-weight: 600; color: var(--text3); font-family: inherit;
-  }
   .dbx2-date-sep { color: var(--text3); font-size: 11px; }
 
   .dbx2-team-pill {
@@ -1710,7 +1706,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 27/08/2026 - 16:53</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 27/08/2026 - 17:14</footer>
 
 <script>
 
@@ -2268,23 +2264,30 @@ function updateSubFilter(period) {
     });
 
   } else if (period === "custom") {
-    const bounds = _dbxSessionDateBounds();
-    if (!dbxCustomFrom) dbxCustomFrom = bounds ? bounds.min : null;
-    if (!dbxCustomTo)   dbxCustomTo   = bounds ? bounds.max : null;
-    const minAttr = bounds ? ` min="${bounds.min}"` : "";
-    const maxAttr = bounds ? ` max="${bounds.max}"` : "";
-    sub.innerHTML = `
-      <input type="date" class="dbx2-date-input" id="dbx-custom-from" value="${dbxCustomFrom||''}"${minAttr}${maxAttr}>
-      <span class="dbx2-date-sep">→</span>
-      <input type="date" class="dbx2-date-input" id="dbx-custom-to" value="${dbxCustomTo||''}"${minAttr}${maxAttr}>`;
-    document.getElementById("dbx-custom-from").addEventListener("change", e => {
-      dbxCustomFrom = e.target.value || null;
-      renderDashboard();
-    });
-    document.getElementById("dbx-custom-to").addEventListener("change", e => {
-      dbxCustomTo = e.target.value || null;
-      renderDashboard();
-    });
+    const sortedDates = [...new Set(SESSIONS.map(s => s.date))].sort();
+    if (!sortedDates.length) { sub.innerHTML = ""; }
+    else {
+      if (!dbxCustomFrom || !sortedDates.includes(dbxCustomFrom)) dbxCustomFrom = sortedDates[0];
+      if (!dbxCustomTo   || !sortedDates.includes(dbxCustomTo))   dbxCustomTo   = sortedDates[sortedDates.length-1];
+      const fromOpts = sortedDates.filter(d => d <= dbxCustomTo);
+      const toOpts   = sortedDates.filter(d => d >= dbxCustomFrom);
+      sub.innerHTML = `
+        <select class="dbx-fb-select" id="dbx-custom-from">${fromOpts.map(d => `<option value="${d}" ${d===dbxCustomFrom?"selected":""}>${fmtDate(d)}</option>`).join("")}</select>
+        <span class="dbx2-date-sep">→</span>
+        <select class="dbx-fb-select" id="dbx-custom-to">${toOpts.map(d => `<option value="${d}" ${d===dbxCustomTo?"selected":""}>${fmtDate(d)}</option>`).join("")}</select>`;
+      document.getElementById("dbx-custom-from").addEventListener("change", e => {
+        dbxCustomFrom = e.target.value;
+        updateSubFilter("custom");
+        _dbxSyncHash();
+        renderDashboard();
+      });
+      document.getElementById("dbx-custom-to").addEventListener("change", e => {
+        dbxCustomTo = e.target.value;
+        updateSubFilter("custom");
+        _dbxSyncHash();
+        renderDashboard();
+      });
+    }
 
   } else {
     sub.innerHTML = "";
@@ -5041,6 +5044,7 @@ function _dbxRenderContext() {
     el.querySelectorAll(".dbx2-team-pill").forEach(btn => btn.addEventListener("click", () => {
       dbxTeam = btn.dataset.team;
       _dbxRenderContext();
+      _dbxSyncHash();
       renderDashboard();
     }));
   } else if (dbxScope === "player") {
@@ -5050,11 +5054,22 @@ function _dbxRenderContext() {
     el.innerHTML = `<select class="dbx2-player-select-main" id="dbx2-player-select">${_dbxPlayerOptsHtml(dbxPlayer)}</select>`;
     document.getElementById("dbx2-player-select").addEventListener("change", e => {
       dbxPlayer = e.target.value;
+      _dbxSyncHash();
       renderDashboard();
     });
   } else {
     el.innerHTML = "";
   }
+}
+
+/* Persiste scope/equipe-ou-joueur/periode dans le hash pour survivre a un refresh
+   (#dashboard/<scope>/<team-ou-player-ou-->/<periode>[/<from>,<to> si personnalise]). */
+function _dbxSyncHash() {
+  let h = "dashboard/" + dbxScope;
+  h += "/" + (dbxScope === "team" && dbxTeam ? dbxTeam : dbxScope === "player" && dbxPlayer ? encodeURIComponent(dbxPlayer) : "-");
+  h += "/" + currentPeriod;
+  if (currentPeriod === "custom" && dbxCustomFrom && dbxCustomTo) h += "/" + dbxCustomFrom + "," + dbxCustomTo;
+  history.replaceState(null, '', '#' + h);
 }
 
 /* Face à face joueur (reprend Rivalités de l'onglet Récompenses telle quelle :
@@ -5099,6 +5114,7 @@ function _dbxPlaceHi(hi, btn) {
       _dbxPlaceHi(hi, btn);
       dbxScope = btn.dataset.scope;
       _dbxRenderContext();
+      _dbxSyncHash();
       renderDashboard();
     });
   });
@@ -5112,7 +5128,7 @@ function _dbxPlaceHi(hi, btn) {
   sel.value = currentPeriod;
   sel.addEventListener("change", e => {
     currentPeriod = e.target.value;
-    history.replaceState(null, '', '#' + currentPeriod);
+    _dbxSyncHash();
     updateSubFilter(currentPeriod);
     renderDashboard();
   });
@@ -5252,7 +5268,7 @@ document.querySelectorAll(".main-tab").forEach(tab => {
       history.replaceState(null, '', '#joueurs');
       renderJoueurs();
     } else if (tab.dataset.tab === "dashboard") {
-      history.replaceState(null, '', '#' + currentPeriod);
+      _dbxSyncHash();
       renderDashboard();
     } else if (tab.dataset.tab === "session") {
       history.replaceState(null, '', '#sessions');
@@ -7605,10 +7621,32 @@ document.addEventListener("click", e => {
     const _tabKey = _hash === "sessions" ? "session" : _hash;
     document.querySelectorAll(".main-tab").forEach(t => t.classList.toggle("active", t.dataset.tab === _tabKey));
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === `panel-${_tabKey}`));
+  } else if (_hash.indexOf("dashboard/") === 0) {
+    // Format complet, ecrit par _dbxSyncHash() : dashboard/<scope>/<team-ou-player-ou-->/<periode>[/<from>,<to>]
+    const parts = _hash.split("/");
+    const _scope = parts[1];
+    dbxScope = (_scope === "team" || _scope === "player") ? _scope : "global";
+    if (dbxScope === "team" && parts[2] && parts[2] !== "-") dbxTeam = parts[2];
+    if (dbxScope === "player" && parts[2] && parts[2] !== "-") dbxPlayer = decodeURIComponent(parts[2]);
+    if (["session","month","year","custom","all"].includes(parts[3])) currentPeriod = parts[3];
+    if (currentPeriod === "custom" && parts[4]) {
+      const [_f,_t] = parts[4].split(",");
+      if (_f) dbxCustomFrom = _f;
+      if (_t) dbxCustomTo = _t;
+    }
+    const periodSel = document.getElementById("dbx2-period-select");
+    if (periodSel) periodSel.value = currentPeriod;
+    document.querySelectorAll(".main-tab").forEach(t => t.classList.toggle("active", t.dataset.tab === "dashboard"));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === "panel-dashboard"));
+    document.querySelectorAll("#dbx2-scope-seg .dbx-seg-btn").forEach(b => b.classList.toggle("active", b.dataset.scope === dbxScope));
+    requestAnimationFrame(() => _dbxPlaceHi(document.getElementById("dbx2-scope-hi"), document.querySelector("#dbx2-scope-seg .dbx-seg-btn.active")));
   } else if (_hash === "last" || ["session","month","year","custom","all"].includes(_hash)) {
+    // Ancien format court (portee globale uniquement) — conserve pour compatibilite des liens existants
     currentPeriod = _hash === "last" ? "session" : _hash; // "last" = ancien lien, alias de "session"
     const periodSel = document.getElementById("dbx2-period-select");
     if (periodSel) periodSel.value = currentPeriod;
+    document.querySelectorAll(".main-tab").forEach(t => t.classList.toggle("active", t.dataset.tab === "dashboard"));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === "panel-dashboard"));
   }
   updateSubFilter(currentPeriod);
   renderDashboard();
