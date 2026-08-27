@@ -1706,7 +1706,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 27/08/2026 - 17:14</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 27/08/2026 - 17:26</footer>
 
 <script>
 
@@ -4481,9 +4481,10 @@ function _dbx2RadarSvg(axes, series, size) {
   }).join("");
   const polys = series.map(s => {
     const pts = axes.map((a,i) => pt(i, Math.max(0.03,s.values[a.key]||0)).join(",")).join(" ");
-    const op = s.emphasized ? 1 : .45;
-    const fillOp = s.emphasized ? .22 : .08;
-    return `<polygon points="${pts}" fill="${s.color}" fill-opacity="${fillOp}" stroke="${s.color}" stroke-opacity="${op}" stroke-width="${s.emphasized?2.4:1.6}"/>`;
+    const op = s.emphasized ? 1 : .9;
+    const fillOp = s.emphasized ? .22 : .1;
+    const dash = s.emphasized ? "" : ` stroke-dasharray="5,3"`;
+    return `<polygon points="${pts}" fill="${s.color}" fill-opacity="${fillOp}" stroke="${s.color}" stroke-opacity="${op}" stroke-width="${s.emphasized?2.4:2}"${dash}/>`;
   }).join("");
   return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${rings}${spokes}${polys}</svg>`;
 }
@@ -4721,40 +4722,56 @@ function _dbxComputePlayerAgg(sessions, player) {
   const mvpCounts = _dbxComputeMvpCounts(sessions);
   const mvp = mvpCounts[player] || 0;
 
-  /* Axe Gardien : buts encaissés / match gardé (computeGardiensRanking, déjà période-scopé),
-     normalisé 1 - min(1, avg/2.5). Sans match gardé -> neutre 0.5 (pas de "0 = excellent gardien"). */
+  /* Radar : chaque axe est relatif au max (ou min/max inverse pour def/gardien) observe parmi
+     les joueurs actifs sur la periode choisie, plutot qu un plafond fixe — sinon une performance
+     ponctuelle exceptionnelle (ex: meilleur buteur d une seule session) paraissait toute petite
+     des qu on tombait sous le plafond arbitraire. Attaque/Passes/Victoires : total brut du joueur
+     / total brut du meilleur de la periode. Defense/Gardien : bases sur les buts encaisses
+     (computeTopDefendersStats / computeGardiensRanking, deja periode-scopes) — celui qui en a
+     encaisse le moins obtient le max, celui qui en a encaisse le plus obtient le min. */
   const gkRanking = computeGardiensRanking(sessions);
-  const gkEntry = gkRanking.find(r => r.name === player);
-  const gkVal = gkEntry && gkEntry.matchs > 0 ? Math.min(1, Math.max(0, 1 - (gkEntry.rate/2.5))) : 0.5;
-  /* Axe Défense : buts encaissés / match joué (computeTopDefendersStats, existant, réutilisé
-     tel quel), même normalisation /2.5 que l'axe défense équipe. Même logique de neutre 0.5. */
   const defRanking = computeTopDefendersStats(sessions, 1);
-  const defEntry = defRanking.find(dd => dd.name === player);
-  const defVal = defEntry ? Math.min(1, Math.max(0, 1 - (defEntry.avg/2.5))) : 0.5;
-  const radar = {
-    atk:  pa.played ? Math.min(1, (pa.buts/pa.played)/2.5) : 0,
-    pass: pa.played ? Math.min(1, (pa.passes/pa.played)/2.5) : 0,
-    gk:   gkVal,
-    win:  winRate,
-    def:  defVal,
-  };
-
-  /* Moyenne du groupe sur les memes 5 axes, joueurs ayant >=1 presence sur la periode */
   const activePlayers = Object.keys(st.ps).filter(nm => st.ps[nm] && st.ps[nm].presences > 0);
-  const avgAcc = { atk:0, pass:0, gk:0, win:0, def:0 };
-  let avgCount = 0;
+  const perPlayer = {};
   activePlayers.forEach(nm => {
-    const npa = _dbxPlayerMatchAgg(sessions, nm);
+    const npa = nm === player ? pa : _dbxPlayerMatchAgg(sessions, nm);
     if (!npa.played) return;
     const ngk = gkRanking.find(r => r.name === nm);
-    const ngkVal = ngk && ngk.matchs > 0 ? Math.min(1, Math.max(0, 1 - (ngk.rate/2.5))) : 0.5;
     const ndef = defRanking.find(dd => dd.name === nm);
-    const ndefVal = ndef ? Math.min(1, Math.max(0, 1 - (ndef.avg/2.5))) : 0.5;
-    avgAcc.atk  += Math.min(1, (npa.buts/npa.played)/2.5);
-    avgAcc.pass += Math.min(1, (npa.passes/npa.played)/2.5);
-    avgAcc.gk   += ngkVal;
-    avgAcc.win  += npa.w/npa.played;
-    avgAcc.def  += ndefVal;
+    perPlayer[nm] = {
+      buts: npa.buts, passes: npa.passes, wins: npa.w,
+      gk: (ngk && ngk.matchs > 0) ? ngk.rate : null,
+      def: ndef ? ndef.avg : null,
+    };
+  });
+  const entries = Object.values(perPlayer);
+  const maxButs   = Math.max(0, ...entries.map(e => e.buts));
+  const maxPasses = Math.max(0, ...entries.map(e => e.passes));
+  const maxWins   = Math.max(0, ...entries.map(e => e.wins));
+  const defVals = entries.map(e => e.def).filter(v => v !== null);
+  const minDef = defVals.length ? Math.min(...defVals) : null, maxDef = defVals.length ? Math.max(...defVals) : null;
+  const gkVals = entries.map(e => e.gk).filter(v => v !== null);
+  const minGk = gkVals.length ? Math.min(...gkVals) : null, maxGk = gkVals.length ? Math.max(...gkVals) : null;
+
+  const _dbxRadarFracs = nm => {
+    const e = perPlayer[nm];
+    if (!e) return { atk:0, pass:0, gk:.5, win:0, def:.5 };
+    return {
+      atk:  maxButs   > 0 ? e.buts/maxButs     : 0,
+      pass: maxPasses > 0 ? e.passes/maxPasses : 0,
+      win:  maxWins   > 0 ? e.wins/maxWins     : 0,
+      def:  e.def===null ? 0.5 : (maxDef===minDef ? 0.5 : (maxDef-e.def)/(maxDef-minDef)),
+      gk:   e.gk===null  ? 0.5 : (maxGk===minGk  ? 0.5 : (maxGk-e.gk)/(maxGk-minGk)),
+    };
+  };
+
+  const radar = _dbxRadarFracs(player);
+
+  const avgAcc = { atk:0, pass:0, gk:0, win:0, def:0 };
+  let avgCount = 0;
+  Object.keys(perPlayer).forEach(nm => {
+    const f = _dbxRadarFracs(nm);
+    avgAcc.atk += f.atk; avgAcc.pass += f.pass; avgAcc.gk += f.gk; avgAcc.win += f.win; avgAcc.def += f.def;
     avgCount++;
   });
   const avgRadar = avgCount
@@ -4954,7 +4971,7 @@ function _dbxRenderPlayerScope(sessions, player) {
 
     const RAXES = [ {key:"atk",label:"Attaque"}, {key:"pass",label:"Passes"}, {key:"gk",label:"Gardien"}, {key:"win",label:"Victoires"}, {key:"def",label:"Défense"} ];
     const radar = _dbx2RadarSvg(RAXES, [
-      { key:"avg", color:"var(--text3)", emphasized:false, values:d.avgRadar },
+      { key:"avg", color:"var(--text2)", emphasized:false, values:d.avgRadar },
       { key:"player", color:"var(--gold)", emphasized:true, values:d.radar },
     ], 210);
 
@@ -4973,7 +4990,7 @@ function _dbxRenderPlayerScope(sessions, player) {
         ${radar}
         <div class="dbx2-viz-legend">
           <span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:var(--gold)"></span>${player}</span>
-          <span class="dbx2-viz-legend-item dim"><span class="dbx2-viz-legend-dot" style="background:var(--text3)"></span>Moyenne du groupe</span>
+          <span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:var(--text2)"></span>Moyenne du groupe</span>
         </div>
       </div>
       <div class="dbx-card dbx2-viz-card">
