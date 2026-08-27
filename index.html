@@ -815,7 +815,6 @@
   .saisie-chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
   .saisie-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 999px; padding: 5px 6px 5px 12px; font-size: 13.5px; font-weight: 600; transition: border-color .15s, background .15s; }
   .saisie-chip-name { white-space: nowrap; }
-  .saisie-chip-badge { font-size: 10px; font-weight: 700; background: rgba(245,200,66,.14); color: var(--gold); border-radius: 999px; padding: 1px 6px; letter-spacing: .02em; }
   .saisie-chip-btns { display: inline-flex; gap: 3px; }
   .saisie-chip-btn { width: 26px; height: 26px; border-radius: 50%; border: none; background: transparent; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; opacity: .55; transition: opacity .15s, background .15s; }
   .saisie-chip-btn:hover { opacity: 1; background: var(--border); }
@@ -1706,7 +1705,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 27/08/2026 - 17:26</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 27/08/2026 - 17:32</footer>
 
 <script>
 
@@ -3585,11 +3584,10 @@ function renderMhfMatrixHtml() {
     const rowCls = i%2===0 ? 'mhf-mrow-odd' : 'mhf-mrow-even';
     const rank = i+1;
     const rankCls = _mhfState.sortKey!=='name' && rank<=3 ? (rank===1?'gold':rank===2?'silver':'bronze') : '';
-    const jokerTag = JOKERS.has(p) ? ' <span style="color:var(--text3);font-size:10px">[+1]</span>' : '';
     h += `<div class="mhf-mcell mhf-mname player-link ${rowCls}" data-player="${p}">
       <span class="mhf-mrank ${rankCls}">${rank}</span>
       <span class="mhf-mavatar">${_mhfInitials[p] || p.slice(0,2).toUpperCase()}</span>
-      <span class="mhf-mname-txt">${p}${jokerTag}</span>
+      <span class="mhf-mname-txt">${p}</span>
     </div>`;
     h += `<div class="mhf-mcell mhf-msum ${rowCls}${_mhfState.sortKey==='hautsFaits'?' sorted':''}">${_mhf.summary[p].hautsFaits}</div>`;
     h += `<div class="mhf-mcell mhf-msum ${rowCls}${_mhfState.sortKey==='niveaux'?' sorted':''}">${_mhf.summary[p].niveaux}</div>`;
@@ -5037,18 +5035,20 @@ function _dbxRenderPlayerScope(sessions, player) {
    DASHBOARD XXL — sélecteurs de portée / contexte / face à face
 ══════════════════════════════════════════════════════════ */
 function _dbxRosterForPicker() {
-  const roster = ALL_PLAYERS.filter(p => !JOKERS.has(p)).sort((a,b) => a.localeCompare(b,'fr'));
-  const jokers = ALL_PLAYERS.filter(p => JOKERS.has(p)).sort((a,b) => a.localeCompare(b,'fr'));
-  return { roster, jokers, all: [...roster, ...jokers] };
+  const roster  = ALL_PLAYERS.filter(p => !JOKERS.has(p) && !ABSENTS.has(p)).sort((a,b) => a.localeCompare(b,'fr'));
+  const jokers  = ALL_PLAYERS.filter(p => JOKERS.has(p)).sort((a,b) => a.localeCompare(b,'fr'));
+  const absents = ALL_PLAYERS.filter(p => ABSENTS.has(p)).sort((a,b) => a.localeCompare(b,'fr'));
+  return { roster, jokers, absents, all: [...roster, ...jokers, ...absents] };
 }
 
+/* Trie toujours par statut (reguliers / occasionnels / absents) via <optgroup> — plus de
+   suffixe "[+1]" sur les occasionnels, le groupe suffit a les distinguer. */
 function _dbxPlayerOptsHtml(selected) {
-  const { roster, jokers } = _dbxRosterForPicker();
-  return [
-    ...roster.map(p => `<option value="${p}"${p===selected?' selected':''}>${p}</option>`),
-    jokers.length ? `<option disabled>──────────</option>` : '',
-    ...jokers.map(p => `<option value="${p}"${p===selected?' selected':''}>${p} [+1]</option>`),
-  ].join("");
+  const { roster, jokers, absents } = _dbxRosterForPicker();
+  const grp = (label, list) => list.length
+    ? `<optgroup label="${label}">${list.map(p => `<option value="${p}"${p===selected?' selected':''}>${p}</option>`).join("")}</optgroup>`
+    : '';
+  return grp("Réguliers", roster) + grp("Occasionnels", jokers) + grp("Absents", absents);
 }
 
 function _dbxRenderContext() {
@@ -6464,7 +6464,7 @@ function _saisieJokerChipHTML(p, removable) {
     ${removable ? `<button class="saisie-chip-btn" data-act="saisie-remove-temp-joker" data-player="${p}" title="Retirer">✕</button>` : ""}
   `;
   return `<span class="saisie-chip ${stCls}${teamCls}">
-    <span class="saisie-chip-name">${p} <span class="saisie-chip-badge">+1</span></span>
+    <span class="saisie-chip-name">${p}</span>
     ${dots}
     <span class="saisie-chip-btns">${btns}</span>
   </span>`;
@@ -6514,12 +6514,12 @@ function _buildPresencesScreenHTML() {
     ${group("Absents", "❌", byStatut(regularPlayers, "Absent"))}
     ${group("Blessés", "🤕", byStatut(regularPlayers, "Blessé"))}
     ${group("Pas répondu", "❓", byStatut(regularPlayers, "Pas répondu"))}
-    <div class="saisie-jokers-title">Joueurs +1</div>
+    <div class="saisie-jokers-title">Joueurs occasionnels</div>
     ${jokerGroup("Présents", "✅", jkPresents)}
     ${jokerGroup("Blessés", "🤕", jkBlesses)}
     ${jokerGroup("Non convoqués", "🫥", jkNC)}
     <div class="saisie-joker-add">
-      <input type="text" id="saisie-new-joker-input" placeholder="Nom du +1" class="saisie-date-input">
+      <input type="text" id="saisie-new-joker-input" placeholder="Nom de l'occasionnel" class="saisie-date-input">
       <button class="saisie-btn secondary" data-act="saisie-add-temp-joker">+ Ajouter</button>
     </div>
   </div>`;
