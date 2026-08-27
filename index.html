@@ -1437,6 +1437,100 @@
     .dbx-filterbar { padding: 12px; gap: 10px; }
     .dbx-fb-meta { margin-left: 0; text-align: left; }
   }
+
+  /* ══════════════════════════════════════════════════════════
+     DASHBOARD XXL (préfixe dbx2-) — 3 portées Globales / Équipes /
+     Joueurs, recopié du prototype approuvé. Les classes dbx- déjà
+     existantes (dbx-seg, dbx-card, dbx-hero-*, dbx-lead-*, dbx-fb-select,
+     dbx-form-chip, dbx-trend-card…) sont réutilisées telles quelles ;
+     seul ce qui est réellement nouveau est préfixé dbx2-.
+  ══════════════════════════════════════════════════════════ */
+  .dbx2-scope-row { display: flex; justify-content: center; margin-bottom: 1.1rem; }
+  .dbx2-scope-row .dbx-seg-btn { padding: 9px 20px; font-size: 13px; }
+
+  .dbx2-context-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; min-height: 1px; }
+
+  .dbx2-period-row { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 1.6rem; }
+  .dbx2-period-select-mini {
+    background: transparent; border: none; border-bottom: 1px dashed var(--border2);
+    padding: 3px 2px; font-size: 11.5px; font-weight: 600; color: var(--text3); cursor: pointer; outline: none;
+  }
+  .dbx2-period-select-mini:hover { color: var(--text2); }
+  .dbx2-date-input {
+    background: transparent; border: none; border-bottom: 1px dashed var(--border2);
+    padding: 3px 2px; font-size: 11.5px; font-weight: 600; color: var(--text3); font-family: inherit;
+  }
+  .dbx2-date-sep { color: var(--text3); font-size: 11px; }
+
+  .dbx2-team-pill {
+    display: flex; align-items: center; gap: 7px; padding: 9px 18px; border-radius: 10px;
+    border: 1px solid var(--border2); background: var(--bg3); color: var(--text2);
+    font-size: 13.5px; font-weight: 700; cursor: pointer; transition: all .15s; font-family: inherit;
+  }
+  .dbx2-team-pill .dbx2-pill-dot { width: 9px; height: 9px; border-radius: 50%; }
+  .dbx2-team-pill:hover:not(.active) { color: var(--text); }
+  .dbx2-team-pill.rouge.active { background: var(--rouge-bg); border-color: var(--rouge-border); color: var(--rouge); }
+  .dbx2-team-pill.vert.active  { background: var(--vert-bg);  border-color: var(--vert-border);  color: var(--vert); }
+  .dbx2-team-pill.bleu.active  { background: var(--bleu-bg);  border-color: var(--bleu-border);  color: var(--bleu); }
+
+  .dbx2-player-select-main {
+    background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px;
+    padding: 9px 16px; font-size: 13.5px; font-weight: 700; color: var(--text); cursor: pointer; font-family: inherit;
+  }
+
+  .dbx2-viz-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; align-items: stretch; }
+  @media (max-width: 820px) { .dbx2-viz-row { grid-template-columns: 1fr; } }
+  .dbx2-viz-card { padding: 16px 16px 14px; display: flex; flex-direction: column; align-items: center; }
+  .dbx2-viz-card svg { max-width: 100%; height: auto; }
+  .dbx2-viz-title { align-self: flex-start; font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .dbx2-viz-note  { align-self: flex-start; font-size: 10.5px; color: var(--text3); margin-bottom: 10px; }
+  .dbx2-viz-legend { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: auto; padding-top: 10px; }
+  .dbx2-viz-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text2); }
+  .dbx2-viz-legend-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dbx2-viz-legend-item.dim { opacity: .55; }
+
+  .dbx2-gfga-chart { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; margin-top: 4px; }
+  .dbx2-gfga-groups { display: flex; gap: 26px; }
+  .dbx2-gfga-group { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+  .dbx2-gfga-group-lbl { font-size: 9.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }
+  .dbx2-gfga-group-bars { position: relative; display: flex; align-items: flex-end; gap: 7px; }
+  .dbx2-gfga-avg-line { position: absolute; left: -5px; right: -5px; height: 0; border-top: 1px dashed var(--text2); opacity: .85; }
+  .dbx2-gfga-avg-line span { position: absolute; right: 0; top: -8px; font-size: 8px; color: var(--text3); font-weight: 700; text-transform: uppercase; letter-spacing: .03em; background: var(--bg2); padding-left: 3px; }
+  .dbx2-gfga-bar-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .dbx2-gfga-bar-track { width: 22px; height: 74px; background: var(--bg3); border-radius: 5px; display: flex; align-items: flex-end; overflow: hidden; }
+  .dbx2-gfga-bar { width: 100%; border-radius: 5px 5px 0 0; }
+  .dbx2-gfga-bar.gf { background: var(--good); } .dbx2-gfga-bar.ga { background: var(--bad); }
+  .dbx2-gfga-bar-col.dim .dbx2-gfga-bar { opacity: .3; }
+  .dbx2-gfga-bar-num { font-size: 11.5px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .dbx2-gfga-avgs { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+  .dbx2-gfga-avg-case { display: flex; align-items: baseline; justify-content: space-between; background: var(--bg3); border-radius: 8px; padding: 6px 10px; font-size: 10.5px; color: var(--text2); }
+  .dbx2-gfga-avg-case b { font-size: 14px; color: var(--text); font-variant-numeric: tabular-nums; }
+
+  .dbx2-fun-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+  @media (max-width: 760px) { .dbx2-fun-grid { grid-template-columns: repeat(2,1fr); } }
+  .dbx2-fun-card { padding: 14px 16px; }
+  .dbx2-fun-ico { font-size: 18px; }
+  .dbx2-fun-lbl { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; font-weight: 600; margin-top: 6px; }
+  .dbx2-fun-val { font-size: 15.5px; font-weight: 700; margin-top: 3px; }
+  .dbx2-fun-sub { font-size: 11.5px; color: var(--text2); margin-top: 2px; }
+
+  .dbx2-trend-layout { display: flex; gap: 4px; }
+  .dbx2-trend-axis { position: relative; flex-shrink: 0; width: 20px; }
+  .dbx2-trend-axis-tick { position: absolute; right: 4px; transform: translateY(50%); font-size: 9px; color: var(--text3); font-variant-numeric: tabular-nums; }
+  .dbx2-trend-scroll { overflow-x: auto; flex: 1; min-width: 0; }
+
+  .dbx2-oppo-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .dbx2-oppo-table th { text-align: left; color: var(--text3); font-weight: 600; font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; padding: 4px 10px; border-bottom: 1px solid var(--border); }
+  .dbx2-oppo-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  .dbx2-oppo-table tr:last-child td { border-bottom: none; }
+
+  .dbx2-h2h-card { padding: 16px 18px; }
+
+  .dbx2-hero-form { display: flex; align-items: center; gap: 4px; margin-top: 11px; }
+
+  @media (max-width: 640px) {
+    .dbx2-context-row { gap: 6px; }
+  }
 </style>
 <script>if(localStorage.getItem('hmft_theme')==='light')document.documentElement.classList.add('light');</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -1535,14 +1629,23 @@
 
   <!-- ── Onglet Dashboard ── -->
   <div class="tab-panel active" id="panel-dashboard">
-    <div class="dbx-filterbar">
-      <div class="dbx-seg" id="dbx-seg">
-        <div class="dbx-seg-hi" id="dbx-seg-hi"></div>
-        <button class="dbx-seg-btn" data-period="session">Session</button>
-        <button class="dbx-seg-btn" data-period="month">Mois</button>
-        <button class="dbx-seg-btn" data-period="year">Saison</button>
-        <button class="dbx-seg-btn" data-period="all">All-time</button>
+    <div class="dbx2-scope-row">
+      <div class="dbx-seg" id="dbx2-scope-seg">
+        <div class="dbx-seg-hi" id="dbx2-scope-hi"></div>
+        <button class="dbx-seg-btn active" data-scope="global">Globales</button>
+        <button class="dbx-seg-btn" data-scope="team">Équipes</button>
+        <button class="dbx-seg-btn" data-scope="player">Joueurs</button>
       </div>
+    </div>
+    <div class="dbx2-context-row" id="dbx2-context-row"></div>
+    <div class="dbx2-period-row">
+      <select class="dbx2-period-select-mini" id="dbx2-period-select">
+        <option value="session">Session</option>
+        <option value="month">Mois</option>
+        <option value="year">Saison</option>
+        <option value="custom">Personnalisé</option>
+        <option value="all">All-time</option>
+      </select>
       <div class="dbx-fb-sub" id="dbx-fb-sub"></div>
       <div class="dbx-fb-meta" id="dbx-fb-meta"></div>
     </div>
@@ -1607,7 +1710,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 27/08/2026 - 13:19</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 27/08/2026 - 16:46</footer>
 
 <script>
 
@@ -2012,10 +2115,17 @@ function pLink(name, extra) {
 /* ══════════════════════════════════════════════════════════
    DASHBOARD
 ══════════════════════════════════════════════════════════ */
-let currentPeriod = "session"; // "session" | "month" | "year" | "all"
+let currentPeriod = "session"; // "session" | "month" | "year" | "custom" | "all"
 let filterYear  = null; // stocke le début de saison (ex: 2024 pour 2024/2025)
 let filterMonth = null;
 let filterSessionDate = null; // date de la session choisie en mode "session"
+
+/* ── Dashboard XXL : portée (Globales/Équipes/Joueurs) + plage personnalisée ── */
+let dbxScope = "global"; // "global" | "team" | "player"
+let dbxTeam = "Rouge";
+let dbxPlayer = null;
+let dbxCustomFrom = null;
+let dbxCustomTo = null;
 
 /* Bornes de saisons avec dates précises (sy = année de début) */
 const SEASON_DEFS = [
@@ -2064,7 +2174,21 @@ function filterSessions(period) {
     return d.getMonth() === filterMonth && _seasonStart(d) === filterYear;
   });
   if (period === "year")  return SESSIONS.filter(s => _seasonStart(s.date) === filterYear);
+  if (period === "custom") {
+    const bounds = _dbxSessionDateBounds();
+    const from = dbxCustomFrom || (bounds ? bounds.min : null);
+    const to   = dbxCustomTo   || (bounds ? bounds.max : null);
+    if (!from || !to) return SESSIONS;
+    return SESSIONS.filter(s => s.date >= from && s.date <= to);
+  }
   return SESSIONS;
+}
+
+/* Bornes (min/max) des dates de session — pour les bornes de l'input date personnalisé */
+function _dbxSessionDateBounds() {
+  if (!SESSIONS.length) return null;
+  const sorted = [...SESSIONS].sort((a,b) => new Date(a.date)-new Date(b.date));
+  return { min: sorted[0].date, max: sorted[sorted.length-1].date };
 }
 
 /* Saisons disponibles (triées desc) — logique de scoping partagée */
@@ -2140,6 +2264,25 @@ function updateSubFilter(period) {
     sub.innerHTML = `<select class="dbx-fb-select" id="dbx-sel-year2">${seasons.map(sy => `<option value="${sy}" ${sy===filterYear?"selected":""}>Saison ${_seasonLabel(sy)}</option>`).join("")}</select>`;
     document.getElementById("dbx-sel-year2").addEventListener("change", e => {
       filterYear = Number(e.target.value);
+      renderDashboard();
+    });
+
+  } else if (period === "custom") {
+    const bounds = _dbxSessionDateBounds();
+    if (!dbxCustomFrom) dbxCustomFrom = bounds ? bounds.min : null;
+    if (!dbxCustomTo)   dbxCustomTo   = bounds ? bounds.max : null;
+    const minAttr = bounds ? ` min="${bounds.min}"` : "";
+    const maxAttr = bounds ? ` max="${bounds.max}"` : "";
+    sub.innerHTML = `
+      <input type="date" class="dbx2-date-input" id="dbx-custom-from" value="${dbxCustomFrom||''}"${minAttr}${maxAttr}>
+      <span class="dbx2-date-sep">→</span>
+      <input type="date" class="dbx2-date-input" id="dbx-custom-to" value="${dbxCustomTo||''}"${minAttr}${maxAttr}>`;
+    document.getElementById("dbx-custom-from").addEventListener("change", e => {
+      dbxCustomFrom = e.target.value || null;
+      renderDashboard();
+    });
+    document.getElementById("dbx-custom-to").addEventListener("change", e => {
+      dbxCustomTo = e.target.value || null;
       renderDashboard();
     });
 
@@ -3992,31 +4135,6 @@ function renderStats() {
     </div>
   </div>`;
 
-  /* ── Rivalités ── */
-  const _rivRoster = ALL_PLAYERS.filter(p => !JOKERS.has(p)).sort((a,b) => a.localeCompare(b,'fr'));
-  const _rivJokers = ALL_PLAYERS.filter(p =>  JOKERS.has(p)).sort((a,b) => a.localeCompare(b,'fr'));
-  const _rivPlayers = [..._rivRoster, ..._rivJokers];
-  const _rivOpts = [
-    ..._rivRoster.map(p => `<option value="${p}">${p}</option>`),
-    _rivJokers.length ? `<option disabled>──────────</option>` : '',
-    ..._rivJokers.map(p => `<option value="${p}">${p} [+1]</option>`),
-  ].join('');
-  const _rivDefault1 = _rivPlayers[0] || '';
-  const _rivDefault2 = _rivPlayers[1] || '';
-  h += `<div class="kpi-card" style="margin-bottom:1rem">
-    <div class="kpi-lbl" style="margin-top:0;margin-bottom:12px">Rivalités ⚔️</div>
-    <div class="riv-selects">
-      <select id="riv-a">${_rivOpts}</select>
-      <select id="riv-b">${_rivOpts}</select>
-      <select id="riv-period">
-        <option value="all">All time</option>
-        <option value="year">Cette saison</option>
-        <option value="month">Ce mois</option>
-      </select>
-    </div>
-    <div id="riv-body"></div>
-  </div>`;
-
   const isAdmin = sessionStorage.getItem("hmft_role") === "admin";
   h += isAdmin ? renderAchievementsMatrix() : _mhfKpiSectionHtml();
 
@@ -4034,21 +4152,6 @@ function renderStats() {
       btn.textContent = willShow ? 'Réduire ‹' : `Voir le classement complet (${total}) ›`;
     });
   });
-
-  /* ── Rivalités — init et listeners ── */
-  const _rivSelA = container.querySelector('#riv-a');
-  const _rivSelB = container.querySelector('#riv-b');
-  const _rivSelP = container.querySelector('#riv-period');
-  if (_rivSelA && _rivSelB && _rivSelP) {
-    if (_rivDefault2) _rivSelB.value = _rivDefault2;
-    const _updateRiv = () => {
-      document.getElementById('riv-body').innerHTML = renderRivBody(_rivSelA.value, _rivSelB.value, _rivSelP.value);
-    };
-    _updateRiv();
-    _rivSelA.addEventListener('change', _updateRiv);
-    _rivSelB.addEventListener('change', _updateRiv);
-    _rivSelP.addEventListener('change', _updateRiv);
-  }
 
   if (isAdmin) {
     const _mhfWrap = container.querySelector('#mhf-matrix-scroll');
@@ -4164,6 +4267,7 @@ function _dbxComputeAgg(sessions) {
     .filter(([n,p]) => p.presences>0 && !JOKERS.has(n))
     .sort((a,b) => b[1].presences-a[1].presences || byAlpha(a,b)).slice(0,5);
   const goalsBySession = sorted.map(s => ({ date: s.date, goals: (s.matchs||[]).reduce((a,m) => a+m.scoreA+m.scoreB, 0) }));
+  const assistsBySession = sorted.map(s => ({ date: s.date, assists: (s.matchs||[]).reduce((a,m) => a+_dbxCountAssists(m), 0) }));
   /* Clean sheets : une equipe garde sa cage inviolee des qu elle ne concede aucun
      but sur un match (un nul 0-0 compte pour les 2 equipes). */
   const totalCleanSheets = allMatchsChrono.reduce((a,m) => a + (m.scoreB===0?1:0) + (m.scoreA===0?1:0), 0);
@@ -4171,9 +4275,24 @@ function _dbxComputeAgg(sessions) {
     allMatchs: allMatchsChrono, ps: st.ps, colorWins: st.colorWins, draws,
     goalsFor: st.goalsPerTeam, goalsAgainst, totalGoals, leaders, maxWins,
     topScorers, topAssists, topPresence, totalPres, totalAbs, totalBles, totalCleanSheets,
-    mostGoals: st.mostGoals, biggestAmp: st.biggestAmp, results, goalsBySession,
+    mostGoals: st.mostGoals, biggestAmp: st.biggestAmp, results, goalsBySession, assistsBySession,
     sessionsCount: sessions.length
   };
+}
+
+/* Nombre de passes decisives valides (non-CSC) sur un match, tous cotes confondus —
+   utilise par la tendance Globales (ligne passes) et par les agregations Equipes/Joueurs. */
+function _dbxCountAssists(m) {
+  let c = 0;
+  ["A","B"].forEach(side => {
+    const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
+    buts.forEach((b,i) => {
+      if (!b || b==="CSC") return;
+      const p = passes[i];
+      if (p && p!=="CSC") c++;
+    });
+  });
+  return c;
 }
 
 function _dbxSparkSvg(values, color) {
@@ -4268,45 +4387,6 @@ function _dbxRenderCompare(agg) {
   return `<div class="dbx-card dbx-cmp-card">${bars}</div><div class="dbx-team-grid">${teamCards}</div>`;
 }
 
-function _dbxTrendChart(agg) {
-  const data = agg.goalsBySession;
-  const single = data.length <= 1;
-  const points = single
-    ? agg.allMatchs.map(m => ({ label: `${(TEAM_LABEL[m.eqA]||m.eqA).slice(0,3)}-${(TEAM_LABEL[m.eqB]||m.eqB).slice(0,3)}`, goals: m.scoreA+m.scoreB }))
-    : data.map(d => ({ label: _dbxFmtDateShort(d.date), goals: d.goals }));
-  if (!points.length) return `<div class="dbx-card dbx-trend-card"><p style="color:var(--text3);font-size:13px;font-style:italic;margin:0">Aucune donnée.</p></div>`;
-
-  const w = Math.max(360, points.length*46), h = 130, padB = 22, padT = 10;
-  const max = Math.max(...points.map(p=>p.goals), 1);
-  const barW = Math.min(28, (w/points.length)*0.55);
-  const step = w/points.length;
-  const avg = points.reduce((a,p)=>a+p.goals,0)/points.length;
-
-  const bars = points.map((p,i) => {
-    const x = i*step + (step-barW)/2;
-    const bh = Math.max(2, (p.goals/max)*(h-padB-padT));
-    const y = h-padB-bh;
-    return `<g class="dbx-trend-bar">
-      <rect x="${x}" y="${y}" width="${barW}" height="${bh}" rx="4" fill="var(--gold)" opacity=".82"/>
-      <text x="${x+barW/2}" y="${h-6}" text-anchor="middle" font-size="9.5" fill="var(--text3)" font-family="inherit">${p.label}</text>
-      <title>${p.label} — ${p.goals} but${p.goals>1?"s":""}</title>
-    </g>`;
-  }).join("");
-
-  const avgY = h-padB-(avg/max)*(h-padB-padT);
-  const avgLine = points.length>1 ? `<line x1="0" y1="${avgY}" x2="${w}" y2="${avgY}" stroke="var(--text3)" stroke-width="1" stroke-dasharray="3,3" opacity=".6"/>` : "";
-
-  return `<div class="dbx-card dbx-trend-card">
-    <div class="dbx-trend-top">
-      <span class="dbx-trend-top-lbl">${single?"Répartition par match":"Buts marqués par session"}</span>
-      <span class="dbx-trend-top-val">Moyenne <b>${avg.toFixed(1)}</b> buts</span>
-    </div>
-    <div class="dbx-trend-svg-wrap">
-      <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${avgLine}${bars}</svg>
-    </div>
-  </div>`;
-}
-
 function _dbxHighlightCards(agg) {
   function card(lbl, m) {
     if (!m) return `<div class="dbx-card dbx-hl-card"><div class="dbx-hl-lbl">${lbl}</div><p style="color:var(--text3);font-size:12.5px;font-style:italic;margin:0">—</p></div>`;
@@ -4349,8 +4429,699 @@ function _dbxRenderAssiduity(agg) {
   </div>`;
 }
 
+/* ══════════════════════════════════════════════════════════
+   DASHBOARD XXL — graphiques SVG partagés (donut / radar / barres+ligne),
+   portés quasi verbatim du prototype approuvé.
+══════════════════════════════════════════════════════════ */
+function _dbx2FormChipsHtml(form) {
+  return `<div class="dbx2-hero-form">${form.map(r => `<span class="dbx-form-chip ${r}">${r==="w"?"V":r==="n"?"N":"D"}</span>`).join("")}</div>`;
+}
+
+function _dbx2DonutSvg(slices, size) {
+  size = size || 150;
+  const r = size/2 - 16, cx = size/2, cy = size/2, circ = 2*Math.PI*r;
+  const total = slices.reduce((a,s)=>a+s.value,0) || 1;
+  let offset = 0;
+  const rings = slices.map(s => {
+    const frac = s.value/total, len = frac*circ;
+    const dash = `${len} ${circ-len}`;
+    const rot = (offset/total)*360 - 90;
+    offset += s.value;
+    return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.color}" stroke-width="16"
+      stroke-dasharray="${dash}" transform="rotate(${rot} ${cx} ${cy})" stroke-linecap="butt"/>`;
+  }).join("");
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--bg3)" stroke-width="16"/>
+    ${rings}
+    <text x="${cx}" y="${cy-3}" text-anchor="middle" font-size="21" font-weight="700" fill="var(--text)" font-family="inherit">${total}</text>
+    <text x="${cx}" y="${cy+15}" text-anchor="middle" font-size="9.5" fill="var(--text3)" font-family="inherit">matchs</text>
+  </svg>`;
+}
+
+function _dbx2RadarSvg(axes, series, size) {
+  size = size || 240;
+  const labelMargin = 52;
+  const w = size + labelMargin*2, h = size;
+  const cx = w/2, cy = h/2 - 6, R = size/2 - 30, n = axes.length;
+  const angle = i => -Math.PI/2 + i*(2*Math.PI/n);
+  const pt = (i, frac) => [cx + Math.cos(angle(i))*R*frac, cy + Math.sin(angle(i))*R*frac];
+  const rings = [.25,.5,.75,1].map(f => {
+    const pts = axes.map((_,i) => pt(i,f).join(",")).join(" ");
+    return `<polygon points="${pts}" fill="none" stroke="var(--border2)" stroke-width="1"/>`;
+  }).join("");
+  const spokes = axes.map((a,i) => {
+    const [x,y] = pt(i,1);
+    const [lx,ly] = pt(i,1.2);
+    const anchor = Math.abs(Math.cos(angle(i)))<0.2 ? "middle" : (Math.cos(angle(i))>0?"start":"end");
+    return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--border2)" stroke-width="1"/>
+      <text x="${lx}" y="${ly}" text-anchor="${anchor}" dominant-baseline="middle" font-size="10" fill="var(--text2)" font-family="inherit" font-weight="600">${a.label}</text>`;
+  }).join("");
+  const polys = series.map(s => {
+    const pts = axes.map((a,i) => pt(i, Math.max(0.03,s.values[a.key]||0)).join(",")).join(" ");
+    const op = s.emphasized ? 1 : .45;
+    const fillOp = s.emphasized ? .22 : .08;
+    return `<polygon points="${pts}" fill="${s.color}" fill-opacity="${fillOp}" stroke="${s.color}" stroke-opacity="${op}" stroke-width="${s.emphasized?2.4:1.6}"/>`;
+  }).join("");
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${rings}${spokes}${polys}</svg>`;
+}
+
+/* Buts (barres) + passes (ligne pointillee) superposes, meme echelle */
+function _dbx2BarLineComboSvg(bars, line, barColor, lineColor, labels) {
+  const w = Math.max(320, bars.length*32), h = 122, padB = 20, padT = 10;
+  const max = Math.max(...bars, ...line, 1);
+  const barW = Math.min(20, (w/bars.length)*0.55);
+  const step = w/bars.length;
+  const barsHtml = bars.map((v,i) => {
+    const x = i*step + (step-barW)/2;
+    const bh = Math.max(2, (v/max)*(h-padB-padT));
+    const y = h-padB-bh;
+    const lbl = labels ? `<text x="${x+barW/2}" y="${h-6}" text-anchor="middle" font-size="9" fill="var(--text3)" font-family="inherit">${labels[i]}</text>` : "";
+    return `<g><rect x="${x}" y="${y}" width="${barW}" height="${bh}" rx="3.5" fill="${barColor}" opacity=".85"><title>${labels?labels[i]+' — ':''}${v} but${v>1?'s':''}</title></rect>${lbl}</g>`;
+  }).join("");
+  const pts = line.map((v,i) => {
+    const x = i*step + step/2;
+    const y = h-padB-(v/max)*(h-padB-padT);
+    return [x,y];
+  });
+  const poly = pts.map(p=>p.join(",")).join(" ");
+  const dots = pts.map(([x,y],i) => `<circle cx="${x}" cy="${y}" r="2.8" fill="var(--bg2)" stroke="${lineColor}" stroke-width="2"><title>${labels?labels[i]+' — ':''}${line[i]} passe${line[i]>1?'s':''}</title></circle>`).join("");
+  return { svg: `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+      ${barsHtml}
+      <polyline points="${poly}" fill="none" stroke="${lineColor}" stroke-width="2" stroke-dasharray="5,3" stroke-linecap="round" stroke-linejoin="round"/>
+      ${dots}
+    </svg>`,
+    barAvg: bars.length ? (bars.reduce((a,v)=>a+v,0)/bars.length).toFixed(1) : "0.0",
+    lineAvg: line.length ? (line.reduce((a,v)=>a+v,0)/line.length).toFixed(1) : "0.0",
+    max, h, padB, padT };
+}
+
+/* Echelle verticale a gauche du graphique barres+ligne, hors de la zone qui scrolle */
+function _dbx2TrendAxisHtml(max, h, padB, padT) {
+  const steps = 4;
+  const ticks = [];
+  for (let i = 0; i <= steps; i++) {
+    const v = Math.round(max*i/steps);
+    const bottom = (v/max)*(h-padB-padT) + padB;
+    ticks.push(`<span class="dbx2-trend-axis-tick" style="bottom:${bottom}px">${v}</span>`);
+  }
+  return `<div class="dbx2-trend-axis" style="height:${h}px">${ticks.join('')}</div>`;
+}
+
+/* Carte "Tendance" partagee (buts en barres + passes en ligne pointillee) — les 3 portees */
+function _dbx2RenderTrendCard(subLbl, bars, line, labels, barColor, lineColor) {
+  if (!bars.length) return `<div class="dbx-card dbx-trend-card"><p style="color:var(--text3);font-size:13px;font-style:italic;margin:0">Aucune donnée.</p></div>`;
+  const trend = _dbx2BarLineComboSvg(bars, line, barColor, lineColor, labels);
+  const axis = _dbx2TrendAxisHtml(trend.max, trend.h, trend.padB, trend.padT);
+  return `<div class="dbx-card dbx-trend-card">
+    <div class="dbx-trend-top">
+      <span class="dbx-trend-top-lbl">${subLbl}</span>
+      <span class="dbx-trend-top-val">Moy. <b style="color:${barColor}">${trend.barAvg}</b> buts &middot; <b style="color:${lineColor}">${trend.lineAvg}</b> passes</span>
+    </div>
+    <div class="dbx2-trend-layout">
+      ${axis}
+      <div class="dbx2-trend-scroll">${trend.svg}</div>
+    </div>
+    <div class="dbx2-viz-legend" style="margin-top:8px">
+      <span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:${barColor}"></span>Buts (barres)</span>
+      <span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:${lineColor}"></span>Passes (ligne)</span>
+    </div>
+  </div>`;
+}
+
+/* Tendance Globales : preserve exactement le calcul de barres pre-existant
+   (1 session -> repartition par match), ajoute la ligne passes + l'axe. */
+function _dbxGlobalTrendChart(agg) {
+  const data = agg.goalsBySession;
+  const single = data.length <= 1;
+  let bars, line, labels, subLbl;
+  if (single) {
+    bars = agg.allMatchs.map(m => m.scoreA+m.scoreB);
+    line = agg.allMatchs.map(m => _dbxCountAssists(m));
+    labels = agg.allMatchs.map(m => `${(TEAM_LABEL[m.eqA]||m.eqA).slice(0,3)}-${(TEAM_LABEL[m.eqB]||m.eqB).slice(0,3)}`);
+    subLbl = "Répartition par match";
+  } else {
+    bars = data.map(d => d.goals);
+    line = agg.assistsBySession.map(d => d.assists);
+    labels = data.map(d => _dbxFmtDateShort(d.date));
+    subLbl = "Buts et passes par session";
+  }
+  return _dbx2RenderTrendCard(subLbl, bars, line, labels, "var(--gold)", "var(--bleu)");
+}
+
+/* ══════════════════════════════════════════════════════════
+   DASHBOARD XXL — agrégations réelles Équipes / Joueurs
+══════════════════════════════════════════════════════════ */
+function _dbxComputeTeamAgg(sessions, color) {
+  const sorted = [...sessions].sort((a,b) => new Date(a.date)-new Date(b.date));
+  let w=0,n=0,l=0,gf=0,ga=0,cleanSheets=0;
+  const results = [];
+  const vs = {};
+  const scorerTally = {}, assistTally = {};
+  let biggestWin = null, worstLoss = null;
+  const goalsBySession = [], assistsBySession = [];
+  sorted.forEach(s => {
+    let sessGoals = 0, sessAssists = 0;
+    (s.matchs||[]).forEach(m => {
+      const isA = m.eqA === color, isB = m.eqB === color;
+      if (!isA && !isB) return;
+      const myScore = isA ? (m.scoreA||0) : (m.scoreB||0);
+      const oppScore = isA ? (m.scoreB||0) : (m.scoreA||0);
+      const oppColor = isA ? m.eqB : m.eqA;
+      gf += myScore; ga += oppScore;
+      if (oppScore === 0) cleanSheets++;
+      let res;
+      if (myScore > oppScore) { w++; res = "w"; }
+      else if (myScore < oppScore) { l++; res = "l"; }
+      else { n++; res = "n"; }
+      results.push(res);
+      if (!vs[oppColor]) vs[oppColor] = { played:0, w:0, n:0, l:0, gf:0, ga:0 };
+      vs[oppColor].played++; vs[oppColor].gf += myScore; vs[oppColor].ga += oppScore;
+      if (res === "w") vs[oppColor].w++; else if (res === "l") vs[oppColor].l++; else vs[oppColor].n++;
+      const diff = myScore - oppScore;
+      const rec = { score: `${myScore}–${oppScore}`, opp: oppColor, date: s.date, diff };
+      if (diff > 0 && (!biggestWin || diff > biggestWin.diff)) biggestWin = rec;
+      if (diff < 0 && (!worstLoss || diff < worstLoss.diff)) worstLoss = rec;
+      const myButs = (isA ? m.buteursA : m.buteursB) || [];
+      const myPasses = (isA ? m.passeursA : m.passeursB) || [];
+      myButs.forEach((b,i) => {
+        if (!b || b === "CSC") return;
+        scorerTally[b] = (scorerTally[b]||0) + 1; sessGoals++;
+        const p = myPasses[i];
+        if (p && p !== "CSC") { assistTally[p] = (assistTally[p]||0) + 1; sessAssists++; }
+      });
+    });
+    goalsBySession.push({ date: s.date, goals: sessGoals });
+    assistsBySession.push({ date: s.date, assists: sessAssists });
+  });
+  const played = w + n + l;
+  const byAlpha = (a,b) => a[0].localeCompare(b[0], "fr");
+  const scorers = Object.entries(scorerTally).sort((a,b) => b[1]-a[1] || byAlpha(a,b)).slice(0,5);
+  const assists = Object.entries(assistTally).sort((a,b) => b[1]-a[1] || byAlpha(a,b)).slice(0,5);
+  let bestStreak = 0, cur = 0;
+  results.forEach(r => { if (r === "w") { cur++; bestStreak = Math.max(bestStreak, cur); } else cur = 0; });
+  const vsEntries = Object.entries(vs);
+  const nemesis = vsEntries.length ? [...vsEntries].sort((a,b) => (a[1].w/a[1].played) - (b[1].w/b[1].played))[0] : null;
+  const form = results.slice(-5);
+  return { color, played, w, n, l, gf, ga, cleanSheets, scorers, assists, vs, biggestWin, worstLoss, bestStreak, nemesis, form, results, goalsBySession, assistsBySession };
+}
+
+/* Agregation match par match pour un joueur (reutilisee pour lui-meme ET pour
+   la moyenne du groupe, sur les memes axes) */
+function _dbxPlayerMatchAgg(sessions, player) {
+  const sorted = [...sessions].sort((a,b) => new Date(a.date)-new Date(b.date));
+  let w=0,n=0,l=0,buts=0,passes=0;
+  const results = [];
+  const colorMatches = {}, colorWinsGames = {};
+  let bestMatch = null;
+  const goalsBySession = [], assistsBySession = [];
+  sorted.forEach(s => {
+    const info = s.presences[player];
+    if (info && info.statut === "Présent" && info.equipe) {
+      colorMatches[info.equipe] = (colorMatches[info.equipe]||0) + 1;
+    }
+    let sessGoals = 0, sessAssists = 0;
+    (s.matchs||[]).forEach(m => {
+      let myG = 0, myA = 0;
+      ["A","B"].forEach(side => {
+        const bts = m[`buteurs${side}`]||[], pss = m[`passeurs${side}`]||[];
+        bts.forEach((b,i) => {
+          if (!b || b === "CSC") return;
+          if (b === player) { myG++; sessGoals++; buts++; }
+          const psr = pss[i];
+          if (psr && psr !== "CSC" && psr === player) { myA++; sessAssists++; passes++; }
+        });
+      });
+      if (info && info.statut === "Présent" && info.equipe && (m.eqA === info.equipe || m.eqB === info.equipe)) {
+        const isA = m.eqA === info.equipe;
+        const myScore = isA ? (m.scoreA||0) : (m.scoreB||0);
+        const oppScore = isA ? (m.scoreB||0) : (m.scoreA||0);
+        let res;
+        if (myScore > oppScore) { w++; res = "w"; colorWinsGames[info.equipe] = (colorWinsGames[info.equipe]||0)+1; }
+        else if (myScore < oppScore) { l++; res = "l"; }
+        else { n++; res = "n"; }
+        results.push(res);
+        const oppColor = isA ? m.eqB : m.eqA;
+        const ga = myG + myA;
+        if (!bestMatch || ga > bestMatch.ga) {
+          bestMatch = { score: `${myScore}–${oppScore}`, opp: oppColor, g: myG, a: myA, ga, date: s.date };
+        }
+      }
+    });
+    goalsBySession.push({ date: s.date, goals: sessGoals });
+    assistsBySession.push({ date: s.date, assists: sessAssists });
+  });
+  const played = w + n + l;
+  return { played, w, n, l, buts, passes, results, colorMatches, colorWinsGames, bestMatch, goalsBySession, assistsBySession };
+}
+
+/* MVP par session, sur une plage donnee (sessions deja filtrees) — replique le tally
+   goals+assists de computeAchievementStats (qui lui est all-time uniquement) */
+function _dbxComputeMvpCounts(sessions) {
+  const counts = {};
+  sessions.forEach(s => {
+    const tally = {};
+    (s.matchs||[]).forEach(m => {
+      ["A","B"].forEach(side => {
+        const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
+        buts.forEach((b,i) => {
+          if (b && b!=="CSC") tally[b] = (tally[b]||0) + 1;
+          const p = passes[i];
+          if (p && p!=="CSC") tally[p] = (tally[p]||0) + 1;
+        });
+      });
+    });
+    const vals = Object.values(tally);
+    if (!vals.length) return;
+    const maxVal = Math.max(...vals);
+    if (maxVal <= 0) return;
+    Object.entries(tally).forEach(([name,val]) => { if (val === maxVal) counts[name] = (counts[name]||0)+1; });
+  });
+  return counts;
+}
+
+function _dbxComputePlayerAgg(sessions, player) {
+  const st = computeStats(sessions);
+  const psStat = st.ps[player] || { presences:0, buts:0, passes:0 };
+  const pa = _dbxPlayerMatchAgg(sessions, player);
+  const presenceRate = sessions.length ? psStat.presences / sessions.length : 0;
+  const winRate = pa.played ? pa.w / pa.played : 0;
+  const form = pa.results.slice(-5);
+
+  const colorEntries = Object.entries(pa.colorMatches).filter(([,v]) => v>0);
+  const bestColor = colorEntries.length
+    ? [...colorEntries].map(([c,v]) => [c, (pa.colorWinsGames[c]||0)/v]).sort((a,b)=>b[1]-a[1])[0]
+    : null;
+
+  const duos = computeLinkUpStats(sessions).filter(dd => dd.p1===player || dd.p2===player);
+  const bestDuo = duos.length ? { name: duos[0].p1===player?duos[0].p2:duos[0].p1, n: duos[0].connexions } : null;
+
+  const mvpCounts = _dbxComputeMvpCounts(sessions);
+  const mvp = mvpCounts[player] || 0;
+
+  /* Axe Gardien : buts encaissés / match gardé (computeGardiensRanking, déjà période-scopé),
+     normalisé 1 - min(1, avg/2.5). Sans match gardé -> neutre 0.5 (pas de "0 = excellent gardien"). */
+  const gkRanking = computeGardiensRanking(sessions);
+  const gkEntry = gkRanking.find(r => r.name === player);
+  const gkVal = gkEntry && gkEntry.matchs > 0 ? Math.min(1, Math.max(0, 1 - (gkEntry.rate/2.5))) : 0.5;
+  /* Axe Défense : buts encaissés / match joué (computeTopDefendersStats, existant, réutilisé
+     tel quel), même normalisation /2.5 que l'axe défense équipe. Même logique de neutre 0.5. */
+  const defRanking = computeTopDefendersStats(sessions, 1);
+  const defEntry = defRanking.find(dd => dd.name === player);
+  const defVal = defEntry ? Math.min(1, Math.max(0, 1 - (defEntry.avg/2.5))) : 0.5;
+  const radar = {
+    atk:  pa.played ? Math.min(1, (pa.buts/pa.played)/2.5) : 0,
+    pass: pa.played ? Math.min(1, (pa.passes/pa.played)/2.5) : 0,
+    gk:   gkVal,
+    win:  winRate,
+    def:  defVal,
+  };
+
+  /* Moyenne du groupe sur les memes 5 axes, joueurs ayant >=1 presence sur la periode */
+  const activePlayers = Object.keys(st.ps).filter(nm => st.ps[nm] && st.ps[nm].presences > 0);
+  const avgAcc = { atk:0, pass:0, gk:0, win:0, def:0 };
+  let avgCount = 0;
+  activePlayers.forEach(nm => {
+    const npa = _dbxPlayerMatchAgg(sessions, nm);
+    if (!npa.played) return;
+    const ngk = gkRanking.find(r => r.name === nm);
+    const ngkVal = ngk && ngk.matchs > 0 ? Math.min(1, Math.max(0, 1 - (ngk.rate/2.5))) : 0.5;
+    const ndef = defRanking.find(dd => dd.name === nm);
+    const ndefVal = ndef ? Math.min(1, Math.max(0, 1 - (ndef.avg/2.5))) : 0.5;
+    avgAcc.atk  += Math.min(1, (npa.buts/npa.played)/2.5);
+    avgAcc.pass += Math.min(1, (npa.passes/npa.played)/2.5);
+    avgAcc.gk   += ngkVal;
+    avgAcc.win  += npa.w/npa.played;
+    avgAcc.def  += ndefVal;
+    avgCount++;
+  });
+  const avgRadar = avgCount
+    ? { atk: avgAcc.atk/avgCount, pass: avgAcc.pass/avgCount, gk: avgAcc.gk/avgCount, win: avgAcc.win/avgCount, def: avgAcc.def/avgCount }
+    : { atk:.5, pass:.5, gk:.5, win:.5, def:.5 };
+
+  return {
+    player, played: pa.played, w: pa.w, n: pa.n, l: pa.l, buts: pa.buts, passes: pa.passes,
+    presenceRate, winRate, form, colorMatches: pa.colorMatches, colorWinsGames: pa.colorWinsGames,
+    bestColor, bestMatch: pa.bestMatch, bestDuo, mvp, radar, avgRadar,
+    goalsBySession: pa.goalsBySession, assistsBySession: pa.assistsBySession,
+  };
+}
+
+/* ══════════════════════════════════════════════════════════
+   DASHBOARD XXL — rendu portée Équipes
+══════════════════════════════════════════════════════════ */
+function _dbxRenderTeamScope(sessions, color) {
+  const d = _dbxComputeTeamAgg(sessions, color);
+  const cls = teamCls(color);
+  const winRate = d.played ? Math.round(d.w/d.played*100) : 0;
+  const diff = d.gf - d.ga;
+
+  let h = "";
+  h += `<div class="dbx-hero-grid">
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Bilan</div>
+      <div class="dbx-hero-num dbx-team" style="font-size:20px"><span style="color:var(--good)">${d.w}V</span> <span style="color:var(--neutral)">${d.n}N</span> <span style="color:var(--bad)">${d.l}D</span></div>
+      <div class="dbx-hero-sub">${d.played} match${d.played>1?"s":""}</div>
+      ${d.form.length ? _dbx2FormChipsHtml(d.form) : ""}
+    </div>
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Différentiel</div>
+      <div class="dbx-hero-num">${diff>0?"+":""}${diff}</div>
+      <div class="dbx-hero-sub">${d.gf} pour &middot; ${d.ga} contre</div>
+    </div>
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Taux de victoire</div>
+      <div class="dbx-hero-num">${winRate}%</div>
+      <div class="dbx-hero-sub">sur la période</div>
+    </div>
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Clean sheets</div>
+      <div class="dbx-hero-num">${d.cleanSheets}</div>
+      <div class="dbx-hero-sub">${d.cleanSheets} / ${d.played} match${d.played>1?"s":""}</div>
+    </div>
+  </div>`;
+
+  h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Répartition &amp; profil</span><span class="dbx-sec-note">${TEAM_LABEL[color]} vs les 2 autres équipes</span></div>`;
+  const donut = _dbx2DonutSvg([
+    { value: d.w, color: "var(--good)" },
+    { value: d.n, color: "var(--neutral)" },
+    { value: d.l, color: "var(--bad)" },
+  ], 196);
+  const RAXES = [ {key:"atk",label:"Attaque"}, {key:"def",label:"Défense"}, {key:"form",label:"Forme"}, {key:"dom",label:"Dominance"}, {key:"cs",label:"Clean sheets"} ];
+  const T3 = ["Rouge","Vert","Bleue"];
+  const teamAggAll = {}; T3.forEach(t => { teamAggAll[t] = t===color ? d : _dbxComputeTeamAgg(sessions, t); });
+  const seriesFor = t => {
+    const td = teamAggAll[t];
+    const diffT = td.gf - td.ga;
+    return { key:t, color:`var(--${teamCls(t)})`, emphasized: t===color, values: {
+      atk: td.played ? Math.min(1, (td.gf/td.played)/2.5) : 0,
+      def: td.played ? Math.min(1, Math.max(0, 1-(td.ga/td.played)/2.5)) : 0,
+      form: td.played ? td.w/td.played : 0,
+      dom: td.played ? Math.max(0, Math.min(1, (diffT/td.played+2)/4)) : 0.5,
+      cs: td.played ? td.cleanSheets/td.played : 0,
+    }};
+  };
+  const radar = _dbx2RadarSvg(RAXES, T3.map(seriesFor), 210);
+  const legend = T3.map(t => `<span class="dbx2-viz-legend-item${t===color?"":" dim"}"><span class="dbx2-viz-legend-dot" style="background:var(--${teamCls(t)})"></span>${TEAM_LABEL[t]}</span>`).join("");
+
+  const GFGA_TRACK_H = 74, GFGA_BELOW_TRACK = 13;
+  const gfgaMax = Math.max(1, ...T3.flatMap(t => [teamAggAll[t].gf, teamAggAll[t].ga]));
+  const gfgaFrac = v => Math.max(0.04, v/gfgaMax);
+  const gfAvg = T3.reduce((a,t) => a+teamAggAll[t].gf, 0)/3;
+  const gaAvg = T3.reduce((a,t) => a+teamAggAll[t].ga, 0)/3;
+  const gfgaGroup = (label, stat, avg, semanticColor) => {
+    const bars = T3.map(t => {
+      const v = teamAggAll[t][stat];
+      const dim = t===color ? "" : " dim";
+      const numColor = t===color ? semanticColor : "var(--text3)";
+      return `<div class="dbx2-gfga-bar-col${dim}">
+        <div class="dbx2-gfga-bar-num" style="color:${numColor}">${v}</div>
+        <div class="dbx2-gfga-bar-track"><div class="dbx2-gfga-bar ${stat}" style="height:${(gfgaFrac(v)*GFGA_TRACK_H).toFixed(1)}px"></div></div>
+        ${dot(t)}
+      </div>`;
+    }).join("");
+    const avgBottom = GFGA_BELOW_TRACK + gfgaFrac(avg)*GFGA_TRACK_H;
+    return `<div class="dbx2-gfga-group">
+      <div class="dbx2-gfga-group-bars">
+        <div class="dbx2-gfga-avg-line" style="bottom:${avgBottom.toFixed(1)}px"><span>moy.</span></div>
+        ${bars}
+      </div>
+      <div class="dbx2-gfga-group-lbl">${label}</div>
+    </div>`;
+  };
+  const gfgaChart = `<div class="dbx2-gfga-chart">
+    <div class="dbx2-gfga-groups">
+      ${gfgaGroup("Marqués", "gf", gfAvg, "var(--good)")}
+      ${gfgaGroup("Encaissés", "ga", gaAvg, "var(--bad)")}
+    </div>
+    <div class="dbx2-gfga-avgs">
+      <div class="dbx2-gfga-avg-case"><span>Moy. marqués /match</span><b>${d.played ? (d.gf/d.played).toFixed(1) : "0.0"}</b></div>
+      <div class="dbx2-gfga-avg-case"><span>Moy. encaissés /match</span><b>${d.played ? (d.ga/d.played).toFixed(1) : "0.0"}</b></div>
+    </div>
+  </div>`;
+
+  h += `<div class="dbx2-viz-row">
+    <div class="dbx-card dbx2-viz-card">
+      <div class="dbx2-viz-title">Résultats</div><div class="dbx2-viz-note">Victoires · nuls · défaites</div>
+      ${donut}
+      <div class="dbx2-viz-legend">
+        <span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:var(--good)"></span>Victoires ${d.w}</span>
+        <span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:var(--neutral)"></span>Nuls ${d.n}</span>
+        <span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:var(--bad)"></span>Défaites ${d.l}</span>
+      </div>
+    </div>
+    <div class="dbx-card dbx2-viz-card">
+      <div class="dbx2-viz-title">Profil d'équipe</div><div class="dbx2-viz-note">Comparé aux 2 autres équipes</div>
+      ${radar}
+      <div class="dbx2-viz-legend">${legend}</div>
+    </div>
+    <div class="dbx-card dbx2-viz-card" style="align-items:stretch">
+      <div class="dbx2-viz-title">Buts pour / contre</div><div class="dbx2-viz-note">${TEAM_LABEL[color]} vs les 2 autres équipes</div>
+      ${gfgaChart}
+    </div>
+  </div>`;
+
+  h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Tendance</span><span class="dbx-sec-note">Évolution des buts et passes, session par session</span></div>`;
+  h += _dbx2RenderTrendCard(`Buts et passes des ${TEAM_LABEL[color]}`, d.goalsBySession.map(x=>x.goals), d.assistsBySession.map(x=>x.assists), d.goalsBySession.map(x=>_dbxFmtDateShort(x.date)), `var(--${cls})`, "var(--gold)");
+
+  h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Buteurs &amp; passeurs — ${TEAM_LABEL[color]}</span></div>`;
+  h += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    ${_dbxLeaderCol("Buteurs","⚽", d.scorers.map(([nm,c])=>[nm,{buts:c}]), "buts")}
+    ${_dbxLeaderCol("Passeurs","🎯", d.assists.map(([nm,c])=>[nm,{passes:c}]), "passes")}
+  </div>`;
+
+  h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Moments forts</span></div>`;
+  h += `<div class="dbx2-fun-grid">
+    <div class="dbx-card dbx2-fun-card"><div class="dbx2-fun-ico">🔥</div><div class="dbx2-fun-lbl">Plus belle victoire</div><div class="dbx2-fun-val">${d.biggestWin ? `${d.biggestWin.score} vs ${TEAM_LABEL[d.biggestWin.opp]||d.biggestWin.opp}` : "—"}</div><div class="dbx2-fun-sub">${d.biggestWin ? fmtDate(d.biggestWin.date) : ""}</div></div>
+    <div class="dbx-card dbx2-fun-card"><div class="dbx2-fun-ico">💀</div><div class="dbx2-fun-lbl">Pire défaite</div><div class="dbx2-fun-val">${d.worstLoss ? `${d.worstLoss.score} vs ${TEAM_LABEL[d.worstLoss.opp]||d.worstLoss.opp}` : "—"}</div><div class="dbx2-fun-sub">${d.worstLoss ? fmtDate(d.worstLoss.date) : ""}</div></div>
+    <div class="dbx-card dbx2-fun-card"><div class="dbx2-fun-ico">⚡</div><div class="dbx2-fun-lbl">Meilleure série</div><div class="dbx2-fun-val">${d.bestStreak} victoire${d.bestStreak>1?"s":""}</div><div class="dbx2-fun-sub">d'affilée</div></div>
+    <div class="dbx-card dbx2-fun-card"><div class="dbx2-fun-ico">😈</div><div class="dbx2-fun-lbl">Bête noire</div><div class="dbx2-fun-val">${d.nemesis ? TEAM_LABEL[d.nemesis[0]] : "—"}</div><div class="dbx2-fun-sub">${d.nemesis ? `${Math.round(d.nemesis[1].w/d.nemesis[1].played*100)}% de victoires seulement` : ""}</div></div>
+  </div>`;
+
+  h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Face à face</span></div>`;
+  const oppRows = Object.entries(d.vs).map(([opp,r]) => {
+    const wr = r.played ? Math.round(r.w/r.played*100) : 0;
+    return `<tr><td>${_dbxTag(opp)}</td><td>${r.played}</td><td style="color:var(--good)">${r.w}</td><td style="color:var(--neutral)">${r.n}</td><td style="color:var(--bad)">${r.l}</td><td>${r.gf}–${r.ga}</td><td><b>${wr}%</b></td></tr>`;
+  }).join("");
+  h += `<div class="dbx-card" style="padding:6px 16px;overflow-x:auto">
+    <table class="dbx2-oppo-table"><thead><tr><th>Adversaire</th><th>MJ</th><th>V</th><th>N</th><th>D</th><th>Buts</th><th>%V</th></tr></thead><tbody>${oppRows || `<tr><td colspan="7" class="no-data">Aucune donnée</td></tr>`}</tbody></table>
+  </div>`;
+
+  return h;
+}
+
+/* ══════════════════════════════════════════════════════════
+   DASHBOARD XXL — rendu portée Joueurs (+ Face à face = Rivalités déplacé)
+══════════════════════════════════════════════════════════ */
+function _dbxRenderPlayerScope(sessions, player) {
+  const d = _dbxComputePlayerAgg(sessions, player);
+  const goalsPerMatch = d.played ? (d.buts/d.played).toFixed(1) : "0.0";
+
+  let h = "";
+  h += `<div class="dbx-hero-grid">
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Matchs joués</div>
+      <div class="dbx-hero-num">${d.played}</div>
+      <div class="dbx-hero-sub">${Math.round(d.presenceRate*100)}% de présence</div>
+    </div>
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Buts</div>
+      <div class="dbx-hero-num">${d.buts}</div>
+      <div class="dbx-hero-sub">${goalsPerMatch} / match</div>
+    </div>
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Passes décisives</div>
+      <div class="dbx-hero-num">${d.passes}</div>
+      <div class="dbx-hero-sub">sur la période</div>
+    </div>
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Victoires</div>
+      <div class="dbx-hero-num">${Math.round(d.winRate*100)}%</div>
+      <div class="dbx-hero-sub"><span style="color:var(--good)">${d.w}V</span> <span style="color:var(--neutral)">${d.n}N</span> <span style="color:var(--bad)">${d.l}D</span></div>
+      ${d.form.length ? _dbx2FormChipsHtml(d.form) : ""}
+    </div>
+  </div>`;
+
+  if (!d.played) {
+    h += `<p class="no-data" style="margin-top:1.5rem">Aucune donnée de match pour ${player} sur cette période.</p>`;
+  } else {
+    h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Répartition &amp; profil</span><span class="dbx-sec-note">${player} vs moyenne du groupe</span></div>`;
+    const colorEntries = Object.entries(d.colorMatches).filter(([,v])=>v>0);
+    const donut = colorEntries.length ? _dbx2DonutSvg(colorEntries.map(([c,v]) => ({ value:v, color:`var(--${teamCls(c)})` })), 196) : `<p class="no-data">Aucune donnée.</p>`;
+    const legend = colorEntries.map(([c,v]) => `<span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:var(--${teamCls(c)})"></span>${TEAM_LABEL[c]} ${v}</span>`).join("");
+
+    const RAXES = [ {key:"atk",label:"Attaque"}, {key:"pass",label:"Passes"}, {key:"gk",label:"Gardien"}, {key:"win",label:"Victoires"}, {key:"def",label:"Défense"} ];
+    const radar = _dbx2RadarSvg(RAXES, [
+      { key:"avg", color:"var(--text3)", emphasized:false, values:d.avgRadar },
+      { key:"player", color:"var(--gold)", emphasized:true, values:d.radar },
+    ], 210);
+
+    const wnlDonut = _dbx2DonutSvg([
+      { value:d.w, color:"var(--good)" }, { value:d.n, color:"var(--neutral)" }, { value:d.l, color:"var(--bad)" },
+    ], 196);
+
+    h += `<div class="dbx2-viz-row">
+      <div class="dbx-card dbx2-viz-card">
+        <div class="dbx2-viz-title">Répartition par équipe</div><div class="dbx2-viz-note">Nombre de matchs joués par couleur</div>
+        ${donut}
+        <div class="dbx2-viz-legend">${legend}</div>
+      </div>
+      <div class="dbx-card dbx2-viz-card">
+        <div class="dbx2-viz-title">Profil joueur</div><div class="dbx2-viz-note">Comparé à la moyenne du groupe</div>
+        ${radar}
+        <div class="dbx2-viz-legend">
+          <span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:var(--gold)"></span>${player}</span>
+          <span class="dbx2-viz-legend-item dim"><span class="dbx2-viz-legend-dot" style="background:var(--text3)"></span>Moyenne du groupe</span>
+        </div>
+      </div>
+      <div class="dbx-card dbx2-viz-card">
+        <div class="dbx2-viz-title">Résultats</div><div class="dbx2-viz-note">Quand ${player} joue</div>
+        ${wnlDonut}
+        <div class="dbx2-viz-legend">
+          <span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:var(--good)"></span>V ${d.w}</span>
+          <span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:var(--neutral)"></span>N ${d.n}</span>
+          <span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:var(--bad)"></span>D ${d.l}</span>
+        </div>
+      </div>
+    </div>`;
+
+    h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Tendance</span><span class="dbx-sec-note">Évolution des buts et passes, session par session</span></div>`;
+    h += _dbx2RenderTrendCard(`Buts et passes de ${player}`, d.goalsBySession.map(x=>x.goals), d.assistsBySession.map(x=>x.assists), d.goalsBySession.map(x=>_dbxFmtDateShort(x.date)), "var(--gold)", "var(--bleu)");
+
+    h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Moments forts</span></div>`;
+    h += `<div class="dbx2-fun-grid">
+      <div class="dbx-card dbx2-fun-card"><div class="dbx2-fun-ico">🌟</div><div class="dbx2-fun-lbl">Meilleur match</div><div class="dbx2-fun-val">${d.bestMatch ? `${d.bestMatch.score} vs ${TEAM_LABEL[d.bestMatch.opp]||d.bestMatch.opp}` : "—"}</div><div class="dbx2-fun-sub">${d.bestMatch ? `${d.bestMatch.g} but${d.bestMatch.g>1?"s":""}, ${d.bestMatch.a} passe${d.bestMatch.a>1?"s":""} &middot; ${fmtDate(d.bestMatch.date)}` : ""}</div></div>
+      <div class="dbx-card dbx2-fun-card"><div class="dbx2-fun-ico">🤝</div><div class="dbx2-fun-lbl">Meilleur duo</div><div class="dbx2-fun-val">${d.bestDuo ? d.bestDuo.name : "—"}</div><div class="dbx2-fun-sub">${d.bestDuo ? `${d.bestDuo.n} connexion${d.bestDuo.n>1?"s":""} ensemble` : ""}</div></div>
+      <div class="dbx-card dbx2-fun-card"><div class="dbx2-fun-ico">🍀</div><div class="dbx2-fun-lbl">Équipe fétiche</div><div class="dbx2-fun-val">${d.bestColor ? TEAM_LABEL[d.bestColor[0]] : "—"}</div><div class="dbx2-fun-sub">${d.bestColor ? `${Math.round(d.bestColor[1]*100)}% de victoires` : ""}</div></div>
+      <div class="dbx-card dbx2-fun-card"><div class="dbx2-fun-ico">🏆</div><div class="dbx2-fun-lbl">Trophées MVP</div><div class="dbx2-fun-val">${d.mvp}</div><div class="dbx2-fun-sub">sur la période</div></div>
+    </div>`;
+  }
+
+  h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Face à face</span><span class="dbx-sec-note">Repris de Récompenses</span></div>`;
+  h += `<div class="dbx-card dbx2-h2h-card">
+    <div class="riv-selects" style="justify-content:center">
+      <select id="dbx2-h2h-a"></select>
+      <select id="dbx2-h2h-b"></select>
+      <select id="dbx2-h2h-period">
+        <option value="all">All time</option>
+        <option value="year">Cette saison</option>
+        <option value="month">Ce mois</option>
+      </select>
+    </div>
+    <div id="dbx2-h2h-body"></div>
+  </div>`;
+
+  return h;
+}
+
+/* ══════════════════════════════════════════════════════════
+   DASHBOARD XXL — sélecteurs de portée / contexte / face à face
+══════════════════════════════════════════════════════════ */
+function _dbxRosterForPicker() {
+  const roster = ALL_PLAYERS.filter(p => !JOKERS.has(p)).sort((a,b) => a.localeCompare(b,'fr'));
+  const jokers = ALL_PLAYERS.filter(p => JOKERS.has(p)).sort((a,b) => a.localeCompare(b,'fr'));
+  return { roster, jokers, all: [...roster, ...jokers] };
+}
+
+function _dbxPlayerOptsHtml(selected) {
+  const { roster, jokers } = _dbxRosterForPicker();
+  return [
+    ...roster.map(p => `<option value="${p}"${p===selected?' selected':''}>${p}</option>`),
+    jokers.length ? `<option disabled>──────────</option>` : '',
+    ...jokers.map(p => `<option value="${p}"${p===selected?' selected':''}>${p} [+1]</option>`),
+  ].join("");
+}
+
+function _dbxRenderContext() {
+  const el = document.getElementById("dbx2-context-row");
+  if (!el) return;
+  if (dbxScope === "team") {
+    el.innerHTML = ["Rouge","Vert","Bleue"].map(t =>
+      `<button type="button" class="dbx2-team-pill ${teamCls(t)}${t===dbxTeam?' active':''}" data-team="${t}"><span class="dbx2-pill-dot" style="background:var(--${teamCls(t)})"></span>${TEAM_LABEL[t]}</button>`
+    ).join("");
+    el.querySelectorAll(".dbx2-team-pill").forEach(btn => btn.addEventListener("click", () => {
+      dbxTeam = btn.dataset.team;
+      _dbxRenderContext();
+      renderDashboard();
+    }));
+  } else if (dbxScope === "player") {
+    const { all } = _dbxRosterForPicker();
+    if (!dbxPlayer || !all.includes(dbxPlayer)) dbxPlayer = all[0] || null;
+    if (!all.length) { el.innerHTML = ""; return; }
+    el.innerHTML = `<select class="dbx2-player-select-main" id="dbx2-player-select">${_dbxPlayerOptsHtml(dbxPlayer)}</select>`;
+    document.getElementById("dbx2-player-select").addEventListener("change", e => {
+      dbxPlayer = e.target.value;
+      renderDashboard();
+    });
+  } else {
+    el.innerHTML = "";
+  }
+}
+
+/* Face à face joueur (reprend Rivalités de l'onglet Récompenses telle quelle :
+   computeRivalites / renderRivBody, seule l'UI de sélection est réintégrée ici) */
+function _dbxWireH2H(defaultPlayer) {
+  const selA = document.getElementById("dbx2-h2h-a");
+  const selB = document.getElementById("dbx2-h2h-b");
+  const selP = document.getElementById("dbx2-h2h-period");
+  if (!selA || !selB || !selP) return;
+  const { all } = _dbxRosterForPicker();
+  if (!all.length) return;
+  selA.innerHTML = _dbxPlayerOptsHtml(null);
+  selB.innerHTML = _dbxPlayerOptsHtml(null);
+  selA.value = all.includes(defaultPlayer) ? defaultPlayer : all[0];
+  const altB = all.find(p => p !== selA.value);
+  selB.value = altB || all[0];
+  const renderBody = () => {
+    let a = selA.value, b = selB.value;
+    if (a === b) { const alt = all.find(p => p !== a); if (alt) { b = alt; selB.value = b; } }
+    document.getElementById("dbx2-h2h-body").innerHTML = renderRivBody(a, b, selP.value);
+  };
+  selA.addEventListener("change", renderBody);
+  selB.addEventListener("change", renderBody);
+  selP.addEventListener("change", renderBody);
+  renderBody();
+}
+
+function _dbxPlaceHi(hi, btn) {
+  if (!hi || !btn) return;
+  hi.style.left = btn.offsetLeft + "px";
+  hi.style.width = btn.offsetWidth + "px";
+}
+
+(function _dbxInitScopeSeg() {
+  const seg = document.getElementById("dbx2-scope-seg");
+  if (!seg) return;
+  const hi = document.getElementById("dbx2-scope-hi");
+  seg.querySelectorAll(".dbx-seg-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      seg.querySelectorAll(".dbx-seg-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      _dbxPlaceHi(hi, btn);
+      dbxScope = btn.dataset.scope;
+      _dbxRenderContext();
+      renderDashboard();
+    });
+  });
+  requestAnimationFrame(() => _dbxPlaceHi(hi, seg.querySelector(".dbx-seg-btn.active")));
+  window.addEventListener("resize", () => _dbxPlaceHi(hi, seg.querySelector(".dbx-seg-btn.active")));
+})();
+
+(function _dbxInitPeriodSelect() {
+  const sel = document.getElementById("dbx2-period-select");
+  if (!sel) return;
+  sel.value = currentPeriod;
+  sel.addEventListener("change", e => {
+    currentPeriod = e.target.value;
+    history.replaceState(null, '', '#' + currentPeriod);
+    updateSubFilter(currentPeriod);
+    renderDashboard();
+  });
+})();
+
+/* ══════════════════════════════════════════════════════════
+   DASHBOARD XXL — dispatcher principal (Globales / Équipes / Joueurs)
+══════════════════════════════════════════════════════════ */
 function renderDashboard() {
-  const sessions = filterSessions(currentPeriod);
   const dash = document.getElementById("dash");
 
   const latestDate = SESSIONS.length
@@ -4358,37 +5129,45 @@ function renderDashboard() {
     : "—";
   document.getElementById("header-sub").textContent = `Dernière session : ${latestDate}`;
 
+  _dbxRenderContext();
+
+  const sessions = filterSessions(currentPeriod);
   if (!sessions.length) {
     dash.innerHTML = '<p class="no-data" style="margin-top:2rem">Aucune session pour cette période.</p>';
     return;
   }
 
-  const agg = _dbxComputeAgg(sessions);
   let h = "";
-
-  h += _dbxRenderHero(agg);
-
-  h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Comparatif équipes</span><span class="dbx-sec-note">Victoires, forme et différentiel</span></div>`;
-  h += _dbxRenderCompare(agg);
-
-  h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Tendance</span></div>`;
-  h += _dbxTrendChart(agg);
-
-  h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Matchs marquants</span></div>`;
-  h += _dbxHighlightCards(agg);
-
-  h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Classements</span><span class="dbx-sec-note">Sur la période sélectionnée</span></div>`;
-  h += `<div class="dbx-lead-grid">
-    ${_dbxLeaderCol("Buteurs","⚽",agg.topScorers,"buts")}
-    ${_dbxLeaderCol("Passeurs","🎯",agg.topAssists,"passes")}
-    ${_dbxLeaderCol("Présences","✅",agg.topPresence,"presences")}
-  </div>`;
-
-  h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Assiduité</span></div>`;
-  h += _dbxRenderAssiduity(agg);
+  if (dbxScope === "team") {
+    h = _dbxRenderTeamScope(sessions, dbxTeam);
+  } else if (dbxScope === "player") {
+    if (!dbxPlayer) {
+      dash.innerHTML = '<p class="no-data" style="margin-top:2rem">Aucun joueur disponible.</p>';
+      return;
+    }
+    h = _dbxRenderPlayerScope(sessions, dbxPlayer);
+  } else {
+    const agg = _dbxComputeAgg(sessions);
+    h += _dbxRenderHero(agg);
+    h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Comparatif équipes</span><span class="dbx-sec-note">Victoires, forme et différentiel</span></div>`;
+    h += _dbxRenderCompare(agg);
+    h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Tendance</span></div>`;
+    h += _dbxGlobalTrendChart(agg);
+    h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Matchs marquants</span></div>`;
+    h += _dbxHighlightCards(agg);
+    h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Classements</span><span class="dbx-sec-note">Sur la période sélectionnée</span></div>`;
+    h += `<div class="dbx-lead-grid">
+      ${_dbxLeaderCol("Buteurs","⚽",agg.topScorers,"buts")}
+      ${_dbxLeaderCol("Passeurs","🎯",agg.topAssists,"passes")}
+      ${_dbxLeaderCol("Présences","✅",agg.topPresence,"presences")}
+    </div>`;
+    h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Assiduité</span></div>`;
+    h += _dbxRenderAssiduity(agg);
+  }
 
   dash.innerHTML = h;
   animateView(dash);
+  if (dbxScope === "player") _dbxWireH2H(dbxPlayer);
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -4503,34 +5282,6 @@ function _goToSaisie() {
   renderSaisie();
 }
 document.getElementById("saisie-nav-btn").addEventListener("click", _goToSaisie);
-
-/* Segment « Session / Mois / Saison / All-time » — highlight glissant.
-   Mesure uniquement la position/largeur de son propre bouton actif
-   (pas de couplage avec un autre élément indépendant). */
-function _dbxPlaceSegHi(btn) {
-  const hi = document.getElementById("dbx-seg-hi");
-  if (!hi || !btn) return;
-  hi.style.left = btn.offsetLeft + "px";
-  hi.style.width = btn.offsetWidth + "px";
-}
-(function _dbxInitSeg() {
-  const seg = document.getElementById("dbx-seg");
-  if (!seg) return;
-  seg.querySelectorAll(".dbx-seg-btn").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.period === currentPeriod);
-    btn.addEventListener("click", () => {
-      seg.querySelectorAll(".dbx-seg-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      _dbxPlaceSegHi(btn);
-      currentPeriod = btn.dataset.period;
-      history.replaceState(null, '', '#' + currentPeriod);
-      updateSubFilter(currentPeriod);
-      renderDashboard();
-    });
-  });
-  requestAnimationFrame(() => _dbxPlaceSegHi(seg.querySelector(".dbx-seg-btn.active")));
-  window.addEventListener("resize", () => _dbxPlaceSegHi(seg.querySelector(".dbx-seg-btn.active")));
-})();
 
 /* Fermeture du sélecteur de session du Dashboard au clic extérieur
    (motif sess-dd existant, espace de noms dbx- dédié). */
@@ -6854,11 +7605,10 @@ document.addEventListener("click", e => {
     const _tabKey = _hash === "sessions" ? "session" : _hash;
     document.querySelectorAll(".main-tab").forEach(t => t.classList.toggle("active", t.dataset.tab === _tabKey));
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === `panel-${_tabKey}`));
-  } else if (_hash === "last" || ["session","month","year","all"].includes(_hash)) {
+  } else if (_hash === "last" || ["session","month","year","custom","all"].includes(_hash)) {
     currentPeriod = _hash === "last" ? "session" : _hash; // "last" = ancien lien, alias de "session"
-    const segBtn = document.querySelector(`.dbx-seg-btn[data-period="${currentPeriod}"]`);
-    document.querySelectorAll(".dbx-seg-btn").forEach(b => b.classList.toggle("active", b === segBtn));
-    if (segBtn) requestAnimationFrame(() => _dbxPlaceSegHi(segBtn));
+    const periodSel = document.getElementById("dbx2-period-select");
+    if (periodSel) periodSel.value = currentPeriod;
   }
   updateSubFilter(currentPeriod);
   renderDashboard();
