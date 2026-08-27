@@ -1593,8 +1593,8 @@
   </div>
   <div class="hnav-tabsrow">
     <div class="main-tabs">
-      <button class="main-tab" data-tab="session">Sessions</button>
-      <button class="main-tab active" data-tab="dashboard">Dashboard</button>
+      <button class="main-tab active" data-tab="session">Sessions</button>
+      <button class="main-tab" data-tab="dashboard">Dashboard</button>
       <button class="main-tab" data-tab="joueurs">Effectif</button>
       <button class="main-tab" data-tab="stats">Récompenses</button>
     </div>
@@ -1628,7 +1628,7 @@
 <div class="container">
 
   <!-- ── Onglet Dashboard ── -->
-  <div class="tab-panel active" id="panel-dashboard">
+  <div class="tab-panel" id="panel-dashboard">
     <div class="dbx2-scope-row">
       <div class="dbx-seg" id="dbx2-scope-seg">
         <div class="dbx-seg-hi" id="dbx2-scope-hi"></div>
@@ -1658,7 +1658,7 @@
   </div>
 
   <!-- ── Onglet Résultats de session ── -->
-  <div class="tab-panel" id="panel-session">
+  <div class="tab-panel active" id="panel-session">
     <div class="session-selector">
       <label for="session-date">Session :</label>
       <div class="sess-dd" id="sess-dd">
@@ -1710,7 +1710,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 27/08/2026 - 16:46</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 27/08/2026 - 16:53</footer>
 
 <script>
 
@@ -3967,10 +3967,9 @@ function renderRivBody(pA, pB, period) {
         <span style="font-size:40px;font-weight:800;line-height:1;color:var(--text3)">${t.dA}</span>
         <span style="font-size:40px;font-weight:800;line-height:1;color:${lCol}">${t.lA}</span>
       </div>
-      <div class="riv-foot" style="display:block">
-        <span style="font-weight:700;color:var(--text)">${pA}</span> : <strong style="color:var(--text2)">${t.gA}</strong> but${t.gA>1?'s':''} · <strong style="color:var(--text2)">${t.aA}</strong> <span class="assist-full">assist${t.aA>1?'s':''}</span><span class="assist-short">ass.</span>
-        <br>
-        <span style="font-weight:700;color:var(--text)">${pB}</span> : <strong style="color:var(--text2)">${t.gB}</strong> but${t.gB>1?'s':''} · <strong style="color:var(--text2)">${t.aB}</strong> <span class="assist-full">assist${t.aB>1?'s':''}</span><span class="assist-short">ass.</span>
+      <div class="riv-foot">
+        <span><span style="font-weight:700;color:var(--text)">${pA}</span> : <strong style="color:var(--text2)">${t.gA}</strong> but${t.gA>1?'s':''} · <strong style="color:var(--text2)">${t.aA}</strong> <span class="assist-full">assist${t.aA>1?'s':''}</span><span class="assist-short">ass.</span></span>
+        <span><span style="font-weight:700;color:var(--text)">${pB}</span> : <strong style="color:var(--text2)">${t.gB}</strong> but${t.gB>1?'s':''} · <strong style="color:var(--text2)">${t.aB}</strong> <span class="assist-full">assist${t.aB>1?'s':''}</span><span class="assist-short">ass.</span></span>
       </div>
     </div>`;
   } else {
@@ -4437,8 +4436,9 @@ function _dbx2FormChipsHtml(form) {
   return `<div class="dbx2-hero-form">${form.map(r => `<span class="dbx-form-chip ${r}">${r==="w"?"V":r==="n"?"N":"D"}</span>`).join("")}</div>`;
 }
 
-function _dbx2DonutSvg(slices, size) {
+function _dbx2DonutSvg(slices, size, unitLabel) {
   size = size || 150;
+  unitLabel = unitLabel || "matchs";
   const r = size/2 - 16, cx = size/2, cy = size/2, circ = 2*Math.PI*r;
   const total = slices.reduce((a,s)=>a+s.value,0) || 1;
   let offset = 0;
@@ -4454,7 +4454,7 @@ function _dbx2DonutSvg(slices, size) {
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--bg3)" stroke-width="16"/>
     ${rings}
     <text x="${cx}" y="${cy-3}" text-anchor="middle" font-size="21" font-weight="700" fill="var(--text)" font-family="inherit">${total}</text>
-    <text x="${cx}" y="${cy+15}" text-anchor="middle" font-size="9.5" fill="var(--text3)" font-family="inherit">matchs</text>
+    <text x="${cx}" y="${cy+15}" text-anchor="middle" font-size="9.5" fill="var(--text3)" font-family="inherit">${unitLabel}</text>
   </svg>`;
 }
 
@@ -4946,7 +4946,7 @@ function _dbxRenderPlayerScope(sessions, player) {
   } else {
     h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Répartition &amp; profil</span><span class="dbx-sec-note">${player} vs moyenne du groupe</span></div>`;
     const colorEntries = Object.entries(d.colorMatches).filter(([,v])=>v>0);
-    const donut = colorEntries.length ? _dbx2DonutSvg(colorEntries.map(([c,v]) => ({ value:v, color:`var(--${teamCls(c)})` })), 196) : `<p class="no-data">Aucune donnée.</p>`;
+    const donut = colorEntries.length ? _dbx2DonutSvg(colorEntries.map(([c,v]) => ({ value:v, color:`var(--${teamCls(c)})` })), 196, "sessions") : `<p class="no-data">Aucune donnée.</p>`;
     const legend = colorEntries.map(([c,v]) => `<span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:var(--${teamCls(c)})"></span>${TEAM_LABEL[c]} ${v}</span>`).join("");
 
     const RAXES = [ {key:"atk",label:"Attaque"}, {key:"pass",label:"Passes"}, {key:"gk",label:"Gardien"}, {key:"win",label:"Victoires"}, {key:"def",label:"Défense"} ];
@@ -4961,7 +4961,7 @@ function _dbxRenderPlayerScope(sessions, player) {
 
     h += `<div class="dbx2-viz-row">
       <div class="dbx-card dbx2-viz-card">
-        <div class="dbx2-viz-title">Répartition par équipe</div><div class="dbx2-viz-note">Nombre de matchs joués par couleur</div>
+        <div class="dbx2-viz-title">Répartition par équipe</div><div class="dbx2-viz-note">Nombre de sessions jouées par couleur</div>
         ${donut}
         <div class="dbx2-viz-legend">${legend}</div>
       </div>
