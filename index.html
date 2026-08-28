@@ -1708,7 +1708,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 11:36</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 11:41</footer>
 
 <script>
 
@@ -4487,23 +4487,16 @@ function _dbxHighlightCards(agg) {
   return `<div class="dbx-hl-grid">${card("Plus gros score", agg.mostGoals)}${card("Plus grand écart", agg.biggestAmp)}</div>`;
 }
 
-/* homeColor : { [nom]: "Rouge"|"Vert"|"Bleue" } optionnel — si la couleur d un joueur
-   diverge de viewColor (portee Equipe), on affiche son pastille d origine devant son nom
-   (ex: un "mercenaire" ayant marque pour cette equipe alors qu il joue ailleurs). */
-function _dbxLeaderCol(title, icon, entries, unit, viewColor, homeColor) {
+function _dbxLeaderCol(title, icon, entries, unit) {
   if (!entries.length) return `<div class="dbx-card dbx-lead-card"><div class="dbx-lead-head">${icon} ${title}</div><div class="dbx-lead-empty">Aucune donnée</div></div>`;
   const max = entries[0][1][unit];
-  const rows = entries.map(([name,p],i) => {
-    const home = homeColor && homeColor[name];
-    const tag = (viewColor && home && home !== viewColor) ? dot(home) : "";
-    return `
+  const rows = entries.map(([name,p],i) => `
     <div class="dbx-lead-row r${i+1}">
       <div class="dbx-lead-rank">${i+1}</div>
-      <div class="dbx-lead-name">${tag}${pLink(name)}</div>
+      <div class="dbx-lead-name">${pLink(name)}</div>
       <div class="dbx-lead-bar-wrap"><div class="dbx-lead-bar" style="width:${max?p[unit]/max*100:0}%"></div></div>
       <div class="dbx-lead-val">${p[unit]}</div>
-    </div>`;
-  }).join("");
+    </div>`).join("");
   return `<div class="dbx-card dbx-lead-card"><div class="dbx-lead-head">${icon} ${title}</div>${rows}</div>`;
 }
 
@@ -4706,13 +4699,9 @@ function _dbxComputeTeamAgg(sessions, color) {
   const played = w + n + l;
   const byAlpha = (a,b) => a[0].localeCompare(b[0], "fr");
   // Liste complete (plus de top 5) : un joueur peut avoir marque/passe pour cette equipe
-  // en depannage ("mercenaire") sans y etre habituellement affecte.
-  const scorers = Object.entries(scorerTally).sort((a,b) => b[1]-a[1] || byAlpha(a,b));
-  const assists = Object.entries(assistTally).sort((a,b) => b[1]-a[1] || byAlpha(a,b));
-  // Couleur d equipe la plus frequente de chaque joueur sur TOUTE la periode (indépendant
-  // du fait qu il ait marque ou non ce soir-la) — sert a reperer les "mercenaires" dans
-  // les classements buteurs/passeurs de cette equipe (ex: un joueur habituellement chez
-  // les Jaunes qui a depanne et marque pour cette equipe).
+  // en depannage ("mercenaire") — on ne les compte pas dans les buteurs/passeurs de
+  // cette equipe, seulement pour celle a laquelle ils appartiennent le plus souvent sur
+  // la periode (une meme personne peut etre mercenaire ailleurs a differents moments).
   const colorTally = {};
   sessions.forEach(s => {
     Object.entries(s.presences || {}).forEach(([nm, info]) => {
@@ -4721,18 +4710,19 @@ function _dbxComputeTeamAgg(sessions, color) {
       colorTally[nm][info.equipe] = (colorTally[nm][info.equipe]||0) + 1;
     });
   });
-  const homeColor = {};
-  [...scorers, ...assists].forEach(([nm]) => {
-    if (homeColor[nm] !== undefined) return;
+  const isHome = nm => {
     const t = colorTally[nm];
-    homeColor[nm] = t ? Object.entries(t).sort((a,b) => b[1]-a[1])[0][0] : null;
-  });
+    if (!t) return false;
+    return Object.entries(t).sort((a,b) => b[1]-a[1])[0][0] === color;
+  };
+  const scorers = Object.entries(scorerTally).filter(([nm]) => isHome(nm)).sort((a,b) => b[1]-a[1] || byAlpha(a,b));
+  const assists = Object.entries(assistTally).filter(([nm]) => isHome(nm)).sort((a,b) => b[1]-a[1] || byAlpha(a,b));
   let bestStreak = 0, cur = 0;
   results.forEach(r => { if (r === "w") { cur++; bestStreak = Math.max(bestStreak, cur); } else cur = 0; });
   const vsEntries = Object.entries(vs);
   const nemesis = vsEntries.length ? [...vsEntries].sort((a,b) => (a[1].w/a[1].played) - (b[1].w/b[1].played))[0] : null;
   const form = results.slice(-5);
-  return { color, played, w, n, l, gf, ga, cleanSheets, scorers, assists, homeColor, vs, biggestWin, worstLoss, bestStreak, nemesis, form, results, goalsBySession, assistsBySession };
+  return { color, played, w, n, l, gf, ga, cleanSheets, scorers, assists, vs, biggestWin, worstLoss, bestStreak, nemesis, form, results, goalsBySession, assistsBySession };
 }
 
 /* Agregation match par match pour un joueur (reutilisee pour lui-meme ET pour
@@ -5022,8 +5012,8 @@ function _dbxRenderTeamScope(sessions, color) {
 
   h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Buteurs &amp; passeurs — ${TEAM_LABEL[color]}</span></div>`;
   h += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-    ${_dbxLeaderCol("Buteurs","⚽", d.scorers.map(([nm,c])=>[nm,{buts:c}]), "buts", color, d.homeColor)}
-    ${_dbxLeaderCol("Passeurs","🎯", d.assists.map(([nm,c])=>[nm,{passes:c}]), "passes", color, d.homeColor)}
+    ${_dbxLeaderCol("Buteurs","⚽", d.scorers.map(([nm,c])=>[nm,{buts:c}]), "buts")}
+    ${_dbxLeaderCol("Passeurs","🎯", d.assists.map(([nm,c])=>[nm,{passes:c}]), "passes")}
   </div>`;
 
   h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Moments forts</span></div>`;
