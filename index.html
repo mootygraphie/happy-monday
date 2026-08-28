@@ -1708,7 +1708,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 11:41</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 11:55</footer>
 
 <script>
 
@@ -2002,6 +2002,12 @@ async function _fbLoadFromNetwork() {
     ABSENTS = new Set(cfg.absents);
     localStorage.setItem('hmft_absents', JSON.stringify(cfg.absents));
   }
+  if (cfg.inactifs) {
+    INACTIFS = new Set(cfg.inactifs);
+    localStorage.setItem('hmft_inactifs', JSON.stringify(cfg.inactifs));
+  } else {
+    _db.ref('config/inactifs').set([...INACTIFS]).catch(() => {});
+  }
 }
 
 async function _fbSaveSession(session) {
@@ -2047,6 +2053,9 @@ const ALL_PLAYERS = [
 */
 let JOKERS  = new Set(JSON.parse(localStorage.getItem('hmft_jokers')  || 'null') || ["Hamine","Marius","Harone","Alexi","Godefroy"]);
 let ABSENTS = new Set(JSON.parse(localStorage.getItem('hmft_absents') || 'null') || []);
+/* Inactifs : desactives par un admin, masques de tout le monde sauf des admins
+   (contrairement aux Absents, visibles de tous dans Effectif). */
+let INACTIFS = new Set(JSON.parse(localStorage.getItem('hmft_inactifs') || 'null') || ["Laury"]);
 function _saveJokers() {
   const arr = [...JOKERS];
   localStorage.setItem('hmft_jokers', JSON.stringify(arr));
@@ -2056,6 +2065,11 @@ function _saveAbsents() {
   const arr = [...ABSENTS];
   localStorage.setItem('hmft_absents', JSON.stringify(arr));
   if (_db) _db.ref('config/absents').set(arr).catch(e => console.error('FB absents:', e));
+}
+function _saveInactifs() {
+  const arr = [...INACTIFS];
+  localStorage.setItem('hmft_inactifs', JSON.stringify(arr));
+  if (_db) _db.ref('config/inactifs').set(arr).catch(e => console.error('FB inactifs:', e));
 }
 
 /* Joueurs ajoutés via saisie (+1 temp) — localStorage pour rendu instantané, Firebase source de vérité */
@@ -5160,9 +5174,9 @@ function _dbxRenderPlayerScope(sessions, player) {
    DASHBOARD XXL — sélecteurs de portée / contexte / face à face
 ══════════════════════════════════════════════════════════ */
 function _dbxRosterForPicker() {
-  const roster  = ALL_PLAYERS.filter(p => !JOKERS.has(p) && !ABSENTS.has(p)).sort((a,b) => a.localeCompare(b,'fr'));
-  const jokers  = ALL_PLAYERS.filter(p => JOKERS.has(p)).sort((a,b) => a.localeCompare(b,'fr'));
-  const absents = ALL_PLAYERS.filter(p => ABSENTS.has(p)).sort((a,b) => a.localeCompare(b,'fr'));
+  const roster  = ALL_PLAYERS.filter(p => !JOKERS.has(p) && !ABSENTS.has(p) && !INACTIFS.has(p)).sort((a,b) => a.localeCompare(b,'fr'));
+  const jokers  = ALL_PLAYERS.filter(p => JOKERS.has(p) && !INACTIFS.has(p)).sort((a,b) => a.localeCompare(b,'fr'));
+  const absents = ALL_PLAYERS.filter(p => ABSENTS.has(p) && !INACTIFS.has(p)).sort((a,b) => a.localeCompare(b,'fr'));
   return { roster, jokers, absents, all: [...roster, ...jokers, ...absents] };
 }
 
@@ -5575,10 +5589,10 @@ function renderJoueurs() {
     taux: totalSessions > 0 ? Math.round(r.presences / totalSessions * 100) : 0
   }));
 
-  const rosterRows = rowsWithTaux.filter(r => !JOKERS.has(r.name) && !ABSENTS.has(r.name));
-  const jokerRows  = rowsWithTaux.filter(r =>  JOKERS.has(r.name));
+  const rosterRows = rowsWithTaux.filter(r => !JOKERS.has(r.name) && !ABSENTS.has(r.name) && !INACTIFS.has(r.name));
+  const jokerRows  = rowsWithTaux.filter(r =>  JOKERS.has(r.name) && !INACTIFS.has(r.name));
 
-  const _initialsMap = computeAllInitials([...new Set([...ALL_PLAYERS, ...rowsWithTaux.map(r => r.name), ...ABSENTS])]);
+  const _initialsMap = computeAllInitials([...new Set([...ALL_PLAYERS, ...rowsWithTaux.map(r => r.name), ...ABSENTS, ...INACTIFS])]);
 
   function sortArr(arr, s) {
     return [...arr].sort((a, b) => {
@@ -5621,7 +5635,10 @@ function renderJoueurs() {
   function buildRosterCard(r) {
     const tCls = r.taux >= 75 ? "high" : r.taux >= 40 ? "mid" : "low";
     const chips = chip("❌", r.absences, "danger") + chip("🤕", r.blesses, "warn") + chip("⁉️", r.pasRepondu, "warn") + chip("🎒", r.sac) + chip("👕", r.maillots);
-    const action = isAdmin ? `<div class="roster-actions"><button data-action="to-joker" data-player="${r.name}" title="Passer en occasionnel">🔽</button></div>` : "";
+    const action = isAdmin ? `<div class="roster-actions">
+      <button data-action="to-joker" data-player="${r.name}" title="Passer en occasionnel">🔽</button>
+      <button data-action="to-inactif" data-player="${r.name}" title="Désactiver">🚫</button>
+    </div>` : "";
     return `<div class="roster-card">
       <div class="roster-avatar">${initials(r.name)}</div>
       <div class="roster-main">
@@ -5640,6 +5657,7 @@ function renderJoueurs() {
     const action = isAdmin ? `<div class="roster-actions">
       <button data-action="to-roster" data-player="${r.name}" title="Passer en régulier">🔼</button>
       <button data-action="to-absent" data-player="${r.name}" title="Marquer absent pour la saison">🔽</button>
+      <button data-action="to-inactif" data-player="${r.name}" title="Désactiver">🚫</button>
     </div>` : "";
     return `<div class="roster-card">
       <div class="roster-avatar dim">${initials(r.name)}</div>
@@ -5652,7 +5670,10 @@ function renderJoueurs() {
   }
 
   function buildAbsentCard(name) {
-    const action = isAdmin ? `<div class="roster-actions"><button data-action="to-joker" data-player="${name}" title="Passer en occasionnel">🔼</button></div>` : "";
+    const action = isAdmin ? `<div class="roster-actions">
+      <button data-action="to-joker" data-player="${name}" title="Passer en occasionnel">🔼</button>
+      <button data-action="to-inactif" data-player="${name}" title="Désactiver">🚫</button>
+    </div>` : "";
     return `<div class="roster-card">
       <div class="roster-avatar dim">${initials(name)}</div>
       <div class="roster-main">
@@ -5663,10 +5684,24 @@ function renderJoueurs() {
     </div>`;
   }
 
+  function buildInactifCard(name) {
+    const action = isAdmin ? `<div class="roster-actions"><button data-action="to-roster" data-player="${name}" title="Réactiver">🔼</button></div>` : "";
+    return `<div class="roster-card">
+      <div class="roster-avatar dim">${initials(name)}</div>
+      <div class="roster-main">
+        <button class="roster-name player-link" data-player="${name}">${name}</button>
+        <div class="roster-sub">Inactif</div>
+      </div>
+      ${action}
+    </div>`;
+  }
+
   const rosterCards = sortArr(rosterRows, rosterSort).map(buildRosterCard).join("");
   const jokerCards  = sortArr(jokerRows, jokerSort).map(buildJokerCard).join("");
   const absentNames = [...ABSENTS].sort((a,b) => a.localeCompare(b,'fr'));
   const absentCards = absentNames.map(buildAbsentCard).join("");
+  const inactifNames = [...INACTIFS].sort((a,b) => a.localeCompare(b,'fr'));
+  const inactifCards = inactifNames.map(buildInactifCard).join("");
 
   const jokerSection = jokerRows.length > 0 ? `
     <div class="joueurs-section-label" style="margin-top:2rem">Occasionnels (${jokerRows.length})</div>
@@ -5677,11 +5712,16 @@ function renderJoueurs() {
     <div class="joueurs-section-label" style="margin-top:2rem">Absents pour la saison (${absentNames.length})</div>
     <div class="roster-list">${absentCards}</div>` : '';
 
+  // Inactifs : reserve aux admins, invisible du reste des utilisateurs.
+  const inactifSection = (isAdmin && inactifNames.length > 0) ? `
+    <div class="joueurs-section-label" style="margin-top:2rem">Inactifs (${inactifNames.length})</div>
+    <div class="roster-list">${inactifCards}</div>` : '';
+
   container.innerHTML = `
     <div class="joueurs-section-label">Réguliers (${rosterRows.length})</div>
     ${buildSortRow("roster-sort", colDef, rosterSort)}
     <div class="roster-list">${rosterCards}</div>
-    ${jokerSection}${absentSection}`;
+    ${jokerSection}${absentSection}${inactifSection}`;
 
   bindSortRow("roster-sort", rosterSort);
   bindSortRow("jokers-sort", jokerSort);
@@ -5689,13 +5729,14 @@ function renderJoueurs() {
 
 document.getElementById("joueurs-content").addEventListener("click", e => {
   const btn = e.target.closest('[data-action]');
-  if (!btn || !['to-roster','to-joker','to-absent'].includes(btn.dataset.action)) return;
+  if (!btn || !['to-roster','to-joker','to-absent','to-inactif'].includes(btn.dataset.action)) return;
   e.stopPropagation();
   const player = btn.dataset.player;
   const action = btn.dataset.action;
-  if (action === 'to-roster')  { JOKERS.delete(player); ABSENTS.delete(player); _saveJokers(); _saveAbsents(); }
-  if (action === 'to-joker')   { ABSENTS.delete(player); JOKERS.add(player);    _saveAbsents(); _saveJokers(); }
-  if (action === 'to-absent')  { JOKERS.delete(player); ABSENTS.add(player);    _saveJokers(); _saveAbsents(); }
+  if (action === 'to-roster')  { JOKERS.delete(player); ABSENTS.delete(player); INACTIFS.delete(player); _saveJokers(); _saveAbsents(); _saveInactifs(); }
+  if (action === 'to-joker')   { ABSENTS.delete(player); INACTIFS.delete(player); JOKERS.add(player);    _saveAbsents(); _saveInactifs(); _saveJokers(); }
+  if (action === 'to-absent')  { JOKERS.delete(player); INACTIFS.delete(player); ABSENTS.add(player);    _saveJokers(); _saveInactifs(); _saveAbsents(); }
+  if (action === 'to-inactif') { JOKERS.delete(player); ABSENTS.delete(player); INACTIFS.add(player);    _saveJokers(); _saveAbsents(); _saveInactifs(); }
   renderJoueurs();
 });
 
@@ -6418,7 +6459,7 @@ function openPlayerPanel(playerName) {
   document.getElementById("pp-name").textContent = playerName;
   const _ppBadgeEl = document.getElementById("pp-statut-badge");
   if (_ppBadgeEl) {
-    const _ppStatut = ABSENTS.has(playerName) ? 'quitte' : JOKERS.has(playerName) ? 'plus1' : 'actif';
+    const _ppStatut = (ABSENTS.has(playerName) || INACTIFS.has(playerName)) ? 'quitte' : JOKERS.has(playerName) ? 'plus1' : 'actif';
     const _ppS = REGL_STATUTS[_ppStatut];
     _ppBadgeEl.innerHTML = `<span class="regl-badge ${_ppS.badge}">${_ppS.label}</span>`;
   }
@@ -6603,8 +6644,8 @@ function _sortPresentFirst(list) {
   });
 }
 function _buildPresencesScreenHTML() {
-  const regularPlayers = ALL_PLAYERS.filter(p => !JOKERS.has(p) && !ABSENTS.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
-  const jokerPlayers = ALL_PLAYERS.filter(p => JOKERS.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
+  const regularPlayers = ALL_PLAYERS.filter(p => !JOKERS.has(p) && !ABSENTS.has(p) && !INACTIFS.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
+  const jokerPlayers = ALL_PLAYERS.filter(p => JOKERS.has(p) && !INACTIFS.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
   const tempJokers = _draft.tempJokers || [];
   const byStatut = (list, s) => list.filter(p => (_draft.presences[p]?.statut || "Pas répondu") === s);
 
