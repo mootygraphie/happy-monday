@@ -1708,7 +1708,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 11:55</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 12:44</footer>
 
 <script>
 
@@ -2656,7 +2656,7 @@ function _matchGoalsRecapHTML(buteurs, passeurs) {
     if (!b) return;
     if (!groups[b]) { groups[b] = { count: 0, passeurs: [] }; order.push(b); }
     groups[b].count++;
-    if (b !== "CSC") groups[b].passeurs.push(passeurs[j] || null);
+    groups[b].passeurs.push(passeurs[j] || null);
   });
   return order.map(name => {
     const g = groups[name];
@@ -2664,8 +2664,10 @@ function _matchGoalsRecapHTML(buteurs, passeurs) {
     const nameHtml = isCsc ? `<em>CSC</em>` : `<span style="color:var(--text2)">${name}</span>`;
     let scorerHtml = g.count > 1 ? `${nameHtml} ×${g.count}` : nameHtml;
     if (g.count >= 3) scorerHtml = `<span class="mgr-highlight">${scorerHtml}</span>`;
+    // Pour un CSC, le champ "passeur" sert a noter le malheureux buteur (Saisie) —
+    // on l affiche entre parentheses comme un assist normal.
     let assistHtml = "";
-    if (!isCsc && g.passeurs.some(p => p)) {
+    if (g.passeurs.some(p => p)) {
       const aOrder = [], aCounts = {};
       g.passeurs.forEach(p => {
         const key = p || "ø";
