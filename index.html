@@ -836,6 +836,9 @@
   .saisie-chip.team-bleue { background: var(--bleu-bg);  border-color: var(--bleu-border); }
   .saisie-jokers-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin: 18px 0 8px; }
   .saisie-joker-add { display: flex; gap: 8px; margin-top: 12px; }
+  .saisie-auto-teams { display: flex; align-items: center; gap: 10px; margin: 4px 0 16px; flex-wrap: wrap; }
+  .saisie-auto-teams-note { font-size: 12px; color: var(--text2); }
+  .saisie-auto-teams-hint { font-size: 12px; color: var(--text2); margin: 4px 0 16px; }
   .saisie-joker-add input { flex: 1; max-width: 220px; }
 
   /* Logistique */
@@ -1460,6 +1463,14 @@
   }
   .dbx2-period-select-mini:hover { color: var(--text2); }
   .dbx2-date-sep { color: var(--text3); font-size: 11px; }
+  .dbx2-compare-toggle { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text3); cursor: pointer; user-select: none; }
+  .dbx2-compare-toggle:hover { color: var(--text2); }
+  .dbx2-compare-toggle input { accent-color: var(--gold); margin: 0; }
+  .dbx-hero-delta { display: inline-block; margin-left: 8px; font-size: 12px; font-weight: 700; vertical-align: middle; }
+  .dbx-hero-delta.up { color: var(--good); }
+  .dbx-hero-delta.down { color: var(--bad); }
+  .dbx-hero-delta.flat { color: var(--text3); }
+  .dbx-hero-delta.na { color: var(--text3); opacity: .6; font-weight: 600; }
 
   .dbx2-team-pill {
     display: flex; align-items: center; gap: 7px; padding: 9px 18px; border-radius: 10px;
@@ -1487,6 +1498,18 @@
   .dbx2-viz-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text2); }
   .dbx2-viz-legend-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
   .dbx2-viz-legend-item.dim { opacity: .55; }
+
+  .dbx2-radar-cmp { width: 100%; margin-top: 10px; }
+  .dbx2-radar-cmp summary { font-size: 11px; color: var(--text2); cursor: pointer; list-style: none; user-select: none; }
+  .dbx2-radar-cmp summary::-webkit-details-marker { display: none; }
+  .dbx2-radar-cmp summary::before { content: "▸ "; }
+  .dbx2-radar-cmp[open] summary::before { content: "▾ "; }
+  .radar-player-list { max-height: 150px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius); margin-top: 8px; }
+  .radar-player-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; border-bottom: 1px solid var(--border); font-size: 12.5px; cursor: pointer; }
+  .radar-player-row:last-child { border-bottom: none; }
+  .radar-player-row.selected { background: var(--bg2); }
+  .radar-player-row.disabled { opacity: .4; cursor: not-allowed; }
+  .radar-player-row input { accent-color: var(--gold); margin: 0; }
 
   .dbx2-gfga-chart { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; margin-top: 4px; }
   .dbx2-gfga-groups { display: flex; gap: 26px; }
@@ -1645,6 +1668,9 @@
         <option value="custom">Personnalisé</option>
         <option value="all">All-time</option>
       </select>
+      <label class="dbx2-compare-toggle" id="dbx2-compare-toggle">
+        <input type="checkbox" id="dbx2-compare-check"> Comparer avec la période précédente
+      </label>
       <div class="dbx-fb-sub" id="dbx-fb-sub"></div>
       <div class="dbx-fb-meta" id="dbx-fb-meta"></div>
     </div>
@@ -1709,7 +1735,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 12:54</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 19:55</footer>
 
 <script>
 
@@ -2137,8 +2163,10 @@ let filterSessionDate = null; // date de la session choisie en mode "session"
 let dbxScope = "global"; // "global" | "team" | "player"
 let dbxTeam = "Rouge";
 let dbxPlayer = null;
+let dbxRadarCompare = []; // joueurs additionnels superposes sur le radar (max 2, en plus de dbxPlayer)
 let dbxCustomFrom = null;
 let dbxCustomTo = null;
+let dbxCompare = false; // affiche les variations vs la periode precedente equivalente, tous scopes confondus
 
 /* Bornes de saisons avec dates précises (sy = année de début) */
 const SEASON_DEFS = [
@@ -2195,6 +2223,64 @@ function filterSessions(period) {
     return SESSIONS.filter(s => s.date >= from && s.date <= to);
   }
   return SESSIONS;
+}
+
+/* Résout les sessions de la "période précédente équivalente" pour un mode donné :
+   session -> session juste avant ; mois -> mois précédent ; saison -> saison précédente ;
+   personnalisé -> même durée juste avant la plage en cours. Retourne null si non calculable
+   (pas de session antérieure trouvée) — sert de base au mode "Comparer avec la période précédente". */
+function _dbxPreviousPeriodSessions(period) {
+  if (period === "session") {
+    const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
+    const curDate = filterSessionDate || (sorted[0] && sorted[0].date);
+    const idx = sorted.findIndex(s => s.date === curDate);
+    if (idx === -1 || idx + 1 >= sorted.length) return null;
+    return [sorted[idx + 1]];
+  }
+  if (period === "month") {
+    if (filterYear == null || filterMonth == null) return null;
+    /* filterYear est le label de SAISON (sy), pas l'annee calendaire : au sein d'une
+       saison, les mois s'enchainent aout(7)->...->decembre(11)->janvier(0)->...->juillet(6).
+       Le label de saison ne change qu'a la frontiere aout/juillet, jamais a decembre/janvier. */
+    let py = filterYear, pm = filterMonth - 1;
+    if (pm < 0) pm = 11;
+    else if (filterMonth === 7) py = filterYear - 1;
+    const prev = SESSIONS.filter(s => { const d = new Date(s.date); return d.getMonth() === pm && _seasonStart(d) === py; });
+    return prev.length ? prev : null;
+  }
+  if (period === "year") {
+    if (filterYear == null) return null;
+    const prev = SESSIONS.filter(s => _seasonStart(s.date) === filterYear - 1);
+    return prev.length ? prev : null;
+  }
+  if (period === "custom") {
+    const bounds = _dbxSessionDateBounds();
+    const from = dbxCustomFrom || (bounds ? bounds.min : null);
+    const to   = dbxCustomTo   || (bounds ? bounds.max : null);
+    if (!from || !to) return null;
+    const days = Math.round((new Date(to) - new Date(from)) / 86400000) + 1;
+    const prevTo = new Date(new Date(from).getTime() - 86400000).toISOString().slice(0,10);
+    const prevFrom = new Date(new Date(prevTo).getTime() - (days-1) * 86400000).toISOString().slice(0,10);
+    const prev = SESSIONS.filter(s => s.date >= prevFrom && s.date <= prevTo);
+    return prev.length ? prev : null;
+  }
+  return null; // "all" n'a pas de période antérieure
+}
+
+/* Petit badge de variation à injecter juste après .dbx-hero-num. prev=null/undefined -> "N/A"
+   grisé (pas de période de comparaison disponible). opts.invert : les baisses sont "bonnes"
+   (ex. buts encaissés/match). opts.decimals : arrondi à 1 décimale plutôt qu'à l'entier. */
+function _dbxDeltaBadge(cur, prev, opts) {
+  opts = opts || {};
+  if (prev === null || prev === undefined || isNaN(prev)) return `<span class="dbx-hero-delta na">N/A</span>`;
+  const mult = opts.decimals ? 10 : 1;
+  const diff = Math.round((cur - prev) * mult) / mult;
+  const suffix = opts.suffix || "";
+  if (diff === 0) return `<span class="dbx-hero-delta flat">= période précédente</span>`;
+  const good = opts.invert ? diff < 0 : diff > 0;
+  const arrow = diff > 0 ? "▲" : "▼";
+  const sign = diff > 0 ? "+" : "";
+  return `<span class="dbx-hero-delta ${good ? "up" : "down"}">${arrow} ${sign}${diff}${suffix}</span>`;
 }
 
 /* Bornes (min/max) des dates de session — pour les bornes de l'input date personnalisé */
@@ -4418,7 +4504,7 @@ function _dbxTag(t) {
   return `<span class="dbx-tag ${t.toLowerCase()}">${dot(t)}${TEAM_LABEL[t]||t}</span>`;
 }
 
-function _dbxRenderHero(agg) {
+function _dbxRenderHero(agg, prevAgg) {
   const avgGoals = agg.allMatchs.length ? (agg.totalGoals/agg.allMatchs.length).toFixed(1) : "—";
   const leaderHtml = agg.leaders.length
     ? agg.leaders.map(t => `${dot(t)}<span class="dbx-txt ${t.toLowerCase()}">${TEAM_LABEL[t]}</span>`).join(" &amp; ")
@@ -4427,12 +4513,12 @@ function _dbxRenderHero(agg) {
   return `<div class="dbx-hero-grid">
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Matchs joués</div>
-      <div class="dbx-hero-num">${agg.allMatchs.length}</div>
+      <div class="dbx-hero-num">${agg.allMatchs.length}${dbxCompare ? _dbxDeltaBadge(agg.allMatchs.length, prevAgg ? prevAgg.allMatchs.length : null) : ""}</div>
       <div class="dbx-hero-sub">${agg.sessionsCount} session${agg.sessionsCount>1?"s":""}</div>
     </div>
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Buts marqués</div>
-      <div class="dbx-hero-num">${agg.totalGoals}</div>
+      <div class="dbx-hero-num">${agg.totalGoals}${dbxCompare ? _dbxDeltaBadge(agg.totalGoals, prevAgg ? prevAgg.totalGoals : null) : ""}</div>
       <div class="dbx-hero-sub">${avgGoals} buts / match en moy.</div>
       ${sparkVals.length>1?`<div class="dbx-hero-spark">${_dbxSparkSvg(sparkVals,'#f5c842')}</div>`:""}
     </div>
@@ -4443,7 +4529,7 @@ function _dbxRenderHero(agg) {
     </div>
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Clean sheets</div>
-      <div class="dbx-hero-num">${agg.totalCleanSheets}</div>
+      <div class="dbx-hero-num">${agg.totalCleanSheets}${dbxCompare ? _dbxDeltaBadge(agg.totalCleanSheets, prevAgg ? prevAgg.totalCleanSheets : null) : ""}</div>
       <div class="dbx-hero-sub">${agg.totalCleanSheets} / ${agg.allMatchs.length} match${agg.allMatchs.length>1?"s":""}</div>
     </div>
   </div>`;
@@ -4913,11 +4999,14 @@ function _dbxComputePlayerAgg(sessions, player) {
 /* ══════════════════════════════════════════════════════════
    DASHBOARD XXL — rendu portée Équipes
 ══════════════════════════════════════════════════════════ */
-function _dbxRenderTeamScope(sessions, color) {
+function _dbxRenderTeamScope(sessions, color, prevSessions) {
   const d = _dbxComputeTeamAgg(sessions, color);
   const cls = teamCls(color);
   const winRate = d.played ? Math.round(d.w/d.played*100) : 0;
   const diff = d.gf - d.ga;
+  const prevD = prevSessions ? _dbxComputeTeamAgg(prevSessions, color) : null;
+  const prevWinRate = prevD ? (prevD.played ? Math.round(prevD.w/prevD.played*100) : 0) : null;
+  const prevDiff = prevD ? (prevD.gf - prevD.ga) : null;
 
   let h = "";
   h += `<div class="dbx-hero-grid">
@@ -4929,17 +5018,17 @@ function _dbxRenderTeamScope(sessions, color) {
     </div>
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Différentiel</div>
-      <div class="dbx-hero-num">${diff>0?"+":""}${diff}</div>
+      <div class="dbx-hero-num">${diff>0?"+":""}${diff}${dbxCompare ? _dbxDeltaBadge(diff, prevDiff) : ""}</div>
       <div class="dbx-hero-sub">${d.gf} pour &middot; ${d.ga} contre</div>
     </div>
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Taux de victoire</div>
-      <div class="dbx-hero-num">${winRate}%</div>
+      <div class="dbx-hero-num">${winRate}%${dbxCompare ? _dbxDeltaBadge(winRate, prevWinRate, {suffix:"%"}) : ""}</div>
       <div class="dbx-hero-sub">sur la période</div>
     </div>
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Clean sheets</div>
-      <div class="dbx-hero-num">${d.cleanSheets}</div>
+      <div class="dbx-hero-num">${d.cleanSheets}${dbxCompare ? _dbxDeltaBadge(d.cleanSheets, prevD ? prevD.cleanSheets : null) : ""}</div>
       <div class="dbx-hero-sub">${d.cleanSheets} / ${d.played} match${d.played>1?"s":""}</div>
     </div>
   </div>`;
@@ -5056,47 +5145,49 @@ function _dbxRenderTeamScope(sessions, color) {
 /* ══════════════════════════════════════════════════════════
    DASHBOARD XXL — rendu portée Joueurs (+ Face à face = Rivalités déplacé)
 ══════════════════════════════════════════════════════════ */
-function _dbxRenderPlayerScope(sessions, player) {
+function _dbxRenderPlayerScope(sessions, player, prevSessions) {
   const d = _dbxComputePlayerAgg(sessions, player);
+  const prevD = prevSessions ? _dbxComputePlayerAgg(prevSessions, player) : null;
+  const prevWinRate = prevD ? Math.round(prevD.winRate*100) : null;
 
   let h = "";
   h += `<div class="dbx2-hero-grid-3">
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Matchs joués</div>
-      <div class="dbx-hero-num">${d.played}</div>
+      <div class="dbx-hero-num">${d.played}${dbxCompare ? _dbxDeltaBadge(d.played, prevD ? prevD.played : null) : ""}</div>
       <div class="dbx-hero-sub">${Math.round(d.presenceRate*100)}% de présence &middot; ${d.sessionsAttended} session${d.sessionsAttended>1?"s":""}</div>
     </div>
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Victoires</div>
-      <div class="dbx-hero-num">${Math.round(d.winRate*100)}%</div>
+      <div class="dbx-hero-num">${Math.round(d.winRate*100)}%${dbxCompare ? _dbxDeltaBadge(Math.round(d.winRate*100), prevWinRate, {suffix:"%"}) : ""}</div>
       <div class="dbx-hero-sub"><span style="color:var(--good)">${d.w}V</span> <span style="color:var(--neutral)">${d.n}N</span> <span style="color:var(--bad)">${d.l}D</span></div>
       ${d.form.length ? _dbx2FormChipsHtml(d.form) : ""}
     </div>
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Points par match</div>
-      <div class="dbx-hero-num">${d.pointsPerMatch.toFixed(1)}</div>
+      <div class="dbx-hero-num">${d.pointsPerMatch.toFixed(1)}${dbxCompare ? _dbxDeltaBadge(d.pointsPerMatch, prevD ? prevD.pointsPerMatch : null, {decimals:true}) : ""}</div>
       <div class="dbx-hero-sub">${d.points} pt${d.points>1?"s":""} sur ${d.played} match${d.played>1?"s":""}</div>
     </div>
   </div>`;
   h += `<div class="dbx-hero-grid" style="margin-top:10px">
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Buteur</div>
-      <div class="dbx-hero-num">${d.buts}</div>
+      <div class="dbx-hero-num">${d.buts}${dbxCompare ? _dbxDeltaBadge(d.buts, prevD ? prevD.buts : null) : ""}</div>
       <div class="dbx-hero-sub">but${d.buts>1?"s":""} marqué${d.buts>1?"s":""}</div>
     </div>
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Passeur</div>
-      <div class="dbx-hero-num">${d.passes}</div>
+      <div class="dbx-hero-num">${d.passes}${dbxCompare ? _dbxDeltaBadge(d.passes, prevD ? prevD.passes : null) : ""}</div>
       <div class="dbx-hero-sub">passe${d.passes>1?"s":""} décisive${d.passes>1?"s":""}</div>
     </div>
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Défenseur</div>
-      <div class="dbx-hero-num">${d.defAvg!==null ? d.defAvg.toFixed(1) : "—"}</div>
+      <div class="dbx-hero-num">${d.defAvg!==null ? d.defAvg.toFixed(1) : "—"}${dbxCompare && d.defAvg!==null ? _dbxDeltaBadge(d.defAvg, prevD && prevD.defAvg!==null ? prevD.defAvg : null, {decimals:true, invert:true}) : ""}</div>
       <div class="dbx-hero-sub">Buts encaissés / match</div>
     </div>
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Gardien</div>
-      <div class="dbx-hero-num">${d.gkMatches>0 ? d.gkCleanSheets : "—"}</div>
+      <div class="dbx-hero-num">${d.gkMatches>0 ? d.gkCleanSheets : "—"}${dbxCompare && d.gkMatches>0 ? _dbxDeltaBadge(d.gkCleanSheets, prevD && prevD.gkMatches>0 ? prevD.gkCleanSheets : null) : ""}</div>
       <div class="dbx-hero-sub">${d.gkMatches>0 ? `Clean sheet${d.gkCleanSheets>1?"s":""}` : "Aucun match gardé"}</div>
     </div>
   </div>`;
@@ -5110,10 +5201,18 @@ function _dbxRenderPlayerScope(sessions, player) {
     const legend = colorEntries.map(([c,v]) => `<span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:var(--${teamCls(c)})"></span>${TEAM_LABEL[c]} ${v}</span>`).join("");
 
     const RAXES = [ {key:"atk",label:"Attaque"}, {key:"pass",label:"Passes"}, {key:"gk",label:"Gardien"}, {key:"win",label:"Victoires"}, {key:"def",label:"Défense"} ];
-    const radar = _dbx2RadarSvg(RAXES, [
-      { key:"avg", color:"var(--text2)", emphasized:false, values:d.avgRadar },
-      { key:"player", color:"var(--gold)", emphasized:true, values:d.radar },
-    ], 210);
+    const radarCandidates = _dbxRosterForPicker().all.filter(p => p !== player);
+    dbxRadarCompare = dbxRadarCompare.filter(p => radarCandidates.includes(p)).slice(0,2);
+    const RADAR_SLOT_COLORS = ["var(--rouge)","var(--bleu)"];
+    const radarSeries = dbxRadarCompare.length
+      ? [{ key:"player", color:"var(--gold)", emphasized:true, values:d.radar }].concat(
+          dbxRadarCompare.map((p,i) => ({ key:p, color:RADAR_SLOT_COLORS[i], emphasized:true, values:_dbxComputePlayerAgg(sessions, p).radar }))
+        )
+      : [
+          { key:"avg", color:"var(--text2)", emphasized:false, values:d.avgRadar },
+          { key:"player", color:"var(--gold)", emphasized:true, values:d.radar },
+        ];
+    const radar = _dbx2RadarSvg(RAXES, radarSeries, 210);
 
     const wnlDonut = _dbx2DonutSvg([
       { value:d.w, color:"var(--good)" }, { value:d.n, color:"var(--neutral)" }, { value:d.l, color:"var(--bad)" },
@@ -5126,12 +5225,27 @@ function _dbxRenderPlayerScope(sessions, player) {
         <div class="dbx2-viz-legend">${legend}</div>
       </div>
       <div class="dbx-card dbx2-viz-card">
-        <div class="dbx2-viz-title">Profil joueur</div><div class="dbx2-viz-note">Comparé à la moyenne du groupe</div>
+        <div class="dbx2-viz-title">Profil joueur</div><div class="dbx2-viz-note">${dbxRadarCompare.length ? "Comparé à d'autres joueurs" : "Comparé à la moyenne du groupe"}</div>
         ${radar}
         <div class="dbx2-viz-legend">
           <span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:var(--gold)"></span>${player}</span>
-          <span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:var(--text2)"></span>Moyenne du groupe</span>
+          ${dbxRadarCompare.length
+            ? dbxRadarCompare.map((p,i) => `<span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:${RADAR_SLOT_COLORS[i]}"></span>${p}</span>`).join("")
+            : `<span class="dbx2-viz-legend-item"><span class="dbx2-viz-legend-dot" style="background:var(--text2)"></span>Moyenne du groupe</span>`}
         </div>
+        <details class="dbx2-radar-cmp"${dbxRadarCompare.length?' open':''}>
+          <summary>Comparer avec d'autres joueurs (max 2)</summary>
+          <div class="radar-player-list" id="dbx2-radar-cmp-list">
+            ${radarCandidates.map(p => {
+              const checked = dbxRadarCompare.includes(p);
+              const disabled = !checked && dbxRadarCompare.length >= 2;
+              return `<label class="radar-player-row${checked?' selected':''}${disabled?' disabled':''}">
+                <span>${p}</span>
+                <input type="checkbox" data-name="${p}"${checked?' checked':''}${disabled?' disabled':''}>
+              </label>`;
+            }).join("")}
+          </div>
+        </details>
       </div>
       <div class="dbx-card dbx2-viz-card">
         <div class="dbx2-viz-title">Résultats</div><div class="dbx2-viz-note">Quand ${player} joue</div>
@@ -5213,6 +5327,7 @@ function _dbxRenderContext() {
     el.innerHTML = `<select class="dbx2-player-select-main" id="dbx2-player-select">${_dbxPlayerOptsHtml(dbxPlayer)}</select>`;
     document.getElementById("dbx2-player-select").addEventListener("change", e => {
       dbxPlayer = e.target.value;
+      dbxRadarCompare = [];
       _dbxSyncHash();
       renderDashboard();
     });
@@ -5256,6 +5371,19 @@ function _dbxWireH2H(defaultPlayer) {
   renderBody();
 }
 
+function _dbxWireRadarCompare() {
+  const list = document.getElementById("dbx2-radar-cmp-list");
+  if (!list) return;
+  list.addEventListener("change", e => {
+    const name = e.target.getAttribute("data-name");
+    if (!name) return;
+    const idx = dbxRadarCompare.indexOf(name);
+    if (e.target.checked && idx === -1 && dbxRadarCompare.length < 2) dbxRadarCompare.push(name);
+    else if (!e.target.checked && idx !== -1) dbxRadarCompare.splice(idx, 1);
+    renderDashboard();
+  });
+}
+
 function _dbxPlaceHi(hi, btn) {
   if (!hi || !btn) return;
   hi.style.left = btn.offsetLeft + "px";
@@ -5291,6 +5419,14 @@ function _dbxPlaceHi(hi, btn) {
     updateSubFilter(currentPeriod);
     renderDashboard();
   });
+  const cmp = document.getElementById("dbx2-compare-check");
+  if (cmp) {
+    cmp.checked = dbxCompare;
+    cmp.addEventListener("change", e => {
+      dbxCompare = e.target.checked;
+      renderDashboard();
+    });
+  }
 })();
 
 /* ══════════════════════════════════════════════════════════
@@ -5311,19 +5447,21 @@ function renderDashboard() {
     dash.innerHTML = '<p class="no-data" style="margin-top:2rem">Aucune session pour cette période.</p>';
     return;
   }
+  const prevSessions = dbxCompare ? _dbxPreviousPeriodSessions(currentPeriod) : null;
 
   let h = "";
   if (dbxScope === "team") {
-    h = _dbxRenderTeamScope(sessions, dbxTeam);
+    h = _dbxRenderTeamScope(sessions, dbxTeam, prevSessions);
   } else if (dbxScope === "player") {
     if (!dbxPlayer) {
       dash.innerHTML = '<p class="no-data" style="margin-top:2rem">Aucun joueur disponible.</p>';
       return;
     }
-    h = _dbxRenderPlayerScope(sessions, dbxPlayer);
+    h = _dbxRenderPlayerScope(sessions, dbxPlayer, prevSessions);
   } else {
     const agg = _dbxComputeAgg(sessions);
-    h += _dbxRenderHero(agg);
+    const prevAgg = prevSessions ? _dbxComputeAgg(prevSessions) : null;
+    h += _dbxRenderHero(agg, prevAgg);
     h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Comparatif équipes</span><span class="dbx-sec-note">Victoires, forme et différentiel</span></div>`;
     h += _dbxRenderCompare(agg);
     h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Tendance</span></div>`;
@@ -5342,7 +5480,7 @@ function renderDashboard() {
 
   dash.innerHTML = h;
   animateView(dash);
-  if (dbxScope === "player") _dbxWireH2H(dbxPlayer);
+  if (dbxScope === "player") { _dbxWireH2H(dbxPlayer); _dbxWireRadarCompare(); }
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -6604,6 +6742,37 @@ function _saisieBenchTeam(eqA, eqB, teams) {
   return teams.length >= 3 ? (teams.find(t => t !== eqA && t !== eqB) || "") : "";
 }
 
+/* Repartition automatique des equipes parmi les presents, sur base d'un bareme
+   interne (jamais affiche) combinant buts, passes et taux de victoire historiques.
+   10-11 presents -> 2 equipes (Rouge/Bleue), 12+ -> 3 equipes (Rouge/Vert/Bleue). */
+function _saisieAutoAssignTeams() {
+  const present = _presentList();
+  if (present.length < 10) return;
+  const teamColors = present.length >= 12 ? ["Rouge","Vert","Bleue"] : ["Rouge","Bleue"];
+  const statsMap = {};
+  computePlayerStats().forEach(r => { statsMap[r.name] = r; });
+  const ratingFor = name => {
+    const r = statsMap[name];
+    if (!r) return 50;
+    const wins = r.vR + r.vV + r.vB;
+    const winRate = r.presences > 0 ? wins / r.presences : 0;
+    return r.buts * 3 + r.passes * 2 + winRate * 30 + r.presences * 0.5;
+  };
+  const sorted = [...present].sort((a, b) => ratingFor(b) - ratingFor(a));
+  const teamCount = teamColors.length;
+  const buckets = teamColors.map(() => []);
+  let idx = 0, dir = 1;
+  sorted.forEach(name => {
+    buckets[idx].push(name);
+    idx += dir;
+    if (idx === teamCount) { idx = teamCount - 1; dir = -1; }
+    else if (idx === -1) { idx = 0; dir = 1; }
+  });
+  buckets.forEach((names, i) => names.forEach(name => { _draft.presences[name].equipe = teamColors[i]; }));
+  _saveDraft();
+  renderSaisie();
+}
+
 /* ── Présences : chips groupées par statut ── */
 function _saisieTeamDotsHTML(p, eq) {
   return `<span class="saisie-team-dots">${["Rouge","Vert","Bleue"].map(t =>
@@ -6683,6 +6852,12 @@ function _buildPresencesScreenHTML() {
       <span>❓ ${countNR} n'${countNR>1?"ont":"a"} pas répondu</span>
     </div>
     ${group("Présents", "✅", _sortPresentFirst(byStatut(regularPlayers, "Présent")))}
+    ${countPresents >= 10
+      ? `<div class="saisie-auto-teams">
+          <button class="saisie-btn secondary" data-act="saisie-auto-teams">🎲 Choisir automatiquement les équipes</button>
+          <span class="saisie-auto-teams-note">${countPresents >= 12 ? "3 équipes" : "2 équipes"} pour ${countPresents} présents — modifiable ensuite</span>
+        </div>`
+      : `<div class="saisie-auto-teams-hint">Encore ${10 - countPresents} présent${10 - countPresents > 1 ? "s" : ""} avant de pouvoir générer les équipes automatiquement (min. 10).</div>`}
     ${group("Absents", "❌", byStatut(regularPlayers, "Absent"))}
     ${group("Blessés", "🤕", byStatut(regularPlayers, "Blessé"))}
     ${group("Pas répondu", "❓", byStatut(regularPlayers, "Pas répondu"))}
@@ -7062,6 +7237,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     if (_draft.presences[p]) _draft.presences[p].equipe = _draft.presences[p].equipe === eq ? "" : eq;
     renderSaisie(); return;
   }
+  if (e.target.closest('[data-act="saisie-auto-teams"]')) { _saisieAutoAssignTeams(); return; }
 
   if (e.target.id === "saisie-save")   { _saveDraft(); return; }
   if (e.target.id === "saisie-cancel-edit") {
