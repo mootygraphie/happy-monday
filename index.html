@@ -1387,6 +1387,9 @@
 
   /* ── Graphique de tendance ── */
   .dbx-trend-card { padding: 20px 22px 14px; }
+  .dbx-trend-mode-seg { display: inline-flex; gap: 4px; margin-bottom: 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 2px; }
+  .dbx-trend-mode-btn { border: none; background: transparent; color: var(--text3); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+  .dbx-trend-mode-btn.active { background: var(--bg2); color: var(--text); }
   .dbx-trend-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; flex-wrap: wrap; gap: 6px; }
   .dbx-trend-top-lbl { font-size: 13px; font-weight: 700; }
   .dbx-trend-top-val { font-size: 12px; color: var(--text2); }
@@ -1735,7 +1738,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 19:55</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 19:59</footer>
 
 <script>
 
@@ -2167,6 +2170,7 @@ let dbxRadarCompare = []; // joueurs additionnels superposes sur le radar (max 2
 let dbxCustomFrom = null;
 let dbxCustomTo = null;
 let dbxCompare = false; // affiche les variations vs la periode precedente equivalente, tous scopes confondus
+let dbxTrendMode = "session"; // "session" | "match" — granularite des cartes Tendance (Globales/Equipes/Joueurs)
 
 /* Bornes de saisons avec dates précises (sy = année de début) */
 const SEASON_DEFS = [
@@ -4713,12 +4717,22 @@ function _dbx2TrendAxisHtml(max, h, padB, padT) {
   return `<div class="dbx2-trend-axis" style="height:${h}px">${ticks.join('')}</div>`;
 }
 
+/* Toggle "Par session / Par match" partage par les 3 cartes Tendance */
+function _dbxTrendToggleHtml() {
+  return `<div class="dbx-trend-mode-seg">
+    <button type="button" class="dbx-trend-mode-btn${dbxTrendMode==="session"?" active":""}" data-act="dbx-trend-mode" data-mode="session">Par session</button>
+    <button type="button" class="dbx-trend-mode-btn${dbxTrendMode==="match"?" active":""}" data-act="dbx-trend-mode" data-mode="match">Par match</button>
+  </div>`;
+}
+
 /* Carte "Tendance" partagee (buts en barres + passes en ligne pointillee) — les 3 portees */
-function _dbx2RenderTrendCard(subLbl, bars, line, labels, barColor, lineColor) {
-  if (!bars.length) return `<div class="dbx-card dbx-trend-card"><p style="color:var(--text3);font-size:13px;font-style:italic;margin:0">Aucune donnée.</p></div>`;
+function _dbx2RenderTrendCard(subLbl, bars, line, labels, barColor, lineColor, withToggle) {
+  const toggle = withToggle ? _dbxTrendToggleHtml() : "";
+  if (!bars.length) return `<div class="dbx-card dbx-trend-card">${toggle}<p style="color:var(--text3);font-size:13px;font-style:italic;margin:0">Aucune donnée.</p></div>`;
   const trend = _dbx2BarLineComboSvg(bars, line, barColor, lineColor, labels);
   const axis = _dbx2TrendAxisHtml(trend.max, trend.h, trend.padB, trend.padT);
   return `<div class="dbx-card dbx-trend-card">
+    ${toggle}
     <div class="dbx-trend-top">
       <span class="dbx-trend-top-lbl">${subLbl}</span>
       <span class="dbx-trend-top-val">Moy. <b style="color:${barColor}">${trend.barAvg}</b> buts &middot; <b style="color:${lineColor}">${trend.lineAvg}</b> passes</span>
@@ -4734,24 +4748,21 @@ function _dbx2RenderTrendCard(subLbl, bars, line, labels, barColor, lineColor) {
   </div>`;
 }
 
-/* Tendance Globales : preserve exactement le calcul de barres pre-existant
-   (1 session -> repartition par match), ajoute la ligne passes + l'axe. */
+/* Tendance Globales : granularite pilotee par le toggle dbxTrendMode (session/match). */
 function _dbxGlobalTrendChart(agg) {
-  const data = agg.goalsBySession;
-  const single = data.length <= 1;
   let bars, line, labels, subLbl;
-  if (single) {
+  if (dbxTrendMode === "match") {
     bars = agg.allMatchs.map(m => m.scoreA+m.scoreB);
     line = agg.allMatchs.map(m => _dbxCountAssists(m));
-    labels = agg.allMatchs.map(m => `${(TEAM_LABEL[m.eqA]||m.eqA).slice(0,3)}-${(TEAM_LABEL[m.eqB]||m.eqB).slice(0,3)}`);
-    subLbl = "Répartition par match";
+    labels = agg.allMatchs.map(m => `${_dbxFmtDateShort(m.date)} ${(TEAM_LABEL[m.eqA]||m.eqA).slice(0,3)}-${(TEAM_LABEL[m.eqB]||m.eqB).slice(0,3)}`);
+    subLbl = "Buts et passes par match";
   } else {
-    bars = data.map(d => d.goals);
+    bars = agg.goalsBySession.map(d => d.goals);
     line = agg.assistsBySession.map(d => d.assists);
-    labels = data.map(d => _dbxFmtDateShort(d.date));
+    labels = agg.goalsBySession.map(d => _dbxFmtDateShort(d.date));
     subLbl = "Buts et passes par session";
   }
-  return _dbx2RenderTrendCard(subLbl, bars, line, labels, "var(--gold)", "var(--bleu)");
+  return _dbx2RenderTrendCard(subLbl, bars, line, labels, "var(--gold)", "var(--bleu)", true);
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -4765,6 +4776,7 @@ function _dbxComputeTeamAgg(sessions, color) {
   const scorerTally = {}, assistTally = {};
   let biggestWin = null, worstLoss = null;
   const goalsBySession = [], assistsBySession = [];
+  const goalsByMatch = [], assistsByMatch = [], matchLabels = [];
   sorted.forEach(s => {
     let sessGoals = 0, sessAssists = 0;
     (s.matchs||[]).forEach(m => {
@@ -4789,12 +4801,15 @@ function _dbxComputeTeamAgg(sessions, color) {
       if (diff < 0 && (!worstLoss || diff < worstLoss.diff)) worstLoss = rec;
       const myButs = (isA ? m.buteursA : m.buteursB) || [];
       const myPasses = (isA ? m.passeursA : m.passeursB) || [];
+      let matchGoals = 0, matchAssists = 0;
       myButs.forEach((b,i) => {
         if (!b || b === "CSC") return;
-        scorerTally[b] = (scorerTally[b]||0) + 1; sessGoals++;
+        scorerTally[b] = (scorerTally[b]||0) + 1; sessGoals++; matchGoals++;
         const p = myPasses[i];
-        if (p && p !== "CSC") { assistTally[p] = (assistTally[p]||0) + 1; sessAssists++; }
+        if (p && p !== "CSC") { assistTally[p] = (assistTally[p]||0) + 1; sessAssists++; matchAssists++; }
       });
+      goalsByMatch.push(matchGoals); assistsByMatch.push(matchAssists);
+      matchLabels.push(`${_dbxFmtDateShort(s.date)} vs ${(TEAM_LABEL[oppColor]||oppColor).slice(0,3)}`);
     });
     goalsBySession.push({ date: s.date, goals: sessGoals });
     assistsBySession.push({ date: s.date, assists: sessAssists });
@@ -4825,7 +4840,7 @@ function _dbxComputeTeamAgg(sessions, color) {
   const vsEntries = Object.entries(vs);
   const nemesis = vsEntries.length ? [...vsEntries].sort((a,b) => (a[1].w/a[1].played) - (b[1].w/b[1].played))[0] : null;
   const form = results.slice(-5);
-  return { color, played, w, n, l, gf, ga, cleanSheets, scorers, assists, vs, biggestWin, worstLoss, bestStreak, nemesis, form, results, goalsBySession, assistsBySession };
+  return { color, played, w, n, l, gf, ga, cleanSheets, scorers, assists, vs, biggestWin, worstLoss, bestStreak, nemesis, form, results, goalsBySession, assistsBySession, goalsByMatch, assistsByMatch, matchLabels };
 }
 
 /* Agregation match par match pour un joueur (reutilisee pour lui-meme ET pour
@@ -4837,6 +4852,7 @@ function _dbxPlayerMatchAgg(sessions, player) {
   const colorMatches = {}, colorWinsGames = {};
   let bestMatch = null;
   const goalsBySession = [], assistsBySession = [];
+  const goalsByMatch = [], assistsByMatch = [], matchLabels = [];
   sorted.forEach(s => {
     const info = s.presences[player];
     if (info && info.statut === "Présent" && info.equipe) {
@@ -4854,6 +4870,8 @@ function _dbxPlayerMatchAgg(sessions, player) {
           if (psr && psr !== "CSC" && psr === player) { myA++; sessAssists++; passes++; }
         });
       });
+      goalsByMatch.push(myG); assistsByMatch.push(myA);
+      matchLabels.push(`${_dbxFmtDateShort(s.date)} (${(TEAM_LABEL[m.eqA]||m.eqA).slice(0,3)}-${(TEAM_LABEL[m.eqB]||m.eqB).slice(0,3)})`);
       if (info && info.statut === "Présent" && info.equipe && (m.eqA === info.equipe || m.eqB === info.equipe)) {
         const isA = m.eqA === info.equipe;
         const myScore = isA ? (m.scoreA||0) : (m.scoreB||0);
@@ -4874,7 +4892,7 @@ function _dbxPlayerMatchAgg(sessions, player) {
     assistsBySession.push({ date: s.date, assists: sessAssists });
   });
   const played = w + n + l;
-  return { played, w, n, l, buts, passes, results, colorMatches, colorWinsGames, bestMatch, goalsBySession, assistsBySession };
+  return { played, w, n, l, buts, passes, results, colorMatches, colorWinsGames, bestMatch, goalsBySession, assistsBySession, goalsByMatch, assistsByMatch, matchLabels };
 }
 
 /* MVP par session, sur une plage donnee (sessions deja filtrees) — replique le tally
@@ -4993,6 +5011,7 @@ function _dbxComputePlayerAgg(sessions, player) {
     defAvg: defEntry ? defEntry.avg : null, defMatches: defEntry ? defEntry.matchCount : 0, defTotal: defEntry ? defEntry.goalsAgainst : 0,
     gkCleanSheets: gkEntry ? (gkEntry.cleanSheets||0) : 0, gkMatches: gkEntry ? gkEntry.matchs : 0, gkConceded: gkEntry ? gkEntry.buts : 0,
     goalsBySession: pa.goalsBySession, assistsBySession: pa.assistsBySession,
+    goalsByMatch: pa.goalsByMatch, assistsByMatch: pa.assistsByMatch, matchLabels: pa.matchLabels,
   };
 }
 
@@ -5114,7 +5133,9 @@ function _dbxRenderTeamScope(sessions, color, prevSessions) {
   </div>`;
 
   h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Tendance</span><span class="dbx-sec-note">Évolution des buts et passes, session par session</span></div>`;
-  h += _dbx2RenderTrendCard(`Buts et passes des ${TEAM_LABEL[color]}`, d.goalsBySession.map(x=>x.goals), d.assistsBySession.map(x=>x.assists), d.goalsBySession.map(x=>_dbxFmtDateShort(x.date)), `var(--${cls})`, "var(--gold)");
+  h += dbxTrendMode === "match"
+    ? _dbx2RenderTrendCard(`Buts et passes des ${TEAM_LABEL[color]}, par match`, d.goalsByMatch, d.assistsByMatch, d.matchLabels, `var(--${cls})`, "var(--gold)", true)
+    : _dbx2RenderTrendCard(`Buts et passes des ${TEAM_LABEL[color]}`, d.goalsBySession.map(x=>x.goals), d.assistsBySession.map(x=>x.assists), d.goalsBySession.map(x=>_dbxFmtDateShort(x.date)), `var(--${cls})`, "var(--gold)", true);
 
   h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Buteurs &amp; passeurs — ${TEAM_LABEL[color]}</span></div>`;
   h += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
@@ -5259,7 +5280,9 @@ function _dbxRenderPlayerScope(sessions, player, prevSessions) {
     </div>`;
 
     h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Tendance</span><span class="dbx-sec-note">Évolution des buts et passes, session par session</span></div>`;
-    h += _dbx2RenderTrendCard(`Buts et passes de ${player}`, d.goalsBySession.map(x=>x.goals), d.assistsBySession.map(x=>x.assists), d.goalsBySession.map(x=>_dbxFmtDateShort(x.date)), "var(--gold)", "var(--bleu)");
+    h += dbxTrendMode === "match"
+      ? _dbx2RenderTrendCard(`Buts et passes de ${player}, par match`, d.goalsByMatch, d.assistsByMatch, d.matchLabels, "var(--gold)", "var(--bleu)", true)
+      : _dbx2RenderTrendCard(`Buts et passes de ${player}`, d.goalsBySession.map(x=>x.goals), d.assistsBySession.map(x=>x.assists), d.goalsBySession.map(x=>_dbxFmtDateShort(x.date)), "var(--gold)", "var(--bleu)", true);
 
     h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Moments forts</span></div>`;
     h += `<div class="dbx2-fun-grid">
@@ -5427,6 +5450,17 @@ function _dbxPlaceHi(hi, btn) {
       renderDashboard();
     });
   }
+})();
+
+(function _dbxInitTrendModeToggle() {
+  const panel = document.getElementById("panel-dashboard");
+  if (!panel) return;
+  panel.addEventListener("click", e => {
+    const btn = e.target.closest('[data-act="dbx-trend-mode"]');
+    if (!btn) return;
+    dbxTrendMode = btn.dataset.mode;
+    renderDashboard();
+  });
 })();
 
 /* ══════════════════════════════════════════════════════════
