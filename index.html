@@ -325,9 +325,10 @@
   .roster-chip-ico { font-size: 20px; font-weight: 500; line-height: 1; padding-right: 5px; }
   .roster-chip.danger { color: var(--bad); background: var(--bad-bg); }
   .roster-chip.warn { color: #ffa726; background: rgba(255,167,38,.12); }
-  .roster-actions { display: flex; gap: 3px; flex-shrink: 0; }
-  .roster-actions button { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border2); background: #1A1A1F; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); }
+  .roster-actions { display: flex; gap: 3px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; max-width: 118px; }
+  .roster-actions button { width: 27px; height: 27px; border-radius: 50%; border: 1px solid var(--border2); background: #1A1A1F; font-size: 13.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); }
   .roster-actions button:hover { background: var(--border2); }
+  .roster-actions button.current { background: var(--border2); border-color: var(--text3); color: var(--text); cursor: default; }
   html.light .roster-actions button { background: #f4f4f8; }
 
   .joueurs-section-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-style: italic; color: var(--text3); margin: 2rem 0 .75rem; }
@@ -1708,7 +1709,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 12:44</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 12:54</footer>
 
 <script>
 
@@ -2661,7 +2662,7 @@ function _matchGoalsRecapHTML(buteurs, passeurs) {
   return order.map(name => {
     const g = groups[name];
     const isCsc = name === "CSC";
-    const nameHtml = isCsc ? `<em>CSC</em>` : `<span style="color:var(--text2)">${name}</span>`;
+    const nameHtml = isCsc ? `<em style="color:var(--text2)">CSC</em>` : `<span style="color:var(--text2)">${name}</span>`;
     let scorerHtml = g.count > 1 ? `${nameHtml} ×${g.count}` : nameHtml;
     if (g.count >= 3) scorerHtml = `<span class="mgr-highlight">${scorerHtml}</span>`;
     // Pour un CSC, le champ "passeur" sert a noter le malheureux buteur (Saisie) —
@@ -5634,13 +5635,26 @@ function renderJoueurs() {
     return `<span class="roster-chip ${cls || ""}"><span class="roster-chip-ico">${icon}</span> ${val}</span>`;
   }
 
+  /* Rangee de boutons de statut, identique sur toutes les cartes (meme principe que les
+     boutons Present/Blesse/Non convoque de la Saisie) — on clique directement le statut
+     cible au lieu de suivre des fleches contextuelles, plus simple pour reassigner. */
+  const _EFF_STATUSES = [
+    { status: "roster",  action: "to-roster",  icon: "👤", title: "Régulier" },
+    { status: "joker",   action: "to-joker",   icon: "🔄", title: "Occasionnel" },
+    { status: "absent",  action: "to-absent",  icon: "💤", title: "Absent pour la saison" },
+    { status: "inactif", action: "to-inactif", icon: "🚫", title: "Inactif" },
+  ];
+  function _effActionsHtml(name, current) {
+    if (!isAdmin) return "";
+    const btns = _EFF_STATUSES.map(o =>
+      `<button data-action="${o.action}" data-player="${name}" title="${o.title}"${o.status===current?' class="current"':''}>${o.icon}</button>`
+    ).join("");
+    return `<div class="roster-actions">${btns}</div>`;
+  }
+
   function buildRosterCard(r) {
     const tCls = r.taux >= 75 ? "high" : r.taux >= 40 ? "mid" : "low";
     const chips = chip("❌", r.absences, "danger") + chip("🤕", r.blesses, "warn") + chip("⁉️", r.pasRepondu, "warn") + chip("🎒", r.sac) + chip("👕", r.maillots);
-    const action = isAdmin ? `<div class="roster-actions">
-      <button data-action="to-joker" data-player="${r.name}" title="Passer en occasionnel">🔽</button>
-      <button data-action="to-inactif" data-player="${r.name}" title="Désactiver">🚫</button>
-    </div>` : "";
     return `<div class="roster-card">
       <div class="roster-avatar">${initials(r.name)}</div>
       <div class="roster-main">
@@ -5651,56 +5665,46 @@ function renderJoueurs() {
         </div>
       </div>
       <div class="roster-chips">${chips}</div>
-      ${action}
+      ${_effActionsHtml(r.name, "roster")}
     </div>`;
   }
 
   function buildJokerCard(r) {
-    const action = isAdmin ? `<div class="roster-actions">
-      <button data-action="to-roster" data-player="${r.name}" title="Passer en régulier">🔼</button>
-      <button data-action="to-absent" data-player="${r.name}" title="Marquer absent pour la saison">🔽</button>
-      <button data-action="to-inactif" data-player="${r.name}" title="Désactiver">🚫</button>
-    </div>` : "";
     return `<div class="roster-card">
       <div class="roster-avatar dim">${initials(r.name)}</div>
       <div class="roster-main">
         <button class="roster-name player-link" data-player="${r.name}">${r.name}</button>
         <div class="roster-sub"><b>${r.presences}</b> venue${r.presences > 1 ? "s" : ""} cette saison</div>
       </div>
-      ${action}
+      ${_effActionsHtml(r.name, "joker")}
     </div>`;
   }
 
   function buildAbsentCard(name) {
-    const action = isAdmin ? `<div class="roster-actions">
-      <button data-action="to-joker" data-player="${name}" title="Passer en occasionnel">🔼</button>
-      <button data-action="to-inactif" data-player="${name}" title="Désactiver">🚫</button>
-    </div>` : "";
     return `<div class="roster-card">
       <div class="roster-avatar dim">${initials(name)}</div>
       <div class="roster-main">
         <button class="roster-name player-link" data-player="${name}">${name}</button>
         <div class="roster-sub">Absent pour la saison</div>
       </div>
-      ${action}
+      ${_effActionsHtml(name, "absent")}
     </div>`;
   }
 
   function buildInactifCard(name) {
-    const action = isAdmin ? `<div class="roster-actions"><button data-action="to-roster" data-player="${name}" title="Réactiver">🔼</button></div>` : "";
     return `<div class="roster-card">
       <div class="roster-avatar dim">${initials(name)}</div>
       <div class="roster-main">
         <button class="roster-name player-link" data-player="${name}">${name}</button>
         <div class="roster-sub">Inactif</div>
       </div>
-      ${action}
+      ${_effActionsHtml(name, "inactif")}
     </div>`;
   }
 
   const rosterCards = sortArr(rosterRows, rosterSort).map(buildRosterCard).join("");
   const jokerCards  = sortArr(jokerRows, jokerSort).map(buildJokerCard).join("");
-  const absentNames = [...ABSENTS].sort((a,b) => a.localeCompare(b,'fr'));
+  const absentNames = [...ABSENTS].filter(n => !INACTIFS.has(n)).sort((a,b) => a.localeCompare(b,'fr'));
   const absentCards = absentNames.map(buildAbsentCard).join("");
   const inactifNames = [...INACTIFS].sort((a,b) => a.localeCompare(b,'fr'));
   const inactifCards = inactifNames.map(buildInactifCard).join("");
