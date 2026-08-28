@@ -1705,7 +1705,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 10:41</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 10:46</footer>
 
 <script>
 
@@ -2810,7 +2810,20 @@ function _sfmPickSpotlights(matchs) {
   return picks.sort((a,b) => a.i - b.i);
 }
 
-function _sfmPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+/* Choix "aleatoire" mais fige par session : _sfmRng est re-seede a partir de la date de
+   la session a chaque rendu (voir renderSessionDetailV2), donc la meme session tire
+   toujours la meme sequence de variantes de texte — plus de reformulation a chaque
+   refresh — tout en gardant des sessions differentes entre elles. */
+function _sfmSeedRng(seedStr) {
+  let h = 0;
+  for (let i = 0; i < seedStr.length; i++) h = (Math.imul(31, h) + seedStr.charCodeAt(i)) | 0;
+  return function() {
+    h = (Math.imul(h, 1103515245) + 12345) | 0;
+    return ((h >>> 0) % 1000000) / 1000000;
+  };
+}
+let _sfmRng = Math.random;
+function _sfmPick(arr) { return arr[Math.floor(_sfmRng() * arr.length)]; }
 
 /* Ne credite un gardien de "cage inviolee" que s il a garde SEUL tout le
    match (pas de rotation a la mi-temps) et n a rien encaisse. Un gardien
@@ -3164,6 +3177,7 @@ function _sfmLogisticsHTML(session) {
 }
 
 function renderSessionDetailV2(session) {
+  _sfmRng = _sfmSeedRng(session.date || "");
   const matchs = session.matchs || [];
 
   const presentsAll = Object.entries(session.presences || {})
