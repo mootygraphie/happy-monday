@@ -1627,7 +1627,7 @@
     <div class="dbx2-scope-row">
       <div class="dbx-seg" id="dbx2-scope-seg">
         <div class="dbx-seg-hi" id="dbx2-scope-hi"></div>
-        <button class="dbx-seg-btn active" data-scope="global">Globales</button>
+        <button class="dbx-seg-btn active" data-scope="global">Global</button>
         <button class="dbx-seg-btn" data-scope="team">Équipes</button>
         <button class="dbx-seg-btn" data-scope="player">Joueurs</button>
       </div>
@@ -1705,7 +1705,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 27/08/2026 - 17:32</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 10:41</footer>
 
 <script>
 
@@ -2742,31 +2742,72 @@ function _sfmTopScorerInMatch(m) {
   const ranked = Object.entries(c).sort((a,b) => b[1]-a[1]);
   return ranked.length ? { name: ranked[0][0], count: ranked[0][1] } : null;
 }
+function _sfmTopAssisterInMatch(m) {
+  const c = {};
+  (m.passeursA||[]).forEach(p => { if (p && p !== "CSC") c[p] = (c[p]||0)+1; });
+  (m.passeursB||[]).forEach(p => { if (p && p !== "CSC") c[p] = (c[p]||0)+1; });
+  const ranked = Object.entries(c).sort((a,b) => b[1]-a[1]);
+  return ranked.length ? { name: ranked[0][0], count: ranked[0][1] } : null;
+}
+function _sfmMatchHasCsc(m) {
+  return (m.buteursA||[]).includes("CSC") || (m.buteursB||[]).includes("CSC");
+}
+/* Buts + passes d'un joueur dans UN match precis — pour credier une implication
+   complete (ex: "un doublé et une passe décisive") plutôt que le seul total de buts. */
+function _sfmPlayerStatsInMatch(m, name) {
+  const goals   = [...(m.buteursA||[]),  ...(m.buteursB||[])].filter(b => b === name).length;
+  const assists = [...(m.passeursA||[]), ...(m.passeursB||[])].filter(p => p === name).length;
+  return { goals, assists };
+}
+function _sfmGoalsAssistsPhrase(goals, assists) {
+  const gp = _sfmGoalsPhrase(goals);
+  if (!assists) return gp;
+  const ap = assists === 1 ? "une passe décisive" : `${assists} passes décisives`;
+  return `${gp} et ${ap}`;
+}
 
-// Choisit jusqu'à 3 matchs « temps forts » distincts : ouverture, plus gros écart, plus tendu.
+/* Choisit jusqu'à 3 matchs « temps forts » distincts, parmi 5 types de scénarios
+   possibles (gros match individuel en buts, gros match en passes, CSC, gros score,
+   gros écart) plutôt qu'un gabarit fixe ouverture/écart/tendu — chaque match est noté
+   sur chacun des scénarios qu'il remplit, puis on garde les meilleurs, en essayant de
+   varier les joueurs mis en avant d'une carte à l'autre. */
 function _sfmPickSpotlights(matchs) {
   if (!matchs.length) return [];
-  const used = new Set();
-  const spots = [];
-  spots.push({ i: 0, kind: "opener" }); used.add(0);
-
-  let blowoutI = -1, blowoutMargin = -1;
-  matchs.forEach((m,i) => {
-    if (used.has(i)) return;
-    const mg = Math.abs(m.scoreA - m.scoreB);
-    if (mg > blowoutMargin) { blowoutMargin = mg; blowoutI = i; }
+  const candidates = [];
+  matchs.forEach((m, i) => {
+    const total = m.scoreA + m.scoreB;
+    const margin = Math.abs(m.scoreA - m.scoreB);
+    const topScorer = _sfmTopScorerInMatch(m);
+    const topAssist = _sfmTopAssisterInMatch(m);
+    if (topScorer && topScorer.count >= 3) candidates.push({ i, kind: "scorer", score: 100 + topScorer.count, player: topScorer.name });
+    if (topAssist && topAssist.count >= 2) candidates.push({ i, kind: "assist", score: 70 + topAssist.count * 10, player: topAssist.name });
+    if (_sfmMatchHasCsc(m)) candidates.push({ i, kind: "csc", score: 60, player: null });
+    if (total >= 6) candidates.push({ i, kind: "highscore", score: 40 + total * 3, player: null });
+    if (margin >= 3) candidates.push({ i, kind: "blowout", score: 30 + margin * 6, player: topScorer && topScorer.count >= 2 ? topScorer.name : null });
   });
-  if (blowoutI !== -1 && blowoutMargin > 0) { spots.push({ i: blowoutI, kind: "blowout" }); used.add(blowoutI); }
+  candidates.sort((a,b) => b.score - a.score);
 
-  let thrillI = -1, thrillGoals = Infinity;
-  matchs.forEach((m,i) => {
-    if (used.has(i)) return;
-    const tg = m.scoreA + m.scoreB;
-    if (tg < thrillGoals) { thrillGoals = tg; thrillI = i; }
+  const picks = [], usedMatch = new Set(), usedPlayer = new Set();
+  candidates.forEach(c => {
+    if (picks.length >= 3 || usedMatch.has(c.i)) return;
+    if (c.player && usedPlayer.has(c.player)) return;
+    picks.push(c); usedMatch.add(c.i); if (c.player) usedPlayer.add(c.player);
   });
-  if (thrillI !== -1) { spots.push({ i: thrillI, kind: "thriller" }); used.add(thrillI); }
-
-  return spots.sort((a,b) => a.i - b.i);
+  // Soirée calme, peu de scénarios marquants : complète sans la contrainte de diversité.
+  if (picks.length < 2) {
+    candidates.forEach(c => {
+      if (picks.length >= Math.min(3, candidates.length || 1) || usedMatch.has(c.i)) return;
+      picks.push(c); usedMatch.add(c.i);
+    });
+  }
+  // Filet de sécurité : aucun scénario ne ressort (petite soirée très plate) — on ne
+  // laisse jamais la section vide, on prend le match au score le plus généreux.
+  if (!picks.length) {
+    let best = 0;
+    matchs.forEach((m,i) => { if ((m.scoreA+m.scoreB) > (matchs[best].scoreA+matchs[best].scoreB)) best = i; });
+    picks.push({ i: best, kind: "highscore", score: 0, player: null });
+  }
+  return picks.sort((a,b) => a.i - b.i);
 }
 
 function _sfmPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -2793,55 +2834,53 @@ function _sfmFindFullCleanSheet(matchs) {
 }
 
 function _sfmSpotlightMeta(m, kind) {
-  const eyebrows = { opener: "🎩 Ouverture des hostilités", blowout: "💥 Correction en règle", thriller: "🥶 Frisson du soir" };
-  const top = _sfmTopScorerInMatch(m);
+  const eyebrows = {
+    scorer: "🔥 Festival perso", assist: "🎯 Chef d'orchestre", csc: "😅 Petit cadeau",
+    highscore: "🎆 Feu d'artifice", blowout: "💥 Correction en règle",
+  };
+  const top  = _sfmTopScorerInMatch(m);
+  const topA = _sfmTopAssisterInMatch(m);
   let caption = "";
-  if (kind === "blowout" && top && top.count >= 2) {
-    const ph = _sfmGoalsPhrase(top.count);
+  if (kind === "scorer" && top) {
+    const ph = _sfmGoalsAssistsPhrase(top.count, _sfmPlayerStatsInMatch(m, top.name).assists);
+    caption = _sfmPick([
+      `${top.name} n'a pas fait dans la dentelle : ${ph} rien que dans ce match.`,
+      `${top.name} a décidé que ce match était plié à lui tout seul — ${ph}.`,
+      `Quand ${top.name} s'y met (${ph}), la défense d'en face ferait mieux de checker les horaires du dernier bus.`,
+    ]);
+  } else if (kind === "assist" && topA) {
+    caption = _sfmPick([
+      `${topA.name} a passé le match à distribuer les caviars : ${topA.count} passes décisives rien que là-dedans.`,
+      `${topA.name} en chef d'orchestre : ${topA.count} passes décisives pour lancer les autres.`,
+      `${topA.name} n'a pas marqué, mais tout le monde marquait grâce à lui : ${topA.count} passes décisives.`,
+    ]);
+  } else if (kind === "csc") {
+    caption = _sfmPick([
+      `Un but contre son camp est venu pimenter la soirée — ça arrive aux meilleurs.`,
+      `Petit cadeau involontaire dans ce match : un CSC est venu corser l'addition.`,
+      `Un but contre son camp au menu de ce match — la défense adverse dit merci.`,
+    ]);
+  } else if (kind === "highscore") {
+    const total = m.scoreA + m.scoreB;
+    caption = _sfmPick([
+      `${total} buts dans ce seul match — les défenses ont pris la soirée off.`,
+      `Un vrai feu d'artifice offensif : ${total} buts inscrits à eux deux.`,
+      `${total} buts au compteur pour ce match, difficile de faire plus spectaculaire ce soir-là.`,
+    ]);
+  } else if (kind === "blowout" && top && top.count >= 2) {
+    const ph = _sfmGoalsAssistsPhrase(top.count, _sfmPlayerStatsInMatch(m, top.name).assists);
     caption = _sfmPick([
       `${top.name} n'a pas fait dans la dentelle : ${ph}, et l'adversaire n'a rien vu venir.`,
       `${top.name} a décidé que le match était plié — ${ph}, sans même forcer le ton.`,
       `Quand ${top.name} s'y met (${ph}), la défense d'en face ferait mieux de checker les horaires du dernier bus.`,
     ]);
-  } else if (kind === "thriller") {
-    if (m.scoreA + m.scoreB === 0) {
-      caption = _sfmPick([
-        `0–0 : les deux défenses ont pris la soirée très au sérieux.`,
-        `0–0, personne n'a voulu prendre le moindre risque — remboursez les organisateurs.`,
-      ]);
-    } else if (m.scoreA === m.scoreB) {
-      caption = _sfmPick([
-        `Nul et non avenu, ${m.scoreA}–${m.scoreB} : les deux équipes repartent avec leur fierté et pas grand-chose d'autre.`,
-        `${m.scoreA}–${m.scoreB}, un partage des points aussi juste qu'ennuyeux à raconter.`,
-      ]);
-    } else if (m.scoreA === 0 || m.scoreB === 0) {
-      const gk = m.scoreA === 0 ? (m.gardiensA||[])[0] : (m.gardiensB||[])[0];
-      caption = gk
-        ? _sfmPick([
-            `${gk} n'a rien laissé passer ce soir-là : cage fermée à double tour.`,
-            `${gk} a passé la rencontre les mains dans les poches — enfin, façon de parler.`,
-          ])
-        : `Une seule frappe dans toute la rencontre.`;
-    } else {
-      // L'écart n'est pas forcément de 1 : le "thriller" est le match le moins
-      // prolifique de la soirée, pas nécessairement le plus serré.
-      const ecart = Math.abs(m.scoreA - m.scoreB);
-      caption = ecart === 1
-        ? _sfmPick([
-            `Un but d'écart, l'équivalent footballistique d'un cheveu sur la soupe.`,
-            `Un seul but a fait la différence — de quoi discuter jusqu'à la prochaine session.`,
-          ])
-        : `${ecart} buts d'écart dans le match le plus verrouillé de la soirée.`;
-    }
-  } else if (kind === "opener" && top) {
-    caption = top.count >= 2
-      ? _sfmPick([
-          `${top.name} lance les hostilités avec ${_sfmGoalsPhrase(top.count)} — la soirée commence fort, tant pis pour les autres.`,
-          `Coup d'envoi, et déjà ${top.name} qui sort le grand jeu : ${_sfmGoalsPhrase(top.count)}.`,
-        ])
-      : `Coup d'envoi de la soirée, tout le monde est encore frais.`;
-  } else if (top) {
-    caption = `${top.name} se distingue avec ${_sfmGoalsPhrase(top.count)}, notez-le quelque part.`;
+  } else if (kind === "blowout") {
+    const ecart = Math.abs(m.scoreA - m.scoreB);
+    const ep = `${ecart} but${ecart>1?"s":""} d'écart`;
+    caption = _sfmPick([
+      `Une correction en règle : ${ep}, sans discussion possible.`,
+      `${ep} — le genre de score qui se commente tout seul.`,
+    ]);
   }
   return { eyebrow: eyebrows[kind] || "⭐ Temps fort", caption };
 }
@@ -2897,7 +2936,8 @@ function _sfmRecapSentence(session, matchs, totalButs, buteursRanked, passeursRa
     const cls = eq ? teamCls(eq) : "";
     const nameHtml = cls ? `<b style="color:var(--${cls})">${name}</b>` : `<b>${name}</b>`;
     const teamHtml = cls ? ` pour les <b style="color:var(--${cls})">${TEAM_LABEL[eq]||eq}</b>` : "";
-    const ph = _sfmGoalsPhrase(count);
+    const assistEntry = passeursRanked.find(([n]) => n === name);
+    const ph = _sfmGoalsAssistsPhrase(count, assistEntry ? assistEntry[1] : 0);
     parts.push(_sfmPick([
       `${nameHtml} s'est chargé du service après-vente offensif avec ${ph}${teamHtml} — pas franchement discret.`,
       `${nameHtml} régale avec ${ph}${teamHtml}, les autres n'avaient plus qu'à applaudir.`,
@@ -3029,6 +3069,7 @@ function _sfmPerfCard(role, name, cls, statLine, delay) {
 function _sfmBuildPerformers(session, matchs, buteursCount, passeursCount, gkRanking) {
   const cards = [];
   let delay = 0;
+  const featured = new Set();
   const teamOf = name => (session.presences && session.presences[name]) ? (session.presences[name].equipe||"") : "";
 
   const buteursRanked  = Object.entries(buteursCount).sort((a,b) => b[1]-a[1]);
@@ -3038,32 +3079,54 @@ function _sfmBuildPerformers(session, matchs, buteursCount, passeursCount, gkRan
     const [name, count] = buteursRanked[0];
     cards.push(_sfmPerfCard("Étoile de la soirée", name, teamCls(teamOf(name)),
       `${count} but${count>1?"s":""} inscrit${count>1?"s":""} durant la soirée`, (delay+=0.05).toFixed(2)));
+    featured.add(name);
   }
+  // Passeur en chef : privilégie quelqu'un d'autre que l'Étoile de la soirée si l'écart
+  // avec le passeur suivant reste raisonnable — sinon la même personne trusterait
+  // systématiquement toutes les cartes.
   if (passeursRanked.length) {
-    const [name, count] = passeursRanked[0];
+    let pick = passeursRanked[0];
+    if (featured.has(pick[0])) {
+      const alt = passeursRanked.find(([n]) => !featured.has(n));
+      if (alt && pick[1] - alt[1] <= 2) pick = alt;
+    }
+    const [name, count] = pick;
     cards.push(_sfmPerfCard("Passeur en chef", name, teamCls(teamOf(name)),
       `${count} passe${count>1?"s":""} décisive${count>1?"s":""}`, (delay+=0.05).toFixed(2)));
+    featured.add(name);
   }
+  // Mur infranchissable : exige au moins 2 mi-temps gardées pour éviter de valoriser un
+  // échantillon trop faible (ex : 0 encaissé sur une seule mi-temps, pas convaincant).
   if (gkRanking && gkRanking.length) {
-    const best = [...gkRanking].sort((a,b) => a.rate-b.rate || b.matchs-a.matchs || a.name.localeCompare(b.name,"fr"))[0];
-    const stat = best.buts === 0
-      ? `0 but encaissé dans les buts (${best.matchs} mi-temps${best.matchs>1?"s":""})`
-      : `${best.buts} but${best.buts>1?"s":""} encaissé${best.buts>1?"s":""} en ${best.matchs} mi-temps${best.matchs>1?"s":""}`;
-    cards.push(_sfmPerfCard("Mur infranchissable", best.name, teamCls(teamOf(best.name)), stat, (delay+=0.05).toFixed(2)));
+    const eligible = gkRanking.filter(g => g.matchs >= 2);
+    const best = [...eligible].sort((a,b) => a.rate-b.rate || b.matchs-a.matchs || a.name.localeCompare(b.name,"fr"))[0];
+    if (best) {
+      const stat = best.buts === 0
+        ? `0 but encaissé dans les buts (${best.matchs} mi-temps${best.matchs>1?"s":""})`
+        : `${best.buts} but${best.buts>1?"s":""} encaissé${best.buts>1?"s":""} en ${best.matchs} mi-temps${best.matchs>1?"s":""}`;
+      cards.push(_sfmPerfCard("Mur infranchissable", best.name, teamCls(teamOf(best.name)), stat, (delay+=0.05).toFixed(2)));
+      featured.add(best.name);
+    }
   }
 
-  let bestSingle = null;
+  // Festival offensif : meilleure perf sur un seul match — si c'est déjà la même
+  // personne qu'une autre carte, on regarde s'il y a un autre joueur presque aussi
+  // fort ce soir-là pour diversifier qui est mis en avant.
+  const singleMatchBest = {};
   matchs.forEach((m, i) => {
     const c = {};
     (m.buteursA||[]).forEach(b => { if (b && b!=="CSC") c[b]=(c[b]||0)+1; });
     (m.buteursB||[]).forEach(b => { if (b && b!=="CSC") c[b]=(c[b]||0)+1; });
     Object.entries(c).forEach(([name, count]) => {
-      if (!bestSingle || count > bestSingle.count) bestSingle = { name, count, idx: i, m };
+      if (!singleMatchBest[name] || count > singleMatchBest[name].count) singleMatchBest[name] = { name, count, idx: i, m };
     });
   });
-  if (bestSingle && bestSingle.count >= 2) {
+  const singleRanked = Object.values(singleMatchBest).filter(s => s.count >= 2).sort((a,b) => b.count - a.count);
+  if (singleRanked.length) {
+    const bestSingle = singleRanked.find(s => !featured.has(s.name)) || singleRanked[0];
     cards.push(_sfmPerfCard("Festival offensif", bestSingle.name, teamCls(teamOf(bestSingle.name)),
       `${_sfmGoalsPhrase(bestSingle.count)} lors du match #${bestSingle.idx+1} (${bestSingle.m.scoreA}-${bestSingle.m.scoreB})`, (delay+=0.05).toFixed(2)));
+    featured.add(bestSingle.name);
   }
 
   return cards;
@@ -4482,7 +4545,7 @@ function _dbx2RadarSvg(axes, series, size) {
     const op = s.emphasized ? 1 : .9;
     const fillOp = s.emphasized ? .22 : .1;
     const dash = s.emphasized ? "" : ` stroke-dasharray="5,3"`;
-    return `<polygon points="${pts}" fill="${s.color}" fill-opacity="${fillOp}" stroke="${s.color}" stroke-opacity="${op}" stroke-width="${s.emphasized?2.4:2}"${dash}/>`;
+    return `<polygon points="${pts}" fill="${s.color}" fill-opacity="${fillOp}" stroke="${s.color}" stroke-opacity="${op}" stroke-width="${s.emphasized?2.4:1}"${dash}/>`;
   }).join("");
   return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${rings}${spokes}${polys}</svg>`;
 }
