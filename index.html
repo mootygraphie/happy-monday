@@ -1025,7 +1025,8 @@
   .riv-match-player { text-align:center; padding:4px; }
   .riv-match-player-name { font-size:12px; font-weight:700; margin-bottom:3px; }
   .riv-match-player-ga { font-size:12px; color:var(--text3); }
-  .riv-match-player-ga.active { color:#FEDB00; font-weight:700; }
+  .riv-match-player-ga.active { color:var(--gold); font-weight:700; }
+  html.light .riv-match-player-ga.active { color:#9a7005; }
   .riv-col-card { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
   .riv-no-data-small { font-size:12px; color:var(--text3); text-align:center; padding:20px 0; }
   /* ── Rivalités : récap / face-à-face / ensemble ── */
@@ -1324,6 +1325,8 @@
   /* ── Hero KPI strip ── */
   .dbx-hero-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
   @media (min-width: 720px) { .dbx-hero-grid { grid-template-columns: repeat(4,1fr); } }
+  .dbx2-hero-grid-3 { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+  @media (min-width: 640px) { .dbx2-hero-grid-3 { grid-template-columns: repeat(3,1fr); } }
   .dbx-hero-card {
     background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg);
     padding: 18px 19px; position: relative; overflow: hidden; min-height: 118px;
@@ -1705,7 +1708,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 10:46</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 11:36</footer>
 
 <script>
 
@@ -2540,15 +2543,16 @@ function computeGardiensRanking(sessions) {
         matchMap[p] = (matchMap[p] || 0) + c;
       });
       Object.entries(matchMap).forEach(([p, c]) => {
-        if (!stats[p]) stats[p] = { matchs: 0, buts: 0 };
+        if (!stats[p]) stats[p] = { matchs: 0, buts: 0, cleanSheets: 0 };
         stats[p].matchs++;
         stats[p].buts += c;
+        if (c === 0) stats[p].cleanSheets++;
       });
     });
   });
   return Object.entries(stats)
     .filter(([,s]) => s.matchs > 0)
-    .map(([name, s]) => ({ name, matchs: s.matchs, buts: s.buts, rate: s.buts / s.matchs }));
+    .map(([name, s]) => ({ name, matchs: s.matchs, buts: s.buts, cleanSheets: s.cleanSheets, rate: s.buts / s.matchs }));
 }
 
 function buildYachineHtml(sessions) {
@@ -4483,16 +4487,23 @@ function _dbxHighlightCards(agg) {
   return `<div class="dbx-hl-grid">${card("Plus gros score", agg.mostGoals)}${card("Plus grand écart", agg.biggestAmp)}</div>`;
 }
 
-function _dbxLeaderCol(title, icon, entries, unit) {
+/* homeColor : { [nom]: "Rouge"|"Vert"|"Bleue" } optionnel — si la couleur d un joueur
+   diverge de viewColor (portee Equipe), on affiche son pastille d origine devant son nom
+   (ex: un "mercenaire" ayant marque pour cette equipe alors qu il joue ailleurs). */
+function _dbxLeaderCol(title, icon, entries, unit, viewColor, homeColor) {
   if (!entries.length) return `<div class="dbx-card dbx-lead-card"><div class="dbx-lead-head">${icon} ${title}</div><div class="dbx-lead-empty">Aucune donnée</div></div>`;
   const max = entries[0][1][unit];
-  const rows = entries.map(([name,p],i) => `
+  const rows = entries.map(([name,p],i) => {
+    const home = homeColor && homeColor[name];
+    const tag = (viewColor && home && home !== viewColor) ? dot(home) : "";
+    return `
     <div class="dbx-lead-row r${i+1}">
       <div class="dbx-lead-rank">${i+1}</div>
-      <div class="dbx-lead-name">${pLink(name)}</div>
+      <div class="dbx-lead-name">${tag}${pLink(name)}</div>
       <div class="dbx-lead-bar-wrap"><div class="dbx-lead-bar" style="width:${max?p[unit]/max*100:0}%"></div></div>
       <div class="dbx-lead-val">${p[unit]}</div>
-    </div>`).join("");
+    </div>`;
+  }).join("");
   return `<div class="dbx-card dbx-lead-card"><div class="dbx-lead-head">${icon} ${title}</div>${rows}</div>`;
 }
 
@@ -4694,14 +4705,34 @@ function _dbxComputeTeamAgg(sessions, color) {
   });
   const played = w + n + l;
   const byAlpha = (a,b) => a[0].localeCompare(b[0], "fr");
-  const scorers = Object.entries(scorerTally).sort((a,b) => b[1]-a[1] || byAlpha(a,b)).slice(0,5);
-  const assists = Object.entries(assistTally).sort((a,b) => b[1]-a[1] || byAlpha(a,b)).slice(0,5);
+  // Liste complete (plus de top 5) : un joueur peut avoir marque/passe pour cette equipe
+  // en depannage ("mercenaire") sans y etre habituellement affecte.
+  const scorers = Object.entries(scorerTally).sort((a,b) => b[1]-a[1] || byAlpha(a,b));
+  const assists = Object.entries(assistTally).sort((a,b) => b[1]-a[1] || byAlpha(a,b));
+  // Couleur d equipe la plus frequente de chaque joueur sur TOUTE la periode (indépendant
+  // du fait qu il ait marque ou non ce soir-la) — sert a reperer les "mercenaires" dans
+  // les classements buteurs/passeurs de cette equipe (ex: un joueur habituellement chez
+  // les Jaunes qui a depanne et marque pour cette equipe).
+  const colorTally = {};
+  sessions.forEach(s => {
+    Object.entries(s.presences || {}).forEach(([nm, info]) => {
+      if (info.statut !== "Présent" || !info.equipe) return;
+      colorTally[nm] = colorTally[nm] || {};
+      colorTally[nm][info.equipe] = (colorTally[nm][info.equipe]||0) + 1;
+    });
+  });
+  const homeColor = {};
+  [...scorers, ...assists].forEach(([nm]) => {
+    if (homeColor[nm] !== undefined) return;
+    const t = colorTally[nm];
+    homeColor[nm] = t ? Object.entries(t).sort((a,b) => b[1]-a[1])[0][0] : null;
+  });
   let bestStreak = 0, cur = 0;
   results.forEach(r => { if (r === "w") { cur++; bestStreak = Math.max(bestStreak, cur); } else cur = 0; });
   const vsEntries = Object.entries(vs);
   const nemesis = vsEntries.length ? [...vsEntries].sort((a,b) => (a[1].w/a[1].played) - (b[1].w/b[1].played))[0] : null;
   const form = results.slice(-5);
-  return { color, played, w, n, l, gf, ga, cleanSheets, scorers, assists, vs, biggestWin, worstLoss, bestStreak, nemesis, form, results, goalsBySession, assistsBySession };
+  return { color, played, w, n, l, gf, ga, cleanSheets, scorers, assists, homeColor, vs, biggestWin, worstLoss, bestStreak, nemesis, form, results, goalsBySession, assistsBySession };
 }
 
 /* Agregation match par match pour un joueur (reutilisee pour lui-meme ET pour
@@ -4853,10 +4884,21 @@ function _dbxComputePlayerAgg(sessions, player) {
     ? { atk: avgAcc.atk/avgCount, pass: avgAcc.pass/avgCount, gk: avgAcc.gk/avgCount, win: avgAcc.win/avgCount, def: avgAcc.def/avgCount }
     : { atk:.5, pass:.5, gk:.5, win:.5, def:.5 };
 
+  // Points "a la Ligue" (3V/1N/0D) accumules par le joueur selon les resultats de son
+  // equipe quand il jouait, + stats gardien/defense brutes (deja calculees ci-dessus
+  // pour le radar, on relit juste l entree de ce joueur pour l affichage en clair).
+  const points = pa.w * 3 + pa.n;
+  const pointsPerMatch = pa.played ? points / pa.played : 0;
+  const defEntry = defRanking.find(dd => dd.name === player) || null;
+  const gkEntry  = gkRanking.find(r => r.name === player) || null;
+
   return {
     player, played: pa.played, w: pa.w, n: pa.n, l: pa.l, buts: pa.buts, passes: pa.passes,
-    presenceRate, winRate, form, colorMatches: pa.colorMatches, colorWinsGames: pa.colorWinsGames,
+    presenceRate, sessionsAttended: psStat.presences, winRate, points, pointsPerMatch, form,
+    colorMatches: pa.colorMatches, colorWinsGames: pa.colorWinsGames,
     bestColor, bestMatch: pa.bestMatch, bestDuo, mvp, radar, avgRadar,
+    defAvg: defEntry ? defEntry.avg : null, defMatches: defEntry ? defEntry.matchCount : 0, defTotal: defEntry ? defEntry.goalsAgainst : 0,
+    gkCleanSheets: gkEntry ? (gkEntry.cleanSheets||0) : 0, gkMatches: gkEntry ? gkEntry.matchs : 0, gkConceded: gkEntry ? gkEntry.buts : 0,
     goalsBySession: pa.goalsBySession, assistsBySession: pa.assistsBySession,
   };
 }
@@ -4980,8 +5022,8 @@ function _dbxRenderTeamScope(sessions, color) {
 
   h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Buteurs &amp; passeurs — ${TEAM_LABEL[color]}</span></div>`;
   h += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-    ${_dbxLeaderCol("Buteurs","⚽", d.scorers.map(([nm,c])=>[nm,{buts:c}]), "buts")}
-    ${_dbxLeaderCol("Passeurs","🎯", d.assists.map(([nm,c])=>[nm,{passes:c}]), "passes")}
+    ${_dbxLeaderCol("Buteurs","⚽", d.scorers.map(([nm,c])=>[nm,{buts:c}]), "buts", color, d.homeColor)}
+    ${_dbxLeaderCol("Passeurs","🎯", d.assists.map(([nm,c])=>[nm,{passes:c}]), "passes", color, d.homeColor)}
   </div>`;
 
   h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Moments forts</span></div>`;
@@ -5009,30 +5051,46 @@ function _dbxRenderTeamScope(sessions, color) {
 ══════════════════════════════════════════════════════════ */
 function _dbxRenderPlayerScope(sessions, player) {
   const d = _dbxComputePlayerAgg(sessions, player);
-  const goalsPerMatch = d.played ? (d.buts/d.played).toFixed(1) : "0.0";
 
   let h = "";
-  h += `<div class="dbx-hero-grid">
+  h += `<div class="dbx2-hero-grid-3">
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Matchs joués</div>
       <div class="dbx-hero-num">${d.played}</div>
-      <div class="dbx-hero-sub">${Math.round(d.presenceRate*100)}% de présence</div>
-    </div>
-    <div class="dbx-hero-card">
-      <div class="dbx-hero-lbl">Buts</div>
-      <div class="dbx-hero-num">${d.buts}</div>
-      <div class="dbx-hero-sub">${goalsPerMatch} / match</div>
-    </div>
-    <div class="dbx-hero-card">
-      <div class="dbx-hero-lbl">Passes décisives</div>
-      <div class="dbx-hero-num">${d.passes}</div>
-      <div class="dbx-hero-sub">sur la période</div>
+      <div class="dbx-hero-sub">${Math.round(d.presenceRate*100)}% de présence &middot; ${d.sessionsAttended} session${d.sessionsAttended>1?"s":""}</div>
     </div>
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Victoires</div>
       <div class="dbx-hero-num">${Math.round(d.winRate*100)}%</div>
       <div class="dbx-hero-sub"><span style="color:var(--good)">${d.w}V</span> <span style="color:var(--neutral)">${d.n}N</span> <span style="color:var(--bad)">${d.l}D</span></div>
       ${d.form.length ? _dbx2FormChipsHtml(d.form) : ""}
+    </div>
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Points par match</div>
+      <div class="dbx-hero-num">${d.pointsPerMatch.toFixed(1)}</div>
+      <div class="dbx-hero-sub">${d.points} pt${d.points>1?"s":""} sur ${d.played} match${d.played>1?"s":""}</div>
+    </div>
+  </div>`;
+  h += `<div class="dbx-hero-grid" style="margin-top:10px">
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Buteur</div>
+      <div class="dbx-hero-num">${d.buts}</div>
+      <div class="dbx-hero-sub">but${d.buts>1?"s":""} marqué${d.buts>1?"s":""}</div>
+    </div>
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Passeur</div>
+      <div class="dbx-hero-num">${d.passes}</div>
+      <div class="dbx-hero-sub">passe${d.passes>1?"s":""} décisive${d.passes>1?"s":""}</div>
+    </div>
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Défenseur</div>
+      <div class="dbx-hero-num">${d.defAvg!==null ? d.defAvg.toFixed(1) : "—"}</div>
+      <div class="dbx-hero-sub">Buts encaissés / match</div>
+    </div>
+    <div class="dbx-hero-card">
+      <div class="dbx-hero-lbl">Gardien</div>
+      <div class="dbx-hero-num">${d.gkMatches>0 ? d.gkCleanSheets : "—"}</div>
+      <div class="dbx-hero-sub">${d.gkMatches>0 ? `Clean sheet${d.gkCleanSheets>1?"s":""}` : "Aucun match gardé"}</div>
     </div>
   </div>`;
 
