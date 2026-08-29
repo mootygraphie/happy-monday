@@ -1739,7 +1739,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 29/08/2026 - 13:46</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 29/08/2026 - 13:58</footer>
 
 <script>
 
@@ -2611,25 +2611,20 @@ function buildTopDefCardHTMLv2(sessions, minMatches) {
   </div>`;
 }
 
-// Top 3 gardien : taux de clean sheets (%), minimum 3 matchs gardés
-function buildGardienTop3HTML() {
+// Top 10 gardien : taux de clean sheets (%), minimum 3 matchs gardés
+function buildGardienTop10HTML() {
   const ranked = ALL_PLAYERS.map(p => {
     const s = computeAchievementStats(p);
     return { name: p, matchs: s.gardiensMatchs, rate: s.gardienRate };
   }).filter(r => r.matchs >= 3).sort((a,b) => b.rate - a.rate || b.matchs - a.matchs || a.name.localeCompare(b.name,'fr'));
   if (!ranked.length) return `<div class="kpi-card" data-card="top-gardien">
-    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 3 Gardien 🧤 (% clean sheets)</div>
+    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 10 Gardien 🧤 (% clean sheets)</div>
     <span style="color:var(--text3)">—</span>
   </div>`;
-  const slots = []; let rem = [...ranked];
-  while (rem.length && slots.length < 3) {
-    const top = rem[0].rate;
-    slots.push({ rank: slots.length, players: rem.filter(r => r.rate === top).map(r => r.name) });
-    rem = rem.filter(r => r.rate !== top);
-  }
-  const body = buildPodiumVizSlotsV2(slots, s => `${ranked.find(r=>r.name===s.players[0]).rate}%`, s => s.players.map(n => pLink(n)).join(", "), true);
+  const items = ranked.map(r => ({ name: r.name, value: r.rate }));
+  const body = buildTop10HTMLv2(items, v => `${v}%`);
   return `<div class="kpi-card" data-card="top-gardien">
-    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 3 Gardien 🧤 (% clean sheets)</div>
+    <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 10 Gardien 🧤 (% clean sheets)</div>
     ${body}
     <div style="font-size:11px;color:var(--text3);margin-top:10px;text-align:center">Minimum 3 matchs gardés</div>
   </div>`;
@@ -4290,7 +4285,7 @@ function renderStats() {
 
   /* ── Ligne 2 : Défenseurs (Top 10) | Gardien (Top 3) ── */
   const defCard     = buildTopDefCardHTMLv2(SESSIONS);
-  const gardienCard = buildGardienTop3HTML();
+  const gardienCard = buildGardienTop10HTML();
 
   h += `<div class="podium-section">
     ${defCard}
@@ -4452,9 +4447,10 @@ function _dbxComputeAgg(sessions) {
   const byAlpha = (a,b) => a[0].localeCompare(b[0], "fr");
   const topScorers  = st.buteursRank.slice(0,5);
   const topAssists  = st.passeursRank.slice(0,5);
-  const topPresence = Object.entries(st.ps)
-    .filter(([n,p]) => p.presences>0 && !JOKERS.has(n))
-    .sort((a,b) => b[1].presences-a[1].presences || byAlpha(a,b)).slice(0,5);
+  const topCleanSheets = computeGardiensRanking(sessions)
+    .filter(r => r.cleanSheets > 0)
+    .sort((a,b) => b.cleanSheets-a.cleanSheets || a.name.localeCompare(b.name,"fr")).slice(0,5)
+    .map(r => [r.name, { cleanSheets: r.cleanSheets }]);
   const goalsBySession = sorted.map(s => ({ date: s.date, goals: (s.matchs||[]).reduce((a,m) => a+m.scoreA+m.scoreB, 0) }));
   const assistsBySession = sorted.map(s => ({ date: s.date, assists: (s.matchs||[]).reduce((a,m) => a+_dbxCountAssists(m), 0) }));
   /* Clean sheets : une equipe garde sa cage inviolee des qu elle ne concede aucun
@@ -4463,7 +4459,7 @@ function _dbxComputeAgg(sessions) {
   return {
     allMatchs: allMatchsChrono, ps: st.ps, colorWins: st.colorWins, draws,
     goalsFor: st.goalsPerTeam, goalsAgainst, totalGoals, leaders, maxWins,
-    topScorers, topAssists, topPresence, totalPres, totalAbs, totalBles, totalCleanSheets,
+    topScorers, topAssists, topCleanSheets, totalPres, totalAbs, totalBles, totalCleanSheets,
     mostGoals: st.mostGoals, biggestAmp: st.biggestAmp, results, goalsBySession, assistsBySession,
     sessionsCount: sessions.length
   };
@@ -5507,7 +5503,7 @@ function renderDashboard() {
     h += `<div class="dbx-lead-grid">
       ${_dbxLeaderCol("Buteurs","⚽",agg.topScorers,"buts")}
       ${_dbxLeaderCol("Passeurs","🎯",agg.topAssists,"passes")}
-      ${_dbxLeaderCol("Présences","✅",agg.topPresence,"presences")}
+      ${_dbxLeaderCol("Clean sheets","🧤",agg.topCleanSheets,"cleanSheets")}
     </div>`;
     h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Assiduité</span></div>`;
     h += _dbxRenderAssiduity(agg);
