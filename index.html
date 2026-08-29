@@ -1330,6 +1330,7 @@
   .dbx-hero-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
   @media (min-width: 720px) { .dbx-hero-grid { grid-template-columns: repeat(4,1fr); } }
   .dbx2-hero-grid-3 { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+  @media (max-width: 639px) { .dbx2-hero-grid-3 .dbx-hero-card-win { order: -1; grid-column: 1 / -1; } }
   @media (min-width: 640px) { .dbx2-hero-grid-3 { grid-template-columns: repeat(3,1fr); } }
   .dbx-hero-card {
     background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg);
@@ -1738,7 +1739,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 28/08/2026 - 19:59</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 29/08/2026 - 13:32</footer>
 
 <script>
 
@@ -5178,7 +5179,7 @@ function _dbxRenderPlayerScope(sessions, player, prevSessions) {
       <div class="dbx-hero-num">${d.played}${dbxCompare ? _dbxDeltaBadge(d.played, prevD ? prevD.played : null) : ""}</div>
       <div class="dbx-hero-sub">${Math.round(d.presenceRate*100)}% de présence &middot; ${d.sessionsAttended} session${d.sessionsAttended>1?"s":""}</div>
     </div>
-    <div class="dbx-hero-card">
+    <div class="dbx-hero-card dbx-hero-card-win">
       <div class="dbx-hero-lbl">Victoires</div>
       <div class="dbx-hero-num">${Math.round(d.winRate*100)}%${dbxCompare ? _dbxDeltaBadge(Math.round(d.winRate*100), prevWinRate, {suffix:"%"}) : ""}</div>
       <div class="dbx-hero-sub"><span style="color:var(--good)">${d.w}V</span> <span style="color:var(--neutral)">${d.n}N</span> <span style="color:var(--bad)">${d.l}D</span></div>
