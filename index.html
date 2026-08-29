@@ -27,6 +27,7 @@
     --neutral: #9898aa; --neutral-bg: rgba(154,154,170,.1); --neutral-border: rgba(154,154,170,.3);
     --shadow: 0 1px 3px rgba(0,0,0,.35);
     --radius: 10px; --radius-lg: 16px;
+    --tt-pitch-floor: #5a8770; --tt-pitch-line: rgba(255,255,255,.6);
   }
   /* ── Mode clair ── */
   html.light {
@@ -1241,6 +1242,25 @@
   .sfm-spot-goals em { color: var(--text3); font-style: italic; }
   .sfm-spot-gk { display: inline-block; margin-left: 8px; font-size: 10px; color: var(--text3); white-space: nowrap; }
 
+  .sfm-tt-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+  @media (max-width: 780px) { .sfm-tt-layout { grid-template-columns: 1fr; } }
+  .sfm-tt-spots { display: flex; flex-direction: column; gap: 12px; }
+
+  .tt-pitch-card { padding: 16px; }
+  .tt-pitch-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+  .tt-pitch-title { font-size: 13px; font-weight: 700; }
+  .tt-gk-toggle { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text3); }
+  .tt-gk-toggle select { border: 1px solid var(--border); background: var(--bg3); color: var(--text); border-radius: 8px; padding: 4px 8px; font-size: 11px; }
+  .tt-pitch-wrap { position: relative; width: 100%; height: 340px; border-radius: 12px; overflow: hidden; }
+  .tt-pitch-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .tt-pitch-rows { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 18px 8px 14px; }
+  .tt-pitch-row { display: flex; justify-content: center; align-items: flex-start; gap: 16px; min-height: 68px; flex-wrap: wrap; }
+  .tt-badge { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 66px; text-align: center; }
+  .tt-badge-circle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; box-shadow: 0 3px 8px rgba(0,0,0,.35); border: 2px solid rgba(255,255,255,.7); }
+  .tt-badge-name { font-size: 10.5px; font-weight: 600; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.6); line-height: 1.15; }
+  .tt-badge-stat { font-size: 9px; color: rgba(255,255,255,.82); text-shadow: 0 1px 3px rgba(0,0,0,.6); }
+  .tt-pitch-empty { color: var(--text3); font-size: 13px; font-style: italic; padding: 20px; text-align: center; }
+
   .sfm-perf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 12px; }
   .sfm-perf-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 15px; display: flex; gap: 12px; align-items: flex-start; }
   .sfm-perf-av { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; background: var(--bg3); color: var(--text2); }
@@ -1739,7 +1759,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 29/08/2026 - 13:58</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 29/08/2026 - 14:14</footer>
 
 <script>
 
@@ -2172,6 +2192,7 @@ let dbxCustomFrom = null;
 let dbxCustomTo = null;
 let dbxCompare = false; // affiche les variations vs la periode precedente equivalente, tous scopes confondus
 let dbxTrendMode = "session"; // "session" | "match" — granularite des cartes Tendance (Globales/Equipes/Joueurs)
+let ttGkCriteria = "avg"; // "avg" | "cs" — critere de choix du gardien pour l equipe-type (Session + Dashboard)
 
 /* Bornes de saisons avec dates précises (sy = année de début) */
 const SEASON_DEFS = [
@@ -2654,6 +2675,115 @@ function computeGardiensRanking(sessions) {
   return Object.entries(stats)
     .filter(([,s]) => s.matchs > 0)
     .map(([name, s]) => ({ name, matchs: s.matchs, buts: s.buts, cleanSheets: s.cleanSheets, rate: s.buts / s.matchs }));
+}
+
+/* Équipe-type (soirée ou période) : 1 gardien + jusqu'à 4 joueurs de champ répartis en
+   attaquant/milieu/défenseur — 0 à 2 par poste, total 4. Aucun poste n'est stocké nulle
+   part : tout est déduit des stats (buteur/passeur/moins de buts encaissés en jouant),
+   sans minimum par poste (ex: 2 attaquants + 2 défenseurs sans milieu est valide si les
+   stats de la période penchent nettement de ce côté). outfield/gks doivent deja porter
+   un champ .team (couleur d'équipe) resolu par l'appelant (session ou periode). */
+function _pickEquipeType(outfield, gks, gkCriteria) {
+  if (!gks.length) return null;
+  const gk = gks.slice().sort((a,b) => gkCriteria === "cs"
+    ? (b.cleanSheets - a.cleanSheets) || (a.rate - b.rate)
+    : (a.rate - b.rate) || (b.cleanSheets - a.cleanSheets)
+  )[0];
+  const candidates = outfield.filter(p => p.name !== gk.name);
+  if (!candidates.length) return { gk, attaquants: [], milieux: [], defenseurs: [], shape: "0-0-0" };
+
+  const maxButs = Math.max(1, ...candidates.map(p => p.buts));
+  const maxPasses = Math.max(1, ...candidates.map(p => p.passes));
+  const minDef = Math.min(...candidates.map(p => p.defAvg));
+  const maxDef = Math.max(...candidates.map(p => p.defAvg));
+  const defRange = (maxDef - minDef) || 1;
+  // Un "leader" avec seulement 1 but/passe ne doit pas peser autant qu'un leader avec 3+.
+  const scoreFor = (p, role) => role === "attaquant" ? (p.buts / maxButs) * Math.min(1, p.buts / 3)
+    : role === "milieu" ? (p.passes / maxPasses) * Math.min(1, p.passes / 3)
+    : 1 - (p.defAvg - minDef) / defRange;
+
+  const ROLE_PRIORITY = { attaquant: 0, milieu: 1, defenseur: 2 };
+  const roles = ["attaquant", "milieu", "defenseur"];
+  const counts = { attaquant: 0, milieu: 0, defenseur: 0 };
+  const usedNames = new Set();
+  const picks = [];
+  const slotsToFill = Math.min(4, candidates.length);
+
+  for (let slot = 0; slot < slotsToFill; slot++) {
+    let best = null;
+    candidates.forEach(p => {
+      if (usedNames.has(p.name)) return;
+      roles.forEach(role => {
+        if (counts[role] >= 2) return;
+        const s = scoreFor(p, role);
+        const better = !best || s > best.s + 1e-9 ||
+          (Math.abs(s - best.s) < 1e-9 && (ROLE_PRIORITY[role] < ROLE_PRIORITY[best.role] ||
+            (ROLE_PRIORITY[role] === ROLE_PRIORITY[best.role] && p.name.localeCompare(best.p.name, "fr") < 0)));
+        if (better) best = { p, role, s };
+      });
+    });
+    if (!best) break;
+    counts[best.role]++;
+    usedNames.add(best.p.name);
+    picks.push({ ...best.p, role: best.role });
+  }
+
+  const attaquants = picks.filter(p => p.role === "attaquant");
+  const milieux = picks.filter(p => p.role === "milieu");
+  const defenseurs = picks.filter(p => p.role === "defenseur");
+  return { gk, attaquants, milieux, defenseurs, shape: `${attaquants.length}-${milieux.length}-${defenseurs.length}` };
+}
+
+function _ttBadgeHtml(p, statLabel) {
+  const cls = teamCls(p.team);
+  const textColor = p.team === "Vert" ? "#161a22" : "#fff";
+  return `<div class="tt-badge">
+    <div class="tt-badge-circle" style="background:var(--${cls||"text3"});color:${p.team?textColor:"#fff"}">${(p.name||"").slice(0,2).toUpperCase()}</div>
+    <div class="tt-badge-name">${p.name}</div>
+    <div class="tt-badge-stat">${statLabel}</div>
+  </div>`;
+}
+
+function _ttPitchSvg() {
+  return `<svg class="tt-pitch-svg" viewBox="0 0 360 380" preserveAspectRatio="none">
+    <rect width="360" height="380" fill="var(--tt-pitch-floor)"/>
+    <rect x="10" y="10" width="340" height="360" fill="none" stroke="var(--tt-pitch-line)" stroke-width="2"/>
+    <line x1="10" y1="10" x2="350" y2="10" stroke="var(--tt-pitch-line)" stroke-width="2"/>
+    <circle cx="180" cy="10" r="43" fill="none" stroke="var(--tt-pitch-line)" stroke-width="2"/>
+    <circle cx="180" cy="10" r="3" fill="var(--tt-pitch-line)"/>
+    <rect x="90" y="309" width="180" height="53" fill="none" stroke="var(--tt-pitch-line)" stroke-width="2"/>
+    <rect x="135" y="347" width="90" height="16" fill="none" stroke="var(--tt-pitch-line)" stroke-width="2"/>
+    <rect x="150" y="362" width="60" height="8" fill="none" stroke="var(--tt-pitch-line)" stroke-width="2"/>
+  </svg>`;
+}
+
+/* idPrefix distingue les instances (session vs dashboard) pour le toggle gardien */
+function _ttPanelHtml(idPrefix, team, gkCriteria) {
+  if (!team) return `<div class="dbx-card tt-pitch-card"><div class="tt-pitch-empty">Pas assez de données pour générer une équipe-type.</div></div>`;
+  const gkStat = gkCriteria === "cs"
+    ? `${team.gk.cleanSheets} clean sheet${team.gk.cleanSheets>1?"s":""}`
+    : `${team.gk.rate.toFixed(2)} enc./match`;
+  return `<div class="dbx-card tt-pitch-card" data-tt-id="${idPrefix}">
+    <div class="tt-pitch-head">
+      <span class="tt-pitch-title">Équipe-type</span>
+      <label class="tt-gk-toggle">
+        <span>Gardien</span>
+        <select data-act="tt-gk-criteria" data-target="${idPrefix}">
+          <option value="avg"${gkCriteria!=="cs"?' selected':''}>Moy. encaissée</option>
+          <option value="cs"${gkCriteria==="cs"?' selected':''}>Clean sheets</option>
+        </select>
+      </label>
+    </div>
+    <div class="tt-pitch-wrap">
+      ${_ttPitchSvg()}
+      <div class="tt-pitch-rows">
+        <div class="tt-pitch-row">${team.attaquants.map(p=>_ttBadgeHtml(p, `${p.buts} but${p.buts>1?"s":""}`)).join("")}</div>
+        <div class="tt-pitch-row">${team.milieux.map(p=>_ttBadgeHtml(p, `${p.passes} passe${p.passes>1?"s":""}`)).join("")}</div>
+        <div class="tt-pitch-row">${team.defenseurs.map(p=>_ttBadgeHtml(p, `${p.defAvg.toFixed(1)} enc./match`)).join("")}</div>
+        <div class="tt-pitch-row">${_ttBadgeHtml(team.gk, gkStat)}</div>
+      </div>
+    </div>
+  </div>`;
 }
 
 function buildYachineHtml(sessions) {
@@ -3329,8 +3459,25 @@ function renderSessionDetailV2(session) {
     h += _sfmScoreboardHTML(standings);
 
     const spotCards = spotlights.map((s,i) => _sfmSpotlightCardHTML(matchs[s.i], s.kind, (i*0.05).toFixed(2)));
+
+    const ttOutfield = computeTopDefendersStats([session], 1).map(d => ({
+      name: d.name,
+      team: (session.presences[d.name] && session.presences[d.name].equipe) || "",
+      buts: buteursCount[d.name] || 0,
+      passes: passeursCount[d.name] || 0,
+      defAvg: d.avg
+    }));
+    const ttGks = gkRanking.map(g => ({ ...g, team: (session.presences[g.name] && session.presences[g.name].equipe) || "" }));
+    const ttTeam = _pickEquipeType(ttOutfield, ttGks, ttGkCriteria);
+
     if (spotCards.length) {
-      h += `<div class="section-label">Temps forts</div><div class="sfm-spot-grid">${spotCards.join("")}</div>`;
+      h += `<div class="section-label">Temps forts</div>
+        <div class="sfm-tt-layout">
+          <div class="sfm-tt-spots">${spotCards.join("")}</div>
+          ${_ttPanelHtml("sess", ttTeam, ttGkCriteria)}
+        </div>`;
+    } else if (ttTeam) {
+      h += `<div class="section-label">Équipe-type</div>${_ttPanelHtml("sess", ttTeam, ttGkCriteria)}`;
     }
 
     const perfCards = _sfmBuildPerformers(session, matchs, buteursCount, passeursCount, gkRanking);
@@ -4591,6 +4738,35 @@ function _dbxHighlightCards(agg) {
   return `<div class="dbx-hl-grid">${card("Plus gros score", agg.mostGoals)}${card("Plus grand écart", agg.biggestAmp)}</div>`;
 }
 
+/* Equipe-type sur la periode selectionnee (Dashboard Globales) — meme logique que sur
+   une session, mais les stats et la couleur d equipe sont agregees sur toute la periode
+   (couleur = celle la plus frequente sur les sessions de la periode). */
+function _dbxRenderEquipeType(sessions) {
+  const colorTally = {};
+  sessions.forEach(s => {
+    Object.entries(s.presences || {}).forEach(([nm, info]) => {
+      if (info.statut !== "Présent" || !info.equipe) return;
+      colorTally[nm] = colorTally[nm] || {};
+      colorTally[nm][info.equipe] = (colorTally[nm][info.equipe]||0) + 1;
+    });
+  });
+  const teamOf = nm => {
+    const t = colorTally[nm];
+    return t ? Object.entries(t).sort((a,b)=>b[1]-a[1])[0][0] : "";
+  };
+  const ps = computeStats(sessions).ps;
+  const outfield = computeTopDefendersStats(sessions, 1).map(d => ({
+    name: d.name,
+    team: teamOf(d.name),
+    buts: (ps[d.name] && ps[d.name].buts) || 0,
+    passes: (ps[d.name] && ps[d.name].passes) || 0,
+    defAvg: d.avg
+  }));
+  const gks = computeGardiensRanking(sessions).map(g => ({ ...g, team: teamOf(g.name) }));
+  const team = _pickEquipeType(outfield, gks, ttGkCriteria);
+  return _ttPanelHtml("dbx", team, ttGkCriteria);
+}
+
 function _dbxLeaderCol(title, icon, entries, unit) {
   if (!entries.length) return `<div class="dbx-card dbx-lead-card"><div class="dbx-lead-head">${icon} ${title}</div><div class="dbx-lead-empty">Aucune donnée</div></div>`;
   const max = entries[0][1][unit];
@@ -5460,6 +5636,24 @@ function _dbxPlaceHi(hi, btn) {
   });
 })();
 
+(function _ttInitGkToggle() {
+  const sessBox = document.getElementById("session-results");
+  if (sessBox) sessBox.addEventListener("change", e => {
+    const sel = e.target.closest('[data-act="tt-gk-criteria"][data-target="sess"]');
+    if (!sel) return;
+    ttGkCriteria = sel.value;
+    const dateSel = document.getElementById("session-date");
+    if (dateSel && dateSel.value) renderSessionResults(dateSel.value);
+  });
+  const dashBox = document.getElementById("panel-dashboard");
+  if (dashBox) dashBox.addEventListener("change", e => {
+    const sel = e.target.closest('[data-act="tt-gk-criteria"][data-target="dbx"]');
+    if (!sel) return;
+    ttGkCriteria = sel.value;
+    renderDashboard();
+  });
+})();
+
 /* ══════════════════════════════════════════════════════════
    DASHBOARD XXL — dispatcher principal (Globales / Équipes / Joueurs)
 ══════════════════════════════════════════════════════════ */
@@ -5499,6 +5693,8 @@ function renderDashboard() {
     h += _dbxGlobalTrendChart(agg);
     h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Matchs marquants</span></div>`;
     h += _dbxHighlightCards(agg);
+    h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Équipe-type</span><span class="dbx-sec-note">Sur la période sélectionnée</span></div>`;
+    h += _dbxRenderEquipeType(sessions);
     h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Classements</span><span class="dbx-sec-note">Sur la période sélectionnée</span></div>`;
     h += `<div class="dbx-lead-grid">
       ${_dbxLeaderCol("Buteurs","⚽",agg.topScorers,"buts")}
