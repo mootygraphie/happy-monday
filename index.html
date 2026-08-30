@@ -1774,7 +1774,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 20:22</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 20:27</footer>
 
 <script>
 
@@ -7100,11 +7100,16 @@ function _buildPresencesScreenHTML() {
   const tempJokers = _draft.tempJokers || [];
   const allJokers = [...jokerPlayers, ...tempJokers].sort((a, b) => a.localeCompare(b, "fr"));
 
-  // Recap global : reguliers + occasionnels, de facon uniforme sur les 4 statuts.
-  const countPresents = Object.values(_draft.presences).filter(v => v.statut === "Présent").length;
-  const countAbsents  = Object.values(_draft.presences).filter(v => v.statut === "Absent").length;
-  const countBlesses  = Object.values(_draft.presences).filter(v => v.statut === "Blessé").length;
-  const countNR       = Object.values(_draft.presences).filter(v => v.statut === "Pas répondu").length;
+  // Recap global : uniquement sur les joueurs reellement affiches dans la liste
+  // (reguliers + occasionnels), jamais sur tout _draft.presences — sinon les joueurs
+  // "Absent pour la saison"/"Inactif" (exclus de la liste, jamais cliquables) restent
+  // eternellement a "Pas repondu" par defaut et gonflent le compteur sans jamais
+  // apparaitre quand on filtre dessus.
+  const rosterForCount = [...regularPlayers, ...allJokers];
+  const countPresents = rosterForCount.filter(p => _draft.presences[p]?.statut === "Présent").length;
+  const countAbsents  = rosterForCount.filter(p => _draft.presences[p]?.statut === "Absent").length;
+  const countBlesses  = rosterForCount.filter(p => _draft.presences[p]?.statut === "Blessé").length;
+  const countNR       = rosterForCount.filter(p => (_draft.presences[p]?.statut || "Pas répondu") === "Pas répondu").length;
 
   // Liste plate, toujours dans le meme ordre (reguliers alpha puis occasionnels alpha) —
   // le filtre et la recherche cachent/montrent des lignes, ne deplacent jamais personne.
