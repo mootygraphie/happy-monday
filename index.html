@@ -899,6 +899,7 @@
   .saisie-gk-mt { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
   .saisie-gk-mt:last-child { margin-bottom: 0; }
   .saisie-gk-mt-tag { font-size: 10px; font-weight: 700; color: var(--text3); width: 26px; flex-shrink: 0; }
+  .saisie-gk-mt-tag.wide { width: 60px; }
 
   .saisie-field-btn { flex: 1; text-align: left; background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 9px 12px; font: inherit; font-size: 13px; font-weight: 600; color: var(--text2); cursor: pointer; display: flex; align-items: center; gap: 7px; min-height: 40px; transition: border-color .15s, background .15s; }
   .saisie-field-btn:hover { border-color: var(--text3); }
@@ -1773,7 +1774,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 20:05</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 20:22</footer>
 
 <script>
 
@@ -2038,6 +2039,8 @@ async function _fbLoadFromNetwork() {
       if (!Array.isArray(m.passeursB)) m.passeursB = [];
       if (!Array.isArray(m.gardiensA)) m.gardiensA = ["",""];
       if (!Array.isArray(m.gardiensB)) m.gardiensB = ["",""];
+      if (!Array.isArray(m.bancA)) m.bancA = ["",""];
+      if (!Array.isArray(m.bancB)) m.bancB = ["",""];
     });
     _draft = fbDraft;
     _migrateLegacyPresenceStatuts(_draft.presences);
@@ -2550,18 +2553,30 @@ function computeLinkUpStats(sessions) {
 
 function computeTopDefendersStats(sessions, minMatches) {
   const defMap = {};
+  const add = (player, goals) => {
+    if (!defMap[player]) defMap[player] = {goalsAgainst:0, matchCount:0};
+    defMap[player].goalsAgainst += goals;
+    defMap[player].matchCount++;
+  };
   sessions.forEach(session => {
     const presences = session.presences || {};
     (session.matchs || []).forEach(m => {
+      // Equipe a 6 : le joueur au Banc un mi-temps ne doit ni etre credite ni penalise
+      // pour ce mi-temps-la (il n etait pas sur le terrain). Necessite le detail par
+      // mi-temps ; les sessions plus anciennes sans ce detail gardent l ancien calcul
+      // (1 unite = le match entier) pour ne pas perdre leur historique.
+      const hasHalves = m.mt1A !== undefined && m.mt1B !== undefined;
+      const bancA = m.bancA || ["",""], bancB = m.bancB || ["",""];
       Object.entries(presences).forEach(([player, info]) => {
         if (info.statut !== "Présent" || !info.equipe) return;
-        let gc = null;
-        if (m.eqA === info.equipe) gc = m.scoreB;
-        else if (m.eqB === info.equipe) gc = m.scoreA;
-        if (gc === null) return;
-        if (!defMap[player]) defMap[player] = {goalsAgainst:0, matchCount:0};
-        defMap[player].goalsAgainst += gc;
-        defMap[player].matchCount++;
+        const isA = m.eqA === info.equipe, isB = m.eqB === info.equipe;
+        if (!isA && !isB) return;
+        if (!hasHalves) { add(player, isA ? m.scoreB : m.scoreA); return; }
+        const banc = isA ? bancA : bancB;
+        const mt1c = isA ? (m.mt1B||0) : (m.mt1A||0);
+        const mt2c = isA ? Math.max(0,(m.scoreB||0)-(m.mt1B||0)) : Math.max(0,(m.scoreA||0)-(m.mt1A||0));
+        if (banc[0] !== player) add(player, mt1c);
+        if (banc[1] !== player) add(player, mt2c);
       });
     });
   });
@@ -6962,7 +6977,9 @@ function _loadSessionIntoDraft(session) {
       passeursB: [...(m.passeursB || [])],
       mt1A: m.mt1A ?? 0, mt1B: m.mt1B ?? 0,
       gardiensA: [...(m.gardiensA || ["",""])],
-      gardiensB: [...(m.gardiensB || ["",""])]
+      gardiensB: [...(m.gardiensB || ["",""])],
+      bancA: [...(m.bancA || ["",""])],
+      bancB: [...(m.bancB || ["",""])]
     })),
     tempJokers
   };
@@ -7232,12 +7249,30 @@ function _saisieGkColHTML(idx, side, eq, gardienPool) {
   const m = _draft.matchs[idx];
   const g = side === "A" ? m.gardiensA : m.gardiensB;
   const k0 = `gk-${idx}-${side}-0`, k1 = `gk-${idx}-${side}-1`;
+
+  // Equipe a 6 : on reste a 5 sur le terrain, le champ Banc indique juste lequel
+  // des 6 laisse sa place ce mi-temps-la (ses stats ne comptent pas pour ce mi-temps).
+  const ownTeam = _playersOfTeam(eq);
+  let bancHtml = "";
+  if (ownTeam.length === 6) {
+    if (!m.bancA) m.bancA = ["",""];
+    if (!m.bancB) m.bancB = ["",""];
+    const banc = side === "A" ? m.bancA : m.bancB;
+    const bk0 = `banc-${idx}-${side}-0`, bk1 = `banc-${idx}-${side}-1`;
+    bancHtml = `
+    <div class="saisie-gk-mt"><span class="saisie-gk-mt-tag wide">Banc MT1</span>${_saisieFieldBtnHTML(banc[0]||"", "— Personne —", bk0, false)}</div>
+    ${_saisiePickerHTML(bk0, `Banc MT1 — ${TEAM_LABEL[eq]||eq}`, ownTeam, false, true)}
+    <div class="saisie-gk-mt"><span class="saisie-gk-mt-tag wide">Banc MT2</span>${_saisieFieldBtnHTML(banc[1]||"", "— Personne —", bk1, false)}</div>
+    ${_saisiePickerHTML(bk1, `Banc MT2 — ${TEAM_LABEL[eq]||eq}`, ownTeam, false, true)}`;
+  }
+
   return `<div class="saisie-gk-col">
     <div class="saisie-gk-col-label">Gardien · ${TEAM_LABEL[eq]||eq}</div>
     <div class="saisie-gk-mt"><span class="saisie-gk-mt-tag">MT1</span>${_saisieFieldBtnHTML(g[0]||"", "— Gardien —", k0, false)}</div>
     ${_saisiePickerHTML(k0, `Gardien MT1 — ${TEAM_LABEL[eq]||eq}`, gardienPool, false, false)}
     <div class="saisie-gk-mt"><span class="saisie-gk-mt-tag">MT2</span>${_saisieFieldBtnHTML(g[1]||"", "— Gardien —", k1, false)}</div>
     ${_saisiePickerHTML(k1, `Gardien MT2 — ${TEAM_LABEL[eq]||eq}`, gardienPool, false, false)}
+    ${bancHtml}
   </div>`;
 }
 function _saisieMatchEditorHTML(idx) {
@@ -7459,7 +7494,9 @@ async function _commitSession() {
       passeursB: (m.passeursB || []).slice(0, m.scoreB),
       mt1A: m.mt1A || 0, mt1B: m.mt1B || 0,
       gardiensA: (m.gardiensA || ["",""]).map(g => g || ""),
-      gardiensB: (m.gardiensB || ["",""]).map(g => g || "")
+      gardiensB: (m.gardiensB || ["",""]).map(g => g || ""),
+      bancA: (m.bancA || ["",""]).map(g => g || ""),
+      bancB: (m.bancB || ["",""]).map(g => g || "")
     }))
   };
 
@@ -7589,7 +7626,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   if (e.target.closest('[data-act="saisie-add-match"]')) {
     const teams = _activeTeams();
     if (!Array.isArray(_draft.matchs)) _draft.matchs = [];
-    _draft.matchs.push({ eqA: teams[0]||"", eqB: teams[1]||"", scoreA: 0, scoreB: 0, buteursA: [], buteursB: [], passeursA: [], passeursB: [], mt1A: 0, mt1B: 0, gardiensA: ["",""], gardiensB: ["",""] });
+    _draft.matchs.push({ eqA: teams[0]||"", eqB: teams[1]||"", scoreA: 0, scoreB: 0, buteursA: [], buteursB: [], passeursA: [], passeursB: [], mt1A: 0, mt1B: 0, gardiensA: ["",""], gardiensB: ["",""], bancA: ["",""], bancB: ["",""] });
     _saisieFocusedMatch = _draft.matchs.length - 1;
     _saisiePicker = null; _saisieTeamSwap = null;
     renderSaisie(); return;
@@ -7670,6 +7707,10 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       _draft.matchs[idx][side === "A" ? "passeursA" : "passeursB"][n] = val;
     } else if (kind === "gk") {
       const field = side === "A" ? "gardiensA" : "gardiensB";
+      if (!_draft.matchs[idx][field]) _draft.matchs[idx][field] = ["",""];
+      _draft.matchs[idx][field][n] = val;
+    } else if (kind === "banc") {
+      const field = side === "A" ? "bancA" : "bancB";
       if (!_draft.matchs[idx][field]) _draft.matchs[idx][field] = ["",""];
       _draft.matchs[idx][field][n] = val;
     }
