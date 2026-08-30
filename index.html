@@ -812,7 +812,7 @@
   /* Présences : liste plate filtrable (aucun joueur ne change jamais de position) */
   .saisie-pres-summary { display: flex; gap: 14px; margin-bottom: 12px; font-size: 12.5px; font-weight: 600; color: var(--text2); flex-wrap: wrap; }
   .saisie-pres-search { width: 100%; padding: 9px 12px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--bg2); color: var(--text); font-size: 13.5px; margin-bottom: 10px; }
-  .saisie-pres-filters { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 14px; }
+  .saisie-pres-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
   .saisie-pres-filter { flex: none; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
   .saisie-pres-filter.active { background: var(--gold); border-color: var(--gold); color: #171708; }
   .saisie-pres-filter .n { font-variant-numeric: tabular-nums; opacity: .85; }
@@ -1773,7 +1773,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 19:43</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 20:05</footer>
 
 <script>
 
@@ -2041,6 +2041,8 @@ async function _fbLoadFromNetwork() {
     });
     _draft = fbDraft;
     _migrateLegacyPresenceStatuts(_draft.presences);
+    _saisieStep = _SAISIE_STEPS.some(st => st.key === _draft.step) ? _draft.step : "presences";
+    if (document.getElementById("panel-saisie")?.classList.contains("active")) renderSaisie();
     localStorage.setItem('hmft_draft', JSON.stringify(_draft));
   }
 
@@ -6894,7 +6896,7 @@ function _newDraft() {
   ALL_PLAYERS.forEach(p => {
     presences[p] = { statut: "Pas répondu", equipe: "" };
   });
-  return { date: "", sac: "", maillots: "", presences, matchs: [], tempJokers: [] };
+  return { date: "", sac: "", maillots: "", presences, matchs: [], tempJokers: [], step: "presences" };
 }
 
 function _resetSaisieUiState() {
@@ -6921,7 +6923,12 @@ function _migrateLegacyPresenceStatuts(presences) {
 function _loadDraft() {
   try {
     const s = localStorage.getItem("hmft_draft");
-    if (s) { _draft = JSON.parse(s); _migrateLegacyPresenceStatuts(_draft.presences); return; }
+    if (s) {
+      _draft = JSON.parse(s);
+      _migrateLegacyPresenceStatuts(_draft.presences);
+      _saisieStep = _SAISIE_STEPS.some(st => st.key === _draft.step) ? _draft.step : "presences";
+      return;
+    }
   } catch(e) {}
   _draft = _newDraft();
 }
@@ -7525,6 +7532,8 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       if (missing.length && !confirm(`⚠️ Ces joueurs présents n'ont pas d'équipe :\n${missing.map(n => "• " + n).join("\n")}\n\nContinuer quand même ?`)) return;
     }
     _saisieStep = stepBtn.dataset.step; _saisiePicker = null; _saisieTeamSwap = null;
+    _draft.step = _saisieStep;
+    _saveDraft();
     renderSaisie(); window.scrollTo({top:0, behavior:"smooth"}); return;
   }
 
