@@ -1769,7 +1769,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 17:42</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 18:06</footer>
 
 <script>
 
@@ -2203,7 +2203,7 @@ let dbxCustomFrom = null;
 let dbxCustomTo = null;
 let dbxCompare = false; // affiche les variations vs la periode precedente equivalente, tous scopes confondus
 let dbxTrendMode = "session"; // "session" | "match" — granularite des cartes Tendance (Globales/Equipes/Joueurs)
-let ttGkCriteria = "avg"; // "avg" | "cs" — critere de choix du gardien pour l equipe-type (Session + Dashboard)
+let ttGkCriteria = "cs"; // "avg" | "cs" — critere de choix du gardien pour l equipe-type (Session + Dashboard)
 
 /* Bornes de saisons avec dates précises (sy = année de début) */
 const SEASON_DEFS = [
@@ -2670,12 +2670,11 @@ function computeGardiensRanking(sessions) {
       const gA = m.gardiensA || [], gB = m.gardiensB || [];
       const mt1Ac = m.mt1B || 0, mt2Ac = Math.max(0, (m.scoreB||0) - (m.mt1B||0));
       const mt1Bc = m.mt1A || 0, mt2Bc = Math.max(0, (m.scoreA||0) - (m.mt1A||0));
-      const matchMap = {};
+      // Chaque mi-temps gardee compte comme une unite a part entiere (meme si le meme
+      // gardien tient les deux mi-temps) : sinon un 0-0 en 1ere mi-temps suivi d un 0-2
+      // en 2e se noierait en une seule "presence" a la moyenne, sans clean sheet compte.
       [[gA[0],mt1Ac],[gA[1],mt2Ac],[gB[0],mt1Bc],[gB[1],mt2Bc]].forEach(([p,c]) => {
         if (!p || !p.trim()) return;
-        matchMap[p] = (matchMap[p] || 0) + c;
-      });
-      Object.entries(matchMap).forEach(([p, c]) => {
         if (!stats[p]) stats[p] = { matchs: 0, buts: 0, cleanSheets: 0 };
         stats[p].matchs++;
         stats[p].buts += c;
@@ -6312,7 +6311,7 @@ const ACH_ABOUT = {
   dbl:        'Matchs avec 1 but et 1 passe dans le même match',
   invic:      'Soirées sans la moindre défaite',
   defenseFer: 'Matchs joués sans encaisser de but',
-  mur:          'Clean sheets en tant que gardien (1 par match)',
+  mur:          'Clean sheets en tant que gardien (1 par mi-temps)',
   passoire:     'Buts encaissés en gardant les buts',
   gardienAssist:'Passe décisive en tant que gardien',
   willgrigg:  'Au moins 3 buts dans un même match',
@@ -6390,12 +6389,11 @@ function computeAchievementStats(playerName) {
           const gA=m.gardiensA||[], gB=m.gardiensB||[];
           const mt1Ac=m.mt1B||0, mt2Ac=Math.max(0,(m.scoreB||0)-(m.mt1B||0));
           const mt1Bc=m.mt1A||0, mt2Bc=Math.max(0,(m.scoreA||0)-(m.mt1A||0));
-          let _wasOwnGK=false,_gkConc=0;
-          if(gA[0]===playerName){_wasOwnGK=true;gardiensButsEncaisses+=mt1Ac;_gkConc+=mt1Ac;}
-          if(gA[1]===playerName){_wasOwnGK=true;gardiensButsEncaisses+=mt2Ac;_gkConc+=mt2Ac;}
-          if(gB[0]===playerName){_wasOwnGK=true;gardiensButsEncaisses+=mt1Bc;_gkConc+=mt1Bc;}
-          if(gB[1]===playerName){_wasOwnGK=true;gardiensButsEncaisses+=mt2Bc;_gkConc+=mt2Bc;}
-          if(_wasOwnGK){gardiensMatchs++;if(_gkConc===0)gardiensCleanSheets++;}
+          // Chaque mi-temps gardee compte comme une unite a part entiere (cf computeGardiensRanking).
+          if(gA[0]===playerName){gardiensMatchs++;gardiensButsEncaisses+=mt1Ac;if(mt1Ac===0)gardiensCleanSheets++;}
+          if(gA[1]===playerName){gardiensMatchs++;gardiensButsEncaisses+=mt2Ac;if(mt2Ac===0)gardiensCleanSheets++;}
+          if(gB[0]===playerName){gardiensMatchs++;gardiensButsEncaisses+=mt1Bc;if(mt1Bc===0)gardiensCleanSheets++;}
+          if(gB[1]===playerName){gardiensMatchs++;gardiensButsEncaisses+=mt2Bc;if(mt2Bc===0)gardiensCleanSheets++;}
         }
         if(inMatch){
           sessPlayed++;
