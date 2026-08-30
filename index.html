@@ -872,6 +872,8 @@
   @media (min-width: 900px) and (min-height: 600px) and (orientation: landscape) {
     .saisie-repart-cols { flex-direction: row; }
     .saisie-repart-zone { flex: 1; }
+    .saisie-repart-cols.n4 { flex-wrap: wrap; }
+    .saisie-repart-cols.n4 .saisie-repart-zone.grise { flex-basis: 100%; }
   }
 
   /* Logistique */
@@ -1794,7 +1796,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 22:55</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 22:59</footer>
 
 <script>
 
@@ -7220,6 +7222,7 @@ function _buildRepartitionScreenHTML() {
 
   // Sans equipe en tete : c'est la ou l'action est necessaire au moment de repartir.
   const zoneOrder = [["", unassigned], ["Bleue", teams.Bleue], ["Vert", teams.Vert], ["Rouge", teams.Rouge]];
+  const visibleZonesCount = zoneOrder.filter(([, list]) => list.length).length;
   const colsHtml = zoneOrder.map(([color, list]) => {
     if (!list.length) return "";
     const cls = _TEAM_CYCLE_CLASS[color];
@@ -7251,7 +7254,7 @@ function _buildRepartitionScreenHTML() {
         : `Encore ${10 - countPresents} présent${10 - countPresents > 1 ? "s" : ""} avant de pouvoir générer (min. 10)`}</span>
     </div>
     <p class="saisie-repart-hint">Touchez un joueur, puis choisissez sa couleur.</p>
-    <div class="saisie-repart-cols">${colsHtml}</div>
+    <div class="saisie-repart-cols n${visibleZonesCount}">${colsHtml}</div>
   </div>`;
 }
 
