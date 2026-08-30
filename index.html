@@ -778,7 +778,7 @@
 
   /* ── Saisie ── */
   .saisie-wrap { max-width: 820px; overflow-x: hidden; }
-  .saisie-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 10px; }
+  .saisie-bar { display: flex; align-items: center; justify-content: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 10px 24px; }
   .saisie-actions { display: flex; gap: 8px; flex-wrap: nowrap; }
   .saisie-btn { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border2); font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s, opacity .15s; white-space: nowrap; background: var(--bg3); color: var(--text); }
   .saisie-btn.secondary { background: var(--bg2); color: var(--text); }
@@ -887,7 +887,7 @@
   /* Match : éditeur focalisé */
   .saisie-match-editor { background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 20px; }
   .saisie-me-teams { display: grid; grid-template-columns: 1fr auto 1fr; align-items: start; gap: 14px; margin-bottom: 18px; }
-  .saisie-team-pick { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 10px; border: 1.5px solid var(--border2); background: var(--bg2); font-weight: 800; font-size: 15px; cursor: pointer; width: 100%; font-family: inherit; }
+  .saisie-team-pick { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 10px; border: 1.5px solid var(--border2); background: var(--bg2); font-weight: 800; font-size: 15px; cursor: pointer; width: 100%; min-width: 0; font-family: inherit; }
   .saisie-team-pick.rouge { border-color: var(--rouge-border); color: var(--rouge); }
   .saisie-team-pick.vert  { border-color: var(--vert-border); color: var(--vert); }
   .saisie-team-pick.bleue { border-color: var(--bleu-border); color: var(--bleu); }
@@ -896,8 +896,8 @@
   .saisie-vs .bench-note { font-weight: 400; color: var(--text3); margin-top: 2px; font-size: 11px; }
   .saisie-team-swap-picker { grid-column: 1 / -1; background: var(--bg2); border: 1.5px solid var(--gold); border-radius: 10px; padding: 10px; margin-top: -4px; }
 
-  .saisie-score-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 18px; margin-bottom: 6px; }
-  .saisie-score-side { display: flex; align-items: center; justify-content: center; gap: 14px; }
+  .saisie-score-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 18px; margin-bottom: 6px; min-width: 0; }
+  .saisie-score-side { display: flex; align-items: center; justify-content: center; gap: 14px; min-width: 0; }
   .saisie-score-num { font-size: 64px; font-weight: 800; font-variant-numeric: tabular-nums; min-width: 1.3ch; text-align: center; }
   .saisie-stepper-btn { width: 46px; height: 46px; border-radius: 50%; border: 1.5px solid var(--border2); background: var(--bg2); color: var(--text); font-size: 22px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: background .12s, transform .1s; }
   .saisie-stepper-btn:hover { background: var(--bg); }
@@ -959,8 +959,11 @@
   .mrr-edit { font-size: 11px; color: var(--text3); flex-shrink: 0; }
 
   @media (max-width: 620px) {
-    .saisie-score-num { font-size: 46px; }
-    .saisie-stepper-btn { width: 40px; height: 40px; font-size: 19px; }
+    .saisie-score-num { font-size: 38px; }
+    .saisie-stepper-btn { width: 34px; height: 34px; font-size: 17px; }
+    .saisie-score-row { gap: 8px; }
+    .saisie-score-side { gap: 8px; }
+    .saisie-me-teams { gap: 6px; }
     .saisie-gk-grid { grid-template-columns: 1fr; }
   }
 
@@ -1792,7 +1795,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 21:42</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 21:56</footer>
 
 <script>
 
@@ -7450,11 +7453,11 @@ function renderSaisie() {
     ${_editMode ? `<div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;padding:10px 14px;background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.2);border-radius:10px;font-size:13px;color:var(--gold)">✏️&ensp;<strong>Mode édition</strong>&ensp;<span style="color:var(--text2)">— Session du ${fmtDate(_draft.date)}</span></div>` : ""}
 
     <div class="saisie-bar">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0;max-width:100%">
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;min-width:0;max-width:100%">
         <label for="saisie-date" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3)">Session du</label>
         <input type="date" class="saisie-date-input" id="saisie-date" value="${_draft.date}"${_editMode ? ' readonly style="opacity:.55;cursor:not-allowed"' : ''}>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
         <div class="saisie-actions">
           ${_editMode ? "" : `<button class="saisie-btn secondary" id="saisie-save">Enregistrer</button>`}
           ${_editMode
