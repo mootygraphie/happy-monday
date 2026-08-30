@@ -1792,7 +1792,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 21:38</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 21:42</footer>
 
 <script>
 
@@ -7454,12 +7454,14 @@ function renderSaisie() {
         <label for="saisie-date" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3)">Session du</label>
         <input type="date" class="saisie-date-input" id="saisie-date" value="${_draft.date}"${_editMode ? ' readonly style="opacity:.55;cursor:not-allowed"' : ''}>
       </div>
-      <span id="saisie-status" class="saisie-status">${_editMode ? "" : statusTxt}</span>
-      <div class="saisie-actions">
-        ${_editMode ? "" : `<button class="saisie-btn secondary" id="saisie-save">Enregistrer</button>`}
-        ${_editMode
-          ? `<button class="saisie-btn secondary" id="saisie-cancel-edit">Annuler</button>`
-          : `<button class="saisie-btn danger" id="saisie-clear">Effacer</button>`}
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div class="saisie-actions">
+          ${_editMode ? "" : `<button class="saisie-btn secondary" id="saisie-save">Enregistrer</button>`}
+          ${_editMode
+            ? `<button class="saisie-btn secondary" id="saisie-cancel-edit">Annuler</button>`
+            : `<button class="saisie-btn danger" id="saisie-clear">Effacer</button>`}
+        </div>
+        <span id="saisie-status" class="saisie-status">${_editMode ? "" : statusTxt}</span>
       </div>
     </div>
 
