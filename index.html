@@ -841,20 +841,36 @@
   .saisie-auto-teams-btn:disabled { background: var(--border2); color: var(--text3); box-shadow: none; cursor: not-allowed; transform: none; }
   .saisie-auto-teams-note { font-size: 12px; color: var(--text2); }
 
-  /* Repartition : colonnes par equipe, tap pour faire tourner un joueur */
+  /* Repartition : zones teintees par equipe, avatars a initiales, selection directe */
   .saisie-repart-hint { font-size: 12.5px; color: var(--text2); text-align: center; margin: 0 0 14px; }
   .saisie-repart-cols { display: flex; flex-direction: column; gap: 10px; }
-  .saisie-repart-col { background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius); padding: 10px; }
-  .saisie-repart-col-head { display: flex; align-items: center; gap: 7px; font-weight: 700; font-size: 13px; margin-bottom: 8px; }
+  .saisie-repart-zone { border-radius: var(--radius-lg); padding: 12px; }
+  .saisie-repart-zone.grise { background: var(--bg3); border: 1px dashed var(--border2); }
+  .saisie-repart-zone.rouge { background: linear-gradient(135deg, var(--rouge-bg), var(--bg2)); border: 1px solid var(--rouge-border); }
+  .saisie-repart-zone.vert  { background: linear-gradient(135deg, var(--vert-bg),  var(--bg2)); border: 1px solid var(--vert-border); }
+  .saisie-repart-zone.bleue { background: linear-gradient(135deg, var(--bleu-bg),  var(--bg2)); border: 1px solid var(--bleu-border); }
+  .saisie-repart-col-head { display: flex; align-items: center; gap: 7px; font-weight: 800; font-size: 13px; margin-bottom: 10px; }
   .saisie-repart-col-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
-  .saisie-repart-player { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 9px 6px; font-size: 13.5px; border-bottom: 1px solid var(--border); cursor: pointer; }
-  .saisie-repart-player:last-child { border-bottom: none; }
-  .saisie-repart-player:hover { color: var(--gold); }
   .saisie-repart-empty { font-size: 12px; color: var(--text3); text-align: center; padding: 6px; }
-  .saisie-repart-unassigned { background: var(--bg2); border: 1px dashed var(--border2); border-radius: var(--radius); padding: 10px; margin-top: 10px; }
+
+  .saisie-repart-chips { display: grid; gap: 10px; }
+  .saisie-repart-chip { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; }
+  .saisie-repart-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; border: 2.5px solid var(--text3); background: var(--bg2); color: var(--text); cursor: pointer; margin: 0 auto; padding: 0; }
+  .saisie-repart-avatar.rouge { border-color: var(--rouge); color: var(--rouge); }
+  .saisie-repart-avatar.vert  { border-color: var(--vert);  color: var(--vert); }
+  .saisie-repart-avatar.bleue { border-color: var(--bleu);  color: var(--bleu); }
+  .saisie-repart-name { font-size: 10.5px; font-weight: 600; text-align: center; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
+
+  .saisie-repart-swatches { display: flex; gap: 5px; justify-content: center; }
+  .saisie-repart-swatch { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--border2); cursor: pointer; padding: 0; }
+  .saisie-repart-swatch.grise { background: var(--bg2); border-color: var(--text3); }
+  .saisie-repart-swatch.rouge { background: var(--rouge); border-color: var(--rouge); }
+  .saisie-repart-swatch.vert  { background: var(--vert);  border-color: var(--vert); }
+  .saisie-repart-swatch.bleue { background: var(--bleu);  border-color: var(--bleu); }
+  .saisie-repart-swatch.current { box-shadow: 0 0 0 2px var(--bg2), 0 0 0 4px var(--text); }
   @media (min-width: 900px) and (min-height: 600px) and (orientation: landscape) {
     .saisie-repart-cols { flex-direction: row; }
-    .saisie-repart-col { flex: 1; }
+    .saisie-repart-zone { flex: 1; }
   }
 
   /* Logistique */
@@ -1774,7 +1790,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 21:01</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 21:26</footer>
 
 <script>
 
@@ -6899,6 +6915,7 @@ let _saisieTeamSwap = null;          // "{idx}-{side}" — sélecteur d'équipe 
 let _saisieMtOpen = {};              // { [matchIdx]: true } — mi-temps dépliée
 let _saisiePresFilter = "all";        // filtre d'affichage de l'ecran Presences (ne trie jamais, cache/montre)
 let _saisiePresSearch = "";          // recherche d'affichage de l'ecran Presences
+let _saisieRepartPicker = null;      // joueur dont le selecteur de couleur est actuellement ouvert (ecran Equipes)
 const _SAISIE_STEPS = [
   { key: "presences",   label: "Présences",   icon: "👥" },
   { key: "repartition", label: "Équipes",     icon: "⚖️" },
@@ -6922,6 +6939,7 @@ function _resetSaisieUiState() {
   _saisieMtOpen = {};
   _saisiePresFilter = "all";
   _saisiePresSearch = "";
+  _saisieRepartPicker = null;
 }
 
 /* Un brouillon cree avant l alignement des statuts occasionnels peut encore contenir
@@ -7044,6 +7062,7 @@ function _saisieNextBenchedColor() {
 function _saisieAutoAssignTeams() {
   const present = _presentList();
   if (present.length < 10) return;
+  _saisieRepartPicker = null;
   const teamCount = present.length >= 12 ? 3 : 2;
   const benched = teamCount === 3 ? null : _saisieNextBenchedColor();
   const teamColors = teamCount === 3 ? ["Rouge","Vert","Bleue"] : ["Rouge","Vert","Bleue"].filter(c => c !== benched);
@@ -7146,9 +7165,20 @@ function _buildPresencesScreenHTML() {
 }
 
 /* ── Répartition : uniquement les presents, classes en colonnes par equipe ── */
-function _saisieRepartPlayerRowHTML(p, isOcc) {
-  return `<div class="saisie-repart-player" data-act="saisie-team-cycle" data-player="${p}">
-    <span>${p}${isOcc ? '<span class="saisie-chip-tag">Occ.</span>' : ""}</span>
+function _saisieInitials(name) { return (name || "").slice(0, 2).toUpperCase(); }
+// 4 ou 5 joueurs : tous sur une ligne. 6 : deux lignes de 3 (evite un 4+1/5+1 desequilibre).
+function _saisieRepartCols(n) { return n <= 5 ? Math.max(n, 1) : 3; }
+const _TEAM_CYCLE_CLASS = { "": "grise", "Rouge": "rouge", "Vert": "vert", "Bleue": "bleue" };
+
+function _saisieRepartChipHTML(p, isOcc) {
+  const eq = _draft.presences[p]?.equipe || "";
+  const cls = _TEAM_CYCLE_CLASS[eq];
+  const control = _saisieRepartPicker === p
+    ? `<div class="saisie-repart-swatches">${_TEAM_CYCLE.map(t => `<button class="saisie-repart-swatch ${_TEAM_CYCLE_CLASS[t]}${t===eq?' current':''}" data-act="saisie-repart-pick" data-player="${p}" data-equipe="${t}" title="${t?TEAM_LABEL[t]:'Sans équipe'}"></button>`).join("")}</div>`
+    : `<button class="saisie-repart-avatar ${cls}" data-act="saisie-repart-avatar" data-player="${p}">${_saisieInitials(p)}</button>`;
+  return `<div class="saisie-repart-chip">
+    ${control}
+    <span class="saisie-repart-name">${p}${isOcc ? '<span class="saisie-chip-tag">Occ.</span>' : ""}</span>
   </div>`;
 }
 function _buildRepartitionScreenHTML() {
@@ -7162,17 +7192,21 @@ function _buildRepartitionScreenHTML() {
     const eq = _draft.presences[p]?.equipe;
     if (eq && teams[eq]) teams[eq].push(p); else unassigned.push(p);
   });
-  const activeColors = ["Rouge","Vert","Bleue"].filter(c => teams[c].length > 0);
 
-  const colsHtml = activeColors.map(c => `<div class="saisie-repart-col">
-    <div class="saisie-repart-col-head"><span class="saisie-repart-col-dot" style="background:var(--${c.toLowerCase()==='bleue'?'bleu':c.toLowerCase()})"></span>${TEAM_LABEL[c]} (${teams[c].length})</div>
-    ${teams[c].map(p => _saisieRepartPlayerRowHTML(p, jokerSet.has(p))).join("") || '<div class="saisie-repart-empty">Personne</div>'}
-  </div>`).join("");
-
-  const unassignedHtml = unassigned.length ? `<div class="saisie-repart-unassigned">
-    <div class="saisie-repart-col-head">Pas encore d'équipe (${unassigned.length})</div>
-    ${unassigned.map(p => _saisieRepartPlayerRowHTML(p, jokerSet.has(p))).join("")}
-  </div>` : "";
+  // Sans equipe en tete : c'est la ou l'action est necessaire au moment de repartir.
+  const zoneOrder = [["", unassigned], ["Bleue", teams.Bleue], ["Vert", teams.Vert], ["Rouge", teams.Rouge]];
+  const colsHtml = zoneOrder.map(([color, list]) => {
+    if (!list.length) return "";
+    const cls = _TEAM_CYCLE_CLASS[color];
+    const label = color ? TEAM_LABEL[color] : "Sans équipe";
+    const cols = _saisieRepartCols(list.length);
+    return `<div class="saisie-repart-zone ${cls}">
+      <div class="saisie-repart-col-head">${color ? `<span class="saisie-repart-col-dot" style="background:var(--${color.toLowerCase()==='bleue'?'bleu':color.toLowerCase()})"></span>` : ""}${label} (${list.length})</div>
+      <div class="saisie-repart-chips" style="grid-template-columns:repeat(${cols},1fr)">
+        ${list.map(p => _saisieRepartChipHTML(p, jokerSet.has(p))).join("")}
+      </div>
+    </div>`;
+  }).join("");
 
   if (!countPresents) {
     return `<div class="saisie-section">
@@ -7189,9 +7223,8 @@ function _buildRepartitionScreenHTML() {
         ? `${countPresents >= 12 ? "3 équipes" : "2 équipes"} pour ${countPresents} présents — modifiable ensuite`
         : `Encore ${10 - countPresents} présent${10 - countPresents > 1 ? "s" : ""} avant de pouvoir générer (min. 10)`}</span>
     </div>
-    <p class="saisie-repart-hint">Touchez un joueur pour faire défiler son équipe.</p>
+    <p class="saisie-repart-hint">Touchez un joueur, puis choisissez sa couleur.</p>
     <div class="saisie-repart-cols">${colsHtml}</div>
-    ${unassignedHtml}
   </div>`;
 }
 
@@ -7590,11 +7623,17 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     _saveDraft();
     renderSaisie(); return;
   }
-  const teamCycleBtn = e.target.closest('[data-act="saisie-team-cycle"]');
-  if (teamCycleBtn) {
-    const p = teamCycleBtn.dataset.player;
-    const cur = _draft.presences[p]?.equipe || "";
-    _draft.presences[p].equipe = _TEAM_CYCLE[(_TEAM_CYCLE.indexOf(cur) + 1) % _TEAM_CYCLE.length];
+  const repartAvatarBtn = e.target.closest('[data-act="saisie-repart-avatar"]');
+  if (repartAvatarBtn) {
+    const p = repartAvatarBtn.dataset.player;
+    _saisieRepartPicker = _saisieRepartPicker === p ? null : p;
+    renderSaisie(); return;
+  }
+  const repartPickBtn = e.target.closest('[data-act="saisie-repart-pick"]');
+  if (repartPickBtn) {
+    const p = repartPickBtn.dataset.player;
+    _draft.presences[p].equipe = repartPickBtn.dataset.equipe;
+    _saisieRepartPicker = null;
     _saveDraft();
     renderSaisie(); return;
   }
