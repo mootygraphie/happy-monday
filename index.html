@@ -55,6 +55,11 @@
   button, input, select, textarea, optgroup { font-family: inherit; color: inherit; }
   html { overflow-x: hidden; max-width: 100vw; }
   body { background: var(--bg); color: var(--text); font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.5; min-height: 100vh; overflow-x: hidden; max-width: 100vw; }
+  /* Marge de securite sur telephone : si un element interieur deborde encore un peu,
+     ces 5% de marge absorbent le depassement au lieu de creer un scroll horizontal visible. */
+  @media (max-width: 700px) {
+    .container, .saisie-wrap { max-width: 95vw; margin-left: auto; margin-right: auto; }
+  }
 
   header { padding: 1.5rem 2rem 1rem; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; position: sticky; top: 0; z-index: 500; background: var(--bg); }
   .hnav-toprow { display: flex; align-items: center; gap: 14px; width: 100%; }
@@ -1795,7 +1800,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 21:56</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 22:00</footer>
 
 <script>
 
