@@ -1759,7 +1759,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 29/08/2026 - 14:14</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 16:27</footer>
 
 <script>
 
@@ -6859,7 +6859,6 @@ let _draftSavedAt = null;
 let _editMode = false;
 
 const _STATUTS_REG  = ["Présent", "Absent", "Blessé", "Pas répondu"];
-const _JOKER_NC = "Non convoqué";
 
 let _saisieStep = "presences";      // "presences" | "matchs" | "logistique"
 let _saisieFocusedMatch = undefined; // index dans _draft.matchs actuellement en édition ; null = réduit explicitement, undefined = pas encore décidé
@@ -6875,7 +6874,7 @@ const _SAISIE_STEPS = [
 function _newDraft() {
   const presences = {};
   ALL_PLAYERS.forEach(p => {
-    presences[p] = { statut: JOKERS.has(p) ? _JOKER_NC : "Pas répondu", equipe: "" };
+    presences[p] = { statut: "Pas répondu", equipe: "" };
   });
   return { date: "", sac: "", maillots: "", presences, matchs: [], tempJokers: [] };
 }
@@ -6899,17 +6898,15 @@ function _loadDraft() {
 function _loadSessionIntoDraft(session) {
   const presences = {};
   ALL_PLAYERS.forEach(p => {
-    presences[p] = { statut: JOKERS.has(p) ? _JOKER_NC : "Pas répondu", equipe: "" };
+    presences[p] = { statut: "Pas répondu", equipe: "" };
   });
   const tempJokers = [];
   Object.entries(session.presences).forEach(([p, info]) => {
     if (!ALL_PLAYERS.includes(p)) {
       tempJokers.push(p);
-      presences[p] = { statut: info.statut === "Présent" ? "Présent" : _JOKER_NC, equipe: info.equipe || "", joker: true, temp: true };
-    } else if (JOKERS.has(p)) {
-      presences[p] = { statut: info.statut === "Présent" ? "Présent" : _JOKER_NC, equipe: info.equipe || "" };
+      presences[p] = { statut: info.statut || "Pas répondu", equipe: info.equipe || "", joker: true, temp: true };
     } else {
-      presences[p] = { statut: info.statut, equipe: info.equipe || "" };
+      presences[p] = { statut: info.statut || "Pas répondu", equipe: info.equipe || "" };
     }
   });
   return {
@@ -6980,9 +6977,12 @@ function _saisieAutoAssignTeams() {
   computePlayerStats().forEach(r => { statsMap[r.name] = r; });
   const ratingFor = name => {
     const r = statsMap[name];
-    if (!r) return 50;
-    const wins = r.vR + r.vV + r.vB;
-    const winRate = r.presences > 0 ? wins / r.presences : 0;
+    // Le taux de victoire doit se baser sur les matchs reellement joues (equipe assignee),
+    // pas sur les presences brutes — sinon une soiree "present mais sans equipe" compte
+    // comme une occasion manquee et penalise injustement le joueur.
+    const pa = _dbxPlayerMatchAgg(SESSIONS, name);
+    const winRate = pa.played > 0 ? pa.w / pa.played : 0;
+    if (!r) return winRate * 30;
     return r.buts * 3 + r.passes * 2 + winRate * 30 + r.presences * 0.5;
   };
   const sorted = [...present].sort((a, b) => ratingFor(b) - ratingFor(a));
@@ -7020,17 +7020,13 @@ function _saisieRegChipHTML(p) {
   </span>`;
 }
 function _saisieJokerChipHTML(p, removable) {
-  const statut = _draft.presences[p]?.statut || _JOKER_NC;
+  const statut = _draft.presences[p]?.statut || "Pas répondu";
   const eq = _draft.presences[p]?.equipe || "";
-  const stCls = statut === "Présent" ? "st-present" : statut === "Blessé" ? "st-blesse" : "st-nr";
+  const stCls = statut === "Présent" ? "st-present" : statut === "Absent" ? "st-absent" : statut === "Blessé" ? "st-blesse" : "st-nr";
   const teamCls = statut === "Présent" && eq ? ` team-${eq.toLowerCase()}` : "";
   const dots = statut === "Présent" ? _saisieTeamDotsHTML(p, eq) : "";
-  const btns = `
-    <button class="saisie-chip-btn" data-act="saisie-status" data-player="${p}" data-statut="Présent" title="Présent">✅</button>
-    <button class="saisie-chip-btn" data-act="saisie-status" data-player="${p}" data-statut="Blessé" title="Blessé">🤕</button>
-    <button class="saisie-chip-btn" data-act="saisie-status" data-player="${p}" data-statut="${_JOKER_NC}" title="Non convoqué">🫥</button>
-    ${removable ? `<button class="saisie-chip-btn" data-act="saisie-remove-temp-joker" data-player="${p}" title="Retirer">✕</button>` : ""}
-  `;
+  const btns = _STATUTS_REG.map(s => `<button class="saisie-chip-btn" data-act="saisie-status" data-player="${p}" data-statut="${s}" title="${s}">${{"Présent":"✅","Absent":"❌","Blessé":"🤕","Pas répondu":"❓"}[s]}</button>`).join("")
+    + (removable ? `<button class="saisie-chip-btn" data-act="saisie-remove-temp-joker" data-player="${p}" title="Retirer">✕</button>` : "");
   return `<span class="saisie-chip ${stCls}${teamCls}">
     <span class="saisie-chip-name">${p}</span>
     ${dots}
@@ -7066,9 +7062,11 @@ function _buildPresencesScreenHTML() {
     </div>`;
 
   const allJokers = [...jokerPlayers, ...tempJokers];
-  const jkPresents = _sortPresentFirst(allJokers.filter(p => (_draft.presences[p]?.statut || _JOKER_NC) === "Présent"));
-  const jkBlesses  = allJokers.filter(p => _draft.presences[p]?.statut === "Blessé");
-  const jkNC       = allJokers.filter(p => (_draft.presences[p]?.statut || _JOKER_NC) === _JOKER_NC);
+  const jkByStatut = s => allJokers.filter(p => (_draft.presences[p]?.statut || "Pas répondu") === s);
+  const jkPresents = _sortPresentFirst(jkByStatut("Présent"));
+  const jkAbsents  = jkByStatut("Absent");
+  const jkBlesses  = jkByStatut("Blessé");
+  const jkNR       = jkByStatut("Pas répondu");
 
   return `<div class="saisie-section">
     <div class="saisie-section-title">👥 Présences</div>
@@ -7090,8 +7088,9 @@ function _buildPresencesScreenHTML() {
     ${group("Pas répondu", "❓", byStatut(regularPlayers, "Pas répondu"))}
     <div class="saisie-jokers-title">Joueurs occasionnels</div>
     ${jokerGroup("Présents", "✅", jkPresents)}
+    ${jokerGroup("Absents", "❌", jkAbsents)}
     ${jokerGroup("Blessés", "🤕", jkBlesses)}
-    ${jokerGroup("Non convoqués", "🫥", jkNC)}
+    ${jokerGroup("Pas répondu", "❓", jkNR)}
     <div class="saisie-joker-add">
       <input type="text" id="saisie-new-joker-input" placeholder="Nom de l'occasionnel" class="saisie-date-input">
       <button class="saisie-btn secondary" data-act="saisie-add-temp-joker">+ Ajouter</button>
@@ -7360,7 +7359,6 @@ async function _commitSession() {
 
   const finalPresences = {};
   Object.entries(_draft.presences).forEach(([p, info]) => {
-    if (info.statut === _JOKER_NC) return;
     finalPresences[p] = { statut: info.statut, equipe: info.equipe || "" };
     if ((JOKERS.has(p) || (_draft.tempJokers||[]).includes(p)) && info.statut === "Présent") finalPresences[p].joker = true;
   });
