@@ -776,7 +776,7 @@
   #ach-tip .atn2 { font-size:10px; color:var(--text3); margin-top:2px; font-style:italic; }
 
   /* ── Saisie ── */
-  .saisie-wrap { max-width: 820px; }
+  .saisie-wrap { max-width: 820px; overflow-x: hidden; }
   .saisie-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 10px; }
   .saisie-actions { display: flex; gap: 8px; flex-wrap: nowrap; }
   .saisie-btn { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border2); font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s, opacity .15s; white-space: nowrap; background: var(--bg3); color: var(--text); }
@@ -817,14 +817,14 @@
   .saisie-pres-filter.active { background: var(--gold); border-color: var(--gold); color: #171708; }
   .saisie-pres-filter .n { font-variant-numeric: tabular-nums; opacity: .85; }
 
-  .saisie-pres-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 4px; border-bottom: 1px solid var(--border); }
+  .saisie-pres-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 8px; padding: 8px 4px; border-bottom: 1px solid var(--border); }
   .saisie-pres-row.hidden { display: none; }
   .saisie-pres-row:last-child { border-bottom: none; }
   .saisie-pres-row-name { display: flex; align-items: baseline; gap: 6px; min-width: 0; flex: 1; font-size: 13.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .saisie-pres-row-controls { display: flex; align-items: center; gap: 8px; flex: none; }
+  .saisie-pres-row-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; flex: none; }
   .saisie-chip-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text3); background: var(--bg3); border-radius: 4px; padding: 1px 5px; margin-left: 5px; vertical-align: middle; }
 
-  .saisie-cycle-btn { display: flex; align-items: center; justify-content: center; gap: 6px; border: 1.5px solid var(--border2); background: var(--bg3); border-radius: 10px; padding: 8px 12px; font-size: 12.5px; font-weight: 700; font-family: inherit; color: var(--text); cursor: pointer; min-height: 36px; min-width: 108px; transition: background .12s, border-color .12s, transform .08s; }
+  .saisie-cycle-btn { display: flex; align-items: center; justify-content: center; gap: 5px; border: 1.5px solid var(--border2); background: var(--bg3); border-radius: 10px; padding: 8px 10px; font-size: 12px; font-weight: 700; font-family: inherit; color: var(--text); cursor: pointer; min-height: 36px; white-space: nowrap; transition: background .12s, border-color .12s, transform .08s; }
   .saisie-cycle-btn:active { transform: scale(.96); }
   .saisie-cycle-btn[data-cur="Présent"] { background: rgba(46,204,113,.14); border-color: rgba(46,204,113,.45); color: #2ecc71; }
   .saisie-cycle-btn[data-cur="Absent"] { background: rgba(231,76,60,.14); border-color: rgba(231,76,60,.45); color: #e74c3c; }
@@ -1774,7 +1774,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 20:27</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 20:32</footer>
 
 <script>
 
