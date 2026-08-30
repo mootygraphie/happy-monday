@@ -862,19 +862,12 @@
 
   .saisie-repart-chips { display: grid; gap: 10px; }
   .saisie-repart-chip { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; }
-  .saisie-repart-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; border: 2.5px solid var(--text3); background: var(--bg2); color: var(--text); cursor: pointer; margin: 0 auto; padding: 0; }
+  .saisie-repart-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; border: 2.5px solid var(--text3); background: var(--bg2); color: var(--text); cursor: pointer; margin: 0 auto; padding: 0; transition: box-shadow .12s, transform .08s; }
   .saisie-repart-avatar.rouge { border-color: var(--rouge); color: var(--rouge); }
   .saisie-repart-avatar.vert  { border-color: var(--vert);  color: var(--vert); }
   .saisie-repart-avatar.bleue { border-color: var(--bleu);  color: var(--bleu); }
+  .saisie-repart-avatar.open { box-shadow: 0 0 0 3px var(--gold-bg); border-color: var(--gold); transform: scale(1.05); }
   .saisie-repart-name { font-size: 10.5px; font-weight: 600; text-align: center; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
-
-  .saisie-repart-swatches { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; max-width: 100%; }
-  .saisie-repart-swatch { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border2); cursor: pointer; padding: 0; flex: none; }
-  .saisie-repart-swatch.grise { background: var(--bg2); border-color: var(--text3); }
-  .saisie-repart-swatch.rouge { background: var(--rouge); border-color: var(--rouge); }
-  .saisie-repart-swatch.vert  { background: var(--vert);  border-color: var(--vert); }
-  .saisie-repart-swatch.bleue { background: var(--bleu);  border-color: var(--bleu); }
-  .saisie-repart-swatch.current { box-shadow: 0 0 0 2px var(--bg2), 0 0 0 4px var(--text); }
   @media (min-width: 900px) and (min-height: 600px) and (orientation: landscape) {
     .saisie-repart-cols { flex-direction: row; }
     .saisie-repart-zone { flex: 1; }
@@ -1800,7 +1793,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 22:10</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 22:16</footer>
 
 <script>
 
@@ -7201,12 +7194,21 @@ const _TEAM_CYCLE_CLASS = { "": "grise", "Rouge": "rouge", "Vert": "vert", "Bleu
 function _saisieRepartChipHTML(p, isOcc) {
   const eq = _draft.presences[p]?.equipe || "";
   const cls = _TEAM_CYCLE_CLASS[eq];
-  const control = _saisieRepartPicker === p
-    ? `<div class="saisie-repart-swatches">${_TEAM_CYCLE.map(t => `<button class="saisie-repart-swatch ${_TEAM_CYCLE_CLASS[t]}${t===eq?' current':''}" data-act="saisie-repart-pick" data-player="${p}" data-equipe="${t}" title="${t?TEAM_LABEL[t]:'Sans équipe'}"></button>`).join("")}</div>`
-    : `<button class="saisie-repart-avatar ${cls}" data-act="saisie-repart-avatar" data-player="${p}">${_saisieInitials(p)}</button>`;
+  const open = _saisieRepartPicker === p;
   return `<div class="saisie-repart-chip">
-    ${control}
+    <button class="saisie-repart-avatar ${cls}${open ? " open" : ""}" data-act="saisie-repart-avatar" data-player="${p}">${_saisieInitials(p)}</button>
     <span class="saisie-repart-name">${_saisieCompactName(p)}${isOcc ? '<span class="saisie-chip-tag">O</span>' : ""}</span>
+  </div>`;
+}
+// Le selecteur de couleur s'affiche en pleine largeur (grid-column:1/-1, meme motif que
+// les selecteurs buteur/gardien) plutot que de remplacer l avatar dans sa cellule exigue —
+// plus lisible, et ne peut plus jamais deborder d une colonne trop etroite.
+function _saisieRepartPickerHTML(p) {
+  const eq = _draft.presences[p]?.equipe || "";
+  const chips = _TEAM_CYCLE.map(t => `<button class="saisie-pchip ${_TEAM_CYCLE_CLASS[t]}" data-act="saisie-repart-pick" data-player="${p}" data-equipe="${t}">${t ? `<span class="pdot"></span>${TEAM_LABEL[t]}` : "Sans équipe"}${t===eq ? " ✓" : ""}</button>`).join("");
+  return `<div class="saisie-picker" style="grid-column:1/-1">
+    <div class="saisie-picker-hdr"><span>Équipe de ${p}</span><button data-act="saisie-repart-close">✕</button></div>
+    <div class="saisie-picker-grid">${chips}</div>
   </div>`;
 }
 function _buildRepartitionScreenHTML() {
@@ -7228,10 +7230,12 @@ function _buildRepartitionScreenHTML() {
     const cls = _TEAM_CYCLE_CLASS[color];
     const label = color ? TEAM_LABEL[color] : "Sans équipe";
     const cols = _saisieRepartCols(list.length);
+    const pickerHtml = list.includes(_saisieRepartPicker) ? _saisieRepartPickerHTML(_saisieRepartPicker) : "";
     return `<div class="saisie-repart-zone ${cls}">
       <div class="saisie-repart-col-head">${color ? `<span class="saisie-repart-col-dot" style="background:var(--${color.toLowerCase()==='bleue'?'bleu':color.toLowerCase()})"></span>` : ""}${label} (${list.length})</div>
       <div class="saisie-repart-chips" style="grid-template-columns:repeat(${cols},minmax(0,1fr))">
         ${list.map(p => _saisieRepartChipHTML(p, jokerSet.has(p))).join("")}
+        ${pickerHtml}
       </div>
     </div>`;
   }).join("");
@@ -7667,6 +7671,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     _saveDraft();
     renderSaisie(); return;
   }
+  if (e.target.closest('[data-act="saisie-repart-close"]')) { _saisieRepartPicker = null; renderSaisie(); return; }
   const presFilterBtn = e.target.closest('[data-act="saisie-pres-filter"]');
   if (presFilterBtn) {
     _saisiePresFilter = presFilterBtn.dataset.filter;
