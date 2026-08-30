@@ -817,9 +817,18 @@
   .saisie-chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
   .saisie-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 999px; padding: 5px 6px 5px 12px; font-size: 13.5px; font-weight: 600; transition: border-color .15s, background .15s; }
   .saisie-chip-name { white-space: nowrap; }
+  .saisie-chip-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text3); background: var(--bg3); border-radius: 4px; padding: 1px 5px; margin-left: 5px; vertical-align: middle; }
+  .saisie-btn.accent { background: var(--gold-bg); color: var(--gold); border-color: var(--gold-border); font-weight: 700; }
+  .saisie-btn.accent:hover { background: var(--gold); color: #171708; }
+  .saisie-noteam-warn { display: flex; align-items: center; gap: 8px; background: var(--gold-bg); border: 1px solid var(--gold-border); border-radius: var(--radius); padding: 10px 14px; margin: 4px 0 16px; font-size: 12.5px; color: var(--gold); }
   .saisie-chip-btns { display: inline-flex; gap: 3px; }
   .saisie-chip-btn { width: 26px; height: 26px; border-radius: 50%; border: none; background: transparent; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; opacity: .55; transition: opacity .15s, background .15s; }
   .saisie-chip-btn:hover { opacity: 1; background: var(--border); }
+  .saisie-chip-btn.active { opacity: 1; }
+  .saisie-chip-btn.active[data-statut="Présent"] { background: rgba(46,204,113,.32); }
+  .saisie-chip-btn.active[data-statut="Absent"] { background: rgba(231,76,60,.32); }
+  .saisie-chip-btn.active[data-statut="Blessé"] { background: rgba(243,156,18,.32); }
+  .saisie-chip-btn.active[data-statut="Pas répondu"] { background: var(--border2); }
   .saisie-chip.st-present { border-color: rgba(46,204,113,.4); background: rgba(46,204,113,.08); }
   .saisie-chip.st-absent  { border-color: rgba(231,76,60,.4); background: rgba(231,76,60,.08); }
   .saisie-chip.st-blesse  { border-color: rgba(243,156,18,.4); background: rgba(243,156,18,.08); }
@@ -1759,7 +1768,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 16:27</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 16:37</footer>
 
 <script>
 
@@ -2026,6 +2035,7 @@ async function _fbLoadFromNetwork() {
       if (!Array.isArray(m.gardiensB)) m.gardiensB = ["",""];
     });
     _draft = fbDraft;
+    _migrateLegacyPresenceStatuts(_draft.presences);
     localStorage.setItem('hmft_draft', JSON.stringify(_draft));
   }
 
@@ -6887,10 +6897,21 @@ function _resetSaisieUiState() {
   _saisieMtOpen = {};
 }
 
+/* Un brouillon cree avant l alignement des statuts occasionnels peut encore contenir
+   l ancienne valeur "Non convoque", qui ne correspond plus a aucune des 4 categories
+   affichees (Presents/Absents/Blesses/Pas repondu) : sans migration ces occasionnels
+   disparaissent silencieusement de l ecran Presences. */
+function _migrateLegacyPresenceStatuts(presences) {
+  Object.values(presences || {}).forEach(info => {
+    if (info && info.statut === "Non convoqué") info.statut = "Pas répondu";
+  });
+  return presences;
+}
+
 function _loadDraft() {
   try {
     const s = localStorage.getItem("hmft_draft");
-    if (s) { _draft = JSON.parse(s); return; }
+    if (s) { _draft = JSON.parse(s); _migrateLegacyPresenceStatuts(_draft.presences); return; }
   } catch(e) {}
   _draft = _newDraft();
 }
@@ -6909,6 +6930,7 @@ function _loadSessionIntoDraft(session) {
       presences[p] = { statut: info.statut || "Pas répondu", equipe: info.equipe || "" };
     }
   });
+  _migrateLegacyPresenceStatuts(presences);
   return {
     date: session.date,
     sac: session.sac || "",
@@ -7011,7 +7033,7 @@ function _saisieRegChipHTML(p) {
   const eq = _draft.presences[p]?.equipe || "";
   const stCls = statut === "Présent" ? "st-present" : statut === "Absent" ? "st-absent" : statut === "Blessé" ? "st-blesse" : "st-nr";
   const teamCls = statut === "Présent" && eq ? ` team-${eq.toLowerCase()}` : "";
-  const btns = _STATUTS_REG.map(s => `<button class="saisie-chip-btn" data-act="saisie-status" data-player="${p}" data-statut="${s}" title="${s}">${{"Présent":"✅","Absent":"❌","Blessé":"🤕","Pas répondu":"❓"}[s]}</button>`).join("");
+  const btns = _STATUTS_REG.map(s => `<button class="saisie-chip-btn${s===statut?' active':''}" data-act="saisie-status" data-player="${p}" data-statut="${s}" title="${s}">${{"Présent":"✅","Absent":"❌","Blessé":"🤕","Pas répondu":"❓"}[s]}</button>`).join("");
   const dots = statut === "Présent" ? _saisieTeamDotsHTML(p, eq) : "";
   return `<span class="saisie-chip ${stCls}${teamCls}">
     <span class="saisie-chip-name">${p}</span>
@@ -7025,10 +7047,10 @@ function _saisieJokerChipHTML(p, removable) {
   const stCls = statut === "Présent" ? "st-present" : statut === "Absent" ? "st-absent" : statut === "Blessé" ? "st-blesse" : "st-nr";
   const teamCls = statut === "Présent" && eq ? ` team-${eq.toLowerCase()}` : "";
   const dots = statut === "Présent" ? _saisieTeamDotsHTML(p, eq) : "";
-  const btns = _STATUTS_REG.map(s => `<button class="saisie-chip-btn" data-act="saisie-status" data-player="${p}" data-statut="${s}" title="${s}">${{"Présent":"✅","Absent":"❌","Blessé":"🤕","Pas répondu":"❓"}[s]}</button>`).join("")
+  const btns = _STATUTS_REG.map(s => `<button class="saisie-chip-btn${s===statut?' active':''}" data-act="saisie-status" data-player="${p}" data-statut="${s}" title="${s}">${{"Présent":"✅","Absent":"❌","Blessé":"🤕","Pas répondu":"❓"}[s]}</button>`).join("")
     + (removable ? `<button class="saisie-chip-btn" data-act="saisie-remove-temp-joker" data-player="${p}" title="Retirer">✕</button>` : "");
   return `<span class="saisie-chip ${stCls}${teamCls}">
-    <span class="saisie-chip-name">${p}</span>
+    <span class="saisie-chip-name">${p}<span class="saisie-chip-tag">Occ.</span></span>
     ${dots}
     <span class="saisie-chip-btns">${btns}</span>
   </span>`;
@@ -7062,11 +7084,25 @@ function _buildPresencesScreenHTML() {
     </div>`;
 
   const allJokers = [...jokerPlayers, ...tempJokers];
+  const jkSet = new Set(allJokers);
   const jkByStatut = s => allJokers.filter(p => (_draft.presences[p]?.statut || "Pas répondu") === s);
-  const jkPresents = _sortPresentFirst(jkByStatut("Présent"));
   const jkAbsents  = jkByStatut("Absent");
   const jkBlesses  = jkByStatut("Blessé");
   const jkNR       = jkByStatut("Pas répondu");
+
+  /* Tous les presents (reguliers + occasionnels) regroupes ensemble pour un coup d oeil
+     immediat sur qui vient ce soir — les occasionnels restent distingues par la pastille
+     "Occ." posee sur leur chip (cf _saisieJokerChipHTML), le reste de leur classement
+     (absents/blesses/pas repondu) demeure a part plus bas. */
+  const allPresentNames = _sortPresentFirst([...byStatut(regularPlayers, "Présent"), ...jkByStatut("Présent")]);
+  const presentChips = allPresentNames.map(p => jkSet.has(p) ? _saisieJokerChipHTML(p, tempJokers.includes(p)) : _saisieRegChipHTML(p)).join("");
+  const presentBlock = allPresentNames.length ? `<div class="saisie-pres-block">
+      <div class="saisie-pres-label">✅ Présents <span class="n">(${allPresentNames.length})</span></div>
+      <div class="saisie-chip-row">${presentChips}</div>
+    </div>` : "";
+
+  const noTeamPresents = allPresentNames.filter(p => !(_draft.presences[p]?.equipe));
+  const noTeamWarning = noTeamPresents.length ? `<div class="saisie-noteam-warn">⚠️ ${noTeamPresents.length} présent${noTeamPresents.length>1?"s":""} sans équipe assignée : ${noTeamPresents.join(", ")}</div>` : "";
 
   return `<div class="saisie-section">
     <div class="saisie-section-title">👥 Présences</div>
@@ -7076,10 +7112,11 @@ function _buildPresencesScreenHTML() {
       <span>🤕 ${countBlesses} blessé${countBlesses>1?"s":""}</span>
       <span>❓ ${countNR} n'${countNR>1?"ont":"a"} pas répondu</span>
     </div>
-    ${group("Présents", "✅", _sortPresentFirst(byStatut(regularPlayers, "Présent")))}
+    ${presentBlock}
+    ${noTeamWarning}
     ${countPresents >= 10
       ? `<div class="saisie-auto-teams">
-          <button class="saisie-btn secondary" data-act="saisie-auto-teams">🎲 Choisir automatiquement les équipes</button>
+          <button class="saisie-btn accent" data-act="saisie-auto-teams">🎲 Choisir automatiquement les équipes</button>
           <span class="saisie-auto-teams-note">${countPresents >= 12 ? "3 équipes" : "2 équipes"} pour ${countPresents} présents — modifiable ensuite</span>
         </div>`
       : `<div class="saisie-auto-teams-hint">Encore ${10 - countPresents} présent${10 - countPresents > 1 ? "s" : ""} avant de pouvoir générer les équipes automatiquement (min. 10).</div>`}
@@ -7087,7 +7124,6 @@ function _buildPresencesScreenHTML() {
     ${group("Blessés", "🤕", byStatut(regularPlayers, "Blessé"))}
     ${group("Pas répondu", "❓", byStatut(regularPlayers, "Pas répondu"))}
     <div class="saisie-jokers-title">Joueurs occasionnels</div>
-    ${jokerGroup("Présents", "✅", jkPresents)}
     ${jokerGroup("Absents", "❌", jkAbsents)}
     ${jokerGroup("Blessés", "🤕", jkBlesses)}
     ${jokerGroup("Pas répondu", "❓", jkNR)}
