@@ -53,7 +53,8 @@
   html.light .player-link:hover { color: #000; text-decoration-color: rgba(0,0,0,.5); }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   button, input, select, textarea, optgroup { font-family: inherit; color: inherit; }
-  body { background: var(--bg); color: var(--text); font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.5; min-height: 100vh; overflow-x: hidden; }
+  html { overflow-x: hidden; max-width: 100vw; }
+  body { background: var(--bg); color: var(--text); font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.5; min-height: 100vh; overflow-x: hidden; max-width: 100vw; }
 
   header { padding: 1.5rem 2rem 1rem; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; position: sticky; top: 0; z-index: 500; background: var(--bg); }
   .hnav-toprow { display: flex; align-items: center; gap: 14px; width: 100%; }
@@ -786,7 +787,7 @@
   .saisie-btn.danger:hover { background: #e74c3c15; }
   .saisie-btn.primary { background: var(--green,#2ecc71); color: #111; border-color: transparent; }
   .saisie-btn.primary:hover { opacity: .9; }
-  .saisie-date-input { background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 8px 12px; color: var(--text); font-size: 15px; cursor: pointer; }
+  .saisie-date-input { background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 8px 12px; color: var(--text); font-size: 15px; cursor: pointer; max-width: 100%; min-width: 0; }
 
   /* Stepper 3 écrans */
   .saisie-stepper { display: flex; align-items: center; justify-content: center; margin-bottom: 1.2rem; }
@@ -817,6 +818,7 @@
   .saisie-pres-filter.active { background: var(--gold); border-color: var(--gold); color: #171708; }
   .saisie-pres-filter .n { font-variant-numeric: tabular-nums; opacity: .85; }
 
+  .saisie-pres-list { max-height: 420px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius); padding: 0 8px; }
   .saisie-pres-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 8px; padding: 8px 4px; border-bottom: 1px solid var(--border); }
   .saisie-pres-row.hidden { display: none; }
   .saisie-pres-row:last-child { border-bottom: none; }
@@ -1790,7 +1792,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 21:26</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 21:38</footer>
 
 <script>
 
@@ -7026,15 +7028,18 @@ function _playersOfTeam(color) {
     .filter(([,v]) => v.statut === "Présent" && v.equipe === color).map(([k]) => k).sort((a, b) => a.localeCompare(b, "fr"));
 }
 
-// Buteurs/passeurs : équipe sur le terrain d'abord, équipe de dépanne ensuite
+// Buteurs/passeurs : équipe sur le terrain d'abord, équipe de dépanne ensuite, puis les
+// présents pas encore affectés a une equipe (mercenaires "sans equipe" a l origine).
 function _teamPoolOrdered(eq, benchEq) {
-  return [..._playersOfTeam(eq), ...(benchEq ? _playersOfTeam(benchEq) : [])];
+  return [..._playersOfTeam(eq), ...(benchEq ? _playersOfTeam(benchEq) : []), ..._playersOfTeam("")];
 }
-// Gardien : à 5+ joueurs présents l'équipe garde ses buts elle-même ; à 4, le banc dépanne en priorité
+// Gardien : à 5+ joueurs présents l'équipe garde ses buts elle-même ; à 4, le banc dépanne
+// en priorité, puis les presents sans equipe.
 function _gardienPoolOrdered(eq, benchEq) {
   const own = _playersOfTeam(eq);
-  if (own.length >= 5 || !benchEq) return own;
-  return [..._playersOfTeam(benchEq), ...own];
+  const sansEquipe = _playersOfTeam("");
+  if (own.length >= 5 || !benchEq) return [...own, ...sansEquipe];
+  return [..._playersOfTeam(benchEq), ...own, ...sansEquipe];
 }
 function _saisieBenchTeam(eqA, eqB, teams) {
   return teams.length >= 3 ? (teams.find(t => t !== eqA && t !== eqB) || "") : "";
@@ -7445,7 +7450,7 @@ function renderSaisie() {
     ${_editMode ? `<div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;padding:10px 14px;background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.2);border-radius:10px;font-size:13px;color:var(--gold)">✏️&ensp;<strong>Mode édition</strong>&ensp;<span style="color:var(--text2)">— Session du ${fmtDate(_draft.date)}</span></div>` : ""}
 
     <div class="saisie-bar">
-      <div style="display:flex;align-items:center;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0;max-width:100%">
         <label for="saisie-date" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3)">Session du</label>
         <input type="date" class="saisie-date-input" id="saisie-date" value="${_draft.date}"${_editMode ? ' readonly style="opacity:.55;cursor:not-allowed"' : ''}>
       </div>
