@@ -842,7 +842,6 @@
   .saisie-chip.team-rouge { background: var(--rouge-bg); border-color: var(--rouge-border); }
   .saisie-chip.team-vert  { background: var(--vert-bg);  border-color: var(--vert-border); }
   .saisie-chip.team-bleue { background: var(--bleu-bg);  border-color: var(--bleu-border); }
-  .saisie-jokers-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin: 18px 0 8px; }
   .saisie-joker-add { display: flex; gap: 8px; margin-top: 12px; }
   .saisie-auto-teams { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 0 0 20px; }
   .saisie-auto-teams-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; border: none; border-radius: 12px; padding: 15px 16px; background: var(--gold); color: #171708; font-size: 15.5px; font-weight: 800; cursor: pointer; box-shadow: 0 6px 18px -6px rgba(245,200,66,.55); transition: transform .1s ease, box-shadow .15s ease; }
@@ -1769,7 +1768,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 18:06</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 18:14</footer>
 
 <script>
 
@@ -7054,18 +7053,12 @@ function _saisieJokerChipHTML(p, removable) {
     <span class="saisie-chip-btns">${btns}</span>
   </span>`;
 }
-function _sortPresentFirst(list) {
-  const order = ["Rouge","Vert","Bleue"];
-  return [...list].sort((a, b) => {
-    const ea = _draft.presences[a]?.equipe || "", eb = _draft.presences[b]?.equipe || "";
-    const ia = order.indexOf(ea), ib = order.indexOf(eb);
-    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || a.localeCompare(b, "fr");
-  });
-}
 function _buildPresencesScreenHTML() {
   const regularPlayers = ALL_PLAYERS.filter(p => !JOKERS.has(p) && !ABSENTS.has(p) && !INACTIFS.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
   const jokerPlayers = ALL_PLAYERS.filter(p => JOKERS.has(p) && !INACTIFS.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
   const tempJokers = _draft.tempJokers || [];
+  const allJokers = [...jokerPlayers, ...tempJokers].sort((a, b) => a.localeCompare(b, "fr"));
+  const jkSet = new Set(allJokers);
   const byStatut = (list, s) => list.filter(p => (_draft.presences[p]?.statut || "Pas répondu") === s);
 
   // Recap global : reguliers + occasionnels, de facon uniforme sur les 4 statuts.
@@ -7074,34 +7067,20 @@ function _buildPresencesScreenHTML() {
   const countBlesses  = Object.values(_draft.presences).filter(v => v.statut === "Blessé").length;
   const countNR       = Object.values(_draft.presences).filter(v => v.statut === "Pas répondu").length;
 
-  const group = (label, icon, list) => !list.length ? "" : `<div class="saisie-pres-block">
+  const chipFor = p => jkSet.has(p) ? _saisieJokerChipHTML(p, tempJokers.includes(p)) : _saisieRegChipHTML(p);
+  // Un seul groupe par statut, reguliers et occasionnels ensemble — toujours les reguliers
+  // par ordre alpha d'abord, puis les occasionnels par ordre alpha (cf pastille "Occ.").
+  const combinedGroup = (label, icon, statut) => {
+    const list = [...byStatut(regularPlayers, statut), ...byStatut(allJokers, statut)];
+    if (!list.length) return "";
+    return `<div class="saisie-pres-block">
       <div class="saisie-pres-label">${icon} ${label} <span class="n">(${list.length})</span></div>
-      <div class="saisie-chip-row">${list.map(_saisieRegChipHTML).join("")}</div>
+      <div class="saisie-chip-row">${list.map(chipFor).join("")}</div>
     </div>`;
-  const jokerGroup = (label, icon, list) => !list.length ? "" : `<div class="saisie-pres-block">
-      <div class="saisie-pres-label">${icon} ${label} <span class="n">(${list.length})</span></div>
-      <div class="saisie-chip-row">${list.map(p => _saisieJokerChipHTML(p, tempJokers.includes(p))).join("")}</div>
-    </div>`;
+  };
 
-  const allJokers = [...jokerPlayers, ...tempJokers];
-  const jkSet = new Set(allJokers);
-  const jkByStatut = s => allJokers.filter(p => (_draft.presences[p]?.statut || "Pas répondu") === s);
-  const jkAbsents  = jkByStatut("Absent");
-  const jkBlesses  = jkByStatut("Blessé");
-  const jkNR       = jkByStatut("Pas répondu");
-
-  /* Tous les presents (reguliers + occasionnels) regroupes ensemble pour un coup d oeil
-     immediat sur qui vient ce soir — les occasionnels restent distingues par la pastille
-     "Occ." posee sur leur chip (cf _saisieJokerChipHTML), le reste de leur classement
-     (absents/blesses/pas repondu) demeure a part plus bas. */
-  const allPresentNames = _sortPresentFirst([...byStatut(regularPlayers, "Présent"), ...jkByStatut("Présent")]);
-  const presentChips = allPresentNames.map(p => jkSet.has(p) ? _saisieJokerChipHTML(p, tempJokers.includes(p)) : _saisieRegChipHTML(p)).join("");
-  const presentBlock = allPresentNames.length ? `<div class="saisie-pres-block">
-      <div class="saisie-pres-label">✅ Présents <span class="n">(${allPresentNames.length})</span></div>
-      <div class="saisie-chip-row">${presentChips}</div>
-    </div>` : "";
-
-  const noTeamPresents = allPresentNames.filter(p => !(_draft.presences[p]?.equipe));
+  const presentNames = [...byStatut(regularPlayers, "Présent"), ...byStatut(allJokers, "Présent")];
+  const noTeamPresents = presentNames.filter(p => !(_draft.presences[p]?.equipe));
   const noTeamWarning = noTeamPresents.length ? `<div class="saisie-noteam-warn">⚠️ ${noTeamPresents.length} présent${noTeamPresents.length>1?"s":""} sans équipe assignée : ${noTeamPresents.join(", ")}</div>` : "";
 
   return `<div class="saisie-section">
@@ -7118,15 +7097,11 @@ function _buildPresencesScreenHTML() {
       <span>🤕 ${countBlesses} blessé${countBlesses>1?"s":""}</span>
       <span>❓ ${countNR} n'${countNR>1?"ont":"a"} pas répondu</span>
     </div>
-    ${presentBlock}
+    ${combinedGroup("Présents", "✅", "Présent")}
     ${noTeamWarning}
-    ${group("Absents", "❌", byStatut(regularPlayers, "Absent"))}
-    ${group("Blessés", "🤕", byStatut(regularPlayers, "Blessé"))}
-    ${group("Pas répondu", "❓", byStatut(regularPlayers, "Pas répondu"))}
-    <div class="saisie-jokers-title">Joueurs occasionnels</div>
-    ${jokerGroup("Absents", "❌", jkAbsents)}
-    ${jokerGroup("Blessés", "🤕", jkBlesses)}
-    ${jokerGroup("Pas répondu", "❓", jkNR)}
+    ${combinedGroup("Absents", "❌", "Absent")}
+    ${combinedGroup("Blessés", "🤕", "Blessé")}
+    ${combinedGroup("Pas répondu", "❓", "Pas répondu")}
     <div class="saisie-joker-add">
       <input type="text" id="saisie-new-joker-input" placeholder="Nom de l'occasionnel" class="saisie-date-input">
       <button class="saisie-btn secondary" data-act="saisie-add-temp-joker">+ Ajouter</button>
@@ -7490,12 +7465,14 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     if (!_draft.presences[p]) _draft.presences[p] = { statut: s, equipe: "" };
     _draft.presences[p].statut = s;
     if (s !== "Présent") _draft.presences[p].equipe = "";
+    _saveDraft();
     renderSaisie(); return;
   }
   const teamBtn = e.target.closest('[data-act="saisie-team"]');
   if (teamBtn) {
     const p = teamBtn.dataset.player; const eq = teamBtn.dataset.equipe;
     if (_draft.presences[p]) _draft.presences[p].equipe = _draft.presences[p].equipe === eq ? "" : eq;
+    _saveDraft();
     renderSaisie(); return;
   }
   if (e.target.closest('[data-act="saisie-auto-teams"]')) { _saisieAutoAssignTeams(); return; }
