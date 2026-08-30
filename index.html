@@ -809,47 +809,45 @@
   /* Meme traitement que .section-label (titres de section de toutes les pages). */
   .saisie-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; font-style: italic; letter-spacing: .08em; color: var(--text3); margin-bottom: 16px; }
 
-  /* Présences groupées */
-  .saisie-pres-summary { display: flex; gap: 14px; margin-bottom: 16px; font-size: 12.5px; font-weight: 600; color: var(--text2); flex-wrap: wrap; }
-  .saisie-pres-block + .saisie-pres-block { margin-top: 18px; }
-  .saisie-pres-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin-bottom: 8px; display: flex; align-items: center; gap: 7px; }
-  .saisie-pres-label .n { font-variant-numeric: tabular-nums; color: var(--text2); }
-  .saisie-chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
-  .saisie-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 999px; padding: 5px 6px 5px 12px; font-size: 13.5px; font-weight: 600; transition: border-color .15s, background .15s; }
-  .saisie-chip-name { white-space: nowrap; }
+  /* Présences : liste plate filtrable (aucun joueur ne change jamais de position) */
+  .saisie-pres-summary { display: flex; gap: 14px; margin-bottom: 12px; font-size: 12.5px; font-weight: 600; color: var(--text2); flex-wrap: wrap; }
+  .saisie-pres-search { width: 100%; padding: 9px 12px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--bg2); color: var(--text); font-size: 13.5px; margin-bottom: 10px; }
+  .saisie-pres-filters { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 14px; }
+  .saisie-pres-filter { flex: none; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .saisie-pres-filter.active { background: var(--gold); border-color: var(--gold); color: #171708; }
+  .saisie-pres-filter .n { font-variant-numeric: tabular-nums; opacity: .85; }
+
+  .saisie-pres-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 4px; border-bottom: 1px solid var(--border); }
+  .saisie-pres-row.hidden { display: none; }
+  .saisie-pres-row:last-child { border-bottom: none; }
+  .saisie-pres-row-name { display: flex; align-items: baseline; gap: 6px; min-width: 0; flex: 1; font-size: 13.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .saisie-pres-row-controls { display: flex; align-items: center; gap: 8px; flex: none; }
   .saisie-chip-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text3); background: var(--bg3); border-radius: 4px; padding: 1px 5px; margin-left: 5px; vertical-align: middle; }
+
+  .saisie-cycle-btn { display: flex; align-items: center; justify-content: center; gap: 6px; border: 1.5px solid var(--border2); background: var(--bg3); border-radius: 10px; padding: 8px 12px; font-size: 12.5px; font-weight: 700; font-family: inherit; color: var(--text); cursor: pointer; min-height: 36px; min-width: 108px; transition: background .12s, border-color .12s, transform .08s; }
+  .saisie-cycle-btn:active { transform: scale(.96); }
+  .saisie-cycle-btn[data-cur="Présent"] { background: rgba(46,204,113,.14); border-color: rgba(46,204,113,.45); color: #2ecc71; }
+  .saisie-cycle-btn[data-cur="Absent"] { background: rgba(231,76,60,.14); border-color: rgba(231,76,60,.45); color: #e74c3c; }
+  .saisie-cycle-btn[data-cur="Blessé"] { background: rgba(243,156,18,.16); border-color: rgba(243,156,18,.5); color: var(--gold); }
+  .saisie-cycle-btn[data-cur="Pas répondu"] { color: var(--text2); }
+
+  .saisie-team-cycle-btn { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--border2); background: var(--bg3); cursor: pointer; padding: 0; flex: none; display: flex; align-items: center; justify-content: center; transition: transform .08s, border-color .12s; }
+  .saisie-team-cycle-btn:active { transform: scale(.9); }
+  .saisie-team-cycle-btn .dot { width: 15px; height: 15px; border-radius: 50%; background: var(--text3); }
+  .saisie-team-cycle-btn.rouge { border-color: var(--rouge); } .saisie-team-cycle-btn.rouge .dot { background: var(--rouge); }
+  .saisie-team-cycle-btn.vert  { border-color: var(--vert);  } .saisie-team-cycle-btn.vert  .dot { background: var(--vert);  }
+  .saisie-team-cycle-btn.bleue { border-color: var(--bleu);  } .saisie-team-cycle-btn.bleue .dot { background: var(--bleu);  }
+
   .saisie-noteam-warn { display: flex; align-items: center; gap: 8px; background: var(--gold-bg); border: 1px solid var(--gold-border); border-radius: var(--radius); padding: 10px 14px; margin: 4px 0 16px; font-size: 12.5px; color: var(--gold); }
-  .saisie-chip-btns { display: inline-flex; gap: 3px; }
-  .saisie-chip-btn { width: 26px; height: 26px; border-radius: 50%; border: none; background: transparent; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; opacity: .55; transition: opacity .15s, background .15s; }
-  .saisie-chip-btn:hover { opacity: 1; background: var(--border); }
-  .saisie-chip-btn.active { opacity: 1; }
-  .saisie-chip-btn.active[data-statut="Présent"] { background: rgba(46,204,113,.32); }
-  .saisie-chip-btn.active[data-statut="Absent"] { background: rgba(231,76,60,.32); }
-  .saisie-chip-btn.active[data-statut="Blessé"] { background: rgba(243,156,18,.32); }
-  .saisie-chip-btn.active[data-statut="Pas répondu"] { background: var(--border2); }
-  .saisie-chip.st-present { border-color: rgba(46,204,113,.4); background: rgba(46,204,113,.08); }
-  .saisie-chip.st-absent  { border-color: rgba(231,76,60,.4); background: rgba(231,76,60,.08); }
-  .saisie-chip.st-blesse  { border-color: rgba(243,156,18,.4); background: rgba(243,156,18,.08); }
-  .saisie-chip.st-nr      { border-color: var(--border2); background: var(--bg3); color: var(--text3); }
-  .saisie-team-dots { display: inline-flex; gap: 4px; margin-left: 2px; }
-  .saisie-team-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding: 0; transition: transform .12s, border-color .12s; }
-  .saisie-team-dot::after { content: ''; width: 10px; height: 10px; border-radius: 50%; display: block; }
-  .saisie-team-dot.rouge::after { background: var(--rouge); } .saisie-team-dot.vert::after { background: var(--vert); } .saisie-team-dot.bleue::after { background: var(--bleu); }
-  .saisie-team-dot:hover { transform: scale(1.12); }
-  .saisie-team-dot.active.rouge { border-color: var(--rouge); }
-  .saisie-team-dot.active.vert  { border-color: var(--vert); }
-  .saisie-team-dot.active.bleue { border-color: var(--bleu); }
-  .saisie-chip.team-rouge { background: var(--rouge-bg); border-color: var(--rouge-border); }
-  .saisie-chip.team-vert  { background: var(--vert-bg);  border-color: var(--vert-border); }
-  .saisie-chip.team-bleue { background: var(--bleu-bg);  border-color: var(--bleu-border); }
-  .saisie-joker-add { display: flex; gap: 8px; margin-top: 12px; }
+  .saisie-joker-add { display: flex; gap: 8px; margin-top: 14px; }
+  .saisie-joker-add input { flex: 1; max-width: 220px; }
+
   .saisie-auto-teams { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 0 0 20px; }
-  .saisie-auto-teams-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; border: none; border-radius: 12px; padding: 15px 16px; background: var(--gold); color: #171708; font-size: 15.5px; font-weight: 800; cursor: pointer; box-shadow: 0 6px 18px -6px rgba(245,200,66,.55); transition: transform .1s ease, box-shadow .15s ease; }
+  .saisie-auto-teams-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; border: none; border-radius: 12px; padding: 15px 16px; background: var(--gold); color: #171708; font-size: 15.5px; font-weight: 800; cursor: pointer; box-shadow: 0 6px 18px -6px rgba(245,200,66,.55); transition: transform .1s ease, box-shadow .15s ease, opacity .15s ease; }
   .saisie-auto-teams-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 22px -6px rgba(245,200,66,.7); }
   .saisie-auto-teams-btn:active { transform: translateY(0); box-shadow: 0 4px 12px -6px rgba(245,200,66,.5); }
+  .saisie-auto-teams-btn:disabled { background: var(--border2); color: var(--text3); box-shadow: none; cursor: not-allowed; transform: none; }
   .saisie-auto-teams-note { font-size: 12px; color: var(--text2); }
-  .saisie-auto-teams-hint { font-size: 12px; color: var(--text2); margin: 0 0 20px; }
-  .saisie-joker-add input { flex: 1; max-width: 220px; }
 
   /* Logistique */
   .saisie-logistique { display: flex; gap: 16px; margin-top: 4px; flex-wrap: wrap; }
@@ -944,7 +942,6 @@
     .saisie-wrap { max-width: 100%; }
     .saisie-section { padding: 18px 26px; }
     .saisie-match-editor { padding: 18px 26px; }
-    .saisie-pres-block + .saisie-pres-block { margin-top: 12px; }
     .saisie-gk-grid { gap: 20px; }
     .sqtb-goal-cols { display: flex; gap: 26px; align-items: flex-start; }
     .sqtb-goal-cols > .saisie-goal-side { flex: 1 1 0; min-width: 0; margin-bottom: 0; }
@@ -1768,7 +1765,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 18:16</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 19:11</footer>
 
 <script>
 
@@ -6867,12 +6864,16 @@ let _draftSavedAt = null;
 let _editMode = false;
 
 const _STATUTS_REG  = ["Présent", "Absent", "Blessé", "Pas répondu"];
+const _STATUT_CYCLE = ["Pas répondu", "Présent", "Absent", "Blessé"];
+const _TEAM_CYCLE = ["", "Bleue", "Vert", "Rouge"]; // "" = pas d'equipe (joker)
 
 let _saisieStep = "presences";      // "presences" | "matchs" | "logistique"
 let _saisieFocusedMatch = undefined; // index dans _draft.matchs actuellement en édition ; null = réduit explicitement, undefined = pas encore décidé
 let _saisiePicker = null;            // { key } — sélecteur (gardien/buteur/passeur) ouvert
 let _saisieTeamSwap = null;          // "{idx}-{side}" — sélecteur d'équipe ouvert
 let _saisieMtOpen = {};              // { [matchIdx]: true } — mi-temps dépliée
+let _saisiePresFilter = "all";        // filtre d'affichage de l'ecran Presences (ne trie jamais, cache/montre)
+let _saisiePresSearch = "";          // recherche d'affichage de l'ecran Presences
 const _SAISIE_STEPS = [
   { key: "presences",  label: "Présences",  icon: "👥" },
   { key: "matchs",     label: "Matchs",     icon: "⚽" },
@@ -6893,6 +6894,8 @@ function _resetSaisieUiState() {
   _saisiePicker = null;
   _saisieTeamSwap = null;
   _saisieMtOpen = {};
+  _saisiePresFilter = "all";
+  _saisiePresSearch = "";
 }
 
 /* Un brouillon cree avant l alignement des statuts occasionnels peut encore contenir
@@ -6986,13 +6989,31 @@ function _saisieBenchTeam(eqA, eqB, teams) {
   return teams.length >= 3 ? (teams.find(t => t !== eqA && t !== eqB) || "") : "";
 }
 
+/* Quand seulement 2 equipes suffisent, la couleur laissee au repos tourne
+   (Jaunes -> Bleus -> Roses -> ...) au lieu de toujours retomber sur la meme —
+   on regarde la derniere session historique a 2 equipes pour savoir laquelle
+   etait au repos, et on avance d'un cran. Les soirees a 3 equipes ne comptent pas. */
+function _saisieNextBenchedColor() {
+  const ROT = ["Vert","Bleue","Rouge"];
+  for (let i = SESSIONS.length - 1; i >= 0; i--) {
+    const used = new Set(Object.values(SESSIONS[i].presences || {}).map(v => v.equipe).filter(Boolean));
+    if (used.size === 2) {
+      const benched = ["Rouge","Vert","Bleue"].find(c => !used.has(c));
+      return ROT[(ROT.indexOf(benched) + 1) % ROT.length];
+    }
+  }
+  return ROT[0];
+}
+
 /* Repartition automatique des equipes parmi les presents, sur base d'un bareme
    interne (jamais affiche) combinant buts, passes et taux de victoire historiques.
-   10-11 presents -> 2 equipes (Rouge/Bleue), 12+ -> 3 equipes (Rouge/Vert/Bleue). */
+   10-11 presents -> 2 equipes, 12+ -> 3 equipes (Rouge/Vert/Bleue). */
 function _saisieAutoAssignTeams() {
   const present = _presentList();
   if (present.length < 10) return;
-  const teamColors = present.length >= 12 ? ["Rouge","Vert","Bleue"] : ["Rouge","Bleue"];
+  const teamCount = present.length >= 12 ? 3 : 2;
+  const benched = teamCount === 3 ? null : _saisieNextBenchedColor();
+  const teamColors = teamCount === 3 ? ["Rouge","Vert","Bleue"] : ["Rouge","Vert","Bleue"].filter(c => c !== benched);
   const statsMap = {};
   computePlayerStats().forEach(r => { statsMap[r.name] = r; });
   const ratingFor = name => {
@@ -7006,7 +7027,6 @@ function _saisieAutoAssignTeams() {
     return r.buts * 3 + r.passes * 2 + winRate * 30 + r.presences * 0.5;
   };
   const sorted = [...present].sort((a, b) => ratingFor(b) - ratingFor(a));
-  const teamCount = teamColors.length;
   const buckets = teamColors.map(() => []);
   let idx = 0, dir = 1;
   sorted.forEach(name => {
@@ -7015,43 +7035,36 @@ function _saisieAutoAssignTeams() {
     if (idx === teamCount) { idx = teamCount - 1; dir = -1; }
     else if (idx === -1) { idx = 0; dir = 1; }
   });
-  buckets.forEach((names, i) => names.forEach(name => { _draft.presences[name].equipe = teamColors[i]; }));
+  // Le regroupement par niveau ne depend que de la note. Mais quelle couleur recoit quel
+  // groupe est tire au sort a chaque generation — sinon la meilleure note atterrirait
+  // toujours dans la meme couleur, session apres session.
+  const shuffledColors = [...teamColors];
+  for (let i = shuffledColors.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledColors[i], shuffledColors[j]] = [shuffledColors[j], shuffledColors[i]];
+  }
+  buckets.forEach((names, i) => names.forEach(name => { _draft.presences[name].equipe = shuffledColors[i]; }));
   _saveDraft();
   renderSaisie();
 }
 
-/* ── Présences : chips groupées par statut ── */
-function _saisieTeamDotsHTML(p, eq) {
-  return `<span class="saisie-team-dots">${["Rouge","Vert","Bleue"].map(t =>
-    `<button class="saisie-team-dot ${t.toLowerCase()}${eq===t?" active":""}" data-act="saisie-team" data-player="${p}" data-equipe="${t}" title="${TEAM_LABEL[t]}"></button>`
-  ).join("")}</span>`;
-}
-function _saisieRegChipHTML(p) {
-  const statut = _draft.presences[p]?.statut || "Pas répondu";
-  const eq = _draft.presences[p]?.equipe || "";
-  const stCls = statut === "Présent" ? "st-present" : statut === "Absent" ? "st-absent" : statut === "Blessé" ? "st-blesse" : "st-nr";
-  const teamCls = statut === "Présent" && eq ? ` team-${eq.toLowerCase()}` : "";
-  const btns = _STATUTS_REG.map(s => `<button class="saisie-chip-btn${s===statut?' active':''}" data-act="saisie-status" data-player="${p}" data-statut="${s}" title="${s}">${{"Présent":"✅","Absent":"❌","Blessé":"🤕","Pas répondu":"❓"}[s]}</button>`).join("");
-  const dots = statut === "Présent" ? _saisieTeamDotsHTML(p, eq) : "";
-  return `<span class="saisie-chip ${stCls}${teamCls}">
-    <span class="saisie-chip-name">${p}</span>
-    ${dots}
-    <span class="saisie-chip-btns">${btns}</span>
-  </span>`;
-}
-function _saisieJokerChipHTML(p, removable) {
-  const statut = _draft.presences[p]?.statut || "Pas répondu";
-  const eq = _draft.presences[p]?.equipe || "";
-  const stCls = statut === "Présent" ? "st-present" : statut === "Absent" ? "st-absent" : statut === "Blessé" ? "st-blesse" : "st-nr";
-  const teamCls = statut === "Présent" && eq ? ` team-${eq.toLowerCase()}` : "";
-  const dots = statut === "Présent" ? _saisieTeamDotsHTML(p, eq) : "";
-  const btns = _STATUTS_REG.map(s => `<button class="saisie-chip-btn${s===statut?' active':''}" data-act="saisie-status" data-player="${p}" data-statut="${s}" title="${s}">${{"Présent":"✅","Absent":"❌","Blessé":"🤕","Pas répondu":"❓"}[s]}</button>`).join("")
-    + (removable ? `<button class="saisie-chip-btn" data-act="saisie-remove-temp-joker" data-player="${p}" title="Retirer">✕</button>` : "");
-  return `<span class="saisie-chip ${stCls}${teamCls}">
-    <span class="saisie-chip-name">${p}<span class="saisie-chip-tag">Occ.</span></span>
-    ${dots}
-    <span class="saisie-chip-btns">${btns}</span>
-  </span>`;
+/* ── Présences : liste plate filtrable, un tap fait defiler statut puis equipe ── */
+function _saisiePresRowHTML(p, isOcc, removable, hidden) {
+  const info = _draft.presences[p] || { statut: "Pas répondu", equipe: "" };
+  const statut = info.statut || "Pas répondu";
+  const eq = info.equipe || "";
+  const teamBtn = statut === "Présent"
+    ? `<button class="saisie-team-cycle-btn${eq ? " " + eq.toLowerCase() : ""}" data-act="saisie-team-cycle" data-player="${p}" title="${eq ? TEAM_LABEL[eq] : "— joker —"}"><span class="dot"></span></button>`
+    : "";
+  const removeBtn = removable ? `<button class="saisie-cycle-btn" data-act="saisie-remove-temp-joker" data-player="${p}" title="Retirer" style="min-width:auto;padding:8px 10px">✕</button>` : "";
+  return `<div class="saisie-pres-row${hidden ? " hidden" : ""}" data-player="${p}" data-statut="${statut}">
+    <span class="saisie-pres-row-name">${p}${isOcc ? '<span class="saisie-chip-tag">Occ.</span>' : ""}</span>
+    <div class="saisie-pres-row-controls">
+      <button class="saisie-cycle-btn" data-cur="${statut}" data-act="saisie-status-cycle" data-player="${p}">${{"Présent":"✅","Absent":"❌","Blessé":"🤕","Pas répondu":"❓"}[statut]} ${statut}</button>
+      ${teamBtn}
+      ${removeBtn}
+    </div>
+  </div>`;
 }
 function _buildPresencesScreenHTML() {
   const regularPlayers = ALL_PLAYERS.filter(p => !JOKERS.has(p) && !ABSENTS.has(p) && !INACTIFS.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
@@ -7059,7 +7072,6 @@ function _buildPresencesScreenHTML() {
   const tempJokers = _draft.tempJokers || [];
   const allJokers = [...jokerPlayers, ...tempJokers].sort((a, b) => a.localeCompare(b, "fr"));
   const jkSet = new Set(allJokers);
-  const byStatut = (list, s) => list.filter(p => (_draft.presences[p]?.statut || "Pas répondu") === s);
 
   // Recap global : reguliers + occasionnels, de facon uniforme sur les 4 statuts.
   const countPresents = Object.values(_draft.presences).filter(v => v.statut === "Présent").length;
@@ -7067,41 +7079,43 @@ function _buildPresencesScreenHTML() {
   const countBlesses  = Object.values(_draft.presences).filter(v => v.statut === "Blessé").length;
   const countNR       = Object.values(_draft.presences).filter(v => v.statut === "Pas répondu").length;
 
-  const chipFor = p => jkSet.has(p) ? _saisieJokerChipHTML(p, tempJokers.includes(p)) : _saisieRegChipHTML(p);
-  // Un seul groupe par statut, reguliers et occasionnels ensemble — toujours les reguliers
-  // par ordre alpha d'abord, puis les occasionnels par ordre alpha (cf pastille "Occ.").
-  const combinedGroup = (label, icon, statut) => {
-    const list = [...byStatut(regularPlayers, statut), ...byStatut(allJokers, statut)];
-    if (!list.length) return "";
-    return `<div class="saisie-pres-block">
-      <div class="saisie-pres-label">${icon} ${label} <span class="n">(${list.length})</span></div>
-      <div class="saisie-chip-row">${list.map(chipFor).join("")}</div>
-    </div>`;
-  };
-
-  const presentNames = [...byStatut(regularPlayers, "Présent"), ...byStatut(allJokers, "Présent")];
+  const presentNames = ALL_PLAYERS.filter(p => (_draft.presences[p]?.statut) === "Présent").concat(tempJokers.filter(p => _draft.presences[p]?.statut === "Présent"));
   const noTeamPresents = presentNames.filter(p => !(_draft.presences[p]?.equipe));
   const noTeamWarning = noTeamPresents.length ? `<div class="saisie-noteam-warn">⚠️ ${noTeamPresents.length} présent${noTeamPresents.length>1?"s":""} sans équipe assignée : ${noTeamPresents.join(", ")}</div>` : "";
 
+  // Liste plate, toujours dans le meme ordre (reguliers alpha puis occasionnels alpha) —
+  // le filtre et la recherche cachent/montrent des lignes, ne deplacent jamais personne.
+  const q = _saisiePresSearch.trim().toLowerCase();
+  const allRows = [...regularPlayers.map(p => ({p, isOcc:false, removable:false})), ...allJokers.map(p => ({p, isOcc:true, removable:tempJokers.includes(p)}))];
+  const rowsHtml = allRows.map(({p, isOcc, removable}) => {
+    const statut = _draft.presences[p]?.statut || "Pas répondu";
+    const matchFilter = _saisiePresFilter === "all" || statut === _saisiePresFilter;
+    const matchSearch = !q || p.toLowerCase().includes(q);
+    return _saisiePresRowHTML(p, isOcc, removable, !(matchFilter && matchSearch));
+  }).join("");
+
+  const filterTabs = [["all","👥",countPresents+countAbsents+countBlesses+countNR],["Présent","✅",countPresents],["Absent","❌",countAbsents],["Blessé","🤕",countBlesses],["Pas répondu","❓",countNR]];
+
   return `<div class="saisie-section">
     <div class="saisie-section-title">👥 Présences</div>
-    ${countPresents >= 10
-      ? `<div class="saisie-auto-teams">
-          <button class="saisie-auto-teams-btn" data-act="saisie-auto-teams">🎲 Choisir automatiquement les équipes</button>
-          <span class="saisie-auto-teams-note">${countPresents >= 12 ? "3 équipes" : "2 équipes"} pour ${countPresents} présents — modifiable ensuite</span>
-        </div>`
-      : `<div class="saisie-auto-teams-hint">Encore ${10 - countPresents} présent${10 - countPresents > 1 ? "s" : ""} avant de pouvoir générer les équipes automatiquement (min. 10).</div>`}
+    <div class="saisie-auto-teams">
+      <button class="saisie-auto-teams-btn" data-act="saisie-auto-teams"${countPresents < 10 ? " disabled" : ""}>🎲 Choisir automatiquement les équipes</button>
+      <span class="saisie-auto-teams-note">${countPresents >= 10
+        ? `${countPresents >= 12 ? "3 équipes" : "2 équipes"} pour ${countPresents} présents — modifiable ensuite`
+        : `Encore ${10 - countPresents} présent${10 - countPresents > 1 ? "s" : ""} avant de pouvoir générer (min. 10)`}</span>
+    </div>
+    <input type="text" class="saisie-pres-search" id="saisie-pres-search" placeholder="Rechercher un joueur…" value="${_saisiePresSearch.replace(/"/g,"&quot;")}">
+    <div class="saisie-pres-filters">
+      ${filterTabs.map(([key,icon,n]) => `<button class="saisie-pres-filter${_saisiePresFilter===key?" active":""}" data-act="saisie-pres-filter" data-filter="${key}">${icon} <span class="n">${n}</span></button>`).join("")}
+    </div>
     <div class="saisie-pres-summary">
       <span>✅ ${countPresents} présent${countPresents>1?"s":""}</span>
       <span>❌ ${countAbsents} absent${countAbsents>1?"s":""}</span>
       <span>🤕 ${countBlesses} blessé${countBlesses>1?"s":""}</span>
       <span>❓ ${countNR} n'${countNR>1?"ont":"a"} pas répondu</span>
     </div>
-    ${combinedGroup("Présents", "✅", "Présent")}
     ${noTeamWarning}
-    ${combinedGroup("Absents", "❌", "Absent")}
-    ${combinedGroup("Blessés", "🤕", "Blessé")}
-    ${combinedGroup("Pas répondu", "❓", "Pas répondu")}
+    <div class="saisie-pres-list">${rowsHtml}</div>
     <div class="saisie-joker-add">
       <input type="text" id="saisie-new-joker-input" placeholder="Nom de l'occasionnel" class="saisie-date-input">
       <button class="saisie-btn secondary" data-act="saisie-add-temp-joker">+ Ajouter</button>
@@ -7455,24 +7469,36 @@ document.getElementById("saisie-content").addEventListener("click", e => {
 
   const stepBtn = e.target.closest('[data-act="saisie-go-step"]');
   if (stepBtn) {
+    if (_saisieStep === "presences" && stepBtn.dataset.step === "matchs") {
+      const missing = _presentList().filter(p => !_draft.presences[p]?.equipe);
+      if (missing.length && !confirm(`⚠️ Ces joueurs présents n'ont pas d'équipe :\n${missing.map(n => "• " + n).join("\n")}\n\nContinuer quand même ?`)) return;
+    }
     _saisieStep = stepBtn.dataset.step; _saisiePicker = null; _saisieTeamSwap = null;
     renderSaisie(); window.scrollTo({top:0, behavior:"smooth"}); return;
   }
 
-  const statusBtn = e.target.closest('[data-act="saisie-status"]');
-  if (statusBtn) {
-    const p = statusBtn.dataset.player; const s = statusBtn.dataset.statut;
-    if (!_draft.presences[p]) _draft.presences[p] = { statut: s, equipe: "" };
-    _draft.presences[p].statut = s;
-    if (s !== "Présent") _draft.presences[p].equipe = "";
+  const statusCycleBtn = e.target.closest('[data-act="saisie-status-cycle"]');
+  if (statusCycleBtn) {
+    const p = statusCycleBtn.dataset.player;
+    const cur = _draft.presences[p]?.statut || "Pas répondu";
+    const next = _STATUT_CYCLE[(_STATUT_CYCLE.indexOf(cur) + 1) % _STATUT_CYCLE.length];
+    if (!_draft.presences[p]) _draft.presences[p] = { statut: next, equipe: "" };
+    _draft.presences[p].statut = next;
+    if (next !== "Présent") _draft.presences[p].equipe = "";
     _saveDraft();
     renderSaisie(); return;
   }
-  const teamBtn = e.target.closest('[data-act="saisie-team"]');
-  if (teamBtn) {
-    const p = teamBtn.dataset.player; const eq = teamBtn.dataset.equipe;
-    if (_draft.presences[p]) _draft.presences[p].equipe = _draft.presences[p].equipe === eq ? "" : eq;
+  const teamCycleBtn = e.target.closest('[data-act="saisie-team-cycle"]');
+  if (teamCycleBtn) {
+    const p = teamCycleBtn.dataset.player;
+    const cur = _draft.presences[p]?.equipe || "";
+    _draft.presences[p].equipe = _TEAM_CYCLE[(_TEAM_CYCLE.indexOf(cur) + 1) % _TEAM_CYCLE.length];
     _saveDraft();
+    renderSaisie(); return;
+  }
+  const presFilterBtn = e.target.closest('[data-act="saisie-pres-filter"]');
+  if (presFilterBtn) {
+    _saisiePresFilter = presFilterBtn.dataset.filter;
     renderSaisie(); return;
   }
   if (e.target.closest('[data-act="saisie-auto-teams"]')) { _saisieAutoAssignTeams(); return; }
@@ -7630,6 +7656,16 @@ document.getElementById("saisie-content").addEventListener("change", e => {
     _draft.matchs[idx][side === "A" ? "mt1A" : "mt1B"] = Math.max(0, parseInt(e.target.value) || 0);
     _saveDraft();
     return;
+  }
+});
+
+document.getElementById("saisie-content").addEventListener("input", e => {
+  if (!_draft) return;
+  if (e.target.id === "saisie-pres-search") {
+    _saisiePresSearch = e.target.value;
+    renderSaisie();
+    const el = document.getElementById("saisie-pres-search");
+    if (el) { el.focus(); el.selectionStart = el.selectionEnd = el.value.length; }
   }
 });
 
