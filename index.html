@@ -1768,7 +1768,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 18:14</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 30/08/2026 - 18:16</footer>
 
 <script>
 
@@ -7538,6 +7538,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     while (_draft.matchs[idx][bfield].length < val) _draft.matchs[idx][bfield].push("");
     _draft.matchs[idx][pfield] = (_draft.matchs[idx][pfield] || []).slice(0, val);
     while (_draft.matchs[idx][pfield].length < val) _draft.matchs[idx][pfield].push("");
+    _saveDraft();
     renderSaisie(); return;
   }
   const mtToggle = e.target.closest('[data-act="saisie-toggle-mt"]');
@@ -7557,6 +7558,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     _draft.matchs[idx][thisField] = val;
     if (val === oldOther) _draft.matchs[idx][otherField] = oldThis;
     _saisieTeamSwap = null;
+    _saveDraft();
     renderSaisie(); return;
   }
 
@@ -7586,6 +7588,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       _draft.matchs[idx][field][n] = val;
     }
     _saisiePicker = null;
+    _saveDraft();
     renderSaisie(); return;
   }
 
@@ -7602,6 +7605,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     if (!_draft.tempJokers) _draft.tempJokers = [];
     _draft.tempJokers.push(name);
     _draft.presences[name] = { statut: "Présent", equipe: "", joker: true, temp: true };
+    _saveDraft();
     renderSaisie(); return;
   }
 
@@ -7610,19 +7614,21 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     const name = rmTempBtn.dataset.player;
     _draft.tempJokers = (_draft.tempJokers||[]).filter(p => p !== name);
     delete _draft.presences[name];
+    _saveDraft();
     renderSaisie(); return;
   }
 });
 
 document.getElementById("saisie-content").addEventListener("change", e => {
   if (!_draft) return;
-  if (e.target.id === "saisie-date")     { _draft.date = e.target.value; return; }
-  if (e.target.id === "saisie-sac")      { _draft.sac = e.target.value; return; }
-  if (e.target.id === "saisie-maillots") { _draft.maillots = e.target.value; return; }
+  if (e.target.id === "saisie-date")     { _draft.date = e.target.value; _saveDraft(); return; }
+  if (e.target.id === "saisie-sac")      { _draft.sac = e.target.value; _saveDraft(); return; }
+  if (e.target.id === "saisie-maillots") { _draft.maillots = e.target.value; _saveDraft(); return; }
   const mtInput = e.target.closest('[data-act="saisie-mt-input"]');
   if (mtInput) {
     const idx = Number(mtInput.dataset.match); const side = mtInput.dataset.side;
     _draft.matchs[idx][side === "A" ? "mt1A" : "mt1B"] = Math.max(0, parseInt(e.target.value) || 0);
+    _saveDraft();
     return;
   }
 });
