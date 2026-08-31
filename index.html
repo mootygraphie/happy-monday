@@ -1286,9 +1286,6 @@
   .tt-pitch-card { padding: 16px; }
   .tt-pitch-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
   .tt-pitch-title { font-size: 13px; font-weight: 700; }
-  .tt-gk-toggle { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text3); }
-  .tt-gk-toggle b { color: var(--text); font-weight: 700; }
-  .tt-gk-toggle select { border: 1px solid var(--border); background: var(--bg3); color: var(--text); border-radius: 8px; padding: 4px 8px; font-size: 11px; }
   .tt-pitch-wrap { position: relative; width: 100%; height: 340px; border-radius: 12px; overflow: hidden; }
   .tt-pitch-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
   .tt-pitch-rows { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 18px 8px 14px; }
@@ -1790,7 +1787,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 12:32</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 12:56</footer>
 
 <script>
 
@@ -2781,7 +2778,8 @@ function _dbxTeamScopedEquipeType(sessions, color) {
     name, team: color,
     buts: buteursCount[name] || 0,
     passes: passeursCount[name] || 0,
-    defAvg: defMap[name].goalsAgainst / defMap[name].matchCount
+    defAvg: defMap[name].goalsAgainst / defMap[name].matchCount,
+    matchCount: defMap[name].matchCount
   }));
   const gks = Object.entries(gkMap).map(([name,g]) => ({
     name, team: color, matchs: g.matchs, buts: g.buts, cleanSheets: g.cleanSheets, rate: g.buts / g.matchs
@@ -2818,9 +2816,14 @@ function _pickEquipeType(outfield, gks, gkCriteria) {
   const maxDef = Math.max(...candidates.map(p => p.defAvg));
   const defRange = (maxDef - minDef) || 1;
   // Un "leader" avec seulement 1 but/passe ne doit pas peser autant qu'un leader avec 3+.
+  // Meme logique cote defense : sur un tout petit echantillon (peu de mi-temps jouees),
+  // le meilleur def relatif du lot decrochait un score plein de 1 par simple normalisation
+  // min/max, ecrasant a tort un profil offensif clair (ex: 3 passes decisives) qui, lui,
+  // doit deja justifier son score par un volume reel. On applique le meme plancher de
+  // volume (3 mi-temps) a la defense pour ne pas favoriser un ecart minime sur peu de matchs.
   const scoreFor = (p, role) => role === "attaquant" ? (p.buts / maxButs) * Math.min(1, p.buts / 3)
     : role === "milieu" ? (p.passes / maxPasses) * Math.min(1, p.passes / 3)
-    : 1 - (p.defAvg - minDef) / defRange;
+    : (1 - (p.defAvg - minDef) / defRange) * Math.min(1, (p.matchCount || 3) / 3);
 
   const ROLE_PRIORITY = { attaquant: 0, milieu: 1, defenseur: 2 };
   const roles = ["attaquant", "milieu", "defenseur"];
@@ -2893,7 +2896,6 @@ function _ttPanelHtml(idPrefix, team, gkCriteria) {
   return `<div class="dbx-card tt-pitch-card" data-tt-id="${idPrefix}">
     <div class="tt-pitch-head">
       <span class="tt-pitch-title">Équipe-type</span>
-      <span class="tt-gk-toggle"><span>Gardien</span><b>Clean sheets</b></span>
     </div>
     <div class="tt-pitch-wrap">
       ${_ttPitchSvg()}
@@ -3575,7 +3577,8 @@ function renderSessionDetailV2(session) {
     team: (session.presences[d.name] && session.presences[d.name].equipe) || "",
     buts: buteursCount[d.name] || 0,
     passes: passeursCount[d.name] || 0,
-    defAvg: d.avg
+    defAvg: d.avg,
+    matchCount: d.matchCount
   }));
   const ttGks = gkRanking.map(g => ({ ...g, team: (session.presences[g.name] && session.presences[g.name].equipe) || "" }));
   const ttTeam = matchs.length ? _pickEquipeType(ttOutfield, ttGks, ttGkCriteria) : null;
@@ -4879,7 +4882,8 @@ function _dbxRenderEquipeType(sessions) {
     team: teamOf(d.name),
     buts: (ps[d.name] && ps[d.name].buts) || 0,
     passes: (ps[d.name] && ps[d.name].passes) || 0,
-    defAvg: d.avg
+    defAvg: d.avg,
+    matchCount: d.matchCount
   }));
   const gks = computeGardiensRanking(sessions).map(g => ({ ...g, team: teamOf(g.name) }));
   const team = _pickEquipeType(outfield, gks, ttGkCriteria);
@@ -6473,7 +6477,8 @@ function _computeEquipeTypeAppearances() {
       team: (s.presences[d.name] && s.presences[d.name].equipe) || "",
       buts: buteursCount[d.name] || 0,
       passes: passeursCount[d.name] || 0,
-      defAvg: d.avg
+      defAvg: d.avg,
+      matchCount: d.matchCount
     }));
     const gks = gkRanking.map(g => ({ ...g, team: (s.presences[g.name] && s.presences[g.name].equipe) || "" }));
     const team = _pickEquipeType(outfield, gks, "cs");
