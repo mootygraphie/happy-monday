@@ -1281,12 +1281,13 @@
   .sfm-spot-goals em { color: var(--text3); font-style: italic; }
   .sfm-spot-gk { display: inline-block; margin-left: 8px; font-size: 10px; color: var(--text3); white-space: nowrap; }
 
-  .sfm-tt-spots { display: flex; flex-direction: column; gap: 12px; }
+  .sfm-tt-spots { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 12px; }
 
   .tt-pitch-card { padding: 16px; }
   .tt-pitch-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
   .tt-pitch-title { font-size: 13px; font-weight: 700; }
   .tt-gk-toggle { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text3); }
+  .tt-gk-toggle b { color: var(--text); font-weight: 700; }
   .tt-gk-toggle select { border: 1px solid var(--border); background: var(--bg3); color: var(--text); border-radius: 8px; padding: 4px 8px; font-size: 11px; }
   .tt-pitch-wrap { position: relative; width: 100%; height: 340px; border-radius: 12px; overflow: hidden; }
   .tt-pitch-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
@@ -1789,7 +1790,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 11:52</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 11:59</footer>
 
 <script>
 
@@ -2874,13 +2875,7 @@ function _ttPanelHtml(idPrefix, team, gkCriteria) {
   return `<div class="dbx-card tt-pitch-card" data-tt-id="${idPrefix}">
     <div class="tt-pitch-head">
       <span class="tt-pitch-title">Équipe-type</span>
-      <label class="tt-gk-toggle">
-        <span>Gardien</span>
-        <select data-act="tt-gk-criteria" data-target="${idPrefix}">
-          <option value="avg"${gkCriteria!=="cs"?' selected':''}>Moy. encaissée</option>
-          <option value="cs"${gkCriteria==="cs"?' selected':''}>Clean sheets</option>
-        </select>
-      </label>
+      <span class="tt-gk-toggle"><span>Gardien</span><b>Clean sheets</b></span>
     </div>
     <div class="tt-pitch-wrap">
       ${_ttPitchSvg()}
@@ -3138,8 +3133,9 @@ function _sfmPickSpotlights(matchs) {
     if (c.player && usedPlayer.has(c.player)) return;
     picks.push(c); usedMatch.add(c.i); if (c.player) usedPlayer.add(c.player);
   });
-  // Soirée calme, peu de scénarios marquants : complète sans la contrainte de diversité.
-  if (picks.length < 2) {
+  // Peu de scénarios diversifiés (matchs/joueurs distincts) : complète jusqu'à 3 en
+  // relâchant la contrainte de diversité, pour toujours remplir la 3e case si possible.
+  if (picks.length < 3) {
     candidates.forEach(c => {
       if (picks.length >= Math.min(3, candidates.length || 1) || usedMatch.has(c.i)) return;
       picks.push(c); usedMatch.add(c.i);
@@ -5306,7 +5302,7 @@ function _dbxRenderTeamScope(sessions, color, prevSessions) {
   const prevDiff = prevD ? (prevD.gf - prevD.ga) : null;
 
   let h = "";
-  h += `<div class="dbx-hero-grid">
+  const heroGridHtml = `<div class="dbx-hero-grid">
     <div class="dbx-hero-card">
       <div class="dbx-hero-lbl">Bilan</div>
       <div class="dbx-hero-num dbx-team" style="font-size:20px"><span style="color:var(--good)">${d.w}V</span> <span style="color:var(--neutral)">${d.n}N</span> <span style="color:var(--bad)">${d.l}D</span></div>
@@ -5331,10 +5327,9 @@ function _dbxRenderTeamScope(sessions, color, prevSessions) {
   </div>`;
 
   const ttTeam = _dbxTeamScopedEquipeType(sessions, color);
-  if (ttTeam) {
-    h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Équipe-type</span><span class="dbx-sec-note">${TEAM_LABEL[color]} · basée sur les stats sous cette couleur uniquement</span></div>`;
-    h += _ttPanelHtml("dbx", ttTeam, ttGkCriteria);
-  }
+  h += ttTeam
+    ? `<div class="dbx-hero-tt-row">${heroGridHtml}${_ttPanelHtml("dbx", ttTeam, ttGkCriteria)}</div>`
+    : heroGridHtml;
 
   h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Répartition &amp; profil</span><span class="dbx-sec-note">${TEAM_LABEL[color]} vs les 2 autres équipes</span></div>`;
   const donut = _dbx2DonutSvg([
