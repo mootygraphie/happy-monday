@@ -924,7 +924,8 @@
   .saisie-mt1-recap button:hover { color: var(--text2); }
   .saisie-me-validate { width: 100%; margin-top: 6px; padding: 13px; font-size: 14.5px; }
 
-  .hmft-toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); max-width: min(90vw, 380px); text-align: center; background: #2ecc71; color: #071b0f; font-weight: 700; font-size: 13.5px; padding: 12px 20px; border-radius: 999px; box-shadow: 0 6px 20px rgba(0,0,0,.25); opacity: 0; transition: opacity .25s, transform .25s; z-index: 4000; pointer-events: none; }
+  .hmft-toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 12px); display: flex; align-items: center; gap: 10px; max-width: min(90vw, 380px); background: var(--bg2); border: 1px solid var(--border2); border-left: 3px solid #2ecc71; color: var(--text); font-weight: 600; font-size: 13.5px; line-height: 1.4; padding: 13px 16px; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.28); opacity: 0; transition: opacity .2s, transform .2s; z-index: 4000; pointer-events: none; }
+  .hmft-toast .hmft-toast-ico { flex-shrink: 0; font-size: 17px; }
   .hmft-toast.show { opacity: 1; transform: translate(-50%, 0); }
 
   .saisie-gk-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 12px; margin-bottom: 16px; }
@@ -1798,7 +1799,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 23:31</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 23:43</footer>
 
 <script>
 
@@ -2058,6 +2059,9 @@ async function _fbLoadFromNetwork() {
     // Le brouillon de match en cours (non valide) reste local a cet appareil — jamais
     // celui (toujours vide) venu de ce blob partage.
     fbDraft.matchs = (_draft && Array.isArray(_draft.matchs)) ? _draft.matchs : [];
+    // matchsMap est un sous-noeud Firebase distinct (voir _fbWatchDraftMatches, quelques
+    // lignes plus bas) : on ne le garde pas ici pour eviter de le dupliquer dans _draft.
+    delete fbDraft.matchsMap;
     _draft = fbDraft;
     _migrateLegacyPresenceStatuts(_draft.presences);
     _saisieStep = _SAISIE_STEPS.some(st => st.key === _draft.step) ? _draft.step : "presences";
@@ -2246,10 +2250,10 @@ function dot(color) {
 function _showToast(msg) {
   const t = document.createElement('div');
   t.className = 'hmft-toast';
-  t.textContent = msg;
+  t.innerHTML = `<span class="hmft-toast-ico">✅</span><span>${msg}</span>`;
   document.body.appendChild(t);
   requestAnimationFrame(() => t.classList.add('show'));
-  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2600);
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 250); }, 4500);
 }
 function teamCls(t) { return t === "Bleue" ? "bleu" : t ? t.toLowerCase() : ""; }
 function scoreColors(m) {
@@ -7302,8 +7306,13 @@ function _saveDraft() {
   // sur son propre noeud au moment de sa validation (_fbValidateMatch), pour qu un appareil
   // avec une copie locale perimee ne puisse plus effacer les matchs valides entre-temps par
   // un autre telephone (cause du bug de perte de matchs du 31/08/2026).
+  // IMPORTANT : .update() et non .set() sur ce noeud parent — un .set() remplace tout le
+  // contenu de config/draft, y compris le sous-noeud matchsMap absent de sharedDraft, ce
+  // qui effacait silencieusement tous les matchs deja valides au premier _saveDraft() venu
+  // (ex: cocher une presence) juste apres leur validation. .update() ne touche que les cles
+  // presentes ici et laisse matchsMap intact.
   const { matchs, ...sharedDraft } = _draft;
-  if (_db) _db.ref('config/draft').set(sharedDraft).catch(e => console.error('FB draft save:', e));
+  if (_db) _db.ref('config/draft').update(sharedDraft).catch(e => console.error('FB draft save:', e));
 }
 
 function _presentList() {
@@ -7776,10 +7785,13 @@ function _buildMatchsScreenHTML() {
 
 function renderSaisie() {
   if (!_draft) _loadDraft();
-  // Chaque appel remplace tout le contenu du panneau (innerHTML) : sans ceci, le
-  // navigateur perd la position de defilement a chaque frappe/tap (ex: cocher un
-  // present remonte tout en haut de la page). Un appelant qui veut explicitement
-  // remonter (ex: changement d etape) le fait deja lui-meme apres coup.
+  // Chaque appel remplace tout le contenu du panneau (innerHTML), ce qui detruit le
+  // bouton tape juste avant. Sur mobile, un element qui perd le focus ainsi (plutot que
+  // par un blur() explicite) declenche souvent un recalage automatique du viewport par le
+  // navigateur, un ou deux frames plus tard — d'ou le "remonte en haut" au tap suivant.
+  // On desactive le focus nous-memes avant la destruction pour couper court a ce recalage,
+  // et on reimpose la position memorisee a la fois tout de suite et au frame suivant.
+  if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
   const _scrollY = window.scrollY;
   const statusTxt = _draftSavedAt
     ? `<span style="color:#2ecc71;font-size:12px">✓ Sauvegardé à ${_draftSavedAt}</span>`
@@ -8187,7 +8199,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       _saisieFocusedMatch = null;
       _saveDraft();
       renderSaisie();
-      _showToast(`✅ Match envoyé — visible sur tous les téléphones (${payload.scoreA}–${payload.scoreB})`);
+      _showToast(`Match envoyé — visible sur tous les téléphones (${payload.scoreA}–${payload.scoreB})`);
     }).catch(err => {
       if (overlay) overlay.style.display = "none";
       alert('⚠️ Erreur de synchronisation :\n' + (err?.message || err?.code || String(err)) + '\n\nLe match reste dans votre brouillon local — réessayez.');
