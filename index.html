@@ -917,16 +917,17 @@
   .saisie-stepper-btn:active { transform: scale(.92); }
   .saisie-score-dash { font-size: 26px; color: var(--text3); font-weight: 300; text-align: center; }
 
-  .saisie-mt-row { text-align: center; color: var(--text3); font-size: 12px; margin-bottom: 16px; }
-  .saisie-mt-row button { font: inherit; font-size: 12px; color: var(--text2); background: none; border: none; text-decoration: underline; text-decoration-color: transparent; cursor: pointer; }
-  .saisie-mt-row button:hover { text-decoration-color: currentColor; }
-  .saisie-mt-inputs { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; }
-  .saisie-mt-inputs input { width: 52px; text-align: center; background: var(--bg2); border: 1px solid var(--border2); border-radius: 8px; padding: 7px; color: var(--text); font: inherit; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
-  .saisie-mt-inputs span { color: var(--text3); font-size: 13px; }
+  .saisie-phase-label { text-align: center; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--gold); margin-bottom: 10px; }
+  .saisie-mt1-recap { text-align: center; font-size: 12px; color: var(--text2); margin-bottom: 10px; }
+  .saisie-mt1-recap b { color: var(--text); }
+  .saisie-mt1-recap button { font: inherit; font-size: 11.5px; color: var(--text3); background: none; border: none; text-decoration: underline; cursor: pointer; margin-left: 6px; }
+  .saisie-mt1-recap button:hover { color: var(--text2); }
+  .saisie-me-validate { width: 100%; margin-top: 6px; padding: 13px; font-size: 14.5px; }
 
   .saisie-gk-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 12px; margin-bottom: 16px; }
   .saisie-gk-col { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
-  .saisie-gk-col-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin-bottom: 8px; }
+  .saisie-gk-col-label { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin-bottom: 8px; }
+  .saisie-gk-phase-tag { font-size: 9.5px; font-weight: 800; color: var(--gold); background: var(--gold-bg); border-radius: 5px; padding: 1px 6px; letter-spacing: .02em; flex-shrink: 0; }
   .saisie-gk-mt { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
   .saisie-gk-mt:last-child { margin-bottom: 0; }
   .saisie-gk-mt-tag { font-size: 10px; font-weight: 700; color: var(--text3); width: 26px; flex-shrink: 0; }
@@ -969,6 +970,7 @@
   .saisie-recap-title h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin: 0; }
   .match-recap-row.clickable { cursor: pointer; width: 100%; text-align: left; font: inherit; }
   .match-recap-row.clickable:hover { border-color: var(--gold); background: var(--bg3); }
+  .match-recap-row.draft { border-style: dashed; border-color: var(--border2); }
   .mrr-edit { font-size: 11px; color: var(--text3); flex-shrink: 0; }
 
   @media (max-width: 620px) {
@@ -1792,7 +1794,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 15:18</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 23:05</footer>
 
 <script>
 
@@ -2042,30 +2044,23 @@ async function _fbLoadFromNetwork() {
   });
   localStorage.setItem('hmft_sessions', JSON.stringify(SESSIONS));
 
-  // Brouillon — sync cross-device
+  // Brouillon — sync cross-device (presences/equipes/logistique uniquement : les matchs
+  // valides ne transitent plus par ce blob, voir _saveDraft et _fbWatchDraftMatches).
   const draftSnap = await _db.ref('config/draft').once('value');
   if (_fbLoadTimedOut) return;
   const fbDraft = draftSnap.val();
   if (fbDraft) {
-    // Firebase drops empty arrays — restore them
-    if (!Array.isArray(fbDraft.matchs)) fbDraft.matchs = [];
     if (!Array.isArray(fbDraft.tempJokers)) fbDraft.tempJokers = [];
-    fbDraft.matchs.forEach(m => {
-      if (!Array.isArray(m.buteursA))  m.buteursA  = [];
-      if (!Array.isArray(m.buteursB))  m.buteursB  = [];
-      if (!Array.isArray(m.passeursA)) m.passeursA = [];
-      if (!Array.isArray(m.passeursB)) m.passeursB = [];
-      if (!Array.isArray(m.gardiensA)) m.gardiensA = ["",""];
-      if (!Array.isArray(m.gardiensB)) m.gardiensB = ["",""];
-      if (!Array.isArray(m.bancA)) m.bancA = ["",""];
-      if (!Array.isArray(m.bancB)) m.bancB = ["",""];
-    });
+    // Le brouillon de match en cours (non valide) reste local a cet appareil — jamais
+    // celui (toujours vide) venu de ce blob partage.
+    fbDraft.matchs = (_draft && Array.isArray(_draft.matchs)) ? _draft.matchs : [];
     _draft = fbDraft;
     _migrateLegacyPresenceStatuts(_draft.presences);
     _saisieStep = _SAISIE_STEPS.some(st => st.key === _draft.step) ? _draft.step : "presences";
     if (document.getElementById("panel-saisie")?.classList.contains("active")) renderSaisie();
     localStorage.setItem('hmft_draft', JSON.stringify(_draft));
   }
+  _fbWatchDraftMatches();
 
   // Config : joueurs extra et jokers (Firebase = source de vérité)
   const cfgSnap = await _db.ref('config').once('value');
@@ -2126,6 +2121,54 @@ async function _fbDeleteSession(date) {
 
   if (!_db) return;
   await _db.ref('sessions/' + date).remove();
+}
+
+/* ── Matchs valides pendant la Saisie : chaque match "valide" est ecrit sur son propre
+   noeud Firebase (config/draft/matchsMap/{id}), jamais dans le blob config/draft partage
+   (voir _saveDraft). Plusieurs telephones peuvent ainsi valider des matchs differents en
+   parallele sans jamais s ecraser mutuellement — a la difference de l ancien systeme ou
+   le brouillon entier (matchs compris) etait reecrit a chaque frappe, et un appareil avec
+   une copie locale perimee pouvait effacer les matchs ajoutes entre-temps par un autre. */
+let _liveValidatedMatchs = []; // tries du plus ancien au plus recent (cles Firebase push, triables)
+let _fbMatchesWatching = false;
+
+function _fbWatchDraftMatches() {
+  if (!_db || _fbMatchesWatching) return;
+  _fbMatchesWatching = true;
+  _db.ref('config/draft/matchsMap').on('value', snap => {
+    const map = snap.val() || {};
+    _liveValidatedMatchs = Object.keys(map).sort().map(id => {
+      const m = { ...map[id], _id: id, _validated: true };
+      if (!Array.isArray(m.buteursA))  m.buteursA  = [];
+      if (!Array.isArray(m.buteursB))  m.buteursB  = [];
+      if (!Array.isArray(m.passeursA)) m.passeursA = [];
+      if (!Array.isArray(m.passeursB)) m.passeursB = [];
+      if (!Array.isArray(m.gardiensA)) m.gardiensA = ["",""];
+      if (!Array.isArray(m.gardiensB)) m.gardiensB = ["",""];
+      if (!Array.isArray(m.bancA)) m.bancA = ["",""];
+      if (!Array.isArray(m.bancB)) m.bancB = ["",""];
+      return m;
+    });
+    if (document.getElementById("panel-saisie")?.classList.contains("active")) renderSaisie();
+  });
+}
+
+async function _fbValidateMatch(matchId, matchData) {
+  if (!_db) throw new Error('Firebase non initialisé (_db est null)');
+  await Promise.race([
+    _db.ref('config/draft/matchsMap/' + matchId).set(matchData),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('OFFLINE_TIMEOUT')), 6000))
+  ]);
+}
+
+async function _fbRemoveValidatedMatch(matchId) {
+  if (!_db) return;
+  await _db.ref('config/draft/matchsMap/' + matchId).remove();
+}
+
+async function _fbClearValidatedMatchs() {
+  if (!_db) return;
+  await _db.ref('config/draft/matchsMap').remove();
 }
 /* ═══════════════════════════════════════════════════════ */
 
@@ -5968,6 +6011,9 @@ function _goToSaisie() {
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
   document.getElementById("panel-saisie").classList.add("active");
   history.replaceState(null, '', '#saisie');
+  // Filet de securite : si le chargement initial a expire avant d y arriver (reseau lent),
+  // on s assure quand meme d etre a l ecoute des matchs valides par d autres telephones.
+  _fbWatchDraftMatches();
   renderSaisie();
 }
 document.getElementById("saisie-nav-btn").addEventListener("click", _goToSaisie);
@@ -7141,7 +7187,6 @@ let _saisieStep = "presences";      // "presences" | "matchs" | "logistique"
 let _saisieFocusedMatch = undefined; // index dans _draft.matchs actuellement en édition ; null = réduit explicitement, undefined = pas encore décidé
 let _saisiePicker = null;            // { key } — sélecteur (gardien/buteur/passeur) ouvert
 let _saisieTeamSwap = null;          // "{idx}-{side}" — sélecteur d'équipe ouvert
-let _saisieMtOpen = {};              // { [matchIdx]: true } — mi-temps dépliée
 let _saisiePresFilter = "all";        // filtre d'affichage de l'ecran Presences (ne trie jamais, cache/montre)
 let _saisiePresSearch = "";          // recherche d'affichage de l'ecran Presences
 let _saisieRepartPicker = null;      // joueur dont le selecteur de couleur est actuellement ouvert (ecran Equipes)
@@ -7165,7 +7210,6 @@ function _resetSaisieUiState() {
   _saisieFocusedMatch = undefined;
   _saisiePicker = null;
   _saisieTeamSwap = null;
-  _saisieMtOpen = {};
   _saisiePresFilter = "all";
   _saisiePresSearch = "";
   _saisieRepartPicker = null;
@@ -7226,7 +7270,12 @@ function _loadSessionIntoDraft(session) {
       gardiensA: [...(m.gardiensA || ["",""])],
       gardiensB: [...(m.gardiensB || ["",""])],
       bancA: [...(m.bancA || ["",""])],
-      bancB: [...(m.bancB || ["",""])]
+      bancB: [...(m.bancB || ["",""])],
+      // Mode edition : un match deja joue est charge directement au stade "mi-temps 2"
+      // (les 2 mi-temps modifiables), pas au debut du flux de saisie live.
+      _phase: "mt2",
+      _mt2A: Math.max(0, (m.scoreA||0) - (m.mt1A||0)),
+      _mt2B: Math.max(0, (m.scoreB||0) - (m.mt1B||0))
     })),
     tempJokers
   };
@@ -7237,7 +7286,12 @@ function _saveDraft() {
   _draftSavedAt = new Date().toLocaleTimeString("fr", { hour: "2-digit", minute: "2-digit" });
   const el = document.getElementById("saisie-status");
   if (el) el.innerHTML = `<span style="color:#2ecc71;font-size:12px">✓ Sauvegardé à ${_draftSavedAt}</span>`;
-  if (_db) _db.ref('config/draft').set(_draft).catch(e => console.error('FB draft save:', e));
+  // Les matchs ne transitent jamais par ce blob partage — chacun est ecrit independamment
+  // sur son propre noeud au moment de sa validation (_fbValidateMatch), pour qu un appareil
+  // avec une copie locale perimee ne puisse plus effacer les matchs valides entre-temps par
+  // un autre telephone (cause du bug de perte de matchs du 31/08/2026).
+  const { matchs, ...sharedDraft } = _draft;
+  if (_db) _db.ref('config/draft').set(sharedDraft).catch(e => console.error('FB draft save:', e));
 }
 
 function _presentList() {
@@ -7503,15 +7557,22 @@ function _saisiePickerHTML(key, title, options, includeCSC, allowNone) {
     <div class="saisie-picker-grid">${chips.join("")}</div>
   </div>`;
 }
-function _saisieGoalRowsHTML(idx, side, eq, otherEq, benchTeam) {
+// phase "mt1" -> les mt1(A|B) premiers buts du tableau plat buteurs/passeurs ; phase
+// "mt2" -> les _mt2(A|B) suivants, juxtaposes apres (l ordre du tableau plat reste donc
+// toujours chronologique : tous les buts de la mi-temps 1, puis tous ceux de la 2).
+function _saisieGoalRowsHTML(idx, side, eq, otherEq, benchTeam, phase) {
   const m = _draft.matchs[idx];
-  const score = side === "A" ? m.scoreA : m.scoreB;
+  const mt1 = side === "A" ? (m.mt1A||0) : (m.mt1B||0);
+  const mt2 = side === "A" ? (m._mt2A||0) : (m._mt2B||0);
   const buteurs = side === "A" ? m.buteursA : m.buteursB;
   const passeurs = side === "A" ? m.passeursA : m.passeursB;
   const pool = _teamPoolOrdered(eq, benchTeam);
   const otherPool = _teamPoolOrdered(otherEq, benchTeam);
+  const start = phase === "mt2" ? mt1 : 0;
+  const count = phase === "mt2" ? mt2 : mt1;
   let rows = "";
-  for (let j = 0; j < score; j++) {
+  for (let k = 0; k < count; k++) {
+    const j = start + k;
     const bKey = `but-${idx}-${side}-${j}`, pKey = `pas-${idx}-${side}-${j}`;
     const bv = buteurs[j] || "", pv = passeurs[j] || "";
     const isCSC = bv === "CSC";
@@ -7536,10 +7597,14 @@ function _saisieTeamPickHTML(idx, side, eq, otherEq, teams) {
       ${opts.map(t => `<button class="saisie-pchip ${t.toLowerCase()}" data-act="saisie-pick-team" data-match="${idx}" data-side="${side}" data-val="${t}"><span class="pdot"></span>${TEAM_LABEL[t]||t}</button>`).join("")}
     </div></div>` : ""}`;
 }
-function _saisieGkColHTML(idx, side, eq, gardienPool) {
+// Champ gardien (et banc) filtre par mi-temps : n affiche que celui de la phase en
+// cours, au meme rythme que le score et les buteurs/passeurs de cette meme phase.
+function _saisieGkColHTML(idx, side, eq, gardienPool, phase) {
   const m = _draft.matchs[idx];
   const g = side === "A" ? m.gardiensA : m.gardiensB;
-  const k0 = `gk-${idx}-${side}-0`, k1 = `gk-${idx}-${side}-1`;
+  const mt = phase === "mt2" ? 1 : 0;
+  const mtLabel = phase === "mt2" ? "MT2" : "MT1";
+  const key = `gk-${idx}-${side}-${mt}`;
 
   // Equipe a 6 : on reste a 5 sur le terrain, le champ Banc indique juste lequel
   // des 6 laisse sa place ce mi-temps-la (ses stats ne comptent pas pour ce mi-temps).
@@ -7549,20 +7614,16 @@ function _saisieGkColHTML(idx, side, eq, gardienPool) {
     if (!m.bancA) m.bancA = ["",""];
     if (!m.bancB) m.bancB = ["",""];
     const banc = side === "A" ? m.bancA : m.bancB;
-    const bk0 = `banc-${idx}-${side}-0`, bk1 = `banc-${idx}-${side}-1`;
+    const bKey = `banc-${idx}-${side}-${mt}`;
     bancHtml = `
-    <div class="saisie-gk-mt"><span class="saisie-gk-mt-tag wide">Banc MT1</span>${_saisieFieldBtnHTML(banc[0]||"", "— Personne —", bk0, false)}</div>
-    ${_saisiePickerHTML(bk0, `Banc MT1 — ${TEAM_LABEL[eq]||eq}`, ownTeam, false, true)}
-    <div class="saisie-gk-mt"><span class="saisie-gk-mt-tag wide">Banc MT2</span>${_saisieFieldBtnHTML(banc[1]||"", "— Personne —", bk1, false)}</div>
-    ${_saisiePickerHTML(bk1, `Banc MT2 — ${TEAM_LABEL[eq]||eq}`, ownTeam, false, true)}`;
+    <div class="saisie-gk-mt"><span class="saisie-gk-mt-tag wide">Banc ${mtLabel}</span>${_saisieFieldBtnHTML(banc[mt]||"", "— Personne —", bKey, false)}</div>
+    ${_saisiePickerHTML(bKey, `Banc ${mtLabel} — ${TEAM_LABEL[eq]||eq}`, ownTeam, false, true)}`;
   }
 
   return `<div class="saisie-gk-col">
-    <div class="saisie-gk-col-label">Gardien · ${TEAM_LABEL[eq]||eq}</div>
-    <div class="saisie-gk-mt"><span class="saisie-gk-mt-tag">MT1</span>${_saisieFieldBtnHTML(g[0]||"", "— Gardien —", k0, false)}</div>
-    ${_saisiePickerHTML(k0, `Gardien MT1 — ${TEAM_LABEL[eq]||eq}`, gardienPool, false, false)}
-    <div class="saisie-gk-mt"><span class="saisie-gk-mt-tag">MT2</span>${_saisieFieldBtnHTML(g[1]||"", "— Gardien —", k1, false)}</div>
-    ${_saisiePickerHTML(k1, `Gardien MT2 — ${TEAM_LABEL[eq]||eq}`, gardienPool, false, false)}
+    <div class="saisie-gk-col-label">Gardien · ${TEAM_LABEL[eq]||eq} <span class="saisie-gk-phase-tag">${mtLabel}</span></div>
+    ${_saisieFieldBtnHTML(g[mt]||"", "— Gardien —", key, true)}
+    ${_saisiePickerHTML(key, `Gardien ${mtLabel} — ${TEAM_LABEL[eq]||eq}`, gardienPool, false, false)}
     ${bancHtml}
   </div>`;
 }
@@ -7573,18 +7634,21 @@ function _saisieMatchEditorHTML(idx) {
   const benchTeam = _saisieBenchTeam(eqA, eqB, teams);
   const gardienPoolA = _gardienPoolOrdered(eqA, benchTeam);
   const gardienPoolB = _gardienPoolOrdered(eqB, benchTeam);
-
-  // Un gardien doit toujours être renseigné : on pré-remplit avec le premier joueur du pool si vide
   if (!m.gardiensA) m.gardiensA = ["",""];
   if (!m.gardiensB) m.gardiensB = ["",""];
-  [0,1].forEach(mt => {
-    if (!m.gardiensA[mt] && gardienPoolA.length) m.gardiensA[mt] = gardienPoolA[0];
-    if (!m.gardiensB[mt] && gardienPoolB.length) m.gardiensB[mt] = gardienPoolB[0];
-  });
 
-  const mtOpen = !!_saisieMtOpen[idx] || (m.mt1A > 0 || m.mt1B > 0);
+  const phase = m._phase || "mt1";
+  const scoreA = phase === "mt1" ? (m.mt1A||0) : (m._mt2A||0);
+  const scoreB = phase === "mt1" ? (m.mt1B||0) : (m._mt2B||0);
   const eqAVar = eqA === "Bleue" ? "bleu" : eqA.toLowerCase();
   const eqBVar = eqB === "Bleue" ? "bleu" : eqB.toLowerCase();
+
+  const mt1RecapHtml = phase === "mt2"
+    ? `<div class="saisie-mt1-recap">Mi-temps 1 validée : <b>${m.mt1A||0}–${m.mt1B||0}</b> <button data-act="saisie-back-mt1" data-match="${idx}">← Revenir</button></div>`
+    : "";
+  const finalActionHtml = phase === "mt1"
+    ? `<button class="saisie-btn primary saisie-me-validate" data-act="saisie-validate-mt1" data-match="${idx}">Valider la mi-temps 1 →</button>`
+    : `<button class="saisie-btn primary saisie-me-validate" data-act="saisie-validate-match" data-match="${idx}">Valider le match ✓</button>`;
 
   return `<div class="saisie-match-editor">
     <div class="saisie-me-teams">
@@ -7593,47 +7657,40 @@ function _saisieMatchEditorHTML(idx) {
       ${_saisieTeamPickHTML(idx, "B", eqB, eqA, teams)}
     </div>
 
+    <div class="saisie-phase-label">Score — ${phase === "mt1" ? "mi-temps 1" : "mi-temps 2"}</div>
+    ${mt1RecapHtml}
     <div class="saisie-score-row">
       <div class="saisie-score-side">
         <button class="saisie-stepper-btn" data-act="saisie-score" data-match="${idx}" data-side="A" data-delta="-1">–</button>
-        <span class="saisie-score-num">${m.scoreA}</span>
+        <span class="saisie-score-num">${scoreA}</span>
         <button class="saisie-stepper-btn" data-act="saisie-score" data-match="${idx}" data-side="A" data-delta="1">+</button>
       </div>
       <span class="saisie-score-dash">–</span>
       <div class="saisie-score-side">
         <button class="saisie-stepper-btn" data-act="saisie-score" data-match="${idx}" data-side="B" data-delta="-1">–</button>
-        <span class="saisie-score-num">${m.scoreB}</span>
+        <span class="saisie-score-num">${scoreB}</span>
         <button class="saisie-stepper-btn" data-act="saisie-score" data-match="${idx}" data-side="B" data-delta="1">+</button>
       </div>
     </div>
-    <div class="saisie-mt-row">
-      ${mtOpen
-        ? `<button data-act="saisie-toggle-mt" data-match="${idx}">− masquer la mi-temps</button>
-           <div class="saisie-mt-inputs">
-             <input type="number" min="0" max="${m.scoreA}" data-act="saisie-mt-input" data-match="${idx}" data-side="A" value="${m.mt1A||0}">
-             <span>–</span>
-             <input type="number" min="0" max="${m.scoreB}" data-act="saisie-mt-input" data-match="${idx}" data-side="B" value="${m.mt1B||0}">
-             <span>à la mi-temps</span>
-           </div>`
-        : `<button data-act="saisie-toggle-mt" data-match="${idx}">+ renseigner la mi-temps</button>`}
-    </div>
 
     <div class="saisie-gk-grid">
-      ${_saisieGkColHTML(idx, "A", eqA, gardienPoolA)}
-      ${_saisieGkColHTML(idx, "B", eqB, gardienPoolB)}
+      ${_saisieGkColHTML(idx, "A", eqA, gardienPoolA, phase)}
+      ${_saisieGkColHTML(idx, "B", eqB, gardienPoolB, phase)}
     </div>
 
-    <div class="saisie-goals-title">Buteurs &amp; passeurs</div>
+    <div class="saisie-goals-title">Buteurs &amp; passeurs — ${phase === "mt1" ? "mi-temps 1" : "mi-temps 2"}</div>
     <div class="sqtb-goal-cols">
       <div class="saisie-goal-side">
         <span class="saisie-goal-side-label" style="color:var(--${eqAVar})">${TEAM_LABEL[eqA]||eqA}</span>
-        ${_saisieGoalRowsHTML(idx, "A", eqA, eqB, benchTeam)}
+        ${_saisieGoalRowsHTML(idx, "A", eqA, eqB, benchTeam, phase)}
       </div>
       <div class="saisie-goal-side">
         <span class="saisie-goal-side-label" style="color:var(--${eqBVar})">${TEAM_LABEL[eqB]||eqB}</span>
-        ${_saisieGoalRowsHTML(idx, "B", eqB, eqA, benchTeam)}
+        ${_saisieGoalRowsHTML(idx, "B", eqB, eqA, benchTeam, phase)}
       </div>
     </div>
+
+    ${finalActionHtml}
 
     <div class="saisie-me-actions">
       <button class="saisie-btn danger" data-act="saisie-remove-match" data-match="${idx}">Supprimer ce match</button>
@@ -7650,27 +7707,58 @@ function _buildMatchsScreenHTML() {
     </div>`;
   }
   if (!Array.isArray(_draft.matchs)) _draft.matchs = [];
-  if (_saisieFocusedMatch === undefined && _draft.matchs.length) _saisieFocusedMatch = _draft.matchs.length - 1;
-  if (_saisieFocusedMatch !== undefined && _saisieFocusedMatch !== null && !_draft.matchs[_saisieFocusedMatch]) _saisieFocusedMatch = _draft.matchs.length ? _draft.matchs.length - 1 : null;
+
+  // Hors mode edition, la liste officielle vient des matchs deja valides et partages en
+  // direct entre tous les telephones connectes (voir _fbWatchDraftMatches) — jamais du
+  // brouillon local, qui ne contient que du travail pas encore envoye. On exclut de cette
+  // liste partagee tout match actuellement repris en local pour modification (on affiche
+  // alors la copie de travail a la place, pas la version figee, potentiellement en retard).
+  const localIds = new Set(_draft.matchs.map(mm => mm._id).filter(Boolean));
+  const sharedEntries = _editMode ? [] : _liveValidatedMatchs
+    .filter(vm => !localIds.has(vm._id))
+    .map(vm => ({ kind: "shared", id: vm._id, match: vm }));
+  const localEntries = _draft.matchs.map((mm, i) => ({ kind: "local", idx: i, match: mm }));
+
+  if (_saisieFocusedMatch === undefined && localEntries.length) _saisieFocusedMatch = localEntries[localEntries.length-1].idx;
+  if (_saisieFocusedMatch !== undefined && _saisieFocusedMatch !== null && !_draft.matchs[_saisieFocusedMatch]) {
+    _saisieFocusedMatch = _draft.matchs.length ? _draft.matchs.length - 1 : null;
+  }
 
   const editorHTML = _saisieFocusedMatch != null ? _saisieMatchEditorHTML(_saisieFocusedMatch) : "";
-  const recapRows = _draft.matchs.map((m, i) => {
-    if (i === _saisieFocusedMatch) return "";
-    const sc = scoreColors(m);
-    return `<button class="match-recap-row clickable" data-act="saisie-focus-match" data-match="${i}">
-      <span class="mrr-num">#${i+1}</span>
-      <span class="mrr-teams">${dot(m.eqA)}<span class="mrr-score"><span style="color:${sc.a}">${m.scoreA}</span>–<span style="color:${sc.b}">${m.scoreB}</span></span>${dot(m.eqB)}</span>
-      <span class="mrr-sep"></span>
-      <span class="mrr-goals">${[_recapSideSummary(m,"A"), _recapSideSummary(m,"B")].filter(Boolean).join(' <span style="color:var(--border2)">|</span> ') || "—"}</span>
-      <span class="mrr-edit">Modifier ›</span>
-    </button>`;
-  }).join("");
+
+  // Plus recent en tete : les matchs partages sont ranges du plus ancien au plus recent
+  // (cles Firebase triables), on les inverse ; un brouillon local (pas encore valide, ou
+  // repris pour modification) est toujours l activite la plus recente, donc en tout premier.
+  const display = [...localEntries].reverse().concat([...sharedEntries].reverse());
+  const recapRows = display
+    .filter(entry => !(entry.kind === "local" && entry.idx === _saisieFocusedMatch))
+    .map(entry => {
+      const m = entry.match;
+      const sc = scoreColors(m);
+      const goalsHtml = [_recapSideSummary(m,"A"), _recapSideSummary(m,"B")].filter(Boolean).join(' <span style="color:var(--border2)">|</span> ') || "—";
+      if (entry.kind === "shared") {
+        return `<button class="match-recap-row clickable" data-act="saisie-open-validated" data-id="${entry.id}">
+          <span class="mrr-num">✅</span>
+          <span class="mrr-teams">${dot(m.eqA)}<span class="mrr-score"><span style="color:${sc.a}">${m.scoreA}</span>–<span style="color:${sc.b}">${m.scoreB}</span></span>${dot(m.eqB)}</span>
+          <span class="mrr-sep"></span>
+          <span class="mrr-goals">${goalsHtml}</span>
+          <span class="mrr-edit">Modifier ›</span>
+        </button>`;
+      }
+      return `<button class="match-recap-row clickable draft" data-act="saisie-focus-match" data-match="${entry.idx}">
+        <span class="mrr-num">✏️</span>
+        <span class="mrr-teams">${dot(m.eqA)}<span class="mrr-score"><span style="color:${sc.a}">${m.scoreA||0}</span>–<span style="color:${sc.b}">${m.scoreB||0}</span></span>${dot(m.eqB)}</span>
+        <span class="mrr-sep"></span>
+        <span class="mrr-goals" style="font-style:italic;color:var(--text3)">Brouillon non validé</span>
+        <span class="mrr-edit">Reprendre ›</span>
+      </button>`;
+    }).join("");
 
   return `<div class="saisie-section">
     <div class="saisie-section-title">⚽ Matchs</div>
     ${editorHTML}
     <button class="saisie-add-match" data-act="saisie-add-match">+ Ajouter un match</button>
-    ${_draft.matchs.length > 1 ? `<div class="saisie-recap-title"><h4>Autres matchs de la soirée</h4></div><div class="matches-recap-list">${recapRows}</div>` : ""}
+    ${recapRows ? `<div class="saisie-recap-title"><h4>Autres matchs de la soirée</h4></div><div class="matches-recap-list">${recapRows}</div>` : ""}
   </div>`;
 }
 
@@ -7758,7 +7846,15 @@ async function _commitSession() {
   if (!_editMode && SESSIONS.find(s => s.date === _draft.date)) {
     alert(`Une session du ${fmtDate(_draft.date)} existe déjà.`); return;
   }
-  const emptyButeurs = _draft.matchs.some(m =>
+  // Hors mode edition, les matchs officiels sont ceux deja valides et partages (voir
+  // _fbWatchDraftMatches) — pas le brouillon local, qui ne contient que du travail pas
+  // encore envoye. On avertit si un match est reste en brouillon pour eviter de le perdre
+  // silencieusement en validant la soiree sans lui.
+  const unvalidatedCount = _editMode ? 0 : _draft.matchs.filter(mm => !_liveValidatedMatchs.some(vm => vm._id === mm._id)).length;
+  if (unvalidatedCount > 0 && !confirm(`${unvalidatedCount} match${unvalidatedCount>1?"s":""} n'${unvalidatedCount>1?"ont":"a"} pas encore été validé${unvalidatedCount>1?"s":""} (bouton « Valider le match »).\n\nContinuer sans lui ${unvalidatedCount>1?"(eux)":""} ?`)) return;
+
+  const sourceMatchs = _editMode ? _draft.matchs : _liveValidatedMatchs;
+  const emptyButeurs = sourceMatchs.some(m =>
     (m.buteursA || []).some(b => !b) || (m.buteursB || []).some(b => !b)
   );
   if (emptyButeurs) {
@@ -7779,7 +7875,7 @@ async function _commitSession() {
     ...(_draft.sac      ? { sac:      _draft.sac      } : {}),
     ...(_draft.maillots ? { maillots: _draft.maillots } : {}),
     presences: finalPresences,
-    matchs: _draft.matchs.map(m => ({
+    matchs: sourceMatchs.map(m => ({
       eqA: m.eqA, eqB: m.eqB, scoreA: m.scoreA, scoreB: m.scoreB,
       buteursA:  (m.buteursA  || []).filter(b => b),
       buteursB:  (m.buteursB  || []).filter(b => b),
@@ -7835,8 +7931,11 @@ async function _commitSession() {
   _draft = null;
   _draftSavedAt = null;
   _editMode = false;
+  _liveValidatedMatchs = [];
   _resetSaisieUiState();
   localStorage.removeItem("hmft_draft");
+  // Supprime aussi config/draft/matchsMap (sous-noeud de config/draft) — la session est
+  // maintenant dans sessions/{date}, plus besoin de garder ces matchs en brouillon partage.
   if (_db) _db.ref('config/draft').remove().catch(() => {});
 
   // Naviguer vers la session validée
@@ -7912,8 +8011,9 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     return;
   }
   if (e.target.id === "saisie-clear") {
-    if (confirm("Effacer le brouillon en cours ?")) {
+    if (confirm("Effacer le brouillon en cours ?\n\nCela efface aussi les matchs déjà validés ce soir par tous les téléphones connectés.")) {
       _draft = _newDraft(); _draftSavedAt = null;
+      _liveValidatedMatchs = [];
       _resetSaisieUiState();
       localStorage.removeItem("hmft_draft");
       if (_db) _db.ref('config/draft').remove().catch(() => {});
@@ -7926,7 +8026,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   if (e.target.closest('[data-act="saisie-add-match"]')) {
     const teams = _activeTeams();
     if (!Array.isArray(_draft.matchs)) _draft.matchs = [];
-    _draft.matchs.push({ eqA: teams[0]||"", eqB: teams[1]||"", scoreA: 0, scoreB: 0, buteursA: [], buteursB: [], passeursA: [], passeursB: [], mt1A: 0, mt1B: 0, gardiensA: ["",""], gardiensB: ["",""], bancA: ["",""], bancB: ["",""] });
+    _draft.matchs.push({ eqA: teams[0]||"", eqB: teams[1]||"", scoreA: 0, scoreB: 0, buteursA: [], buteursB: [], passeursA: [], passeursB: [], mt1A: 0, mt1B: 0, _mt2A: 0, _mt2B: 0, _phase: "mt1", gardiensA: ["",""], gardiensB: ["",""], bancA: ["",""], bancB: ["",""] });
     _saisieFocusedMatch = _draft.matchs.length - 1;
     _saisiePicker = null; _saisieTeamSwap = null;
     _saveDraft();
@@ -7935,7 +8035,12 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   const rmBtn = e.target.closest('[data-act="saisie-remove-match"]');
   if (rmBtn) {
     const idx = Number(rmBtn.dataset.match);
+    const match = _draft.matchs[idx];
     if (confirm("Supprimer ce match ?")) {
+      if (match && match._id && !_editMode) {
+        _fbRemoveValidatedMatch(match._id).catch(() => {});
+        _liveValidatedMatchs = _liveValidatedMatchs.filter(vm => vm._id !== match._id);
+      }
       _draft.matchs.splice(idx, 1);
       _saisieFocusedMatch = _draft.matchs.length ? Math.min(idx, _draft.matchs.length - 1) : null;
       _saveDraft();
@@ -7950,24 +8055,126 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     _saisiePicker = null; _saisieTeamSwap = null;
     renderSaisie(); return;
   }
+  const openValidatedBtn = e.target.closest('[data-act="saisie-open-validated"]');
+  if (openValidatedBtn) {
+    const id = openValidatedBtn.dataset.id;
+    let localIdx = _draft.matchs.findIndex(mm => mm._id === id);
+    if (localIdx === -1) {
+      const vm = _liveValidatedMatchs.find(x => x._id === id);
+      if (!vm) return;
+      const working = {
+        ...vm,
+        buteursA: [...(vm.buteursA||[])], buteursB: [...(vm.buteursB||[])],
+        passeursA: [...(vm.passeursA||[])], passeursB: [...(vm.passeursB||[])],
+        gardiensA: [...(vm.gardiensA||["",""])], gardiensB: [...(vm.gardiensB||["",""])],
+        bancA: [...(vm.bancA||["",""])], bancB: [...(vm.bancB||["",""])],
+        _phase: "mt2",
+        _mt2A: Math.max(0, (vm.scoreA||0) - (vm.mt1A||0)),
+        _mt2B: Math.max(0, (vm.scoreB||0) - (vm.mt1B||0))
+      };
+      delete working._validated;
+      _draft.matchs.push(working);
+      localIdx = _draft.matchs.length - 1;
+    }
+    _saisieFocusedMatch = localIdx;
+    _saisiePicker = null; _saisieTeamSwap = null;
+    renderSaisie(); return;
+  }
 
   const scoreBtn = e.target.closest('[data-act="saisie-score"]');
   if (scoreBtn) {
     const idx = Number(scoreBtn.dataset.match); const side = scoreBtn.dataset.side; const delta = Number(scoreBtn.dataset.delta);
-    const field  = side === "A" ? "scoreA"    : "scoreB";
+    const match = _draft.matchs[idx];
+    const phase = match._phase || "mt1";
+    const field  = phase === "mt1" ? (side === "A" ? "mt1A"  : "mt1B")  : (side === "A" ? "_mt2A" : "_mt2B");
     const bfield = side === "A" ? "buteursA"  : "buteursB";
     const pfield = side === "A" ? "passeursA" : "passeursB";
-    const val = Math.max(0, (_draft.matchs[idx][field]||0) + delta);
-    _draft.matchs[idx][field]  = val;
-    _draft.matchs[idx][bfield] = (_draft.matchs[idx][bfield] || []).slice(0, val);
-    while (_draft.matchs[idx][bfield].length < val) _draft.matchs[idx][bfield].push("");
-    _draft.matchs[idx][pfield] = (_draft.matchs[idx][pfield] || []).slice(0, val);
-    while (_draft.matchs[idx][pfield].length < val) _draft.matchs[idx][pfield].push("");
+    match[field] = Math.max(0, (match[field]||0) + delta);
+    const total = (side === "A" ? (match.mt1A||0) : (match.mt1B||0)) + (side === "A" ? (match._mt2A||0) : (match._mt2B||0));
+    match[bfield] = (match[bfield] || []).slice(0, total);
+    while (match[bfield].length < total) match[bfield].push("");
+    match[pfield] = (match[pfield] || []).slice(0, total);
+    while (match[pfield].length < total) match[pfield].push("");
     _saveDraft();
     renderSaisie(); return;
   }
-  const mtToggle = e.target.closest('[data-act="saisie-toggle-mt"]');
-  if (mtToggle) { _saisieMtOpen[Number(mtToggle.dataset.match)] = !_saisieMtOpen[Number(mtToggle.dataset.match)]; renderSaisie(); return; }
+  const validateMt1Btn = e.target.closest('[data-act="saisie-validate-mt1"]');
+  if (validateMt1Btn) {
+    const idx = Number(validateMt1Btn.dataset.match);
+    const match = _draft.matchs[idx];
+    const emptyButeurs = (match.buteursA||[]).slice(0, match.mt1A||0).some(b => !b) || (match.buteursB||[]).slice(0, match.mt1B||0).some(b => !b);
+    if (emptyButeurs) { alert("Certains buteurs de la mi-temps 1 ne sont pas renseignés.\nVeuillez sélectionner un joueur ou « CSC » pour chaque but."); return; }
+    if (!match.gardiensA[0] || !match.gardiensB[0]) { alert("Le gardien de chaque équipe doit être renseigné pour la mi-temps 1."); return; }
+    match._phase = "mt2";
+    match._mt2A = 0; match._mt2B = 0;
+    _saveDraft();
+    renderSaisie(); return;
+  }
+  const backMt1Btn = e.target.closest('[data-act="saisie-back-mt1"]');
+  if (backMt1Btn) {
+    const idx = Number(backMt1Btn.dataset.match);
+    const match = _draft.matchs[idx];
+    if (confirm("Revenir à la mi-temps 1 ?\n\nLes buts déjà saisis pour la mi-temps 2 seront réinitialisés.")) {
+      match.buteursA  = (match.buteursA  || []).slice(0, match.mt1A||0);
+      match.buteursB  = (match.buteursB  || []).slice(0, match.mt1B||0);
+      match.passeursA = (match.passeursA || []).slice(0, match.mt1A||0);
+      match.passeursB = (match.passeursB || []).slice(0, match.mt1B||0);
+      match._phase = "mt1";
+      match._mt2A = 0; match._mt2B = 0;
+      _saveDraft();
+      renderSaisie();
+    }
+    return;
+  }
+  const validateMatchBtn = e.target.closest('[data-act="saisie-validate-match"]');
+  if (validateMatchBtn) {
+    const idx = Number(validateMatchBtn.dataset.match);
+    const match = _draft.matchs[idx];
+    const scoreA = (match.mt1A||0) + (match._mt2A||0);
+    const scoreB = (match.mt1B||0) + (match._mt2B||0);
+    const emptyButeurs = (match.buteursA||[]).slice(0, scoreA).some(b => !b) || (match.buteursB||[]).slice(0, scoreB).some(b => !b);
+    if (emptyButeurs) { alert("Certains buteurs ne sont pas renseignés.\nVeuillez sélectionner un joueur ou « CSC » pour chaque but."); return; }
+    if (!match.gardiensA[0] || !match.gardiensA[1] || !match.gardiensB[0] || !match.gardiensB[1]) {
+      alert("Le gardien de chaque équipe doit être renseigné pour les 2 mi-temps."); return;
+    }
+    match.scoreA = scoreA; match.scoreB = scoreB;
+    const payload = {
+      eqA: match.eqA, eqB: match.eqB, scoreA, scoreB,
+      buteursA: (match.buteursA||[]).slice(0, scoreA), buteursB: (match.buteursB||[]).slice(0, scoreB),
+      passeursA: (match.passeursA||[]).slice(0, scoreA), passeursB: (match.passeursB||[]).slice(0, scoreB),
+      mt1A: match.mt1A||0, mt1B: match.mt1B||0,
+      gardiensA: match.gardiensA, gardiensB: match.gardiensB,
+      bancA: match.bancA || ["",""], bancB: match.bancB || ["",""]
+    };
+    if (_editMode) {
+      // Session deja existante : pas d ecriture Firebase individuelle, tout part
+      // ensemble au clic sur "Mettre a jour" en bas de la Saisie.
+      Object.assign(match, payload);
+      _saisieFocusedMatch = null;
+      renderSaisie();
+      return;
+    }
+    if (!match._id) match._id = _db ? _db.ref('config/draft/matchsMap').push().key : ('local-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+    const overlay = document.getElementById("fb-saving-overlay");
+    if (overlay) overlay.style.display = "flex";
+    _fbValidateMatch(match._id, payload).then(() => {
+      if (overlay) overlay.style.display = "none";
+      // Optimiste : ajoute tout de suite a la liste partagee locale — le listener Firebase
+      // la remplacera ensuite par la copie faisant foi (identique en pratique).
+      const already = _liveValidatedMatchs.some(vm => vm._id === match._id);
+      const entry = { ...payload, _id: match._id, _validated: true };
+      _liveValidatedMatchs = (already ? _liveValidatedMatchs.map(vm => vm._id === match._id ? entry : vm) : [..._liveValidatedMatchs, entry])
+        .sort((a,b) => a._id.localeCompare(b._id));
+      _draft.matchs = _draft.matchs.filter(mm => mm !== match);
+      _saisieFocusedMatch = null;
+      _saveDraft();
+      renderSaisie();
+    }).catch(err => {
+      if (overlay) overlay.style.display = "none";
+      alert('⚠️ Erreur de synchronisation :\n' + (err?.message || err?.code || String(err)) + '\n\nLe match reste dans votre brouillon local — réessayez.');
+    });
+    return;
+  }
 
   const teamSwapBtn = e.target.closest('[data-act="saisie-team-swap"]');
   if (teamSwapBtn) {
@@ -8053,13 +8260,6 @@ document.getElementById("saisie-content").addEventListener("change", e => {
   if (e.target.id === "saisie-date")     { _draft.date = e.target.value; _saveDraft(); return; }
   if (e.target.id === "saisie-sac")      { _draft.sac = e.target.value; _saveDraft(); return; }
   if (e.target.id === "saisie-maillots") { _draft.maillots = e.target.value; _saveDraft(); return; }
-  const mtInput = e.target.closest('[data-act="saisie-mt-input"]');
-  if (mtInput) {
-    const idx = Number(mtInput.dataset.match); const side = mtInput.dataset.side;
-    _draft.matchs[idx][side === "A" ? "mt1A" : "mt1B"] = Math.max(0, parseInt(e.target.value) || 0);
-    _saveDraft();
-    return;
-  }
 });
 
 document.getElementById("saisie-content").addEventListener("input", e => {
