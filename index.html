@@ -1400,15 +1400,6 @@
   /* ── Cartes partagées ── */
   .dbx-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); }
 
-  /* ── Comparatif équipes ── */
-  .dbx-cmp-card { padding: 18px 20px 16px; margin-bottom: 12px; }
-  .dbx-cmp-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
-  .dbx-cmp-row:last-child { margin-bottom: 0; }
-  .dbx-cmp-label { width: 82px; flex-shrink: 0; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
-  .dbx-cmp-track { flex: 1; height: 10px; background: var(--bg3); border-radius: 6px; overflow: hidden; }
-  .dbx-cmp-fill { height: 100%; border-radius: 6px; transition: width .4s ease; }
-  .dbx-cmp-val { width: 34px; text-align: right; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; flex-shrink: 0; }
-
   .dbx-txt.rouge { color: var(--rouge); } .dbx-txt.vert { color: var(--vert); } .dbx-txt.bleue { color: var(--bleu); }
 
   .dbx-team-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
@@ -1787,7 +1778,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 12:56</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 13:19</footer>
 
 <script>
 
@@ -4807,14 +4798,6 @@ function _dbxRenderHero(agg, prevAgg) {
 
 function _dbxRenderCompare(agg) {
   const T3 = ["Rouge","Vert","Bleue"];
-  const maxW = Math.max(1, ...T3.map(t=>agg.colorWins[t]||0));
-  const bars = T3.map(t => `
-    <div class="dbx-cmp-row">
-      <div class="dbx-cmp-label">${dot(t)}${TEAM_LABEL[t]}</div>
-      <div class="dbx-cmp-track"><div class="dbx-cmp-fill" style="width:${(agg.colorWins[t]||0)/maxW*100}%;background:var(--${teamCls(t)})"></div></div>
-      <div class="dbx-cmp-val">${agg.colorWins[t]||0}</div>
-    </div>`).join("");
-
   const teamCards = T3.map(t => {
     const w = agg.colorWins[t]||0, gf = agg.goalsFor[t]||0, ga = agg.goalsAgainst[t]||0, diff = gf-ga;
     const played = agg.results[t].length;
@@ -4838,7 +4821,7 @@ function _dbxRenderCompare(agg) {
     </div>`;
   }).join("");
 
-  return `<div class="dbx-card dbx-cmp-card">${bars}</div><div class="dbx-team-grid">${teamCards}</div>`;
+  return `<div class="dbx-team-grid">${teamCards}</div>`;
 }
 
 function _dbxHighlightCards(agg) {
@@ -6009,8 +5992,8 @@ document.getElementById("edit-session-btn").addEventListener("click", () => {
    JOUEURS
 ══════════════════════════════════════════════════════════ */
 
-let rosterSort = { col: "taux",      dir: 1 };
-let jokerSort  = { col: "presences", dir: 1 };
+let rosterSort = { col: "taux", dir: 1 };
+let jokerSort  = { col: "taux", dir: 1 };
 
 function computePlayerStats() {
   const ps = {};
@@ -6073,11 +6056,6 @@ function renderJoueurs() {
     { key:"sac",        label:"🎒"             },
     { key:"maillots",   label:"👕"             },
   ];
-  const jokerColDef = [
-    { key:"name",       label:"Joueur"         },
-    { key:"presences",  label:"✅"             },
-  ];
-
   const rowsWithTaux = rows.map(r => ({
     ...r,
     taux: totalSessions > 0 ? Math.round(r.presences / totalSessions * 100) : 0
@@ -6161,12 +6139,18 @@ function renderJoueurs() {
   }
 
   function buildJokerCard(r) {
+    const tCls = r.taux >= 75 ? "high" : r.taux >= 40 ? "mid" : "low";
+    const chips = chip("❌", r.absences, "danger") + chip("🤕", r.blesses, "warn") + chip("⁉️", r.pasRepondu, "warn") + chip("🎒", r.sac) + chip("👕", r.maillots);
     return `<div class="roster-card">
       <div class="roster-avatar dim">${initials(r.name)}</div>
       <div class="roster-main">
         <button class="roster-name player-link" data-player="${r.name}">${r.name}</button>
-        <div class="roster-sub"><b>${r.presences}</b> venue${r.presences > 1 ? "s" : ""} cette saison</div>
+        <div class="roster-taux">
+          <div class="roster-taux-track"><div class="roster-taux-fill ${tCls}" style="width:${r.taux}%"></div></div>
+          <span class="roster-taux-val ${tCls}">${r.taux}%</span>
+        </div>
       </div>
+      <div class="roster-chips">${chips}</div>
       ${_effActionsHtml(r.name, "joker")}
     </div>`;
   }
@@ -6202,7 +6186,7 @@ function renderJoueurs() {
 
   const jokerSection = jokerRows.length > 0 ? `
     <div class="joueurs-section-label" style="margin-top:2rem">Occasionnels (${jokerRows.length})</div>
-    ${buildSortRow("jokers-sort", jokerColDef, jokerSort)}
+    ${buildSortRow("jokers-sort", colDef, jokerSort)}
     <div class="roster-list">${jokerCards}</div>` : '';
 
   const absentSection = absentNames.length > 0 ? `
@@ -6403,7 +6387,7 @@ const ACH_DEFS = [
   { id:'mesutozil',    name:'Mesut Özil',      icon:'🪄', tiers:[1], fixedTier:6,      hidden:true,  key:'assistHattricks', desc:v=>`${v} fois avec au moins 3 passes décisives dans un même match` },
   { id:'patron',       name:'Patron',          icon:'👑', tiers:[1], fixedTier:6,      hidden:true,  key:'patronCount',  desc:v=>`${v} fois impliqué sur 100% des buts de son équipe (min. 4 buts)` },
   { id:'mercenaire',   name:'Mercenaire',      icon:'👺', tiers:[1,3,7,15,25,40],     hidden:false, key:'mercenaireCount', desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''} pour l'équipe dépannée` },
-  { id:'equipetype',   name:'Indéboulonnable', icon:'🎖️', tiers:[1,3,7,15,25,40],     hidden:false, key:'equipeTypeCount', desc:v=>`${v} sélection${v>1?'s':''} dans l'équipe-type` },
+  { id:'equipetype',   name:'Pilier',          icon:'🎖️', tiers:[1,3,7,15,25,40],     hidden:false, key:'equipeTypeCount', desc:v=>`${v} sélection${v>1?'s':''} dans l'équipe-type` },
   { id:'legende',      name:'Légende',         icon:'🐐', tiers:[5,15,30,50,100,127], hidden:true,  key:'legendeCount', desc:v=>`${v} niveaux débloqués` },
   // ── Négatifs / Secrets ──
   { id:'bonnet',   name:"Bonnet d'Âne",    icon:'🫏', tiers:[10,30,50,100], tierOffset:2, tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'absences',       desc:v=>`${v} absence${v>1?'s':''}` },
