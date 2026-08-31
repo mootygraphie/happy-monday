@@ -1778,7 +1778,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 13:46</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 13:53</footer>
 
 <script>
 
@@ -6378,18 +6378,18 @@ const ACH_DEFS = [
   { id:'assidu',   name:'Assidu',          icon:'🗓️', tiers:[1,2,3,4],  tierOffset:2,  hidden:false, key:'assiduAnnes',  desc:v=>v===4?'1 an à ≥90% de présence':v===3?'1 an à ≥80% de présence':v===2?'1 an à ≥70% de présence':'1 an à ≥60% de présence' },
   { id:'comete',   name:'La Comète',       icon:'🌠', tiers:[1,2,3,4],  tierOffset:2,  tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'cometeAnnes',  desc:v=>v===4?'1 an à ≤10% de présence':v===3?'1 an à ≤20% de présence':v===2?'1 an à ≤30% de présence':'1 an à ≤40% de présence' },
   // ── Distinctions ──
-  { id:'mvp',          name:'Meilleur joueur', icon:'🏅', tiers:[1,3,7,15,25,40],     hidden:false, key:'mvp',          desc:v=>`MVP de soirée ${v} fois` },
+  { id:'mvp',          name:'Meilleur joueur', icon:'🏆', tiers:[1,3,7,15,25,40],     hidden:false, key:'mvp',          desc:v=>`MVP de soirée ${v} fois` },
   { id:'soiree',       name:'Soirée parfaite', icon:'🌟', tiers:[1], fixedTier:6,      hidden:false, key:'soireeParfaite', desc:_=>`Soirée terminée avec 100 % de victoires` },
   { id:'remontada',    name:'Remontada',       icon:'🌅', tiers:[1], fixedTier:6,      hidden:false, key:'remontadas',   desc:_=>`Perdant d'au moins 2 buts à la mi-temps, vainqueur à la fin` },
   { id:'chelem',       name:'Grand Chelem',    icon:'🎨', tiers:[1], fixedTier:6,      hidden:true,  key:'grandChelem',  desc:_=>`Les 3 couleurs jouées` },
   { id:'gardienAssist',name:'Neuer',           icon:'🧤', tiers:[1], fixedTier:6,      hidden:false, key:'gardienAssist', desc:_=>`Passe décisive en tant que gardien` },
   { id:'willgrigg',    name:'Archie Thompson', icon:'🔥', tiers:[1], fixedTier:6,      hidden:true,  key:'hattricks',    desc:v=>`${v} fois avec au moins 3 buts dans un même match` },
   { id:'mesutozil',    name:'Mesut Özil',      icon:'🪄', tiers:[1], fixedTier:6,      hidden:true,  key:'assistHattricks', desc:v=>`${v} fois avec au moins 3 passes décisives dans un même match` },
-  { id:'patron',       name:'Patron',          icon:'👑', tiers:[1], fixedTier:6,      hidden:true,  key:'patronCount',  desc:v=>`${v} fois impliqué sur 100% des buts de son équipe (min. 4 buts)` },
+  { id:'patron',       name:'Patron',          icon:'🎩', tiers:[1], fixedTier:6,      hidden:true,  key:'patronCount',  desc:v=>`${v} fois impliqué sur 100% des buts de son équipe (min. 4 buts)` },
   { id:'mercenaire',   name:'Mercenaire',      icon:'👺', tiers:[1,3,7,15,25,40],     hidden:false, key:'mercenaireCount', desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''} pour l'équipe dépannée` },
-  { id:'equipetype',   name:'TOTN',            icon:'🎖️', tiers:[1,3,7,15,25,40],     hidden:false, key:'equipeTypeCount', desc:v=>`${v} sélection${v>1?'s':''} dans l'équipe-type` },
-  { id:'totsaison',    name:'TOTS',            icon:'💎', tiers:[1], fixedTier:6,      hidden:false, key:'equipeTypeSaisonCount', desc:v=>`${v} sélection${v>1?'s':''} dans l'équipe-type de la saison` },
-  { id:'bdor',         name:"Ballon d'Or",     icon:'🏆', tiers:[1], fixedTier:6,      hidden:false, key:'ballonDorCount', desc:v=>`${v} Ballon${v>1?'s':''} d'Or gagné${v>1?'s':''}` },
+  { id:'equipetype',   name:'TOTN',            icon:'🏅', tiers:[1,3,7,15,25,40],     hidden:false, key:'equipeTypeCount', desc:v=>`${v} sélection${v>1?'s':''} dans l'équipe-type` },
+  { id:'totsaison',    name:'TOTS',            icon:'🎖️', tiers:[1], fixedTier:6,      hidden:false, key:'equipeTypeSaisonCount', desc:v=>`${v} sélection${v>1?'s':''} dans l'équipe-type de la saison` },
+  { id:'bdor',         name:"Ballon d'Or",     icon:'👑', tiers:[1], fixedTier:6,      hidden:false, key:'ballonDorCount', desc:v=>`${v} Ballon${v>1?'s':''} d'Or gagné${v>1?'s':''}` },
   { id:'legende',      name:'Légende',         icon:'🐐', tiers:[5,15,30,50,100,127], hidden:true,  key:'legendeCount', desc:v=>`${v} niveaux débloqués` },
   // ── Négatifs / Secrets ──
   { id:'bonnet',   name:"Bonnet d'Âne",    icon:'🫏', tiers:[10,30,50,100], tierOffset:2, tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'absences',       desc:v=>`${v} absence${v>1?'s':''}` },
@@ -6478,12 +6478,13 @@ function _computeEquipeTypeAppearances() {
 
 /* Nombre de fois qu chaque joueur apparait dans l equipe-type DE LA SAISON (toutes les
    sessions d une meme saison agregees en une seule equipe-type, meme logique que
-   _dbxRenderEquipeType sur le Dashboard Globales). Une saison en cours compte deja des
-   qu elle a un gardien + au moins un joueur de champ, comme les autres haut faits par
-   saison de ce fichier (assidu/comete). */
+   _dbxRenderEquipeType sur le Dashboard Globales). Uniquement les saisons TERMINEES
+   (exclut la saison en cours), contrairement a Assidu/Comete qui comptent deja la
+   saison en cours — celle-ci doit etre figee pour ne recompenser qu un classement final. */
 function _computeSeasonEquipeTypeAppearances() {
   const counts = {};
-  const seasons = [...new Set(SESSIONS.map(s => _seasonStart(s.date)))];
+  const currentSeason = _currentSeason();
+  const seasons = [...new Set(SESSIONS.map(s => _seasonStart(s.date)))].filter(sy => sy !== currentSeason);
   seasons.forEach(sy => {
     const sessions = SESSIONS.filter(s => _seasonStart(s.date) === sy);
     const colorTally = {};
@@ -6518,10 +6519,12 @@ function _computeSeasonEquipeTypeAppearances() {
 }
 
 /* Nombre de Ballon d Or gagnes (1er du classement pts = buts*5 + passes*10, meme formule
-   que buildBallonDorHtml), un par saison. */
+   que buildBallonDorHtml), un par saison TERMINEE (exclut la saison en cours — le
+   classement affiche en direct dans Recompenses peut encore changer jusqu a la fin). */
 function _computeBallonDorWins() {
   const wins = {};
-  const seasons = [...new Set(SESSIONS.map(s => _seasonStart(s.date)))];
+  const currentSeason = _currentSeason();
+  const seasons = [...new Set(SESSIONS.map(s => _seasonStart(s.date)))].filter(sy => sy !== currentSeason);
   seasons.forEach(sy => {
     const ps = {};
     SESSIONS.filter(s => _seasonStart(s.date) === sy).forEach(s => {
