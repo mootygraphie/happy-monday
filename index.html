@@ -456,8 +456,8 @@
   .pph-forme-row { display: flex; gap: 8px; }
   .pph-forme-pill { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 9px 4px; border-radius: var(--radius); background: var(--bg3); border: 1px solid var(--border); }
   .pph-forme-date { font-size: 9.5px; color: var(--text3); font-weight: 600; }
-  .pph-forme-result { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #fff; }
-  .pph-forme-result.w { background: #2ecc71; } .pph-forme-result.d { background: var(--text3); } .pph-forme-result.l { background: #e74c3c; }
+  .pph-forme-result { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+  .pph-forme-result.na { font-size: 11px; font-weight: 800; color: var(--text3); }
   .pph-forme-vdn { font-size: 10px; color: var(--text2); font-weight: 700; }
   .pph-forme-ga { font-size: 9px; color: var(--text3); font-weight: 600; }
   @media (max-width: 400px) { .pph-forme-row { flex-wrap: wrap; } .pph-forme-pill { flex: 1 1 30%; } }
@@ -1778,7 +1778,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 14:12</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 14:27</footer>
 
 <script>
 
@@ -6803,7 +6803,10 @@ function openPlayerPanel(playerName) {
             });
           });
         });
-        // Résultat : majorité V/D/N de la soirée (plusieurs matchs possibles à 3 équipes)
+        // Résultat : V/D/N (plusieurs matchs possibles à 3 équipes) + classement de la
+        // soirée pour la médaille (1re/2e/3e place, meme logique que le scoreboard de
+        // session — pertinent notamment sur les soirées à 3 équipes ou le V/D/N seul
+        // ne dit pas qui a fini devant).
         let wins=0, losses=0, draws=0;
         if (myEq) {
           (s.matchs||[]).filter(m => m.eqA===myEq||m.eqB===myEq).forEach(m => {
@@ -6811,16 +6814,12 @@ function openPlayerPanel(playerName) {
             if (w===myEq) wins++; else if (w===null) draws++; else losses++;
           });
         }
-        const maxVdn = Math.max(wins, losses, draws);
-        let resultCls, resultChar;
-        if (!myEq || maxVdn === 0) { resultCls = 'd'; resultChar = '='; }
-        else if (wins === maxVdn) { resultCls = 'w'; resultChar = '✓'; }
-        else if (losses === maxVdn) { resultCls = 'l'; resultChar = '✗'; }
-        else { resultCls = 'd'; resultChar = '='; }
+        const rank = myEq ? _sfmStandings(s.matchs||[]).findIndex(r => r.team===myEq) : -1;
+        const medal = rank===0 ? "🥇" : rank===1 ? "🥈" : rank===2 ? "🥉" : "—";
         const gaStr = gSess+aSess > 0 ? `${gSess}G ${aSess}A` : `0 G/A`;
         h += `<div class="pph-forme-pill">
           <span class="pph-forme-date">${dateStr}</span>
-          <span class="pph-forme-result ${resultCls}">${resultChar}</span>
+          <span class="pph-forme-result${rank<0?' na':''}">${medal}</span>
           <span class="pph-forme-vdn">${wins}V ${losses}D ${draws}N</span>
           <span class="pph-forme-ga">${gaStr}</span>
         </div>`;
