@@ -1790,7 +1790,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 11:59</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 12:32</footer>
 
 <script>
 
@@ -2764,9 +2764,12 @@ function _dbxTeamScopedEquipeType(sessions, color) {
       });
 
       if (hasHalves) {
+        // Un gardien "mercenaire" (venu depanner une autre couleur, ex : equipes a
+        // 4 sur une soiree a 3 equipes) ne fait pas partie de cette couleur — on ne
+        // le compte pas ici, meme s il a garde les buts ce soir-la sous cette couleur.
         const gs = isA ? (m.gardiensA||[]) : (m.gardiensB||[]);
         [[gs[0],mt1c],[gs[1],mt2c]].forEach(([p,c]) => {
-          if (!p || !p.trim()) return;
+          if (!p || !p.trim() || (presences[p]||{}).equipe !== color) return;
           gkMap[p] = gkMap[p] || { matchs:0, buts:0, cleanSheets:0 };
           gkMap[p].matchs++; gkMap[p].buts += c; if (c===0) gkMap[p].cleanSheets++;
         });
@@ -2783,6 +2786,14 @@ function _dbxTeamScopedEquipeType(sessions, color) {
   const gks = Object.entries(gkMap).map(([name,g]) => ({
     name, team: color, matchs: g.matchs, buts: g.buts, cleanSheets: g.cleanSheets, rate: g.buts / g.matchs
   }));
+  // Aucun gardien legitime (propre a cette couleur) sur la periode, mais des joueurs de
+  // champ existent bien : on affiche quand meme l equipe-type, avec un gardien "vide"
+  // (Ø / N/A) plutot que de masquer toute la section ou de retomber sur un mercenaire.
+  if (!gks.length && outfield.length) {
+    const team = _pickEquipeType(outfield, [{ name:" _no_gk_", team:color, matchs:0, buts:0, cleanSheets:0, rate:0 }], ttGkCriteria);
+    if (team) team.gk = null;
+    return team;
+  }
   return _pickEquipeType(outfield, gks, ttGkCriteria);
 }
 
@@ -2844,6 +2855,13 @@ function _pickEquipeType(outfield, gks, gkCriteria) {
 }
 
 function _ttBadgeHtml(p, statLabel) {
+  if (!p) {
+    return `<div class="tt-badge">
+      <div class="tt-badge-circle" style="background:var(--text3);color:#fff">Ø</div>
+      <div class="tt-badge-name">N/A</div>
+      <div class="tt-badge-stat">${statLabel||""}</div>
+    </div>`;
+  }
   const cls = teamCls(p.team);
   const textColor = p.team === "Vert" ? "#161a22" : "#fff";
   return `<div class="tt-badge">
@@ -2869,7 +2887,7 @@ function _ttPitchSvg() {
 /* idPrefix distingue les instances (session vs dashboard) pour le toggle gardien */
 function _ttPanelHtml(idPrefix, team, gkCriteria) {
   if (!team) return `<div class="dbx-card tt-pitch-card"><div class="tt-pitch-empty">Pas assez de données pour générer une équipe-type.</div></div>`;
-  const gkStat = gkCriteria === "cs"
+  const gkStat = !team.gk ? "—" : gkCriteria === "cs"
     ? `${team.gk.cleanSheets} clean sheet${team.gk.cleanSheets>1?"s":""}`
     : `${team.gk.rate.toFixed(2)} enc./match`;
   return `<div class="dbx-card tt-pitch-card" data-tt-id="${idPrefix}">
