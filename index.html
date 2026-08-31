@@ -898,7 +898,7 @@
   .saisie-status { font-size: 12px; }
 
   /* Match : éditeur focalisé */
-  .saisie-match-editor { background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 20px; }
+  .saisie-match-editor { background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 20px; overflow-x: hidden; max-width: 100%; overflow-wrap: break-word; }
   .saisie-me-teams { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: start; gap: 14px; margin-bottom: 18px; }
   .saisie-team-pick { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 10px; border: 1.5px solid var(--border2); background: var(--bg2); font-weight: 800; font-size: 15px; cursor: pointer; width: 100%; min-width: 0; font-family: inherit; }
   .saisie-team-pick.rouge { border-color: var(--rouge-border); color: var(--rouge); }
@@ -924,16 +924,20 @@
   .saisie-mt1-recap button:hover { color: var(--text2); }
   .saisie-me-validate { width: 100%; margin-top: 6px; padding: 13px; font-size: 14.5px; }
 
+  .hmft-toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); max-width: min(90vw, 380px); text-align: center; background: #2ecc71; color: #071b0f; font-weight: 700; font-size: 13.5px; padding: 12px 20px; border-radius: 999px; box-shadow: 0 6px 20px rgba(0,0,0,.25); opacity: 0; transition: opacity .25s, transform .25s; z-index: 4000; pointer-events: none; }
+  .hmft-toast.show { opacity: 1; transform: translate(-50%, 0); }
+
   .saisie-gk-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 12px; margin-bottom: 16px; }
   .saisie-gk-col { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
-  .saisie-gk-col-label { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin-bottom: 8px; }
+  .saisie-gk-col-label { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin-bottom: 8px; min-width: 0; }
   .saisie-gk-phase-tag { font-size: 9.5px; font-weight: 800; color: var(--gold); background: var(--gold-bg); border-radius: 5px; padding: 1px 6px; letter-spacing: .02em; flex-shrink: 0; }
   .saisie-gk-mt { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
   .saisie-gk-mt:last-child { margin-bottom: 0; }
   .saisie-gk-mt-tag { font-size: 10px; font-weight: 700; color: var(--text3); width: 26px; flex-shrink: 0; }
   .saisie-gk-mt-tag.wide { width: 60px; }
 
-  .saisie-field-btn { flex: 1; text-align: left; background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 9px 12px; font: inherit; font-size: 13px; font-weight: 600; color: var(--text2); cursor: pointer; display: flex; align-items: center; gap: 7px; min-height: 40px; transition: border-color .15s, background .15s; }
+  .saisie-field-btn { flex: 1; min-width: 0; text-align: left; background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 9px 12px; font: inherit; font-size: 13px; font-weight: 600; color: var(--text2); cursor: pointer; display: flex; align-items: center; gap: 7px; min-height: 40px; transition: border-color .15s, background .15s; }
+  .saisie-field-btn .flabel { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .saisie-field-btn:hover { border-color: var(--text3); }
   .saisie-field-btn.filled { color: var(--text); background: var(--bg2); }
   .saisie-field-btn.empty { border-color: #e74c3c; }
@@ -953,7 +957,7 @@
   .saisie-picker-hdr span { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); }
   .saisie-picker-hdr button { background: none; border: none; color: var(--text3); font-size: 16px; cursor: pointer; line-height: 1; padding: 2px 4px; }
   .saisie-picker-grid { display: flex; flex-wrap: wrap; gap: 7px; }
-  .saisie-pchip { border: 1.5px solid var(--border2); background: var(--bg3); border-radius: 999px; padding: 9px 15px; font: inherit; font-weight: 700; font-size: 13.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: transform .1s, border-color .15s; min-height: 40px; }
+  .saisie-pchip { border: 1.5px solid var(--border2); background: var(--bg3); border-radius: 999px; padding: 9px 15px; font: inherit; font-weight: 700; font-size: 13.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: transform .1s, border-color .15s; min-height: 40px; max-width: 100%; overflow-wrap: anywhere; }
   .saisie-pchip:hover { transform: translateY(-1px); }
   .saisie-pchip:active { transform: scale(.96); }
   .saisie-pchip .pdot { width: 9px; height: 9px; border-radius: 50%; }
@@ -1794,7 +1798,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 23:05</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 23:31</footer>
 
 <script>
 
@@ -2238,6 +2242,14 @@ function badge(color) {
 function dot(color) {
   if (!color) return "";
   return `<span class="cdot ${color.toLowerCase()}"></span>`;
+}
+function _showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'hmft-toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('show'));
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2600);
 }
 function teamCls(t) { return t === "Bleue" ? "bleu" : t ? t.toLowerCase() : ""; }
 function scoreColors(m) {
@@ -7541,7 +7553,7 @@ function _saisieFieldBtnHTML(value, placeholder, key, emptyWarn) {
   const isOpen = _saisiePicker && _saisiePicker.key === key;
   const cls = ["saisie-field-btn", info ? "filled" : "", isOpen ? "open" : "", (!info && emptyWarn) ? "empty" : ""].filter(Boolean).join(" ");
   const dotEl = info && info.team ? `<span class="fdot ${info.team.toLowerCase()}"></span>` : "";
-  return `<button class="${cls}" data-act="saisie-open-picker" data-key="${key}">${dotEl}<span>${info ? info.name : placeholder}</span><span class="chev2">▾</span></button>`;
+  return `<button class="${cls}" data-act="saisie-open-picker" data-key="${key}">${dotEl}<span class="flabel">${info ? info.name : placeholder}</span><span class="chev2">▾</span></button>`;
 }
 function _saisiePickerHTML(key, title, options, includeCSC, allowNone) {
   if (!_saisiePicker || _saisiePicker.key !== key) return "";
@@ -7764,6 +7776,11 @@ function _buildMatchsScreenHTML() {
 
 function renderSaisie() {
   if (!_draft) _loadDraft();
+  // Chaque appel remplace tout le contenu du panneau (innerHTML) : sans ceci, le
+  // navigateur perd la position de defilement a chaque frappe/tap (ex: cocher un
+  // present remonte tout en haut de la page). Un appelant qui veut explicitement
+  // remonter (ex: changement d etape) le fait deja lui-meme apres coup.
+  const _scrollY = window.scrollY;
   const statusTxt = _draftSavedAt
     ? `<span style="color:#2ecc71;font-size:12px">✓ Sauvegardé à ${_draftSavedAt}</span>`
     : `<span style="color:var(--text3);font-size:12px">Brouillon non sauvegardé</span>`;
@@ -7839,6 +7856,7 @@ function renderSaisie() {
     </div>
 
   </div>`;
+  window.scrollTo(0, _scrollY);
 }
 
 async function _commitSession() {
@@ -8169,6 +8187,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       _saisieFocusedMatch = null;
       _saveDraft();
       renderSaisie();
+      _showToast(`✅ Match envoyé — visible sur tous les téléphones (${payload.scoreA}–${payload.scoreB})`);
     }).catch(err => {
       if (overlay) overlay.style.display = "none";
       alert('⚠️ Erreur de synchronisation :\n' + (err?.message || err?.code || String(err)) + '\n\nLe match reste dans votre brouillon local — réessayez.');
@@ -8902,7 +8921,7 @@ document.addEventListener("click", e => {
   renderJoueurs();
   if (_hash === "stats") renderStats();
   if (_hash === "reglement") renderReglement();
-  if (_loadSaisie) renderSaisie();
+  if (_loadSaisie) { _fbWatchDraftMatches(); renderSaisie(); }
   if (SESSIONS.length) {
     const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
     renderSessionResults(sorted[0].date);
