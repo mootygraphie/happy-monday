@@ -226,8 +226,9 @@
   .mrr-teams { display: flex; align-items: center; gap: 2px; font-weight: 700; font-size: 13.5px; flex-shrink: 0; white-space: nowrap; color: var(--text); }
   .mrr-score { font-weight: 800; margin: 0 4px; color: var(--text); }
   .mrr-sep { width: 1px; height: 18px; background: var(--border2); flex-shrink: 0; }
+  .mrr-gk { flex-shrink: 0; color: var(--text2); font-size: 12px; white-space: nowrap; }
   .mrr-goals { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text2); font-size: 12px; }
-  @media (max-width: 640px) { .match-recap-row { flex-wrap: wrap; } .mrr-goals { flex-basis: 100%; white-space: normal; } .mrr-sep { display: none; } }
+  @media (max-width: 640px) { .match-recap-row { flex-wrap: wrap; } .mrr-gk { flex-basis: 100%; white-space: normal; } .mrr-goals { flex-basis: 100%; white-space: normal; } .mrr-sep { display: none; } }
 
   /* ── KPI summary ── */
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 10px; margin-bottom: 2rem; }
@@ -1778,7 +1779,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 14:35</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 14:42</footer>
 
 <script>
 
@@ -3026,13 +3027,25 @@ function _recapSideSummary(m, side) {
   return `${dot(eq)} : ⚽️ ${_matchGoalsRecapHTML(buteurs, passeurs)}`;
 }
 
+function _recapSideGkSummary(m, side) {
+  const eq = side === "A" ? m.eqA : m.eqB;
+  const raw = (side === "A" ? m.gardiensA : m.gardiensB) || [];
+  const names = [...new Set(raw.filter(Boolean))];
+  if (!names.length) return "";
+  return `${dot(eq)} : 🧤 ${names.join(" | ")}`;
+}
+
 function buildMatchRecapRowHTML(m, idx) {
   const sideA = _recapSideSummary(m, "A"), sideB = _recapSideSummary(m, "B");
   const summary = [sideA, sideB].filter(Boolean).join(` <span style="color:var(--border2)">|</span> `);
+  const gkA = _recapSideGkSummary(m, "A"), gkB = _recapSideGkSummary(m, "B");
+  const gkSummary = [gkA, gkB].filter(Boolean).join(` <span style="color:var(--border2)">|</span> `);
   const sc = scoreColors(m);
   return `<div class="match-recap-row">
     <span class="mrr-num">#${idx+1}</span>
     <span class="mrr-teams">${dot(m.eqA)}<span class="mrr-score"><span style="color:${sc.a}">${m.scoreA}</span>–<span style="color:${sc.b}">${m.scoreB}</span></span>${dot(m.eqB)}</span>
+    <span class="mrr-sep"></span>
+    <span class="mrr-gk">${gkSummary || "—"}</span>
     <span class="mrr-sep"></span>
     <span class="mrr-goals">${summary || "—"}</span>
   </div>`;
