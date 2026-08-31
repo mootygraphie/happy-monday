@@ -228,7 +228,20 @@
   .mrr-sep { width: 1px; height: 18px; background: var(--border2); flex-shrink: 0; }
   .mrr-gk { flex-shrink: 0; color: var(--text2); font-size: 12px; white-space: nowrap; }
   .mrr-goals { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text2); font-size: 12px; }
+  /* Wrappers utilises uniquement par "Tous les matchs" (Sessions) : transparents en
+     display:contents partout sauf mobile, donc n affectent pas les lignes de recap de
+     la Saisie (autre usage de .match-recap-row / .mrr-*, sans ces wrappers). */
+  .mrr-score-col, .mrr-info-col { display: contents; }
   @media (max-width: 640px) { .match-recap-row { flex-wrap: wrap; } .mrr-gk { flex-basis: 100%; white-space: normal; } .mrr-goals { flex-basis: 100%; white-space: normal; } .mrr-sep { display: none; } }
+  @media (max-width: 640px) {
+    .match-recap-row:has(.mrr-score-col) { align-items: stretch; flex-wrap: nowrap; }
+    .mrr-score-col { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; flex-shrink: 0; min-width: 62px; }
+    .mrr-score-col .mrr-score { font-size: 20px; }
+    .mrr-sep.mrr-sep-outer { display: block; align-self: stretch; height: auto; }
+    .mrr-info-col { display: flex; flex-direction: column; justify-content: center; gap: 4px; flex: 1; min-width: 0; }
+    .mrr-info-col .mrr-gk { flex-basis: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+    .mrr-info-col .mrr-goals { flex-basis: auto; white-space: nowrap; }
+  }
 
   /* ── KPI summary ── */
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 10px; margin-bottom: 2rem; }
@@ -1779,7 +1792,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 15:05</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 15:18</footer>
 
 <script>
 
@@ -3052,12 +3065,16 @@ function buildMatchRecapRowHTML(m, idx) {
   const gkSummary = (gkA || gkB) ? `🧤 ${gkA || "—"} - ${gkB || "—"}` : "";
   const sc = scoreColors(m);
   return `<div class="match-recap-row">
-    <span class="mrr-num">#${idx+1}</span>
-    <span class="mrr-teams">${dot(m.eqA)}<span class="mrr-score"><span style="color:${sc.a}">${m.scoreA}</span>–<span style="color:${sc.b}">${m.scoreB}</span></span>${dot(m.eqB)}</span>
-    <span class="mrr-sep"></span>
-    <span class="mrr-gk">${gkSummary || "—"}</span>
-    <span class="mrr-sep"></span>
-    <span class="mrr-goals">${summary || "—"}</span>
+    <span class="mrr-score-col">
+      <span class="mrr-num">#${idx+1}</span>
+      <span class="mrr-teams">${dot(m.eqA)}<span class="mrr-score"><span style="color:${sc.a}">${m.scoreA}</span>–<span style="color:${sc.b}">${m.scoreB}</span></span>${dot(m.eqB)}</span>
+    </span>
+    <span class="mrr-sep mrr-sep-outer"></span>
+    <span class="mrr-info-col">
+      <span class="mrr-gk">${gkSummary || "—"}</span>
+      <span class="mrr-sep"></span>
+      <span class="mrr-goals">${summary || "—"}</span>
+    </span>
   </div>`;
 }
 
