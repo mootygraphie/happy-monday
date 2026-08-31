@@ -1779,7 +1779,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 14:42</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 14:53</footer>
 
 <script>
 
@@ -3027,19 +3027,17 @@ function _recapSideSummary(m, side) {
   return `${dot(eq)} : ⚽️ ${_matchGoalsRecapHTML(buteurs, passeurs)}`;
 }
 
-function _recapSideGkSummary(m, side) {
-  const eq = side === "A" ? m.eqA : m.eqB;
+function _recapSideGkName(m, side) {
   const raw = (side === "A" ? m.gardiensA : m.gardiensB) || [];
   const names = [...new Set(raw.filter(Boolean))];
-  if (!names.length) return "";
-  return `${dot(eq)} : 🧤 ${names.join(" | ")}`;
+  return names.join("/");
 }
 
 function buildMatchRecapRowHTML(m, idx) {
   const sideA = _recapSideSummary(m, "A"), sideB = _recapSideSummary(m, "B");
   const summary = [sideA, sideB].filter(Boolean).join(` <span style="color:var(--border2)">|</span> `);
-  const gkA = _recapSideGkSummary(m, "A"), gkB = _recapSideGkSummary(m, "B");
-  const gkSummary = [gkA, gkB].filter(Boolean).join(` <span style="color:var(--border2)">|</span> `);
+  const gkA = _recapSideGkName(m, "A"), gkB = _recapSideGkName(m, "B");
+  const gkSummary = (gkA || gkB) ? `🧤 ${gkA || "—"} - ${gkB || "—"}` : "";
   const sc = scoreColors(m);
   return `<div class="match-recap-row">
     <span class="mrr-num">#${idx+1}</span>
