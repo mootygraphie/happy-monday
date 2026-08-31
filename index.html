@@ -1782,7 +1782,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 11:00</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 11:17</footer>
 
 <script>
 
@@ -8479,6 +8479,33 @@ document.addEventListener("click", e => {
   updateAdminBtn();
   document.getElementById("loading-screen").style.display = "none";
 })();
+
+/* ── Outil de diagnostic temporaire (scroll horizontal mobile) : ?debugscroll dans l URL ── */
+if (location.search.includes("debugscroll")) {
+  const _dsBtn = document.createElement("button");
+  _dsBtn.textContent = "🐞";
+  _dsBtn.style.cssText = "position:fixed;bottom:16px;right:16px;z-index:99999;width:48px;height:48px;border-radius:50%;background:#e33;color:#fff;font-size:20px;border:none;box-shadow:0 4px 14px rgba(0,0,0,.4);";
+  _dsBtn.onclick = () => {
+    const vw = document.documentElement.clientWidth;
+    const offenders = [...document.querySelectorAll("*")]
+      .filter(el => el.scrollWidth > vw + 1)
+      .map(el => {
+        const cls = typeof el.className === "string" && el.className ? "." + el.className.trim().split(/\s+/).join(".") : "";
+        return `${el.tagName}${el.id ? "#"+el.id : ""}${cls}\n  scrollWidth:${el.scrollWidth}  (vw:${vw})`;
+      });
+    const box = document.createElement("div");
+    box.style.cssText = "position:fixed;inset:0;z-index:100000;background:#000;color:#0f0;font:11px/1.4 monospace;padding:14px;overflow:auto;white-space:pre-wrap;";
+    box.textContent = "html.scrollWidth: " + document.documentElement.scrollWidth + "\nclientWidth: " + vw + "\n\n" +
+      (offenders.length ? offenders.join("\n\n") : "Aucun element ne deborde du viewport.");
+    const _dsClose = document.createElement("button");
+    _dsClose.textContent = "✕ Fermer";
+    _dsClose.style.cssText = "position:fixed;top:10px;right:10px;z-index:100001;padding:8px 14px;background:#fff;color:#000;border:none;border-radius:6px;font-weight:700;";
+    _dsClose.onclick = () => box.remove();
+    box.appendChild(_dsClose);
+    document.body.appendChild(box);
+  };
+  document.body.appendChild(_dsBtn);
+}
 </script>
 </body>
 </html>
