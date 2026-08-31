@@ -1778,7 +1778,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 13:19</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 13:46</footer>
 
 <script>
 
@@ -3900,7 +3900,7 @@ const MHF_CAT_BY_ID = {
   invic:'Collectif', duo:'Collectif',
   fidele:'Présence', sac:'Présence', maillots:'Présence', assidu:'Présence', comete:'Présence',
   mvp:'Distinctions', soiree:'Distinctions', remontada:'Distinctions', chelem:'Distinctions',
-  gardienAssist:'Distinctions', willgrigg:'Distinctions', mesutozil:'Distinctions', patron:'Distinctions', mercenaire:'Distinctions', equipetype:'Distinctions', legende:'Distinctions',
+  gardienAssist:'Distinctions', willgrigg:'Distinctions', mesutozil:'Distinctions', patron:'Distinctions', mercenaire:'Distinctions', equipetype:'Distinctions', totsaison:'Distinctions', bdor:'Distinctions', legende:'Distinctions',
   bonnet:'Secrets', infirm:'Secrets', pois:'Secrets', fantome:'Secrets', zerovic:'Secrets', toutnul:'Secrets',
 };
 
@@ -6387,7 +6387,9 @@ const ACH_DEFS = [
   { id:'mesutozil',    name:'Mesut Özil',      icon:'🪄', tiers:[1], fixedTier:6,      hidden:true,  key:'assistHattricks', desc:v=>`${v} fois avec au moins 3 passes décisives dans un même match` },
   { id:'patron',       name:'Patron',          icon:'👑', tiers:[1], fixedTier:6,      hidden:true,  key:'patronCount',  desc:v=>`${v} fois impliqué sur 100% des buts de son équipe (min. 4 buts)` },
   { id:'mercenaire',   name:'Mercenaire',      icon:'👺', tiers:[1,3,7,15,25,40],     hidden:false, key:'mercenaireCount', desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''} pour l'équipe dépannée` },
-  { id:'equipetype',   name:'Pilier',          icon:'🎖️', tiers:[1,3,7,15,25,40],     hidden:false, key:'equipeTypeCount', desc:v=>`${v} sélection${v>1?'s':''} dans l'équipe-type` },
+  { id:'equipetype',   name:'TOTN',            icon:'🎖️', tiers:[1,3,7,15,25,40],     hidden:false, key:'equipeTypeCount', desc:v=>`${v} sélection${v>1?'s':''} dans l'équipe-type` },
+  { id:'totsaison',    name:'TOTS',            icon:'💎', tiers:[1], fixedTier:6,      hidden:false, key:'equipeTypeSaisonCount', desc:v=>`${v} sélection${v>1?'s':''} dans l'équipe-type de la saison` },
+  { id:'bdor',         name:"Ballon d'Or",     icon:'🏆', tiers:[1], fixedTier:6,      hidden:false, key:'ballonDorCount', desc:v=>`${v} Ballon${v>1?'s':''} d'Or gagné${v>1?'s':''}` },
   { id:'legende',      name:'Légende',         icon:'🐐', tiers:[5,15,30,50,100,127], hidden:true,  key:'legendeCount', desc:v=>`${v} niveaux débloqués` },
   // ── Négatifs / Secrets ──
   { id:'bonnet',   name:"Bonnet d'Âne",    icon:'🫏', tiers:[10,30,50,100], tierOffset:2, tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'absences',       desc:v=>`${v} absence${v>1?'s':''}` },
@@ -6472,6 +6474,77 @@ function _computeEquipeTypeAppearances() {
     });
   });
   return counts;
+}
+
+/* Nombre de fois qu chaque joueur apparait dans l equipe-type DE LA SAISON (toutes les
+   sessions d une meme saison agregees en une seule equipe-type, meme logique que
+   _dbxRenderEquipeType sur le Dashboard Globales). Une saison en cours compte deja des
+   qu elle a un gardien + au moins un joueur de champ, comme les autres haut faits par
+   saison de ce fichier (assidu/comete). */
+function _computeSeasonEquipeTypeAppearances() {
+  const counts = {};
+  const seasons = [...new Set(SESSIONS.map(s => _seasonStart(s.date)))];
+  seasons.forEach(sy => {
+    const sessions = SESSIONS.filter(s => _seasonStart(s.date) === sy);
+    const colorTally = {};
+    sessions.forEach(s => {
+      Object.entries(s.presences || {}).forEach(([nm, info]) => {
+        if (info.statut !== "Présent" || !info.equipe) return;
+        colorTally[nm] = colorTally[nm] || {};
+        colorTally[nm][info.equipe] = (colorTally[nm][info.equipe]||0) + 1;
+      });
+    });
+    const teamOf = nm => {
+      const t = colorTally[nm];
+      return t ? Object.entries(t).sort((a,b)=>b[1]-a[1])[0][0] : "";
+    };
+    const ps = computeStats(sessions).ps;
+    const outfield = computeTopDefendersStats(sessions, 1).map(d => ({
+      name: d.name,
+      team: teamOf(d.name),
+      buts: (ps[d.name] && ps[d.name].buts) || 0,
+      passes: (ps[d.name] && ps[d.name].passes) || 0,
+      defAvg: d.avg,
+      matchCount: d.matchCount
+    }));
+    const gks = computeGardiensRanking(sessions).map(g => ({ ...g, team: teamOf(g.name) }));
+    const team = _pickEquipeType(outfield, gks, "cs");
+    if (!team) return;
+    [team.gk, ...team.attaquants, ...team.milieux, ...team.defenseurs].filter(Boolean).forEach(p => {
+      counts[p.name] = (counts[p.name]||0) + 1;
+    });
+  });
+  return counts;
+}
+
+/* Nombre de Ballon d Or gagnes (1er du classement pts = buts*5 + passes*10, meme formule
+   que buildBallonDorHtml), un par saison. */
+function _computeBallonDorWins() {
+  const wins = {};
+  const seasons = [...new Set(SESSIONS.map(s => _seasonStart(s.date)))];
+  seasons.forEach(sy => {
+    const ps = {};
+    SESSIONS.filter(s => _seasonStart(s.date) === sy).forEach(s => {
+      (s.matchs || []).forEach(m => {
+        ["A","B"].forEach(side => {
+          const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
+          buts.forEach((b,i) => {
+            if (!b || b==="CSC") return;
+            if (!ps[b]) ps[b] = { buts:0, passes:0 };
+            ps[b].buts++;
+            const p = passes[i];
+            if (p && p!=="CSC") { if (!ps[p]) ps[p] = { buts:0, passes:0 }; ps[p].passes++; }
+          });
+        });
+      });
+    });
+    const ranked = Object.entries(ps)
+      .map(([name,p]) => ({ name, buts:p.buts, passes:p.passes, pts: p.buts*5 + p.passes*10 }))
+      .filter(p => p.pts > 0)
+      .sort((a,b) => b.pts-a.pts || b.buts-a.buts || a.name.localeCompare(b.name,"fr"));
+    if (ranked.length) wins[ranked[0].name] = (wins[ranked[0].name]||0) + 1;
+  });
+  return wins;
 }
 
 function computeAchievementStats(playerName) {
@@ -6615,13 +6688,15 @@ function computeAchievementStats(playerName) {
   // Note gardien : taux de clean sheets, à partir de 3 matchs gardés (sinon pas assez de données)
   const gardienRate = gardiensMatchs>=3 ? Math.round(gardiensCleanSheets/gardiensMatchs*100) : 0;
   const equipeTypeCount = _computeEquipeTypeAppearances()[playerName] || 0;
+  const equipeTypeSaisonCount = _computeSeasonEquipeTypeAppearances()[playerName] || 0;
+  const ballonDorCount = _computeBallonDorWins()[playerName] || 0;
 
   return { buts, passes, gaTotal:buts+passes, presences, absences, injuries, sessionsBlesses,
            sac, maillots, hattricks, assistHattricks, patronCount, bestStreak, soireeParfaite, doubleDouble,
            invincible, cleanSheets, bestDuo, mvp, csc, grandChelem,
            fantomeStreak, assiduAnnes, cometeAnnes, zeroVict, toutNul, sessionsAvecGA,
            gardiensCleanSheets, gardiensButsEncaisses, gardiensMatchs, gardienRate, remontadas, gardienAssist, mercenaireCount,
-           equipeTypeCount };
+           equipeTypeCount, equipeTypeSaisonCount, ballonDorCount };
 }
 
 function renderAchievementsGrid(achSt) {
