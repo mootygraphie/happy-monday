@@ -1779,7 +1779,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 14:53</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 15:05</footer>
 
 <script>
 
@@ -2696,16 +2696,24 @@ function computeGardiensRanking(sessions) {
       const gA = m.gardiensA || [], gB = m.gardiensB || [];
       const mt1Ac = m.mt1B || 0, mt2Ac = Math.max(0, (m.scoreB||0) - (m.mt1B||0));
       const mt1Bc = m.mt1A || 0, mt2Bc = Math.max(0, (m.scoreA||0) - (m.mt1A||0));
-      // Chaque mi-temps gardee compte comme une unite a part entiere (meme si le meme
-      // gardien tient les deux mi-temps) : sinon un 0-0 en 1ere mi-temps suivi d un 0-2
-      // en 2e se noierait en une seule "presence" a la moyenne, sans clean sheet compte.
+      // Chaque mi-temps gardee compte comme une unite a part entiere pour la moyenne
+      // encaissee (meme si le meme gardien tient les deux mi-temps) : sinon un 0-0 en
+      // 1ere mi-temps suivi d un 0-2 en 2e se noierait en une seule "presence".
       [[gA[0],mt1Ac],[gA[1],mt2Ac],[gB[0],mt1Bc],[gB[1],mt2Bc]].forEach(([p,c]) => {
         if (!p || !p.trim()) return;
         if (!stats[p]) stats[p] = { matchs: 0, buts: 0, cleanSheets: 0 };
         stats[p].matchs++;
         stats[p].buts += c;
-        if (c === 0) stats[p].cleanSheets++;
       });
+      // Clean sheet : sur le MATCH COMPLET, pas par mi-temps — sinon un seul 0-0 tenu
+      // par un gardien qui joue les deux mi-temps compterait pour 2 clean sheets. Si
+      // deux gardiens differents se relaient sur un match nul et vierge, les deux
+      // recoivent le clean sheet complet (genereux pour celui qui n a garde qu une
+      // mi-temps, accepte comme tel).
+      const uniqA = [...new Set(gA.filter(p => p && p.trim()))];
+      const uniqB = [...new Set(gB.filter(p => p && p.trim()))];
+      if ((m.scoreB||0) === 0) uniqA.forEach(p => { if (!stats[p]) stats[p] = { matchs: 0, buts: 0, cleanSheets: 0 }; stats[p].cleanSheets++; });
+      if ((m.scoreA||0) === 0) uniqB.forEach(p => { if (!stats[p]) stats[p] = { matchs: 0, buts: 0, cleanSheets: 0 }; stats[p].cleanSheets++; });
     });
   });
   return Object.entries(stats)
@@ -2757,11 +2765,15 @@ function _dbxTeamScopedEquipeType(sessions, color) {
         // 4 sur une soiree a 3 equipes) ne fait pas partie de cette couleur — on ne
         // le compte pas ici, meme s il a garde les buts ce soir-la sous cette couleur.
         const gs = isA ? (m.gardiensA||[]) : (m.gardiensB||[]);
+        const matchConceded = isA ? (m.scoreB||0) : (m.scoreA||0);
+        const uniqGk = [...new Set(gs.filter(p => p && p.trim() && (presences[p]||{}).equipe === color))];
         [[gs[0],mt1c],[gs[1],mt2c]].forEach(([p,c]) => {
           if (!p || !p.trim() || (presences[p]||{}).equipe !== color) return;
           gkMap[p] = gkMap[p] || { matchs:0, buts:0, cleanSheets:0 };
-          gkMap[p].matchs++; gkMap[p].buts += c; if (c===0) gkMap[p].cleanSheets++;
+          gkMap[p].matchs++; gkMap[p].buts += c;
         });
+        // Clean sheet sur le match complet, pas par mi-temps (cf computeGardiensRanking).
+        if (matchConceded === 0) uniqGk.forEach(p => { gkMap[p] = gkMap[p] || { matchs:0, buts:0, cleanSheets:0 }; gkMap[p].cleanSheets++; });
       }
     });
   });
@@ -6615,11 +6627,19 @@ function computeAchievementStats(playerName) {
           const gA=m.gardiensA||[], gB=m.gardiensB||[];
           const mt1Ac=m.mt1B||0, mt2Ac=Math.max(0,(m.scoreB||0)-(m.mt1B||0));
           const mt1Bc=m.mt1A||0, mt2Bc=Math.max(0,(m.scoreA||0)-(m.mt1A||0));
-          // Chaque mi-temps gardee compte comme une unite a part entiere (cf computeGardiensRanking).
-          if(gA[0]===playerName){gardiensMatchs++;gardiensButsEncaisses+=mt1Ac;if(mt1Ac===0)gardiensCleanSheets++;}
-          if(gA[1]===playerName){gardiensMatchs++;gardiensButsEncaisses+=mt2Ac;if(mt2Ac===0)gardiensCleanSheets++;}
-          if(gB[0]===playerName){gardiensMatchs++;gardiensButsEncaisses+=mt1Bc;if(mt1Bc===0)gardiensCleanSheets++;}
-          if(gB[1]===playerName){gardiensMatchs++;gardiensButsEncaisses+=mt2Bc;if(mt2Bc===0)gardiensCleanSheets++;}
+          // Buts encaisses : cumule mi-temps par mi-temps (cf computeGardiensRanking).
+          if(gA[0]===playerName){gardiensButsEncaisses+=mt1Ac;}
+          if(gA[1]===playerName){gardiensButsEncaisses+=mt2Ac;}
+          if(gB[0]===playerName){gardiensButsEncaisses+=mt1Bc;}
+          if(gB[1]===playerName){gardiensButsEncaisses+=mt2Bc;}
+          // Clean sheet et "matchs gardes" : sur le MATCH COMPLET, pas par mi-temps —
+          // sinon un seul 0-0 tenu sur les 2 mi-temps compterait pour 2 clean sheets.
+          const inA = gA[0]===playerName || gA[1]===playerName;
+          const inB = gB[0]===playerName || gB[1]===playerName;
+          if(inA || inB){
+            gardiensMatchs++;
+            if((inA && (m.scoreB||0)===0) || (inB && (m.scoreA||0)===0)) gardiensCleanSheets++;
+          }
         }
         if(inMatch){
           sessPlayed++;
