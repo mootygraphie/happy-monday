@@ -807,7 +807,11 @@
   .saisie-btn.danger:hover { background: #e74c3c15; }
   .saisie-btn.primary { background: var(--green,#2ecc71); color: #111; border-color: transparent; }
   .saisie-btn.primary:hover { opacity: .9; }
-  .saisie-date-input { background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 8px 12px; color: var(--text); font-size: 15px; cursor: pointer; max-width: 100%; min-width: 0; }
+  /* font-size >= 16px sur les champs de saisie : en dessous, Safari iOS zoome automatiquement
+     a la prise de focus, et ce zoom reste actif meme apres avoir change d ecran (SPA sans
+     rechargement) — c est la vraie cause du "scroll horizontal" qui semblait revenir sans
+     raison : ce n etait pas un debordement de contenu mais la page entiere zoomee. */
+  .saisie-date-input { background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 8px 12px; color: var(--text); font-size: 16px; cursor: pointer; max-width: 100%; min-width: 0; }
 
   /* Stepper 3 écrans */
   .saisie-stepper { display: flex; align-items: center; justify-content: center; margin-bottom: 1.2rem; }
@@ -831,7 +835,7 @@
   .saisie-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; font-style: italic; letter-spacing: .08em; color: var(--text3); margin-bottom: 16px; }
 
   /* Présences : liste plate filtrable (aucun joueur ne change jamais de position) */
-  .saisie-pres-search { width: 100%; padding: 9px 12px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--bg2); color: var(--text); font-size: 13.5px; margin-bottom: 10px; }
+  .saisie-pres-search { width: 100%; padding: 9px 12px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--bg2); color: var(--text); font-size: 16px; margin-bottom: 10px; }
   .saisie-pres-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 14px; }
   .saisie-pres-filter { flex: none; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
   .saisie-pres-filter.active { background: var(--gold); border-color: var(--gold); color: #171708; }
@@ -892,7 +896,7 @@
   .saisie-logistique { display: flex; gap: 16px; margin-top: 4px; flex-wrap: wrap; }
   .saisie-logistique-row { display: flex; align-items: center; gap: 10px; }
   .saisie-logistique-row label { font-size: 14px; font-weight: 600; color: var(--text2); }
-  .saisie-select { background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 6px 10px; color: var(--text); font-size: 13px; cursor: pointer; }
+  .saisie-select { background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 6px 10px; color: var(--text); font-size: 16px; cursor: pointer; }
 
   .saisie-empty { color: var(--text3); font-size: 14px; font-style: italic; margin: 0; }
   .saisie-status { font-size: 12px; }
@@ -1799,7 +1803,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 31/08/2026 - 23:43</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 01/09/2026 - 08:54</footer>
 
 <script>
 
@@ -7785,14 +7789,14 @@ function _buildMatchsScreenHTML() {
 
 function renderSaisie() {
   if (!_draft) _loadDraft();
-  // Chaque appel remplace tout le contenu du panneau (innerHTML), ce qui detruit le
-  // bouton tape juste avant. Sur mobile, un element qui perd le focus ainsi (plutot que
-  // par un blur() explicite) declenche souvent un recalage automatique du viewport par le
-  // navigateur, un ou deux frames plus tard — d'ou le "remonte en haut" au tap suivant.
-  // On desactive le focus nous-memes avant la destruction pour couper court a ce recalage,
-  // et on reimpose la position memorisee a la fois tout de suite et au frame suivant.
+  // Chaque appel remplace tout le contenu du panneau (innerHTML) : ceci recree entierement
+  // .saisie-pres-list, qui a son propre defilement interne (overflow-y:auto) — recreer
+  // l'element reinitialise ce defilement a 0, d'ou le "remonte en haut de la liste" a
+  // chaque tap sur un statut de presence. On memorise et restaure son scrollTop ici, en
+  // plus du scroll de page (au cas ou une autre zone scrollable serait ajoutee plus tard).
   if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
   const _scrollY = window.scrollY;
+  const _presListScrollTop = document.querySelector(".saisie-pres-list")?.scrollTop || 0;
   const statusTxt = _draftSavedAt
     ? `<span style="color:#2ecc71;font-size:12px">✓ Sauvegardé à ${_draftSavedAt}</span>`
     : `<span style="color:var(--text3);font-size:12px">Brouillon non sauvegardé</span>`;
@@ -7869,6 +7873,8 @@ function renderSaisie() {
 
   </div>`;
   window.scrollTo(0, _scrollY);
+  const _newPresList = document.querySelector(".saisie-pres-list");
+  if (_newPresList) _newPresList.scrollTop = _presListScrollTop;
 }
 
 async function _commitSession() {
