@@ -1417,7 +1417,9 @@
   .dbx-hero-num.dbx-team { font-size: 21px; display: flex; align-items: center; gap: 8px; margin-top: 12px; }
   .dbx-hero-sub { font-size: 12px; color: var(--text2); margin-top: 6px; }
   .dbx-hero-spark { position: absolute; right: 14px; bottom: 14px; opacity: .9; }
+  .dbx-hero-tt-row > *:first-child { margin-bottom: 16px; }
   @media (min-width: 900px) {
+    .dbx-hero-tt-row > *:first-child { margin-bottom: 0; }
     .dbx-hero-tt-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
     .dbx-hero-tt-row .dbx-hero-grid { grid-template-columns: repeat(2,1fr); grid-template-rows: repeat(2,1fr); height: 100%; }
   }
@@ -1803,7 +1805,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 02/09/2026 - 12:00</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 02/09/2026 - 15:49</footer>
 
 <script>
 
@@ -7339,13 +7341,11 @@ function _playersOfTeam(color) {
 function _teamPoolOrdered(eq, benchEq) {
   return [..._playersOfTeam(eq), ...(benchEq ? _playersOfTeam(benchEq) : []), ..._playersOfTeam("")];
 }
-// Gardien : à 5+ joueurs présents l'équipe garde ses buts elle-même ; à 4, le banc dépanne
-// en priorité, puis les presents sans equipe.
+// Gardien : équipe sur le terrain d'abord (que ce soit pour garder ses propres buts ou
+// pour dépanner un but déjà pris ailleurs), équipe de dépanne ensuite — toujours proposée,
+// pas seulement quand l'équipe est à court de monde — puis les presents sans equipe.
 function _gardienPoolOrdered(eq, benchEq) {
-  const own = _playersOfTeam(eq);
-  const sansEquipe = _playersOfTeam("");
-  if (own.length >= 5 || !benchEq) return [...own, ...sansEquipe];
-  return [..._playersOfTeam(benchEq), ...own, ...sansEquipe];
+  return [..._playersOfTeam(eq), ...(benchEq ? _playersOfTeam(benchEq) : []), ..._playersOfTeam("")];
 }
 function _saisieBenchTeam(eqA, eqB, teams) {
   return teams.length >= 3 ? (teams.find(t => t !== eqA && t !== eqB) || "") : "";
