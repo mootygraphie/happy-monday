@@ -165,33 +165,8 @@
   .pill:hover:not(.active) { background: var(--bg3); color: var(--text); }
 
   /* ── Sélecteur de session ── */
-  .session-selector { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 2rem; }
+  .session-selector { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 2rem; flex-wrap: wrap; }
   .session-selector label { font-size: 13px; color: var(--text2); }
-
-  .sess-dd { position: relative; }
-  .sess-dd-btn {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    min-width: 190px; background: var(--bg2); color: var(--text); border: 1px solid var(--border2);
-    border-radius: 999px; padding: 9px 16px; font-size: 14px; font-weight: 600;
-    cursor: pointer; font-family: inherit;
-  }
-  .sess-dd-btn:hover { background: var(--bg3); }
-  .sess-dd-btn svg { flex-shrink: 0; opacity: .55; color: var(--text2); transition: transform .15s; }
-  .sess-dd.open .sess-dd-btn svg { transform: rotate(180deg); }
-  .sess-dd-panel {
-    display: none; position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%);
-    min-width: 220px; max-height: 320px; overflow-y: auto; z-index: 40;
-    background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius);
-    box-shadow: var(--shadow); padding: 6px;
-  }
-  .sess-dd.open .sess-dd-panel { display: block; }
-  .sess-dd-opt {
-    display: block; width: 100%; text-align: left; background: none; border: none;
-    color: var(--text2); font-size: 13.5px; font-family: inherit; padding: 9px 11px;
-    border-radius: 8px; cursor: pointer;
-  }
-  .sess-dd-opt:hover { background: var(--bg3); color: var(--text); }
-  .sess-dd-opt.active { background: var(--gold-bg); color: var(--gold); font-weight: 700; }
 
   .section-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-style: italic; color: var(--text3); margin: 2rem 0 .75rem; }
 
@@ -1391,6 +1366,15 @@
     padding: 8px 30px 8px 12px; font-size: 13px; font-family: inherit; font-weight: 600; cursor: pointer; outline: none;
   }
   .dbx-fb-select:focus { border-color: var(--border2); box-shadow: 0 0 0 3px var(--gold-bg); }
+  /* Sélecteur de date à 3 menus (saison / mois / jour) — ne propose que des dates ayant
+     une session enregistrée. Remplace les longues listes plates de sessions. */
+  .dd-compact-row { display: flex; align-items: center; justify-content: center; gap: 5px; flex-wrap: wrap; }
+  .dd-compact-row .rp-lbl { font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: var(--text3); margin-left: 4px; }
+  .dd-compact-row .rp-lbl:first-child { margin-left: 0; }
+  .dd-compact-row .dbx-fb-select { padding: 7px 20px 7px 9px; font-size: 12px; border-radius: 8px; background-position: right 7px center; background-size: 8px 5px; }
+  .dd-compact-row .dbx-fb-select.season-sel { font-weight: 700; }
+  .dd-compact-row .dbx-fb-select.month-sel { width: 60px; }
+  .dd-compact-row .dbx-fb-select.day-sel2 { width: 48px; }
   .dbx-fb-meta { margin-left: auto; font-size: 12px; color: var(--text3); text-align: right; }
   .dbx-fb-meta b { color: var(--text2); font-weight: 600; }
 
@@ -1532,7 +1516,6 @@
     padding: 3px 2px; font-size: 11.5px; font-weight: 600; color: var(--text3); cursor: pointer; outline: none;
   }
   .dbx2-period-select-mini:hover { color: var(--text2); }
-  .dbx2-date-sep { color: var(--text3); font-size: 11px; }
   .dbx2-compare-toggle { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text3); cursor: pointer; user-select: none; }
   .dbx2-compare-toggle:hover { color: var(--text2); }
   .dbx2-compare-toggle input { accent-color: var(--gold); margin: 0; }
@@ -1755,14 +1738,8 @@
   <!-- ── Onglet Résultats de session ── -->
   <div class="tab-panel active" id="panel-session">
     <div class="session-selector">
-      <label for="session-date">Session :</label>
-      <div class="sess-dd" id="sess-dd">
-        <button type="button" class="sess-dd-btn" id="sess-dd-btn">
-          <span id="sess-dd-label">—</span>
-          <svg width="11" height="7" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
-        </button>
-        <div class="sess-dd-panel" id="sess-dd-panel"></div>
-      </div>
+      <label>Session :</label>
+      <div class="dd-compact-row" id="sess-dd-row"></div>
       <select id="session-date" style="display:none"></select>
       <button id="delete-session-btn" title="Supprimer cette session" style="display:none;background:transparent;border:1px solid #e74c3c44;color:#e74c3c;border-radius:8px;padding:7px 11px;font-size:16px;cursor:pointer;line-height:1;transition:background .15s;" onmouseover="this.style.background='#e74c3c18'" onmouseout="this.style.background='transparent'">🗑️</button>
       <button id="edit-session-btn" title="Modifier cette session" style="display:none;background:transparent;border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:7px 11px;font-size:16px;cursor:pointer;line-height:1;transition:background .15s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">✏️</button>
@@ -1805,7 +1782,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 02/09/2026 - 15:49</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 02/09/2026 - 16:11</footer>
 
 <script>
 
@@ -2432,10 +2409,86 @@ function _dbxMonthsForSeason(sy) {
   )].sort((a,b)=>b-a);
 }
 
+/* Sélecteur de date à 3 menus (saison / mois / jour) — ne propose jamais un jour sans
+   session enregistrée, contrairement à un input date classique. Remplace les longues
+   listes plates de sessions (Sessions, Dashboard mode Session et Personnalisé). */
+function _dateDdDaysForMonth(sy, m) {
+  return [...new Set(SESSIONS.filter(s => _seasonStart(s.date) === sy && new Date(s.date).getMonth() === m).map(s => s.date))].sort();
+}
+function _dateDdHTML(uid) {
+  return `<select class="dbx-fb-select season-sel" id="dd-season-${uid}"></select><select class="dbx-fb-select month-sel" id="dd-month-${uid}"></select><select class="dbx-fb-select day-sel2" id="dd-day-${uid}"></select>`;
+}
+// getSelected() renvoie la date "YYYY-MM-DD" actuellement choisie ; onChange(date) est
+// appelé chaque fois que la sélection change (y compris via saison/mois, qui retombent
+// sur la session la plus récente de la nouvelle période).
+function _wireDateDd(uid, getSelected, onChange) {
+  const seasonSel = document.getElementById(`dd-season-${uid}`);
+  const monthSel = document.getElementById(`dd-month-${uid}`);
+  const daySel = document.getElementById(`dd-day-${uid}`);
+  function render() {
+    const cur = getSelected();
+    const seasons = _dbxSeasonsAvailable();
+    const curSeason = seasons.includes(_seasonStart(cur)) ? _seasonStart(cur) : seasons[0];
+    seasonSel.innerHTML = seasons.map(sy => `<option value="${sy}" ${sy===curSeason?"selected":""}>${_seasonLabel(sy)}</option>`).join("");
+    const months = _dbxMonthsForSeason(Number(seasonSel.value));
+    const curMonth = _seasonStart(cur)===Number(seasonSel.value) ? new Date(cur).getMonth() : months[0];
+    monthSel.innerHTML = months.map(m => `<option value="${m}" ${m===curMonth?"selected":""}>${MONTH_NAMES[m].slice(0,3)}</option>`).join("");
+    const days = _dateDdDaysForMonth(Number(seasonSel.value), Number(monthSel.value));
+    const curDay = days.includes(cur) ? cur : days[days.length-1];
+    daySel.innerHTML = days.map(d => `<option value="${d}" ${d===curDay?"selected":""}>${Number(d.split("-")[2])}</option>`).join("");
+  }
+  function jumpTo(sy, m, day) {
+    const days = _dateDdDaysForMonth(sy, m);
+    const match = (day && days.includes(day)) ? day : days[days.length-1];
+    if (!match) return;
+    onChange(match);
+    render();
+  }
+  seasonSel.addEventListener("change", () => {
+    const sy = Number(seasonSel.value);
+    jumpTo(sy, _dbxMonthsForSeason(sy)[0], null);
+  });
+  monthSel.addEventListener("change", () => jumpTo(Number(seasonSel.value), Number(monthSel.value), null));
+  daySel.addEventListener("change", () => onChange(daySel.value));
+  render();
+}
+// Variante mois+jour seul, saison fournie par un sélecteur externe partagé (utilisée pour
+// "Personnalisé", où Du/Au restent presque toujours dans la même saison).
+function _dateDd2HTML(uid) {
+  return `<select class="dbx-fb-select month-sel" id="dd-month-${uid}"></select><select class="dbx-fb-select day-sel2" id="dd-day-${uid}"></select>`;
+}
+function _wireDateDd2(uid, getSeason, getSelected, onChange) {
+  const monthSel = document.getElementById(`dd-month-${uid}`);
+  const daySel = document.getElementById(`dd-day-${uid}`);
+  function render() {
+    const sy = getSeason();
+    const cur = getSelected();
+    const months = _dbxMonthsForSeason(sy);
+    const curMonth = _seasonStart(cur)===sy ? new Date(cur).getMonth() : months[0];
+    monthSel.innerHTML = months.map(m => `<option value="${m}" ${m===curMonth?"selected":""}>${MONTH_NAMES[m].slice(0,3)}</option>`).join("");
+    const days = _dateDdDaysForMonth(sy, Number(monthSel.value));
+    const curDay = days.includes(cur) ? cur : days[days.length-1];
+    daySel.innerHTML = days.map(d => `<option value="${d}" ${d===curDay?"selected":""}>${Number(d.split("-")[2])}</option>`).join("");
+    return curDay;
+  }
+  function jumpTo(m, day) {
+    const days = _dateDdDaysForMonth(getSeason(), m);
+    const match = (day && days.includes(day)) ? day : days[days.length-1];
+    if (!match) return;
+    onChange(match);
+    render();
+  }
+  monthSel.addEventListener("change", () => jumpTo(Number(monthSel.value), null));
+  daySel.addEventListener("change", () => onChange(daySel.value));
+  const initial = render();
+  return { render, current: initial };
+}
+
 /* Reconstruit le sous-filtre contextuel (droite du segment) selon le mode actif :
-   session → sélecteur de session (motif sess-dd existant) ; mois → saison + mois ;
-   saison → saison seule ; all-time → rien. Pilote toujours currentPeriod/filterYear/
-   filterMonth/filterSessionDate et déclenche renderDashboard(), comme l'ancien filtre. */
+   session → sélecteur à 3 menus (saison/mois/jour) ; mois → saison + mois ;
+   saison → saison seule ; personnalisé → saison partagée + 2 bornes (mois/jour) ;
+   all-time → rien. Pilote toujours currentPeriod/filterYear/filterMonth/
+   filterSessionDate/dbxCustomFrom/dbxCustomTo et déclenche renderDashboard(). */
 function updateSubFilter(period) {
   const sub = document.getElementById("dbx-fb-sub");
   if (!sub) return;
@@ -2444,27 +2497,8 @@ function updateSubFilter(period) {
     const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
     if (!sorted.length) { sub.innerHTML = ""; return; }
     if (filterSessionDate === null || !sorted.some(s => s.date === filterSessionDate)) filterSessionDate = sorted[0].date;
-    sub.innerHTML = `
-      <div class="sess-dd" id="dbx-sess-dd">
-        <button type="button" class="sess-dd-btn" id="dbx-sess-dd-btn">
-          <span id="dbx-sess-dd-label">${fmtDate(filterSessionDate)}</span>
-          <svg width="11" height="7" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
-        </button>
-        <div class="sess-dd-panel" id="dbx-sess-dd-panel">${sorted.map(s =>
-          `<button type="button" class="sess-dd-opt${s.date===filterSessionDate?" active":""}" data-date="${s.date}">${fmtDate(s.date)}</button>`
-        ).join("")}</div>
-      </div>`;
-    document.getElementById("dbx-sess-dd-btn").addEventListener("click", e => {
-      e.stopPropagation();
-      document.getElementById("dbx-sess-dd").classList.toggle("open");
-    });
-    document.getElementById("dbx-sess-dd-panel").addEventListener("click", e => {
-      const btn = e.target.closest(".sess-dd-opt");
-      if (!btn) return;
-      filterSessionDate = btn.dataset.date;
-      document.getElementById("dbx-sess-dd").classList.remove("open");
-      renderDashboard();
-    });
+    sub.innerHTML = `<div class="dd-compact-row">${_dateDdHTML("dbxsess")}</div>`;
+    _wireDateDd("dbxsess", () => filterSessionDate, date => { filterSessionDate = date; renderDashboard(); });
 
   } else if (period === "month") {
     const seasons = _dbxSeasonsAvailable();
@@ -2501,20 +2535,32 @@ function updateSubFilter(period) {
     else {
       if (!dbxCustomFrom || !sortedDates.includes(dbxCustomFrom)) dbxCustomFrom = sortedDates[0];
       if (!dbxCustomTo   || !sortedDates.includes(dbxCustomTo))   dbxCustomTo   = sortedDates[sortedDates.length-1];
-      const fromOpts = sortedDates.filter(d => d <= dbxCustomTo);
-      const toOpts   = sortedDates.filter(d => d >= dbxCustomFrom);
-      sub.innerHTML = `
-        <select class="dbx-fb-select" id="dbx-custom-from">${fromOpts.map(d => `<option value="${d}" ${d===dbxCustomFrom?"selected":""}>${fmtDate(d)}</option>`).join("")}</select>
-        <span class="dbx2-date-sep">→</span>
-        <select class="dbx-fb-select" id="dbx-custom-to">${toOpts.map(d => `<option value="${d}" ${d===dbxCustomTo?"selected":""}>${fmtDate(d)}</option>`).join("")}</select>`;
-      document.getElementById("dbx-custom-from").addEventListener("change", e => {
-        dbxCustomFrom = e.target.value;
-        updateSubFilter("custom");
+      // Un intervalle personnalisé reste presque toujours dans la même saison : un seul
+      // menu Saison partagé, chaque borne (Du/Au) ne garde que Mois + Jour — plus compact
+      // que 2 pickers complets, et tient sur une seule ligne.
+      sub.innerHTML = `<div class="dd-compact-row">
+        <select class="dbx-fb-select season-sel" id="dbx-custom-season"></select>
+        <span class="rp-lbl">Du</span>${_dateDd2HTML("dbxfrom")}
+        <span class="rp-lbl">Au</span>${_dateDd2HTML("dbxto")}
+      </div>`;
+      const seasons = _dbxSeasonsAvailable();
+      let customSeason = seasons.includes(_seasonStart(dbxCustomTo)) ? _seasonStart(dbxCustomTo) : seasons[0];
+      const seasonSel = document.getElementById("dbx-custom-season");
+      seasonSel.innerHTML = seasons.map(sy => `<option value="${sy}" ${sy===customSeason?"selected":""}>${_seasonLabel(sy)}</option>`).join("");
+      // Après tout changement, on force Du ≤ Au en resserrant l'autre borne plutôt que de
+      // permettre un intervalle inversé.
+      function afterChange() {
+        if (dbxCustomFrom > dbxCustomTo) dbxCustomTo = dbxCustomFrom;
         _dbxSyncHash();
         renderDashboard();
-      });
-      document.getElementById("dbx-custom-to").addEventListener("change", e => {
-        dbxCustomTo = e.target.value;
+      }
+      _wireDateDd2("dbxfrom", () => customSeason, () => dbxCustomFrom, date => { dbxCustomFrom = date; afterChange(); });
+      _wireDateDd2("dbxto", () => customSeason, () => dbxCustomTo, date => { dbxCustomTo = date; afterChange(); });
+      seasonSel.addEventListener("change", () => {
+        customSeason = Number(seasonSel.value);
+        const months = _dbxMonthsForSeason(customSeason);
+        const days = _dateDdDaysForMonth(customSeason, months[0]);
+        if (days.length) { dbxCustomFrom = days[0]; dbxCustomTo = days[days.length-1]; }
         updateSubFilter("custom");
         _dbxSyncHash();
         renderDashboard();
@@ -5930,13 +5976,11 @@ function renderDashboard() {
 
 function populateSessionSelect() {
   const sel = document.getElementById("session-date");
-  const ddLabel = document.getElementById("sess-dd-label");
-  const ddPanel = document.getElementById("sess-dd-panel");
+  const ddRow = document.getElementById("sess-dd-row");
   sel.innerHTML = "";
   if (!SESSIONS.length) {
     sel.innerHTML = `<option value="">Aucune session disponible</option>`;
-    if (ddLabel) ddLabel.textContent = "Aucune session";
-    if (ddPanel) ddPanel.innerHTML = "";
+    if (ddRow) ddRow.innerHTML = "";
     return;
   }
   const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
@@ -5947,37 +5991,14 @@ function populateSessionSelect() {
     if (i === 0) opt.selected = true;
     sel.appendChild(opt);
   });
-  if (ddPanel) {
-    ddPanel.innerHTML = sorted.map((s, i) =>
-      `<button type="button" class="sess-dd-opt${i===0?" active":""}" data-date="${s.date}">${fmtDate(s.date)}</button>`
-    ).join("");
+  if (ddRow) {
+    ddRow.innerHTML = _dateDdHTML("sess");
+    _wireDateDd("sess", () => sel.value, date => {
+      sel.value = date;
+      sel.dispatchEvent(new Event("change"));
+    });
   }
-  _syncSessDd(sorted[0].date);
 }
-
-function _syncSessDd(date) {
-  const ddLabel = document.getElementById("sess-dd-label");
-  const btn = document.querySelector(`.sess-dd-opt[data-date="${date}"]`);
-  if (ddLabel) ddLabel.textContent = btn ? btn.textContent : fmtDate(date);
-  document.querySelectorAll(".sess-dd-opt").forEach(o => o.classList.toggle("active", o === btn));
-}
-
-document.getElementById("sess-dd-btn").addEventListener("click", () => {
-  document.getElementById("sess-dd").classList.toggle("open");
-});
-document.getElementById("sess-dd-panel").addEventListener("click", e => {
-  const btn = e.target.closest(".sess-dd-opt");
-  if (!btn) return;
-  const sel = document.getElementById("session-date");
-  sel.value = btn.dataset.date;
-  _syncSessDd(btn.dataset.date);
-  document.getElementById("sess-dd").classList.remove("open");
-  sel.dispatchEvent(new Event("change"));
-});
-document.addEventListener("click", e => {
-  const dd = document.getElementById("sess-dd");
-  if (dd.classList.contains("open") && !dd.contains(e.target)) dd.classList.remove("open");
-});
 
 
 function renderSessionResults(date) {
@@ -6039,13 +6060,6 @@ function _goToSaisie() {
   renderSaisie();
 }
 document.getElementById("saisie-nav-btn").addEventListener("click", _goToSaisie);
-
-/* Fermeture du sélecteur de session du Dashboard au clic extérieur
-   (motif sess-dd existant, espace de noms dbx- dédié). */
-document.addEventListener("click", e => {
-  const dd = document.getElementById("dbx-sess-dd");
-  if (dd && dd.classList.contains("open") && !dd.contains(e.target)) dd.classList.remove("open");
-});
 
 document.getElementById("session-date").addEventListener("change", e => {
   renderSessionResults(e.target.value);
