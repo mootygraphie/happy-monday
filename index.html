@@ -1217,10 +1217,19 @@
     mask-image: linear-gradient(to right, transparent, black 14px, black calc(100% - 14px), transparent);
   }
   .sfm-ticker::-webkit-scrollbar { display: none; }
+  @media (min-width: 601px) {
+    /* Desktop : plus de defilement du tout, les matchs s enchainent par lignes de 6
+       (aucune souris sans molette horizontale n a besoin de scroller quoi que ce soit).
+       Mobile : inchange, defilement tactile natif. */
+    .sfm-ticker {
+      display: grid; grid-template-columns: repeat(6, 1fr); overflow-x: visible;
+      -webkit-mask-image: none; mask-image: none;
+    }
+  }
   /* Souris sans molette horizontale : le clic-glisser (voir le gestionnaire JS délégué
      "hscroll") reste le seul moyen de défiler un bandeau à scrollbar masquée. */
-  .sfm-ticker, .roster-sort-row, .pph-stat-scroller, .pph-moments-scroller, .dbx2-trend-scroll { cursor: grab; }
-  .sfm-ticker:active, .roster-sort-row:active, .pph-stat-scroller:active, .pph-moments-scroller:active, .dbx2-trend-scroll:active { cursor: grabbing; }
+  .roster-sort-row, .pph-stat-scroller, .pph-moments-scroller, .dbx2-trend-scroll { cursor: grab; }
+  .roster-sort-row:active, .pph-stat-scroller:active, .pph-moments-scroller:active, .dbx2-trend-scroll:active { cursor: grabbing; }
   .sfm-t-stop { position: relative; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .sfm-t-num { font-size: 10px; color: var(--text3); font-variant-numeric: tabular-nums; }
   .sfm-t-chip { display: flex; align-items: center; padding: 6px 12px; border-radius: 20px; background: var(--bg); border: 1px solid var(--border2); font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums; transition: all .15s; cursor: pointer; }
@@ -1786,7 +1795,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 03/09/2026 - 19:12</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 03/09/2026 - 19:27</footer>
 
 <script>
 
@@ -8890,7 +8899,7 @@ document.addEventListener("click", e => {
    molette horizontale n'a que ce geste. Délégué sur document car ces bandeaux sont
    recréés à chaque rendu (innerHTML). */
 {
-  const HSCROLL_SEL = ".sfm-ticker, .roster-sort-row, .pph-stat-scroller, .pph-moments-scroller, .dbx2-trend-scroll";
+  const HSCROLL_SEL = ".roster-sort-row, .pph-stat-scroller, .pph-moments-scroller, .dbx2-trend-scroll";
   let dragEl = null, startX = 0, startScroll = 0, dragged = false;
   document.addEventListener("mousedown", e => {
     const el = e.target.closest(HSCROLL_SEL);
