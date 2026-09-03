@@ -1217,6 +1217,10 @@
     mask-image: linear-gradient(to right, transparent, black 14px, black calc(100% - 14px), transparent);
   }
   .sfm-ticker::-webkit-scrollbar { display: none; }
+  /* Souris sans molette horizontale : le clic-glisser (voir le gestionnaire JS délégué
+     "hscroll") reste le seul moyen de défiler un bandeau à scrollbar masquée. */
+  .sfm-ticker, .roster-sort-row, .pph-stat-scroller, .pph-moments-scroller, .dbx2-trend-scroll { cursor: grab; }
+  .sfm-ticker:active, .roster-sort-row:active, .pph-stat-scroller:active, .pph-moments-scroller:active, .dbx2-trend-scroll:active { cursor: grabbing; }
   .sfm-t-stop { position: relative; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .sfm-t-num { font-size: 10px; color: var(--text3); font-variant-numeric: tabular-nums; }
   .sfm-t-chip { display: flex; align-items: center; padding: 6px 12px; border-radius: 20px; background: var(--bg); border: 1px solid var(--border2); font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums; transition: all .15s; cursor: pointer; }
@@ -1782,7 +1786,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 02/09/2026 - 16:11</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 03/09/2026 - 19:12</footer>
 
 <script>
 
@@ -2823,21 +2827,20 @@ function computeGardiensRanking(sessions) {
       // Chaque mi-temps gardee compte comme une unite a part entiere pour la moyenne
       // encaissee (meme si le meme gardien tient les deux mi-temps) : sinon un 0-0 en
       // 1ere mi-temps suivi d un 0-2 en 2e se noierait en une seule "presence".
-      [[gA[0],mt1Ac],[gA[1],mt2Ac],[gB[0],mt1Bc],[gB[1],mt2Bc]].forEach(([p,c]) => {
+      const halves = [[gA[0],mt1Ac],[gA[1],mt2Ac],[gB[0],mt1Bc],[gB[1],mt2Bc]];
+      halves.forEach(([p,c]) => {
         if (!p || !p.trim()) return;
         if (!stats[p]) stats[p] = { matchs: 0, buts: 0, cleanSheets: 0 };
         stats[p].matchs++;
         stats[p].buts += c;
       });
-      // Clean sheet : sur le MATCH COMPLET, pas par mi-temps — sinon un seul 0-0 tenu
-      // par un gardien qui joue les deux mi-temps compterait pour 2 clean sheets. Si
-      // deux gardiens differents se relaient sur un match nul et vierge, les deux
-      // recoivent le clean sheet complet (genereux pour celui qui n a garde qu une
-      // mi-temps, accepte comme tel).
-      const uniqA = [...new Set(gA.filter(p => p && p.trim()))];
-      const uniqB = [...new Set(gB.filter(p => p && p.trim()))];
-      if ((m.scoreB||0) === 0) uniqA.forEach(p => { if (!stats[p]) stats[p] = { matchs: 0, buts: 0, cleanSheets: 0 }; stats[p].cleanSheets++; });
-      if ((m.scoreA||0) === 0) uniqB.forEach(p => { if (!stats[p]) stats[p] = { matchs: 0, buts: 0, cleanSheets: 0 }; stats[p].cleanSheets++; });
+      // Clean sheet par mi-temps : chaque mi-temps gardee a 0 but encaisse vaut 1 clean
+      // sheet pour le gardien de cette mi-temps (deux gardiens differents qui se relaient
+      // sur un 0-0 recoivent donc chacun 1). Si le meme gardien tient les 2 mi-temps
+      // consecutives du match, ca ne compte qu une fois pour ce match, pas deux.
+      const cleanBy = {};
+      halves.forEach(([p,c]) => { if (p && p.trim() && c === 0) cleanBy[p] = true; });
+      Object.keys(cleanBy).forEach(p => { if (!stats[p]) stats[p] = { matchs: 0, buts: 0, cleanSheets: 0 }; stats[p].cleanSheets++; });
     });
   });
   return Object.entries(stats)
@@ -2889,15 +2892,16 @@ function _dbxTeamScopedEquipeType(sessions, color) {
         // 4 sur une soiree a 3 equipes) ne fait pas partie de cette couleur — on ne
         // le compte pas ici, meme s il a garde les buts ce soir-la sous cette couleur.
         const gs = isA ? (m.gardiensA||[]) : (m.gardiensB||[]);
-        const matchConceded = isA ? (m.scoreB||0) : (m.scoreA||0);
-        const uniqGk = [...new Set(gs.filter(p => p && p.trim() && (presences[p]||{}).equipe === color))];
-        [[gs[0],mt1c],[gs[1],mt2c]].forEach(([p,c]) => {
-          if (!p || !p.trim() || (presences[p]||{}).equipe !== color) return;
+        const gsHalves = [[gs[0],mt1c],[gs[1],mt2c]].filter(([p]) => p && p.trim() && (presences[p]||{}).equipe === color);
+        gsHalves.forEach(([p,c]) => {
           gkMap[p] = gkMap[p] || { matchs:0, buts:0, cleanSheets:0 };
           gkMap[p].matchs++; gkMap[p].buts += c;
         });
-        // Clean sheet sur le match complet, pas par mi-temps (cf computeGardiensRanking).
-        if (matchConceded === 0) uniqGk.forEach(p => { gkMap[p] = gkMap[p] || { matchs:0, buts:0, cleanSheets:0 }; gkMap[p].cleanSheets++; });
+        // Clean sheet par mi-temps (cf computeGardiensRanking) : dedupe par gardien pour
+        // ce match, pas par mi-temps.
+        const cleanBy = {};
+        gsHalves.forEach(([p,c]) => { if (c === 0) cleanBy[p] = true; });
+        Object.keys(cleanBy).forEach(p => { gkMap[p] = gkMap[p] || { matchs:0, buts:0, cleanSheets:0 }; gkMap[p].cleanSheets++; });
       }
     });
   });
@@ -6731,13 +6735,16 @@ function computeAchievementStats(playerName) {
           if(gA[1]===playerName){gardiensButsEncaisses+=mt2Ac;}
           if(gB[0]===playerName){gardiensButsEncaisses+=mt1Bc;}
           if(gB[1]===playerName){gardiensButsEncaisses+=mt2Bc;}
-          // Clean sheet et "matchs gardes" : sur le MATCH COMPLET, pas par mi-temps —
-          // sinon un seul 0-0 tenu sur les 2 mi-temps compterait pour 2 clean sheets.
+          // Clean sheet par mi-temps : chaque mi-temps gardee a 0 but encaisse vaut 1 —
+          // mais si le joueur tient les 2 mi-temps consecutives du meme match, ca ne
+          // compte qu une fois pour ce match, pas deux.
           const inA = gA[0]===playerName || gA[1]===playerName;
           const inB = gB[0]===playerName || gB[1]===playerName;
           if(inA || inB){
             gardiensMatchs++;
-            if((inA && (m.scoreB||0)===0) || (inB && (m.scoreA||0)===0)) gardiensCleanSheets++;
+            const cleanHalf = (gA[0]===playerName && mt1Ac===0) || (gA[1]===playerName && mt2Ac===0)
+                            || (gB[0]===playerName && mt1Bc===0) || (gB[1]===playerName && mt2Bc===0);
+            if(cleanHalf) gardiensCleanSheets++;
           }
         }
         if(inMatch){
@@ -8877,6 +8884,33 @@ document.addEventListener("click", e => {
   const btn = e.target.closest(".player-link");
   if (btn && btn.dataset.player) openPlayerPanel(btn.dataset.player);
 });
+
+/* Clic-glisser sur les bandeaux à défilement horizontal (scrollbar masquée par design).
+   La molette+Shift et le trackpad défilent déjà nativement ; une souris classique sans
+   molette horizontale n'a que ce geste. Délégué sur document car ces bandeaux sont
+   recréés à chaque rendu (innerHTML). */
+{
+  const HSCROLL_SEL = ".sfm-ticker, .roster-sort-row, .pph-stat-scroller, .pph-moments-scroller, .dbx2-trend-scroll";
+  let dragEl = null, startX = 0, startScroll = 0, dragged = false;
+  document.addEventListener("mousedown", e => {
+    const el = e.target.closest(HSCROLL_SEL);
+    if (!el || el.scrollWidth <= el.clientWidth) return;
+    dragEl = el; startX = e.clientX; startScroll = el.scrollLeft; dragged = false;
+  });
+  document.addEventListener("mousemove", e => {
+    if (!dragEl) return;
+    const dx = e.clientX - startX;
+    if (Math.abs(dx) > 3) dragged = true;
+    if (dragged) dragEl.scrollLeft = startScroll - dx;
+  });
+  document.addEventListener("mouseup", () => { dragEl = null; });
+  // Empêche le clic de déclencher l'action du dessous (ex: ouvrir un match) juste après
+  // un glisser, sans bloquer les clics normaux (non déplacés).
+  document.addEventListener("click", e => {
+    if (dragged && e.target.closest(HSCROLL_SEL)) { e.preventDefault(); e.stopPropagation(); }
+    dragged = false;
+  }, true);
+}
 
 /* ── Tooltip hauts faits ── */
 {
