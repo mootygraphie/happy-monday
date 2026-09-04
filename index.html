@@ -936,6 +936,9 @@
   .saisie-picker-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 9px; }
   .saisie-picker-hdr span { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); }
   .saisie-picker-hdr button { background: none; border: none; color: var(--text3); font-size: 16px; cursor: pointer; line-height: 1; padding: 2px 4px; }
+  /* Grille de chips : reste utilisee pour les pickers a peu d options (equipe d un
+     joueur en Repartition, echange d equipe d un match) — seule la selection de joueur
+     (gardien/buteur/passeur/banc, potentiellement longue) passe en liste ci-dessous. */
   .saisie-picker-grid { display: flex; flex-wrap: wrap; gap: 7px; }
   .saisie-pchip { border: 1.5px solid var(--border2); background: var(--bg3); border-radius: 999px; padding: 9px 15px; font: inherit; font-weight: 700; font-size: 13.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: transform .1s, border-color .15s; min-height: 40px; max-width: 100%; overflow-wrap: anywhere; }
   .saisie-pchip:hover { transform: translateY(-1px); }
@@ -945,6 +948,22 @@
   .saisie-pchip.vert  { border-color: var(--vert-border);  color: var(--vert); }  .saisie-pchip.vert .pdot  { background: var(--vert); }
   .saisie-pchip.bleue { border-color: var(--bleu-border);  color: var(--bleu); }  .saisie-pchip.bleue .pdot { background: var(--bleu); }
   .saisie-pchip.muted { color: var(--text3); font-weight: 600; }
+  /* Liste défilante (remplace la grille de chips) : une ligne pleine largeur par joueur,
+     groupée par équipe (équipe sur le terrain, puis équipe qui dépanne — même ordre que
+     le pool ; la couleur du point suffit à distinguer un joueur prêté, pas besoin d'un
+     badge en plus). */
+  .saisie-picker-list { max-height: 300px; overflow-y: auto; margin: 0 -4px; padding: 0 4px; }
+  .saisie-plist-group-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); padding: 10px 6px 5px; }
+  .saisie-plist-group-lbl:first-child { padding-top: 2px; }
+  .saisie-plist-row { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: none; border: none; padding: 11px 6px; border-radius: 9px; font: inherit; font-size: 14px; font-weight: 700; color: var(--text); cursor: pointer; min-height: 40px; }
+  .saisie-plist-row:hover { background: var(--bg3); }
+  .saisie-plist-row:active { background: var(--gold-bg); }
+  .saisie-plist-row .name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .saisie-plist-row .pdot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .saisie-plist-row.rouge .pdot { background: var(--rouge); }
+  .saisie-plist-row.vert  .pdot { background: var(--vert); }
+  .saisie-plist-row.bleue .pdot { background: var(--bleu); }
+  .saisie-plist-row.muted { color: var(--text3); font-weight: 600; }
 
   .saisie-me-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
   .saisie-add-match { width: 100%; padding: 10px; background: transparent; border: 2px dashed var(--border2); border-radius: 10px; color: var(--text2); font-size: 14px; cursor: pointer; transition: all .15s; margin-top: 14px; }
@@ -1795,7 +1814,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 03/09/2026 - 19:27</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 04/09/2026 - 17:10</footer>
 
 <script>
 
@@ -7598,18 +7617,28 @@ function _saisieFieldBtnHTML(value, placeholder, key, emptyWarn) {
   const dotEl = info && info.team ? `<span class="fdot ${info.team.toLowerCase()}"></span>` : "";
   return `<button class="${cls}" data-act="saisie-open-picker" data-key="${key}">${dotEl}<span class="flabel">${info ? info.name : placeholder}</span><span class="chev2">▾</span></button>`;
 }
+// Liste defilante plutot qu une grille de chips : plus facile a parcourir des que
+// l effectif + l equipe qui depanne allongent la liste. Groupee par equipe, dans le
+// meme ordre que le pool recu (equipe sur le terrain, puis equipe de depanne, puis les
+// presents sans equipe) — la couleur du point suffit a reperer un joueur prete, pas
+// besoin d une etiquette en plus sur chaque ligne.
 function _saisiePickerHTML(key, title, options, includeCSC, allowNone) {
   if (!_saisiePicker || _saisiePicker.key !== key) return "";
-  const chips = [];
-  if (includeCSC) chips.push(`<button class="saisie-pchip muted" data-act="saisie-pick" data-key="${key}" data-val="CSC">CSC (c.s.c.)</button>`);
-  if (allowNone !== false) chips.push(`<button class="saisie-pchip muted" data-act="saisie-pick" data-key="${key}" data-val="">— aucun —</button>`);
+  const rows = [];
+  if (includeCSC) rows.push(`<button class="saisie-plist-row muted" data-act="saisie-pick" data-key="${key}" data-val="CSC">CSC (c.s.c.)</button>`);
+  if (allowNone !== false) rows.push(`<button class="saisie-plist-row muted" data-act="saisie-pick" data-key="${key}" data-val="">— aucun —</button>`);
+  let lastGroup;
   options.forEach(p => {
-    const eq = (_draft.presences[p]?.equipe || "").toLowerCase();
-    chips.push(`<button class="saisie-pchip ${eq}" data-act="saisie-pick" data-key="${key}" data-val="${p}"><span class="pdot"></span>${p}</button>`);
+    const eq = _draft.presences[p]?.equipe || "";
+    if (eq !== lastGroup) {
+      lastGroup = eq;
+      rows.push(`<div class="saisie-plist-group-lbl">${eq ? (TEAM_LABEL[eq]||eq) : "Sans équipe"}</div>`);
+    }
+    rows.push(`<button class="saisie-plist-row ${eq.toLowerCase()}" data-act="saisie-pick" data-key="${key}" data-val="${p}"><span class="pdot"></span><span class="name">${p}</span></button>`);
   });
   return `<div class="saisie-picker">
     <div class="saisie-picker-hdr"><span>${title}</span><button data-act="saisie-close-picker">✕</button></div>
-    <div class="saisie-picker-grid">${chips.join("")}</div>
+    <div class="saisie-picker-list">${rows.join("")}</div>
   </div>`;
 }
 // phase "mt1" -> les mt1(A|B) premiers buts du tableau plat buteurs/passeurs ; phase
