@@ -1818,7 +1818,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 08/09/2026 - 08:43</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 08/09/2026 - 10:29</footer>
 
 <script>
 
@@ -2891,6 +2891,12 @@ function _dbxTeamScopedEquipeType(sessions, color) {
 
   sessions.forEach(s => {
     const presences = s.presences || {};
+    // Soiree a 4 joueurs presents pour cette couleur (pas de gardien vraiment dedie,
+    // tout le monde tourne) : on met en avant les postes de champ pour cette equipe-la,
+    // ce match ne credite donc personne comme gardien (mais compte normalement pour
+    // buts/passes/defense).
+    const teamPresentCount = Object.values(presences).filter(v => v.statut === "Présent" && v.equipe === color).length;
+    const teamHasNoDedicatedGk = teamPresentCount === 4;
     (s.matchs || []).forEach(m => {
       const isA = m.eqA === color, isB = m.eqB === color;
       if (!isA && !isB) return;
@@ -2919,7 +2925,7 @@ function _dbxTeamScopedEquipeType(sessions, color) {
         if (banc[1] !== player) { defMap[player].goalsAgainst += mt2c; defMap[player].matchCount++; }
       });
 
-      if (hasHalves) {
+      if (hasHalves && !teamHasNoDedicatedGk) {
         // Un gardien "mercenaire" (venu depanner une autre couleur, ex : equipes a
         // 4 sur une soiree a 3 equipes) ne fait pas partie de cette couleur — on ne
         // le compte pas ici, meme s il a garde les buts ce soir-la sous cette couleur.
@@ -2965,6 +2971,55 @@ function _dbxTeamScopedEquipeType(sessions, color) {
    sans minimum par poste (ex: 2 attaquants + 2 défenseurs sans milieu est valide si les
    stats de la période penchent nettement de ce côté). outfield/gks doivent deja porter
    un champ .team (couleur d'équipe) resolu par l'appelant (session ou periode). */
+// Les dispositions valables pour les 4 postes de champ (gardien toujours a part). Les 15
+// combinaisons mathematiques (def+milieu+but=4) existent, mais certaines sont irrealistes
+// en foot a 5 (4 defenseurs et personne d ailleurs, 0 defenseur avec 3-4 attaquants...) —
+// on ne retient que celles qui ont du sens sur le terrain.
+const EQUIPE_TYPE_FORMATIONS = [
+  { defenseur: 2, milieu: 1, attaquant: 1 },
+  { defenseur: 2, milieu: 0, attaquant: 2 },
+  { defenseur: 0, milieu: 2, attaquant: 2 },
+  { defenseur: 2, milieu: 2, attaquant: 0 },
+  { defenseur: 3, milieu: 0, attaquant: 1 },
+  { defenseur: 3, milieu: 1, attaquant: 0 },
+  { defenseur: 1, milieu: 1, attaquant: 2 },
+  { defenseur: 1, milieu: 2, attaquant: 1 },
+  { defenseur: 1, milieu: 0, attaquant: 3 },
+  { defenseur: 0, milieu: 1, attaquant: 3 },
+];
+
+// Remplit une disposition donnee en glouton (meilleur joueur/poste restant a chaque tour,
+// borne par les effectifs de cette disposition) et renvoie le score total obtenu.
+function _fillEquipeTypeFormation(candidates, roleCaps, scoreFor) {
+  const ROLE_PRIORITY = { attaquant: 0, milieu: 1, defenseur: 2 };
+  const roles = ["attaquant", "milieu", "defenseur"];
+  const counts = { attaquant: 0, milieu: 0, defenseur: 0 };
+  const usedNames = new Set();
+  const picks = [];
+  const slotsToFill = Math.min(4, candidates.length);
+
+  for (let slot = 0; slot < slotsToFill; slot++) {
+    let best = null;
+    candidates.forEach(p => {
+      if (usedNames.has(p.name)) return;
+      roles.forEach(role => {
+        if (counts[role] >= roleCaps[role]) return;
+        const s = scoreFor(p, role);
+        const better = !best || s > best.s + 1e-9 ||
+          (Math.abs(s - best.s) < 1e-9 && (ROLE_PRIORITY[role] < ROLE_PRIORITY[best.role] ||
+            (ROLE_PRIORITY[role] === ROLE_PRIORITY[best.role] && p.name.localeCompare(best.p.name, "fr") < 0)));
+        if (better) best = { p, role, s };
+      });
+    });
+    if (!best) break;
+    counts[best.role]++;
+    usedNames.add(best.p.name);
+    picks.push({ ...best.p, role: best.role, _s: best.s });
+  }
+  const total = picks.reduce((sum, p) => sum + p._s, 0);
+  return { picks, total };
+}
+
 function _pickEquipeType(outfield, gks, gkCriteria) {
   if (!gks.length) return null;
   const gk = gks.slice().sort((a,b) => gkCriteria === "cs"
@@ -2989,32 +3044,23 @@ function _pickEquipeType(outfield, gks, gkCriteria) {
     : role === "milieu" ? (p.passes / maxPasses) * Math.min(1, p.passes / 3)
     : (1 - (p.defAvg - minDef) / defRange) * Math.min(1, (p.matchCount || 3) / 3);
 
-  const ROLE_PRIORITY = { attaquant: 0, milieu: 1, defenseur: 2 };
-  const roles = ["attaquant", "milieu", "defenseur"];
-  const counts = { attaquant: 0, milieu: 0, defenseur: 0 };
-  const usedNames = new Set();
-  const picks = [];
-  const slotsToFill = Math.min(4, candidates.length);
+  // Essaie chaque disposition et retient celle qui degage le meilleur score total sur les
+  // 4 postes de champ : une soiree avec 3 buteurs en forme fera ressortir un 1-0-3, une
+  // soiree plus equilibree un 2-1-1. Petite penalite (pas un veto) par poste laisse a 0
+  // pour continuer a favoriser une equipe equilibree quand les scores sont proches — une
+  // disposition specialisee ne l emporte que si elle est nettement meilleure.
+  const ZERO_PENALTY = 0.25;
+  let bestFormation = null;
+  EQUIPE_TYPE_FORMATIONS.forEach(caps => {
+    const { picks, total } = _fillEquipeTypeFormation(candidates, caps, scoreFor);
+    const zeroCount = Object.values(caps).filter(n => n === 0).length;
+    const adjusted = total - zeroCount * ZERO_PENALTY;
+    if (!bestFormation || adjusted > bestFormation.adjusted + 1e-9) {
+      bestFormation = { picks, adjusted };
+    }
+  });
 
-  for (let slot = 0; slot < slotsToFill; slot++) {
-    let best = null;
-    candidates.forEach(p => {
-      if (usedNames.has(p.name)) return;
-      roles.forEach(role => {
-        if (counts[role] >= 2) return;
-        const s = scoreFor(p, role);
-        const better = !best || s > best.s + 1e-9 ||
-          (Math.abs(s - best.s) < 1e-9 && (ROLE_PRIORITY[role] < ROLE_PRIORITY[best.role] ||
-            (ROLE_PRIORITY[role] === ROLE_PRIORITY[best.role] && p.name.localeCompare(best.p.name, "fr") < 0)));
-        if (better) best = { p, role, s };
-      });
-    });
-    if (!best) break;
-    counts[best.role]++;
-    usedNames.add(best.p.name);
-    picks.push({ ...best.p, role: best.role });
-  }
-
+  const picks = bestFormation ? bestFormation.picks : [];
   const attaquants = picks.filter(p => p.role === "attaquant");
   const milieux = picks.filter(p => p.role === "milieu");
   const defenseurs = picks.filter(p => p.role === "defenseur");
