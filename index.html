@@ -1818,7 +1818,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 08/09/2026 - 10:29</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 08/09/2026 - 10:39</footer>
 
 <script>
 
@@ -2971,26 +2971,19 @@ function _dbxTeamScopedEquipeType(sessions, color) {
    sans minimum par poste (ex: 2 attaquants + 2 défenseurs sans milieu est valide si les
    stats de la période penchent nettement de ce côté). outfield/gks doivent deja porter
    un champ .team (couleur d'équipe) resolu par l'appelant (session ou periode). */
-// Les dispositions valables pour les 4 postes de champ (gardien toujours a part). Les 15
-// combinaisons mathematiques (def+milieu+but=4) existent, mais certaines sont irrealistes
-// en foot a 5 (4 defenseurs et personne d ailleurs, 0 defenseur avec 3-4 attaquants...) —
-// on ne retient que celles qui ont du sens sur le terrain.
+// Les dispositions valables pour les 4 postes de champ (gardien toujours a part) — les
+// seules qui n ont jamais un poste a 0, pour toujours garder une equipe equilibree.
 const EQUIPE_TYPE_FORMATIONS = [
   { defenseur: 2, milieu: 1, attaquant: 1 },
-  { defenseur: 2, milieu: 0, attaquant: 2 },
-  { defenseur: 0, milieu: 2, attaquant: 2 },
-  { defenseur: 2, milieu: 2, attaquant: 0 },
-  { defenseur: 3, milieu: 0, attaquant: 1 },
-  { defenseur: 3, milieu: 1, attaquant: 0 },
   { defenseur: 1, milieu: 1, attaquant: 2 },
   { defenseur: 1, milieu: 2, attaquant: 1 },
-  { defenseur: 1, milieu: 0, attaquant: 3 },
-  { defenseur: 0, milieu: 1, attaquant: 3 },
 ];
 
 // Remplit une disposition donnee en glouton (meilleur joueur/poste restant a chaque tour,
 // borne par les effectifs de cette disposition) et renvoie le score total obtenu.
-function _fillEquipeTypeFormation(candidates, roleCaps, scoreFor) {
+// forcedTopScorer : le meilleur buteur du groupe est toujours affiche en attaquant,
+// meme si un autre choix aurait degage un score total legerement superieur.
+function _fillEquipeTypeFormation(candidates, roleCaps, scoreFor, forcedTopScorer) {
   const ROLE_PRIORITY = { attaquant: 0, milieu: 1, defenseur: 2 };
   const roles = ["attaquant", "milieu", "defenseur"];
   const counts = { attaquant: 0, milieu: 0, defenseur: 0 };
@@ -2998,7 +2991,13 @@ function _fillEquipeTypeFormation(candidates, roleCaps, scoreFor) {
   const picks = [];
   const slotsToFill = Math.min(4, candidates.length);
 
-  for (let slot = 0; slot < slotsToFill; slot++) {
+  if (forcedTopScorer && roleCaps.attaquant > 0) {
+    counts.attaquant++;
+    usedNames.add(forcedTopScorer.name);
+    picks.push({ ...forcedTopScorer, role: "attaquant", _s: scoreFor(forcedTopScorer, "attaquant") });
+  }
+
+  for (let slot = picks.length; slot < slotsToFill; slot++) {
     let best = null;
     candidates.forEach(p => {
       if (usedNames.has(p.name)) return;
@@ -3044,19 +3043,18 @@ function _pickEquipeType(outfield, gks, gkCriteria) {
     : role === "milieu" ? (p.passes / maxPasses) * Math.min(1, p.passes / 3)
     : (1 - (p.defAvg - minDef) / defRange) * Math.min(1, (p.matchCount || 3) / 3);
 
-  // Essaie chaque disposition et retient celle qui degage le meilleur score total sur les
-  // 4 postes de champ : une soiree avec 3 buteurs en forme fera ressortir un 1-0-3, une
-  // soiree plus equilibree un 2-1-1. Petite penalite (pas un veto) par poste laisse a 0
-  // pour continuer a favoriser une equipe equilibree quand les scores sont proches — une
-  // disposition specialisee ne l emporte que si elle est nettement meilleure.
-  const ZERO_PENALTY = 0.25;
+  // Le meilleur buteur du groupe est toujours affiche en attaquant, quoi qu il arrive.
+  const topScorer = candidates
+    .filter(p => p.buts > 0)
+    .sort((a,b) => b.buts - a.buts || a.name.localeCompare(b.name, "fr"))[0] || null;
+
+  // Essaie chaque disposition (toutes equilibrees, jamais un poste a 0) et retient celle
+  // qui degage le meilleur score total sur les 4 postes de champ.
   let bestFormation = null;
   EQUIPE_TYPE_FORMATIONS.forEach(caps => {
-    const { picks, total } = _fillEquipeTypeFormation(candidates, caps, scoreFor);
-    const zeroCount = Object.values(caps).filter(n => n === 0).length;
-    const adjusted = total - zeroCount * ZERO_PENALTY;
-    if (!bestFormation || adjusted > bestFormation.adjusted + 1e-9) {
-      bestFormation = { picks, adjusted };
+    const { picks, total } = _fillEquipeTypeFormation(candidates, caps, scoreFor, topScorer);
+    if (!bestFormation || total > bestFormation.total + 1e-9) {
+      bestFormation = { picks, total };
     }
   });
 
