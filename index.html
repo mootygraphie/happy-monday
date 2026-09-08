@@ -1818,7 +1818,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 07/09/2026 - 09:53</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 08/09/2026 - 08:43</footer>
 
 <script>
 
@@ -3407,10 +3407,12 @@ function _sfmSpotlightMeta(m, kind) {
       `${topA.name} n'a pas marqué, mais tout le monde marquait grâce à lui : ${topA.count} passes décisives.`,
     ]);
   } else if (kind === "csc") {
+    const cscBeneficiary = (m.buteursB||[]).includes("CSC") ? m.eqB : m.eqA;
+    const cscTeam = TEAM_LABEL[cscBeneficiary] || cscBeneficiary;
     caption = _sfmPick([
       `Un but contre son camp est venu pimenter la soirée — ça arrive aux meilleurs.`,
       `Petit cadeau involontaire dans ce match : un CSC est venu corser l'addition.`,
-      `Un but contre son camp au menu de ce match — la défense adverse dit merci.`,
+      `Un but contre son camp au menu de ce match — les ${cscTeam} disent merci.`,
     ]);
   } else if (kind === "highscore") {
     const total = m.scoreA + m.scoreB;
@@ -3865,20 +3867,25 @@ function buildBallonDorHtml() {
   const _bdPs = {};
   SESSIONS.filter(s => _seasonStart(s.date) === _bdYear).forEach(s => {
     (s.matchs || []).forEach(m => {
+      const scoredInMatch = new Set();
       ["A","B"].forEach(side => {
         const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
         buts.forEach((b,i) => {
           if (!b || b==="CSC") return;
-          if (!_bdPs[b]) _bdPs[b]={buts:0,passes:0}; _bdPs[b].buts++;
-          const p = passes[i]; if (p && p!=="CSC") { if (!_bdPs[p]) _bdPs[p]={buts:0,passes:0}; _bdPs[p].passes++; }
+          if (!_bdPs[b]) _bdPs[b]={buts:0,passes:0,matchsScored:0}; _bdPs[b].buts++;
+          scoredInMatch.add(b);
+          const p = passes[i]; if (p && p!=="CSC") { if (!_bdPs[p]) _bdPs[p]={buts:0,passes:0,matchsScored:0}; _bdPs[p].passes++; }
         });
       });
+      scoredInMatch.forEach(name => { _bdPs[name].matchsScored++; });
     });
   });
+  // Egalite aux points : d abord le plus de passes decisives, puis le plus de matchs ou
+  // il a marque au moins 1 but (regularite), puis alphabetique.
   const _bdFull = Object.entries(_bdPs)
-    .map(([name, p]) => ({ name, buts: p.buts, passes: p.passes, pts: p.buts * 5 + p.passes * 10 }))
+    .map(([name, p]) => ({ name, buts: p.buts, passes: p.passes, matchsScored: p.matchsScored, pts: p.buts * 5 + p.passes * 10 }))
     .filter(p => p.pts > 0)
-    .sort((a, b) => b.pts - a.pts || b.buts - a.buts || a.name.localeCompare(b.name, "fr"));
+    .sort((a, b) => b.pts - a.pts || b.passes - a.passes || b.matchsScored - a.matchsScored || a.name.localeCompare(b.name, "fr"));
   const _bdMedals = ["🥇","🥈","🥉"];
   let html = `<div class="award-card" style="--award-color:var(--gold);--award-bg:var(--gold-bg);--award-border:var(--gold-border)">
     <div class="award-head">
@@ -6687,22 +6694,26 @@ function _computeBallonDorWins() {
     const ps = {};
     SESSIONS.filter(s => _seasonStart(s.date) === sy).forEach(s => {
       (s.matchs || []).forEach(m => {
+        const scoredInMatch = new Set();
         ["A","B"].forEach(side => {
           const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
           buts.forEach((b,i) => {
             if (!b || b==="CSC") return;
-            if (!ps[b]) ps[b] = { buts:0, passes:0 };
+            if (!ps[b]) ps[b] = { buts:0, passes:0, matchsScored:0 };
             ps[b].buts++;
+            scoredInMatch.add(b);
             const p = passes[i];
-            if (p && p!=="CSC") { if (!ps[p]) ps[p] = { buts:0, passes:0 }; ps[p].passes++; }
+            if (p && p!=="CSC") { if (!ps[p]) ps[p] = { buts:0, passes:0, matchsScored:0 }; ps[p].passes++; }
           });
         });
+        scoredInMatch.forEach(name => { ps[name].matchsScored++; });
       });
     });
+    // Meme ordre de departage que buildBallonDorHtml (passes puis matchs marques).
     const ranked = Object.entries(ps)
-      .map(([name,p]) => ({ name, buts:p.buts, passes:p.passes, pts: p.buts*5 + p.passes*10 }))
+      .map(([name,p]) => ({ name, buts:p.buts, passes:p.passes, matchsScored:p.matchsScored, pts: p.buts*5 + p.passes*10 }))
       .filter(p => p.pts > 0)
-      .sort((a,b) => b.pts-a.pts || b.buts-a.buts || a.name.localeCompare(b.name,"fr"));
+      .sort((a,b) => b.pts-a.pts || b.passes-a.passes || b.matchsScored-a.matchsScored || a.name.localeCompare(b.name,"fr"));
     if (ranked.length) wins[ranked[0].name] = (wins[ranked[0].name]||0) + 1;
   });
   return wins;
