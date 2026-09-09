@@ -28,6 +28,12 @@
     --shadow: 0 1px 3px rgba(0,0,0,.35);
     --radius: 10px; --radius-lg: 16px;
     --tt-pitch-floor: #5a8770; --tt-pitch-line: rgba(255,255,255,.6);
+    /* Categories des hauts faits (mur de badges, Recompenses publiques) */
+    --hf-attaque: #ff5c7a; --hf-attaque-bg: rgba(255,92,122,.12);
+    --hf-defense: #4fc3f7; --hf-defense-bg: rgba(79,195,247,.12);
+    --hf-collectif: #66d9a0; --hf-collectif-bg: rgba(102,217,160,.12);
+    --hf-presence: #b892ff; --hf-presence-bg: rgba(184,146,255,.12);
+    --hf-distinct: #f5c842; --hf-distinct-bg: rgba(245,200,66,.12);
   }
   /* ── Mode clair ── */
   html.light {
@@ -40,6 +46,11 @@
     --gold-bg: rgba(181,134,10,.1); --gold-border: rgba(181,134,10,.28);
     --good: #1a8a4a; --bad: #d1364a; --bad-bg: rgba(209,54,74,.1); --bad-border: rgba(209,54,74,.24);
     --neutral: #6b6b78; --neutral-bg: rgba(107,107,120,.08); --neutral-border: rgba(107,107,120,.22);
+    --hf-attaque: #d81b52; --hf-attaque-bg: rgba(216,27,82,.09);
+    --hf-defense: #0077b6; --hf-defense-bg: rgba(0,119,182,.09);
+    --hf-collectif: #1a9d5e; --hf-collectif-bg: rgba(26,157,94,.09);
+    --hf-presence: #7b3ff2; --hf-presence-bg: rgba(123,63,242,.09);
+    --hf-distinct: #a5760a; --hf-distinct-bg: rgba(165,118,10,.1);
     --shadow: 0 1px 2px rgba(0,0,0,.05);
     color-scheme: light;
   }
@@ -615,6 +626,21 @@
   html.light .ach-cell.ach-passoire.t4 { background:rgba(5,40,130,.12);   border-color:rgba(5,40,130,.32);   color:#052882; }
   html.light .ach-cell.ach-passoire.t5 { background:rgba(0,20,90,.1);     border-color:rgba(0,40,120,.28);   color:#001464; }
   html.light .ach-cell.ach-passoire.t6 { background:rgba(0,10,50,.12);    border-color:rgba(0,30,100,.35);   color:#000A3C; }
+  /* ── Hauts faits — mur de badges public (hf-showcase-*) : les hauts faits non caches,
+     comment les debloquer, sans les baremes de niveaux. Visible par tout le monde,
+     contrairement a la matrice admin ci-dessous qui reste reservee a l admin. ── */
+  .hf-showcase-cat { display: flex; align-items: baseline; gap: 10px; margin: 1.8rem 0 .8rem; }
+  .hf-showcase-cat:first-child { margin-top: 0; }
+  .hf-showcase-cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .hf-showcase-cat-name { font-weight: 800; font-style: italic; font-size: 15px; }
+  .hf-showcase-cat-count { font-size: 11px; color: var(--text3); }
+  .hf-showcase-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px,1fr)); gap: 9px; }
+  .hf-showcase-card { position: relative; background: var(--cb); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 10px; text-align: center; overflow: hidden; transition: transform .18s, border-color .18s; }
+  .hf-showcase-card:hover { transform: scale(1.035); border-color: var(--cc); z-index: 2; }
+  .hf-showcase-card::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 0%, var(--cc) 0%, transparent 65%); opacity: .16; }
+  .hf-showcase-ico { font-size: 26px; position: relative; }
+  .hf-showcase-name { font-weight: 800; font-size: 11.5px; margin-top: 7px; position: relative; }
+  .hf-showcase-desc { font-size: 10px; color: var(--text2); margin-top: 4px; line-height: 1.4; position: relative; }
   /* ── Hauts faits — matrice admin (mhf-*) ── */
   :root {
     --mhf-t0-bg: rgba(255,255,255,.03); --mhf-t0-b: rgba(255,255,255,.07);
@@ -1847,7 +1873,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 09/09/2026 - 17:09</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 09/09/2026 - 17:59</footer>
 
 <script>
 
@@ -4884,6 +4910,8 @@ function renderStats() {
     </div>
   </div>`;
 
+  h += _hfShowcaseHtml();
+
   const isAdmin = sessionStorage.getItem("hmft_role") === "admin";
   h += isAdmin ? renderAchievementsMatrix() : _mhfKpiSectionHtml();
 
@@ -6726,7 +6754,39 @@ const ACH_ABOUT = {
   comete:     'Taux de présence annuel très faible (≤ seuil sur une année complète)',
   zerovic:    'Soirées sans aucune victoire',
   toutnul:    'Soirées où tous les matchs sont nuls',
+  equipetype: 'Sélection dans l\'équipe-type de la soirée',
+  totsaison:  'Sélection dans l\'équipe-type de fin de saison (saison terminée)',
+  bdor:       'Meilleur au classement Ballon d\'Or de la saison (saison terminée)',
 };
+
+// Mur de badges public (onglet Récompenses, visible par tout le monde) : les hauts faits
+// non caches, groupes par categorie (meme regroupement que la matrice admin, MHF_CAT_BY_ID),
+// avec juste l icone/nom/comment-l-avoir — jamais les baremes de niveaux, qui restent dans
+// la matrice detaillee (admin uniquement).
+const HF_SHOWCASE_CAT_VARS = {
+  'Attaque':      ['--hf-attaque', '--hf-attaque-bg'],
+  'Défense':      ['--hf-defense', '--hf-defense-bg'],
+  'Collectif':    ['--hf-collectif', '--hf-collectif-bg'],
+  'Présence':     ['--hf-presence', '--hf-presence-bg'],
+  'Distinctions': ['--hf-distinct', '--hf-distinct-bg'],
+};
+function _hfShowcaseHtml() {
+  const cats = MHF_CATS.filter(c => c !== 'Secrets');
+  let h = '';
+  cats.forEach(cat => {
+    const items = ACH_DEFS.filter(a => !a.hidden && (MHF_CAT_BY_ID[a.id] || 'Distinctions') === cat);
+    if (!items.length) return;
+    const [cVar, cBgVar] = HF_SHOWCASE_CAT_VARS[cat] || ['--gold', '--gold-bg'];
+    h += `<div class="hf-showcase-cat"><span class="hf-showcase-cat-dot" style="background:var(${cVar})"></span><span class="hf-showcase-cat-name">${cat}</span><span class="hf-showcase-cat-count">${items.length} haut${items.length>1?'s':''} fait${items.length>1?'s':''}</span></div>`;
+    h += `<div class="hf-showcase-grid">${items.map(a => `
+      <div class="hf-showcase-card" style="--cc:var(${cVar});--cb:var(${cBgVar})">
+        <div class="hf-showcase-ico">${a.icon}</div>
+        <div class="hf-showcase-name">${a.name}</div>
+        <div class="hf-showcase-desc">${ACH_ABOUT[a.id] || ''}</div>
+      </div>`).join('')}</div>`;
+  });
+  return `<div class="section-label" style="margin-top:2rem">Hauts faits à débloquer</div>${h}`;
+}
 
 function _achLevel(val, tiers) {
   let lv=0; for(let i=0;i<tiers.length;i++){if(val>=tiers[i])lv=i+1;else break;} return lv;
