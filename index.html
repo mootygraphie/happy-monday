@@ -1847,7 +1847,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 09/09/2026 - 15:23</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 09/09/2026 - 17:09</footer>
 
 <script>
 
@@ -3762,8 +3762,8 @@ function _sfmBuildPerformers(session, matchs, buteursCount, passeursCount, gkRan
     const best = [...eligible].sort((a,b) => a.rate-b.rate || b.matchs-a.matchs || a.name.localeCompare(b.name,"fr"))[0];
     if (best) {
       const stat = best.buts === 0
-        ? `0 but encaissé dans les buts (${best.matchs} mi-temps${best.matchs>1?"s":""})`
-        : `${best.buts} but${best.buts>1?"s":""} encaissé${best.buts>1?"s":""} en ${best.matchs} mi-temps${best.matchs>1?"s":""}`;
+        ? `0 but encaissé dans les buts (${best.matchs} mi-temps)`
+        : `${best.buts} but${best.buts>1?"s":""} encaissé${best.buts>1?"s":""} en ${best.matchs} mi-temps`;
       cards.push(_sfmPerfCard("Mur infranchissable", best.name, teamCls(teamOf(best.name)), stat, (delay+=0.05).toFixed(2)));
       featured.add(best.name);
     }
@@ -6202,8 +6202,26 @@ document.getElementById("footer-reglement-btn").addEventListener("click", () => 
   renderReglement();
 });
 
+// Si le brouillon en memoire correspond a une session DEJA validee (ex : on a quitte un
+// "Modifier" sans cliquer sur "Mettre a jour", meme apres avoir rafraichi la page ou s etre
+// reconnecte — le brouillon reste tel quel puisque _editMode n est jamais persiste mais
+// _draft, lui, l est), ce n est plus un brouillon legitime de nouvelle soiree — on repart
+// d une saisie vierge pour eviter la confusion ("ca m ouvre l etape 4 de je ne sais quoi").
+// Sans risque pour la session deja validee, qui vit dans sessions/{date}, jamais dans ce
+// brouillon. Appelee a l entree normale de la Saisie (nav ou chargement direct sur #saisie)
+// — "Modifier" une session passe par un autre chemin qui ne l appelle jamais.
+function _discardStaleEditDraft() {
+  if (_draft && _draft.date && SESSIONS.some(s => s.date === _draft.date)) {
+    _draft = _newDraft();
+    _draftSavedAt = null;
+    _resetSaisieUiState();
+    localStorage.removeItem("hmft_draft");
+    if (_db) _db.ref('config/draft').remove().catch(() => {});
+  }
+}
 function _goToSaisie() {
   _editMode = false;
+  _discardStaleEditDraft();
   document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
   document.getElementById("panel-saisie").classList.add("active");
@@ -9162,7 +9180,7 @@ document.addEventListener("click", e => {
   renderJoueurs();
   if (_hash === "stats") renderStats();
   if (_hash === "reglement") renderReglement();
-  if (_loadSaisie) { _fbWatchDraftMatches(); renderSaisie(); }
+  if (_loadSaisie) { _discardStaleEditDraft(); _fbWatchDraftMatches(); renderSaisie(); }
   if (SESSIONS.length) {
     const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
     renderSessionResults(sorted[0].date);
