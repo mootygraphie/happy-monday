@@ -1873,7 +1873,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 09/09/2026 - 17:59</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 09/09/2026 - 18:03</footer>
 
 <script>
 
@@ -4910,10 +4910,10 @@ function renderStats() {
     </div>
   </div>`;
 
-  h += _hfShowcaseHtml();
-
   const isAdmin = sessionStorage.getItem("hmft_role") === "admin";
   h += isAdmin ? renderAchievementsMatrix() : _mhfKpiSectionHtml();
+
+  h += _hfShowcaseHtml();
 
   container.innerHTML = h;
   animateView(container);
