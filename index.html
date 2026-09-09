@@ -907,7 +907,7 @@
   .saisie-mt1-recap button:hover { color: var(--text2); }
   .saisie-me-validate { width: 100%; margin-top: 6px; padding: 13px; font-size: 14.5px; }
 
-  .hmft-toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 12px); display: flex; align-items: center; gap: 10px; max-width: min(90vw, 380px); background: var(--bg2); border: 1px solid var(--border2); border-left: 3px solid #2ecc71; color: var(--text); font-weight: 600; font-size: 13.5px; line-height: 1.4; padding: 13px 16px; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.28); opacity: 0; transition: opacity .2s, transform .2s; z-index: 4000; pointer-events: none; }
+  .hmft-toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 12px); width: 90%; max-width: 460px; display: flex; align-items: center; justify-content: center; gap: 12px; background: var(--bg2); border: 1px solid var(--border2); border-left: 4px solid #2ecc71; color: var(--text); font-weight: 600; font-size: 14.5px; line-height: 1.4; padding: 16px 18px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.28); opacity: 0; transition: opacity .2s, transform .2s; z-index: 4000; pointer-events: none; }
   .hmft-toast .hmft-toast-ico { flex-shrink: 0; font-size: 17px; }
   .hmft-toast.show { opacity: 1; transform: translate(-50%, 0); }
 
@@ -979,6 +979,7 @@
   .match-recap-row.clickable:hover { border-color: var(--gold); background: var(--bg3); }
   .match-recap-row.draft { border-style: dashed; border-color: var(--border2); }
   .mrr-edit { font-size: 11px; color: var(--text3); flex-shrink: 0; }
+  .mrr-time { font-size: 10.5px; color: var(--text3); font-variant-numeric: tabular-nums; flex-shrink: 0; }
 
   @media (max-width: 620px) {
     .saisie-score-num { font-size: 38px; }
@@ -1818,7 +1819,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 08/09/2026 - 10:39</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 09/09/2026 - 10:34</footer>
 
 <script>
 
@@ -7735,7 +7736,7 @@ function _saisieTeamPickHTML(idx, side, eq, otherEq, teams) {
   const swapKey = `${idx}-${side}`;
   const isOpen = _saisieTeamSwap === swapKey;
   const opts = teams.filter(t => t !== otherEq);
-  return `<button class="saisie-team-pick ${eq.toLowerCase()}" data-act="saisie-team-swap" data-swapkey="${swapKey}">${TEAM_LABEL[eq]||eq}<span class="chev">▾</span></button>
+  return `<button class="saisie-team-pick ${eq.toLowerCase()}" data-act="saisie-team-swap" data-swapkey="${swapKey}">${TEAM_LABEL[eq]||eq||"— Choisir —"}<span class="chev">▾</span></button>
     ${isOpen ? `<div class="saisie-team-swap-picker"><div class="saisie-picker-grid">
       ${opts.map(t => `<button class="saisie-pchip ${t.toLowerCase()}" data-act="saisie-pick-team" data-match="${idx}" data-side="${side}" data-val="${t}"><span class="pdot"></span>${TEAM_LABEL[t]||t}</button>`).join("")}
     </div></div>` : ""}`;
@@ -7880,11 +7881,13 @@ function _buildMatchsScreenHTML() {
       const sc = scoreColors(m);
       const goalsHtml = [_recapSideSummary(m,"A"), _recapSideSummary(m,"B")].filter(Boolean).join(' <span style="color:var(--border2)">|</span> ') || "—";
       if (entry.kind === "shared") {
+        const timeHtml = m.validatedAt ? `<span class="mrr-time">${new Date(m.validatedAt).toLocaleTimeString("fr", {hour:"2-digit", minute:"2-digit"})}</span>` : "";
         return `<button class="match-recap-row clickable" data-act="saisie-open-validated" data-id="${entry.id}">
           <span class="mrr-num">✅</span>
           <span class="mrr-teams">${dot(m.eqA)}<span class="mrr-score"><span style="color:${sc.a}">${m.scoreA}</span>–<span style="color:${sc.b}">${m.scoreB}</span></span>${dot(m.eqB)}</span>
           <span class="mrr-sep"></span>
           <span class="mrr-goals">${goalsHtml}</span>
+          ${timeHtml}
           <span class="mrr-edit">Modifier ›</span>
         </button>`;
       }
@@ -8178,9 +8181,10 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   if (e.target.id === "saisie-commit") { _commitSession(); return; }
 
   if (e.target.closest('[data-act="saisie-add-match"]')) {
-    const teams = _activeTeams();
     if (!Array.isArray(_draft.matchs)) _draft.matchs = [];
-    _draft.matchs.push({ eqA: teams[0]||"", eqB: teams[1]||"", scoreA: 0, scoreB: 0, buteursA: [], buteursB: [], passeursA: [], passeursB: [], mt1A: 0, mt1B: 0, _mt2A: 0, _mt2B: 0, _phase: "mt1", gardiensA: ["",""], gardiensB: ["",""], bancA: ["",""], bancB: ["",""] });
+    // Un nouveau match part entierement vierge, equipes comprises — sinon c est
+    // systematiquement Roses vs Jaunes qui se pre-remplit (les 2 premieres de _activeTeams).
+    _draft.matchs.push({ eqA: "", eqB: "", scoreA: 0, scoreB: 0, buteursA: [], buteursB: [], passeursA: [], passeursB: [], mt1A: 0, mt1B: 0, _mt2A: 0, _mt2B: 0, _phase: "mt1", gardiensA: ["",""], gardiensB: ["",""], bancA: ["",""], bancB: ["",""] });
     _saisieFocusedMatch = _draft.matchs.length - 1;
     _saisiePicker = null; _saisieTeamSwap = null;
     _saveDraft();
@@ -8256,6 +8260,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   if (validateMt1Btn) {
     const idx = Number(validateMt1Btn.dataset.match);
     const match = _draft.matchs[idx];
+    if (!match.eqA || !match.eqB) { alert("Choisissez les 2 équipes de ce match avant de valider la mi-temps 1."); return; }
     const emptyButeurs = (match.buteursA||[]).slice(0, match.mt1A||0).some(b => !b) || (match.buteursB||[]).slice(0, match.mt1B||0).some(b => !b);
     if (emptyButeurs) { alert("Certains buteurs de la mi-temps 1 ne sont pas renseignés.\nVeuillez sélectionner un joueur ou « CSC » pour chaque but."); return; }
     if (!match.gardiensA[0] || !match.gardiensB[0]) { alert("Le gardien de chaque équipe doit être renseigné pour la mi-temps 1."); return; }
@@ -8284,6 +8289,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   if (validateMatchBtn) {
     const idx = Number(validateMatchBtn.dataset.match);
     const match = _draft.matchs[idx];
+    if (!match.eqA || !match.eqB) { alert("Choisissez les 2 équipes de ce match avant de le valider."); return; }
     const scoreA = (match.mt1A||0) + (match._mt2A||0);
     const scoreB = (match.mt1B||0) + (match._mt2B||0);
     const emptyButeurs = (match.buteursA||[]).slice(0, scoreA).some(b => !b) || (match.buteursB||[]).slice(0, scoreB).some(b => !b);
@@ -8298,7 +8304,8 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       passeursA: (match.passeursA||[]).slice(0, scoreA), passeursB: (match.passeursB||[]).slice(0, scoreB),
       mt1A: match.mt1A||0, mt1B: match.mt1B||0,
       gardiensA: match.gardiensA, gardiensB: match.gardiensB,
-      bancA: match.bancA || ["",""], bancB: match.bancB || ["",""]
+      bancA: match.bancA || ["",""], bancB: match.bancB || ["",""],
+      validatedAt: Date.now()
     };
     if (_editMode) {
       // Session deja existante : pas d ecriture Firebase individuelle, tout part
@@ -8323,7 +8330,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       _saisieFocusedMatch = null;
       _saveDraft();
       renderSaisie();
-      _showToast(`Match envoyé — visible sur tous les téléphones (${payload.scoreA}–${payload.scoreB})`);
+      _showToast(`Match <b style="color:#2ecc71">envoyé</b>`);
     }).catch(err => {
       if (overlay) overlay.style.display = "none";
       alert('⚠️ Erreur de synchronisation :\n' + (err?.message || err?.code || String(err)) + '\n\nLe match reste dans votre brouillon local — réessayez.');
