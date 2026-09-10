@@ -1368,13 +1368,14 @@
   .tt-pitch-empty { color: var(--text3); font-size: 13px; font-style: italic; padding: 20px; text-align: center; }
 
   .sfm-perf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 12px; }
-  .sfm-perf-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 15px; display: flex; gap: 12px; align-items: flex-start; }
-  .sfm-perf-av { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; background: var(--bg3); color: var(--text2); }
-  .sfm-perf-av.rouge { background: var(--rouge-bg); color: var(--rouge); } .sfm-perf-av.vert { background: var(--vert-bg); color: var(--vert); } .sfm-perf-av.bleu { background: var(--bleu-bg); color: var(--bleu); }
+  .sfm-perf-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 15px; display: flex; flex-direction: column; gap: 7px; }
   .sfm-perf-role { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-style: italic; color: var(--text3); }
-  .sfm-perf-name { font-size: 14.5px; font-weight: 700; margin-top: 2px; }
+  .sfm-perf-headline { display: flex; align-items: center; gap: 8px; }
+  .sfm-perf-av { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; flex-shrink: 0; background: var(--bg3); color: var(--text2); }
+  .sfm-perf-av.rouge { background: var(--rouge-bg); color: var(--rouge); } .sfm-perf-av.vert { background: var(--vert-bg); color: var(--vert); } .sfm-perf-av.bleu { background: var(--bleu-bg); color: var(--bleu); }
+  .sfm-perf-name { font-size: 14.5px; font-weight: 700; }
   .sfm-perf-name .player-link { font-size: inherit !important; font-weight: inherit !important; color: inherit !important; }
-  .sfm-perf-stat { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+  .sfm-perf-stat { font-size: 12px; color: var(--text2); line-height: 1.5; }
 
   /* Meilleurs de la soiree (top 3 par categorie) a cote des 4 cartes narratives : empile
      sur mobile, 50/50 a partir de la ou l ecran a la place (meme seuil que le hero du
@@ -1386,15 +1387,32 @@
     .sfm-perf-layout { flex-direction: row; align-items: stretch; }
     .sfm-perf-left, .sfm-perf-right { flex: 1; min-width: 0; }
   }
-  .sfm-best-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; height: 100%; }
-  .sfm-best-card-title { font-size: 12.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px; }
-  .sfm-best-cat { margin-bottom: 14px; }
-  .sfm-best-cat:last-child { margin-bottom: 0; }
-  .sfm-best-cat-lbl { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--gold); margin-bottom: 6px; }
-  .sfm-best-row { display: flex; align-items: center; gap: 8px; padding: 3px 0; font-size: 12.5px; }
+  /* Carte "Meilleurs de la soiree" : les 4 categories defilent en slides (au lieu d etre
+     empilees) pour que la carte tienne sur la meme hauteur que la grille 2x2 d a cote sur
+     desktop, quel que soit le nombre de lignes par categorie. */
+  .sfm-best-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; height: 100%; display: flex; flex-direction: column; }
+  .sfm-best-card-title { font-size: 12.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px; flex-shrink: 0; }
+  .sfm-best-slider-wrap { position: relative; flex: 1; min-height: 0; }
+  .sfm-best-slider { display: flex; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .sfm-best-slider::-webkit-scrollbar { display: none; }
+  .sfm-best-slide { position: relative; flex: 0 0 100%; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; padding: 14px 34px; border-radius: 12px; overflow: hidden; }
+  .sfm-best-slide::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, var(--slide-team, transparent) 0%, transparent 65%); opacity: .16; pointer-events: none; }
+  .sfm-best-cat-lbl { position: relative; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--gold); margin-bottom: 8px; text-align: center; }
+  .sfm-best-row { position: relative; display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 12.5px; }
   .sfm-best-rank { width: 16px; font-size: 11px; flex-shrink: 0; }
+  .sfm-best-team-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
   .sfm-best-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
   .sfm-best-val { font-size: 11.5px; color: var(--text2); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+  .sfm-best-row.first .sfm-best-name { font-size: 14.5px; font-weight: 800; }
+  .sfm-best-row.first .sfm-best-val { font-size: 12.5px; color: var(--text); }
+  .sfm-best-arrow { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); font-size: 15px; line-height: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+  .sfm-best-arrow:hover { background: var(--gold-bg); border-color: var(--gold-border); color: var(--gold); }
+  .sfm-best-arrow:disabled { opacity: .3; cursor: default; }
+  .sfm-best-arrow:disabled:hover { background: var(--bg3); border-color: var(--border2); color: var(--text); }
+  .sfm-best-arrow.prev { left: -4px; } .sfm-best-arrow.next { right: -4px; }
+  .sfm-best-dots { display: flex; justify-content: center; gap: 6px; margin-top: 10px; flex-shrink: 0; }
+  .sfm-best-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); transition: background .15s, transform .15s; }
+  .sfm-best-dot.active { background: var(--gold); transform: scale(1.25); }
 
   .sfm-lineup-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 12px; }
   .sfm-lu-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
@@ -1873,7 +1891,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 09/09/2026 - 18:03</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 10/09/2026 - 08:40</footer>
 
 <script>
 
@@ -3710,29 +3728,38 @@ function _sfmScoreboardHTML(standings) {
 function _sfmPerfCard(role, name, cls, statLine, delay) {
   const initials = name.slice(0,2).toUpperCase();
   return `<div class="sfm-perf-card sfm-fade-up" style="animation-delay:${delay}s">
-    <div class="sfm-perf-av ${cls}">${initials}</div>
-    <div>
-      <div class="sfm-perf-role">${role}</div>
-      <div class="sfm-perf-name">${pLink(name)}</div>
-      <div class="sfm-perf-stat">${statLine}</div>
-    </div>
+    <div class="sfm-perf-role">${role}</div>
+    <div class="sfm-perf-headline"><span class="sfm-perf-av ${cls}">${initials}</span><span class="sfm-perf-name">${pLink(name)}</span></div>
+    <div class="sfm-perf-stat">${statLine}</div>
   </div>`;
 }
 
 // Carte "Meilleurs de la soirée" : top 3 par categorie (MVP = buts+passes cumules,
 // buteur, passeur, gardien), en complement des 4 cartes narratives de _sfmBuildPerformers
-// qui ne mettent en avant qu 1 seule personne chacune.
-function _sfmBestCategoryHTML(label, rows, fmtVal) {
+// qui ne mettent en avant qu 1 seule personne chacune. Point de couleur d equipe par ligne
+// (pour reperer une eventuelle domination d une couleur), degrade teinte par l equipe du
+// 1er, et son nom en plus gros que les 2 autres.
+function _sfmBestCategoryHTML(label, rows, fmtVal, teamOf) {
   if (!rows.length) return "";
   const medals = ["🥇","🥈","🥉"];
-  const rowsHtml = rows.slice(0,3).map((r,i) => `<div class="sfm-best-row">
+  const rowsHtml = rows.slice(0,3).map((r,i) => {
+    const cls = teamCls(teamOf(r.name));
+    return `<div class="sfm-best-row${i===0?" first":""}">
     <span class="sfm-best-rank">${medals[i]}</span>
+    <span class="sfm-best-team-dot" style="background:var(--${cls||"text3"})"></span>
     <span class="sfm-best-name">${pLink(r.name)}</span>
     <span class="sfm-best-val">${fmtVal(r)}</span>
-  </div>`).join("");
-  return `<div class="sfm-best-cat"><div class="sfm-best-cat-lbl">${label}</div>${rowsHtml}</div>`;
+  </div>`;
+  }).join("");
+  const topCls = teamCls(teamOf(rows[0].name));
+  const gradientAttr = topCls ? ` style="--slide-team:var(--${topCls})"` : "";
+  return `<div class="sfm-best-slide"${gradientAttr}><div class="sfm-best-cat-lbl">${label}</div>${rowsHtml}</div>`;
 }
-function _sfmBuildBestOfNightCard(buteursCount, passeursCount, gkRanking) {
+// Carte "Meilleurs de la soirée" : les 4 categories defilent en slides horizontales (au
+// doigt sur mobile, aux fleches partout) plutot que d etre empilees — pour tenir sur la
+// meme hauteur que la grille 2x2 des 4 cartes narratives a cote sur desktop.
+function _sfmBuildBestOfNightCard(session, buteursCount, passeursCount, gkRanking) {
+  const teamOf = name => (session.presences && session.presences[name]) ? (session.presences[name].equipe||"") : "";
   const mvpMap = {};
   Object.entries(buteursCount).forEach(([n,c]) => { mvpMap[n] = (mvpMap[n]||0) + c; });
   Object.entries(passeursCount).forEach(([n,c]) => { mvpMap[n] = (mvpMap[n]||0) + c; });
@@ -3742,14 +3769,53 @@ function _sfmBuildBestOfNightCard(buteursCount, passeursCount, gkRanking) {
   const gkEligible = (gkRanking||[]).filter(g => g.matchs >= 2);
   const gkRankedBest = [...gkEligible].sort((a,b) => a.rate-b.rate || b.matchs-a.matchs || a.name.localeCompare(b.name,"fr"));
 
-  const sections = [
-    _sfmBestCategoryHTML("MVP · buts + passes", mvpRanked, r => `${r.ga} G/A`),
-    _sfmBestCategoryHTML("Meilleur buteur", buteursRanked, r => `${r.buts} but${r.buts>1?"s":""}`),
-    _sfmBestCategoryHTML("Meilleur passeur", passeursRanked, r => `${r.passes} passe${r.passes>1?"s":""}`),
-    _sfmBestCategoryHTML("Meilleur gardien", gkRankedBest, r => `${r.rate.toFixed(1)} enc./m.`),
-  ].filter(Boolean).join("");
-  if (!sections) return "";
-  return `<div class="sfm-best-card"><div class="sfm-best-card-title">🌟 Meilleurs de la soirée</div>${sections}</div>`;
+  const slides = [
+    _sfmBestCategoryHTML("MVP · buts + passes", mvpRanked, r => `${r.ga} G/A`, teamOf),
+    _sfmBestCategoryHTML("Meilleur buteur", buteursRanked, r => `${r.buts} but${r.buts>1?"s":""}`, teamOf),
+    _sfmBestCategoryHTML("Meilleur passeur", passeursRanked, r => `${r.passes} passe${r.passes>1?"s":""}`, teamOf),
+    _sfmBestCategoryHTML("Meilleur gardien", gkRankedBest, r => `${r.rate.toFixed(1)} enc./m.`, teamOf),
+  ].filter(Boolean);
+  if (!slides.length) return "";
+  const arrows = slides.length > 1
+    ? `<button class="sfm-best-arrow prev" data-act="sfm-best-nav" data-dir="-1" aria-label="Catégorie précédente" disabled>‹</button>
+       <button class="sfm-best-arrow next" data-act="sfm-best-nav" data-dir="1" aria-label="Catégorie suivante">›</button>`
+    : "";
+  const dots = slides.length > 1
+    ? `<div class="sfm-best-dots">${slides.map((_,i) => `<span class="sfm-best-dot${i===0?" active":""}"></span>`).join("")}</div>`
+    : "";
+  return `<div class="sfm-best-card">
+    <div class="sfm-best-card-title">🌟 Meilleurs de la soirée</div>
+    <div class="sfm-best-slider-wrap">
+      ${arrows}
+      <div class="sfm-best-slider" id="sfmBestSlider">${slides.join("")}</div>
+    </div>
+    ${dots}
+  </div>`;
+}
+// Fleches + dots de la carte "Meilleurs de la soiree" : glisser (tactile/molette) marche
+// nativement grace au scroll-snap, ceci ne fait qu ajouter la navigation au clic et tenir
+// dots/fleches synchronises avec la position reelle du scroll.
+function _sfmWireBestSlider(container) {
+  const slider = container.querySelector('#sfmBestSlider');
+  if (!slider) return;
+  const wrap = slider.closest('.sfm-best-slider-wrap');
+  const prevBtn = wrap.querySelector('.sfm-best-arrow.prev');
+  const nextBtn = wrap.querySelector('.sfm-best-arrow.next');
+  const dots = container.querySelectorAll('.sfm-best-dot');
+  const slideCount = slider.children.length;
+  function syncFromScroll() {
+    const idx = Math.round(slider.scrollLeft / slider.clientWidth);
+    dots.forEach((d,i) => d.classList.toggle('active', i === idx));
+    if (prevBtn) prevBtn.disabled = idx <= 0;
+    if (nextBtn) nextBtn.disabled = idx >= slideCount - 1;
+  }
+  function goTo(idx) {
+    slider.scrollTo({ left: idx * slider.clientWidth, behavior: 'smooth' });
+  }
+  prevBtn?.addEventListener('click', () => goTo(Math.max(0, Math.round(slider.scrollLeft / slider.clientWidth) - 1)));
+  nextBtn?.addEventListener('click', () => goTo(Math.min(slideCount - 1, Math.round(slider.scrollLeft / slider.clientWidth) + 1)));
+  slider.addEventListener('scroll', () => { clearTimeout(slider._syncT); slider._syncT = setTimeout(syncFromScroll, 60); }, { passive: true });
+  syncFromScroll();
 }
 
 function _sfmBuildPerformers(session, matchs, buteursCount, passeursCount, gkRanking) {
@@ -3915,7 +3981,7 @@ function renderSessionDetailV2(session) {
     }
 
     const perfCards = _sfmBuildPerformers(session, matchs, buteursCount, passeursCount, gkRanking);
-    const bestCardHtml = _sfmBuildBestOfNightCard(buteursCount, passeursCount, gkRanking);
+    const bestCardHtml = _sfmBuildBestOfNightCard(session, buteursCount, passeursCount, gkRanking);
     if (perfCards.length) {
       h += `<div class="section-label">Performances individuelles</div>
         <div class="sfm-perf-layout">
@@ -6193,6 +6259,7 @@ function renderSessionResults(date) {
   container.innerHTML = renderSessionDetailV2(session);
   animateView(container);
   _sfmBindTicker(container);
+  _sfmWireBestSlider(container);
 }
 
 /* ══════════════════════════════════════════════════════════
