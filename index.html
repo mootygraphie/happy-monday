@@ -1407,7 +1407,7 @@
      La couleur y est ecrite en dur (resolue en JS), pas via var(--rouge) imbrique, pour
      que l interpolation de couleur soit fiable au changement de categorie. */
   .sfm-best-card { position: relative; overflow: hidden; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; height: 100%; display: flex; flex-direction: column; }
-  .sfm-best-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, var(--card-team-c, transparent) 0%, transparent 65%); opacity: .16; pointer-events: none; transition: --card-team-c .35s ease; }
+  .sfm-best-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, var(--card-team-c, transparent) 0%, transparent 65%); opacity: .16; pointer-events: none; }
   .sfm-best-card > * { position: relative; }
   .sfm-best-card-title { font-size: 12.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px; flex-shrink: 0; }
   .sfm-best-slider-wrap { position: relative; flex: 1; min-height: 0; }
@@ -1908,7 +1908,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 10/09/2026 - 11:33</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 10/09/2026 - 11:52</footer>
 
 <script>
 
@@ -3835,7 +3835,10 @@ function _sfmBuildBestOfNightCard(session, buteursCount, passeursCount, gkRankin
 }
 // Fleches + dots de la carte "Meilleurs de la soiree" : glisser (tactile/molette) marche
 // nativement grace au scroll-snap, ceci ne fait qu ajouter la navigation au clic et tenir
-// dots/fleches synchronises avec la position reelle du scroll.
+// dots/fleches synchronises avec la position reelle du scroll. Le degrade de fond suit la
+// position de scroll EN DIRECT (melange progressif entre la couleur de la categorie qui
+// part et celle qui arrive), pas seulement une fois la categorie arrivee — pour que la
+// couleur change PENDANT le glissement, pas apres coup.
 function _sfmWireBestSlider(container) {
   const slider = container.querySelector('#sfmBestSlider');
   if (!slider) return;
@@ -3845,29 +3848,64 @@ function _sfmWireBestSlider(container) {
   const nextBtn = wrap.querySelector('.sfm-best-arrow.next');
   const dots = container.querySelectorAll('.sfm-best-dot');
   const slideCount = slider.children.length;
-  function syncFromScroll() {
+
+  // Couleur RGB (r,g,b) de chaque slide, resolue une seule fois — evite de re-parser une
+  // variable CSS a chaque evenement de scroll (potentiellement tres frequents pendant un
+  // glisser tactile). Les couleurs d equipe sont declarees en #RRGGBB, pas en rgb(...),
+  // d ou un parseur hexa dedie plutot qu une simple extraction de nombres.
+  function _cssColorToRgb(str) {
+    str = str.trim();
+    const hex = str.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+    if (hex) {
+      let h = hex[1];
+      if (h.length === 3) h = h.split('').map(c => c + c).join('');
+      const num = parseInt(h, 16);
+      return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
+    }
+    const rgb = str.match(/\d+(\.\d+)?/g);
+    return rgb ? rgb.slice(0,3).map(Number) : null;
+  }
+  const slideColors = Array.from(slider.children).map(s => {
+    const cls = s.dataset.teamCls;
+    if (!cls) return null;
+    const resolved = getComputedStyle(document.documentElement).getPropertyValue(`--${cls}`);
+    return _cssColorToRgb(resolved);
+  });
+  function mixedColor(rawIdx) {
+    const i = Math.max(0, Math.min(slideCount - 1, Math.floor(rawIdx)));
+    const t = Math.max(0, Math.min(1, rawIdx - i));
+    const c1 = slideColors[i], c2 = slideColors[Math.min(slideCount - 1, i + 1)];
+    if (!c1 && !c2) return "transparent";
+    if (!c1) return `rgb(${c2.join(",")})`;
+    if (!c2) return `rgb(${c1.join(",")})`;
+    const mix = c1.map((v, k) => Math.round(v + (c2[k] - v) * t));
+    return `rgb(${mix.join(",")})`;
+  }
+  function updateGradientLive() {
+    if (!card) return;
+    card.style.setProperty('--card-team-c', mixedColor(slider.scrollLeft / slider.clientWidth));
+  }
+  function syncDotsAndArrows() {
     const idx = Math.round(slider.scrollLeft / slider.clientWidth);
     dots.forEach((d,i) => d.classList.toggle('active', i === idx));
     if (prevBtn) prevBtn.disabled = idx <= 0;
     if (nextBtn) nextBtn.disabled = idx >= slideCount - 1;
-    // Le degrade de fond de toute la carte suit l equipe du 1er de la categorie active,
-    // en fondu (voir @property --card-team-c). Couleur resolue en dur ici (pas var()
-    // imbriquee) pour que le navigateur puisse l interpoler entre l ancienne et la
-    // nouvelle valeur.
-    const activeSlide = slider.children[idx];
-    const cls = activeSlide?.dataset.teamCls;
-    if (card) {
-      const resolved = cls ? getComputedStyle(document.documentElement).getPropertyValue(`--${cls}`).trim() : 'transparent';
-      card.style.setProperty('--card-team-c', resolved);
-    }
   }
   function goTo(idx) {
     slider.scrollTo({ left: idx * slider.clientWidth, behavior: 'smooth' });
   }
   prevBtn?.addEventListener('click', () => goTo(Math.max(0, Math.round(slider.scrollLeft / slider.clientWidth) - 1)));
   nextBtn?.addEventListener('click', () => goTo(Math.min(slideCount - 1, Math.round(slider.scrollLeft / slider.clientWidth) + 1)));
-  slider.addEventListener('scroll', () => { clearTimeout(slider._syncT); slider._syncT = setTimeout(syncFromScroll, 60); }, { passive: true });
-  syncFromScroll();
+  let ticking = false;
+  slider.addEventListener('scroll', () => {
+    updateGradientLive();
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(() => { ticking = false; syncDotsAndArrows(); });
+    }
+  }, { passive: true });
+  updateGradientLive();
+  syncDotsAndArrows();
 }
 
 function _sfmBuildPerformers(session, matchs, buteursCount, passeursCount, gkRanking) {
