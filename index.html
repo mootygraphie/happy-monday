@@ -34,6 +34,7 @@
     --hf-collectif: #66d9a0; --hf-collectif-bg: rgba(102,217,160,.12);
     --hf-presence: #b892ff; --hf-presence-bg: rgba(184,146,255,.12);
     --hf-distinct: #f5c842; --hf-distinct-bg: rgba(245,200,66,.12);
+    --hf-secret: #9090a8; --hf-secret-bg: rgba(144,144,168,.14);
   }
   /* Propriete CSS typee <color> : seul moyen fiable de faire fondre un degrade d une
      couleur d equipe a l autre (une variable CSS classique change de valeur d un coup,
@@ -59,6 +60,7 @@
     --hf-collectif: #1a9d5e; --hf-collectif-bg: rgba(26,157,94,.09);
     --hf-presence: #7b3ff2; --hf-presence-bg: rgba(123,63,242,.09);
     --hf-distinct: #a5760a; --hf-distinct-bg: rgba(165,118,10,.1);
+    --hf-secret: #5c5c72; --hf-secret-bg: rgba(92,92,114,.1);
     --shadow: 0 1px 2px rgba(0,0,0,.05);
     color-scheme: light;
   }
@@ -649,6 +651,9 @@
   .hf-showcase-ico { font-size: 26px; position: relative; }
   .hf-showcase-name { font-weight: 800; font-size: 11.5px; margin-top: 7px; position: relative; }
   .hf-showcase-desc { font-size: 10px; color: var(--text2); margin-top: 4px; line-height: 1.4; position: relative; }
+  .hf-showcase-card.is-secret { border-style: dashed; }
+  .hf-showcase-secret-badge { position: absolute; top: 8px; right: 8px; font-size: 10px; line-height: 1; background: var(--cb); border: 1px solid var(--cc); border-radius: 999px; padding: 3px 5px; }
+  .hf-showcase-secret-tag { display: inline-block; margin-top: 6px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--cc); background: var(--cb); border-radius: 999px; padding: 2px 7px; position: relative; }
   /* ── Hauts faits — matrice admin (mhf-*) ── */
   :root {
     --mhf-t0-bg: rgba(255,255,255,.03); --mhf-t0-b: rgba(255,255,255,.07);
@@ -1909,7 +1914,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 10/09/2026 - 12:41</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 10/09/2026 - 17:26</footer>
 
 <script>
 
@@ -4338,7 +4343,7 @@ function buildInfirmeHtml() {
       return { name, val, extra: `${ep} blessure${ep>1?'s':''}` };
     });
   return _buildAbsenceRankHtml({
-    id:'infirm', icon:'🩼', title:`Infirmerie ${lbl}`, subtitle:`Classement matchs manqués — Saison ${lbl}`,
+    id:'infirm', icon:'🩼', title:`Infirmerie ${lbl}`, subtitle:`Classement sessions manquées — Saison ${lbl}`,
     accentColor:'#ffa726', borderColor:'rgba(245,158,11,.28)', bgColor:'rgba(245,158,11,.1)',
     players: ranked, emptyMsg:`Aucune blessure enregistrée en saison ${lbl}.`
   });
@@ -5071,7 +5076,7 @@ function renderStats() {
   const isAdmin = sessionStorage.getItem("hmft_role") === "admin";
   h += isAdmin ? renderAchievementsMatrix() : _mhfKpiSectionHtml();
 
-  h += _hfShowcaseHtml();
+  h += _hfShowcaseHtml(isAdmin);
 
   container.innerHTML = h;
   animateView(container);
@@ -6928,20 +6933,26 @@ const HF_SHOWCASE_CAT_VARS = {
   'Collectif':    ['--hf-collectif', '--hf-collectif-bg'],
   'Présence':     ['--hf-presence', '--hf-presence-bg'],
   'Distinctions': ['--hf-distinct', '--hf-distinct-bg'],
+  'Secrets':      ['--hf-secret', '--hf-secret-bg'],
 };
-function _hfShowcaseHtml() {
-  const cats = MHF_CATS.filter(c => c !== 'Secrets');
+// Admin : les hauts faits caches (categorie Secrets) rejoignent le mur, avec un badge
+// cadenas + bordure en pointilles pour bien les distinguer des hauts faits publics —
+// jamais visibles pour les non-admin, ni ailleurs dans l app.
+function _hfShowcaseHtml(isAdmin) {
+  const cats = MHF_CATS.filter(c => c !== 'Secrets' || isAdmin);
   let h = '';
   cats.forEach(cat => {
-    const items = ACH_DEFS.filter(a => !a.hidden && (MHF_CAT_BY_ID[a.id] || 'Distinctions') === cat);
+    const items = ACH_DEFS.filter(a => (!a.hidden || isAdmin) && (MHF_CAT_BY_ID[a.id] || 'Distinctions') === cat);
     if (!items.length) return;
     const [cVar, cBgVar] = HF_SHOWCASE_CAT_VARS[cat] || ['--gold', '--gold-bg'];
     h += `<div class="hf-showcase-cat"><span class="hf-showcase-cat-dot" style="background:var(${cVar})"></span><span class="hf-showcase-cat-name">${cat}</span><span class="hf-showcase-cat-count">${items.length} haut${items.length>1?'s':''} fait${items.length>1?'s':''}</span></div>`;
     h += `<div class="hf-showcase-grid">${items.map(a => `
-      <div class="hf-showcase-card" style="--cc:var(${cVar});--cb:var(${cBgVar})">
+      <div class="hf-showcase-card${a.hidden?' is-secret':''}" style="--cc:var(${cVar});--cb:var(${cBgVar})">
+        ${a.hidden?'<div class="hf-showcase-secret-badge">🔒</div>':''}
         <div class="hf-showcase-ico">${a.icon}</div>
         <div class="hf-showcase-name">${a.name}</div>
         <div class="hf-showcase-desc">${ACH_ABOUT[a.id] || ''}</div>
+        ${a.hidden?'<div class="hf-showcase-secret-tag">Caché</div>':''}
       </div>`).join('')}</div>`;
   });
   return `<div class="section-label" style="margin-top:2rem">Hauts faits à débloquer</div>${h}`;
