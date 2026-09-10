@@ -35,6 +35,14 @@
     --hf-presence: #b892ff; --hf-presence-bg: rgba(184,146,255,.12);
     --hf-distinct: #f5c842; --hf-distinct-bg: rgba(245,200,66,.12);
   }
+  /* Propriete CSS typee <color> : seul moyen fiable de faire fondre un degrade d une
+     couleur d equipe a l autre (une variable CSS classique change de valeur d un coup,
+     sans transition possible). Utilisee par la carte "Meilleurs de la soiree". */
+  @property --card-team-c {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: transparent;
+  }
   /* ── Mode clair ── */
   html.light {
     --bg: #f4f4f8; --bg2: #ffffff; --bg3: #ebebf2;
@@ -1370,7 +1378,9 @@
   .tt-pitch-empty { color: var(--text3); font-size: 13px; font-style: italic; padding: 20px; text-align: center; }
 
   .sfm-perf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 12px; }
-  .sfm-perf-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 15px; display: flex; flex-direction: column; gap: 7px; }
+  .sfm-perf-card { position: relative; overflow: hidden; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 15px; display: flex; flex-direction: column; gap: 7px; }
+  .sfm-perf-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, var(--perf-team, transparent) 0%, transparent 65%); opacity: .16; pointer-events: none; }
+  .sfm-perf-card > * { position: relative; }
   .sfm-perf-role { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-style: italic; color: var(--text3); }
   .sfm-perf-headline { display: flex; align-items: center; gap: 8px; }
   .sfm-perf-av { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; flex-shrink: 0; background: var(--bg3); color: var(--text2); }
@@ -1391,9 +1401,13 @@
   }
   /* Carte "Meilleurs de la soiree" : les 4 categories defilent en slides (au lieu d etre
      empilees) pour que la carte tienne sur la meme hauteur que la grille 2x2 d a cote sur
-     desktop, quel que soit le nombre de lignes par categorie. */
+     desktop, quel que soit le nombre de lignes par categorie. --card-team-c est une
+     propriete CSS typee <color> (voir @property plus bas) : contrairement a une variable
+     CSS classique, un changement de sa valeur peut etre anime en fondu par le navigateur.
+     La couleur y est ecrite en dur (resolue en JS), pas via var(--rouge) imbrique, pour
+     que l interpolation de couleur soit fiable au changement de categorie. */
   .sfm-best-card { position: relative; overflow: hidden; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; height: 100%; display: flex; flex-direction: column; }
-  .sfm-best-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, var(--card-team, transparent) 0%, transparent 65%); opacity: .16; pointer-events: none; transition: background .25s; }
+  .sfm-best-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, var(--card-team-c, transparent) 0%, transparent 65%); opacity: .16; pointer-events: none; transition: --card-team-c .35s ease; }
   .sfm-best-card > * { position: relative; }
   .sfm-best-card-title { font-size: 12.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px; flex-shrink: 0; }
   .sfm-best-slider-wrap { position: relative; flex: 1; min-height: 0; }
@@ -1894,7 +1908,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 10/09/2026 - 11:22</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 10/09/2026 - 11:33</footer>
 
 <script>
 
@@ -3751,7 +3765,7 @@ function _sfmScoreboardHTML(standings) {
 
 function _sfmPerfCard(role, name, cls, statLine, delay) {
   const initials = name.slice(0,2).toUpperCase();
-  return `<div class="sfm-perf-card sfm-fade-up" style="animation-delay:${delay}s">
+  return `<div class="sfm-perf-card sfm-fade-up" style="animation-delay:${delay}s;${cls ? `--perf-team:var(--${cls});` : ""}">
     <div class="sfm-perf-role">${role}</div>
     <div class="sfm-perf-headline"><span class="sfm-perf-av ${cls}">${initials}</span><span class="sfm-perf-name">${pLink(name)}</span></div>
     <div class="sfm-perf-stat">${statLine}</div>
@@ -3809,7 +3823,7 @@ function _sfmBuildBestOfNightCard(session, buteursCount, passeursCount, gkRankin
     : "";
   // Le degrade porte sur TOUTE la carte (pas chaque sous-carte) et suit l equipe du 1er de
   // la categorie active — valeur initiale ici, mise a jour au slide par _sfmWireBestSlider.
-  const cardStyle = slides[0].teamCls ? ` style="--card-team:var(--${slides[0].teamCls})"` : "";
+  const cardStyle = slides[0].teamCls ? ` style="--card-team-c:var(--${slides[0].teamCls})"` : "";
   return `<div class="sfm-best-card"${cardStyle}>
     <div class="sfm-best-card-title">🌟 Meilleurs de la soirée</div>
     <div class="sfm-best-slider-wrap">
@@ -3836,10 +3850,16 @@ function _sfmWireBestSlider(container) {
     dots.forEach((d,i) => d.classList.toggle('active', i === idx));
     if (prevBtn) prevBtn.disabled = idx <= 0;
     if (nextBtn) nextBtn.disabled = idx >= slideCount - 1;
-    // Le degrade de fond de toute la carte suit l equipe du 1er de la categorie active.
+    // Le degrade de fond de toute la carte suit l equipe du 1er de la categorie active,
+    // en fondu (voir @property --card-team-c). Couleur resolue en dur ici (pas var()
+    // imbriquee) pour que le navigateur puisse l interpoler entre l ancienne et la
+    // nouvelle valeur.
     const activeSlide = slider.children[idx];
     const cls = activeSlide?.dataset.teamCls;
-    if (card) card.style.setProperty('--card-team', cls ? `var(--${cls})` : 'transparent');
+    if (card) {
+      const resolved = cls ? getComputedStyle(document.documentElement).getPropertyValue(`--${cls}`).trim() : 'transparent';
+      card.style.setProperty('--card-team-c', resolved);
+    }
   }
   function goTo(idx) {
     slider.scrollTo({ left: idx * slider.clientWidth, behavior: 'smooth' });
