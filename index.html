@@ -1335,7 +1335,9 @@
   .sfm-sb-gf .diff { font-weight: 700; }
   .sfm-sb-gf .diff.pos { color: var(--good); } .sfm-sb-gf .diff.neg { color: var(--bad); }
 
-  .sfm-spot-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; display: flex; flex-direction: column; }
+  .sfm-spot-card { position: relative; overflow: hidden; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; display: flex; flex-direction: column; }
+  .sfm-spot-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, var(--spot-team, transparent) 0%, transparent 55%, var(--spot-team2, transparent) 100%); opacity: .16; pointer-events: none; }
+  .sfm-spot-card > * { position: relative; }
   .sfm-spot-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; font-style: italic; color: var(--text3); margin-bottom: 14px; }
   .sfm-spot-score { display: flex; align-items: center; justify-content: center; gap: 14px; }
   .sfm-spot-side { flex: 1; text-align: center; }
@@ -1390,13 +1392,14 @@
   /* Carte "Meilleurs de la soiree" : les 4 categories defilent en slides (au lieu d etre
      empilees) pour que la carte tienne sur la meme hauteur que la grille 2x2 d a cote sur
      desktop, quel que soit le nombre de lignes par categorie. */
-  .sfm-best-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; height: 100%; display: flex; flex-direction: column; }
+  .sfm-best-card { position: relative; overflow: hidden; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; height: 100%; display: flex; flex-direction: column; }
+  .sfm-best-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, var(--card-team, transparent) 0%, transparent 65%); opacity: .16; pointer-events: none; transition: background .25s; }
+  .sfm-best-card > * { position: relative; }
   .sfm-best-card-title { font-size: 12.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px; flex-shrink: 0; }
   .sfm-best-slider-wrap { position: relative; flex: 1; min-height: 0; }
   .sfm-best-slider { display: flex; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
   .sfm-best-slider::-webkit-scrollbar { display: none; }
-  .sfm-best-slide { position: relative; flex: 0 0 100%; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; padding: 14px 34px; border-radius: 12px; overflow: hidden; }
-  .sfm-best-slide::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, var(--slide-team, transparent) 0%, transparent 65%); opacity: .16; pointer-events: none; }
+  .sfm-best-slide { position: relative; flex: 0 0 100%; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; padding: 14px 34px; }
   .sfm-best-cat-lbl { position: relative; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--gold); margin-bottom: 8px; text-align: center; }
   .sfm-best-row { position: relative; display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 12.5px; }
   .sfm-best-rank { width: 16px; font-size: 11px; flex-shrink: 0; }
@@ -1891,7 +1894,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 10/09/2026 - 08:40</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 10/09/2026 - 11:22</footer>
 
 <script>
 
@@ -3556,6 +3559,23 @@ function _sfmSpotlightMeta(m, kind) {
   return { eyebrow: eyebrows[kind] || "⭐ Temps fort", caption };
 }
 
+// Equipe(s) mise en avant par le temps fort, pour teinter le fond de la carte : 1 seule
+// pour un exploit individuel (buteur/passeur/CSC/correction avec un homme du match), les 2
+// pour un feu d artifice collectif ou une correction sans buteur qui se detache.
+function _sfmSpotlightTeams(m, kind) {
+  const top = _sfmTopScorerInMatch(m);
+  const topA = _sfmTopAssisterInMatch(m);
+  if (kind === "scorer" && top) return [(m.buteursA||[]).includes(top.name) ? m.eqA : m.eqB];
+  if (kind === "assist" && topA) return [(m.passeursA||[]).includes(topA.name) ? m.eqA : m.eqB];
+  if (kind === "csc") return [(m.buteursB||[]).includes("CSC") ? m.eqB : m.eqA];
+  if (kind === "highscore") return [m.eqA, m.eqB];
+  if (kind === "blowout") {
+    if (top && top.count >= 2) return [(m.buteursA||[]).includes(top.name) ? m.eqA : m.eqB];
+    return [m.scoreA > m.scoreB ? m.eqA : m.eqB];
+  }
+  return [];
+}
+
 function _sfmSpotlightCardHTML(m, kind, delay) {
   const meta = _sfmSpotlightMeta(m, kind);
   const clA = teamCls(m.eqA), clB = teamCls(m.eqB);
@@ -3565,7 +3585,11 @@ function _sfmSpotlightCardHTML(m, kind, delay) {
   const goalsB = _matchGoalsRecapHTML(m.buteursB, m.passeursB);
   const gkA = _sfmGkLineHTML(m.gardiensA);
   const gkB = _sfmGkLineHTML(m.gardiensB);
-  return `<div class="sfm-spot-card sfm-fade-up" style="animation-delay:${delay}s">
+  const spotTeams = _sfmSpotlightTeams(m, kind).map(teamCls).filter(Boolean);
+  const spotStyle = spotTeams.length
+    ? ` style="animation-delay:${delay}s;--spot-team:var(--${spotTeams[0]});${spotTeams[1] ? `--spot-team2:var(--${spotTeams[1]});` : ""}"`
+    : ` style="animation-delay:${delay}s"`;
+  return `<div class="sfm-spot-card sfm-fade-up"${spotStyle}>
     <div class="sfm-spot-eyebrow">${meta.eyebrow}</div>
     <div class="sfm-spot-score">
       <div class="sfm-spot-side"><div class="sfm-spot-num" style="color:${sc.a}">${m.scoreA}</div><div class="sfm-spot-lbl ${clA}">${TEAM_LABEL[m.eqA]||m.eqA}</div></div>
@@ -3740,7 +3764,7 @@ function _sfmPerfCard(role, name, cls, statLine, delay) {
 // (pour reperer une eventuelle domination d une couleur), degrade teinte par l equipe du
 // 1er, et son nom en plus gros que les 2 autres.
 function _sfmBestCategoryHTML(label, rows, fmtVal, teamOf) {
-  if (!rows.length) return "";
+  if (!rows.length) return null;
   const medals = ["🥇","🥈","🥉"];
   const rowsHtml = rows.slice(0,3).map((r,i) => {
     const cls = teamCls(teamOf(r.name));
@@ -3751,9 +3775,9 @@ function _sfmBestCategoryHTML(label, rows, fmtVal, teamOf) {
     <span class="sfm-best-val">${fmtVal(r)}</span>
   </div>`;
   }).join("");
-  const topCls = teamCls(teamOf(rows[0].name));
-  const gradientAttr = topCls ? ` style="--slide-team:var(--${topCls})"` : "";
-  return `<div class="sfm-best-slide"${gradientAttr}><div class="sfm-best-cat-lbl">${label}</div>${rowsHtml}</div>`;
+  const teamCls_ = teamCls(teamOf(rows[0].name));
+  const html = `<div class="sfm-best-slide" data-team-cls="${teamCls_}"><div class="sfm-best-cat-lbl">${label}</div>${rowsHtml}</div>`;
+  return { html, teamCls: teamCls_ };
 }
 // Carte "Meilleurs de la soirée" : les 4 categories defilent en slides horizontales (au
 // doigt sur mobile, aux fleches partout) plutot que d etre empilees — pour tenir sur la
@@ -3783,11 +3807,14 @@ function _sfmBuildBestOfNightCard(session, buteursCount, passeursCount, gkRankin
   const dots = slides.length > 1
     ? `<div class="sfm-best-dots">${slides.map((_,i) => `<span class="sfm-best-dot${i===0?" active":""}"></span>`).join("")}</div>`
     : "";
-  return `<div class="sfm-best-card">
+  // Le degrade porte sur TOUTE la carte (pas chaque sous-carte) et suit l equipe du 1er de
+  // la categorie active — valeur initiale ici, mise a jour au slide par _sfmWireBestSlider.
+  const cardStyle = slides[0].teamCls ? ` style="--card-team:var(--${slides[0].teamCls})"` : "";
+  return `<div class="sfm-best-card"${cardStyle}>
     <div class="sfm-best-card-title">🌟 Meilleurs de la soirée</div>
     <div class="sfm-best-slider-wrap">
       ${arrows}
-      <div class="sfm-best-slider" id="sfmBestSlider">${slides.join("")}</div>
+      <div class="sfm-best-slider" id="sfmBestSlider">${slides.map(s => s.html).join("")}</div>
     </div>
     ${dots}
   </div>`;
@@ -3798,6 +3825,7 @@ function _sfmBuildBestOfNightCard(session, buteursCount, passeursCount, gkRankin
 function _sfmWireBestSlider(container) {
   const slider = container.querySelector('#sfmBestSlider');
   if (!slider) return;
+  const card = slider.closest('.sfm-best-card');
   const wrap = slider.closest('.sfm-best-slider-wrap');
   const prevBtn = wrap.querySelector('.sfm-best-arrow.prev');
   const nextBtn = wrap.querySelector('.sfm-best-arrow.next');
@@ -3808,6 +3836,10 @@ function _sfmWireBestSlider(container) {
     dots.forEach((d,i) => d.classList.toggle('active', i === idx));
     if (prevBtn) prevBtn.disabled = idx <= 0;
     if (nextBtn) nextBtn.disabled = idx >= slideCount - 1;
+    // Le degrade de fond de toute la carte suit l equipe du 1er de la categorie active.
+    const activeSlide = slider.children[idx];
+    const cls = activeSlide?.dataset.teamCls;
+    if (card) card.style.setProperty('--card-team', cls ? `var(--${cls})` : 'transparent');
   }
   function goTo(idx) {
     slider.scrollTo({ left: idx * slider.clientWidth, behavior: 'smooth' });
