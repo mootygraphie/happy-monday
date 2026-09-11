@@ -718,8 +718,21 @@
   .hf-showcase-name { font-weight: 800; font-size: 11.5px; margin-top: 7px; position: relative; }
   .hf-showcase-desc { font-size: 10px; color: var(--text2); margin-top: 4px; line-height: 1.4; position: relative; }
   .hf-showcase-card.is-secret { border-style: dashed; }
+  .hf-showcase-card.is-custom { border: 1.5px solid transparent; background:
+      linear-gradient(var(--bg2), var(--bg2)) padding-box,
+      conic-gradient(from var(--spin,0deg), var(--gold), var(--rouge), var(--bleu), var(--vert), var(--gold)) border-box; }
+  .hf-showcase-card.is-custom:hover { border-color: transparent; }
+  @media (prefers-reduced-motion: no-preference) {
+    .hf-showcase-card.is-custom { animation: hfCustomSpin 5s linear infinite; }
+  }
   .hf-showcase-secret-badge { position: absolute; top: 8px; right: 8px; font-size: 10px; line-height: 1; background: var(--cb); border: 1px solid var(--cc); border-radius: 999px; padding: 3px 5px; }
   .hf-showcase-secret-tag { display: inline-block; margin-top: 6px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--cc); background: var(--cb); border-radius: 999px; padding: 2px 7px; position: relative; }
+  .hf-showcase-secret-badge.unlocked, .hf-showcase-secret-tag.unlocked { color: var(--good); border-color: var(--good); }
+  .hf-showcase-secret-tag.unlocked { background: rgba(102,187,106,.12); }
+  .hf-showcase-card.is-mystery { opacity: .55; }
+  .hf-showcase-card.is-mystery .hf-showcase-ico { filter: grayscale(1); opacity: .6; }
+  .hf-showcase-card.is-mystery .hf-showcase-name { color: var(--text3); font-weight: 700; }
+  .hf-showcase-card.is-mystery:hover { transform: none; border-color: var(--border); }
   /* ── Hauts faits — matrice admin (mhf-*) ── */
   :root {
     --mhf-t0-bg: rgba(255,255,255,.03); --mhf-t0-b: rgba(255,255,255,.07);
@@ -2019,7 +2032,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 11/09/2026 - 13:31</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 11/09/2026 - 14:22</footer>
 
 <script>
 
@@ -7142,26 +7155,70 @@ const HF_SHOWCASE_CAT_VARS = {
   'Distinctions': ['--hf-distinct', '--hf-distinct-bg'],
   'Secrets':      ['--hf-secret', '--hf-secret-bg'],
 };
-// Admin : les hauts faits caches (categorie Secrets) rejoignent le mur, avec un badge
-// cadenas + bordure en pointilles pour bien les distinguer des hauts faits publics —
-// jamais visibles pour les non-admin, ni ailleurs dans l app.
+// Admin : les hauts faits caches (rangés dans leur categorie naturelle, voir MHF_CAT_BY_ID)
+// gardent leur badge cadenas + bordure en pointilles, toujours en detail, quel que soit
+// l avancement — ce mur reste pour l admin un catalogue complet.
+// Non-admin : toutes les categories sont desormais visibles, mais un haut fait cache que
+// personne n a encore debloque reste un mystere (case grise, "?", aucun nom ni description
+// reveles) ; des qu au moins un joueur l a obtenu, il apparait en detail avec un badge
+// "Débloqué" — c est toujours un haut fait cache, juste revele. Meme logique pour les
+// hauts faits personnalises (jamais attribues = mystere ; attribues au moins une fois =
+// reveles), sauf pour l admin qui ne voit dans ce mur que ceux deja attribues (le reste
+// de la bibliotheque reste accessible via le bouton sur la fiche joueur).
+function _hfMysteryCardHtml() {
+  return `<div class="hf-showcase-card is-mystery" style="--cc:var(--text3);--cb:var(--bg3)">
+    <div class="hf-showcase-ico">❓</div>
+    <div class="hf-showcase-name">Secret</div>
+  </div>`;
+}
 function _hfShowcaseHtml(isAdmin) {
-  const cats = MHF_CATS.filter(c => c !== 'Secrets' || isAdmin);
+  const completion = (_mhf && _mhf.completion) || {};
+  const isAchUnlocked = id => (completion[id] && completion[id].unlocked) > 0;
+  const customUnlocked = new Set(CUSTOM_ACH_AWARDS.map(a => a.defiId));
+
   let h = '';
-  cats.forEach(cat => {
-    const items = ACH_DEFS.filter(a => (!a.hidden || isAdmin) && (MHF_CAT_BY_ID[a.id] || 'Distinctions') === cat);
+  MHF_CATS.forEach(cat => {
+    const items = ACH_DEFS.filter(a => (MHF_CAT_BY_ID[a.id] || 'Distinctions') === cat);
     if (!items.length) return;
     const [cVar, cBgVar] = HF_SHOWCASE_CAT_VARS[cat] || ['--gold', '--gold-bg'];
     h += `<div class="hf-showcase-cat"><span class="hf-showcase-cat-dot" style="background:var(${cVar})"></span><span class="hf-showcase-cat-name">${cat}</span><span class="hf-showcase-cat-count">${items.length} haut${items.length>1?'s':''} fait${items.length>1?'s':''}</span></div>`;
-    h += `<div class="hf-showcase-grid">${items.map(a => `
-      <div class="hf-showcase-card${a.hidden?' is-secret':''}" style="--cc:var(${cVar});--cb:var(${cBgVar})">
-        ${a.hidden?'<div class="hf-showcase-secret-badge">🔒</div>':''}
+    h += `<div class="hf-showcase-grid">${items.map(a => {
+      if (!a.hidden) {
+        return `<div class="hf-showcase-card" style="--cc:var(${cVar});--cb:var(${cBgVar})">
+          <div class="hf-showcase-ico">${a.icon}</div>
+          <div class="hf-showcase-name">${a.name}</div>
+          <div class="hf-showcase-desc">${ACH_ABOUT[a.id] || ''}</div>
+        </div>`;
+      }
+      const unlocked = isAchUnlocked(a.id);
+      if (!isAdmin && !unlocked) return _hfMysteryCardHtml();
+      const revealedByPublic = !isAdmin && unlocked;
+      return `<div class="hf-showcase-card is-secret" style="--cc:var(${cVar});--cb:var(${cBgVar})">
+        <div class="hf-showcase-secret-badge${revealedByPublic?' unlocked':''}">${revealedByPublic?'🔓':'🔒'}</div>
         <div class="hf-showcase-ico">${a.icon}</div>
         <div class="hf-showcase-name">${a.name}</div>
         <div class="hf-showcase-desc">${ACH_ABOUT[a.id] || ''}</div>
-        ${a.hidden?'<div class="hf-showcase-secret-tag">Caché</div>':''}
-      </div>`).join('')}</div>`;
+        <div class="hf-showcase-secret-tag${revealedByPublic?' unlocked':''}">${revealedByPublic?'Débloqué':'Caché'}</div>
+      </div>`;
+    }).join('')}</div>`;
   });
+
+  // Hauts faits personnalises
+  const customCardHtml = d => `<div class="hf-showcase-card is-custom" style="--cc:var(--gold);--cb:var(--gold-bg)">
+      <div class="hf-showcase-ico">${d.icon}</div>
+      <div class="hf-showcase-name">${d.name}</div>
+      <div class="hf-showcase-desc">${d.desc}</div>
+    </div>`;
+  if (isAdmin) {
+    const unlockedDefs = CUSTOM_ACH_DEFS.filter(d => customUnlocked.has(d.id));
+    if (unlockedDefs.length) {
+      h += `<div class="hf-showcase-cat"><span class="hf-showcase-cat-dot" style="background:var(--gold)"></span><span class="hf-showcase-cat-name">Personnalisés</span><span class="hf-showcase-cat-count">${unlockedDefs.length} haut${unlockedDefs.length>1?'s':''} fait${unlockedDefs.length>1?'s':''}</span></div>`;
+      h += `<div class="hf-showcase-grid">${unlockedDefs.map(customCardHtml).join('')}</div>`;
+    }
+  } else {
+    h += `<div class="hf-showcase-cat"><span class="hf-showcase-cat-dot" style="background:var(--gold)"></span><span class="hf-showcase-cat-name">Personnalisés</span><span class="hf-showcase-cat-count">${CUSTOM_ACH_DEFS.length} haut${CUSTOM_ACH_DEFS.length>1?'s':''} fait${CUSTOM_ACH_DEFS.length>1?'s':''}</span></div>`;
+    h += `<div class="hf-showcase-grid">${CUSTOM_ACH_DEFS.map(d => customUnlocked.has(d.id) ? customCardHtml(d) : _hfMysteryCardHtml()).join('')}</div>`;
+  }
   return `<div class="section-label" style="margin-top:2rem">Hauts faits à débloquer</div>${h}`;
 }
 
