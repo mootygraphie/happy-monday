@@ -1479,11 +1479,6 @@
   .sfm-lu-pill.bleu { background: var(--bleu-bg); color: var(--text); border: 1px solid var(--bleu-border); }
   .sfm-lu-pill .player-link { font-size: inherit !important; font-weight: inherit !important; color: inherit !important; text-decoration: none !important; }
 
-  .sfm-logistics { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 12px; padding: 13px 18px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); font-size: 12.5px; color: var(--text2); }
-  .sfm-logistics b { color: var(--text); font-weight: 600; }
-  .sfm-logistics b .player-link { font-size: inherit !important; font-weight: inherit !important; color: inherit !important; }
-  .sfm-sep { color: var(--text3); }
-
   .sfm-no-data-card { text-align: center; padding: 3.2rem 1.5rem; color: var(--text3); font-size: 13.5px; font-style: italic; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-top: 1.6rem; }
   .sfm-no-data-card .big { font-size: 30px; margin-bottom: 10px; font-style: normal; }
 
@@ -1948,7 +1943,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 11/09/2026 - 09:37</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 11/09/2026 - 09:49</footer>
 
 <script>
 
@@ -4033,21 +4028,6 @@ function _sfmLineupCardHTML(color, players, delay) {
   </div>`;
 }
 
-function _sfmLogisticsHTML(session) {
-  const parts = [];
-  if (session.sac)      parts.push(`<span>🎒 Sac : <b>${pLink(session.sac)}</b></span>`);
-  if (session.maillots) parts.push(`<span>👕 Maillots : <b>${pLink(session.maillots)}</b></span>`);
-  const byStatut = statut => Object.entries(session.presences||{})
-    .filter(([,i]) => i.statut === statut).map(([n]) => n).sort((a,b)=>a.localeCompare(b,"fr"));
-  const blesses    = byStatut("Blessé");
-  const absents    = byStatut("Absent");
-  const pasRepondu = byStatut("Pas répondu");
-  if (blesses.length)    parts.push(`<span>🩹 Blessé${blesses.length>1?"s":""} : <b>${blesses.map(n=>pLink(n)).join(", ")}</b></span>`);
-  if (absents.length)    parts.push(`<span>❌ Absent${absents.length>1?"s":""} : <b>${absents.map(n=>pLink(n)).join(", ")}</b></span>`);
-  if (pasRepondu.length) parts.push(`<span>❓ Pas répondu : <b>${pasRepondu.map(n=>pLink(n)).join(", ")}</b></span>`);
-  if (!parts.length) return "";
-  return `<div class="sfm-logistics sfm-fade-up">${parts.join(`<span class="sfm-sep">·</span>`)}</div>`;
-}
 
 function renderSessionDetailV2(session) {
   _sfmRng = _sfmSeedRng(session.date || "");
@@ -4130,7 +4110,6 @@ function renderSessionDetailV2(session) {
   const noTeam = [];
   presentsAll.forEach(p => { teamMap[p.equipe] !== undefined ? teamMap[p.equipe].push(p) : noTeam.push(p); });
   const activeColors = ["Rouge","Vert","Bleue"].filter(c => teamMap[c].length > 0);
-  const logisticsHtml = _sfmLogisticsHTML(session);
 
   if (activeColors.length) {
     h += `<div class="section-label">Compositions &amp; coulisses</div><div class="sfm-lineup-grid">`;
@@ -4140,13 +4119,9 @@ function renderSessionDetailV2(session) {
       h += `<div class="no-team-section"><div class="no-team-label">Sans équipe assignée</div>
         <div class="players-present-list">${noTeam.map(p => `<button class="player-chip player-link" data-player="${p.name}">${p.name}</button>`).join("")}</div></div>`;
     }
-    h += logisticsHtml;
   } else if (presentsAll.length) {
     h += `<div class="section-label">Effectif (${presentsAll.length})</div>
       <div class="players-present-list">${presentsAll.map(p => `<button class="player-chip player-link" data-player="${p.name}">${p.name}</button>`).join("")}</div>`;
-    h += logisticsHtml;
-  } else if (logisticsHtml) {
-    h += logisticsHtml;
   }
 
   /* ── Tous les matchs ── */
@@ -6310,6 +6285,11 @@ function renderDashboard() {
   document.getElementById("header-sub").textContent = `Dernière session : ${latestDate}`;
 
   _dbxRenderContext();
+  // Repositionne le pastille Global/Equipes/Joueurs a chaque affichage du Dashboard : mesuree
+  // en pixels (offsetLeft/offsetWidth), elle ne peut pas etre calculee correctement tant que
+  // le panneau est cache (display:none), ce qui arrivait au tout premier chargement (avant
+  // le premier clic sur l onglet Dashboard) et la laissait invisible.
+  requestAnimationFrame(() => _dbxPlaceHi(document.getElementById("dbx2-scope-hi"), document.querySelector("#dbx2-scope-seg .dbx-seg-btn.active")));
 
   const sessions = filterSessions(currentPeriod);
   if (!sessions.length) {
