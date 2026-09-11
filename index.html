@@ -499,14 +499,13 @@
   .customach-list { display: flex; flex-direction: column; gap: 2px; max-height: 320px; overflow-y: auto; }
   .customach-item { display: flex; align-items: center; gap: 10px; padding: 9px 6px; border-radius: 8px; cursor: pointer; }
   .customach-item:hover { background: var(--bg3); }
-  .customach-item.sel { background: var(--gold-bg); }
-  .customach-item.has { opacity: .5; cursor: default; }
+  .customach-item.checked { background: var(--gold-bg); }
   .customach-item .ico { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
   .customach-item .nm { flex: 1; font-size: 12.5px; font-weight: 600; display: flex; flex-direction: column; color: var(--text); }
   .customach-item .nm small { font-size: 10px; font-weight: 400; color: var(--text3); }
   .customach-check { width: 16px; height: 16px; border-radius: 5px; border: 1.5px solid var(--border2); flex-shrink: 0; position: relative; }
-  .customach-item.sel .customach-check, .customach-item.has .customach-check { background: var(--gold); border-color: var(--gold); }
-  .customach-item.sel .customach-check::after, .customach-item.has .customach-check::after { content: "✓"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #241c04; font-weight: 800; }
+  .customach-item.checked .customach-check { background: var(--gold); border-color: var(--gold); }
+  .customach-item.checked .customach-check::after { content: "✓"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #241c04; font-weight: 800; }
   .customach-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
   .customach-date { font-size: 10.5px; color: var(--text3); }
   .customach-cancel { font-size: 12px; font-weight: 600; background: transparent; color: var(--text2); border: 1px solid var(--border2); border-radius: 8px; padding: 7px 14px; cursor: pointer; font-family: inherit; }
@@ -2020,7 +2019,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 11/09/2026 - 12:05</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 11/09/2026 - 13:31</footer>
 
 <script>
 
@@ -7848,32 +7847,33 @@ function closePlayerPanel() {
   document.body.style.overflow = "";
 }
 
-/* Fenetre "choisir un haut fait" : attribution manuelle (admin) d un haut fait
-   personnalise a un joueur, sur la session la plus recente. */
+/* Fenetre "choisir un haut fait" : attribution ET retrait manuel (admin) d un haut fait
+   personnalise a un joueur, sur la session la plus recente. Les cases deja attribuees
+   sont cochees au depart mais restent cliquables pour les decocher (retrait a la
+   confirmation) — comme les cases pas encore attribuees, cochables pour les ajouter. */
 let _customAchTarget = null;
-let _customAchSelected = new Set();
+let _customAchOriginal = new Set(); // deja attribues a l ouverture (ne bouge plus ensuite)
+let _customAchChecked  = new Set(); // etat courant des cases, modifie par les clics
 function _customAchOpenPicker(playerName) {
   const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
   const latestDate = sorted[0] ? sorted[0].date : null;
   _customAchTarget = playerName;
-  _customAchSelected = new Set();
+  const already = new Set(CUSTOM_ACH_AWARDS.filter(a => a.player === playerName && a.date === latestDate).map(a => a.defiId));
+  _customAchOriginal = already;
+  _customAchChecked = new Set(already);
   document.getElementById("customach-player").textContent = playerName;
   document.getElementById("customach-date").textContent = latestDate ? `Session du ${fmtDate(latestDate)}` : "Aucune session enregistrée";
-  const already = new Set(CUSTOM_ACH_AWARDS.filter(a => a.player === playerName && a.date === latestDate).map(a => a.defiId));
   const list = document.getElementById("customach-list");
-  list.innerHTML = CUSTOM_ACH_DEFS.map(d => {
-    const has = already.has(d.id);
-    return `<div class="customach-item${has?' has':''}" data-id="${d.id}">
+  list.innerHTML = CUSTOM_ACH_DEFS.map(d => `<div class="customach-item${already.has(d.id)?' checked':''}" data-id="${d.id}">
       <span class="ico">${d.icon}</span>
-      <span class="nm">${d.name}<small>${has ? 'Déjà attribué' : d.desc}</small></span>
+      <span class="nm">${d.name}<small>${d.desc}</small></span>
       <span class="customach-check"></span>
-    </div>`;
-  }).join("");
-  list.querySelectorAll(".customach-item:not(.has)").forEach(item => {
+    </div>`).join("");
+  list.querySelectorAll(".customach-item").forEach(item => {
     item.addEventListener("click", () => {
       const id = item.dataset.id;
-      if (_customAchSelected.has(id)) { _customAchSelected.delete(id); item.classList.remove("sel"); }
-      else { _customAchSelected.add(id); item.classList.add("sel"); }
+      if (_customAchChecked.has(id)) { _customAchChecked.delete(id); item.classList.remove("checked"); }
+      else { _customAchChecked.add(id); item.classList.add("checked"); }
     });
   });
   document.getElementById("customach-confirm").disabled = !latestDate;
@@ -7882,19 +7882,25 @@ function _customAchOpenPicker(playerName) {
 function _customAchClosePicker() {
   document.getElementById("customach-modal").style.display = "none";
   _customAchTarget = null;
-  _customAchSelected = new Set();
+  _customAchOriginal = new Set();
+  _customAchChecked = new Set();
 }
 document.getElementById("customach-cancel").addEventListener("click", _customAchClosePicker);
 document.getElementById("customach-confirm").addEventListener("click", () => {
-  if (!_customAchTarget || !_customAchSelected.size) { _customAchClosePicker(); return; }
+  if (!_customAchTarget) { _customAchClosePicker(); return; }
   const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
   const latestDate = sorted[0] ? sorted[0].date : null;
   if (!latestDate) { _customAchClosePicker(); return; }
   const player = _customAchTarget;
-  _customAchSelected.forEach(defiId => {
+  const toAdd    = [..._customAchChecked].filter(id => !_customAchOriginal.has(id));
+  const toRemove = [..._customAchOriginal].filter(id => !_customAchChecked.has(id));
+  toAdd.forEach(defiId => {
     CUSTOM_ACH_AWARDS.push({ id: `${Date.now()}_${Math.random().toString(36).slice(2,8)}`, player, defiId, date: latestDate, addedAt: Date.now() });
   });
-  _saveCustomAchAwards();
+  if (toRemove.length) {
+    CUSTOM_ACH_AWARDS = CUSTOM_ACH_AWARDS.filter(a => !(a.player === player && a.date === latestDate && toRemove.includes(a.defiId)));
+  }
+  if (toAdd.length || toRemove.length) _saveCustomAchAwards();
   _customAchClosePicker();
   openPlayerPanel(player);
 });
