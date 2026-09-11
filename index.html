@@ -387,6 +387,29 @@
   }
   #lock-screen .lock-btn:hover { opacity: .88; }
   #lock-screen .lock-err { font-size: 12px; color: var(--rouge); margin-top: 10px; min-height: 16px; }
+  #leave-edit-modal {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,.72);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  #leave-edit-modal .leave-edit-card {
+    background: var(--bg2); border: 1px solid var(--border2);
+    border-radius: 20px; padding: 36px 32px 28px;
+    width: 100%; max-width: 380px; margin: 0 16px;
+    display: flex; flex-direction: column; align-items: center; gap: 0; text-align: center;
+    box-shadow: 0 24px 64px rgba(0,0,0,.5);
+  }
+  #leave-edit-modal .leave-edit-icon { font-size: 32px; margin-bottom: 14px; }
+  #leave-edit-modal h2 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  #leave-edit-modal p { font-size: 13px; color: var(--text3); line-height: 1.5; margin-bottom: 24px; }
+  #leave-edit-modal p strong { color: var(--text2); }
+  .leave-edit-btn { width: 100%; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 10px; cursor: pointer; transition: opacity .15s; border: none; margin-top: 10px; }
+  .leave-edit-btn.primary { background: #fff; color: #0f0f13; }
+  .leave-edit-btn.danger { background: rgba(255,45,149,.12); color: var(--rouge); border: 1px solid rgba(255,45,149,.3); }
+  .leave-edit-btn.ghost { background: transparent; color: var(--text3); }
+  .leave-edit-btn:hover { opacity: .82; }
+  html.light #leave-edit-modal .leave-edit-btn.primary { background: #111118; color: #f4f4f8; }
+  html.light #leave-edit-modal .leave-edit-card { box-shadow: 0 8px 32px rgba(0,0,0,.12); }
   @keyframes shake {
     0%,100%{ transform: translateX(0); }
     20%    { transform: translateX(-6px); }
@@ -1768,6 +1791,17 @@
   <div style="color:rgba(255,255,255,.45);font-size:12px">Ne pas fermer ni actualiser cette page</div>
 </div>
 
+<div id="leave-edit-modal" style="display:none">
+  <div class="leave-edit-card">
+    <div class="leave-edit-icon">✏️</div>
+    <h2>Modifications non enregistrées</h2>
+    <p>Vous éditez la session du <strong id="leave-edit-date"></strong> sans avoir cliqué sur « Mettre à jour ».</p>
+    <button class="leave-edit-btn primary" id="leave-edit-save">Enregistrer mes modifications</button>
+    <button class="leave-edit-btn danger" id="leave-edit-discard">Quitter sans enregistrer</button>
+    <button class="leave-edit-btn ghost" id="leave-edit-cancel">Annuler</button>
+  </div>
+</div>
+
 <header>
   <div class="hnav-toprow">
     <div class="header-main">
@@ -1914,7 +1948,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 10/09/2026 - 17:26</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 11/09/2026 - 09:37</footer>
 
 <script>
 
@@ -2087,16 +2121,19 @@ document.getElementById("refresh-btn").addEventListener("click", () => {
 document.getElementById("admin-btn").addEventListener("click", () => {
   const role = sessionStorage.getItem("hmft_role");
   if (role === "admin" || role === "saisie") {
-    sessionStorage.removeItem("hmft_role");
-    applyRole("user");
-    updateAdminBtn();
-    if (role === "saisie") {
-      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-      document.getElementById("panel-dashboard").classList.add("active");
-      document.querySelector('.main-tab[data-tab="dashboard"]').classList.add("active");
-      history.replaceState(null, '', '#dashboard');
-      renderDashboard();
-    }
+    // Se deconnecter en pleine edition non enregistree passe aussi par le garde-fou.
+    _guardStaleEditDraft(() => {
+      sessionStorage.removeItem("hmft_role");
+      applyRole("user");
+      updateAdminBtn();
+      if (role === "saisie") {
+        document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+        document.getElementById("panel-dashboard").classList.add("active");
+        document.querySelector('.main-tab[data-tab="dashboard"]').classList.add("active");
+        history.replaceState(null, '', '#dashboard');
+        renderDashboard();
+      }
+    });
   } else {
     document.getElementById("pwd-input").value = "";
     document.getElementById("pwd-err").textContent = "";
@@ -6365,24 +6402,28 @@ function renderSessionResults(date) {
 
 document.querySelectorAll(".main-tab").forEach(tab => {
   tab.addEventListener("click", () => {
-    document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
-    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-    tab.classList.add("active");
-    document.getElementById(`panel-${tab.dataset.tab}`).classList.add("active");
-    if (tab.dataset.tab === "joueurs") {
-      history.replaceState(null, '', '#joueurs');
-      renderJoueurs();
-    } else if (tab.dataset.tab === "dashboard") {
-      _dbxSyncHash();
-      renderDashboard();
-    } else if (tab.dataset.tab === "session") {
-      history.replaceState(null, '', '#sessions');
-      const date = document.getElementById("session-date").value;
-      if (date) renderSessionResults(date);
-    } else if (tab.dataset.tab === "stats") {
-      history.replaceState(null, '', '#stats');
-      renderStats();
-    }
+    // Quitter la Saisie via un autre onglet pendant une edition non enregistree doit passer
+    // par le meme garde-fou que le reste (nav Saisie, deconnexion, rechargement sur #saisie).
+    _guardStaleEditDraft(() => {
+      document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById(`panel-${tab.dataset.tab}`).classList.add("active");
+      if (tab.dataset.tab === "joueurs") {
+        history.replaceState(null, '', '#joueurs');
+        renderJoueurs();
+      } else if (tab.dataset.tab === "dashboard") {
+        _dbxSyncHash();
+        renderDashboard();
+      } else if (tab.dataset.tab === "session") {
+        history.replaceState(null, '', '#sessions');
+        const date = document.getElementById("session-date").value;
+        if (date) renderSessionResults(date);
+      } else if (tab.dataset.tab === "stats") {
+        history.replaceState(null, '', '#stats');
+        renderStats();
+      }
+    });
   });
 });
 
@@ -6397,31 +6438,59 @@ document.getElementById("footer-reglement-btn").addEventListener("click", () => 
 // Si le brouillon en memoire correspond a une session DEJA validee (ex : on a quitte un
 // "Modifier" sans cliquer sur "Mettre a jour", meme apres avoir rafraichi la page ou s etre
 // reconnecte — le brouillon reste tel quel puisque _editMode n est jamais persiste mais
-// _draft, lui, l est), ce n est plus un brouillon legitime de nouvelle soiree — on repart
-// d une saisie vierge pour eviter la confusion ("ca m ouvre l etape 4 de je ne sais quoi").
-// Sans risque pour la session deja validee, qui vit dans sessions/{date}, jamais dans ce
-// brouillon. Appelee a l entree normale de la Saisie (nav ou chargement direct sur #saisie)
-// — "Modifier" une session passe par un autre chemin qui ne l appelle jamais.
-function _discardStaleEditDraft() {
-  if (_draft && _draft.date && SESSIONS.some(s => s.date === _draft.date)) {
+// _draft, lui, l est), ce n est plus un brouillon legitime de nouvelle soiree.
+function _isStaleEditDraft() {
+  return !!(_draft && _draft.date && SESSIONS.some(s => s.date === _draft.date));
+}
+// Jamais de perte silencieuse : si un brouillon d edition perime est detecte, on demande a
+// l utilisateur ce qu il veut en faire avant de continuer quoi que ce soit qui le quitterait
+// (nav Saisie, changement d onglet, deconnexion, chargement direct sur #saisie). `afterDiscard`
+// s execute si rien n est a proteger, ou apres le choix "Quitter sans enregistrer". `onCancel`
+// s execute si l utilisateur annule (rien ne doit bouger dans ce cas).
+function _guardStaleEditDraft(afterDiscard, onCancel) {
+  if (!_isStaleEditDraft()) { afterDiscard(); return; }
+  const date = _draft.date;
+  const modal = document.getElementById("leave-edit-modal");
+  document.getElementById("leave-edit-date").textContent = fmtDate(date);
+  modal.style.display = "flex";
+  const saveBtn = document.getElementById("leave-edit-save");
+  const discardBtn = document.getElementById("leave-edit-discard");
+  const cancelBtn = document.getElementById("leave-edit-cancel");
+  const close = () => { modal.style.display = "none"; };
+  saveBtn.onclick = () => {
+    close();
+    _editMode = true;
+    document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    document.getElementById("panel-saisie").classList.add("active");
+    history.replaceState(null, '', '#saisie');
+    renderSaisie();
+    _commitSession();
+  };
+  discardBtn.onclick = () => {
+    close();
     _draft = _newDraft();
     _draftSavedAt = null;
+    _editMode = false;
     _resetSaisieUiState();
     localStorage.removeItem("hmft_draft");
     if (_db) _db.ref('config/draft').remove().catch(() => {});
-  }
+    afterDiscard();
+  };
+  cancelBtn.onclick = () => { close(); if (onCancel) onCancel(); };
 }
 function _goToSaisie() {
   _editMode = false;
-  _discardStaleEditDraft();
-  document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
-  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-  document.getElementById("panel-saisie").classList.add("active");
-  history.replaceState(null, '', '#saisie');
-  // Filet de securite : si le chargement initial a expire avant d y arriver (reseau lent),
-  // on s assure quand meme d etre a l ecoute des matchs valides par d autres telephones.
-  _fbWatchDraftMatches();
-  renderSaisie();
+  _guardStaleEditDraft(() => {
+    document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    document.getElementById("panel-saisie").classList.add("active");
+    history.replaceState(null, '', '#saisie');
+    // Filet de securite : si le chargement initial a expire avant d y arriver (reseau lent),
+    // on s assure quand meme d etre a l ecoute des matchs valides par d autres telephones.
+    _fbWatchDraftMatches();
+    renderSaisie();
+  });
 }
 document.getElementById("saisie-nav-btn").addEventListener("click", _goToSaisie);
 
@@ -6463,15 +6532,19 @@ document.getElementById("edit-session-btn").addEventListener("click", () => {
   if (!date) return;
   const session = SESSIONS.find(s => s.date === date);
   if (!session) return;
-  _editMode = true;
-  _draft = _loadSessionIntoDraft(session);
-  _draftSavedAt = null;
-  _resetSaisieUiState();
-  document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
-  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-  document.getElementById("panel-saisie").classList.add("active");
-  history.replaceState(null, '', '#saisie');
-  renderSaisie();
+  // Editer une autre session pendant qu une edition precedente n est pas enregistree passe
+  // aussi par le garde-fou (sinon elle serait silencieusement ecrasee par ce nouveau brouillon).
+  _guardStaleEditDraft(() => {
+    _editMode = true;
+    _draft = _loadSessionIntoDraft(session);
+    _draftSavedAt = null;
+    _resetSaisieUiState();
+    document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    document.getElementById("panel-saisie").classList.add("active");
+    history.replaceState(null, '', '#saisie');
+    renderSaisie();
+  });
 });
 
 /* ══════════════════════════════════════════════════════════
@@ -9410,7 +9483,13 @@ document.addEventListener("click", e => {
   renderJoueurs();
   if (_hash === "stats") renderStats();
   if (_hash === "reglement") renderReglement();
-  if (_loadSaisie) { _discardStaleEditDraft(); _fbWatchDraftMatches(); renderSaisie(); }
+  if (_loadSaisie) {
+    // "Annuler" ici revient a reprendre l edition telle quelle (le brouillon n a pas ete
+    // touche) — dans les deux cas (discard ou annuler), il suffit de rendre _draft tel qu il
+    // se trouve apres le choix de l utilisateur.
+    const _renderSaisieBoot = () => { _fbWatchDraftMatches(); renderSaisie(); };
+    _guardStaleEditDraft(_renderSaisieBoot, _renderSaisieBoot);
+  }
   if (SESSIONS.length) {
     const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
     renderSessionResults(sorted[0].date);
