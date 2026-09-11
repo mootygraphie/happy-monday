@@ -1526,6 +1526,25 @@
   .dd-compact-row .dbx-fb-select.month-sel { width: 60px; }
   .dd-compact-row .dbx-fb-select.day-sel2 { width: 48px; }
   .dbx-fb-meta { margin-left: auto; font-size: 12px; color: var(--text3); text-align: right; }
+
+  /* Frise de saison — selecteur de session (onglet Sessions uniquement) : les soirees
+     jouees a la suite, facon billets de match, a faire defiler. */
+  #sess-dd-row { flex: 1 1 340px; min-width: 0; }
+  .sess-strip { display: flex; gap: 14px; overflow-x: auto; min-width: 0; padding: 4px 2px 10px; scroll-snap-type: x proximity; }
+  .sess-strip::-webkit-scrollbar { height: 6px; }
+  .sess-strip::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+  .sess-strip-month { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+  .sess-strip-month-lbl { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); padding-left: 2px; }
+  .sess-strip-tickets { display: flex; gap: 8px; }
+  .sess-ticket { scroll-snap-align: start; flex-shrink: 0; width: 64px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 9px 4px 7px; text-align: center; cursor: pointer; position: relative; font: inherit; color: inherit; transition: border-color .15s, transform .15s, background .15s; }
+  .sess-ticket::before, .sess-ticket::after { content:""; position: absolute; width: 10px; height: 10px; background: var(--bg); border-radius: 50%; top: 50%; transform: translateY(-50%); }
+  .sess-ticket::before { left: -5px; } .sess-ticket::after { right: -5px; }
+  .sess-ticket:hover { transform: translateY(-2px); border-color: var(--text3); }
+  .sess-ticket.sel { border-color: var(--gold); background: var(--gold-bg); box-shadow: 0 0 0 1px var(--gold-border); }
+  .sess-ticket .dow { font-size: 9px; text-transform: uppercase; letter-spacing: .04em; color: var(--text3); }
+  .sess-ticket .dnum { font-size: 18px; font-weight: 700; margin: 1px 0; font-variant-numeric: tabular-nums; color: var(--text); }
+  .sess-ticket .tear { border-top: 1px dashed var(--border2); margin: 6px -4px 6px; }
+  .sess-ticket .presents { font-size: 10.5px; font-weight: 700; color: var(--text2); }
   .dbx-fb-meta b { color: var(--text2); font-weight: 600; }
 
   /* ── En-têtes de section ── */
@@ -1900,7 +1919,7 @@
   <div class="tab-panel active" id="panel-session">
     <div class="session-selector">
       <label>Session :</label>
-      <div class="dd-compact-row" id="sess-dd-row"></div>
+      <div id="sess-dd-row"></div>
       <select id="session-date" style="display:none"></select>
       <button id="delete-session-btn" title="Supprimer cette session" style="display:none;background:transparent;border:1px solid #e74c3c44;color:#e74c3c;border-radius:8px;padding:7px 11px;font-size:16px;cursor:pointer;line-height:1;transition:background .15s;" onmouseover="this.style.background='#e74c3c18'" onmouseout="this.style.background='transparent'">🗑️</button>
       <button id="edit-session-btn" title="Modifier cette session" style="display:none;background:transparent;border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:7px 11px;font-size:16px;cursor:pointer;line-height:1;transition:background .15s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">✏️</button>
@@ -1943,7 +1962,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 11/09/2026 - 09:49</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 11/09/2026 - 11:24</footer>
 
 <script>
 
@@ -6336,6 +6355,59 @@ function renderDashboard() {
    RÉSULTATS DE SESSION
 ══════════════════════════════════════════════════════════ */
 
+const _SESS_DOW_SHORT = ["Lu","Ma","Me","Je","Ve","Sa","Di"];
+const _SESS_MONTHS_SHORT = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+
+// Frise de saison : les sessions jouees, facon billets de match, groupees par mois,
+// dans l ordre chronologique (la plus recente a droite).
+function _sessionTicketStripHTML(sortedAsc) {
+  const groups = [];
+  let curKey = null, curGroup = null;
+  sortedAsc.forEach(s => {
+    const [y, m] = s.date.split("-").map(Number);
+    const key = `${y}-${m}`;
+    if (key !== curKey) { curKey = key; curGroup = { y, m, items: [] }; groups.push(curGroup); }
+    curGroup.items.push(s);
+  });
+  const groupsHtml = groups.map(g => {
+    const ticketsHtml = g.items.map(s => {
+      const [y, m, d] = s.date.split("-").map(Number);
+      const dow = _SESS_DOW_SHORT[(new Date(y, m - 1, d).getDay() + 6) % 7];
+      const presents = Object.values(s.presences || {}).filter(p => p.statut === "Présent").length;
+      return `<button type="button" class="sess-ticket" data-date="${s.date}">
+        <div class="dow">${dow}</div>
+        <div class="dnum">${d}</div>
+        <div class="tear"></div>
+        <div class="presents">👥&ensp;${presents}</div>
+      </button>`;
+    }).join("");
+    return `<div class="sess-strip-month">
+      <div class="sess-strip-month-lbl">${_SESS_MONTHS_SHORT[g.m - 1]} ${g.y}</div>
+      <div class="sess-strip-tickets">${ticketsHtml}</div>
+    </div>`;
+  }).join("");
+  return `<div class="sess-strip" id="sess-strip">${groupsHtml}</div>`;
+}
+function _wireSessionTicketStrip(getSelected, onChange) {
+  const strip = document.getElementById("sess-strip");
+  if (!strip) return;
+  strip.querySelectorAll(".sess-ticket").forEach(t => {
+    t.addEventListener("click", () => onChange(t.dataset.date));
+  });
+  _syncSessDd(getSelected());
+}
+// Resynchronise la mise en avant (et le scroll) de la frise sur une date donnee — a
+// appeler chaque fois que #session-date change sans passer par un clic sur un billet
+// (ex : apres validation/mise a jour d une session dans _commitSession).
+function _syncSessDd(date) {
+  const strip = document.getElementById("sess-strip");
+  if (!strip) return;
+  strip.querySelectorAll(".sess-ticket").forEach(t => t.classList.toggle("sel", t.dataset.date === date));
+  const sel = strip.querySelector(".sess-ticket.sel");
+  if (sel) sel.scrollIntoView({ inline: "center", block: "nearest" });
+  else strip.scrollLeft = strip.scrollWidth;
+}
+
 function populateSessionSelect() {
   const sel = document.getElementById("session-date");
   const ddRow = document.getElementById("sess-dd-row");
@@ -6345,8 +6417,8 @@ function populateSessionSelect() {
     if (ddRow) ddRow.innerHTML = "";
     return;
   }
-  const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
-  sorted.forEach((s, i) => {
+  const sortedDesc = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
+  sortedDesc.forEach((s, i) => {
     const opt = document.createElement("option");
     opt.value = s.date;
     opt.textContent = fmtDate(s.date);
@@ -6354,8 +6426,9 @@ function populateSessionSelect() {
     sel.appendChild(opt);
   });
   if (ddRow) {
-    ddRow.innerHTML = _dateDdHTML("sess");
-    _wireDateDd("sess", () => sel.value, date => {
+    const sortedAsc = [...sortedDesc].reverse();
+    ddRow.innerHTML = _sessionTicketStripHTML(sortedAsc);
+    _wireSessionTicketStrip(() => sel.value, date => {
       sel.value = date;
       sel.dispatchEvent(new Event("change"));
     });
@@ -6475,6 +6548,7 @@ function _goToSaisie() {
 document.getElementById("saisie-nav-btn").addEventListener("click", _goToSaisie);
 
 document.getElementById("session-date").addEventListener("change", e => {
+  _syncSessDd(e.target.value);
   renderSessionResults(e.target.value);
 });
 
