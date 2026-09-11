@@ -44,6 +44,12 @@
     inherits: true;
     initial-value: transparent;
   }
+  /* Rotation de la bordure degradee des hauts faits personnalises (fiche joueur). */
+  @property --spin {
+    syntax: '<angle>';
+    inherits: true;
+    initial-value: 0deg;
+  }
   /* ── Mode clair ── */
   html.light {
     --bg: #f4f4f8; --bg2: #ffffff; --bg3: #ebebf2;
@@ -468,6 +474,44 @@
     font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
     color: var(--text3); font-style: italic; margin-bottom: 10px;
   }
+  /* Hauts faits personnalises (fiche joueur) : bouton admin + badges deja attribues,
+     avant la section Hauts faits automatiques. */
+  .pp-custom-ach-add { display: flex; align-items: center; gap: 6px; width: 100%; font-size: 12.5px; font-weight: 700; background: var(--gold-bg); color: var(--gold); border: 1px dashed var(--gold-border); border-radius: 10px; padding: 10px 14px; cursor: pointer; font-family: inherit; transition: background .15s; }
+  .pp-custom-ach-add:hover { background: var(--gold-border); }
+  .pp-admin-tag { margin-left: auto; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text3); background: var(--bg3); border-radius: 999px; padding: 2px 7px; }
+  .hf-custom-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(100px,1fr)); gap: 9px; }
+  .hf-custom-card { position: relative; border-radius: 14px; padding: 14px 10px; text-align: center; overflow: hidden; border: 1.5px solid transparent; background:
+      linear-gradient(var(--bg3), var(--bg3)) padding-box,
+      conic-gradient(from var(--spin,0deg), var(--gold), var(--rouge), var(--bleu), var(--vert), var(--gold)) border-box; }
+  @media (prefers-reduced-motion: no-preference) {
+    .hf-custom-card { animation: hfCustomSpin 5s linear infinite; }
+    @keyframes hfCustomSpin { to { --spin: 360deg; } }
+  }
+  .hf-custom-glow { position: absolute; inset: 0; background: radial-gradient(circle at 50% 0%, var(--gold) 0%, transparent 65%); opacity: .22; pointer-events: none; }
+  .hf-custom-ico { font-size: 26px; position: relative; }
+  .hf-custom-nm { font-weight: 800; font-size: 11.5px; margin-top: 7px; position: relative; }
+  .hf-custom-ds { font-size: 10px; color: var(--text2); margin-top: 4px; position: relative; }
+
+  /* Fenetre "choisir un haut fait" ouverte par le bouton ci-dessus */
+  #customach-modal { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,.72); display: flex; align-items: center; justify-content: center; }
+  .customach-card { background: var(--bg2); border: 1px solid var(--border2); border-radius: 20px; padding: 22px; width: 100%; max-width: 340px; margin: 0 16px; box-shadow: 0 24px 64px rgba(0,0,0,.5); }
+  .customach-title { font-size: 14px; font-weight: 700; margin-bottom: 14px; }
+  .customach-list { display: flex; flex-direction: column; gap: 2px; max-height: 320px; overflow-y: auto; }
+  .customach-item { display: flex; align-items: center; gap: 10px; padding: 9px 6px; border-radius: 8px; cursor: pointer; }
+  .customach-item:hover { background: var(--bg3); }
+  .customach-item.sel { background: var(--gold-bg); }
+  .customach-item.has { opacity: .5; cursor: default; }
+  .customach-item .ico { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+  .customach-item .nm { flex: 1; font-size: 12.5px; font-weight: 600; display: flex; flex-direction: column; color: var(--text); }
+  .customach-item .nm small { font-size: 10px; font-weight: 400; color: var(--text3); }
+  .customach-check { width: 16px; height: 16px; border-radius: 5px; border: 1.5px solid var(--border2); flex-shrink: 0; position: relative; }
+  .customach-item.sel .customach-check, .customach-item.has .customach-check { background: var(--gold); border-color: var(--gold); }
+  .customach-item.sel .customach-check::after, .customach-item.has .customach-check::after { content: "✓"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #241c04; font-weight: 800; }
+  .customach-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .customach-date { font-size: 10.5px; color: var(--text3); }
+  .customach-cancel { font-size: 12px; font-weight: 600; background: transparent; color: var(--text2); border: 1px solid var(--border2); border-radius: 8px; padding: 7px 14px; cursor: pointer; font-family: inherit; }
+  .customach-confirm { font-size: 12px; font-weight: 700; background: var(--gold); color: #241c04; border: none; border-radius: 8px; padding: 7px 16px; cursor: pointer; font-family: inherit; }
+
   .pp-stat-val { font-size: 20px; font-weight: 700; line-height: 1; flex-shrink: 0; min-width: 18px; font-variant-numeric: tabular-nums; }
   .pp-stat-val.green { color: #66bb6a; }
   .pp-stat-val.red   { color: #ef5350; }
@@ -1816,6 +1860,20 @@
   </div>
 </div>
 
+<div id="customach-modal" style="display:none">
+  <div class="customach-card">
+    <div class="customach-title">Choisir un haut fait pour <span id="customach-player"></span></div>
+    <div class="customach-list" id="customach-list"></div>
+    <div class="customach-foot">
+      <span class="customach-date" id="customach-date"></span>
+      <div style="display:flex;gap:8px">
+        <button type="button" class="customach-cancel" id="customach-cancel">Annuler</button>
+        <button type="button" class="customach-confirm" id="customach-confirm">Attribuer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <header>
   <div class="hnav-toprow">
     <div class="header-main">
@@ -1962,7 +2020,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 11/09/2026 - 11:24</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 11/09/2026 - 11:44</footer>
 
 <script>
 
@@ -2266,6 +2324,10 @@ async function _fbLoadFromNetwork() {
   } else {
     _db.ref('config/inactifs').set([...INACTIFS]).catch(() => {});
   }
+  if (cfg.customAch) {
+    CUSTOM_ACH_AWARDS = cfg.customAch;
+    localStorage.setItem('hmft_custom_ach', JSON.stringify(cfg.customAch));
+  }
 }
 
 async function _fbSaveSession(session) {
@@ -2400,6 +2462,25 @@ function _saveExtraPlayers() {
   const extra = ALL_PLAYERS.filter(p => !_BASE_PLAYERS.has(p));
   localStorage.setItem('hmft_extra_players', JSON.stringify(extra));
   if (_db) _db.ref('config/extraPlayers').set(extra).catch(e => console.error('FB extraPlayers:', e));
+}
+
+/* Hauts faits personnalises : bibliotheque de defis fixe (definie ici, pas encore editable
+   depuis l app) + attributions, elles, persistees comme le reste de la config. */
+const CUSTOM_ACH_DEFS = [
+  { id: 'sangfroid',     icon: '🧊',        name: 'Sang-froid',          desc: 'Pénalty décisif' },
+  { id: 'sniper',        icon: '🎯',        name: 'Le Sniper',           desc: 'But à 20m ou plus' },
+  { id: 'poteau',        icon: '🥅',        name: 'Le Poteau Maudit',    desc: '3 poteaux dans le même match' },
+  { id: 'vengeur',       icon: '🦹🏻‍♂️',      name: 'Le Vengeur',          desc: "But contre son ancienne équipe de la soirée" },
+  { id: 'arretfolie',    icon: '🕷️',        name: 'Arrêt de Folie',      desc: 'Un arrêt exceptionnel qui change le match' },
+  { id: 'reprisecanon',  icon: '🚀',        name: 'Reprise Canon',       desc: 'But sur une reprise de volée' },
+  { id: 'ciseau',        icon: '🤸',        name: 'Ciseau Acrobatique',  desc: 'But sur un retourné acrobatique' },
+  { id: 'varvalidee',    icon: '📺',        name: 'VAR Validée',         desc: 'But confirmé après vérification vidéo' },
+  { id: 'varrefusee',    icon: '🚫',        name: 'VAR Refusée',         desc: 'But refusé après vérification vidéo' },
+];
+let CUSTOM_ACH_AWARDS = JSON.parse(localStorage.getItem('hmft_custom_ach') || '[]');
+function _saveCustomAchAwards() {
+  localStorage.setItem('hmft_custom_ach', JSON.stringify(CUSTOM_ACH_AWARDS));
+  if (_db) _db.ref('config/customAch').set(CUSTOM_ACH_AWARDS).catch(e => console.error('FB customAch:', e));
 }
 
 /* ── Helpers ── */
@@ -7717,6 +7798,30 @@ function openPlayerPanel(playerName) {
   } else { h += `<p class="no-data" style="margin-top:4px">Aucune victoire enregistrée</p>`; }
   h += `</div>`;
 
+  /* Hauts faits personnalises : bouton admin (attribution manuelle) + badges deja
+     obtenus, juste avant les hauts faits automatiques. */
+  {
+    const _isAdmin = sessionStorage.getItem("hmft_role") === "admin";
+    const _myCustomAwards = CUSTOM_ACH_AWARDS.filter(a => a.player === playerName);
+    if (_isAdmin) {
+      h += `<button type="button" class="pp-custom-ach-add" onclick="_customAchOpenPicker('${playerName}')">➕&ensp;Ajouter un haut fait<span class="pp-admin-tag">admin</span></button>`;
+    }
+    if (_myCustomAwards.length) {
+      h += `<div><div class="pp-section-title">Hauts faits personnalisés</div><div class="hf-custom-grid">`;
+      h += _myCustomAwards.map(a => {
+        const defi = CUSTOM_ACH_DEFS.find(d => d.id === a.defiId);
+        if (!defi) return "";
+        return `<div class="hf-custom-card">
+          <div class="hf-custom-glow"></div>
+          <div class="hf-custom-ico">${defi.icon}</div>
+          <div class="hf-custom-nm">${defi.name}</div>
+          <div class="hf-custom-ds">${fmtDate(a.date)}</div>
+        </div>`;
+      }).join("");
+      h += `</div></div>`;
+    }
+  }
+
   /* Hauts faits */
   h += `<div><div class="pp-section-title">Hauts faits</div>${renderAchievementsGrid(computeAchievementStats(playerName))}</div>`;
 
@@ -7742,6 +7847,57 @@ function closePlayerPanel() {
   document.getElementById("player-panel").classList.remove("open");
   document.body.style.overflow = "";
 }
+
+/* Fenetre "choisir un haut fait" : attribution manuelle (admin) d un haut fait
+   personnalise a un joueur, sur la session la plus recente. */
+let _customAchTarget = null;
+let _customAchSelected = new Set();
+function _customAchOpenPicker(playerName) {
+  const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
+  const latestDate = sorted[0] ? sorted[0].date : null;
+  _customAchTarget = playerName;
+  _customAchSelected = new Set();
+  document.getElementById("customach-player").textContent = playerName;
+  document.getElementById("customach-date").textContent = latestDate ? `Session du ${fmtDate(latestDate)}` : "Aucune session enregistrée";
+  const already = new Set(CUSTOM_ACH_AWARDS.filter(a => a.player === playerName && a.date === latestDate).map(a => a.defiId));
+  const list = document.getElementById("customach-list");
+  list.innerHTML = CUSTOM_ACH_DEFS.map(d => {
+    const has = already.has(d.id);
+    return `<div class="customach-item${has?' has':''}" data-id="${d.id}">
+      <span class="ico">${d.icon}</span>
+      <span class="nm">${d.name}<small>${has ? 'Déjà attribué' : d.desc}</small></span>
+      <span class="customach-check"></span>
+    </div>`;
+  }).join("");
+  list.querySelectorAll(".customach-item:not(.has)").forEach(item => {
+    item.addEventListener("click", () => {
+      const id = item.dataset.id;
+      if (_customAchSelected.has(id)) { _customAchSelected.delete(id); item.classList.remove("sel"); }
+      else { _customAchSelected.add(id); item.classList.add("sel"); }
+    });
+  });
+  document.getElementById("customach-confirm").disabled = !latestDate;
+  document.getElementById("customach-modal").style.display = "flex";
+}
+function _customAchClosePicker() {
+  document.getElementById("customach-modal").style.display = "none";
+  _customAchTarget = null;
+  _customAchSelected = new Set();
+}
+document.getElementById("customach-cancel").addEventListener("click", _customAchClosePicker);
+document.getElementById("customach-confirm").addEventListener("click", () => {
+  if (!_customAchTarget || !_customAchSelected.size) { _customAchClosePicker(); return; }
+  const sorted = [...SESSIONS].sort((a,b) => new Date(b.date)-new Date(a.date));
+  const latestDate = sorted[0] ? sorted[0].date : null;
+  if (!latestDate) { _customAchClosePicker(); return; }
+  const player = _customAchTarget;
+  _customAchSelected.forEach(defiId => {
+    CUSTOM_ACH_AWARDS.push({ id: `${Date.now()}_${Math.random().toString(36).slice(2,8)}`, player, defiId, date: latestDate, addedAt: Date.now() });
+  });
+  _saveCustomAchAwards();
+  _customAchClosePicker();
+  openPlayerPanel(player);
+});
 
 /* ─────────────────────────────────────────────────────
    SAISIE — onglet de saisie des sessions
