@@ -902,12 +902,9 @@
   .saisie-wrap { max-width: 820px; overflow-x: hidden; }
   .saisie-bar { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 10px 24px; }
   .saisie-actions { display: flex; gap: 8px; flex-wrap: nowrap; }
-  .saisie-bar-actions { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-  @media (max-width: 640px) {
-    /* Le statut (sauvegarde ou non) se lit mieux a cote du bouton Enregistrer que
-       dessous, sur un ecran etroit ou l espace vertical compte. */
-    .saisie-bar-actions { flex-direction: row; gap: 10px; flex-wrap: wrap; justify-content: center; }
-  }
+  /* Le statut (sauvegarde ou non) se lit mieux a cote du bouton Enregistrer que dessous,
+     desktop comme telephone. */
+  .saisie-bar-actions { display: flex; flex-direction: row; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
   .saisie-btn { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border2); font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s, opacity .15s; white-space: nowrap; background: var(--bg3); color: var(--text); }
   .saisie-btn.secondary { background: var(--bg2); color: var(--text); }
   .saisie-btn.secondary:hover { background: var(--bg3); }
@@ -1004,9 +1001,10 @@
     .saisie-repart-zone { flex: 1; }
     .saisie-repart-cols.n4 { flex-wrap: wrap; }
     .saisie-repart-cols.n4 .saisie-repart-zone.grise { flex-basis: 100%; }
-    /* Desktop : plus de place, on laisse le nombre de colonnes suivre la largeur
-       reellement disponible plutot que le nombre fixe pense pour le telephone. */
-    .saisie-repart-chips { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); }
+    /* Desktop : seule la case "Sans equipe" profite de la largeur disponible pour
+       s etaler sur plus de colonnes — les equipes de couleur gardent les memes regles
+       de lignes que sur telephone (voir --rp-cols). */
+    .saisie-repart-zone.grise .saisie-repart-chips { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); }
   }
 
   /* Logistique */
@@ -2052,7 +2050,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 14/09/2026 - 16:28</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 14/09/2026 - 17:10</footer>
 
 <script>
 
