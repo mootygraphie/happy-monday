@@ -2038,7 +2038,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 14/09/2026 - 13:42</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 14/09/2026 - 13:48</footer>
 
 <script>
 
@@ -8605,6 +8605,9 @@ function renderSaisie() {
   const statusTxt = _draftSavedAt
     ? `<span style="color:#2ecc71;font-size:12px">✓ Sauvegardé à ${_draftSavedAt}</span>`
     : `<span style="color:var(--text3);font-size:12px">Brouillon non sauvegardé</span>`;
+  // "Effacer" efface aussi les matchs deja valides ce soir par tous les telephones
+  // connectes (voir handler saisie-clear) — reserve a l admin, pas au role saisie.
+  const isAdmin = sessionStorage.getItem("hmft_role") === "admin";
 
   const doneIdx = _SAISIE_STEPS.findIndex(s => s.key === _saisieStep);
   const stepperHTML = _SAISIE_STEPS.map((s, i) => {
@@ -8633,7 +8636,7 @@ function renderSaisie() {
           ${_editMode ? "" : `<button class="saisie-btn secondary" id="saisie-save">Enregistrer</button>`}
           ${_editMode
             ? `<button class="saisie-btn secondary" id="saisie-cancel-edit">Annuler</button>`
-            : `<button class="saisie-btn danger" id="saisie-clear">Effacer</button>`}
+            : (isAdmin ? `<button class="saisie-btn danger" id="saisie-clear">Effacer</button>` : "")}
         </div>
         <span id="saisie-status" class="saisie-status">${_editMode ? "" : statusTxt}</span>
       </div>
