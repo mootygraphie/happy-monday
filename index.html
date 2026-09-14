@@ -989,7 +989,10 @@
   .saisie-repart-avatar.rouge { border-color: var(--rouge); color: var(--rouge); }
   .saisie-repart-avatar.vert  { border-color: var(--vert);  color: var(--vert); }
   .saisie-repart-avatar.bleue { border-color: var(--bleu);  color: var(--bleu); }
-  .saisie-repart-avatar.open { box-shadow: 0 0 0 3px var(--gold-bg); border-color: var(--gold); transform: scale(1.05); }
+  .saisie-repart-avatar.pending { box-shadow: 0 0 0 3px var(--gold-bg); border-color: var(--gold); transform: scale(1.05); }
+  .validate-row { display: flex; justify-content: center; margin-top: 14px; }
+  .saisie-repart-validate { font-size: 13.5px; font-weight: 700; background: var(--gold); color: #241c04; border: none; border-radius: 10px; padding: 10px 22px; cursor: pointer; font-family: inherit; transition: opacity .15s; }
+  .saisie-repart-validate:disabled { background: var(--border2); color: var(--text3); cursor: not-allowed; }
   .saisie-repart-name { font-size: 10.5px; font-weight: 600; text-align: center; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
   @media (min-width: 900px) and (min-height: 600px) and (orientation: landscape) {
     .saisie-repart-cols { flex-direction: row; }
@@ -2044,7 +2047,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 14/09/2026 - 13:56</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 14/09/2026 - 14:16</footer>
 
 <script>
 
@@ -7992,7 +7995,7 @@ let _saisiePicker = null;            // { key } — sélecteur (gardien/buteur/p
 let _saisieTeamSwap = null;          // "{idx}-{side}" — sélecteur d'équipe ouvert
 let _saisiePresFilter = "all";        // filtre d'affichage de l'ecran Presences (ne trie jamais, cache/montre)
 let _saisiePresSearch = "";          // recherche d'affichage de l'ecran Presences
-let _saisieRepartPicker = null;      // joueur dont le selecteur de couleur est actuellement ouvert (ecran Equipes)
+let _saisieRepartPending = {};       // joueur -> couleur choisie en attente (ecran Equipes), pas encore validee
 const _SAISIE_STEPS = [
   { key: "presences",   label: "Présences",   icon: "👥" },
   { key: "repartition", label: "Équipes",     icon: "⚖️" },
@@ -8015,7 +8018,7 @@ function _resetSaisieUiState() {
   _saisieTeamSwap = null;
   _saisiePresFilter = "all";
   _saisiePresSearch = "";
-  _saisieRepartPicker = null;
+  _saisieRepartPending = {};
 }
 
 /* Un brouillon cree avant l alignement des statuts occasionnels peut encore contenir
@@ -8154,7 +8157,7 @@ function _saisieNextBenchedColor() {
 function _saisieAutoAssignTeams() {
   const present = _presentList();
   if (present.length < 10) return;
-  _saisieRepartPicker = null;
+  _saisieRepartPending = {};
   const teamCount = present.length >= 12 ? 3 : 2;
   const benched = teamCount === 3 ? null : _saisieNextBenchedColor();
   const teamColors = teamCount === 3 ? ["Rouge","Vert","Bleue"] : ["Rouge","Vert","Bleue"].filter(c => c !== benched);
@@ -8193,7 +8196,7 @@ function _saisieAutoAssignTeams() {
 }
 function _saisieResetTeams() {
   if (!confirm("Réinitialiser la répartition des équipes ?")) return;
-  _saisieRepartPicker = null;
+  _saisieRepartPending = {};
   _presentList().forEach(name => { _draft.presences[name].equipe = ""; });
   _saveDraft();
   renderSaisie();
@@ -8276,24 +8279,30 @@ function _saisieCompactName(name) {
 }
 const _TEAM_CYCLE_CLASS = { "": "grise", "Rouge": "rouge", "Vert": "vert", "Bleue": "bleue" };
 
-function _saisieRepartChipHTML(p, isOcc) {
-  const eq = _draft.presences[p]?.equipe || "";
-  const cls = _TEAM_CYCLE_CLASS[eq];
-  const open = _saisieRepartPicker === p;
-  return `<div class="saisie-repart-chip">
-    <button class="saisie-repart-avatar ${cls}${open ? " open" : ""}" data-act="saisie-repart-avatar" data-player="${p}">${_saisieInitials(p)}</button>
-    <span class="saisie-repart-name">${_saisieCompactName(p)}${isOcc ? '<span class="saisie-chip-tag">O</span>' : ""}</span>
-  </div>`;
+// Touchez un joueur pour cycler sa couleur (Sans equipe -> Bleue -> Vert -> Rouge -> Sans
+// equipe...) ; l avatar reflete tout de suite le choix, mais ne change d emplacement qu au
+// clic sur Valider — evite qu enchainer plusieurs appuis rapides ne fasse sauter la mise en
+// page (un joueur qui change de zone a chaque appui decale tout sous le doigt).
+function _saisieRepartNextColor(current) {
+  const i = _TEAM_CYCLE.indexOf(current || "");
+  return _TEAM_CYCLE[(i + 1) % _TEAM_CYCLE.length];
 }
-// Le selecteur de couleur s'affiche en pleine largeur (grid-column:1/-1, meme motif que
-// les selecteurs buteur/gardien) plutot que de remplacer l avatar dans sa cellule exigue —
-// plus lisible, et ne peut plus jamais deborder d une colonne trop etroite.
-function _saisieRepartPickerHTML(p) {
-  const eq = _draft.presences[p]?.equipe || "";
-  const chips = _TEAM_CYCLE.map(t => `<button class="saisie-pchip ${_TEAM_CYCLE_CLASS[t]}" data-act="saisie-repart-pick" data-player="${p}" data-equipe="${t}">${t ? `<span class="pdot"></span>${TEAM_LABEL[t]}` : "Sans équipe"}${t===eq ? " ✓" : ""}</button>`).join("");
-  return `<div class="saisie-picker" style="grid-column:1/-1">
-    <div class="saisie-picker-hdr"><span>Équipe de ${p}</span><button data-act="saisie-repart-close">✕</button></div>
-    <div class="saisie-picker-grid">${chips}</div>
+function _saisieRepartColorOf(p) {
+  return (_saisieRepartPending.hasOwnProperty(p) ? _saisieRepartPending[p] : (_draft.presences[p]?.equipe || "")) || "";
+}
+function _saisieRepartCommitPending() {
+  const touched = Object.keys(_saisieRepartPending);
+  if (!touched.length) return;
+  touched.forEach(p => { _draft.presences[p].equipe = _saisieRepartPending[p]; });
+  _saisieRepartPending = {};
+  _saveDraft();
+}
+function _saisieRepartChipHTML(p, isOcc) {
+  const cls = _TEAM_CYCLE_CLASS[_saisieRepartColorOf(p)];
+  const pending = _saisieRepartPending.hasOwnProperty(p);
+  return `<div class="saisie-repart-chip">
+    <button class="saisie-repart-avatar ${cls}${pending ? " pending" : ""}" data-act="saisie-repart-cycle" data-player="${p}">${_saisieInitials(p)}</button>
+    <span class="saisie-repart-name">${_saisieCompactName(p)}${isOcc ? '<span class="saisie-chip-tag">O</span>' : ""}</span>
   </div>`;
 }
 function _buildRepartitionScreenHTML() {
@@ -8315,7 +8324,6 @@ function _buildRepartitionScreenHTML() {
     if (!list.length) return "";
     const cls = _TEAM_CYCLE_CLASS[color];
     const label = color ? TEAM_LABEL[color] : "Sans équipe";
-    const pickerHtml = list.includes(_saisieRepartPicker) ? _saisieRepartPickerHTML(_saisieRepartPicker) : "";
     // Telephone (voir --rp-cols, surchargee en CSS a partir du desktop) : la case "sans
     // equipe" s affiche en lignes de 4 ; les equipes en lignes de 3, sauf si elles comptent
     // exactement 4 joueurs, auquel cas les 4 tiennent sur une seule ligne.
@@ -8324,7 +8332,6 @@ function _buildRepartitionScreenHTML() {
       <div class="saisie-repart-col-head">${color ? `<span class="saisie-repart-col-dot" style="background:var(--${color.toLowerCase()==='bleue'?'bleu':color.toLowerCase()})"></span>` : ""}${label} (${list.length})</div>
       <div class="saisie-repart-chips" style="--rp-cols:${rpCols}">
         ${list.map(p => _saisieRepartChipHTML(p, jokerSet.has(p))).join("")}
-        ${pickerHtml}
       </div>
     </div>`;
   }).join("");
@@ -8337,11 +8344,18 @@ function _buildRepartitionScreenHTML() {
   }
 
   const anyAssigned = presents.some(p => _draft.presences[p]?.equipe);
+  const nPending = Object.keys(_saisieRepartPending).length;
 
   return `<div class="saisie-section">
     <div class="saisie-section-title">⚖️ Répartition des équipes</div>
-    <p class="saisie-repart-hint">Touchez un joueur, puis choisissez sa couleur.</p>
+    <p class="saisie-repart-hint">Touchez un joueur pour choisir sa couleur, puis validez.</p>
     <div class="saisie-repart-cols n${visibleZonesCount}">${colsHtml}</div>
+    <div class="validate-row">
+      <button class="saisie-repart-validate" data-act="saisie-repart-validate"${nPending ? "" : " disabled"}>Valider la répartition</button>
+    </div>
+    <div class="saisie-auto-teams-note" style="text-align:center">${nPending
+      ? `${nPending} changement${nPending>1?"s":""} en attente — rien ne bouge tant que vous ne validez pas`
+      : "&nbsp;"}</div>
     <div class="saisie-auto-teams">
       <div class="saisie-auto-teams-row">
         <button class="saisie-auto-teams-btn" data-act="saisie-auto-teams"${countPresents < 10 ? " disabled" : ""}>🎲 Générer les équipes</button>
@@ -8417,14 +8431,21 @@ function _saisieGoalRowsHTML(idx, side, eq, otherEq, benchTeam, phase) {
   }
   return rows || `<div class="saisie-empty">Aucun but pour l'instant.</div>`;
 }
-function _saisieTeamPickHTML(idx, side, eq, otherEq, teams) {
+// Le bouton et son panneau de choix sont rendus separement : le panneau reste toujours en
+// dehors de la grille .saisie-me-teams (voir _saisieMatchEditorHTML) pour ne jamais casser
+// l alignement bouton/VS/bouton, cote equipe 1 comme cote equipe 2 (avant, un panneau
+// ouvert cote equipe 1 poussait "VS" et le bouton equipe 2 hors de leur colonne).
+function _saisieTeamPickBtnHTML(idx, side, eq) {
   const swapKey = `${idx}-${side}`;
-  const isOpen = _saisieTeamSwap === swapKey;
+  return `<button class="saisie-team-pick ${eq.toLowerCase()}" data-act="saisie-team-swap" data-swapkey="${swapKey}">${TEAM_LABEL[eq]||eq||"— Choisir —"}<span class="chev">▾</span></button>`;
+}
+function _saisieTeamSwapPanelHTML(idx, side, otherEq, teams) {
+  const swapKey = `${idx}-${side}`;
+  if (_saisieTeamSwap !== swapKey) return "";
   const opts = teams.filter(t => t !== otherEq);
-  return `<button class="saisie-team-pick ${eq.toLowerCase()}" data-act="saisie-team-swap" data-swapkey="${swapKey}">${TEAM_LABEL[eq]||eq||"— Choisir —"}<span class="chev">▾</span></button>
-    ${isOpen ? `<div class="saisie-team-swap-picker"><div class="saisie-picker-grid">
-      ${opts.map(t => `<button class="saisie-pchip ${t.toLowerCase()}" data-act="saisie-pick-team" data-match="${idx}" data-side="${side}" data-val="${t}"><span class="pdot"></span>${TEAM_LABEL[t]||t}</button>`).join("")}
-    </div></div>` : ""}`;
+  return `<div class="saisie-team-swap-picker"><div class="saisie-picker-grid">
+    ${opts.map(t => `<button class="saisie-pchip ${t.toLowerCase()}" data-act="saisie-pick-team" data-match="${idx}" data-side="${side}" data-val="${t}"><span class="pdot"></span>${TEAM_LABEL[t]||t}</button>`).join("")}
+  </div></div>`;
 }
 // Champ gardien (et banc) filtre par mi-temps : n affiche que celui de la phase en
 // cours, au meme rythme que le score et les buteurs/passeurs de cette meme phase.
@@ -8486,10 +8507,12 @@ function _saisieMatchEditorHTML(idx) {
 
   return `<div class="saisie-match-editor">
     <div class="saisie-me-teams">
-      ${_saisieTeamPickHTML(idx, "A", eqA, eqB, teams)}
+      ${_saisieTeamPickBtnHTML(idx, "A", eqA)}
       <div class="saisie-vs">VS${benchTeam ? `<div class="bench-note">${TEAM_LABEL[benchTeam]||benchTeam} dépanne</div>` : ""}</div>
-      ${_saisieTeamPickHTML(idx, "B", eqB, eqA, teams)}
+      ${_saisieTeamPickBtnHTML(idx, "B", eqB)}
     </div>
+    ${_saisieTeamSwapPanelHTML(idx, "A", eqB, teams)}
+    ${_saisieTeamSwapPanelHTML(idx, "B", eqA, teams)}
 
     ${mtStepperHtml}
     ${mt1RecapHtml}
@@ -8810,6 +8833,10 @@ document.getElementById("saisie-content").addEventListener("click", e => {
 
   const stepBtn = e.target.closest('[data-act="saisie-go-step"]');
   if (stepBtn) {
+    // On quitte l ecran Equipes : les couleurs choisies mais pas encore validees sont
+    // appliquees silencieusement, sinon elles disparaitraient sans prevenir (et le controle
+    // "il manque une equipe" juste en dessous doit de toute facon voir l etat a jour).
+    if (_saisieStep === "repartition") _saisieRepartCommitPending();
     if (_saisieStep === "repartition" && stepBtn.dataset.step === "matchs") {
       const missing = _presentList().filter(p => !_draft.presences[p]?.equipe);
       if (missing.length && !confirm(`⚠️ Ces joueurs présents n'ont pas d'équipe :\n${missing.map(n => "• " + n).join("\n")}\n\nContinuer quand même ?`)) return;
@@ -8831,21 +8858,13 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     _saveDraft();
     renderSaisie(); return;
   }
-  const repartAvatarBtn = e.target.closest('[data-act="saisie-repart-avatar"]');
-  if (repartAvatarBtn) {
-    const p = repartAvatarBtn.dataset.player;
-    _saisieRepartPicker = _saisieRepartPicker === p ? null : p;
+  const repartCycleBtn = e.target.closest('[data-act="saisie-repart-cycle"]');
+  if (repartCycleBtn) {
+    const p = repartCycleBtn.dataset.player;
+    _saisieRepartPending[p] = _saisieRepartNextColor(_saisieRepartColorOf(p));
     renderSaisie(); return;
   }
-  const repartPickBtn = e.target.closest('[data-act="saisie-repart-pick"]');
-  if (repartPickBtn) {
-    const p = repartPickBtn.dataset.player;
-    _draft.presences[p].equipe = repartPickBtn.dataset.equipe;
-    _saisieRepartPicker = null;
-    _saveDraft();
-    renderSaisie(); return;
-  }
-  if (e.target.closest('[data-act="saisie-repart-close"]')) { _saisieRepartPicker = null; renderSaisie(); return; }
+  if (e.target.closest('[data-act="saisie-repart-validate"]')) { _saisieRepartCommitPending(); renderSaisie(); return; }
   const presFilterBtn = e.target.closest('[data-act="saisie-pres-filter"]');
   if (presFilterBtn) {
     _saisiePresFilter = presFilterBtn.dataset.filter;
