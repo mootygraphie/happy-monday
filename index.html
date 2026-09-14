@@ -897,6 +897,12 @@
   .saisie-wrap { max-width: 820px; overflow-x: hidden; }
   .saisie-bar { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 10px 24px; }
   .saisie-actions { display: flex; gap: 8px; flex-wrap: nowrap; }
+  .saisie-bar-actions { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  @media (max-width: 640px) {
+    /* Le statut (sauvegarde ou non) se lit mieux a cote du bouton Enregistrer que
+       dessous, sur un ecran etroit ou l espace vertical compte. */
+    .saisie-bar-actions { flex-direction: row; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  }
   .saisie-btn { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border2); font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s, opacity .15s; white-space: nowrap; background: var(--bg3); color: var(--text); }
   .saisie-btn.secondary { background: var(--bg2); color: var(--text); }
   .saisie-btn.secondary:hover { background: var(--bg3); }
@@ -2038,7 +2044,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 14/09/2026 - 13:48</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 14/09/2026 - 13:56</footer>
 
 <script>
 
@@ -8604,7 +8610,7 @@ function renderSaisie() {
   const _presListScrollTop = document.querySelector(".saisie-pres-list")?.scrollTop || 0;
   const statusTxt = _draftSavedAt
     ? `<span style="color:#2ecc71;font-size:12px">✓ Sauvegardé à ${_draftSavedAt}</span>`
-    : `<span style="color:var(--text3);font-size:12px">Brouillon non sauvegardé</span>`;
+    : `<span style="color:#e74c3c;font-size:12px">Brouillon non sauvegardé</span>`;
   // "Effacer" efface aussi les matchs deja valides ce soir par tous les telephones
   // connectes (voir handler saisie-clear) — reserve a l admin, pas au role saisie.
   const isAdmin = sessionStorage.getItem("hmft_role") === "admin";
@@ -8631,7 +8637,7 @@ function renderSaisie() {
         <label for="saisie-date" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3)">Session du</label>
         <input type="date" class="saisie-date-input" id="saisie-date" value="${_draft.date}"${_editMode ? ' readonly style="opacity:.55;cursor:not-allowed"' : ''}>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <div class="saisie-bar-actions">
         <div class="saisie-actions">
           ${_editMode ? "" : `<button class="saisie-btn secondary" id="saisie-save">Enregistrer</button>`}
           ${_editMode
