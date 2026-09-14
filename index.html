@@ -926,6 +926,7 @@
   .saisie-screen { display: none; }
   .saisie-screen.active { display: block; }
   .saisie-screen-nav { display: flex; justify-content: space-between; margin-top: 18px; }
+  .saisie-screen-nav.top { margin-top: 0; margin-bottom: 18px; }
 
   .saisie-section { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; width: 98%; margin-left: auto; margin-right: auto; }
   /* Meme traitement que .section-label (titres de section de toutes les pages). */
@@ -2034,7 +2035,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 14/09/2026 - 08:58</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 14/09/2026 - 09:15</footer>
 
 <script>
 
@@ -8642,7 +8643,7 @@ function renderSaisie() {
     </div>
 
     <div class="saisie-screen${_saisieStep==="repartition"?" active":""}" data-screen="repartition">
-      <div class="saisie-screen-nav">
+      <div class="saisie-screen-nav top">
         <button class="saisie-btn secondary" data-act="saisie-go-step" data-step="presences">← Présences</button>
         <button class="saisie-btn primary" data-act="saisie-go-step" data-step="matchs">Matchs →</button>
       </div>
