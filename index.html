@@ -956,12 +956,14 @@
   .saisie-joker-add { display: flex; gap: 8px; margin-top: 14px; }
   .saisie-joker-add input { flex: 1; max-width: 220px; }
 
-  .saisie-auto-teams { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 0 0 20px; }
-  .saisie-auto-teams-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; border: none; border-radius: 12px; padding: 15px 16px; background: var(--gold); color: #171708; font-size: 15.5px; font-weight: 800; cursor: pointer; box-shadow: 0 6px 18px -6px rgba(245,200,66,.55); transition: transform .1s ease, box-shadow .15s ease, opacity .15s ease; }
-  .saisie-auto-teams-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 22px -6px rgba(245,200,66,.7); }
-  .saisie-auto-teams-btn:active { transform: translateY(0); box-shadow: 0 4px 12px -6px rgba(245,200,66,.5); }
-  .saisie-auto-teams-btn:disabled { background: var(--border2); color: var(--text3); box-shadow: none; cursor: not-allowed; transform: none; }
-  .saisie-auto-teams-note { font-size: 12px; color: var(--text2); }
+  .saisie-auto-teams { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 16px 0 4px; }
+  .saisie-auto-teams-row { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+  .saisie-auto-teams-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--gold-border); border-radius: 10px; padding: 7px 14px; background: var(--gold-bg); color: var(--gold); font-size: 12.5px; font-weight: 700; cursor: pointer; transition: background .15s, opacity .15s; }
+  .saisie-auto-teams-btn:hover { background: var(--gold-border); }
+  .saisie-auto-teams-btn:disabled { background: var(--bg3); color: var(--text3); border-color: var(--border2); cursor: not-allowed; }
+  .saisie-auto-teams-btn.reset { background: var(--bg3); color: var(--text2); border-color: var(--border2); }
+  .saisie-auto-teams-btn.reset:hover { background: var(--bg2); }
+  .saisie-auto-teams-note { font-size: 11px; color: var(--text3); }
 
   /* Repartition : zones teintees par equipe, avatars a initiales, selection directe */
   .saisie-repart-hint { font-size: 12.5px; color: var(--text2); text-align: center; margin: 0 0 14px; }
@@ -2032,7 +2034,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 11/09/2026 - 15:00</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 14/09/2026 - 08:58</footer>
 
 <script>
 
@@ -8179,6 +8181,13 @@ function _saisieAutoAssignTeams() {
   _saveDraft();
   renderSaisie();
 }
+function _saisieResetTeams() {
+  if (!confirm("Réinitialiser la répartition des équipes ?")) return;
+  _saisieRepartPicker = null;
+  _presentList().forEach(name => { _draft.presences[name].equipe = ""; });
+  _saveDraft();
+  renderSaisie();
+}
 
 /* ── Présences : liste plate filtrable, un tap fait defiler statut puis equipe ── */
 function _saisiePresRowHTML(p, isOcc, removable, hidden) {
@@ -8316,16 +8325,21 @@ function _buildRepartitionScreenHTML() {
     </div>`;
   }
 
+  const anyAssigned = presents.some(p => _draft.presences[p]?.equipe);
+
   return `<div class="saisie-section">
     <div class="saisie-section-title">⚖️ Répartition des équipes</div>
+    <p class="saisie-repart-hint">Touchez un joueur, puis choisissez sa couleur.</p>
+    <div class="saisie-repart-cols n${visibleZonesCount}">${colsHtml}</div>
     <div class="saisie-auto-teams">
-      <button class="saisie-auto-teams-btn" data-act="saisie-auto-teams"${countPresents < 10 ? " disabled" : ""}>🎲 Choisir automatiquement les équipes</button>
+      <div class="saisie-auto-teams-row">
+        <button class="saisie-auto-teams-btn" data-act="saisie-auto-teams"${countPresents < 10 ? " disabled" : ""}>🎲 Générer les équipes</button>
+        <button class="saisie-auto-teams-btn reset" data-act="saisie-reset-teams"${anyAssigned ? "" : " disabled"}>↺ Réinitialiser</button>
+      </div>
       <span class="saisie-auto-teams-note">${countPresents >= 10
         ? `${countPresents >= 12 ? "3 équipes" : "2 équipes"} pour ${countPresents} présents — modifiable ensuite`
         : `Encore ${10 - countPresents} présent${10 - countPresents > 1 ? "s" : ""} avant de pouvoir générer (min. 10)`}</span>
     </div>
-    <p class="saisie-repart-hint">Touchez un joueur, puis choisissez sa couleur.</p>
-    <div class="saisie-repart-cols n${visibleZonesCount}">${colsHtml}</div>
   </div>`;
 }
 
@@ -8628,6 +8642,10 @@ function renderSaisie() {
     </div>
 
     <div class="saisie-screen${_saisieStep==="repartition"?" active":""}" data-screen="repartition">
+      <div class="saisie-screen-nav">
+        <button class="saisie-btn secondary" data-act="saisie-go-step" data-step="presences">← Présences</button>
+        <button class="saisie-btn primary" data-act="saisie-go-step" data-step="matchs">Matchs →</button>
+      </div>
       ${_buildRepartitionScreenHTML()}
       <div class="saisie-screen-nav">
         <button class="saisie-btn secondary" data-act="saisie-go-step" data-step="presences">← Présences</button>
@@ -8820,6 +8838,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     renderSaisie(); return;
   }
   if (e.target.closest('[data-act="saisie-auto-teams"]')) { _saisieAutoAssignTeams(); return; }
+  if (e.target.closest('[data-act="saisie-reset-teams"]')) { _saisieResetTeams(); return; }
 
   if (e.target.id === "saisie-save")   { _saveDraft(); return; }
   if (e.target.id === "saisie-cancel-edit") {
