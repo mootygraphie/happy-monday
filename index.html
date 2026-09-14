@@ -977,7 +977,7 @@
   .saisie-repart-col-head { display: flex; align-items: center; gap: 7px; font-weight: 800; font-size: 13px; margin-bottom: 10px; }
   .saisie-repart-col-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
 
-  .saisie-repart-chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 10px; }
+  .saisie-repart-chips { display: grid; grid-template-columns: repeat(var(--rp-cols, 3), minmax(0, 1fr)); gap: 10px; }
   .saisie-repart-chip { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; }
   .saisie-repart-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; border: 2.5px solid var(--text3); background: var(--bg2); color: var(--text); cursor: pointer; margin: 0 auto; padding: 0; transition: box-shadow .12s, transform .08s; }
   .saisie-repart-avatar.rouge { border-color: var(--rouge); color: var(--rouge); }
@@ -990,6 +990,9 @@
     .saisie-repart-zone { flex: 1; }
     .saisie-repart-cols.n4 { flex-wrap: wrap; }
     .saisie-repart-cols.n4 .saisie-repart-zone.grise { flex-basis: 100%; }
+    /* Desktop : plus de place, on laisse le nombre de colonnes suivre la largeur
+       reellement disponible plutot que le nombre fixe pense pour le telephone. */
+    .saisie-repart-chips { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); }
   }
 
   /* Logistique */
@@ -2035,7 +2038,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 14/09/2026 - 13:36</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 14/09/2026 - 13:42</footer>
 
 <script>
 
@@ -8307,9 +8310,13 @@ function _buildRepartitionScreenHTML() {
     const cls = _TEAM_CYCLE_CLASS[color];
     const label = color ? TEAM_LABEL[color] : "Sans équipe";
     const pickerHtml = list.includes(_saisieRepartPicker) ? _saisieRepartPickerHTML(_saisieRepartPicker) : "";
+    // Telephone (voir --rp-cols, surchargee en CSS a partir du desktop) : la case "sans
+    // equipe" s affiche en lignes de 4 ; les equipes en lignes de 3, sauf si elles comptent
+    // exactement 4 joueurs, auquel cas les 4 tiennent sur une seule ligne.
+    const rpCols = color === "" ? 4 : (list.length === 4 ? 4 : 3);
     return `<div class="saisie-repart-zone ${cls}">
       <div class="saisie-repart-col-head">${color ? `<span class="saisie-repart-col-dot" style="background:var(--${color.toLowerCase()==='bleue'?'bleu':color.toLowerCase()})"></span>` : ""}${label} (${list.length})</div>
-      <div class="saisie-repart-chips">
+      <div class="saisie-repart-chips" style="--rp-cols:${rpCols}">
         ${list.map(p => _saisieRepartChipHTML(p, jokerSet.has(p))).join("")}
         ${pickerHtml}
       </div>
