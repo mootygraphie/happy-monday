@@ -2099,7 +2099,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 12:46</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 13:33</footer>
 
 <script>
 
@@ -7263,7 +7263,7 @@ const ACH_DEFS = [
   { id:'remontada',    name:'Remontada',       icon:'🌅', tiers:[1], fixedTier:6,      hidden:false, key:'remontadas',   desc:_=>`Perdant d'au moins 2 buts à la mi-temps, vainqueur à la fin` },
   { id:'chelem',       name:'Grand Chelem',    icon:'🎨', tiers:[1], fixedTier:6,      hidden:true,  key:'grandChelem',  desc:_=>`Les 3 couleurs jouées` },
   { id:'gardienAssist',name:'Neuer',           icon:'🧤', tiers:[1], fixedTier:6,      hidden:false, key:'gardienAssist', desc:_=>`Passe décisive en tant que gardien` },
-  { id:'hattrick',     name:'Hat Trick',       icon:'🎩', tiers:[1,5,15,30,50,100],    hidden:false, key:'hattricks',    desc:v=>`${v} match${v>1?'s':''} avec 3 buts ou plus` },
+  { id:'hattrick',     name:'Hat Trick',       icon:'🎩', tiers:[1,5,15,30,50,100],    hidden:false, key:'hattricks',    desc:v=>`${v} match${v>1?'s':''} avec 3 buts marqués` },
   { id:'willgrigg',    name:'Archie Thompson', icon:'🔥', tiers:[1], fixedTier:6,      hidden:true,  key:'quadrick',     desc:v=>`${v} fois avec au moins 4 buts dans un même match` },
   { id:'mesutozil',    name:'Mesut Özil',      icon:'🪄', tiers:[1], fixedTier:6,      hidden:true,  key:'assistHattricks', desc:v=>`${v} fois avec au moins 3 passes décisives dans un même match` },
   { id:'patron',       name:'Machine',         icon:'🤖', tiers:[1], fixedTier:6,      hidden:true,  key:'patronCount',  desc:v=>`${v} fois impliqué sur 100% des buts de son équipe (min. 4 buts)` },
@@ -7298,7 +7298,7 @@ const ACH_ABOUT = {
   mur:          'Clean sheets en tant que gardien (1 par mi-temps)',
   passoire:     'Buts encaissés en gardant les buts',
   gardienAssist:'Passe décisive en tant que gardien',
-  hattrick:   'Matchs avec 3 buts ou plus',
+  hattrick:   'Matchs avec 3 buts marqués',
   willgrigg:  'Au moins 4 buts dans un même match',
   mesutozil:  'Au moins 3 passes décisives dans un même match',
   patron:     'Implique (but ou passe) sur 100% des buts de son équipe, minimum 4 buts',
@@ -7604,7 +7604,7 @@ function computeAchievementStats(playerName) {
           const w=m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
           if(w&&w!==myEq)sessInvic=false;
           if(w&&w===myEq)sessWins++;
-          if(g>=3)hattricks++;
+          if(g===3)hattricks++;
           if(g>=4)quadrick++;
           if(a>=3)assistHattricks++;
           if(g>=1&&a>=1)doubleDouble++;
@@ -7723,6 +7723,14 @@ function openPlayerPanel(playerName) {
   const _achSt = computeAchievementStats(playerName);
   let h = "";
 
+  // Points par match : meme bareme que le classement de soiree (victoire 3, nul 1,
+  // defaite 0) — nuls derives (matchs joues - victoires - defaites), le decompte de
+  // computePlayerDetailStats ne suivant pas les nuls separement.
+  const _pphNuls = Math.max(0, st.matchsJoues - st.victoires - st.defaites);
+  const _pphTotalPts = st.victoires*3 + _pphNuls;
+  const _pphAvgPts = st.matchsJoues > 0 ? (_pphTotalPts/st.matchsJoues).toFixed(2).replace(".",",") : null;
+  const _pphGA = st.buts + st.passesDecisives;
+
   /* Hero : avatar + prénom, teinté par la couleur préférée (celle avec laquelle il gagne le plus) */
   {
     const _prefColor = st.prefWinColor;
@@ -7748,8 +7756,8 @@ function openPlayerPanel(playerName) {
   h += `<div class="pph-top-grid">
     <div class="pph-top-cell"><div class="pph-top-num" style="color:#66bb6a">${st.presences}</div><div class="pph-top-lbl">Présences</div></div>
     <div class="pph-top-cell"><div class="pph-top-num">${st.matchsJoues}</div><div class="pph-top-lbl">Matchs</div></div>
-    <div class="pph-top-cell"><div class="pph-top-num" style="color:var(--bleu)">${st.buts}</div><div class="pph-top-lbl">Buts</div></div>
-    <div class="pph-top-cell"><div class="pph-top-num" style="color:var(--bleu)">${st.passesDecisives}</div><div class="pph-top-lbl">Assists</div></div>
+    <div class="pph-top-cell"><div class="pph-top-num" style="color:var(--bleu)">${_pphGA}</div><div class="pph-top-lbl">G/A</div></div>
+    <div class="pph-top-cell"><div class="pph-top-num" style="color:var(--gold)">${_pphAvgPts ?? "—"}</div><div class="pph-top-lbl">Pts/match</div></div>
   </div>`;
 
   /* Forme récente (5 dernières sessions où le joueur était Présent) */
@@ -7810,12 +7818,6 @@ function openPlayerPanel(playerName) {
   }
 
   /* Statistiques */
-  // Points par match : meme bareme que le classement de soiree (victoire 3, nul 1,
-  // defaite 0) — nuls derives (matchs joues - victoires - defaites), le decompte de
-  // computePlayerDetailStats ne suivant pas les nuls separement.
-  const _pphNuls = Math.max(0, st.matchsJoues - st.victoires - st.defaites);
-  const _pphTotalPts = st.victoires*3 + _pphNuls;
-  const _pphAvgPts = st.matchsJoues > 0 ? (_pphTotalPts/st.matchsJoues).toFixed(2).replace(".",",") : null;
   h += `<div>
     <div class="pp-section-title">Statistiques</div>
     <div class="pph-stat-scroller">
@@ -7836,11 +7838,6 @@ function openPlayerPanel(playerName) {
       <div class="pph-stat-tile">
         <div class="pp-stat-val ${st.defaites>0?"red":"muted"}">${st.defaites}</div>
         <div class="pp-stat-lbl">Défaites</div>
-      </div>
-      <div class="pph-stat-tile">
-        <div class="pp-stat-val ${_pphAvgPts!==null && _pphTotalPts>0?"amber":"muted"}">${_pphAvgPts ?? "—"}</div>
-        <div class="pp-stat-lbl">Pts / match</div>
-        ${_pphAvgPts!==null?`<div class="pp-stat-sub">${_pphTotalPts} pts en ${st.matchsJoues} match${st.matchsJoues>1?"s":""}</div>`:""}
       </div>
     </div>
     <div class="pph-stat-list">
