@@ -2050,7 +2050,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 08:30</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 08:36</footer>
 
 <script>
 
@@ -2448,25 +2448,41 @@ async function _fbDeleteSession(date) {
 let _liveValidatedMatchs = []; // tries du plus ancien au plus recent (cles Firebase push, triables)
 let _fbMatchesWatching = false;
 
+function _fbNormalizeValidatedMatchs(map) {
+  return Object.keys(map || {}).sort().map(id => {
+    const m = { ...map[id], _id: id, _validated: true };
+    if (!Array.isArray(m.buteursA))  m.buteursA  = [];
+    if (!Array.isArray(m.buteursB))  m.buteursB  = [];
+    if (!Array.isArray(m.passeursA)) m.passeursA = [];
+    if (!Array.isArray(m.passeursB)) m.passeursB = [];
+    if (!Array.isArray(m.gardiensA)) m.gardiensA = ["",""];
+    if (!Array.isArray(m.gardiensB)) m.gardiensB = ["",""];
+    if (!Array.isArray(m.bancA)) m.bancA = ["",""];
+    if (!Array.isArray(m.bancB)) m.bancB = ["",""];
+    return m;
+  });
+}
+
 function _fbWatchDraftMatches() {
   if (!_db || _fbMatchesWatching) return;
   _fbMatchesWatching = true;
   _db.ref('config/draft/matchsMap').on('value', snap => {
-    const map = snap.val() || {};
-    _liveValidatedMatchs = Object.keys(map).sort().map(id => {
-      const m = { ...map[id], _id: id, _validated: true };
-      if (!Array.isArray(m.buteursA))  m.buteursA  = [];
-      if (!Array.isArray(m.buteursB))  m.buteursB  = [];
-      if (!Array.isArray(m.passeursA)) m.passeursA = [];
-      if (!Array.isArray(m.passeursB)) m.passeursB = [];
-      if (!Array.isArray(m.gardiensA)) m.gardiensA = ["",""];
-      if (!Array.isArray(m.gardiensB)) m.gardiensB = ["",""];
-      if (!Array.isArray(m.bancA)) m.bancA = ["",""];
-      if (!Array.isArray(m.bancB)) m.bancB = ["",""];
-      return m;
-    });
+    _liveValidatedMatchs = _fbNormalizeValidatedMatchs(snap.val());
     if (document.getElementById("panel-saisie")?.classList.contains("active")) renderSaisie();
   });
+}
+// Relit config/draft/matchsMap directement (pas le miroir _liveValidatedMatchs tenu par le
+// listener temps reel) au moment de valider la soiree : ce miroir peut, le temps d un
+// accroc reseau, refleter un instantane vide ou perime — et une session validee sur cette
+// base perdrait silencieusement des matchs pourtant bien valides. La validation finale doit
+// toujours se baser sur une lecture fraiche, jamais sur un cache qui peut avoir menti.
+async function _fbFetchValidatedMatchsFresh() {
+  if (!_db) throw new Error('Firebase non initialisé (_db est null)');
+  const snap = await Promise.race([
+    _db.ref('config/draft/matchsMap').once('value'),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('OFFLINE_TIMEOUT')), 6000))
+  ]);
+  return _fbNormalizeValidatedMatchs(snap.val());
 }
 
 async function _fbValidateMatch(matchId, matchData) {
@@ -8776,14 +8792,25 @@ async function _commitSession() {
   if (!_editMode && SESSIONS.find(s => s.date === _draft.date)) {
     alert(`Une session du ${fmtDate(_draft.date)} existe déjà.`); return;
   }
-  // Hors mode edition, les matchs officiels sont ceux deja valides et partages (voir
-  // _fbWatchDraftMatches) — pas le brouillon local, qui ne contient que du travail pas
-  // encore envoye. On avertit si un match est reste en brouillon pour eviter de le perdre
-  // silencieusement en validant la soiree sans lui.
-  const unvalidatedCount = _editMode ? 0 : _draft.matchs.filter(mm => !_liveValidatedMatchs.some(vm => vm._id === mm._id)).length;
-  if (unvalidatedCount > 0 && !confirm(`${unvalidatedCount} match${unvalidatedCount>1?"s":""} n'${unvalidatedCount>1?"ont":"a"} pas encore été validé${unvalidatedCount>1?"s":""} (bouton « Valider le match »).\n\nContinuer sans lui ${unvalidatedCount>1?"(eux)":""} ?`)) return;
+  // Hors mode edition, les matchs officiels sont ceux deja valides et partages — mais on
+  // les relit fraichement depuis Firebase (jamais le miroir _liveValidatedMatchs du
+  // listener temps reel, qui peut refleter un instantane perime le temps d un accroc
+  // reseau) : c est exactement ce genre d instantane perime, utilise pour valider la
+  // soiree, qui a deja fait perdre des matchs pourtant bien valides.
+  let sourceMatchs;
+  if (_editMode) {
+    sourceMatchs = _draft.matchs;
+  } else {
+    try {
+      sourceMatchs = await _fbFetchValidatedMatchsFresh();
+    } catch (err) {
+      alert("⚠️ Impossible de vérifier les matchs validés (connexion instable).\nRéessayez dans un instant — vos matchs déjà validés restent en ligne, rien n'est perdu.");
+      return;
+    }
+    const unvalidatedCount = _draft.matchs.filter(mm => !sourceMatchs.some(vm => vm._id === mm._id)).length;
+    if (unvalidatedCount > 0 && !confirm(`${unvalidatedCount} match${unvalidatedCount>1?"s":""} n'${unvalidatedCount>1?"ont":"a"} pas encore été validé${unvalidatedCount>1?"s":""} (bouton « Valider le match »).\n\nContinuer sans lui ${unvalidatedCount>1?"(eux)":""} ?`)) return;
+  }
 
-  const sourceMatchs = _editMode ? _draft.matchs : _liveValidatedMatchs;
   const emptyButeurs = sourceMatchs.some(m =>
     (m.buteursA || []).some(b => !b) || (m.buteursB || []).some(b => !b)
   );
