@@ -1121,6 +1121,23 @@
   .saisie-plist-row.bleue .pdot { background: var(--bleu); }
   .saisie-plist-row.muted { color: var(--text3); font-weight: 600; }
 
+  .saisie-notables { margin-top: 18px; }
+  .saisie-notables-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
+  .saisie-notables-title span { font-size: 12px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .04em; }
+  .saisie-notables-add { font-size: 12px; font-weight: 700; background: var(--gold-bg); color: var(--gold); border: 1px dashed var(--gold-border); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-family: inherit; }
+  .saisie-notables-list { display: flex; flex-direction: column; gap: 7px; }
+  .saisie-notable-chip { display: flex; align-items: center; gap: 9px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 10px; padding: 9px 11px; }
+  .saisie-notable-ico { font-size: 17px; flex-shrink: 0; }
+  .saisie-notable-text { font-size: 12.5px; flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .saisie-notable-text b { font-weight: 700; }
+  .saisie-notable-remove { background: none; border: none; color: var(--text3); font-size: 14px; cursor: pointer; padding: 2px 6px; flex-shrink: 0; }
+  .saisie-notable-remove:hover { color: #e74c3c; }
+  .saisie-notable-fait-row { gap: 12px; }
+  .saisie-notable-fait-ico { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+  .saisie-notable-fait-row .name small { display: block; font-size: 10.5px; font-weight: 400; color: var(--text3); margin-top: 1px; }
+  .saisie-notable-back-row { text-align: center; margin-top: 8px; }
+  .saisie-notable-back-row button { font-size: 11.5px; font-weight: 700; color: var(--gold); background: none; border: none; cursor: pointer; font-family: inherit; }
+
   .saisie-me-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
   .saisie-add-match { width: 100%; padding: 10px; background: transparent; border: 2px dashed var(--border2); border-radius: 10px; color: var(--text2); font-size: 14px; cursor: pointer; transition: all .15s; margin-top: 14px; }
   .saisie-add-match:hover { border-color: var(--text); color: var(--text); background: var(--bg3); }
@@ -2058,7 +2075,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 10:18</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 11:58</footer>
 
 <script>
 
@@ -8078,6 +8095,9 @@ let _saisieTeamSwap = null;          // "{idx}-{side}" — sélecteur d'équipe 
 let _saisiePresFilter = "all";        // filtre d'affichage de l'ecran Presences (ne trie jamais, cache/montre)
 let _saisiePresSearch = "";          // recherche d'affichage de l'ecran Presences
 let _saisieRepartPending = {};       // joueur -> couleur choisie en attente (ecran Equipes), pas encore validee
+let _saisieNotableMatch = null;      // idx du match dont le popover "faits notables" est ouvert
+let _saisieNotableStep = null;       // null | "player" | "fait" — etape du popover 2 temps
+let _saisieNotablePlayer = null;     // joueur choisi a l etape 1, en attente du choix du fait notable
 const _SAISIE_STEPS = [
   { key: "presences",   label: "Présences",   icon: "👥" },
   { key: "repartition", label: "Équipes",     icon: "⚖️" },
@@ -8212,6 +8232,9 @@ function _teamPoolOrdered(eq, benchEq) {
 // pas seulement quand l'équipe est à court de monde — puis les presents sans equipe.
 function _gardienPoolOrdered(eq, benchEq) {
   return [..._playersOfTeam(eq), ...(benchEq ? _playersOfTeam(benchEq) : []), ..._playersOfTeam("")];
+}
+function _saisieGenMatchId() {
+  return _db ? _db.ref('config/draft/matchsMap').push().key : ('local-' + Date.now() + '-' + Math.random().toString(36).slice(2));
 }
 function _saisieBenchTeam(eqA, eqB, teams) {
   return teams.length >= 3 ? (teams.find(t => t !== eqA && t !== eqB) || "") : "";
@@ -8482,6 +8505,51 @@ function _saisiePickerHTML(key, title, options, includeCSC, allowNone) {
     <div class="saisie-picker-list">${rows.join("")}</div>
   </div>`;
 }
+// Faits notables : attaches directement au match (via son _id, attribue des la creation,
+// voir _saisieGenMatchId) plutot qu au joueur manuellement — reutilise CUSTOM_ACH_AWARDS
+// comme source unique, avec un matchId en plus du player/defiId/date deja existants, pour
+// que ces attributions comptent aussi sur la fiche joueur (comme le picker manuel).
+function _saisieNotablesHTML(idx, m) {
+  const awards = CUSTOM_ACH_AWARDS.filter(a => a.matchId === m._id);
+  const chipsHtml = awards.length
+    ? awards.map(a => {
+        const defi = CUSTOM_ACH_DEFS.find(d => d.id === a.defiId);
+        if (!defi) return "";
+        return `<div class="saisie-notable-chip">
+          <span class="saisie-notable-ico">${defi.icon}</span>
+          <span class="saisie-notable-text"><b>${a.player}</b> — ${defi.name}</span>
+          <button class="saisie-notable-remove" data-act="saisie-notable-remove" data-award="${a.id}">✕</button>
+        </div>`;
+      }).join("")
+    : `<p class="saisie-empty" style="margin:0">Aucun fait notable pour l'instant.</p>`;
+  return `<div class="saisie-notables">
+    <div class="saisie-notables-title"><span>📌 Faits notables</span><button class="saisie-notables-add" data-act="saisie-notable-add" data-match="${idx}">+ Ajouter</button></div>
+    <div class="saisie-notables-list">${chipsHtml}</div>
+  </div>
+  ${_saisieNotablePanelHTML(idx, m)}`;
+}
+function _saisieNotablePanelHTML(idx, m) {
+  if (_saisieNotableMatch !== idx || !_saisieNotableStep) return "";
+  if (_saisieNotableStep === "player") {
+    const teams = _activeTeams();
+    const benchTeam = _saisieBenchTeam(m.eqA, m.eqB, teams);
+    const pool = [...new Set([..._teamPoolOrdered(m.eqA, benchTeam), ..._teamPoolOrdered(m.eqB, benchTeam)])];
+    const rows = pool.map(p => {
+      const eq = _draft.presences[p]?.equipe || "";
+      return `<button class="saisie-plist-row ${eq.toLowerCase()}" data-act="saisie-notable-pick-player" data-player="${p}"><span class="pdot"></span><span class="name">${p}</span></button>`;
+    }).join("");
+    return `<div class="saisie-picker">
+      <div class="saisie-picker-hdr"><span>Étape 1/2 — Quel joueur ?</span><button data-act="saisie-notable-cancel">✕</button></div>
+      <div class="saisie-picker-list">${rows || `<p class="saisie-empty" style="margin:0">Aucun joueur disponible.</p>`}</div>
+    </div>`;
+  }
+  const rows = CUSTOM_ACH_DEFS.map(d => `<button class="saisie-plist-row saisie-notable-fait-row" data-act="saisie-notable-pick-fait" data-defi="${d.id}"><span class="saisie-notable-fait-ico">${d.icon}</span><span class="name">${d.name}<small>${d.desc}</small></span></button>`).join("");
+  return `<div class="saisie-picker">
+    <div class="saisie-picker-hdr"><span>Étape 2/2 — ${_saisieNotablePlayer} : quel fait notable ?</span><button data-act="saisie-notable-cancel">✕</button></div>
+    <div class="saisie-picker-list">${rows}</div>
+    <div class="saisie-notable-back-row"><button data-act="saisie-notable-back">← Joueur</button></div>
+  </div>`;
+}
 // phase "mt1" -> les mt1(A|B) premiers buts du tableau plat buteurs/passeurs ; phase
 // "mt2" -> les _mt2(A|B) suivants, juxtaposes apres (l ordre du tableau plat reste donc
 // toujours chronologique : tous les buts de la mi-temps 1, puis tous ceux de la 2).
@@ -8638,6 +8706,8 @@ function _saisieMatchEditorHTML(idx) {
         ${_saisieGoalRowsHTML(idx, "B", eqB, eqA, benchTeam, phase)}
       </div>
     </div>
+
+    ${_saisieNotablesHTML(idx, m)}
 
     ${finalActionHtml}
 
@@ -8865,7 +8935,11 @@ async function _commitSession() {
       gardiensA: (m.gardiensA || ["",""]).map(g => g || ""),
       gardiensB: (m.gardiensB || ["",""]).map(g => g || ""),
       bancA: (m.bancA || ["",""]).map(g => g || ""),
-      bancB: (m.bancB || ["",""]).map(g => g || "")
+      bancB: (m.bancB || ["",""]).map(g => g || ""),
+      // Les faits notables vivent dans CUSTOM_ACH_AWARDS (relies au match via son _id, non
+      // conserve une fois la session validee) — on les fige ici sur le match lui-meme pour
+      // qu ils restent affichables dans les recaps une fois la session cloturee.
+      notables: CUSTOM_ACH_AWARDS.filter(a => a.matchId === m._id).map(a => ({ player: a.player, defiId: a.defiId }))
     }))
   };
 
@@ -8965,7 +9039,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       const missing = _presentList().filter(p => !_draft.presences[p]?.equipe);
       if (missing.length && !confirm(`⚠️ Ces joueurs présents n'ont pas d'équipe :\n${missing.map(n => "• " + n).join("\n")}\n\nContinuer quand même ?`)) return;
     }
-    _saisieStep = stepBtn.dataset.step; _saisiePicker = null; _saisieTeamSwap = null;
+    _saisieStep = stepBtn.dataset.step; _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
     _draft.step = _saisieStep;
     _saveDraft();
     renderSaisie(); window.scrollTo({top:0, behavior:"smooth"}); return;
@@ -9025,9 +9099,12 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     if (!Array.isArray(_draft.matchs)) _draft.matchs = [];
     // Un nouveau match part entierement vierge, equipes comprises — sinon c est
     // systematiquement Roses vs Jaunes qui se pre-remplit (les 2 premieres de _activeTeams).
-    _draft.matchs.push({ eqA: "", eqB: "", scoreA: 0, scoreB: 0, buteursA: [], buteursB: [], passeursA: [], passeursB: [], mt1A: 0, mt1B: 0, _mt2A: 0, _mt2B: 0, _phase: "mt1", gardiensA: ["",""], gardiensB: ["",""], bancA: ["",""], bancB: ["",""] });
+    // L id est attribue des la creation (pas seulement a la validation) pour que les
+    // faits notables, attaches au match par cet id, puissent etre ajoutes avant meme
+    // que le match soit valide.
+    _draft.matchs.push({ _id: _saisieGenMatchId(), eqA: "", eqB: "", scoreA: 0, scoreB: 0, buteursA: [], buteursB: [], passeursA: [], passeursB: [], mt1A: 0, mt1B: 0, _mt2A: 0, _mt2B: 0, _phase: "mt1", gardiensA: ["",""], gardiensB: ["",""], bancA: ["",""], bancB: ["",""] });
     _saisieFocusedMatch = _draft.matchs.length - 1;
-    _saisiePicker = null; _saisieTeamSwap = null;
+    _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
     _saveDraft();
     renderSaisie(); return;
   }
@@ -9040,8 +9117,13 @@ document.getElementById("saisie-content").addEventListener("click", e => {
         _fbRemoveValidatedMatch(match._id).catch(() => {});
         _liveValidatedMatchs = _liveValidatedMatchs.filter(vm => vm._id !== match._id);
       }
+      if (match && match._id && CUSTOM_ACH_AWARDS.some(a => a.matchId === match._id)) {
+        CUSTOM_ACH_AWARDS = CUSTOM_ACH_AWARDS.filter(a => a.matchId !== match._id);
+        _saveCustomAchAwards();
+      }
       _draft.matchs.splice(idx, 1);
       _saisieFocusedMatch = _draft.matchs.length ? Math.min(idx, _draft.matchs.length - 1) : null;
+      _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
       _saveDraft();
       renderSaisie();
     }
@@ -9051,7 +9133,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   const focusBtn = e.target.closest('[data-act="saisie-focus-match"]');
   if (focusBtn) {
     _saisieFocusedMatch = Number(focusBtn.dataset.match);
-    _saisiePicker = null; _saisieTeamSwap = null;
+    _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
     renderSaisie(); return;
   }
   const openValidatedBtn = e.target.closest('[data-act="saisie-open-validated"]');
@@ -9076,7 +9158,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       localIdx = _draft.matchs.length - 1;
     }
     _saisieFocusedMatch = localIdx;
-    _saisiePicker = null; _saisieTeamSwap = null;
+    _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
     renderSaisie(); return;
   }
 
@@ -9156,7 +9238,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       renderSaisie();
       return;
     }
-    if (!match._id) match._id = _db ? _db.ref('config/draft/matchsMap').push().key : ('local-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+    if (!match._id) match._id = _saisieGenMatchId();
     const overlay = document.getElementById("fb-saving-overlay");
     if (overlay) overlay.style.display = "flex";
     _fbValidateMatch(match._id, payload).then(() => {
@@ -9228,6 +9310,51 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     }
     _saisiePicker = null;
     _saveDraft();
+    renderSaisie(); return;
+  }
+
+  const notableAddBtn = e.target.closest('[data-act="saisie-notable-add"]');
+  if (notableAddBtn) {
+    _saisieNotableMatch = Number(notableAddBtn.dataset.match);
+    _saisieNotableStep = "player";
+    _saisieNotablePlayer = null;
+    renderSaisie(); return;
+  }
+  if (e.target.closest('[data-act="saisie-notable-cancel"]')) {
+    _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
+    renderSaisie(); return;
+  }
+  if (e.target.closest('[data-act="saisie-notable-back"]')) {
+    _saisieNotableStep = "player";
+    renderSaisie(); return;
+  }
+  const notablePlayerBtn = e.target.closest('[data-act="saisie-notable-pick-player"]');
+  if (notablePlayerBtn) {
+    _saisieNotablePlayer = notablePlayerBtn.dataset.player;
+    _saisieNotableStep = "fait";
+    renderSaisie(); return;
+  }
+  const notableFaitBtn = e.target.closest('[data-act="saisie-notable-pick-fait"]');
+  if (notableFaitBtn) {
+    const match = _draft.matchs[_saisieNotableMatch];
+    if (match && match._id && _saisieNotablePlayer) {
+      CUSTOM_ACH_AWARDS.push({
+        id: `${Date.now()}_${Math.random().toString(36).slice(2,8)}`,
+        player: _saisieNotablePlayer,
+        defiId: notableFaitBtn.dataset.defi,
+        date: _draft.date,
+        matchId: match._id,
+        addedAt: Date.now()
+      });
+      _saveCustomAchAwards();
+    }
+    _saisieNotableStep = null; _saisieNotablePlayer = null; _saisieNotableMatch = null;
+    renderSaisie(); return;
+  }
+  const notableRemoveBtn = e.target.closest('[data-act="saisie-notable-remove"]');
+  if (notableRemoveBtn) {
+    CUSTOM_ACH_AWARDS = CUSTOM_ACH_AWARDS.filter(a => a.id !== notableRemoveBtn.dataset.award);
+    _saveCustomAchAwards();
     renderSaisie(); return;
   }
 
