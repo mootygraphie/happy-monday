@@ -2099,7 +2099,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 13:33</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 13:35</footer>
 
 <script>
 
@@ -7604,7 +7604,7 @@ function computeAchievementStats(playerName) {
           const w=m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
           if(w&&w!==myEq)sessInvic=false;
           if(w&&w===myEq)sessWins++;
-          if(g===3)hattricks++;
+          if(g>=3)hattricks++;
           if(g>=4)quadrick++;
           if(a>=3)assistHattricks++;
           if(g>=1&&a>=1)doubleDouble++;
