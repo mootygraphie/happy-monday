@@ -2099,7 +2099,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 12:31</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 12:46</footer>
 
 <script>
 
@@ -7810,6 +7810,12 @@ function openPlayerPanel(playerName) {
   }
 
   /* Statistiques */
+  // Points par match : meme bareme que le classement de soiree (victoire 3, nul 1,
+  // defaite 0) — nuls derives (matchs joues - victoires - defaites), le decompte de
+  // computePlayerDetailStats ne suivant pas les nuls separement.
+  const _pphNuls = Math.max(0, st.matchsJoues - st.victoires - st.defaites);
+  const _pphTotalPts = st.victoires*3 + _pphNuls;
+  const _pphAvgPts = st.matchsJoues > 0 ? (_pphTotalPts/st.matchsJoues).toFixed(2).replace(".",",") : null;
   h += `<div>
     <div class="pp-section-title">Statistiques</div>
     <div class="pph-stat-scroller">
@@ -7830,6 +7836,11 @@ function openPlayerPanel(playerName) {
       <div class="pph-stat-tile">
         <div class="pp-stat-val ${st.defaites>0?"red":"muted"}">${st.defaites}</div>
         <div class="pp-stat-lbl">Défaites</div>
+      </div>
+      <div class="pph-stat-tile">
+        <div class="pp-stat-val ${_pphAvgPts!==null && _pphTotalPts>0?"amber":"muted"}">${_pphAvgPts ?? "—"}</div>
+        <div class="pp-stat-lbl">Pts / match</div>
+        ${_pphAvgPts!==null?`<div class="pp-stat-sub">${_pphTotalPts} pts en ${st.matchsJoues} match${st.matchsJoues>1?"s":""}</div>`:""}
       </div>
     </div>
     <div class="pph-stat-list">
