@@ -2050,7 +2050,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 08:11</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 08:30</footer>
 
 <script>
 
@@ -2288,13 +2288,20 @@ async function _fbLoad() {
 }
 
 async function _fbLoadFromNetwork() {
+  // On tente d abord de renvoyer toute session restee en attente d une session precedente
+  // (ecriture qui avait echoue/timeout) — avant toute reconciliation, pour qu elle ne soit
+  // jamais prise pour une session supprimee faute d etre presente sur Firebase.
+  await _retryPendingSessions();
+  if (_fbLoadTimedOut) return;
   const sessSnap = await _db.ref('sessions').once('value');
   if (_fbLoadTimedOut) return;
   const fbSessions = sessSnap.val() || {};
   const fbDates = new Set(Object.keys(fbSessions));
-  // Retirer du cache les sessions absentes de Firebase (supprimées)
+  const stillPending = new Set(_getPendingSync());
+  // Retirer du cache les sessions absentes de Firebase (supprimées) — jamais celles encore
+  // en attente de synchronisation, qui n ont simplement pas pu etre renvoyees ci-dessus.
   for (let i = SESSIONS.length - 1; i >= 0; i--) {
-    if (!fbDates.has(SESSIONS[i].date)) SESSIONS.splice(i, 1);
+    if (!fbDates.has(SESSIONS[i].date) && !stillPending.has(SESSIONS[i].date)) SESSIONS.splice(i, 1);
   }
   // Ajouter / mettre à jour depuis Firebase
   Object.values(fbSessions).forEach(s => {
@@ -2360,6 +2367,44 @@ async function _fbLoadFromNetwork() {
   }
 }
 
+/* Sessions sauvegardees en local mais dont l ecriture Firebase a echoue/timeout (reseau
+   instable au moment de valider, typiquement en fin de soiree) : leur date reste ici tant
+   qu elles n ont pas ete confirmees synchronisees. Sans ce suivi, un simple rechargement de
+   page suffisait a les faire disparaitre pour de bon (voir _fbLoadFromNetwork) — la
+   promesse "sera synchronisee automatiquement" n etait pas tenue, elle ne l etait que si
+   l onglet restait ouvert sans jamais etre ferme avant la reconnexion. */
+function _getPendingSync() { try { return JSON.parse(localStorage.getItem('hmft_pending_sync') || '[]'); } catch(e) { return []; } }
+function _addPendingSync(date) {
+  const list = _getPendingSync();
+  if (!list.includes(date)) { list.push(date); localStorage.setItem('hmft_pending_sync', JSON.stringify(list)); }
+}
+function _removePendingSync(date) {
+  const list = _getPendingSync().filter(d => d !== date);
+  localStorage.setItem('hmft_pending_sync', JSON.stringify(list));
+}
+// Retente d envoyer a Firebase toute session encore en attente, en utilisant la copie
+// complete deja en memoire/localStorage — appelee au chargement (une fois la connexion
+// Firebase confirmee) et des que le navigateur redevient en ligne.
+async function _retryPendingSessions() {
+  if (!_db) return;
+  const pending = _getPendingSync();
+  for (const date of pending) {
+    const local = SESSIONS.find(s => s.date === date);
+    if (!local) { _removePendingSync(date); continue; }
+    try {
+      // Timeout par tentative : sans lui, un appel declenche par l evenement "online" (donc
+      // hors de tout rechargement de page, sans le garde-fou de _fbLoad) peut rester bloque
+      // indefiniment si la connexion se croit revenue sans vraiment l etre.
+      await Promise.race([
+        _db.ref('sessions/' + date).set(local),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('OFFLINE_TIMEOUT')), 6000))
+      ]);
+      _removePendingSync(date);
+    } catch(e) { /* toujours hors-ligne : on retentera au prochain declenchement */ }
+  }
+}
+window.addEventListener('online', () => { _retryPendingSessions(); });
+
 async function _fbSaveSession(session) {
   // localStorage en premier — données sauvées même si Firebase échoue
   try {
@@ -2370,13 +2415,18 @@ async function _fbSaveSession(session) {
   } catch(e) {}
 
   if (!_db) { throw new Error('Firebase non initialisé (_db est null)'); }
-  // Timeout : si le réseau est absent au moment de valider, on ne bloque pas
-  // l'utilisateur indéfiniment — la session est déjà sauvée en local ci-dessus,
-  // et l'écriture Firebase, déjà lancée, se synchronisera d'elle-même à la reconnexion.
-  await Promise.race([
-    _db.ref('sessions/' + session.date).set(session),
-    new Promise((_, reject) => setTimeout(() => reject(new Error('OFFLINE_TIMEOUT')), 6000))
-  ]);
+  try {
+    // Timeout : si le réseau est absent au moment de valider, on ne bloque pas
+    // l'utilisateur indéfiniment — la session est déjà sauvée en local ci-dessus.
+    await Promise.race([
+      _db.ref('sessions/' + session.date).set(session),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('OFFLINE_TIMEOUT')), 6000))
+    ]);
+    _removePendingSync(session.date);
+  } catch(err) {
+    if (err?.message === 'OFFLINE_TIMEOUT') _addPendingSync(session.date);
+    throw err;
+  }
 }
 
 async function _fbDeleteSession(date) {
