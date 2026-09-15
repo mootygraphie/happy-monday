@@ -2058,7 +2058,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 10:08</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 10:18</footer>
 
 <script>
 
@@ -8433,7 +8433,7 @@ function _buildRepartitionScreenHTML() {
     <p class="saisie-repart-hint">Touchez un joueur pour choisir sa couleur, puis validez.</p>
     <div class="saisie-repart-cols n${visibleZonesCount}">${colsHtml}</div>
     <div class="validate-row">
-      <button class="saisie-repart-validate" data-act="saisie-repart-validate"${nPending ? "" : " disabled"}>Valider la répartition</button>
+      <button class="saisie-repart-validate" data-act="saisie-repart-validate"${nPending ? "" : " disabled"}>${nPending ? "Valider la répartition" : (anyAssigned ? "✓ Répartition validée" : "Valider la répartition")}</button>
     </div>
     <div class="saisie-auto-teams-note" style="text-align:center">${nPending
       ? `${nPending} changement${nPending>1?"s":""} en attente — rien ne bouge tant que vous ne validez pas`
