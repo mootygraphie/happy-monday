@@ -2050,7 +2050,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 08:44</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 09:29</footer>
 
 <script>
 
@@ -8878,6 +8878,27 @@ async function _commitSession() {
   window.onbeforeunload = null;
   if (_offlineSaved) {
     alert('📴 Pas de connexion — session sauvegardée localement.\nElle sera automatiquement synchronisée dès que le réseau revient.');
+  } else {
+    // Ne jamais se contenter de l absence d erreur comme preuve que tout est bien
+    // enregistre : on relit ce qui a vraiment ete stocke et on compare. Si ca ne
+    // correspond pas, on le dit bruyamment plutot que de laisser decouvrir le probleme
+    // plus tard, une fois le brouillon deja efface.
+    try {
+      const verifySnap = await Promise.race([
+        _db.ref('sessions/' + finalSession.date).once('value'),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('VERIFY_TIMEOUT')), 6000))
+      ]);
+      const stored = verifySnap.val();
+      const storedMatchs = Array.isArray(stored?.matchs) ? stored.matchs.length : 0;
+      const expectedMatchs = finalSession.matchs.length;
+      if (!stored || storedMatchs !== expectedMatchs) {
+        alert(`⚠️ ALERTE — la vérification après sauvegarde ne correspond pas à ce qui vient d'être validé (${storedMatchs} match${storedMatchs>1?"s":""} retrouvé${storedMatchs>1?"s":""} au lieu de ${expectedMatchs} attendu${expectedMatchs>1?"s":""}).\n\nNe fermez pas l'application et réessayez, ou contactez l'administrateur technique avant de continuer.`);
+      }
+    } catch (e) {
+      // La verification elle-meme peut echouer (reseau redevenu instable juste apres
+      // l ecriture) sans que ce soit la preuve d un probleme — l ecriture initiale,
+      // elle, a deja reussi juste au-dessus. On ne re-alarme pas sans element concret.
+    }
   }
 
   /* Persister les nouveaux temp jokers dans ALL_PLAYERS + JOKERS */
