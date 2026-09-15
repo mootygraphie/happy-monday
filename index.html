@@ -1477,6 +1477,22 @@
   .sfm-sb-gf { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); font-variant-numeric: tabular-nums; }
   .sfm-sb-gf .diff { font-weight: 700; }
   .sfm-sb-gf .diff.pos { color: var(--good); } .sfm-sb-gf .diff.neg { color: var(--bad); }
+  .sfm-sb-roster { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .sfm-sb-pill { display: inline-flex; align-items: center; padding: 5px 10px; border-radius: 9px; font-size: 11.5px; font-weight: 500; }
+  .sfm-sb-pill.rouge { background: var(--rouge-bg); color: var(--text); border: 1px solid var(--rouge-border); }
+  .sfm-sb-pill.vert { background: var(--vert-bg); color: var(--text); border: 1px solid var(--vert-border); }
+  .sfm-sb-pill.bleu { background: var(--bleu-bg); color: var(--text); border: 1px solid var(--bleu-border); }
+  .sfm-sb-pill .player-link { font-size: inherit !important; font-weight: inherit !important; color: inherit !important; text-decoration: none !important; }
+
+  .sfm-notables-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 4px; }
+  .sfm-notable-row { display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--text2); background: var(--bg2); border: 1px solid var(--border); border-radius: 9px; padding: 9px 12px; }
+  .sfm-notable-row .player-link { color: var(--text) !important; font-weight: 700 !important; text-decoration: none !important; font-size: inherit !important; }
+  .sfm-notable-match { font-size: 10.5px; font-weight: 700; color: var(--text3); flex-shrink: 0; }
+
+  .sfm-logistics { display: flex; flex-wrap: wrap; gap: 10px; margin: 6px 0 20px; }
+  .sfm-logi-item { font-size: 12.5px; color: var(--text2); background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 8px 13px; }
+  .sfm-logi-item b { font-weight: 700; color: var(--text); }
+  .sfm-logi-item .player-link { color: inherit !important; text-decoration: none !important; font: inherit !important; font-weight: 700 !important; }
 
   .sfm-spot-card { position: relative; overflow: hidden; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; display: flex; flex-direction: column; }
   .sfm-spot-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, var(--spot-team, transparent) 0%, transparent 55%, var(--spot-team2, transparent) 100%); opacity: .16; pointer-events: none; }
@@ -2083,7 +2099,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 12:06</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 12:31</footer>
 
 <script>
 
@@ -4002,7 +4018,7 @@ function _sfmHeroHTML(session, matchs, presentsCount, teamsPlayed, recapSentence
   </div>`;
 }
 
-function _sfmScoreboardHTML(standings) {
+function _sfmScoreboardHTML(standings, teamMap) {
   if (standings.length < 2) return "";
   const ranks = ["1re place","2e place","3e place","4e place","5e place"];
   const medals = ["🥇","🥈","🥉"];
@@ -4011,6 +4027,10 @@ function _sfmScoreboardHTML(standings) {
     const diffSign = row.diff > 0 ? "+" : "";
     const diffCls  = row.diff > 0 ? "pos" : row.diff < 0 ? "neg" : "";
     const medal = medals[i] ? `<div class="sfm-sb-medal">${medals[i]}</div>` : "";
+    const roster = (teamMap && teamMap[row.team]) || [];
+    const rosterHtml = roster.length
+      ? `<div class="sfm-sb-roster">${roster.map(p => `<span class="sfm-sb-pill ${cls}">${pLink(p.name)}</span>`).join("")}</div>`
+      : "";
     return `<div class="sfm-sb-card sfm-fade-up${i===0?" sfm-sb-lead":""}" style="animation-delay:${(i*0.05).toFixed(2)}s">
       <div class="sfm-sb-accent ${cls}"></div>
       <div class="sfm-sb-body">
@@ -4022,6 +4042,7 @@ function _sfmScoreboardHTML(standings) {
         <div class="sfm-sb-sep"></div>
         <div class="sfm-sb-wdl"><span class="v">${row.v}V</span><span class="n">${row.n}N</span><span class="d">${row.d}D</span></div>
         <div class="sfm-sb-gf"><span>${row.gf} pour · ${row.ga} contre</span><span class="diff ${diffCls}">${diffSign}${row.diff}</span></div>
+        ${rosterHtml}
       </div>
     </div>`;
   }).join("");
@@ -4176,6 +4197,28 @@ function _sfmWireBestSlider(container) {
   syncDotsAndArrows();
 }
 
+// Faits notables (hauts faits attaches aux matchs + sorties abandon/blessure) : une simple
+// liste texte, volontairement sans le style "carte doree" des hauts faits classiques —
+// c est un recap factuel de la soiree, pas une vitrine de badges.
+function _sfmNotablesHTML(matchs, session) {
+  const rows = [];
+  matchs.forEach((m, i) => {
+    (m.notables || []).forEach(n => {
+      const defi = CUSTOM_ACH_DEFS.find(d => d.id === n.defiId);
+      if (!defi) return;
+      rows.push(`<div class="sfm-notable-row"><span class="sfm-notable-match">#${i+1}</span><span>${defi.icon} ${pLink(n.player)} — ${defi.name}</span></div>`);
+    });
+  });
+  Object.entries(session.outFrom || {}).forEach(([player, outIdx]) => {
+    const backIdx = session.backFrom && session.backFrom[player];
+    const txt = backIdx !== undefined
+      ? `🚑 ${pLink(player)} — sorti(e) à partir du match #${outIdx+2}, de retour au match #${backIdx+1}`
+      : `🚑 ${pLink(player)} — sorti(e) à partir du match #${outIdx+2}`;
+    rows.push(`<div class="sfm-notable-row">${txt}</div>`);
+  });
+  if (!rows.length) return "";
+  return `<div class="section-label">Faits notables</div><div class="sfm-notables-list">${rows.join("")}</div>`;
+}
 function _sfmBuildPerformers(session, matchs, buteursCount, passeursCount, gkRanking) {
   const cards = [];
   let delay = 0;
@@ -4268,6 +4311,11 @@ function renderSessionDetailV2(session) {
     .sort((a, b) => a.name.localeCompare(b.name, "fr"));
   const presentsCount = presentsAll.length;
 
+  const teamMap = { Rouge: [], Vert: [], Bleue: [] };
+  const noTeam = [];
+  presentsAll.forEach(p => { teamMap[p.equipe] !== undefined ? teamMap[p.equipe].push(p) : noTeam.push(p); });
+  const activeColors = ["Rouge","Vert","Bleue"].filter(c => teamMap[c].length > 0);
+
   let totalButs = 0;
   const buteursCount = {}, passeursCount = {};
   matchs.forEach(m => {
@@ -4315,7 +4363,7 @@ function renderSessionDetailV2(session) {
       Aucun match enregistré pour cette soirée pour le moment.
     </div>`;
   } else {
-    h += _sfmScoreboardHTML(standings);
+    h += _sfmScoreboardHTML(standings, teamMap);
 
     const spotCards = spotlights.map((s,i) => _sfmSpotlightCardHTML(matchs[s.i], s.kind, (i*0.05).toFixed(2)));
 
@@ -4332,18 +4380,19 @@ function renderSessionDetailV2(session) {
           <div class="sfm-perf-right"><div class="sfm-perf-grid">${perfCards.join("")}</div></div>
         </div>`;
     }
+
+    h += _sfmNotablesHTML(matchs, session);
   }
 
-  /* ── Compositions & coulisses ── */
-  const teamMap = { Rouge: [], Vert: [], Bleue: [] };
-  const noTeam = [];
-  presentsAll.forEach(p => { teamMap[p.equipe] !== undefined ? teamMap[p.equipe].push(p) : noTeam.push(p); });
-  const activeColors = ["Rouge","Vert","Bleue"].filter(c => teamMap[c].length > 0);
-
+  /* ── Compositions : integrees aux cartes de "Classement de la soirée" quand il y a des
+     matchs (voir _sfmScoreboardHTML) — ne s affichent ici, en grille dediee, que pour une
+     soiree sans match enregistre, faute de classement ou les inserer. ── */
   if (activeColors.length) {
-    h += `<div class="section-label">Compositions &amp; coulisses</div><div class="sfm-lineup-grid">`;
-    h += activeColors.map((c,i) => _sfmLineupCardHTML(c, teamMap[c], (i*0.05).toFixed(2))).join("");
-    h += `</div>`;
+    if (!matchs.length) {
+      h += `<div class="section-label">Compositions</div><div class="sfm-lineup-grid">`;
+      h += activeColors.map((c,i) => _sfmLineupCardHTML(c, teamMap[c], (i*0.05).toFixed(2))).join("");
+      h += `</div>`;
+    }
     if (noTeam.length) {
       h += `<div class="no-team-section"><div class="no-team-label">Sans équipe assignée</div>
         <div class="players-present-list">${noTeam.map(p => `<button class="player-chip player-link" data-player="${p.name}">${p.name}</button>`).join("")}</div></div>`;
@@ -4351,6 +4400,14 @@ function renderSessionDetailV2(session) {
   } else if (presentsAll.length) {
     h += `<div class="section-label">Effectif (${presentsAll.length})</div>
       <div class="players-present-list">${presentsAll.map(p => `<button class="player-chip player-link" data-player="${p.name}">${p.name}</button>`).join("")}</div>`;
+  }
+
+  /* ── Intendance : sac & maillots, quand renseignes pour cette session ── */
+  if (session.sac || session.maillots) {
+    h += `<div class="sfm-logistics">
+      ${session.sac      ? `<span class="sfm-logi-item">🎒 Sac — <b>${pLink(session.sac)}</b></span>`      : ""}
+      ${session.maillots ? `<span class="sfm-logi-item">👕 Maillots — <b>${pLink(session.maillots)}</b></span>` : ""}
+    </div>`;
   }
 
   /* ── Tous les matchs ── */
