@@ -1138,6 +1138,14 @@
   .saisie-notable-back-row { text-align: center; margin-top: 8px; }
   .saisie-notable-back-row button { font-size: 11.5px; font-weight: 700; color: var(--gold); background: none; border: none; cursor: pointer; font-family: inherit; }
 
+  .saisie-out-section { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .saisie-out-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: rgba(231,76,60,.1); border: 1px solid rgba(231,76,60,.3); border-radius: 10px; padding: 9px 12px; }
+  .saisie-out-txt { font-size: 12px; color: #e74c3c; }
+  .saisie-out-txt b { font-weight: 700; }
+  .saisie-out-back { font-size: 11.5px; font-weight: 700; background: transparent; border: 1px solid rgba(231,76,60,.3); color: #e74c3c; border-radius: 7px; padding: 5px 10px; cursor: pointer; font-family: inherit; flex-shrink: 0; }
+  .saisie-out-mark-btn { font-size: 11.5px; font-weight: 700; background: transparent; color: var(--text3); border: 1px dashed var(--border2); border-radius: 8px; padding: 8px 12px; cursor: pointer; font-family: inherit; width: 100%; }
+  .saisie-out-mark-btn:hover { color: #e74c3c; border-color: rgba(231,76,60,.3); }
+
   .saisie-me-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
   .saisie-add-match { width: 100%; padding: 10px; background: transparent; border: 2px dashed var(--border2); border-radius: 10px; color: var(--text2); font-size: 14px; cursor: pointer; transition: all .15s; margin-top: 14px; }
   .saisie-add-match:hover { border-color: var(--text); color: var(--text); background: var(--bg3); }
@@ -2075,7 +2083,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 11:58</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 12:06</footer>
 
 <script>
 
@@ -8098,6 +8106,7 @@ let _saisieRepartPending = {};       // joueur -> couleur choisie en attente (ec
 let _saisieNotableMatch = null;      // idx du match dont le popover "faits notables" est ouvert
 let _saisieNotableStep = null;       // null | "player" | "fait" — etape du popover 2 temps
 let _saisieNotablePlayer = null;     // joueur choisi a l etape 1, en attente du choix du fait notable
+let _saisieOutMatch = null;          // idx du match dont le popover "marquer une sortie" est ouvert
 const _SAISIE_STEPS = [
   { key: "presences",   label: "Présences",   icon: "👥" },
   { key: "repartition", label: "Équipes",     icon: "⚖️" },
@@ -8110,7 +8119,7 @@ function _newDraft() {
   ALL_PLAYERS.forEach(p => {
     presences[p] = { statut: "Pas répondu", equipe: "" };
   });
-  return { date: "", sac: "", maillots: "", presences, matchs: [], tempJokers: [], step: "presences" };
+  return { date: "", sac: "", maillots: "", presences, matchs: [], tempJokers: [], step: "presences", outFrom: {}, backFrom: {} };
 }
 
 function _resetSaisieUiState() {
@@ -8140,6 +8149,8 @@ function _loadDraft() {
     if (s) {
       _draft = JSON.parse(s);
       _migrateLegacyPresenceStatuts(_draft.presences);
+      if (!_draft.outFrom) _draft.outFrom = {};
+      if (!_draft.backFrom) _draft.backFrom = {};
       _saisieStep = _SAISIE_STEPS.some(st => st.key === _draft.step) ? _draft.step : "presences";
       return;
     }
@@ -8168,6 +8179,7 @@ function _loadSessionIntoDraft(session) {
     maillots: session.maillots || "",
     presences,
     matchs: (session.matchs || []).map(m => ({
+      _id: _saisieGenMatchId(),
       eqA: m.eqA, eqB: m.eqB,
       scoreA: m.scoreA, scoreB: m.scoreB,
       buteursA:  [...(m.buteursA  || [])],
@@ -8185,7 +8197,8 @@ function _loadSessionIntoDraft(session) {
       _mt2A: Math.max(0, (m.scoreA||0) - (m.mt1A||0)),
       _mt2B: Math.max(0, (m.scoreB||0) - (m.mt1B||0))
     })),
-    tempJokers
+    tempJokers,
+    outFrom: {}, backFrom: {}
   };
 }
 
@@ -8232,6 +8245,23 @@ function _teamPoolOrdered(eq, benchEq) {
 // pas seulement quand l'équipe est à court de monde — puis les presents sans equipe.
 function _gardienPoolOrdered(eq, benchEq) {
   return [..._playersOfTeam(eq), ...(benchEq ? _playersOfTeam(benchEq) : []), ..._playersOfTeam("")];
+}
+// Abandon / blessure : un joueur marque "sorti" sur un match n est plus proposable comme
+// buteur/passeur/gardien/banc a partir du match SUIVANT (pas celui ou il est marque — il y
+// etait encore). "Faire revenir" n est jamais retroactif : seul le match ou on le fait
+// revenir (et les suivants) redevient eligible. On compare les _id de match (cles Firebase
+// generees a la creation, donc triables chronologiquement) plutot que des index de tableau,
+// qui ne seraient pas stables une fois un match valide et retire de _draft.matchs.
+function _saisieIsPlayerOut(player, match) {
+  const outId = _draft.outFrom && _draft.outFrom[player];
+  if (!outId || !match || !match._id) return false;
+  if (!(match._id > outId)) return false;
+  const backId = _draft.backFrom && _draft.backFrom[player];
+  if (backId && match._id >= backId) return false;
+  return true;
+}
+function _saisieEligiblePool(pool, match) {
+  return pool.filter(p => !_saisieIsPlayerOut(p, match));
 }
 function _saisieGenMatchId() {
   return _db ? _db.ref('config/draft/matchsMap').push().key : ('local-' + Date.now() + '-' + Math.random().toString(36).slice(2));
@@ -8533,7 +8563,7 @@ function _saisieNotablePanelHTML(idx, m) {
   if (_saisieNotableStep === "player") {
     const teams = _activeTeams();
     const benchTeam = _saisieBenchTeam(m.eqA, m.eqB, teams);
-    const pool = [...new Set([..._teamPoolOrdered(m.eqA, benchTeam), ..._teamPoolOrdered(m.eqB, benchTeam)])];
+    const pool = _saisieEligiblePool([...new Set([..._teamPoolOrdered(m.eqA, benchTeam), ..._teamPoolOrdered(m.eqB, benchTeam)])], m);
     const rows = pool.map(p => {
       const eq = _draft.presences[p]?.equipe || "";
       return `<button class="saisie-plist-row ${eq.toLowerCase()}" data-act="saisie-notable-pick-player" data-player="${p}"><span class="pdot"></span><span class="name">${p}</span></button>`;
@@ -8550,6 +8580,34 @@ function _saisieNotablePanelHTML(idx, m) {
     <div class="saisie-notable-back-row"><button data-act="saisie-notable-back">← Joueur</button></div>
   </div>`;
 }
+// Abandon / blessure (phase 1 — affecte uniquement les pools de selection ci-dessus,
+// pas encore le calcul retroactif des stats personnelles, qui reste a faire separement
+// vu le nombre d endroits du moteur de stats qui devraient etre audites un par un).
+function _saisieOutHTML(idx, m) {
+  const present = _presentList();
+  const currentlyOut = present.filter(p => _saisieIsPlayerOut(p, m));
+  const rows = currentlyOut.map(p => `<div class="saisie-out-row">
+    <span class="saisie-out-txt">🚑 <b>${p}</b> — sorti(e)</span>
+    <button class="saisie-out-back" data-act="saisie-out-back" data-match="${idx}" data-player="${p}">↩ Faire revenir</button>
+  </div>`).join("");
+  return `<div class="saisie-out-section">
+    ${rows}
+    <button class="saisie-out-mark-btn" data-act="saisie-out-mark" data-match="${idx}">🚑 Marquer une sortie (abandon / blessure)</button>
+  </div>
+  ${_saisieOutPickerHTML(idx, m)}`;
+}
+function _saisieOutPickerHTML(idx, m) {
+  if (_saisieOutMatch !== idx) return "";
+  const eligible = _saisieEligiblePool(_presentList(), m);
+  const rows = eligible.map(p => {
+    const eq = _draft.presences[p]?.equipe || "";
+    return `<button class="saisie-plist-row ${eq.toLowerCase()}" data-act="saisie-out-pick" data-match="${idx}" data-player="${p}"><span class="pdot"></span><span class="name">${p}</span></button>`;
+  }).join("");
+  return `<div class="saisie-picker">
+    <div class="saisie-picker-hdr"><span>Qui sort du match ?</span><button data-act="saisie-out-cancel">✕</button></div>
+    <div class="saisie-picker-list">${rows || `<p class="saisie-empty" style="margin:0">Aucun joueur disponible.</p>`}</div>
+  </div>`;
+}
 // phase "mt1" -> les mt1(A|B) premiers buts du tableau plat buteurs/passeurs ; phase
 // "mt2" -> les _mt2(A|B) suivants, juxtaposes apres (l ordre du tableau plat reste donc
 // toujours chronologique : tous les buts de la mi-temps 1, puis tous ceux de la 2).
@@ -8559,8 +8617,8 @@ function _saisieGoalRowsHTML(idx, side, eq, otherEq, benchTeam, phase) {
   const mt2 = side === "A" ? (m._mt2A||0) : (m._mt2B||0);
   const buteurs = side === "A" ? m.buteursA : m.buteursB;
   const passeurs = side === "A" ? m.passeursA : m.passeursB;
-  const pool = _teamPoolOrdered(eq, benchTeam);
-  const otherPool = _teamPoolOrdered(otherEq, benchTeam);
+  const pool = _saisieEligiblePool(_teamPoolOrdered(eq, benchTeam), m);
+  const otherPool = _saisieEligiblePool(_teamPoolOrdered(otherEq, benchTeam), m);
   const start = phase === "mt2" ? mt1 : 0;
   const count = phase === "mt2" ? mt2 : mt1;
   let rows = "";
@@ -8601,6 +8659,7 @@ function _saisieTeamSwapPanelHTML(idx, side, otherEq, teams) {
 // cours, au meme rythme que le score et les buteurs/passeurs de cette meme phase.
 function _saisieGkColHTML(idx, side, eq, gardienPool, phase) {
   const m = _draft.matchs[idx];
+  gardienPool = _saisieEligiblePool(gardienPool, m);
   const g = side === "A" ? m.gardiensA : m.gardiensB;
   const mt = phase === "mt2" ? 1 : 0;
   const mtLabel = phase === "mt2" ? "MT2" : "MT1";
@@ -8608,7 +8667,7 @@ function _saisieGkColHTML(idx, side, eq, gardienPool, phase) {
 
   // Equipe a 6 : on reste a 5 sur le terrain, le champ Banc indique juste lequel
   // des 6 laisse sa place ce mi-temps-la (ses stats ne comptent pas pour ce mi-temps).
-  const ownTeam = _playersOfTeam(eq);
+  const ownTeam = _saisieEligiblePool(_playersOfTeam(eq), m);
   let bancHtml = "";
   if (ownTeam.length === 6) {
     if (!m.bancA) m.bancA = ["",""];
@@ -8708,6 +8767,7 @@ function _saisieMatchEditorHTML(idx) {
     </div>
 
     ${_saisieNotablesHTML(idx, m)}
+    ${_saisieOutHTML(idx, m)}
 
     ${finalActionHtml}
 
@@ -8942,6 +9002,22 @@ async function _commitSession() {
       notables: CUSTOM_ACH_AWARDS.filter(a => a.matchId === m._id).map(a => ({ player: a.player, defiId: a.defiId }))
     }))
   };
+  // outFrom/backFrom reperent un match par son _id pendant la saisie live (stable tant que
+  // le match n est pas encore valide/fige) — on les convertit ici en index dans le tableau
+  // matchs final (le seul repere qui survit une fois la session enregistree, _id n y etant
+  // pas conserve). Phase 1 : ceci fige juste la donnee pour un usage stats futur, aucun
+  // calcul existant ne la lit encore (voir la note plus haut sur le risque d editer les
+  // ~19 endroits du moteur de stats en une seule fois).
+  {
+    const idToIdx = new Map(sourceMatchs.map((m, i) => [m._id, i]));
+    const toIdxMap = obj => Object.fromEntries(
+      Object.entries(obj || {}).map(([p, id]) => [p, idToIdx.get(id)]).filter(([, i]) => i !== undefined)
+    );
+    const outIdx = toIdxMap(_draft.outFrom);
+    const backIdx = toIdxMap(_draft.backFrom);
+    if (Object.keys(outIdx).length) finalSession.outFrom = outIdx;
+    if (Object.keys(backIdx).length) finalSession.backFrom = backIdx;
+  }
 
   const overlay = document.getElementById("fb-saving-overlay");
   if (overlay) overlay.style.display = "flex";
@@ -9039,7 +9115,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       const missing = _presentList().filter(p => !_draft.presences[p]?.equipe);
       if (missing.length && !confirm(`⚠️ Ces joueurs présents n'ont pas d'équipe :\n${missing.map(n => "• " + n).join("\n")}\n\nContinuer quand même ?`)) return;
     }
-    _saisieStep = stepBtn.dataset.step; _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
+    _saisieStep = stepBtn.dataset.step; _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null; _saisieOutMatch = null;
     _draft.step = _saisieStep;
     _saveDraft();
     renderSaisie(); window.scrollTo({top:0, behavior:"smooth"}); return;
@@ -9104,7 +9180,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     // que le match soit valide.
     _draft.matchs.push({ _id: _saisieGenMatchId(), eqA: "", eqB: "", scoreA: 0, scoreB: 0, buteursA: [], buteursB: [], passeursA: [], passeursB: [], mt1A: 0, mt1B: 0, _mt2A: 0, _mt2B: 0, _phase: "mt1", gardiensA: ["",""], gardiensB: ["",""], bancA: ["",""], bancB: ["",""] });
     _saisieFocusedMatch = _draft.matchs.length - 1;
-    _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
+    _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null; _saisieOutMatch = null;
     _saveDraft();
     renderSaisie(); return;
   }
@@ -9123,7 +9199,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       }
       _draft.matchs.splice(idx, 1);
       _saisieFocusedMatch = _draft.matchs.length ? Math.min(idx, _draft.matchs.length - 1) : null;
-      _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
+      _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null; _saisieOutMatch = null;
       _saveDraft();
       renderSaisie();
     }
@@ -9133,7 +9209,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   const focusBtn = e.target.closest('[data-act="saisie-focus-match"]');
   if (focusBtn) {
     _saisieFocusedMatch = Number(focusBtn.dataset.match);
-    _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
+    _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null; _saisieOutMatch = null;
     renderSaisie(); return;
   }
   const openValidatedBtn = e.target.closest('[data-act="saisie-open-validated"]');
@@ -9158,7 +9234,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       localIdx = _draft.matchs.length - 1;
     }
     _saisieFocusedMatch = localIdx;
-    _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
+    _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null; _saisieOutMatch = null;
     renderSaisie(); return;
   }
 
@@ -9355,6 +9431,38 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   if (notableRemoveBtn) {
     CUSTOM_ACH_AWARDS = CUSTOM_ACH_AWARDS.filter(a => a.id !== notableRemoveBtn.dataset.award);
     _saveCustomAchAwards();
+    renderSaisie(); return;
+  }
+
+  const outMarkBtn = e.target.closest('[data-act="saisie-out-mark"]');
+  if (outMarkBtn) {
+    _saisieOutMatch = Number(outMarkBtn.dataset.match);
+    renderSaisie(); return;
+  }
+  if (e.target.closest('[data-act="saisie-out-cancel"]')) {
+    _saisieOutMatch = null;
+    renderSaisie(); return;
+  }
+  const outPickBtn = e.target.closest('[data-act="saisie-out-pick"]');
+  if (outPickBtn) {
+    const idx = Number(outPickBtn.dataset.match);
+    const match = _draft.matchs[idx];
+    if (match && match._id) {
+      _draft.outFrom[outPickBtn.dataset.player] = match._id;
+      delete _draft.backFrom[outPickBtn.dataset.player];
+      _saveDraft();
+    }
+    _saisieOutMatch = null;
+    renderSaisie(); return;
+  }
+  const outBackBtn = e.target.closest('[data-act="saisie-out-back"]');
+  if (outBackBtn) {
+    const idx = Number(outBackBtn.dataset.match);
+    const match = _draft.matchs[idx];
+    if (match && match._id) {
+      _draft.backFrom[outBackBtn.dataset.player] = match._id;
+      _saveDraft();
+    }
     renderSaisie(); return;
   }
 
