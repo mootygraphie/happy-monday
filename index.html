@@ -2567,7 +2567,7 @@ const CUSTOM_ACH_DEFS = [
   { id: 'sniper',        icon: '🎯',        name: 'Le Sniper',           desc: 'But à 20m ou plus' },
   { id: 'poteau',        icon: '🥅',        name: 'Le Poteau Maudit',    desc: '3 poteaux dans le même match' },
   { id: 'vengeur',       icon: '🦹🏻‍♂️',      name: 'Le Vengeur',          desc: "But contre son ancienne équipe de la soirée" },
-  { id: 'arretfolie',    icon: '🕷️',        name: 'Arrêt de Folie',      desc: 'Un arrêt exceptionnel qui change le match' },
+  { id: 'arretfolie',    icon: '🕷️',        name: 'OUUUUHH!',            desc: 'Un arrêt exceptionnel qui change le match' },
   { id: 'reprisecanon',  icon: '🚀',        name: 'Reprise Canon',       desc: 'But sur une reprise de volée' },
   { id: 'ciseau',        icon: '🤸',        name: 'Ciseau Acrobatique',  desc: 'But sur un retourné acrobatique' },
   { id: 'varvalidee',    icon: '📺',        name: 'VAR Validée',         desc: 'But confirmé après vérification vidéo' },
@@ -7950,15 +7950,17 @@ function openPlayerPanel(playerName) {
       h += `<button type="button" class="pp-custom-ach-add" onclick="_customAchOpenPicker('${playerName}')">➕&ensp;Ajouter un haut fait<span class="pp-admin-tag">admin</span></button>`;
     }
     if (_myCustomAwards.length) {
+      const _customCounts = new Map();
+      _myCustomAwards.forEach(a => _customCounts.set(a.defiId, (_customCounts.get(a.defiId) || 0) + 1));
       h += `<div><div class="pp-section-title">Hauts faits personnalisés</div><div class="hf-custom-grid">`;
-      h += _myCustomAwards.map(a => {
-        const defi = CUSTOM_ACH_DEFS.find(d => d.id === a.defiId);
+      h += [..._customCounts.entries()].map(([defiId, n]) => {
+        const defi = CUSTOM_ACH_DEFS.find(d => d.id === defiId);
         if (!defi) return "";
         return `<div class="hf-custom-card">
           <div class="hf-custom-glow"></div>
           <div class="hf-custom-ico">${defi.icon}</div>
           <div class="hf-custom-nm">${defi.name}</div>
-          <div class="hf-custom-ds">${fmtDate(a.date)}</div>
+          <div class="hf-custom-ds">${n} fois</div>
         </div>`;
       }).join("");
       h += `</div></div>`;
