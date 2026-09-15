@@ -2050,7 +2050,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 14/09/2026 - 17:10</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 08:11</footer>
 
 <script>
 
@@ -2417,49 +2417,6 @@ function _fbWatchDraftMatches() {
     });
     if (document.getElementById("panel-saisie")?.classList.contains("active")) renderSaisie();
   });
-}
-
-/* Ecoute temps reel des soirees entierement validees (contrairement au brouillon en
-   cours, qui ne concerne que ceux en train de saisir — ceci concerne tout le monde :
-   quelqu un qui consulte Sessions/Dashboard/Recompenses voit une soiree fraichement
-   bouclee ailleurs sans avoir a recharger la page). */
-let _fbSessionsWatching = false;
-function _fbWatchSessions() {
-  if (!_db || _fbSessionsWatching) return;
-  _fbSessionsWatching = true;
-  _db.ref('sessions').on('value', snap => {
-    const fbSessions = snap.val() || {};
-    const fbDates = new Set(Object.keys(fbSessions));
-    let changed = false;
-    for (let i = SESSIONS.length - 1; i >= 0; i--) {
-      if (!fbDates.has(SESSIONS[i].date)) { SESSIONS.splice(i, 1); changed = true; }
-    }
-    Object.values(fbSessions).forEach(s => {
-      const idx = SESSIONS.findIndex(e => e.date === s.date);
-      if (idx === -1) { SESSIONS.push(s); changed = true; }
-      else if (JSON.stringify(SESSIONS[idx]) !== JSON.stringify(s)) { SESSIONS[idx] = s; changed = true; }
-    });
-    if (!changed) return;
-    localStorage.setItem('hmft_sessions', JSON.stringify(SESSIONS));
-    _fbRefreshVisibleView();
-  });
-}
-// Ne rafraichit que ce qui est effectivement a l ecran — jamais pendant une Saisie en
-// cours, pour ne pas interrompre quelqu un en train de remplir un match.
-function _fbRefreshVisibleView() {
-  if (document.getElementById("panel-saisie")?.classList.contains("active")) return;
-  if (document.getElementById("panel-session")?.classList.contains("active")) {
-    const prevDate = document.getElementById("session-date")?.value;
-    populateSessionSelect();
-    const sel = document.getElementById("session-date");
-    const dateToShow = (prevDate && SESSIONS.some(s => s.date === prevDate)) ? prevDate : sel.value;
-    if (dateToShow) { sel.value = dateToShow; _syncSessDd(dateToShow); renderSessionResults(dateToShow); }
-  } else {
-    populateSessionSelect();
-  }
-  if (document.getElementById("panel-dashboard")?.classList.contains("active")) renderDashboard();
-  else if (document.getElementById("panel-stats")?.classList.contains("active")) renderStats();
-  else if (document.getElementById("panel-joueurs")?.classList.contains("active")) renderJoueurs();
 }
 
 async function _fbValidateMatch(matchId, matchData) {
@@ -9804,7 +9761,6 @@ document.addEventListener("click", e => {
 /* ── Init async ── */
 (async function() {
   await _fbLoad();
-  _fbWatchSessions();
 
   const _hash = location.hash.slice(1);
   const _storedRole = sessionStorage.getItem("hmft_role");
