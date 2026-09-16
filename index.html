@@ -2099,7 +2099,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 15/09/2026 - 13:35</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 16/09/2026 - 16:31</footer>
 
 <script>
 
@@ -2984,6 +2984,25 @@ function updateSubFilter(period) {
     `${SESSIONS.length} session${SESSIONS.length>1?"s":""} au total &middot; ${_dbxSeasonsAvailable().length} saison${_dbxSeasonsAvailable().length>1?"s":""}`;
 }
 
+/* Abandon / blessure — phase 2 : exclusion des stats personnelles sur les matchs
+   concernes, partout dans le moteur de stats (les buteurs/passeurs/gardiens ne sont
+   pas concernes : un joueur exclu ne peut deja plus y etre selectionne depuis la
+   phase 1, donc ces donnees-la sont saines par construction). Ce qui reste a filtrer
+   ici, c est tout calcul qui deduit "ce joueur a joue ce match" depuis la seule
+   appartenance d equipe de la session (info.equipe === m.eqA/m.eqB), sans verifier
+   le match precis — c est exactement ce que ca corrige.
+   session.outFrom/backFrom sont indexes par position dans session.matchs (voir
+   _commitSession) : stables une fois la session enregistree, contrairement aux _id
+   de match utilises cote brouillon live en Saisie (_saisieIsPlayerOut). */
+function _isPlayerOutForSessionMatch(session, player, matchIdx) {
+  const outIdx = session.outFrom && session.outFrom[player];
+  if (outIdx === undefined) return false;
+  if (matchIdx <= outIdx) return false;
+  const backIdx = session.backFrom && session.backFrom[player];
+  if (backIdx !== undefined && matchIdx >= backIdx) return false;
+  return true;
+}
+
 function computeStats(sessions) {
   const allMatchs = sessions.flatMap(s => (s.matchs||[]).map(m => ({...m, date:s.date})));
   const ps = {};
@@ -2997,7 +3016,7 @@ function computeStats(sessions) {
       else if (info.statut==="Blessé")      ps[p].blesses++;
       else if (info.statut==="Pas répondu") ps[p].pasRepondu++;
     });
-    (s.matchs||[]).forEach(m => {
+    (s.matchs||[]).forEach((m, mIdx) => {
       ["A","B"].forEach(side => {
         const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
         buts.forEach((b,i) => {
@@ -3009,7 +3028,7 @@ function computeStats(sessions) {
       const winner = m.scoreA > m.scoreB ? m.eqA : m.scoreB > m.scoreA ? m.eqB : null;
       if (winner) {
         Object.entries(s.presences).forEach(([p, info]) => {
-          if (info.statut==="Présent" && info.equipe===winner && ps[p]) {
+          if (info.statut==="Présent" && info.equipe===winner && ps[p] && !_isPlayerOutForSessionMatch(s, p, mIdx)) {
             if (winner==="Rouge") ps[p].vR++; else if (winner==="Vert") ps[p].vV++; else ps[p].vB++;
           }
         });
@@ -3098,7 +3117,7 @@ function computeTopDefendersStats(sessions, minMatches) {
   };
   sessions.forEach(session => {
     const presences = session.presences || {};
-    (session.matchs || []).forEach(m => {
+    (session.matchs || []).forEach((m, mIdx) => {
       // Equipe a 6 : le joueur au Banc un mi-temps ne doit ni etre credite ni penalise
       // pour ce mi-temps-la (il n etait pas sur le terrain). Necessite le detail par
       // mi-temps ; les sessions plus anciennes sans ce detail gardent l ancien calcul
@@ -3109,6 +3128,7 @@ function computeTopDefendersStats(sessions, minMatches) {
         if (info.statut !== "Présent" || !info.equipe) return;
         const isA = m.eqA === info.equipe, isB = m.eqB === info.equipe;
         if (!isA && !isB) return;
+        if (_isPlayerOutForSessionMatch(session, player, mIdx)) return;
         if (!hasHalves) { add(player, isA ? m.scoreB : m.scoreA); return; }
         const banc = isA ? bancA : bancB;
         const mt1c = isA ? (m.mt1B||0) : (m.mt1A||0);
@@ -3270,7 +3290,7 @@ function _dbxTeamScopedEquipeType(sessions, color) {
     // buts/passes/defense).
     const teamPresentCount = Object.values(presences).filter(v => v.statut === "Présent" && v.equipe === color).length;
     const teamHasNoDedicatedGk = teamPresentCount === 4;
-    (s.matchs || []).forEach(m => {
+    (s.matchs || []).forEach((m, mIdx) => {
       const isA = m.eqA === color, isB = m.eqB === color;
       if (!isA && !isB) return;
       const myButs = isA ? (m.buteursA||[]) : (m.buteursB||[]);
@@ -3288,6 +3308,7 @@ function _dbxTeamScopedEquipeType(sessions, color) {
       const mt2c = isA ? Math.max(0,(m.scoreB||0)-(m.mt1B||0)) : Math.max(0,(m.scoreA||0)-(m.mt1A||0));
       Object.entries(presences).forEach(([player, info]) => {
         if (info.statut !== "Présent" || info.equipe !== color) return;
+        if (_isPlayerOutForSessionMatch(s, player, mIdx)) return;
         defMap[player] = defMap[player] || {goalsAgainst:0, matchCount:0};
         if (!hasHalves) {
           defMap[player].goalsAgainst += isA ? (m.scoreB||0) : (m.scoreA||0);
@@ -5049,9 +5070,12 @@ function computeRivalites(pA, pB, period) {
       result.together.gaA += gA + aA; result.together.gA += gA; result.together.aA += aA;
       result.together.gaB += gB + aB; result.together.gB += gB; result.together.aB += aB;
 
-      // W/D/L communs — par match de leur équipe
+      // W/D/L communs — par match de leur équipe, seulement si aucun des deux n est
+      // exclu (sorti/blesse) sur ce match precis : c est un stat "ensemble".
       let wMatch=0, lMatch=0;
-      (s.matchs||[]).filter(m => m.eqA===eqA||m.eqB===eqA).forEach(m => {
+      (s.matchs||[]).forEach((m, mIdx) => {
+        if (!(m.eqA===eqA||m.eqB===eqA)) return;
+        if (_isPlayerOutForSessionMatch(s, pA, mIdx) || _isPlayerOutForSessionMatch(s, pB, mIdx)) return;
         const w = m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
         if (w===eqA) { result.together.wA++; wMatch++; }
         else if (w===null) { result.together.dA++; }
@@ -5067,8 +5091,11 @@ function computeRivalites(pA, pB, period) {
       result.versus.gaA += gA + aA; result.versus.gA += gA; result.versus.aA += aA;
       result.versus.gaB += gB + aB; result.versus.gB += gB; result.versus.aB += aB;
 
-      // W/D/L uniquement sur les matchs directs eqA vs eqB
-      (s.matchs||[]).filter(m => (m.eqA===eqA&&m.eqB===eqB)||(m.eqA===eqB&&m.eqB===eqA)).forEach(m => {
+      // W/D/L uniquement sur les matchs directs eqA vs eqB, seulement si aucun des
+      // deux n est exclu sur ce match precis.
+      (s.matchs||[]).forEach((m, mIdx) => {
+        if (!((m.eqA===eqA&&m.eqB===eqB)||(m.eqA===eqB&&m.eqB===eqA))) return;
+        if (_isPlayerOutForSessionMatch(s, pA, mIdx) || _isPlayerOutForSessionMatch(s, pB, mIdx)) return;
         const w = m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
         if (w===eqA)      { result.versus.wA++; result.versus.lB++; }
         else if (w===eqB) { result.versus.wB++; result.versus.lA++; }
@@ -5932,7 +5959,7 @@ function _dbxPlayerMatchAgg(sessions, player) {
       colorMatches[info.equipe] = (colorMatches[info.equipe]||0) + 1;
     }
     let sessGoals = 0, sessAssists = 0;
-    (s.matchs||[]).forEach(m => {
+    (s.matchs||[]).forEach((m, mIdx) => {
       let myG = 0, myA = 0;
       ["A","B"].forEach(side => {
         const bts = m[`buteurs${side}`]||[], pss = m[`passeurs${side}`]||[];
@@ -5943,7 +5970,7 @@ function _dbxPlayerMatchAgg(sessions, player) {
           if (psr && psr !== "CSC" && psr === player) { myA++; sessAssists++; passes++; }
         });
       });
-      if (info && info.statut === "Présent" && info.equipe && (m.eqA === info.equipe || m.eqB === info.equipe)) {
+      if (info && info.statut === "Présent" && info.equipe && (m.eqA === info.equipe || m.eqB === info.equipe) && !_isPlayerOutForSessionMatch(s, player, mIdx)) {
         goalsByMatch.push(myG); assistsByMatch.push(myA);
         matchLabels.push(`${_dbxFmtDateShort(s.date)} (${(TEAM_LABEL[m.eqA]||m.eqA).slice(0,3)}-${(TEAM_LABEL[m.eqB]||m.eqB).slice(0,3)})`);
         const isA = m.eqA === info.equipe;
@@ -6892,7 +6919,7 @@ function computePlayerStats() {
     if (s.sac     && ps[s.sac])     ps[s.sac].sac++;
     if (s.maillots && ps[s.maillots]) ps[s.maillots].maillots++;
     if (s.matchs) {
-      s.matchs.forEach(m => {
+      s.matchs.forEach((m, mIdx) => {
         ["A","B"].forEach(side => {
           const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
           buts.forEach((b,i) => {
@@ -6904,7 +6931,7 @@ function computePlayerStats() {
         const winner = m.scoreA > m.scoreB ? m.eqA : m.scoreB > m.scoreA ? m.eqB : null;
         if (winner) {
           Object.entries(s.presences).forEach(([p, info]) => {
-            if (info.statut === "Présent" && info.equipe === winner && ps[p]) {
+            if (info.statut === "Présent" && info.equipe === winner && ps[p] && !_isPlayerOutForSessionMatch(s, p, mIdx)) {
               if (winner==="Rouge") ps[p].vR++; else if (winner==="Vert") ps[p].vV++; else ps[p].vB++;
             }
           });
@@ -7127,7 +7154,7 @@ function computePlayerDetailStats(playerName) {
           teammateCount[other] = (teammateCount[other] || 0) + 1;
         });
       }
-      (s.matchs || []).forEach(m => {
+      (s.matchs || []).forEach((m, mIdx) => {
         let g = 0, a = 0;
         ["A","B"].forEach(side => {
           const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
@@ -7142,6 +7169,7 @@ function computePlayerDetailStats(playerName) {
         const ga = g + a;
         if (ga > bestMatchGA) { bestMatchGA = ga; bestMatchGoals = g; bestMatchAssists = a; bestMatch = {...m, date: s.date}; }
         if (!myEquipe || (m.eqA !== myEquipe && m.eqB !== myEquipe)) return;
+        if (_isPlayerOutForSessionMatch(s, playerName, mIdx)) return;
         matchsJoues++;
         const winner = m.scoreA > m.scoreB ? m.eqA : m.scoreB > m.scoreA ? m.eqB : null;
         if (winner === myEquipe) {
@@ -7182,8 +7210,9 @@ function computePlayerDetailStats(playerName) {
     if (!info || info.statut !== "Présent") return;
     const myEquipe = info.equipe;
     if (!myEquipe) return;
-    (s.matchs || []).forEach(m => {
+    (s.matchs || []).forEach((m, mIdx) => {
       if (m.eqA !== myEquipe && m.eqB !== myEquipe) return;
+      if (_isPlayerOutForSessionMatch(s, playerName, mIdx)) return;
       let g = 0, a = 0;
       ["A","B"].forEach(side => {
         const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
@@ -7542,8 +7571,8 @@ function computeAchievementStats(playerName) {
       let sessGA=0,sessPlayed=0,sessWithGA=0,sessInvic=true,sessWins=0;
       const allGA={};
 
-      (s.matchs||[]).forEach(m => {
-        const inMatch=myEq&&(m.eqA===myEq||m.eqB===myEq);
+      (s.matchs||[]).forEach((m, mIdx) => {
+        const inMatch=myEq&&(m.eqA===myEq||m.eqB===myEq)&&!_isPlayerOutForSessionMatch(s, playerName, mIdx);
         let g=0,a=0;
         ["A","B"].forEach(side=>{
           (m[`buteurs${side}`]||[]).forEach((b,i)=>{
@@ -7627,7 +7656,7 @@ function computeAchievementStats(playerName) {
       if(sessPlayed>0&&sessWins===sessPlayed)soireeParfaite++;
       if(myEq&&sessInvic)invincible++;
       if(sessPlayed>0&&sessWins===0)zeroVict++;
-      const teamMatchs=(s.matchs||[]).filter(m=>myEq&&(m.eqA===myEq||m.eqB===myEq));
+      const teamMatchs=(s.matchs||[]).filter((m,mIdx)=>myEq&&(m.eqA===myEq||m.eqB===myEq)&&!_isPlayerOutForSessionMatch(s, playerName, mIdx));
       const allDraw=teamMatchs.length>0&&teamMatchs.every(m=>m.scoreA===m.scoreB);
       if(allDraw)toutNul++;
       if(myEq&&sessPlayed>0){
@@ -7797,7 +7826,8 @@ function openPlayerPanel(playerName) {
         // ne dit pas qui a fini devant).
         let wins=0, losses=0, draws=0;
         if (myEq) {
-          (s.matchs||[]).filter(m => m.eqA===myEq||m.eqB===myEq).forEach(m => {
+          (s.matchs||[]).forEach((m, mIdx) => {
+            if (!(m.eqA===myEq||m.eqB===myEq) || _isPlayerOutForSessionMatch(s, playerName, mIdx)) return;
             const w = m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
             if (w===myEq) wins++; else if (w===null) draws++; else losses++;
           });
