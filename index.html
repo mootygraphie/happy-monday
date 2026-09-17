@@ -2099,7 +2099,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 16/09/2026 - 16:31</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 17/09/2026 - 12:22</footer>
 
 <script>
 
@@ -8225,6 +8225,10 @@ function _resetSaisieUiState() {
   _saisiePresFilter = "all";
   _saisiePresSearch = "";
   _saisieRepartPending = {};
+  _saisieNotableMatch = null;
+  _saisieNotableStep = null;
+  _saisieNotablePlayer = null;
+  _saisieOutMatch = null;
 }
 
 /* Un brouillon cree avant l alignement des statuts occasionnels peut encore contenir
@@ -8268,13 +8272,15 @@ function _loadSessionIntoDraft(session) {
     }
   });
   _migrateLegacyPresenceStatuts(presences);
-  return {
-    date: session.date,
-    sac: session.sac || "",
-    maillots: session.maillots || "",
-    presences,
-    matchs: (session.matchs || []).map(m => ({
+  const loadedMatchs = (session.matchs || []).map(m => ({
       _id: _saisieGenMatchId(),
+      // Les faits notables deja enregistres sur ce match (avant cette reouverture) ne
+      // sont plus relies a aucun CUSTOM_ACH_AWARDS existant : leur matchId d origine
+      // n a jamais ete conserve une fois la session validee (voir _commitSession). On
+      // les fige donc ici tels quels pour ne pas les perdre a la prochaine sauvegarde —
+      // seuls de nouveaux faits notables ajoutes pendant cette edition passent par le
+      // mecanisme habituel (CUSTOM_ACH_AWARDS + matchId frais).
+      _frozenNotables: [...(m.notables || [])],
       eqA: m.eqA, eqB: m.eqB,
       scoreA: m.scoreA, scoreB: m.scoreB,
       buteursA:  [...(m.buteursA  || [])],
@@ -8291,9 +8297,23 @@ function _loadSessionIntoDraft(session) {
       _phase: "mt2",
       _mt2A: Math.max(0, (m.scoreA||0) - (m.mt1A||0)),
       _mt2B: Math.max(0, (m.scoreB||0) - (m.mt1B||0))
-    })),
+  }));
+  // session.outFrom/backFrom sont indexes par position dans session.matchs (voir
+  // _commitSession) — on les reconvertit ici vers les _id frais generes ci-dessus, dans
+  // le meme ordre, pour que l exclusion abandon/blessure deja enregistree reste active
+  // pendant cette edition (et ne soit pas silencieusement effacee a la re-sauvegarde).
+  const idxToId = i => (loadedMatchs[i] || {})._id;
+  const fromIdxMap = obj => Object.fromEntries(
+    Object.entries(obj || {}).map(([p, i]) => [p, idxToId(i)]).filter(([, id]) => id !== undefined)
+  );
+  return {
+    date: session.date,
+    sac: session.sac || "",
+    maillots: session.maillots || "",
+    presences,
+    matchs: loadedMatchs,
     tempJokers,
-    outFrom: {}, backFrom: {}
+    outFrom: fromIdxMap(session.outFrom), backFrom: fromIdxMap(session.backFrom)
   };
 }
 
@@ -8635,18 +8655,29 @@ function _saisiePickerHTML(key, title, options, includeCSC, allowNone) {
 // comme source unique, avec un matchId en plus du player/defiId/date deja existants, pour
 // que ces attributions comptent aussi sur la fiche joueur (comme le picker manuel).
 function _saisieNotablesHTML(idx, m) {
+  // Deux sources : les faits notables figes a la reouverture d une session existante
+  // (m._frozenNotables, non supprimables ici — voir _loadSessionIntoDraft) et ceux
+  // ajoutes pendant cette edition live (CUSTOM_ACH_AWARDS relies par matchId, eux
+  // supprimables normalement).
+  const frozenHtml = (m._frozenNotables || []).map(n => {
+    const defi = CUSTOM_ACH_DEFS.find(d => d.id === n.defiId);
+    if (!defi) return "";
+    return `<div class="saisie-notable-chip">
+      <span class="saisie-notable-ico">${defi.icon}</span>
+      <span class="saisie-notable-text"><b>${n.player}</b> — ${defi.name}</span>
+    </div>`;
+  }).join("");
   const awards = CUSTOM_ACH_AWARDS.filter(a => a.matchId === m._id);
-  const chipsHtml = awards.length
-    ? awards.map(a => {
-        const defi = CUSTOM_ACH_DEFS.find(d => d.id === a.defiId);
-        if (!defi) return "";
-        return `<div class="saisie-notable-chip">
-          <span class="saisie-notable-ico">${defi.icon}</span>
-          <span class="saisie-notable-text"><b>${a.player}</b> — ${defi.name}</span>
-          <button class="saisie-notable-remove" data-act="saisie-notable-remove" data-award="${a.id}">✕</button>
-        </div>`;
-      }).join("")
-    : `<p class="saisie-empty" style="margin:0">Aucun fait notable pour l'instant.</p>`;
+  const liveHtml = awards.map(a => {
+    const defi = CUSTOM_ACH_DEFS.find(d => d.id === a.defiId);
+    if (!defi) return "";
+    return `<div class="saisie-notable-chip">
+      <span class="saisie-notable-ico">${defi.icon}</span>
+      <span class="saisie-notable-text"><b>${a.player}</b> — ${defi.name}</span>
+      <button class="saisie-notable-remove" data-act="saisie-notable-remove" data-award="${a.id}">✕</button>
+    </div>`;
+  }).join("");
+  const chipsHtml = (frozenHtml + liveHtml) || `<p class="saisie-empty" style="margin:0">Aucun fait notable pour l'instant.</p>`;
   return `<div class="saisie-notables">
     <div class="saisie-notables-title"><span>📌 Faits notables</span><button class="saisie-notables-add" data-act="saisie-notable-add" data-match="${idx}">+ Ajouter</button></div>
     <div class="saisie-notables-list">${chipsHtml}</div>
@@ -9093,8 +9124,10 @@ async function _commitSession() {
       bancB: (m.bancB || ["",""]).map(g => g || ""),
       // Les faits notables vivent dans CUSTOM_ACH_AWARDS (relies au match via son _id, non
       // conserve une fois la session validee) — on les fige ici sur le match lui-meme pour
-      // qu ils restent affichables dans les recaps une fois la session cloturee.
-      notables: CUSTOM_ACH_AWARDS.filter(a => a.matchId === m._id).map(a => ({ player: a.player, defiId: a.defiId }))
+      // qu ils restent affichables dans les recaps une fois la session cloturee. En mode
+      // edition, on reprend aussi ceux deja figes a la reouverture (m._frozenNotables) pour
+      // ne pas les perdre a la re-sauvegarde.
+      notables: [...(m._frozenNotables || []), ...CUSTOM_ACH_AWARDS.filter(a => a.matchId === m._id).map(a => ({ player: a.player, defiId: a.defiId }))]
     }))
   };
   // outFrom/backFrom reperent un match par son _id pendant la saisie live (stable tant que
