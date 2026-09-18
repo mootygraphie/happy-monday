@@ -2099,7 +2099,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 17/09/2026 - 12:22</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 18/09/2026 - 08:57</footer>
 
 <script>
 
@@ -4406,10 +4406,11 @@ function renderSessionDetailV2(session) {
   }
 
   /* ── Compositions : integrees aux cartes de "Classement de la soirée" quand il y a des
-     matchs (voir _sfmScoreboardHTML) — ne s affichent ici, en grille dediee, que pour une
-     soiree sans match enregistre, faute de classement ou les inserer. ── */
+     matchs (voir _sfmScoreboardHTML) — ne s affichent ici, en grille dediee, que si ce
+     classement ne s affiche pas (soiree sans match, ou moins de 2 equipes distinctes
+     dans les matchs enregistres), faute d endroit ou les inserer sinon. ── */
   if (activeColors.length) {
-    if (!matchs.length) {
+    if (!matchs.length || standings.length < 2) {
       h += `<div class="section-label">Compositions</div><div class="sfm-lineup-grid">`;
       h += activeColors.map((c,i) => _sfmLineupCardHTML(c, teamMap[c], (i*0.05).toFixed(2))).join("");
       h += `</div>`;
@@ -9133,9 +9134,7 @@ async function _commitSession() {
   // outFrom/backFrom reperent un match par son _id pendant la saisie live (stable tant que
   // le match n est pas encore valide/fige) — on les convertit ici en index dans le tableau
   // matchs final (le seul repere qui survit une fois la session enregistree, _id n y etant
-  // pas conserve). Phase 1 : ceci fige juste la donnee pour un usage stats futur, aucun
-  // calcul existant ne la lit encore (voir la note plus haut sur le risque d editer les
-  // ~19 endroits du moteur de stats en une seule fois).
+  // pas conserve). Lu par _isPlayerOutForSessionMatch partout dans le moteur de stats.
   {
     const idToIdx = new Map(sourceMatchs.map((m, i) => [m._id, i]));
     const toIdxMap = obj => Object.fromEntries(
@@ -9143,6 +9142,14 @@ async function _commitSession() {
     );
     const outIdx = toIdxMap(_draft.outFrom);
     const backIdx = toIdxMap(_draft.backFrom);
+    // Si le match ou un joueur est "revenu" n a pas ete valide (retire via "continuer
+    // sans lui"), son retour disparait de backIdx alors que sa sortie reste dans outIdx —
+    // ca le laisserait exclu de tous les matchs suivants pour toujours, alors qu il a
+    // bien rejoue. On abandonne alors l exclusion plutot que de la rendre permanente par
+    // erreur : mieux vaut ne pas exclure que sur-exclure a tort.
+    Object.keys(_draft.backFrom || {}).forEach(p => {
+      if (_draft.backFrom[p] !== undefined && backIdx[p] === undefined) delete outIdx[p];
+    });
     if (Object.keys(outIdx).length) finalSession.outFrom = outIdx;
     if (Object.keys(backIdx).length) finalSession.backFrom = backIdx;
   }
