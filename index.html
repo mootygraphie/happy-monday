@@ -1370,6 +1370,26 @@
   .regl-admin-btn { padding: 6px 12px; border-radius: 7px; border: 1px solid var(--border); background: var(--bg3); color: var(--text2); font-size: 12px; font-weight: 600; cursor: pointer; transition: background .15s; }
   .regl-admin-btn:hover { background: var(--bg2); color: var(--text); }
   .regl-admin-del:hover { border-color: rgba(239,68,68,.4); color: #EF4444; }
+
+  /* ── Coefficient joueurs (admin) ── */
+  .coef-wrap { max-width: 720px; margin: 0 auto; }
+  .coef-intro { font-size: 13px; line-height: 1.7; color: var(--text2); margin-bottom: 1.8rem; padding: 14px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; }
+  .coef-list { display: flex; flex-direction: column; gap: 9px; }
+  .coef-row { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 15px; }
+  .coef-row-main { display: flex; align-items: center; gap: 9px; }
+  .coef-rank { font-size: 11px; color: var(--text3); font-variant-numeric: tabular-nums; width: 24px; flex-shrink: 0; }
+  .coef-row-main .player-link { font-size: 14.5px; font-weight: 700; color: var(--text); flex: 1; min-width: 0; text-align: left; }
+  .coef-total { font-size: 18px; font-weight: 800; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .coef-row-profil { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .coef-pos-badge { font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+  .coef-pos-att { background: var(--rouge-bg); color: var(--rouge); border: 1px solid var(--rouge-border); }
+  .coef-pos-mil { background: var(--vert-bg); color: var(--vert); border: 1px solid var(--vert-border); }
+  .coef-pos-def { background: var(--bleu-bg); color: var(--bleu); border: 1px solid var(--bleu-border); }
+  .coef-pos-gk { background: var(--gold-bg); color: var(--gold); border: 1px solid var(--gold-border); }
+  .coef-pos-unknown { background: var(--bg3); color: var(--text3); border: 1px solid var(--border); }
+  .coef-row-detail { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 11.5px; color: var(--text2); }
+  .coef-row-detail b { color: var(--text); font-weight: 700; }
+
   /* Stats award grid — 2 cols desktop, 1 col mobile */
   .stats-award-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; align-items: start; }
   @media (max-width: 640px) { .stats-award-grid { grid-template-columns: 1fr; } }
@@ -2075,6 +2095,9 @@
   <!-- ── Onglet Règlement (admin) ── -->
   <div class="tab-panel" id="panel-reglement"></div>
 
+  <!-- ── Onglet Coefficient joueurs (admin) ── -->
+  <div class="tab-panel" id="panel-coef"></div>
+
 </div>
 
 <div id="player-panel-overlay"></div>
@@ -2099,7 +2122,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; 18/09/2026 - 08:57</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button> &mdash; 06/10/2026 - 12:27</footer>
 
 <script>
 
@@ -2107,6 +2130,8 @@
 function applyRole(role) {
   const isAdmin  = role === "admin";
   const isSaisie = role === "saisie";
+  const coefBtn = document.getElementById("footer-coef-btn");
+  if (coefBtn) coefBtn.style.display = isAdmin ? "inline" : "none";
   document.getElementById("saisie-nav-btn").style.display     = (isAdmin || isSaisie) ? "flex" : "none";
   document.getElementById("delete-session-btn").style.display = isAdmin ? "inline-flex" : "none";
   document.getElementById("edit-session-btn").style.display   = isAdmin ? "inline-flex" : "none";
@@ -6783,6 +6808,14 @@ document.getElementById("footer-reglement-btn").addEventListener("click", () => 
   renderReglement();
 });
 
+document.getElementById("footer-coef-btn").addEventListener("click", () => {
+  document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("panel-coef").classList.add("active");
+  history.replaceState(null, '', '#coef');
+  renderCoefficients();
+});
+
 // Si le brouillon en memoire correspond a une session DEJA validee (ex : on a quitte un
 // "Modifier" sans cliquer sur "Mettre a jour", meme apres avoir rafraichi la page ou s etre
 // reconnecte — le brouillon reste tel quel puisque _editMode n est jamais persiste mais
@@ -6946,6 +6979,82 @@ function computePlayerStats() {
     const favTeam = best === 0 ? null : d.vR === best ? "Rouge" : d.vV === best ? "Vert" : "Bleue";
     return { name, ...d, favTeam };
   });
+}
+
+// Coefficient utilise pour equilibrer les equipes en Saisie (_saisieAutoAssignTeams) —
+// extrait ici en fonction partagee pour que la page "Coefficient joueurs" (admin) affiche
+// exactement le detail du calcul reellement utilise, jamais une approximation a cote.
+// Les presences ne sont volontairement pas prises en compte : l assiduite n indique rien
+// sur le niveau de jeu, seul but de ce coefficient.
+function _playerCoefficient(name, statsMap) {
+  const r = statsMap[name];
+  // Le taux de victoire doit se baser sur les matchs reellement joues (equipe assignee,
+  // hors exclusion abandon/blessure), pas sur les presences brutes — sinon une soiree
+  // "present mais sans equipe" compte comme une occasion manquee et penalise injustement.
+  const pa = _dbxPlayerMatchAgg(SESSIONS, name);
+  const winRate = pa.played > 0 ? pa.w / pa.played : 0;
+  const buts = r ? r.buts : 0, passes = r ? r.passes : 0;
+  const parts = {
+    buts:    { raw: buts,    weight: 3,  value: buts * 3 },
+    passes:  { raw: passes,  weight: 2,  value: passes * 2 },
+    winRate: { raw: winRate, weight: 30, value: winRate * 30 },
+  };
+  const total = parts.buts.value + parts.passes.value + parts.winRate.value;
+  return { name, total, parts, matchsJoues: pa.played };
+}
+
+// Profil (poste) deduit des stats, pense pour s affiner tout seul au fil des sessions —
+// aucune saisie manuelle. Gardien est un tag independant (un joueur peut tourner au poste
+// sans que ca change son profil de champ), caracterise par ses clean sheets. Le poste de
+// champ compare 3 indices par match, normalises sur l effectif (min-max) : buts marques
+// (-> Attaquant), passes decisives (-> Milieu), buts encaisses inverse (-> Defenseur) —
+// le poste retenu est celui ou le joueur se distingue le plus. Sous le seuil de matchs
+// minimum, le profil reste "non classe" plutot que force sur trop peu de donnees.
+const PLAYER_PROFIL_MIN_MATCHES = 3;
+const PLAYER_PROFIL_GK_MIN_HALVES = 2;
+function _computePlayerProfiles() {
+  const statsMap = {};
+  computePlayerStats().forEach(r => { statsMap[r.name] = r; });
+  const aggMap = {};
+  Object.keys(statsMap).forEach(name => { aggMap[name] = _dbxPlayerMatchAgg(SESSIONS, name); });
+  const gkRanking = computeGardiensRanking(SESSIONS);
+  const gkMap = Object.fromEntries(gkRanking.map(g => [g.name, g]));
+  const defRanking = computeTopDefendersStats(SESSIONS, 1);
+  const defMap = Object.fromEntries(defRanking.map(d => [d.name, d]));
+
+  const eligible = Object.keys(statsMap).filter(name => (aggMap[name].played||0) >= PLAYER_PROFIL_MIN_MATCHES);
+  const minMax = vals => {
+    const mn = Math.min(...vals), mx = Math.max(...vals);
+    return v => mx > mn ? (v - mn) / (mx - mn) : 0.5;
+  };
+  const attackVals  = eligible.map(name => statsMap[name].buts   / aggMap[name].played);
+  const createVals  = eligible.map(name => statsMap[name].passes / aggMap[name].played);
+  const defenseVals = eligible.filter(name => defMap[name]).map(name => defMap[name].avg);
+  const normAttack  = attackVals.length  ? minMax(attackVals)  : () => 0.5;
+  const normCreate  = createVals.length  ? minMax(createVals)  : () => 0.5;
+  const normDefense = defenseVals.length ? minMax(defenseVals) : null;
+
+  const profiles = {};
+  Object.keys(statsMap).forEach(name => {
+    const played = aggMap[name].played || 0;
+    const gk = gkMap[name];
+    const isGardien = !!gk && gk.matchs >= PLAYER_PROFIL_GK_MIN_HALVES;
+    let position = null;
+    const confident = played >= PLAYER_PROFIL_MIN_MATCHES;
+    if (confident) {
+      const attackScore = normAttack(statsMap[name].buts / played);
+      const createScore = normCreate(statsMap[name].passes / played);
+      const d = defMap[name];
+      const defenseScore = (normDefense && d) ? (1 - normDefense(d.avg)) : 0;
+      const scores = { "Attaquant": attackScore, "Milieu": createScore, "Défenseur": defenseScore };
+      position = Object.entries(scores).sort((a,b) => b[1]-a[1])[0][0];
+    }
+    profiles[name] = {
+      isGardien, gkHalves: gk ? gk.matchs : 0, gkCleanSheets: gk ? gk.cleanSheets : 0,
+      position, confident, played
+    };
+  });
+  return profiles;
 }
 
 
@@ -8414,24 +8523,41 @@ function _saisieAutoAssignTeams() {
   const teamColors = teamCount === 3 ? ["Rouge","Vert","Bleue"] : ["Rouge","Vert","Bleue"].filter(c => c !== benched);
   const statsMap = {};
   computePlayerStats().forEach(r => { statsMap[r.name] = r; });
-  const ratingFor = name => {
-    const r = statsMap[name];
-    // Le taux de victoire doit se baser sur les matchs reellement joues (equipe assignee),
-    // pas sur les presences brutes — sinon une soiree "present mais sans equipe" compte
-    // comme une occasion manquee et penalise injustement le joueur.
-    const pa = _dbxPlayerMatchAgg(SESSIONS, name);
-    const winRate = pa.played > 0 ? pa.w / pa.played : 0;
-    if (!r) return winRate * 30;
-    return r.buts * 3 + r.passes * 2 + winRate * 30 + r.presences * 0.5;
+  const profiles = _computePlayerProfiles();
+
+  // Bruit leger sur le coefficient avant de trier : fait varier la repartition d une
+  // generation a l autre entre joueurs de niveau proche (pour ne pas toujours recreer les
+  // memes trios), sans jamais faire passer un tres bon joueur derriere un tres faible.
+  const JITTER_RATIO = 0.12;
+  const jitteredRating = name => {
+    const base = _playerCoefficient(name, statsMap).total;
+    const noise = (Math.random() * 2 - 1) * JITTER_RATIO * Math.max(1, Math.abs(base));
+    return base + noise;
   };
-  const sorted = [...present].sort((a, b) => ratingFor(b) - ratingFor(a));
+
+  // Equilibre les postes ET le niveau : on serpente groupe de poste par groupe de poste
+  // (Attaquants, puis Milieux, puis Defenseurs, puis non-classes), chaque groupe trie par
+  // niveau — comme ca chaque equipe recoit un nombre similaire de chaque poste, pas
+  // seulement un niveau moyen similaire. Le serpentin continue d un groupe a l autre (idx/
+  // dir ne sont jamais remis a zero) pour qu aucune equipe ne prenne systematiquement le
+  // premier choix sur tous les groupes a la fois. Gardien reste un tag independant : un
+  // gardien de soiree est range ici par son poste de champ, pas a part.
+  const byPosition = { "Attaquant": [], "Milieu": [], "Défenseur": [], "_": [] };
+  present.forEach(name => {
+    const pos = profiles[name] && profiles[name].position;
+    (byPosition[pos] || byPosition._).push(name);
+  });
+
   const buckets = teamColors.map(() => []);
   let idx = 0, dir = 1;
-  sorted.forEach(name => {
-    buckets[idx].push(name);
-    idx += dir;
-    if (idx === teamCount) { idx = teamCount - 1; dir = -1; }
-    else if (idx === -1) { idx = 0; dir = 1; }
+  ["Attaquant", "Milieu", "Défenseur", "_"].forEach(pos => {
+    const sorted = [...byPosition[pos]].sort((a, b) => jitteredRating(b) - jitteredRating(a));
+    sorted.forEach(name => {
+      buckets[idx].push(name);
+      idx += dir;
+      if (idx === teamCount) { idx = teamCount - 1; dir = -1; }
+      else if (idx === -1) { idx = 0; dir = 1; }
+    });
   });
   // Le regroupement par niveau ne depend que de la note. Mais quelle couleur recoit quel
   // groupe est tire au sort a chaque generation — sinon la meilleure note atterrirait
@@ -9860,6 +9986,68 @@ function renderReglement() {
 </div>`;
 
   _initReglForm();
+}
+
+/* Coefficient joueurs (admin uniquement) — expose le calcul reel utilise par
+   "Générer les équipes" en Saisie, avec son detail, plus un profil de poste
+   deduit des stats (evolue tout seul au fil des sessions, jamais saisi a la main). */
+function renderCoefficients() {
+  const panel = document.getElementById('panel-coef');
+  if (!panel) return;
+
+  const statsMap = {};
+  computePlayerStats().forEach(r => { statsMap[r.name] = r; });
+  const profiles = _computePlayerProfiles();
+  const roster = ALL_PLAYERS.filter(p => !INACTIFS.has(p));
+
+  const rows = roster
+    .map(name => ({ name, coef: _playerCoefficient(name, statsMap), profil: profiles[name] }))
+    .sort((a, b) => b.coef.total - a.coef.total);
+
+  const posCls = { "Attaquant": "coef-pos-att", "Milieu": "coef-pos-mil", "Défenseur": "coef-pos-def" };
+
+  const rowsHtml = rows.map((r, i) => {
+    const p = r.coef.parts;
+    const posBadge = r.profil.position
+      ? `<span class="coef-pos-badge ${posCls[r.profil.position]}">${r.profil.position}</span>`
+      : `<span class="coef-pos-badge coef-pos-unknown">Pas assez de données</span>`;
+    const gkBadge = r.profil.isGardien
+      ? `<span class="coef-pos-badge coef-pos-gk">🧤 Gardien — ${r.profil.gkCleanSheets} clean sheet${r.profil.gkCleanSheets>1?'s':''} / ${r.profil.gkHalves} mi-temps</span>`
+      : "";
+    return `<div class="coef-row">
+      <div class="coef-row-main">
+        <span class="coef-rank">#${i+1}</span>
+        ${pLink(r.name, '')}
+        <span class="coef-total">${r.coef.total.toFixed(1)}</span>
+      </div>
+      <div class="coef-row-profil">${posBadge}${gkBadge}</div>
+      <div class="coef-row-detail">
+        <span>⚽ ${p.buts.raw} but${p.buts.raw>1?'s':''} ×3 = <b>${p.buts.value.toFixed(1)}</b></span>
+        <span>🎯 ${p.passes.raw} passe${p.passes.raw>1?'s':''} ×2 = <b>${p.passes.value.toFixed(1)}</b></span>
+        <span>🏆 ${(p.winRate.raw*100).toFixed(0)}% victoires ×30 = <b>${p.winRate.value.toFixed(1)}</b></span>
+      </div>
+    </div>`;
+  }).join("");
+
+  panel.innerHTML = `<div class="coef-wrap">
+    <div class="regl-hero">
+      <div class="regl-hero-emoji">⚖️</div>
+      <div class="regl-hero-title">Coefficient joueurs</div>
+      <div class="regl-hero-sub">Le calcul utilisé pour équilibrer les équipes en Saisie</div>
+    </div>
+    <p class="coef-intro">
+      Chaque joueur reçoit un coefficient = buts ×3 + passes décisives ×2 + taux de victoire ×30
+      (toutes stats all-time — les présences ne comptent pas, l'assiduité n'indique rien sur le niveau).
+      « Générer les équipes » trie les présents par ce coefficient (avec un léger bruit aléatoire pour
+      varier les répartitions d'une fois à l'autre), puis les répartit en serpentin <b>par poste d'abord,
+      puis par niveau</b> — pour éviter à la fois les équipes trop inégales et les équipes trop
+      déséquilibrées en postes (ex. 5 attaquants dans la même équipe).<br><br>
+      Le profil de poste est déduit automatiquement des stats de chacun (plus de buts → Attaquant, plus
+      de passes décisives → Milieu, moins de buts encaissés → Défenseur ; Gardien est un tag à part basé
+      sur les clean sheets) — il s'affine tout seul au fil des sessions, aucune saisie manuelle.
+    </p>
+    <div class="coef-list">${rowsHtml || '<p class="no-data">Aucun joueur.</p>'}</div>
+  </div>`;
 }
 
 function _reglValidate() {
