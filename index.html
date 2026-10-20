@@ -380,6 +380,9 @@
     display: flex; flex-direction: column; align-items: center; gap: 0;
     box-shadow: 0 24px 64px rgba(0,0,0,.5);
   }
+  #lock-screen .lock-card { position: relative; }
+  #lock-screen .lock-close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border-radius: 8px; background: transparent; border: none; color: var(--text3); font-size: 18px; line-height: 1; cursor: pointer; font-family: inherit; }
+  #lock-screen .lock-close:hover { background: var(--bg3); color: var(--text); }
   #lock-screen .lock-icon { font-size: 36px; margin-bottom: 18px; }
   #lock-screen h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
   #lock-screen p  { font-size: 13px; color: var(--text3); margin-bottom: 24px; }
@@ -415,7 +418,6 @@
   #leave-edit-modal p { font-size: 13px; color: var(--text3); line-height: 1.5; margin-bottom: 24px; }
   #leave-edit-modal p strong { color: var(--text2); }
   .leave-edit-btn { width: 100%; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 10px; cursor: pointer; transition: opacity .15s; border: none; margin-top: 10px; }
-  .leave-edit-btn.primary { background: #fff; color: #0f0f13; }
   .leave-edit-btn.danger { background: rgba(255,45,149,.12); color: var(--rouge); border: 1px solid rgba(255,45,149,.3); }
   .leave-edit-btn.ghost { background: transparent; color: var(--text3); }
   .leave-edit-btn:hover { opacity: .82; }
@@ -1138,13 +1140,6 @@
   .saisie-notable-back-row { text-align: center; margin-top: 8px; }
   .saisie-notable-back-row button { font-size: 11.5px; font-weight: 700; color: var(--gold); background: none; border: none; cursor: pointer; font-family: inherit; }
 
-  .saisie-out-section { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
-  .saisie-out-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: rgba(231,76,60,.1); border: 1px solid rgba(231,76,60,.3); border-radius: 10px; padding: 9px 12px; }
-  .saisie-out-txt { font-size: 12px; color: #e74c3c; }
-  .saisie-out-txt b { font-weight: 700; }
-  .saisie-out-back { font-size: 11.5px; font-weight: 700; background: transparent; border: 1px solid rgba(231,76,60,.3); color: #e74c3c; border-radius: 7px; padding: 5px 10px; cursor: pointer; font-family: inherit; flex-shrink: 0; }
-  .saisie-out-mark-btn { font-size: 11.5px; font-weight: 700; background: transparent; color: var(--text3); border: 1px dashed var(--border2); border-radius: 8px; padding: 8px 12px; cursor: pointer; font-family: inherit; width: 100%; }
-  .saisie-out-mark-btn:hover { color: #e74c3c; border-color: rgba(231,76,60,.3); }
 
   .saisie-me-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
   .saisie-add-match { width: 100%; padding: 10px; background: transparent; border: 2px dashed var(--border2); border-radius: 10px; color: var(--text2); font-size: 14px; cursor: pointer; transition: all .15s; margin-top: 14px; }
@@ -1933,6 +1928,7 @@
 
 <div id="lock-screen" style="display:none">
   <div class="lock-card">
+    <button class="lock-close" id="pwd-close" title="Fermer" aria-label="Fermer">✕</button>
     <div class="lock-icon">🔑</div>
     <h2>Mode admin</h2>
     <p>Mot de passe administrateur</p>
@@ -1951,10 +1947,9 @@
 <div id="leave-edit-modal" style="display:none">
   <div class="leave-edit-card">
     <div class="leave-edit-icon">✏️</div>
-    <h2>Modifications non enregistrées</h2>
-    <p>Vous éditez la session du <strong id="leave-edit-date"></strong> sans avoir cliqué sur « Mettre à jour ».</p>
-    <button class="leave-edit-btn primary" id="leave-edit-save">Enregistrer mes modifications</button>
-    <button class="leave-edit-btn danger" id="leave-edit-discard">Quitter sans enregistrer</button>
+    <h2>Ancien brouillon d'édition</h2>
+    <p>Un brouillon de modification de la session du <strong id="leave-edit-date"></strong> est resté en mémoire. La modification des sessions clôturées n'est plus possible : la session enregistrée reste intacte, ce brouillon peut être abandonné.</p>
+    <button class="leave-edit-btn danger" id="leave-edit-discard">Abandonner ce brouillon</button>
     <button class="leave-edit-btn ghost" id="leave-edit-cancel">Annuler</button>
   </div>
 </div>
@@ -2079,7 +2074,6 @@
       <div id="sess-dd-row"></div>
       <select id="session-date" style="display:none"></select>
       <button id="delete-session-btn" title="Supprimer cette session" style="display:none;background:transparent;border:1px solid #e74c3c44;color:#e74c3c;border-radius:8px;padding:7px 11px;font-size:16px;cursor:pointer;line-height:1;transition:background .15s;" onmouseover="this.style.background='#e74c3c18'" onmouseout="this.style.background='transparent'">🗑️</button>
-      <button id="edit-session-btn" title="Modifier cette session" style="display:none;background:transparent;border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:7px 11px;font-size:16px;cursor:pointer;line-height:1;transition:background .15s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">✏️</button>
     </div>
     <div id="session-results"></div>
   </div>
@@ -2134,7 +2128,6 @@ function applyRole(role) {
   if (coefBtn) coefBtn.style.display = isAdmin ? "inline" : "none";
   document.getElementById("saisie-nav-btn").style.display     = (isAdmin || isSaisie) ? "flex" : "none";
   document.getElementById("delete-session-btn").style.display = isAdmin ? "inline-flex" : "none";
-  document.getElementById("edit-session-btn").style.display   = isAdmin ? "inline-flex" : "none";
   document.querySelector(".main-tabs").style.display = isSaisie ? "none" : "";
   const hnavSaisieRow = document.getElementById("hnav-saisie-row");
   if (hnavSaisieRow) hnavSaisieRow.style.display = (isAdmin || isSaisie) ? "flex" : "none";
@@ -2189,6 +2182,16 @@ async function tryAdminUnlock() {
 }
 
 document.getElementById("pwd-btn").addEventListener("click", tryAdminUnlock);
+function _closeAdminLock() {
+  document.getElementById("lock-screen").style.display = "none";
+  document.getElementById("pwd-input").value = "";
+  document.getElementById("pwd-err").textContent = "";
+}
+document.getElementById("pwd-close").addEventListener("click", _closeAdminLock);
+document.getElementById("lock-screen").addEventListener("click", e => { if (e.target.id === "lock-screen") _closeAdminLock(); });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && document.getElementById("lock-screen").style.display === "flex") _closeAdminLock();
+});
 document.getElementById("pwd-input").addEventListener("keydown", e => {
   if (e.key === "Enter") tryAdminUnlock();
 });
@@ -2646,6 +2649,7 @@ const CUSTOM_ACH_DEFS = [
   { id: 'ciseau',        icon: '🤸',        name: 'Ciseau Acrobatique',  desc: 'But sur un retourné acrobatique' },
   { id: 'varvalidee',    icon: '📺',        name: 'VAR Validée',         desc: 'But confirmé après vérification vidéo' },
   { id: 'varrefusee',    icon: '🚫',        name: 'VAR Refusée',         desc: 'But refusé après vérification vidéo' },
+  { id: 'jinglebells',   icon: '🪩',        name: 'Jingle Bells',        desc: 'Recevoir un ballon dans les grelots' },
 ];
 let CUSTOM_ACH_AWARDS = JSON.parse(localStorage.getItem('hmft_custom_ach') || '[]');
 function _saveCustomAchAwards() {
@@ -4739,7 +4743,7 @@ const MHF_CAT_BY_ID = {
   invic:'Collectif', duo:'Collectif',
   fidele:'Présence', sac:'Présence', maillots:'Présence', assidu:'Présence', comete:'Présence',
   mvp:'Distinctions', soiree:'Distinctions', remontada:'Distinctions', chelem:'Distinctions',
-  gardienAssist:'Distinctions', willgrigg:'Distinctions', mesutozil:'Distinctions', patron:'Distinctions', mercenaire:'Distinctions', equipetype:'Distinctions', totsaison:'Distinctions', bdor:'Distinctions', legende:'Distinctions',
+  gardienAssist:'Distinctions', ceni:'Distinctions', willgrigg:'Distinctions', mesutozil:'Distinctions', patron:'Distinctions', mercenaire:'Distinctions', equipetype:'Distinctions', totsaison:'Distinctions', bdor:'Distinctions', legende:'Distinctions',
   bonnet:'Secrets', infirm:'Secrets', pois:'Secrets', fantome:'Secrets', zerovic:'Secrets', toutnul:'Secrets',
 };
 
@@ -6816,10 +6820,10 @@ document.getElementById("footer-coef-btn").addEventListener("click", () => {
   renderCoefficients();
 });
 
-// Si le brouillon en memoire correspond a une session DEJA validee (ex : on a quitte un
-// "Modifier" sans cliquer sur "Mettre a jour", meme apres avoir rafraichi la page ou s etre
-// reconnecte — le brouillon reste tel quel puisque _editMode n est jamais persiste mais
-// _draft, lui, l est), ce n est plus un brouillon legitime de nouvelle soiree.
+// Si le brouillon en memoire correspond a une session DEJA validee (reliquat de l ancienne
+// fonction "Modifier une session", retiree le 20/10/2026, ou brouillon d un autre telephone),
+// ce n est plus un brouillon legitime de nouvelle soiree : on propose seulement de l abandonner,
+// jamais de le re-enregistrer par-dessus la session close.
 function _isStaleEditDraft() {
   return !!(_draft && _draft.date && SESSIONS.some(s => s.date === _draft.date));
 }
@@ -6834,20 +6838,9 @@ function _guardStaleEditDraft(afterDiscard, onCancel) {
   const modal = document.getElementById("leave-edit-modal");
   document.getElementById("leave-edit-date").textContent = fmtDate(date);
   modal.style.display = "flex";
-  const saveBtn = document.getElementById("leave-edit-save");
   const discardBtn = document.getElementById("leave-edit-discard");
   const cancelBtn = document.getElementById("leave-edit-cancel");
   const close = () => { modal.style.display = "none"; };
-  saveBtn.onclick = () => {
-    close();
-    _editMode = true;
-    document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
-    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-    document.getElementById("panel-saisie").classList.add("active");
-    history.replaceState(null, '', '#saisie');
-    renderSaisie();
-    _commitSession();
-  };
   discardBtn.onclick = () => {
     close();
     _draft = _newDraft();
@@ -6906,27 +6899,6 @@ document.getElementById("delete-session-btn").addEventListener("click", () => {
     document.getElementById("session-results").innerHTML =
       `<p class="no-data" style="margin-top:1rem">Aucune session enregistrée.</p>`;
   }
-});
-
-document.getElementById("edit-session-btn").addEventListener("click", () => {
-  const sel = document.getElementById("session-date");
-  const date = sel.value;
-  if (!date) return;
-  const session = SESSIONS.find(s => s.date === date);
-  if (!session) return;
-  // Editer une autre session pendant qu une edition precedente n est pas enregistree passe
-  // aussi par le garde-fou (sinon elle serait silencieusement ecrasee par ce nouveau brouillon).
-  _guardStaleEditDraft(() => {
-    _editMode = true;
-    _draft = _loadSessionIntoDraft(session);
-    _draftSavedAt = null;
-    _resetSaisieUiState();
-    document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
-    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-    document.getElementById("panel-saisie").classList.add("active");
-    history.replaceState(null, '', '#saisie');
-    renderSaisie();
-  });
 });
 
 /* ══════════════════════════════════════════════════════════
@@ -7400,8 +7372,9 @@ const ACH_DEFS = [
   { id:'mvp',          name:'Meilleur joueur', icon:'🏆', tiers:[1,3,7,15,25,40],     hidden:false, key:'mvp',          desc:v=>`MVP de soirée ${v} fois` },
   { id:'soiree',       name:'Soirée parfaite', icon:'🌟', tiers:[1], fixedTier:6,      hidden:false, key:'soireeParfaite', desc:_=>`Soirée terminée avec 100 % de victoires` },
   { id:'remontada',    name:'Remontada',       icon:'🌅', tiers:[1], fixedTier:6,      hidden:false, key:'remontadas',   desc:_=>`Perdant d'au moins 2 buts à la mi-temps, vainqueur à la fin` },
-  { id:'chelem',       name:'Grand Chelem',    icon:'🎨', tiers:[1], fixedTier:6,      hidden:true,  key:'grandChelem',  desc:_=>`Les 3 couleurs jouées` },
+  { id:'chelem',       name:'Grand Chelem',    icon:'🎨', tiers:[1], fixedTier:6,      hidden:true,  key:'grandChelem',  desc:_=>`1re équipe de la soirée dans les 3 couleurs` },
   { id:'gardienAssist',name:'Neuer',           icon:'🧤', tiers:[1], fixedTier:6,      hidden:false, key:'gardienAssist', desc:_=>`Passe décisive en tant que gardien` },
+  { id:'ceni',         name:'Rogério Ceni',    icon:'🦜', tiers:[1], fixedTier:6,      hidden:false, key:'gardienButs',  desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''} en tant que gardien` },
   { id:'hattrick',     name:'Hat Trick',       icon:'🎩', tiers:[1,5,15,30,50,100],    hidden:false, key:'hattricks',    desc:v=>`${v} match${v>1?'s':''} avec 3 buts marqués` },
   { id:'willgrigg',    name:'Archie Thompson', icon:'🔥', tiers:[1], fixedTier:6,      hidden:true,  key:'quadrick',     desc:v=>`${v} fois avec au moins 4 buts dans un même match` },
   { id:'mesutozil',    name:'Mesut Özil',      icon:'🪄', tiers:[1], fixedTier:6,      hidden:true,  key:'assistHattricks', desc:v=>`${v} fois avec au moins 3 passes décisives dans un même match` },
@@ -7437,6 +7410,7 @@ const ACH_ABOUT = {
   mur:          'Clean sheets en tant que gardien (1 par mi-temps)',
   passoire:     'Buts encaissés en gardant les buts',
   gardienAssist:'Passe décisive en tant que gardien',
+  ceni:         'Buts marqués en tant que gardien',
   hattrick:   'Matchs avec 3 buts marqués',
   willgrigg:  'Au moins 4 buts dans un même match',
   mesutozil:  'Au moins 3 passes décisives dans un même match',
@@ -7661,7 +7635,7 @@ function computeAchievementStats(playerName) {
   const _ss = [...SESSIONS].sort((a,b)=>new Date(a.date)-new Date(b.date));
   let buts=0,passes=0,presences=0,absences=0,injuries=0,sessionsBlesses=0,sac=0,maillots=0;
   let hattricks=0,quadrick=0,assistHattricks=0,patronCount=0,doubleDouble=0,cleanSheets=0,mvp=0,soireeParfaite=0,invincible=0,csc=0,zeroVict=0,toutNul=0;
-  let gardiensCleanSheets=0,gardiensButsEncaisses=0,gardiensMatchs=0,remontadas=0,gardienAssist=0,mercenaireCount=0;
+  let gardiensCleanSheets=0,gardiensButsEncaisses=0,gardiensMatchs=0,remontadas=0,gardienAssist=0,gardienButs=0,mercenaireCount=0;
   const chelemColors=new Set(), duoMap={};
   let inEp=false, bestStreak=0, curStreak=0, fantomeStreak=0, sessionsAvecGA=0;
   const yearMap={};
@@ -7706,6 +7680,17 @@ function computeAchievementStats(playerName) {
         buts+=g; passes+=a; sessGA+=g+a;
         // Gardien assist : indépendant des données mi-temps
         if(a>0){const _gAr=m.gardiensA||[],_gBr=m.gardiensB||[];if(_gAr.includes(playerName)||_gBr.includes(playerName))gardienAssist+=a;}
+        // Gardien buteur (Rogério Ceni) : le but doit etre marque pendant la mi-temps ou le
+        // joueur garde les buts. Les buts sont chronologiques (les mt1X premiers = 1re MT) ;
+        // sans score mi-temps, on ne compte que si le meme gardien a tenu les 2 mi-temps.
+        ["A","B"].forEach(side=>{
+          const _gk=m[`gardiens${side}`]||[], _mt1=m[`mt1${side}`];
+          (m[`buteurs${side}`]||[]).forEach((b,i)=>{
+            if(b!==playerName)return;
+            const keeper=_mt1!==undefined?_gk[i<_mt1?0:1]:(_gk[0]===_gk[1]?_gk[0]:null);
+            if(keeper===playerName)gardienButs++;
+          });
+        });
         // Gardien stats clean sheets / buts encaissés : nécessite les données mi-temps
         if(m.mt1A!==undefined && m.mt1B!==undefined){
           const gA=m.gardiensA||[], gB=m.gardiensB||[];
@@ -7769,11 +7754,11 @@ function computeAchievementStats(playerName) {
       const teamMatchs=(s.matchs||[]).filter((m,mIdx)=>myEq&&(m.eqA===myEq||m.eqB===myEq)&&!_isPlayerOutForSessionMatch(s, playerName, mIdx));
       const allDraw=teamMatchs.length>0&&teamMatchs.every(m=>m.scoreA===m.scoreB);
       if(allDraw)toutNul++;
+      // Grand Chelem : 1re place du classement officiel de la soiree (points, puis diff, puis
+      // buts marques — meme tri que l onglet Session), pas simplement le plus de victoires.
       if(myEq&&sessPlayed>0){
-        const _tw={};
-        (s.matchs||[]).forEach(m=>{const w=m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;if(w)_tw[w]=(_tw[w]||0)+1;});
-        const _mx=Math.max(0,...Object.values(_tw));
-        if(_mx>0&&(_tw[myEq]||0)===_mx)chelemColors.add(myEq);
+        const _top=_sfmStandings(s.matchs||[])[0];
+        if(_top&&_top.team===myEq&&_top.pts>0)chelemColors.add(myEq);
       }
       const pGA=allGA[playerName]||0;
       if(pGA>0&&!Object.values(allGA).some(v=>v>pGA))mvp++;
@@ -7817,7 +7802,7 @@ function computeAchievementStats(playerName) {
            sac, maillots, hattricks, quadrick, assistHattricks, patronCount, bestStreak, soireeParfaite, doubleDouble,
            invincible, cleanSheets, bestDuo, mvp, csc, grandChelem,
            fantomeStreak, assiduAnnes, cometeAnnes, zeroVict, toutNul, sessionsAvecGA,
-           gardiensCleanSheets, gardiensButsEncaisses, gardiensMatchs, gardienRate, remontadas, gardienAssist, mercenaireCount,
+           gardiensCleanSheets, gardiensButsEncaisses, gardiensMatchs, gardienRate, remontadas, gardienAssist, gardienButs, mercenaireCount,
            equipeTypeCount, equipeTypeSaisonCount, ballonDorCount };
 }
 
@@ -7972,12 +7957,14 @@ function openPlayerPanel(playerName) {
         ${st.matchsJoues>0?`<div class="pp-stat-sub">moy. ${(st.passesDecisives/st.matchsJoues).toFixed(2).replace(".",",")} / m</div>`:""}
       </div>
       <div class="pph-stat-tile">
-        <div class="pp-stat-val ${st.victoires>0?"green":"muted"}">${st.victoires}</div>
+        <div class="pp-stat-val ${st.victoires>0?"green":"muted"}">${st.matchsJoues>0?Math.round(st.victoires/st.matchsJoues*100)+"%":"–"}</div>
         <div class="pp-stat-lbl">Victoires</div>
+        ${st.matchsJoues>0?`<div class="pp-stat-sub">${st.victoires} / ${st.matchsJoues} m</div>`:""}
       </div>
       <div class="pph-stat-tile">
-        <div class="pp-stat-val ${st.defaites>0?"red":"muted"}">${st.defaites}</div>
+        <div class="pp-stat-val ${st.defaites>0?"red":"muted"}">${st.matchsJoues>0?Math.round(st.defaites/st.matchsJoues*100)+"%":"–"}</div>
         <div class="pp-stat-lbl">Défaites</div>
+        ${st.matchsJoues>0?`<div class="pp-stat-sub">${st.defaites} / ${st.matchsJoues} m</div>`:""}
       </div>
     </div>
     <div class="pph-stat-list">
@@ -8311,7 +8298,6 @@ let _saisieRepartPending = {};       // joueur -> couleur choisie en attente (ec
 let _saisieNotableMatch = null;      // idx du match dont le popover "faits notables" est ouvert
 let _saisieNotableStep = null;       // null | "player" | "fait" — etape du popover 2 temps
 let _saisieNotablePlayer = null;     // joueur choisi a l etape 1, en attente du choix du fait notable
-let _saisieOutMatch = null;          // idx du match dont le popover "marquer une sortie" est ouvert
 const _SAISIE_STEPS = [
   { key: "presences",   label: "Présences",   icon: "👥" },
   { key: "repartition", label: "Équipes",     icon: "⚖️" },
@@ -8338,7 +8324,6 @@ function _resetSaisieUiState() {
   _saisieNotableMatch = null;
   _saisieNotableStep = null;
   _saisieNotablePlayer = null;
-  _saisieOutMatch = null;
 }
 
 /* Un brouillon cree avant l alignement des statuts occasionnels peut encore contenir
@@ -8833,34 +8818,6 @@ function _saisieNotablePanelHTML(idx, m) {
     <div class="saisie-notable-back-row"><button data-act="saisie-notable-back">← Joueur</button></div>
   </div>`;
 }
-// Abandon / blessure (phase 1 — affecte uniquement les pools de selection ci-dessus,
-// pas encore le calcul retroactif des stats personnelles, qui reste a faire separement
-// vu le nombre d endroits du moteur de stats qui devraient etre audites un par un).
-function _saisieOutHTML(idx, m) {
-  const present = _presentList();
-  const currentlyOut = present.filter(p => _saisieIsPlayerOut(p, m));
-  const rows = currentlyOut.map(p => `<div class="saisie-out-row">
-    <span class="saisie-out-txt">🚑 <b>${p}</b> — sorti(e)</span>
-    <button class="saisie-out-back" data-act="saisie-out-back" data-match="${idx}" data-player="${p}">↩ Faire revenir</button>
-  </div>`).join("");
-  return `<div class="saisie-out-section">
-    ${rows}
-    <button class="saisie-out-mark-btn" data-act="saisie-out-mark" data-match="${idx}">🚑 Marquer une sortie (abandon / blessure)</button>
-  </div>
-  ${_saisieOutPickerHTML(idx, m)}`;
-}
-function _saisieOutPickerHTML(idx, m) {
-  if (_saisieOutMatch !== idx) return "";
-  const eligible = _saisieEligiblePool(_presentList(), m);
-  const rows = eligible.map(p => {
-    const eq = _draft.presences[p]?.equipe || "";
-    return `<button class="saisie-plist-row ${eq.toLowerCase()}" data-act="saisie-out-pick" data-match="${idx}" data-player="${p}"><span class="pdot"></span><span class="name">${p}</span></button>`;
-  }).join("");
-  return `<div class="saisie-picker">
-    <div class="saisie-picker-hdr"><span>Qui sort du match ?</span><button data-act="saisie-out-cancel">✕</button></div>
-    <div class="saisie-picker-list">${rows || `<p class="saisie-empty" style="margin:0">Aucun joueur disponible.</p>`}</div>
-  </div>`;
-}
 // phase "mt1" -> les mt1(A|B) premiers buts du tableau plat buteurs/passeurs ; phase
 // "mt2" -> les _mt2(A|B) suivants, juxtaposes apres (l ordre du tableau plat reste donc
 // toujours chronologique : tous les buts de la mi-temps 1, puis tous ceux de la 2).
@@ -9020,7 +8977,6 @@ function _saisieMatchEditorHTML(idx) {
     </div>
 
     ${_saisieNotablesHTML(idx, m)}
-    ${_saisieOutHTML(idx, m)}
 
     ${finalActionHtml}
 
@@ -9376,7 +9332,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       const missing = _presentList().filter(p => !_draft.presences[p]?.equipe);
       if (missing.length && !confirm(`⚠️ Ces joueurs présents n'ont pas d'équipe :\n${missing.map(n => "• " + n).join("\n")}\n\nContinuer quand même ?`)) return;
     }
-    _saisieStep = stepBtn.dataset.step; _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null; _saisieOutMatch = null;
+    _saisieStep = stepBtn.dataset.step; _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
     _draft.step = _saisieStep;
     _saveDraft();
     renderSaisie(); window.scrollTo({top:0, behavior:"smooth"}); return;
@@ -9441,7 +9397,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     // que le match soit valide.
     _draft.matchs.push({ _id: _saisieGenMatchId(), eqA: "", eqB: "", scoreA: 0, scoreB: 0, buteursA: [], buteursB: [], passeursA: [], passeursB: [], mt1A: 0, mt1B: 0, _mt2A: 0, _mt2B: 0, _phase: "mt1", gardiensA: ["",""], gardiensB: ["",""], bancA: ["",""], bancB: ["",""] });
     _saisieFocusedMatch = _draft.matchs.length - 1;
-    _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null; _saisieOutMatch = null;
+    _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
     _saveDraft();
     renderSaisie(); return;
   }
@@ -9460,7 +9416,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       }
       _draft.matchs.splice(idx, 1);
       _saisieFocusedMatch = _draft.matchs.length ? Math.min(idx, _draft.matchs.length - 1) : null;
-      _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null; _saisieOutMatch = null;
+      _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
       _saveDraft();
       renderSaisie();
     }
@@ -9470,7 +9426,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   const focusBtn = e.target.closest('[data-act="saisie-focus-match"]');
   if (focusBtn) {
     _saisieFocusedMatch = Number(focusBtn.dataset.match);
-    _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null; _saisieOutMatch = null;
+    _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
     renderSaisie(); return;
   }
   const openValidatedBtn = e.target.closest('[data-act="saisie-open-validated"]');
@@ -9495,7 +9451,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       localIdx = _draft.matchs.length - 1;
     }
     _saisieFocusedMatch = localIdx;
-    _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null; _saisieOutMatch = null;
+    _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
     renderSaisie(); return;
   }
 
@@ -9695,37 +9651,6 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     renderSaisie(); return;
   }
 
-  const outMarkBtn = e.target.closest('[data-act="saisie-out-mark"]');
-  if (outMarkBtn) {
-    _saisieOutMatch = Number(outMarkBtn.dataset.match);
-    renderSaisie(); return;
-  }
-  if (e.target.closest('[data-act="saisie-out-cancel"]')) {
-    _saisieOutMatch = null;
-    renderSaisie(); return;
-  }
-  const outPickBtn = e.target.closest('[data-act="saisie-out-pick"]');
-  if (outPickBtn) {
-    const idx = Number(outPickBtn.dataset.match);
-    const match = _draft.matchs[idx];
-    if (match && match._id) {
-      _draft.outFrom[outPickBtn.dataset.player] = match._id;
-      delete _draft.backFrom[outPickBtn.dataset.player];
-      _saveDraft();
-    }
-    _saisieOutMatch = null;
-    renderSaisie(); return;
-  }
-  const outBackBtn = e.target.closest('[data-act="saisie-out-back"]');
-  if (outBackBtn) {
-    const idx = Number(outBackBtn.dataset.match);
-    const match = _draft.matchs[idx];
-    if (match && match._id) {
-      _draft.backFrom[outBackBtn.dataset.player] = match._id;
-      _saveDraft();
-    }
-    renderSaisie(); return;
-  }
 
   if (e.target.closest('[data-act="saisie-add-temp-joker"]')) {
     const input = document.getElementById("saisie-new-joker-input");
