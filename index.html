@@ -2116,7 +2116,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button> &mdash; 20/10/2026 - 09:40</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button> &mdash; 20/10/2026 - 09:42</footer>
 
 <script>
 
@@ -7678,17 +7678,19 @@ function computeAchievementStats(playerName) {
           });
         });
         buts+=g; passes+=a; sessGA+=g+a;
-        // Gardien assist : indépendant des données mi-temps
-        if(a>0){const _gAr=m.gardiensA||[],_gBr=m.gardiensB||[];if(_gAr.includes(playerName)||_gBr.includes(playerName))gardienAssist+=a;}
-        // Gardien buteur (Rogério Ceni) : le but doit etre marque pendant la mi-temps ou le
-        // joueur garde les buts. Les buts sont chronologiques (les mt1X premiers = 1re MT) ;
-        // sans score mi-temps, on ne compte que si le meme gardien a tenu les 2 mi-temps.
+        // Gardien passeur (Neuer) / buteur (Rogério Ceni) : l action doit avoir lieu pendant
+        // la mi-temps ou le joueur garde les buts. Les buts sont chronologiques (les mt1X
+        // premiers = 1re MT) ; sans score mi-temps, on ne compte que si le meme gardien a
+        // tenu les 2 mi-temps.
         ["A","B"].forEach(side=>{
           const _gk=m[`gardiens${side}`]||[], _mt1=m[`mt1${side}`];
           (m[`buteurs${side}`]||[]).forEach((b,i)=>{
-            if(b!==playerName)return;
+            const p=(m[`passeurs${side}`]||[])[i];
+            if(b!==playerName&&p!==playerName)return;
             const keeper=_mt1!==undefined?_gk[i<_mt1?0:1]:(_gk[0]===_gk[1]?_gk[0]:null);
-            if(keeper===playerName)gardienButs++;
+            if(keeper!==playerName)return;
+            if(b===playerName)gardienButs++;
+            else if(b!=="CSC")gardienAssist++;
           });
         });
         // Gardien stats clean sheets / buts encaissés : nécessite les données mi-temps
