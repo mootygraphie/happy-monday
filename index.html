@@ -2116,7 +2116,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button> &mdash; 20/10/2026 - 09:44</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button> &mdash; 20/10/2026 - 09:45</footer>
 
 <script>
 
@@ -2651,6 +2651,11 @@ const CUSTOM_ACH_DEFS = [
   { id: 'varrefusee',    icon: '🚫',        name: 'VAR Refusée',         desc: 'But refusé après vérification vidéo' },
   { id: 'jinglebells',   icon: '🪩',        name: 'Jingle Bells',        desc: 'Recevoir un ballon dans les grelots' },
 ];
+// Ordre alphabetique pour les selecteurs (Saisie + fiche joueur), l ordre de definition
+// ci-dessus restant celui de creation.
+function _customAchDefsAlpha() {
+  return [...CUSTOM_ACH_DEFS].sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
+}
 let CUSTOM_ACH_AWARDS = JSON.parse(localStorage.getItem('hmft_custom_ach') || '[]');
 function _saveCustomAchAwards() {
   localStorage.setItem('hmft_custom_ach', JSON.stringify(CUSTOM_ACH_AWARDS));
@@ -8237,7 +8242,7 @@ function _customAchOpenPicker(playerName) {
   document.getElementById("customach-player").textContent = playerName;
   document.getElementById("customach-date").textContent = latestDate ? `Session du ${fmtDate(latestDate)}` : "Aucune session enregistrée";
   const list = document.getElementById("customach-list");
-  list.innerHTML = CUSTOM_ACH_DEFS.map(d => `<div class="customach-item${already.has(d.id)?' checked':''}" data-id="${d.id}">
+  list.innerHTML = _customAchDefsAlpha().map(d => `<div class="customach-item${already.has(d.id)?' checked':''}" data-id="${d.id}">
       <span class="ico">${d.icon}</span>
       <span class="nm">${d.name}<small>${d.desc}</small></span>
       <span class="customach-check"></span>
@@ -8813,7 +8818,7 @@ function _saisieNotablePanelHTML(idx, m) {
       <div class="saisie-picker-list">${rows || `<p class="saisie-empty" style="margin:0">Aucun joueur disponible.</p>`}</div>
     </div>`;
   }
-  const rows = CUSTOM_ACH_DEFS.map(d => `<button class="saisie-plist-row saisie-notable-fait-row" data-act="saisie-notable-pick-fait" data-defi="${d.id}"><span class="saisie-notable-fait-ico">${d.icon}</span><span class="name">${d.name}<small>${d.desc}</small></span></button>`).join("");
+  const rows = _customAchDefsAlpha().map(d => `<button class="saisie-plist-row saisie-notable-fait-row" data-act="saisie-notable-pick-fait" data-defi="${d.id}"><span class="saisie-notable-fait-ico">${d.icon}</span><span class="name">${d.name}<small>${d.desc}</small></span></button>`).join("");
   return `<div class="saisie-picker">
     <div class="saisie-picker-hdr"><span>Étape 2/2 — ${_saisieNotablePlayer} : quel fait notable ?</span><button data-act="saisie-notable-cancel">✕</button></div>
     <div class="saisie-picker-list">${rows}</div>
