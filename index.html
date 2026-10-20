@@ -2116,7 +2116,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button> &mdash; 20/10/2026 - 09:45</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button> &mdash; 20/10/2026 - 09:47</footer>
 
 <script>
 
@@ -4261,7 +4261,7 @@ function _sfmNotablesHTML(matchs, session) {
     (m.notables || []).forEach(n => {
       const defi = CUSTOM_ACH_DEFS.find(d => d.id === n.defiId);
       if (!defi) return;
-      rows.push(`<div class="sfm-notable-row"><span class="sfm-notable-match">#${i+1}</span><span>${defi.icon} ${pLink(n.player)} — ${defi.name}</span></div>`);
+      rows.push(`<div class="sfm-notable-row" title="${defi.desc.replace(/"/g,'&quot;')}"><span class="sfm-notable-match">#${i+1}</span><span>${defi.icon} ${pLink(n.player)} — ${defi.name}</span></div>`);
     });
   });
   Object.entries(session.outFrom || {}).forEach(([player, outIdx]) => {
@@ -8188,7 +8188,8 @@ function openPlayerPanel(playerName) {
       h += [..._customCounts.entries()].map(([defiId, n]) => {
         const defi = CUSTOM_ACH_DEFS.find(d => d.id === defiId);
         if (!defi) return "";
-        return `<div class="hf-custom-card">
+        const tip = `${defi.name} — ${n} fois\n${defi.desc}`.replace(/"/g,'&quot;');
+        return `<div class="hf-custom-card" data-tip="${tip}">
           <div class="hf-custom-glow"></div>
           <div class="hf-custom-ico">${defi.icon}</div>
           <div class="hf-custom-nm">${defi.name}</div>
@@ -8781,7 +8782,7 @@ function _saisieNotablesHTML(idx, m) {
   const frozenHtml = (m._frozenNotables || []).map(n => {
     const defi = CUSTOM_ACH_DEFS.find(d => d.id === n.defiId);
     if (!defi) return "";
-    return `<div class="saisie-notable-chip">
+    return `<div class="saisie-notable-chip" title="${defi.desc.replace(/"/g,'&quot;')}">
       <span class="saisie-notable-ico">${defi.icon}</span>
       <span class="saisie-notable-text"><b>${n.player}</b> — ${defi.name}</span>
     </div>`;
@@ -8790,7 +8791,7 @@ function _saisieNotablesHTML(idx, m) {
   const liveHtml = awards.map(a => {
     const defi = CUSTOM_ACH_DEFS.find(d => d.id === a.defiId);
     if (!defi) return "";
-    return `<div class="saisie-notable-chip">
+    return `<div class="saisie-notable-chip" title="${defi.desc.replace(/"/g,'&quot;')}">
       <span class="saisie-notable-ico">${defi.icon}</span>
       <span class="saisie-notable-text"><b>${a.player}</b> — ${defi.name}</span>
       <button class="saisie-notable-remove" data-act="saisie-notable-remove" data-award="${a.id}">✕</button>
@@ -10354,7 +10355,7 @@ document.addEventListener("click", e => {
   let _tipCell = null;
   const _pp = document.getElementById('player-panel');
   _pp.addEventListener('pointermove', e => {
-    const cell = e.target.closest('.ach-cell[data-tip]');
+    const cell = e.target.closest('.ach-cell[data-tip], .hf-custom-card[data-tip]');
     if (!cell) { _tip.classList.remove('show'); _tipCell=null; return; }
     if (cell !== _tipCell) {
       _tipCell = cell;
