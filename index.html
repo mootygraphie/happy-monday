@@ -2116,7 +2116,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button> &mdash; 20/10/2026 - 09:42</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button> &mdash; 20/10/2026 - 09:44</footer>
 
 <script>
 
@@ -4743,7 +4743,7 @@ const MHF_CAT_BY_ID = {
   invic:'Collectif', duo:'Collectif',
   fidele:'Présence', sac:'Présence', maillots:'Présence', assidu:'Présence', comete:'Présence',
   mvp:'Distinctions', soiree:'Distinctions', remontada:'Distinctions', chelem:'Distinctions',
-  gardienAssist:'Distinctions', ceni:'Distinctions', willgrigg:'Distinctions', mesutozil:'Distinctions', patron:'Distinctions', mercenaire:'Distinctions', equipetype:'Distinctions', totsaison:'Distinctions', bdor:'Distinctions', legende:'Distinctions',
+  gardienAssist:'Distinctions', chilavert:'Distinctions', willgrigg:'Distinctions', mesutozil:'Distinctions', patron:'Distinctions', mercenaire:'Distinctions', equipetype:'Distinctions', totsaison:'Distinctions', bdor:'Distinctions', legende:'Distinctions',
   bonnet:'Secrets', infirm:'Secrets', pois:'Secrets', fantome:'Secrets', zerovic:'Secrets', toutnul:'Secrets',
 };
 
@@ -7374,7 +7374,7 @@ const ACH_DEFS = [
   { id:'remontada',    name:'Remontada',       icon:'🌅', tiers:[1], fixedTier:6,      hidden:false, key:'remontadas',   desc:_=>`Perdant d'au moins 2 buts à la mi-temps, vainqueur à la fin` },
   { id:'chelem',       name:'Grand Chelem',    icon:'🎨', tiers:[1], fixedTier:6,      hidden:true,  key:'grandChelem',  desc:_=>`1re équipe de la soirée dans les 3 couleurs` },
   { id:'gardienAssist',name:'Neuer',           icon:'🧤', tiers:[1], fixedTier:6,      hidden:false, key:'gardienAssist', desc:_=>`Passe décisive en tant que gardien` },
-  { id:'ceni',         name:'Rogério Ceni',    icon:'🦜', tiers:[1], fixedTier:6,      hidden:false, key:'gardienButs',  desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''} en tant que gardien` },
+  { id:'chilavert',    name:'José Luis Chilavert', icon:'🇵🇾', tiers:[1], fixedTier:6,      hidden:false, key:'gardienButs',  desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''} en tant que gardien` },
   { id:'hattrick',     name:'Hat Trick',       icon:'🎩', tiers:[1,5,15,30,50,100],    hidden:false, key:'hattricks',    desc:v=>`${v} match${v>1?'s':''} avec 3 buts marqués` },
   { id:'willgrigg',    name:'Archie Thompson', icon:'🔥', tiers:[1], fixedTier:6,      hidden:true,  key:'quadrick',     desc:v=>`${v} fois avec au moins 4 buts dans un même match` },
   { id:'mesutozil',    name:'Mesut Özil',      icon:'🪄', tiers:[1], fixedTier:6,      hidden:true,  key:'assistHattricks', desc:v=>`${v} fois avec au moins 3 passes décisives dans un même match` },
@@ -7410,7 +7410,7 @@ const ACH_ABOUT = {
   mur:          'Clean sheets en tant que gardien (1 par mi-temps)',
   passoire:     'Buts encaissés en gardant les buts',
   gardienAssist:'Passe décisive en tant que gardien',
-  ceni:         'Buts marqués en tant que gardien',
+  chilavert:    'Buts marqués en tant que gardien',
   hattrick:   'Matchs avec 3 buts marqués',
   willgrigg:  'Au moins 4 buts dans un même match',
   mesutozil:  'Au moins 3 passes décisives dans un même match',
@@ -7678,7 +7678,7 @@ function computeAchievementStats(playerName) {
           });
         });
         buts+=g; passes+=a; sessGA+=g+a;
-        // Gardien passeur (Neuer) / buteur (Rogério Ceni) : l action doit avoir lieu pendant
+        // Gardien passeur (Neuer) / buteur (Chilavert) : l action doit avoir lieu pendant
         // la mi-temps ou le joueur garde les buts. Les buts sont chronologiques (les mt1X
         // premiers = 1re MT) ; sans score mi-temps, on ne compte que si le meme gardien a
         // tenu les 2 mi-temps.
