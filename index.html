@@ -1914,6 +1914,97 @@
   @media (max-width: 640px) {
     .dbx2-context-row { gap: 6px; }
   }
+
+  /* ── Session en cours (onglet live) + pronos ── */
+  #panel-live { max-width: 760px; margin: 0 auto; }
+  .main-tab .live-dot, .hnav-tab .live-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--bad); margin-right: 7px; vertical-align: middle; animation: lvPulse 1.6s ease-in-out infinite; }
+  @keyframes lvPulse { 50% { opacity: .3; } }
+  @media (prefers-reduced-motion: reduce) { .main-tab .live-dot, .hnav-tab .live-dot, .lv-pulse { animation: none; } }
+  .live-banner { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; border: 1px solid var(--border2); background: var(--bg2); color: var(--text2); font: inherit; font-size: 12.5px; font-weight: 600; padding: 7px 12px; border-radius: 10px; cursor: pointer; }
+  .live-banner[hidden] { display: none; }
+  .live-banner.open { border-color: color-mix(in srgb, var(--good) 45%, transparent); background: color-mix(in srgb, var(--good) 12%, transparent); color: var(--good); }
+  .live-banner .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--bad); display: inline-block; animation: lvPulse 1.6s ease-in-out infinite; }
+  .live-banner.open .live-dot { background: var(--good); }
+  .live-banner b { color: var(--text); font-weight: 700; }
+  .live-banner.open b { color: var(--good); }
+  .lv-wrap { display: flex; flex-direction: column; gap: 14px; }
+  .lv-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .lv-head h2 { font-size: 18px; font-weight: 700; }
+  .lv-head span { font-size: 12.5px; color: var(--text3); }
+  .lv-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .lv-card-t { font-size: 11.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--text3); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .lv-card-t span + span { text-transform: none; letter-spacing: 0; font-weight: 500; }
+  .lv-prono { border: 2px solid var(--border2); }
+  .lv-prono.open { border-color: var(--good); background: linear-gradient(color-mix(in srgb, var(--good) 9%, transparent), color-mix(in srgb, var(--good) 9%, transparent)), var(--bg2); }
+  .lv-prono-h { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .lv-prono-ttl { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .lv-prono.open .lv-prono-ttl { color: var(--good); }
+  .lv-prono-when { margin-left: auto; font-size: 12.5px; color: var(--text2); }
+  .lv-closed { font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 99px; background: var(--bad-bg); color: var(--bad); margin-left: auto; }
+  .lv-pulse { width: 9px; height: 9px; border-radius: 50%; background: currentColor; display: inline-block; animation: lvPulse 1.4s ease-in-out infinite; }
+  .lv-match { display: flex; align-items: center; gap: 6px; font-weight: 700; flex-wrap: wrap; }
+  .lv-match .rest { font-weight: 500; font-size: 13px; color: var(--text2); }
+  .lv-step { display: flex; flex-direction: column; gap: 8px; }
+  .lv-step-l { font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); }
+  .lv-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .lv-chip { font: inherit; font-size: 13.5px; font-weight: 600; padding: 7px 12px; border-radius: 99px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text); cursor: pointer; }
+  .lv-chip.on { background: var(--gold-bg); border-color: var(--gold); }
+  .lv-opts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .lv-opt { font: inherit; font-size: 12.5px; font-weight: 700; padding: 10px 4px; border-radius: 12px; border: 1.5px solid var(--border2); background: var(--bg2); color: var(--text); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .lv-opt .c { font-size: 18px; font-variant-numeric: tabular-nums; }
+  .lv-opt .l { font-size: 11.5px; font-weight: 600; color: var(--text2); }
+  .lv-opt.on.rouge { background: var(--rouge-bg); border-color: var(--rouge); }
+  .lv-opt.on.vert  { background: var(--vert-bg);  border-color: var(--vert); }
+  .lv-opt.on.bleu  { background: var(--bleu-bg);  border-color: var(--bleu); }
+  .lv-opt.on.nul   { background: var(--bg3); border-color: var(--text2); }
+  .lv-toggle { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--text2); cursor: pointer; }
+  .lv-toggle input { width: 18px; height: 18px; accent-color: var(--gold); }
+  .lv-score { display: flex; align-items: center; justify-content: center; gap: 14px; }
+  .lv-stepper { display: flex; align-items: center; gap: 6px; }
+  .lv-stepper button { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); font: inherit; font-size: 18px; cursor: pointer; line-height: 1; }
+  .lv-stepper .v { font-size: 26px; font-weight: 700; min-width: 28px; text-align: center; font-variant-numeric: tabular-nums; }
+  .lv-gain { font-size: 12.5px; color: var(--text2); text-align: center; }
+  .lv-gain b { color: var(--gold); }
+  .lv-err { font-size: 12.5px; color: var(--bad); text-align: center; min-height: 1em; }
+  .lv-send { font: inherit; font-size: 14px; font-weight: 700; padding: 12px; border-radius: 10px; border: none; background: var(--good); color: #fff; cursor: pointer; }
+  .lv-send:disabled { opacity: .5; cursor: default; }
+  .lv-votes { display: flex; flex-direction: column; gap: 6px; }
+  .lv-vote { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: center; font-size: 13.5px; padding: 7px 10px; border-radius: 10px; background: var(--bg3); }
+  .lv-vote .pick { font-size: 12.5px; color: var(--text2); text-align: right; font-variant-numeric: tabular-nums; }
+  .lv-vote .hidden { color: var(--text3); font-style: italic; }
+  .lv-hc { text-decoration: line-through; color: var(--text3); }
+  .lv-hc-tag { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--bad); margin-left: 4px; }
+  .lv-pts { font-weight: 700; font-size: 12.5px; padding: 2px 8px; border-radius: 99px; min-width: 50px; text-align: center; font-variant-numeric: tabular-nums; background: var(--bg2); color: var(--text3); }
+  .lv-pts.win { background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); }
+  .lv-pts.exact { background: var(--gold-bg); color: var(--gold); }
+  .lv-live-score { font-size: 13px; color: var(--text2); }
+  .lv-live-score b { color: var(--text); font-size: 15px; font-variant-numeric: tabular-nums; }
+  .lv-allvoted { font-size: 13px; color: var(--good); font-weight: 600; }
+  .lv-muted { font-size: 13px; color: var(--text2); }
+  .lv-compo { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+  .lv-compo > div { background: var(--bg3); border-radius: 10px; padding: 10px; font-size: 13px; color: var(--text2); display: flex; flex-direction: column; gap: 2px; }
+  .lv-compo b { color: var(--text); margin-bottom: 2px; }
+  .lv-tbl-wrap { overflow-x: auto; }
+  .lv-tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .lv-tbl th { text-align: right; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--text3); padding: 6px 6px; border-bottom: 1px solid var(--border2); }
+  .lv-tbl th:nth-child(-n+2) { text-align: left; }
+  .lv-tbl td { padding: 8px 6px; border-bottom: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; }
+  .lv-tbl td:nth-child(-n+2) { text-align: left; }
+  .lv-tbl tr:last-child td { border-bottom: none; }
+  .lv-tbl td.rk { color: var(--text3); width: 22px; }
+  .lv-tbl td.pts { font-weight: 800; }
+  .lv-team { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; white-space: nowrap; }
+  .lv-mlist { display: flex; flex-direction: column; }
+  .lv-mrow { display: flex; align-items: center; gap: 10px; padding: 8px 2px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .lv-mrow:last-child { border-bottom: none; }
+  .lv-mrow .no { font-size: 11px; color: var(--text3); width: 22px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .lv-mrow .sc { display: inline-flex; align-items: center; font-weight: 800; font-size: 14px; flex-shrink: 0; white-space: nowrap; }
+  .lv-mrow .sep { width: 1px; align-self: stretch; background: var(--border2); flex-shrink: 0; }
+  .lv-mrow .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; color: var(--text2); font-size: 12.5px; }
+  .lv-mrow .gk { font-weight: 600; }
+  .lv-mrow .bar { color: var(--border2); margin: 0 6px; }
+  .lv-admin { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 8px; }
+  .pronos-season-note { font-size: 12px; color: var(--text3); margin-top: 6px; }
 </style>
 <script>if(localStorage.getItem('hmft_theme')==='light')document.documentElement.classList.add('light');</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -2001,6 +2092,7 @@
   </div>
   <div class="hnav-tabsrow">
     <div class="main-tabs">
+      <button class="main-tab" data-tab="live" id="live-tab-btn" style="display:none"><span class="live-dot"></span>Session en cours</button>
       <button class="main-tab active" data-tab="session">Sessions</button>
       <button class="main-tab" data-tab="dashboard">Dashboard</button>
       <button class="main-tab" data-tab="joueurs">Effectif</button>
@@ -2008,6 +2100,7 @@
     </div>
   </div>
   <p id="header-sub"></p>
+  <button class="live-banner" id="live-banner" hidden></button>
 </header>
 
 <div class="hnav-overlay" id="hnav-overlay"></div>
@@ -2019,6 +2112,7 @@
     </button>
   </div>
   <div class="hnav-drawer-tabs" id="hnav-drawer-tabs">
+    <button class="hnav-tab" data-tab="live" id="live-drawer-btn" style="display:none"><span class="live-dot"></span>Session en cours</button>
     <button class="hnav-tab" data-tab="session">Sessions</button>
     <button class="hnav-tab" data-tab="dashboard">Dashboard</button>
     <button class="hnav-tab" data-tab="joueurs">Effectif</button>
@@ -2066,6 +2160,11 @@
   <!-- ── Onglet Joueurs ── -->
   <div class="tab-panel" id="panel-joueurs">
     <div id="joueurs-content"></div>
+  </div>
+
+  <!-- ── Onglet Session en cours (soir de match) ── -->
+  <div class="tab-panel" id="panel-live">
+    <div id="live-content"></div>
   </div>
 
   <!-- ── Onglet Résultats de session ── -->
@@ -2117,7 +2216,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button> &mdash; 20/10/2026 - 12:29</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/10/2026 - 13:18</footer>
 
 <script>
 
@@ -2127,6 +2226,8 @@ function applyRole(role) {
   const isSaisie = role === "saisie";
   const coefBtn = document.getElementById("footer-coef-btn");
   if (coefBtn) coefBtn.style.display = isAdmin ? "inline" : "none";
+  const pronosWrap = document.getElementById("footer-pronos-wrap");
+  if (pronosWrap) pronosWrap.style.display = isAdmin ? "inline" : "none";
   document.getElementById("saisie-nav-btn").style.display     = (isAdmin || isSaisie) ? "flex" : "none";
   document.getElementById("delete-session-btn").style.display = isAdmin ? "inline-flex" : "none";
   document.querySelector(".main-tabs").style.display = isSaisie ? "none" : "";
@@ -2136,6 +2237,7 @@ function applyRole(role) {
      et a la sortie du mode — pas aux autres onglets (Sessions/Dashboard/Effectif/Recompenses). */
   const hnavDrawerTabs = document.getElementById("hnav-drawer-tabs");
   if (hnavDrawerTabs) hnavDrawerTabs.style.display = isSaisie ? "none" : "";
+  if (typeof _liveRefresh === "function") _liveRefresh();
 }
 
 const HASH_ADMIN  = "cea45f18ea39c9ece6711634075f9402f52b3727a59e08927043c8cca10182c8";
@@ -2547,6 +2649,7 @@ function _fbWatchDraftMatches() {
   _db.ref('config/draft/matchsMap').on('value', snap => {
     _liveValidatedMatchs = _fbNormalizeValidatedMatchs(snap.val());
     if (document.getElementById("panel-saisie")?.classList.contains("active")) renderSaisie();
+    if (typeof _liveOnMatchsChanged === "function") _liveOnMatchsChanged();
   });
 }
 // Relit config/draft/matchsMap directement (pas le miroir _liveValidatedMatchs tenu par le
@@ -5438,8 +5541,10 @@ function renderStats() {
   h += isAdmin ? renderAchievementsMatrix() : _mhfKpiSectionHtml();
 
   h += _hfShowcaseHtml(isAdmin);
+  h += `<div id="pronos-season-wrap"></div>`;
 
   container.innerHTML = h;
+  _renderPronosSeason();
   animateView(container);
 
   /* ── Récompenses : dépliage du classement complet ── */
@@ -6785,6 +6890,7 @@ function renderSessionResults(date) {
 
 document.querySelectorAll(".main-tab").forEach(tab => {
   tab.addEventListener("click", () => {
+    _liveUserNavigated = true;
     // Quitter la Saisie via un autre onglet pendant une edition non enregistree doit passer
     // par le meme garde-fou que le reste (nav Saisie, deconnexion, rechargement sur #saisie).
     _guardStaleEditDraft(() => {
@@ -6805,7 +6911,11 @@ document.querySelectorAll(".main-tab").forEach(tab => {
       } else if (tab.dataset.tab === "stats") {
         history.replaceState(null, '', '#stats');
         renderStats();
+      } else if (tab.dataset.tab === "live") {
+        history.replaceState(null, '', '#live');
+        renderLive();
       }
+      _liveRefresh();
     });
   });
 });
@@ -8437,6 +8547,7 @@ function _saveDraft() {
   // presentes ici et laisse matchsMap intact.
   const { matchs, ...sharedDraft } = _draft;
   if (_db) _db.ref('config/draft').update(sharedDraft).catch(e => console.error('FB draft save:', e));
+  _pronoSyncSafe();
 }
 
 function _presentList() {
@@ -9343,6 +9454,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     }
     _saisieStep = stepBtn.dataset.step; _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
     _draft.step = _saisieStep;
+    if (_saisieStep === "matchs") _liveMarkStarted();
     _saveDraft();
     renderSaisie(); window.scrollTo({top:0, behavior:"smooth"}); return;
   }
@@ -9386,6 +9498,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   }
   if (e.target.id === "saisie-clear") {
     if (confirm("Effacer le brouillon en cours ?\n\nCela efface aussi les matchs déjà validés ce soir par tous les téléphones connectés.")) {
+      _pronoForgetAll();
       _draft = _newDraft(); _draftSavedAt = null;
       _liveValidatedMatchs = [];
       _resetSaisieUiState();
@@ -9416,6 +9529,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     const match = _draft.matchs[idx];
     if (confirm("Supprimer ce match ?")) {
       if (match && match._id && !_editMode) {
+        _pronoForgetMatch(match._id);
         _fbRemoveValidatedMatch(match._id).catch(() => {});
         _liveValidatedMatchs = _liveValidatedMatchs.filter(vm => vm._id !== match._id);
       }
@@ -10371,9 +10485,483 @@ document.addEventListener("click", e => {
   _pp.addEventListener('pointerleave', ()=>{ _tip.classList.remove('show'); _tipCell=null; });
 }
 
+/* ══════════════════════════════════════════════════════════
+   SESSION EN COURS + PRONOS
+   Onglet public « Session en cours » : visible des que la Saisie passe pour la premiere
+   fois sur l ecran Matchs (_draft.liveStartedAt), jusqu a la validation de la soiree
+   (config/draft supprime). Il ne fait que LIRE config/draft et les matchs valides.
+   Pronos (derriere l interrupteur admin config/pronosEnabled) : noeud Firebase separe
+   pronos/{liveKey}/{matchId}/{ live, votes, result }. Seuls les telephones de la Saisie
+   ecrivent live/result (_pronoSync, toujours en tache de fond, erreurs ignorees) et les
+   votants ecrivent leur vote. Rien ici n est lu par le moteur de stats ni par
+   _commitSession : une panne des pronos ne peut pas bloquer la Saisie.
+══════════════════════════════════════════════════════════ */
+const PRONO_VOTE_MS = 7 * 60 * 1000;      // fermeture auto si la MT1 est validee en retard
+const LIVE_MAX_MS = 12 * 3600 * 1000;     // un brouillon oublie ne laisse pas l onglet ouvert indefiniment
+let _pronosEnabled = false;
+let _liveDraft = null;          // copie LECTURE SEULE de config/draft — jamais _draft
+let _livePronos = {};           // pronos/{_livePronosKey}
+let _livePronosKey = null;
+let _livePronosLoaded = null;   // cle dont le premier instantane est arrive
+let _livePronosRef = null;
+let _liveServerOffset = 0;
+let _liveUserNavigated = false;
+let _liveAutoOpened = false;
+let _liveLastSig = "";
+const _pronoCreating = new Set();
+let _lvVote = { matchId: null, me: null, out: null, exact: false, a: 0, b: 0, err: "", sending: false };
+
+function _liveNow() { return Date.now() + _liveServerOffset; }
+function _liveRoleName() { return sessionStorage.getItem("hmft_role") || "user"; }
+function _liveIsOn() {
+  return !!(_liveDraft && _liveDraft.liveStartedAt && _liveNow() - _liveDraft.liveStartedAt < LIVE_MAX_MS);
+}
+function _liveTodayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+// Appelee par la Saisie au premier passage sur l ecran Matchs (voir saisie-go-step).
+function _liveMarkStarted() {
+  if (!_draft || _draft.liveStartedAt) return;
+  _draft.liveStartedAt = Date.now();
+  _draft.liveKey = _liveTodayKey();
+}
+
+/* ── Cotes : forme de la soiree (points par match joue), calee sur les 67 matchs
+   historiques — 33 % de nuls, le leader du soir gagne 3 matchs decisifs sur 4. ── */
+function _pronoOdds(eqA, eqB, matchs) {
+  const form = eq => {
+    let pts = 0, n = 0;
+    (matchs || []).forEach(m => {
+      if (m.eqA !== eq && m.eqB !== eq) return;
+      n++;
+      const mine = m.eqA === eq ? m.scoreA : m.scoreB, other = m.eqA === eq ? m.scoreB : m.scoreA;
+      pts += mine > other ? 3 : mine === other ? 1 : 0;
+    });
+    return n ? pts / n : null;
+  };
+  const fA = form(eqA), fB = form(eqB);
+  let p;
+  if (fA === null || fB === null) p = { A: .34, N: .32, B: .34 };
+  else {
+    const diff = fA - fB, s = Math.min(1, Math.abs(diff) / 1.5);
+    const pN = .32 - .06 * s, pFav = (1 - pN) / 2 + .18 * s, pOut = 1 - pN - pFav;
+    p = diff >= 0 ? { A: pFav, N: pN, B: pOut } : { A: pOut, N: pN, B: pFav };
+  }
+  const r = x => Math.round(10 / x) / 10;
+  return { A: r(p.A), N: r(p.N), B: r(p.B) };
+}
+function _pronoOutcome(a, b) { return a > b ? "A" : a < b ? "B" : "N"; }
+function _pronoHasScore(v) { return v && v.a !== undefined && v.a !== null && v.b !== undefined && v.b !== null; }
+function _pronoPoints(v, live, result) {
+  if (!v || !live || !result) return null;
+  if (v.out !== _pronoOutcome(result.scoreA, result.scoreB)) return 0;
+  const c = (live.odds || {})[v.out] || 0;
+  return (_pronoHasScore(v) && v.a === result.scoreA && v.b === result.scoreB) ? Math.round(c * 20) / 10 : c;
+}
+function _pronoFmt(x) { return (Math.round(x * 10) / 10).toFixed(1).replace(".", ","); }
+
+/* ── Ecoutes Firebase (tout le monde, lecture seule) ── */
+function _liveInit() {
+  if (!_db) return;
+  _db.ref('.info/serverTimeOffset').on('value', s => { _liveServerOffset = s.val() || 0; });
+  _db.ref('config/pronosEnabled').on('value', s => {
+    _pronosEnabled = s.val() === true;
+    _liveRefresh();
+    _pronoSyncSafe();
+  });
+  _db.ref('config/draft').on('value', s => {
+    const d = s.val();
+    _liveDraft = d ? {
+      date: d.date || "", presences: d.presences || {},
+      liveStartedAt: d.liveStartedAt || 0, liveKey: d.liveKey || ""
+    } : null;
+    _liveWatchPronos(_liveDraft && _liveDraft.liveKey);
+    _liveRefresh();
+  });
+  setInterval(() => { _liveRefresh(true); }, 15000);
+}
+function _liveWatchPronos(key) {
+  key = key || null;
+  if (key === _livePronosKey) return;
+  if (_livePronosRef) _livePronosRef.off();
+  _livePronosKey = key; _livePronos = {}; _livePronosLoaded = null; _livePronosRef = null;
+  if (!key || !_db) return;
+  _livePronosRef = _db.ref('pronos/' + key);
+  _livePronosRef.on('value', s => {
+    _livePronos = s.val() || {};
+    _livePronosLoaded = key;
+    _liveRefresh();
+    _pronoSyncSafe();
+  });
+}
+// Appelee quand la liste des matchs valides change (listener existant de la Saisie).
+function _liveOnMatchsChanged() { _liveRefresh(); _pronoSyncSafe(); }
+
+/* ── Ecriture cote Saisie : ouverture / score / fermeture / resultat ── */
+function _pronoSyncSafe() { try { _pronoSync(); } catch (e) { console.warn('pronos sync:', e); } }
+function _pronoSync() {
+  const role = _liveRoleName();
+  if (!_db || !_pronosEnabled || (role !== "admin" && role !== "saisie")) return;
+  if (!_draft || !_draft.liveKey || !Array.isArray(_draft.matchs)) return;
+  const key = _draft.liveKey;
+  if (_livePronosKey !== key) { _liveWatchPronos(key); return; }
+  if (_livePronosLoaded !== key) return; // jamais d ecriture avant d avoir lu l existant
+  const base = 'pronos/' + key + '/';
+  const validated = new Set(_liveValidatedMatchs.map(m => m._id));
+  const teams = _activeTeams();
+
+  _draft.matchs.forEach(m => {
+    if (!m || !m._id || validated.has(m._id)) return;
+    const node = _livePronos[m._id];
+    const entry = node && node.live;
+    const scoreA = (m.mt1A || 0) + (m._mt2A || 0), scoreB = (m.mt1B || 0) + (m._mt2B || 0);
+    const restOf = (a, b) => teams.length >= 3 ? (teams.find(t => t !== a && t !== b) || "") : "";
+    if (!entry) {
+      if (!m.eqA || !m.eqB || (m._phase || "mt1") !== "mt1" || _pronoCreating.has(m._id)) return;
+      const rest = restOf(m.eqA, m.eqB);
+      if (!rest) return; // soiree a 2 equipes : personne au repos, pas de pronos
+      _pronoCreating.add(m._id);
+      _db.ref(base + m._id + '/live').set({
+        eqA: m.eqA, eqB: m.eqB, rest, phase: "mt1", scoreA, scoreB,
+        openedAt: firebase.database.ServerValue.TIMESTAMP,
+        odds: _pronoOdds(m.eqA, m.eqB, _liveValidatedMatchs)
+      }).catch(() => {}).finally(() => _pronoCreating.delete(m._id));
+      return;
+    }
+    if (entry.phase === "mt1" && (m.eqA !== entry.eqA || m.eqB !== entry.eqB)) {
+      // Equipes corrigees apres l ouverture : les votes portaient sur un autre match.
+      const rest = m.eqA && m.eqB ? restOf(m.eqA, m.eqB) : "";
+      if (!rest) { _db.ref(base + m._id).remove().catch(() => {}); return; }
+      _db.ref(base + m._id).set({ live: {
+        eqA: m.eqA, eqB: m.eqB, rest, phase: "mt1", scoreA, scoreB, openedAt: entry.openedAt,
+        odds: _pronoOdds(m.eqA, m.eqB, _liveValidatedMatchs)
+      } }).catch(() => {});
+      return;
+    }
+    const upd = {};
+    if (entry.phase === "mt1" && (m._phase || "mt1") === "mt2") upd.phase = "mt2"; // on ne rouvre jamais
+    if (entry.phase !== "done" && (entry.scoreA !== scoreA || entry.scoreB !== scoreB)) { upd.scoreA = scoreA; upd.scoreB = scoreB; }
+    if (Object.keys(upd).length) _db.ref(base + m._id + '/live').update(upd).catch(() => {});
+  });
+
+  _liveValidatedMatchs.forEach(vm => {
+    const node = _livePronos[vm._id];
+    if (!node || !node.live) return;
+    const r = node.result;
+    if (r && r.scoreA === vm.scoreA && r.scoreB === vm.scoreB && node.live.phase === "done") return;
+    _db.ref(base + vm._id).update({
+      result: { scoreA: vm.scoreA || 0, scoreB: vm.scoreB || 0 },
+      'live/phase': "done", 'live/scoreA': vm.scoreA || 0, 'live/scoreB': vm.scoreB || 0
+    }).catch(() => {});
+  });
+}
+// Match supprime dans la Saisie : ses pronos disparaissent avec lui.
+function _pronoForgetMatch(matchId) {
+  try {
+    if (!_db || !matchId || !_draft || !_draft.liveKey) return;
+    if (_livePronosKey === _draft.liveKey && !_livePronos[matchId]) return;
+    _db.ref('pronos/' + _draft.liveKey + '/' + matchId).remove().catch(() => {});
+  } catch (e) {}
+}
+
+// Brouillon efface (bouton Effacer de la Saisie) : les pronos de la soiree partent avec.
+function _pronoForgetAll() {
+  try {
+    if (_db && _draft && _draft.liveKey) _db.ref('pronos/' + _draft.liveKey).remove().catch(() => {});
+  } catch (e) {}
+}
+
+/* ── Etat courant des pronos (le dernier match ouvert) ── */
+function _pronoCurrent() {
+  const entries = Object.entries(_livePronos || {})
+    .filter(([, n]) => n && n.live && n.live.eqA && n.live.eqB)
+    .map(([id, n]) => ({ id, ...n }))
+    .sort((x, y) => (y.live.openedAt || 0) - (x.live.openedAt || 0));
+  if (!entries.length) return null;
+  const cur = entries[0];
+  const open = cur.live.phase === "mt1" && !cur.result && _liveNow() < (cur.live.openedAt || 0) + PRONO_VOTE_MS;
+  return { ...cur, open };
+}
+function _livePresentOf(team) {
+  if (!_liveDraft) return [];
+  return Object.entries(_liveDraft.presences || {})
+    .filter(([, v]) => v && v.statut === "Présent" && v.equipe === team)
+    .map(([k]) => k).sort((a, b) => a.localeCompare(b, "fr"));
+}
+
+/* ── Affichage : onglet, bandeau, contenu ── */
+function _liveRefresh(fromTimer) {
+  try {
+    const on = _liveIsOn();
+    const role = _liveRoleName();
+    const showTab = on && role !== "saisie";
+    const cur = on && _pronosEnabled ? _pronoCurrent() : null;
+    const voteOpen = !!(cur && cur.open);
+    const sig = [showTab, voteOpen, cur ? cur.id + cur.live.phase : ""].join("|");
+    if (fromTimer && sig === _liveLastSig) return;
+    _liveLastSig = sig;
+
+    ["live-tab-btn", "live-drawer-btn"].forEach(id => {
+      const b = document.getElementById(id);
+      if (b) b.style.display = showTab ? "" : "none";
+    });
+    const panel = document.getElementById("panel-live");
+    const onLive = panel && panel.classList.contains("active");
+    const banner = document.getElementById("live-banner");
+    if (banner) {
+      banner.hidden = !showTab || onLive;
+      banner.classList.toggle("open", voteOpen);
+      banner.innerHTML = voteOpen
+        ? `<span class="live-dot"></span><span>Pronos ouverts : <b>${TEAM_LABEL[cur.live.eqA]} – ${TEAM_LABEL[cur.live.eqB]}</b> · Voter</span>`
+        : `<span class="live-dot"></span><span><b>Session en cours</b> · classement et matchs en direct</span>`;
+    }
+    const pronosBtn = document.getElementById("footer-pronos-btn");
+    if (pronosBtn) pronosBtn.textContent = _pronosEnabled ? "Pronos : activés" : "Pronos : désactivés";
+
+    if (!showTab && onLive) { document.querySelector('.main-tab[data-tab="session"]')?.click(); return; }
+    if (showTab && !_liveAutoOpened && !_liveUserNavigated) {
+      _liveAutoOpened = true;
+      const h = location.hash.slice(1);
+      if (!h || h === "live" || h === "sessions" || h === "session") { _liveOpenTab(); return; }
+    }
+    if (onLive) renderLive();
+  } catch (e) { console.warn('live refresh:', e); }
+}
+function _liveOpenTab() {
+  document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("live-tab-btn")?.classList.add("active");
+  document.getElementById("panel-live").classList.add("active");
+  history.replaceState(null, '', '#live');
+  _liveRefresh();
+  renderLive();
+}
+
+function _liveTeamHTML(t) { return `<span class="lv-team">${dot(t)}${TEAM_LABEL[t] || t}</span>`; }
+
+function renderLive() {
+  const el = document.getElementById("live-content");
+  if (!el) return;
+  if (!_liveIsOn()) { el.innerHTML = `<p class="no-data" style="margin-top:1rem">Pas de session en cours.</p>`; return; }
+  const d = _liveDraft;
+  const presentCount = Object.values(d.presences || {}).filter(v => v && v.statut === "Présent").length;
+  const teams = ["Rouge", "Vert", "Bleue"].filter(t => _livePresentOf(t).length);
+  const matchs = _liveValidatedMatchs || [];
+  const dateStr = d.date || d.liveKey;
+  let h = `<div class="lv-wrap">
+    <div class="lv-head"><h2>${dateStr ? _sfmHeroDate(dateStr) : "Ce soir"}</h2><span>${presentCount} présent${presentCount > 1 ? "s" : ""}</span></div>`;
+
+  if (_pronosEnabled) h += _livePronoHTML();
+
+  if (!matchs.length && teams.length) {
+    h += `<div class="lv-card"><div class="lv-card-t"><span>Équipes du soir</span></div><div class="lv-compo">
+      ${teams.map(t => `<div><b>${_liveTeamHTML(t)}</b>${_livePresentOf(t).map(p => pLink(p)).join("")}</div>`).join("")}
+    </div></div>`;
+  }
+
+  if (matchs.length) {
+    const st = _sfmStandings(matchs);
+    teams.forEach(t => { if (!st.some(r => r.team === t)) st.push({ team: t, pj: 0, v: 0, n: 0, d: 0, pts: 0, gf: 0, ga: 0, diff: 0 }); });
+    h += `<div class="lv-card"><div class="lv-card-t"><span>Classement de la soirée</span><span>${matchs.length} match${matchs.length > 1 ? "s" : ""} enregistré${matchs.length > 1 ? "s" : ""}</span></div>
+      <div class="lv-tbl-wrap"><table class="lv-tbl"><thead><tr><th></th><th>Équipe</th><th>J</th><th>V</th><th>N</th><th>D</th><th>BP</th><th>BC</th><th>Diff</th><th>Pts</th></tr></thead><tbody>
+      ${st.map((r, i) => `<tr><td class="rk">${i + 1}</td><td>${_liveTeamHTML(r.team)}</td><td>${r.pj}</td><td>${r.v}</td><td>${r.n}</td><td>${r.d}</td><td>${r.gf}</td><td>${r.ga}</td><td>${r.diff > 0 ? "+" : ""}${r.diff}</td><td class="pts">${r.pts}</td></tr>`).join("")}
+      </tbody></table></div></div>`;
+
+    const rows = matchs.map((m, i) => {
+      const sc = scoreColors(m);
+      const gA = _recapSideGkName(m, "A"), gB = _recapSideGkName(m, "B");
+      const goals = ["A", "B"].map(s => {
+        const b = s === "A" ? m.buteursA : m.buteursB, p = s === "A" ? m.passeursA : m.passeursB;
+        const html = _matchGoalsRecapHTML(b, p);
+        return html ? `${dot(s === "A" ? m.eqA : m.eqB)} ⚽️ ${html}` : "";
+      }).filter(Boolean).join(`<span class="bar">|</span>`);
+      return `<div class="lv-mrow">
+        <span class="no">#${i + 1}</span>
+        <span class="sc">${dot(m.eqA)}<span style="color:${sc.a}">${m.scoreA}</span>&nbsp;–&nbsp;<span style="color:${sc.b}">${m.scoreB}</span>${dot(m.eqB)}</span>
+        <span class="sep"></span>
+        <span class="info"><span class="gk">🧤 ${gA || "—"} - ${gB || "—"}</span><span>${goals || "Pas de but"}</span></span>
+      </div>`;
+    }).reverse().join("");
+    h += `<div class="lv-card"><div class="lv-card-t"><span>Matchs enregistrés</span></div><div class="lv-mlist">${rows}</div></div>`;
+  }
+
+  if (_pronosEnabled) h += _liveNightRankingHTML();
+  h += `</div>`;
+  el.innerHTML = h;
+}
+
+function _livePronoHTML() {
+  const cur = _pronoCurrent();
+  if (!cur) {
+    return `<div class="lv-card lv-prono"><div class="lv-prono-h"><span class="lv-prono-ttl">Pronos</span><span class="lv-closed">Votes clos · prochain match pas lancé</span></div>
+      <p class="lv-muted">Le vote s'ouvrira dès que les 2 équipes du prochain match seront choisies dans la Saisie.</p></div>`;
+  }
+  const L = cur.live, votes = cur.votes || {};
+  const label = o => o === "A" ? TEAM_LABEL[L.eqA] : o === "B" ? TEAM_LABEL[L.eqB] : "Nul";
+  const names = Object.keys(votes).sort((a, b) => (votes[a].at || 0) - (votes[b].at || 0));
+  const voters = _livePresentOf(L.rest);
+  const match = `<div class="lv-match">${_liveTeamHTML(L.eqA)}<span>–</span>${_liveTeamHTML(L.eqB)}<span class="rest">· ${TEAM_LABEL[L.rest] || ""} au repos</span></div>`;
+  const voteRows = reveal => names.map(n => {
+    const v = votes[n];
+    let pick = `<span class="pick hidden">caché</span>`;
+    if (reveal) {
+      let sc = "";
+      if (_pronoHasScore(v)) {
+        const out = !cur.result && (L.scoreA > v.a || L.scoreB > v.b);
+        sc = out ? ` · <span class="lv-hc">${v.a} - ${v.b}</span><span class="lv-hc-tag">hors course</span>` : ` · ${v.a} - ${v.b}`;
+      }
+      pick = `<span class="pick">${label(v.out)}${sc} · ${_pronoFmt((L.odds || {})[v.out] || 0)}</span>`;
+    }
+    const p = _pronoPoints(v, L, cur.result);
+    const cls = p === null ? "" : p === 0 ? "" : (_pronoHasScore(v) && v.a === cur.result.scoreA && v.b === cur.result.scoreB) ? " exact" : " win";
+    const badge = p === null ? `<span></span>` : `<span class="lv-pts${cls}">+${_pronoFmt(p)}</span>`;
+    return `<div class="lv-vote"><span>${n}</span>${pick}${badge}</div>`;
+  }).join("");
+
+  if (cur.open) {
+    if (_lvVote.matchId !== cur.id) _lvVote = { matchId: cur.id, me: null, out: null, exact: false, a: 0, b: 0, err: "", sending: false };
+    const remaining = voters.filter(p => !votes[p]);
+    if (_lvVote.me && !remaining.includes(_lvVote.me)) _lvVote.me = null;
+    const optCls = o => o === "A" ? teamCls(L.eqA) : o === "B" ? teamCls(L.eqB) : "nul";
+    const opts = ["A", "N", "B"].map(o => `<button class="lv-opt ${optCls(o)}${_lvVote.out === o ? " on" : ""}" data-lv-out="${o}"><span class="c">${_pronoFmt((L.odds || {})[o] || 0)}</span><span class="l">${o === "N" ? "Nul" : "Victoire " + label(o)}</span></button>`).join("");
+    const gain = _lvVote.out ? `<div class="lv-gain">Gain possible : <b>${_pronoFmt(((L.odds || {})[_lvVote.out] || 0) * (_lvVote.exact ? 2 : 1))} pts</b>${_lvVote.exact ? " si le score exact tombe" : ""}</div>` : "";
+    const form = remaining.length ? `
+      <div class="lv-step"><span class="lv-step-l">1 · Qui vote ?</span>
+        <div class="lv-chips">${remaining.map(p => `<button class="lv-chip${_lvVote.me === p ? " on" : ""}" data-lv-me="${p}">${p}</button>`).join("")}</div></div>
+      <div class="lv-step"><span class="lv-step-l">2 · Issue du match</span><div class="lv-opts">${opts}</div></div>
+      <div class="lv-step">
+        <label class="lv-toggle"><input type="checkbox" id="lv-exact"${_lvVote.exact ? " checked" : ""}> 3 · Tenter le score exact (gain doublé)</label>
+        ${_lvVote.exact ? `<div class="lv-score">
+          <div class="lv-stepper"><button data-lv-sc="a-" aria-label="Un but de moins ${label("A")}">−</button><span class="v">${_lvVote.a}</span><button data-lv-sc="a+" aria-label="Un but de plus ${label("A")}">+</button></div>
+          <span style="color:var(--text3);font-size:22px">-</span>
+          <div class="lv-stepper"><button data-lv-sc="b-" aria-label="Un but de moins ${label("B")}">−</button><span class="v">${_lvVote.b}</span><button data-lv-sc="b+" aria-label="Un but de plus ${label("B")}">+</button></div>
+        </div>` : ""}
+      </div>
+      ${gain}<div class="lv-err">${_lvVote.err || ""}</div>
+      <button class="lv-send" data-lv-send="1"${_lvVote.sending ? " disabled" : ""}>${_lvVote.sending ? "Envoi…" : "Valider le prono"}</button>`
+      : (voters.length ? `<span class="lv-allvoted">Toute l'équipe au repos a voté ✓</span>` : `<span class="lv-muted">Personne au repos pour ce match.</span>`);
+    return `<div class="lv-card lv-prono open">
+      <div class="lv-prono-h"><span class="lv-prono-ttl"><span class="lv-pulse"></span>Votes ouverts</span><span class="lv-prono-when">jusqu'à la mi-temps</span></div>
+      ${match}${form}
+      ${names.length ? `<div class="lv-step"><span class="lv-step-l">Ont voté (${names.length}/${voters.length || names.length})</span><div class="lv-votes">${voteRows(false)}</div></div>` : ""}
+    </div>`;
+  }
+  const done = !!cur.result;
+  const tag = done ? "Votes clos · prochain match pas lancé" : L.phase === "mt2" ? "Votes clos · 2e mi-temps" : "Votes clos";
+  const info = done
+    ? `<p class="lv-muted">Dernier match : ${TEAM_LABEL[L.eqA]} ${cur.result.scoreA} - ${cur.result.scoreB} ${TEAM_LABEL[L.eqB]}. Le prochain vote s'ouvrira au lancement du match suivant.</p>`
+    : `<div class="lv-live-score">Score en direct <b>${L.scoreA || 0} - ${L.scoreB || 0}</b></div>`;
+  return `<div class="lv-card lv-prono"><div class="lv-prono-h"><span class="lv-prono-ttl">Pronos</span><span class="lv-closed">${tag}</span></div>
+    ${done ? "" : match}${info}
+    ${names.length ? `<div class="lv-votes">${voteRows(true)}</div>` : `<p class="lv-muted">Personne n'a voté sur ce match.</p>`}
+  </div>`;
+}
+
+function _liveNightRankingHTML() {
+  const tot = {};
+  Object.values(_livePronos || {}).forEach(n => {
+    if (!n || !n.live || !n.result) return;
+    Object.entries(n.votes || {}).forEach(([p, v]) => {
+      const pts = _pronoPoints(v, n.live, n.result);
+      if (pts === null) return;
+      if (!tot[p]) tot[p] = { pts: 0, n: 0 };
+      tot[p].pts += pts; tot[p].n++;
+    });
+  });
+  const rows = Object.entries(tot).sort((a, b) => b[1].pts - a[1].pts || a[0].localeCompare(b[0], "fr"));
+  if (!rows.length) return "";
+  return `<div class="lv-card"><div class="lv-card-t"><span>Pronostiqueurs de la soirée</span></div><div class="lv-votes">
+    ${rows.map(([p, t]) => `<div class="lv-vote"><span>${p}</span><span class="pick">${t.n} prono${t.n > 1 ? "s" : ""}</span><span class="lv-pts${t.pts > 0 ? " win" : ""}">${_pronoFmt(t.pts)}</span></div>`).join("")}
+  </div></div>`;
+}
+
+/* ── Vote ── */
+function _lvSubmit() {
+  const cur = _pronoCurrent();
+  if (!cur || !cur.open || cur.id !== _lvVote.matchId) { _lvVote.err = "Les votes sont clos pour ce match."; renderLive(); return; }
+  if (!_lvVote.me) { _lvVote.err = "Choisis d'abord le joueur qui vote."; renderLive(); return; }
+  if (!_lvVote.out) { _lvVote.err = "Choisis l'issue du match."; renderLive(); return; }
+  if (_lvVote.exact && _pronoOutcome(_lvVote.a, _lvVote.b) !== _lvVote.out) { _lvVote.err = "Le score ne correspond pas à l'issue choisie."; renderLive(); return; }
+  const vote = { out: _lvVote.out, at: _liveNow() };
+  if (_lvVote.exact) { vote.a = _lvVote.a; vote.b = _lvVote.b; }
+  const who = _lvVote.me;
+  _lvVote.sending = true; _lvVote.err = ""; renderLive();
+  // Ecriture unique : un vote deja present n est jamais ecrase.
+  _db.ref(`pronos/${_livePronosKey}/${cur.id}/votes/${who}`).transaction(v => v === null ? vote : undefined)
+    .then(res => {
+      _lvVote = { matchId: cur.id, me: null, out: null, exact: false, a: 0, b: 0, err: res.committed ? "" : `${who} a déjà voté.`, sending: false };
+      if (res.committed) _showToast(`Prono de <b>${who}</b> enregistré`);
+      renderLive();
+    })
+    .catch(err => { _lvVote.sending = false; _lvVote.err = "Envoi impossible, réessaie dans un instant."; console.warn('vote:', err); renderLive(); });
+}
+document.getElementById("live-content").addEventListener("click", e => {
+  const me = e.target.closest("[data-lv-me]");
+  if (me) { _lvVote.me = me.dataset.lvMe; _lvVote.err = ""; renderLive(); return; }
+  const out = e.target.closest("[data-lv-out]");
+  if (out) { _lvVote.out = out.dataset.lvOut; _lvVote.err = ""; renderLive(); return; }
+  const sc = e.target.closest("[data-lv-sc]");
+  if (sc) {
+    const k = sc.dataset.lvSc;
+    if (k === "a+") _lvVote.a++; if (k === "a-") _lvVote.a = Math.max(0, _lvVote.a - 1);
+    if (k === "b+") _lvVote.b++; if (k === "b-") _lvVote.b = Math.max(0, _lvVote.b - 1);
+    renderLive(); return;
+  }
+  if (e.target.closest("[data-lv-send]")) { if (!_lvVote.sending) _lvSubmit(); }
+});
+document.getElementById("live-content").addEventListener("change", e => {
+  if (e.target.id === "lv-exact") { _lvVote.exact = e.target.checked; renderLive(); }
+});
+document.getElementById("live-banner").addEventListener("click", () => { _liveUserNavigated = true; _liveOpenTab(); });
+document.getElementById("footer-pronos-btn").addEventListener("click", () => {
+  if (!_db) return;
+  const next = !_pronosEnabled;
+  if (!confirm(next ? "Activer les pronos ?\n\nLe vote apparaîtra dans « Session en cours » dès qu'un match sera lancé dans la Saisie." : "Désactiver les pronos ?\n\nLe vote disparaît du site. Les pronos déjà faits sont conservés.")) return;
+  _db.ref('config/pronosEnabled').set(next).catch(err => alert("Impossible de changer le réglage : " + (err?.message || err)));
+});
+
+/* ── Classement de la saison (onglet Récompenses) ── */
+function _renderPronosSeason() {
+  const wrap = document.getElementById("pronos-season-wrap");
+  if (!wrap || !_db) return;
+  const season = _seasonStart(_liveTodayKey());
+  _db.ref('pronos').once('value').then(snap => {
+    const all = snap.val() || {};
+    const tot = {};
+    Object.entries(all).forEach(([key, matches]) => {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(key) || _seasonStart(key) !== season) return;
+      Object.values(matches || {}).forEach(n => {
+        if (!n || !n.live || !n.result) return;
+        Object.entries(n.votes || {}).forEach(([p, v]) => {
+          const pts = _pronoPoints(v, n.live, n.result);
+          if (pts === null) return;
+          if (!tot[p]) tot[p] = { pts: 0, n: 0, ok: 0, exact: 0 };
+          const t = tot[p];
+          t.pts += pts; t.n++;
+          if (pts > 0) t.ok++;
+          if (pts > 0 && _pronoHasScore(v) && v.a === n.result.scoreA && v.b === n.result.scoreB) t.exact++;
+        });
+      });
+    });
+    const rows = Object.entries(tot).map(([p, t]) => ({ p, ...t }))
+      .sort((a, b) => b.pts - a.pts || b.exact - a.exact || (b.ok / b.n) - (a.ok / a.n) || a.p.localeCompare(b.p, "fr"));
+    if (!rows.length) { wrap.innerHTML = ""; return; }
+    const ranked = rows.filter(r => r.n >= 10), waiting = rows.filter(r => r.n < 10);
+    const tr = (r, i) => `<tr><td class="rk">${i === null ? "" : i + 1}</td><td>${pLink(r.p)}</td><td class="pts">${_pronoFmt(r.pts)}</td><td>${r.n}</td><td>${r.exact}</td><td>${Math.round(r.ok / r.n * 100)} %</td></tr>`;
+    wrap.innerHTML = `<div class="section-label">Pronostiqueurs de la saison</div>
+      <div class="lv-card"><div class="lv-tbl-wrap"><table class="lv-tbl">
+        <thead><tr><th></th><th>Joueur</th><th>Pts</th><th>Pronos</th><th>Exacts</th><th>Réussite</th></tr></thead>
+        <tbody>${ranked.map((r, i) => tr(r, i)).join("")}${waiting.length ? `<tr><td colspan="6" style="text-align:left;color:var(--text3);font-size:12px;padding-top:12px">Moins de 10 pronos, pas encore classés</td></tr>${waiting.map(r => tr(r, null)).join("")}` : ""}</tbody>
+      </table></div></div>
+      <p class="pronos-season-note">Points = cote du bon résultat, doublée avec le score exact. Il faut 10 pronos dans la saison pour être classé.</p>`;
+  }).catch(() => { wrap.innerHTML = ""; });
+}
+
 /* ── Init async ── */
 (async function() {
   await _fbLoad();
+  _liveInit();
 
   const _hash = location.hash.slice(1);
   const _storedRole = sessionStorage.getItem("hmft_role");
