@@ -351,13 +351,13 @@
   .roster-sub b { color: var(--text2); font-variant-numeric: tabular-nums; }
   .roster-chips { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
   .roster-chip { display: inline-flex; align-items: center; font-size: 15px; font-weight: 500; border-radius: 999px; padding: 3px 8px; background: var(--bg3); color: var(--text2); }
-  .roster-chip-ico { font-size: 20px; font-weight: 500; line-height: 1; padding-right: 5px; }
+  .roster-chip-ico { font-size: 12px; font-weight: 500; line-height: 1; padding-right: 5px; }
   .roster-chip.danger { color: var(--bad); background: var(--bad-bg); }
   .roster-chip.warn { color: #ffa726; background: rgba(255,167,38,.12); }
   @media (max-width: 640px) {
     .roster-chips { max-width: 130px; }
     .roster-chip { font-size: 12px; padding: 3px 7px; }
-    .roster-chip-ico { font-size: 15px; }
+    .roster-chip-ico { font-size: 12px; }
   }
   .roster-actions { display: flex; gap: 3px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; max-width: 118px; }
   .roster-actions button { width: 27px; height: 27px; border-radius: 50%; border: 1px solid var(--border2); background: #1A1A1F; font-size: 13.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); }
@@ -2216,7 +2216,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/10/2026 - 13:18</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/10/2026 - 12:12</footer>
 
 <script>
 
@@ -2754,6 +2754,7 @@ const CUSTOM_ACH_DEFS = [
   { id: 'varvalidee',    icon: '📺',        name: 'VAR Validée',         desc: 'But confirmé après vérification vidéo' },
   { id: 'varrefusee',    icon: '🚫',        name: 'VAR Refusée',         desc: 'But refusé après vérification vidéo' },
   { id: 'jinglebells',   icon: '🪩',        name: 'Jingle Bells',        desc: 'Recevoir un ballon dans les grelots' },
+  { id: 'immanquable',   icon: '🤦',        name: 'Immanquable',         desc: 'Rater un but immanquable' },
 ];
 // Ordre alphabetique pour les selecteurs (Saisie + fiche joueur), l ordre de definition
 // ci-dessus restant celui de creation.
