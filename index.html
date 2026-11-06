@@ -2219,7 +2219,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 06/11/2026 - 13:33</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 06/11/2026 - 14:41</footer>
 
 <script>
 
@@ -4643,7 +4643,7 @@ function buildBallonDorHtml() {
   // Egalite aux points : d abord le plus de passes decisives, puis le plus de matchs ou
   // il a marque au moins 1 but (regularite), puis alphabetique.
   const _bdFull = Object.entries(_bdPs)
-    .map(([name, p]) => ({ name, buts: p.buts, passes: p.passes, matchsScored: p.matchsScored, pts: p.buts * 5 + p.passes * 10 }))
+    .map(([name, p]) => ({ name, buts: p.buts, passes: p.passes, matchsScored: p.matchsScored, pts: p.buts + p.passes * 2 }))
     .filter(p => p.pts > 0)
     .sort((a, b) => b.pts - a.pts || b.passes - a.passes || b.matchsScored - a.matchsScored || a.name.localeCompare(b.name, "fr"));
   const _bdMedals = ["🥇","🥈","🥉"];
@@ -4652,7 +4652,7 @@ function buildBallonDorHtml() {
       <span class="award-ico">🏆</span>
       <div>
         <div class="award-title">Ballon d'Or ${_bdLbl}</div>
-        <div class="award-meta">5 pts / but &middot; 10 pts / assist</div>
+        <div class="award-meta">1 pt / but &middot; 2 pts / assist</div>
       </div>
     </div>
     <div class="award-list">`;
@@ -4701,7 +4701,7 @@ function buildBallonDePlombHtml() {
     .filter(([name]) => !JOKERS.has(name))
     .map(([name, presences]) => {
       const p = _bdPs[name]||{buts:0,passes:0};
-      return { name, buts: p.buts, passes: p.passes, pts: p.buts*5+p.passes*10, presences };
+      return { name, buts: p.buts, passes: p.passes, pts: p.buts+p.passes*2, presences };
     })
     .sort((a,b) => a.pts-b.pts || a.buts-b.buts || b.presences-a.presences || a.name.localeCompare(b.name,"fr"));
   let html = `<div class="award-card" style="--award-color:var(--neutral);--award-bg:var(--neutral-bg);--award-border:var(--neutral-border)">
@@ -4709,7 +4709,7 @@ function buildBallonDePlombHtml() {
       <span class="award-ico">🪨</span>
       <div>
         <div class="award-title">Ballon de Plomb ${_bdLbl}</div>
-        <div class="award-meta">5 pts / but &middot; 10 pts / assist (classement inversé)</div>
+        <div class="award-meta">1 pt / but &middot; 2 pts / assist (classement inversé)</div>
       </div>
     </div>
     <div class="award-list">`;
@@ -5026,8 +5026,13 @@ function _mhfKpiSectionHtml() {
     const avgRate = totalCells ? filledCells/totalCells : 0;
     const publicAchs = _mhf.achs.filter(a => !a.hidden);
     const sortedByRate = [...publicAchs].sort((a,b) => _mhf.completion[a.id].rate - _mhf.completion[b.id].rate);
-    const rarest = sortedByRate[0], common = sortedByRate[sortedByRate.length-1];
-    const topCollector = [..._mhf.players].sort((a,b) => _mhf.summary[b].niveaux - _mhf.summary[a].niveaux)[0];
+    // « Le plus rare » ignore ceux qui ne s attribuent qu en fin de saison ou d annee complete
+    // (personne ne peut les avoir en cours de route, ils seraient toujours a 0 %).
+    const _SEASON_END_ACHS = new Set(['totsaison', 'bdor', 'assidu', 'comete']);
+    const rarest = sortedByRate.find(a => !_SEASON_END_ACHS.has(a.id)) || sortedByRate[0];
+    const common = sortedByRate[sortedByRate.length-1];
+    const topCollector = [..._mhf.players].sort((a,b) =>
+      _mhf.summary[b].hautsFaits - _mhf.summary[a].hautsFaits || _mhf.summary[b].niveaux - _mhf.summary[a].niveaux || a.localeCompare(b, 'fr'))[0];
     const cards = [
       { ico:'📊', lbl:'Complétion Hauts Faits', num: Math.round(avgRate*100)+'%',
         sub:`${filledCells} / ${totalCells} cases débloquées` },
@@ -5036,7 +5041,7 @@ function _mhfKpiSectionHtml() {
       { ico: common.icon, lbl:'Haut fait le plus commun', num: common.name,
         sub:`${_mhf.completion[common.id].unlocked}/${_mhf.players.length} joueurs (${Math.round(_mhf.completion[common.id].rate*100)}%)` },
       { ico:'👑', lbl:'Meilleur collectionneur', num: topCollector,
-        sub:`${_mhf.summary[topCollector].niveaux} niveaux &middot; ${_mhf.summary[topCollector].hautsFaits} HF` },
+        sub:`${_mhf.summary[topCollector].hautsFaits} HF différents &middot; ${_mhf.summary[topCollector].niveaux} niveaux` },
     ];
     kpiHtml = `<div class="kpi-grid mhf-kpi-grid">` + cards.map(c => `
       <div class="kpi-card mhf-kpi-card">
@@ -7713,7 +7718,7 @@ function _computeSeasonEquipeTypeAppearances() {
   return counts;
 }
 
-/* Nombre de Ballon d Or gagnes (1er du classement pts = buts*5 + passes*10, meme formule
+/* Nombre de Ballon d Or gagnes (1er du classement pts = buts + passes*2, meme formule
    que buildBallonDorHtml), un par saison TERMINEE (exclut la saison en cours — le
    classement affiche en direct dans Recompenses peut encore changer jusqu a la fin). */
 function _computeBallonDorWins() {
@@ -7741,7 +7746,7 @@ function _computeBallonDorWins() {
     });
     // Meme ordre de departage que buildBallonDorHtml (passes puis matchs marques).
     const ranked = Object.entries(ps)
-      .map(([name,p]) => ({ name, buts:p.buts, passes:p.passes, matchsScored:p.matchsScored, pts: p.buts*5 + p.passes*10 }))
+      .map(([name,p]) => ({ name, buts:p.buts, passes:p.passes, matchsScored:p.matchsScored, pts: p.buts + p.passes*2 }))
       .filter(p => p.pts > 0)
       .sort((a,b) => b.pts-a.pts || b.passes-a.passes || b.matchsScored-a.matchsScored || a.name.localeCompare(b.name,"fr"));
     if (ranked.length) wins[ranked[0].name] = (wins[ranked[0].name]||0) + 1;
