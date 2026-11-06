@@ -2219,7 +2219,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 06/11/2026 - 14:41</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 06/11/2026 - 14:48</footer>
 
 <script>
 
@@ -4854,8 +4854,8 @@ const MHF_CAT_BY_ID = {
   invic:'Collectif', duo:'Collectif',
   fidele:'Présence', sac:'Présence', maillots:'Présence', assidu:'Présence', comete:'Présence',
   mvp:'Distinctions', soiree:'Distinctions', remontada:'Distinctions', chelem:'Distinctions',
-  gardienAssist:'Distinctions', chilavert:'Distinctions', willgrigg:'Distinctions', mesutozil:'Distinctions', patron:'Distinctions', mercenaire:'Distinctions', equipetype:'Distinctions', totsaison:'Distinctions', bdor:'Distinctions', legende:'Distinctions',
-  bonnet:'Secrets', infirm:'Secrets', pois:'Secrets', fantome:'Secrets', zerovic:'Secrets', toutnul:'Secrets',
+  gardienAssist:'Distinctions', chilavert:'Distinctions', willgrigg:'Distinctions', mesutozil:'Distinctions', patron:'Distinctions', mercenaire:'Distinctions', butargent:'Distinctions', revenant:'Distinctions', demenageur:'Distinctions', equipetype:'Distinctions', totsaison:'Distinctions', bdor:'Distinctions', legende:'Distinctions',
+  bonnet:'Secrets', infirm:'Secrets', pois:'Secrets', fantome:'Secrets', zerovic:'Secrets', toutnul:'Secrets', psg:'Secrets', cuillere:'Secrets',
 };
 
 let _mhf = null;
@@ -7501,6 +7501,9 @@ const ACH_DEFS = [
   { id:'hattrick',     name:'Hat Trick',       icon:'🎩', tiers:[1,5,15,30,50,100],    hidden:false, key:'hattricks',    desc:v=>`${v} match${v>1?'s':''} avec 3 buts marqués` },
   { id:'willgrigg',    name:'Archie Thompson', icon:'🔥', tiers:[1], fixedTier:6,      hidden:true,  key:'quadrick',     desc:v=>`${v} fois avec au moins 4 buts dans un même match` },
   { id:'mesutozil',    name:'Mesut Özil',      icon:'🪄', tiers:[1], fixedTier:6,      hidden:true,  key:'assistHattricks', desc:v=>`${v} fois avec au moins 3 passes décisives dans un même match` },
+  { id:'butargent',    name:"But d'argent",    icon:'🥈', tiers:[1], fixedTier:6,      hidden:true,  key:'butArgent',    desc:v=>`${v} fois auteur du seul but d'un match gagné 1-0` },
+  { id:'revenant',     name:'Le Revenant',     icon:'🧟', tiers:[1], fixedTier:6,      hidden:true,  key:'revenantCount', desc:v=>`${v} fois buteur le soir de son retour, après 3 séances sans jouer` },
+  { id:'demenageur',   name:'Le Déménageur',   icon:'📦', tiers:[1], fixedTier:6,      hidden:true,  key:'demenageur',   desc:v=>`${v} fois venu avec le sac ET les maillots` },
   { id:'patron',       name:'Machine',         icon:'🤖', tiers:[1], fixedTier:6,      hidden:true,  key:'patronCount',  desc:v=>`${v} fois impliqué sur 100% des buts de son équipe (min. 4 buts)` },
   { id:'mercenaire',   name:'Mercenaire',      icon:'👺', tiers:[1,3,7,15,25,40],     hidden:false, key:'mercenaireCount', desc:v=>`${v} but${v>1?'s':''} marqué${v>1?'s':''} pour l'équipe dépannée` },
   { id:'equipetype',   name:'TOTN',            icon:'🏅', tiers:[1,3,7,15,25,40],     hidden:false, key:'equipeTypeCount', desc:v=>`${v} sélection${v>1?'s':''} dans l'équipe-type` },
@@ -7513,6 +7516,8 @@ const ACH_DEFS = [
   { id:'pois',     name:'Poissard',        icon:'🪨', tiers:[1,2,4,7,12,20],       hidden:true,  key:'csc',            desc:v=>`${v} CSC` },
   { id:'fantome',  name:'Fantôme',         icon:'👻', tiers:[3,5,8,12,20,30],      hidden:true,  key:'fantomeStreak',  desc:v=>`${v} sessions sans G/A` },
   { id:'zerovic',  name:'Disette',         icon:'🌵', tiers:[1], fixedTier:6,        hidden:true,  key:'zeroVict',       desc:_=>`Soirée sans la moindre victoire` },
+  { id:'psg',      name:'Syndrome PSG',    icon:'📉', tiers:[1], fixedTier:6,        hidden:true,  key:'syndromePsg',    desc:v=>`${v} fois mené de 2 buts à la mi-temps… et perdu` },
+  { id:'cuillere', name:'Cuillère de bois',icon:'🥄', tiers:[1,3,7,15,25,40],     hidden:true,  key:'cuillereBois',   desc:v=>`${v} soirée${v>1?'s':''} terminée${v>1?'s':''} avec la dernière équipe` },
   { id:'toutnul',  name:'Statu Quo',       icon:'⚖️', tiers:[1,2,5,10,20,35],      hidden:true,  key:'toutNul',        desc:v=>`${v} soirée${v>1?'s':''} 100% nuls` },
 ];
 const ACH_TIER_NAMES = ['','Plomb','Bronze','Argent','Or','Émeraude','Diamant'];
@@ -7553,6 +7558,11 @@ const ACH_ABOUT = {
   equipetype: 'Sélection dans l\'équipe-type de la soirée',
   totsaison:  'Sélection dans l\'équipe-type de fin de saison (saison terminée)',
   bdor:       'Meilleur au classement Ballon d\'Or de la saison (saison terminée)',
+  butargent:  'Auteur du seul but d\'un match gagné 1-0',
+  revenant:   'Buteur le soir de son retour, après au moins 3 séances sans jouer (absent, blessé ou pas répondu)',
+  demenageur: 'Venu avec le sac et les maillots la même soirée',
+  psg:        'Menait de 2 buts ou plus à la mi-temps, et a perdu le match',
+  cuillere:   'Dans l\'équipe classée dernière de la soirée (soirées à 3 équipes)',
 };
 
 // Mur de badges public (onglet Récompenses, visible par tout le monde) : les hauts faits
@@ -7759,6 +7769,7 @@ function computeAchievementStats(playerName) {
   let buts=0,passes=0,presences=0,absences=0,injuries=0,sessionsBlesses=0,sac=0,maillots=0;
   let hattricks=0,quadrick=0,assistHattricks=0,patronCount=0,doubleDouble=0,cleanSheets=0,mvp=0,soireeParfaite=0,invincible=0,csc=0,zeroVict=0,toutNul=0;
   let gardiensCleanSheets=0,gardiensButsEncaisses=0,gardiensMatchs=0,remontadas=0,gardienAssist=0,gardienButs=0,mercenaireCount=0;
+  let syndromePsg=0,cuillereBois=0,butArgent=0,revenantCount=0,demenageur=0,horsJeuRun=0;
   const chelemColors=new Set(), duoMap={};
   let inEp=false, bestStreak=0, curStreak=0, fantomeStreak=0, sessionsAvecGA=0;
   const yearMap={};
@@ -7773,7 +7784,9 @@ function computeAchievementStats(playerName) {
       presences++; yearMap[yr].present++; inEp=false;
       if(s.sac===playerName) sac++;
       if(s.maillots===playerName) maillots++;
+      if(s.sac===playerName&&s.maillots===playerName) demenageur++;
       const myEq=info.equipe;
+      const _butsAvantSession=buts;
 
       let sessGA=0,sessPlayed=0,sessWithGA=0,sessInvic=true,sessWins=0;
       const allGA={};
@@ -7849,6 +7862,13 @@ function computeAchievementStats(playerName) {
             const mt1gf=isA?m.mt1A:m.mt1B, mt1ga=isA?m.mt1B:m.mt1A;
             const fgf=isA?m.scoreA:m.scoreB, fga=isA?m.scoreB:m.scoreA;
             if((mt1ga-mt1gf)>=2&&fgf>fga)remontadas++;
+            // Syndrome PSG : l inverse — mene de 2 buts ou plus a la mi-temps, perdu au final
+            if((mt1gf-mt1ga)>=2&&fgf<fga)syndromePsg++;
+          }
+          // But d argent : seul but d un match gagne 1-0
+          {
+            const isA=m.eqA===myEq, myGoals=isA?m.scoreA:m.scoreB, oppGoals=isA?m.scoreB:m.scoreA;
+            if(myGoals===1&&oppGoals===0&&((isA?m.buteursA:m.buteursB)||[])[0]===playerName)butArgent++;
           }
           const w=m.scoreA>m.scoreB?m.eqA:m.scoreB>m.scoreA?m.eqB:null;
           if(w&&w!==myEq)sessInvic=false;
@@ -7884,18 +7904,24 @@ function computeAchievementStats(playerName) {
       if(myEq&&sessPlayed>0){
         const _top=_sfmStandings(s.matchs||[])[0];
         if(_top&&_top.team===myEq&&_top.pts>0)chelemColors.add(myEq);
+        // Cuillere de bois : derniere equipe du meme classement, soirees a 3 equipes
+        const _st=_sfmStandings(s.matchs||[]);
+        if(_st.length>=3&&_st[_st.length-1].team===myEq)cuillereBois++;
       }
+      // Le Revenant : marque le soir de son retour apres au moins 3 seances sans jouer
+      if(horsJeuRun>=3&&buts>_butsAvantSession)revenantCount++;
+      horsJeuRun=0;
       const pGA=allGA[playerName]||0;
       if(pGA>0&&!Object.values(allGA).some(v=>v>pGA))mvp++;
       if(sessGA===0) fantomeStreak++;
       if(sessGA>0) sessionsAvecGA++;
 
     } else if(info.statut==="Absent"){
-      absences++; inEp=false;
+      absences++; inEp=false; horsJeuRun++;
     } else if(info.statut==="Blessé"){
-      sessionsBlesses++;
+      sessionsBlesses++; horsJeuRun++;
       if(!inEp){injuries++;inEp=true;}
-    } else { inEp=false; }
+    } else { inEp=false; if(info.statut==="Pas répondu") horsJeuRun++; }
   });
 
   const bestDuo=Math.max(0,...Object.values(duoMap));
@@ -7928,7 +7954,8 @@ function computeAchievementStats(playerName) {
            invincible, cleanSheets, bestDuo, mvp, csc, grandChelem,
            fantomeStreak, assiduAnnes, cometeAnnes, zeroVict, toutNul, sessionsAvecGA,
            gardiensCleanSheets, gardiensButsEncaisses, gardiensMatchs, gardienRate, remontadas, gardienAssist, gardienButs, mercenaireCount,
-           equipeTypeCount, equipeTypeSaisonCount, ballonDorCount };
+           equipeTypeCount, equipeTypeSaisonCount, ballonDorCount,
+           syndromePsg, cuillereBois, butArgent, revenantCount, demenageur };
 }
 
 function renderAchievementsGrid(achSt) {
