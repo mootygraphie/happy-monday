@@ -325,6 +325,9 @@
   .award-row.award-more-row, .award-bar-wrap.award-more-row { display: none; }
   .award-row.award-more-row.show { display: grid; }
   .award-bar-wrap.award-more-row.show { display: block; }
+  .award-sep { padding: 12px 22px 4px; color: var(--text3); font-size: 12px; }
+  .award-sep.award-more-row { display: none; }
+  .award-sep.award-more-row.show { display: block; }
   .award-toggle { width: 100%; text-align: center; background: none; border: none; border-top: 1px solid var(--border); padding: 9px 0; font-size: 11.5px; font-weight: 700; color: var(--text2); cursor: pointer; }
   .award-toggle:hover { color: var(--text); }
 
@@ -2216,7 +2219,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/10/2026 - 12:12</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 06/11/2026 - 13:33</footer>
 
 <script>
 
@@ -3650,76 +3653,74 @@ function _ttPanelHtml(idPrefix, team, gkCriteria) {
   </div>`;
 }
 
-function buildYachineHtml(sessions) {
-  const year = _currentSeason(); const lbl = _seasonLabel(year);
-  const ranking = computeGardiensRanking(sessions.filter(s => _seasonStart(s.date) === year))
-    .sort((a, b) => a.rate - b.rate || b.matchs - a.matchs || a.name.localeCompare(b.name, 'fr'));
-  const medals = ['🥇','🥈','🥉'];
-  let html = `<div class="award-card" style="--award-color:var(--bleu);--award-bg:var(--bleu-bg);--award-border:var(--bleu-border)">
-    <div class="award-head">
-      <span class="award-ico">🧤</span>
-      <div>
-        <div class="award-title">Prix Yachine ${lbl}</div>
-        <div class="award-meta">Moins de buts encaissés / match en goal</div>
-      </div>
-    </div>
-    <div class="award-list">`;
-  if (ranking.length) {
-    const maxRate = Math.max(...ranking.map(p => p.rate), 1);
-    ranking.forEach((p, i) => {
-      const isFirst = i === 0;
-      const rank = i < 3 ? `<span class="award-rank">${medals[i]}</span>` : `<span class="award-rank num">${i+1}</span>`;
-      const bar = Math.round((p.rate / maxRate) * 100);
-      const detail = `${p.buts} but${p.buts!==1?'s':''} / ${p.matchs} m.`;
-      html += `<div class="award-row${isFirst?' award-first':''}${i>=5?' award-more-row':''}" ${i>=5?'data-award-id="yachine"':''}>
+/* Prix gardiens (Yachine / Calamity James) : buts encaisses par mi-temps au but, mais
+   seulement a partir d un minimum de mi-temps gardees, proportionnel a la saison (1 mi-temps
+   pour 10 matchs joues) — sinon 2 bonnes (ou mauvaises) mi-temps suffisaient a dominer.
+   Les gardiens sous le seuil restent visibles en dessous, « pas encore classes ». */
+function _gkAwardRanking(sessions, worstFirst) {
+  const year = _currentSeason();
+  const season = sessions.filter(s => _seasonStart(s.date) === year);
+  const nMatchs = season.reduce((n, s) => n + (s.matchs || []).length, 0);
+  const min = Math.max(1, Math.ceil(nMatchs / 10));
+  const all = computeGardiensRanking(season).sort((a, b) =>
+    (worstFirst ? b.rate - a.rate : a.rate - b.rate) || b.matchs - a.matchs || a.name.localeCompare(b.name, 'fr'));
+  return { year, min, ranked: all.filter(p => p.matchs >= min), waiting: all.filter(p => p.matchs < min) };
+}
+function _gkAwardListHtml(id, r, medals) {
+  const { ranked, waiting, min } = r;
+  if (!ranked.length && !waiting.length) {
+    return `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun gardien enregistré en ${r.year}.</div>`;
+  }
+  const maxRate = Math.max(...[...ranked, ...waiting].map(p => p.rate), 1);
+  const row = (p, i, more, dim) => {
+    const rank = dim ? `<span class="award-rank num">–</span>`
+      : medals && i < 3 ? `<span class="award-rank">${medals[i]}</span>` : `<span class="award-rank num">${i+1}</span>`;
+    const bar = Math.round((p.rate / maxRate) * 100);
+    const detail = `${p.buts} but${p.buts!==1?'s':''} / ${p.matchs} mi-temps`;
+    const attr = more ? ` data-award-id="${id}"` : '';
+    return `<div class="award-row${i===0 && !dim?' award-first':''}${more?' award-more-row':''}"${attr}${dim?' style="opacity:.55"':''}>
         ${rank}
         <span class="award-name">${pLink(p.name)}</span>
         <span class="award-pts">${p.rate.toFixed(2).replace('.',',')}</span>
         <span class="award-detail">${detail}</span>
       </div>
-      <div class="award-bar-wrap${i>=5?' award-more-row':''}" ${i>=5?'data-award-id="yachine"':''}><div class="award-bar" style="width:${bar}%"></div></div>`;
-    });
-    if (ranking.length > 5) html += `<button class="award-toggle" data-award-toggle="yachine">Voir le classement complet (${ranking.length}) ›</button>`;
-  } else {
-    html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun gardien enregistré en ${year}.</div>`;
+      <div class="award-bar-wrap${more?' award-more-row':''}"${attr}${dim?' style="opacity:.55"':''}><div class="award-bar" style="width:${bar}%"></div></div>`;
+  };
+  let html = ranked.length ? ranked.map((p, i) => row(p, i, i >= 5, false)).join("")
+    : `<div style="padding:14px 22px 6px;color:var(--text3);font-size:13px;font-style:italic">Personne n'a encore gardé ${min} mi-temps cette saison.</div>`;
+  if (waiting.length) {
+    html += `<div class="award-sep award-more-row" data-award-id="${id}">Pas encore classés (moins de ${min} mi-temps au but)</div>`;
+    html += waiting.map((p, i) => row(p, i, true, true)).join("");
   }
-  html += `</div></div>`;
+  const hidden = Math.max(0, ranked.length - 5) + waiting.length;
+  if (hidden) html += `<button class="award-toggle" data-award-toggle="${id}" data-total="${ranked.length + waiting.length}">Voir le classement complet (${ranked.length + waiting.length}) ›</button>`;
   return html;
 }
 
+function buildYachineHtml(sessions) {
+  const r = _gkAwardRanking(sessions, false);
+  return `<div class="award-card" style="--award-color:var(--bleu);--award-bg:var(--bleu-bg);--award-border:var(--bleu-border)">
+    <div class="award-head">
+      <span class="award-ico">🧤</span>
+      <div>
+        <div class="award-title">Prix Yachine ${_seasonLabel(r.year)}</div>
+        <div class="award-meta">Moins de buts encaissés par mi-temps au but · min. ${r.min} mi-temps</div>
+      </div>
+    </div>
+    <div class="award-list">${_gkAwardListHtml("yachine", r, ['🥇','🥈','🥉'])}</div></div>`;
+}
+
 function buildCalamityJamesHtml(sessions) {
-  const year = _currentSeason(); const lbl = _seasonLabel(year);
-  const ranking = computeGardiensRanking(sessions.filter(s => _seasonStart(s.date) === year))
-    .sort((a, b) => b.rate - a.rate || b.matchs - a.matchs || a.name.localeCompare(b.name, 'fr'));
-  let html = `<div class="award-card" style="--award-color:var(--neutral);--award-bg:var(--neutral-bg);--award-border:var(--neutral-border)">
+  const r = _gkAwardRanking(sessions, true);
+  return `<div class="award-card" style="--award-color:var(--neutral);--award-bg:var(--neutral-bg);--award-border:var(--neutral-border)">
     <div class="award-head">
       <span class="award-ico">🌪️</span>
       <div>
-        <div class="award-title">Calamity James ${lbl}</div>
-        <div class="award-meta">Plus de buts encaissés / match en goal</div>
+        <div class="award-title">Calamity James ${_seasonLabel(r.year)}</div>
+        <div class="award-meta">Plus de buts encaissés par mi-temps au but · min. ${r.min} mi-temps</div>
       </div>
     </div>
-    <div class="award-list">`;
-  if (ranking.length) {
-    const maxRate = Math.max(...ranking.map(p => p.rate), 1);
-    ranking.forEach((p, i) => {
-      const isFirst = i === 0;
-      const bar = Math.round((p.rate / maxRate) * 100);
-      const detail = `${p.buts} but${p.buts!==1?'s':''} / ${p.matchs} m.`;
-      html += `<div class="award-row${isFirst?' award-first':''}${i>=5?' award-more-row':''}" ${i>=5?'data-award-id="calamity"':''}>
-        <span class="award-rank num">${i+1}</span>
-        <span class="award-name">${pLink(p.name)}</span>
-        <span class="award-pts">${p.rate.toFixed(2).replace('.',',')}</span>
-        <span class="award-detail">${detail}</span>
-      </div>
-      <div class="award-bar-wrap${i>=5?' award-more-row':''}" ${i>=5?'data-award-id="calamity"':''}><div class="award-bar" style="width:${bar}%"></div></div>`;
-    });
-    if (ranking.length > 5) html += `<button class="award-toggle" data-award-toggle="calamity">Voir le classement complet (${ranking.length}) ›</button>`;
-  } else {
-    html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun gardien enregistré en ${year}.</div>`;
-  }
-  html += `</div></div>`;
-  return html;
+    <div class="award-list">${_gkAwardListHtml("calamity", r, null)}</div></div>`;
 }
 
 // Regroupe les buts (et passes décisives) d'un même joueur au sein d'un match,
@@ -5555,7 +5556,7 @@ function renderStats() {
       const rows = container.querySelectorAll(`[data-award-id="${id}"]`);
       const willShow = rows.length > 0 && !rows[0].classList.contains('show');
       rows.forEach(r => r.classList.toggle('show', willShow));
-      const total = rows.length + 5;
+      const total = btn.dataset.total || (container.querySelectorAll(`.award-row[data-award-id="${id}"]`).length + 5);
       btn.textContent = willShow ? 'Réduire ‹' : `Voir le classement complet (${total}) ›`;
     });
   });
