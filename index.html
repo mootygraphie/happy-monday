@@ -2219,7 +2219,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 06/11/2026 - 14:48</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 06/11/2026 - 14:52</footer>
 
 <script>
 
@@ -3653,17 +3653,17 @@ function _ttPanelHtml(idPrefix, team, gkCriteria) {
   </div>`;
 }
 
-/* Prix gardiens (Yachine / Calamity James) : buts encaisses par mi-temps au but, mais
+/* Prix Yachine : buts encaisses par mi-temps au but, mais
    seulement a partir d un minimum de mi-temps gardees, proportionnel a la saison (1 mi-temps
    pour 10 matchs joues) — sinon 2 bonnes (ou mauvaises) mi-temps suffisaient a dominer.
    Les gardiens sous le seuil restent visibles en dessous, « pas encore classes ». */
-function _gkAwardRanking(sessions, worstFirst) {
+function _gkAwardRanking(sessions) {
   const year = _currentSeason();
   const season = sessions.filter(s => _seasonStart(s.date) === year);
   const nMatchs = season.reduce((n, s) => n + (s.matchs || []).length, 0);
   const min = Math.max(1, Math.ceil(nMatchs / 10));
   const all = computeGardiensRanking(season).sort((a, b) =>
-    (worstFirst ? b.rate - a.rate : a.rate - b.rate) || b.matchs - a.matchs || a.name.localeCompare(b.name, 'fr'));
+    a.rate - b.rate || b.matchs - a.matchs || a.name.localeCompare(b.name, 'fr'));
   return { year, min, ranked: all.filter(p => p.matchs >= min), waiting: all.filter(p => p.matchs < min) };
 }
 function _gkAwardListHtml(id, r, medals) {
@@ -3698,7 +3698,7 @@ function _gkAwardListHtml(id, r, medals) {
 }
 
 function buildYachineHtml(sessions) {
-  const r = _gkAwardRanking(sessions, false);
+  const r = _gkAwardRanking(sessions);
   return `<div class="award-card" style="--award-color:var(--bleu);--award-bg:var(--bleu-bg);--award-border:var(--bleu-border)">
     <div class="award-head">
       <span class="award-ico">🧤</span>
@@ -3710,17 +3710,43 @@ function buildYachineHtml(sessions) {
     <div class="award-list">${_gkAwardListHtml("yachine", r, ['🥇','🥈','🥉'])}</div></div>`;
 }
 
+/* Liste d un prix « negatif » (Calamity James, Ballon de Plomb) : 5 lignes visibles, le reste
+   derriere « Voir le classement complet ». `rows` : { name, value (affichee), bar (0-1), detail }. */
+function _awardSimpleListHtml(id, rows, emptyMsg) {
+  if (!rows.length) return `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">${emptyMsg}</div>`;
+  let html = rows.map((p, i) => {
+    const more = i >= 5, attr = more ? ` data-award-id="${id}"` : '';
+    return `<div class="award-row${i===0?' award-first':''}${more?' award-more-row':''}"${attr}>
+        <span class="award-rank num">${i+1}</span>
+        <span class="award-name">${pLink(p.name)}</span>
+        <span class="award-pts">${p.value}</span>
+        <span class="award-detail">${p.detail}</span>
+      </div>
+      <div class="award-bar-wrap${more?' award-more-row':''}"${attr}><div class="award-bar" style="width:${Math.round(p.bar*100)}%"></div></div>`;
+  }).join("");
+  if (rows.length > 5) html += `<button class="award-toggle" data-award-toggle="${id}" data-total="${rows.length}">Voir le classement complet (${rows.length}) ›</button>`;
+  return html;
+}
+
+/* Calamity James : le plus de buts encaisses au total sur la saison ; a egalite, celui qui
+   les a pris en moins de mi-temps est le moins bon. */
 function buildCalamityJamesHtml(sessions) {
-  const r = _gkAwardRanking(sessions, true);
+  const year = _currentSeason();
+  const all = computeGardiensRanking(sessions.filter(s => _seasonStart(s.date) === year))
+    .filter(p => p.buts > 0)
+    .sort((a, b) => b.buts - a.buts || a.matchs - b.matchs || a.name.localeCompare(b.name, 'fr'));
+  const max = Math.max(...all.map(p => p.buts), 1);
+  const rows = all.map(p => ({ name: p.name, value: p.buts, bar: p.buts / max,
+    detail: `${p.matchs} mi-temps · ${p.rate.toFixed(2).replace('.', ',')} / mi-temps` }));
   return `<div class="award-card" style="--award-color:var(--neutral);--award-bg:var(--neutral-bg);--award-border:var(--neutral-border)">
     <div class="award-head">
       <span class="award-ico">🌪️</span>
       <div>
-        <div class="award-title">Calamity James ${_seasonLabel(r.year)}</div>
-        <div class="award-meta">Plus de buts encaissés par mi-temps au but · min. ${r.min} mi-temps</div>
+        <div class="award-title">Calamity James ${_seasonLabel(year)}</div>
+        <div class="award-meta">Le plus de buts encaissés au but · à égalité, en moins de mi-temps</div>
       </div>
     </div>
-    <div class="award-list">${_gkAwardListHtml("calamity", r, null)}</div></div>`;
+    <div class="award-list">${_awardSimpleListHtml("calamity", rows, `Aucun but encaissé en ${year}.`)}</div></div>`;
 }
 
 // Regroupe les buts (et passes décisives) d'un même joueur au sein d'un match,
@@ -4678,61 +4704,50 @@ function buildBallonDorHtml() {
   return html;
 }
 
+/* Ballon de Plomb : le moins decisif, en G/A par match reellement joue (au moins 10 matchs
+   dans la saison, sinon quelques matchs sans marquer suffisaient a « gagner »). Jokers exclus. */
+const BALLON_PLOMB_MIN_MATCHS = 10;
 function buildBallonDePlombHtml() {
-  const _bdYear = _currentSeason(); const _bdLbl = _seasonLabel(_bdYear);
-  const _presCount = {};
-  const _bdPs = {};
-  SESSIONS.filter(s => _seasonStart(s.date) === _bdYear).forEach(s => {
-    Object.entries(s.presences).forEach(([p, info]) => {
-      if (info.statut === "Présent" && !JOKERS.has(p)) _presCount[p] = (_presCount[p]||0)+1;
+  const year = _currentSeason();
+  const st = {};
+  SESSIONS.filter(s => _seasonStart(s.date) === year).forEach(s => {
+    const pres = s.presences || {};
+    Object.entries(pres).forEach(([p, info]) => {
+      if (info.statut !== "Présent" || !info.equipe || JOKERS.has(p)) return;
+      (s.matchs || []).forEach((m, mIdx) => {
+        if (m.eqA !== info.equipe && m.eqB !== info.equipe) return;
+        if (_isPlayerOutForSessionMatch(s, p, mIdx)) return;
+        if (!st[p]) st[p] = { matchs: 0, buts: 0, passes: 0 };
+        st[p].matchs++;
+      });
     });
     (s.matchs || []).forEach(m => {
       ["A","B"].forEach(side => {
         const buts = m[`buteurs${side}`]||[], passes = m[`passeurs${side}`]||[];
         buts.forEach((b,i) => {
           if (!b || b==="CSC") return;
-          if (!_bdPs[b]) _bdPs[b]={buts:0,passes:0}; _bdPs[b].buts++;
-          const p = passes[i]; if (p && p!=="CSC") { if (!_bdPs[p]) _bdPs[p]={buts:0,passes:0}; _bdPs[p].passes++; }
+          if (st[b]) st[b].buts++;
+          const p = passes[i]; if (p && p!=="CSC" && st[p]) st[p].passes++;
         });
       });
     });
   });
-  const _bdBottomAll = Object.entries(_presCount)
-    .filter(([name]) => !JOKERS.has(name))
-    .map(([name, presences]) => {
-      const p = _bdPs[name]||{buts:0,passes:0};
-      return { name, buts: p.buts, passes: p.passes, pts: p.buts+p.passes*2, presences };
-    })
-    .sort((a,b) => a.pts-b.pts || a.buts-b.buts || b.presences-a.presences || a.name.localeCompare(b.name,"fr"));
-  let html = `<div class="award-card" style="--award-color:var(--neutral);--award-bg:var(--neutral-bg);--award-border:var(--neutral-border)">
+  const all = Object.entries(st)
+    .filter(([, x]) => x.matchs >= BALLON_PLOMB_MIN_MATCHS)
+    .map(([name, x]) => ({ name, ...x, rate: (x.buts + x.passes) / x.matchs }))
+    .sort((a, b) => a.rate - b.rate || b.matchs - a.matchs || a.name.localeCompare(b.name, 'fr'));
+  const max = Math.max(...all.map(p => p.rate), 0.01);
+  const rows = all.map(p => ({ name: p.name, value: p.rate.toFixed(2).replace('.', ','), bar: p.rate / max,
+    detail: `${[p.buts?`${p.buts}G`:null, p.passes?`${p.passes}A`:null].filter(Boolean).join(" · ") || "0 G/A"} en ${p.matchs} m.` }));
+  return `<div class="award-card" style="--award-color:var(--neutral);--award-bg:var(--neutral-bg);--award-border:var(--neutral-border)">
     <div class="award-head">
       <span class="award-ico">🪨</span>
       <div>
-        <div class="award-title">Ballon de Plomb ${_bdLbl}</div>
-        <div class="award-meta">1 pt / but &middot; 2 pts / assist (classement inversé)</div>
+        <div class="award-title">Ballon de Plomb ${_seasonLabel(year)}</div>
+        <div class="award-meta">Le moins de G/A par match joué · min. ${BALLON_PLOMB_MIN_MATCHS} matchs</div>
       </div>
     </div>
-    <div class="award-list">`;
-  if (_bdBottomAll.length) {
-    const _bdMax = Math.max(..._bdBottomAll.map(p => p.pts), 1);
-    _bdBottomAll.forEach((p, i) => {
-      const _gaStr = [p.buts>0?`${p.buts}G`:null, p.passes>0?`${p.passes}A`:null].filter(Boolean).join(" · ")||"0 G/A";
-      const _bdBar = Math.round((p.pts / _bdMax) * 100);
-      const isFirst = i===0;
-      html += `<div class="award-row${isFirst?' award-first':''}${i>=5?' award-more-row':''}" ${i>=5?'data-award-id="ballondeplomb"':''}>
-        <span class="award-rank num">${i+1}</span>
-        <span class="award-name">${pLink(p.name)}</span>
-        <span class="award-pts">${p.pts}</span>
-        <span class="award-detail">${_gaStr}</span>
-      </div>
-      <div class="award-bar-wrap${i>=5?' award-more-row':''}" ${i>=5?'data-award-id="ballondeplomb"':''}><div class="award-bar" style="width:${_bdBar}%"></div></div>`;
-    });
-    if (_bdBottomAll.length > 5) html += `<button class="award-toggle" data-award-toggle="ballondeplomb">Voir le classement complet (${_bdBottomAll.length}) ›</button>`;
-  } else {
-    html += `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">Aucun joueur présent en saison ${_bdLbl} pour le moment.</div>`;
-  }
-  html += `</div></div>`;
-  return html;
+    <div class="award-list">${_awardSimpleListHtml("ballondeplomb", rows, `Personne n'a encore joué ${BALLON_PLOMB_MIN_MATCHS} matchs cette saison.`)}</div></div>`;
 }
 
 function _buildAbsenceRankHtml({ id, icon, title, subtitle, accentColor, borderColor, bgColor, players, emptyMsg }) {
