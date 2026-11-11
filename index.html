@@ -343,6 +343,7 @@
   /* Portraits joueurs (portraits/<Nom>.jpeg) : l image recouvre les initiales du conteneur ;
      sans fichier, elle est retiree et les initiales restent. Cadrage visage + buste. */
   .pf { position: relative; overflow: hidden; }
+  .pf-open { cursor: pointer; }
   .pf > .pf-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 47%; transform: scale(1.2); }
   .roster-avatar { width: 44px; height: 44px; border-radius: 12px; background: var(--bg3); color: var(--text2); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0; }
   .roster-avatar.dim { opacity: .55; }
@@ -471,10 +472,13 @@
   }
   #player-panel.open { transform: translateX(0); }
   .pp-header {
-    display: flex; align-items: center; gap: 12px;
-    padding: 22px 22px 18px; border-bottom: 1px solid var(--border);
-    position: sticky; top: 0; background: var(--bg2); z-index: 2;
+    /* Juste le bouton fermer, flottant : prenom + statut sont dans la carte du haut. */
+    display: flex; align-items: flex-start; justify-content: flex-end; gap: 12px;
+    padding: 0 32px; height: 0; overflow: visible;
+    position: sticky; top: 0; z-index: 3;
   }
+  /* Le ✕ se pose dans le coin haut-droit de la carte du joueur (pp-body 20px + hero ~10px). */
+  .pp-header .pp-close { margin-top: 30px; }
   .pp-name { font-size: 20px; font-weight: 700; flex: 1; font-style: italic; }
   .pp-close {
     width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
@@ -1574,7 +1578,10 @@
   .sfm-perf-card > * { position: relative; }
   .sfm-perf-role { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-style: italic; color: var(--text3); }
   .sfm-perf-headline { display: flex; align-items: center; gap: 8px; }
-  .sfm-perf-av { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; flex-shrink: 0; background: var(--bg3); color: var(--text2); }
+  .sfm-perf-body { flex: 1; display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .sfm-perf-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .sfm-perf-av { width: 64px; height: 64px; border-radius: 12px; border: 2px solid var(--perf-team, var(--border2)); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; flex-shrink: 0; background: var(--bg3); color: var(--text2); }
+  @media (max-width: 520px) { .sfm-perf-av { width: 48px; height: 48px; font-size: 14px; border-radius: 10px; } .sfm-perf-body { gap: 9px; } }
   .sfm-perf-av.rouge { background: var(--rouge-bg); color: var(--rouge); } .sfm-perf-av.vert { background: var(--vert-bg); color: var(--vert); } .sfm-perf-av.bleu { background: var(--bleu-bg); color: var(--bleu); }
   .sfm-perf-name { font-size: 14.5px; font-weight: 700; }
   .sfm-perf-name .player-link { font-size: inherit !important; font-weight: inherit !important; color: inherit !important; }
@@ -1589,6 +1596,9 @@
   @media (min-width: 900px) {
     .sfm-perf-layout { flex-direction: row; align-items: stretch; }
     .sfm-perf-left, .sfm-perf-right { flex: 1; min-width: 0; }
+    /* Les 4 cartes s etirent sur toute la hauteur de la carte Meilleurs de la soiree. */
+    .sfm-perf-right { display: flex; }
+    .sfm-perf-right .sfm-perf-grid { flex: 1; grid-auto-rows: 1fr; }
   }
   /* Carte "Meilleurs de la soiree" : les 4 categories defilent en slides (au lieu d etre
      empilees) pour que la carte tienne sur la meme hauteur que la grille 2x2 d a cote sur
@@ -2229,7 +2239,6 @@
 <div id="player-panel-overlay"></div>
 <div id="player-panel">
   <div class="pp-header">
-    <span id="pp-name" class="pp-name"></span><span id="pp-statut-badge" style="margin-left:8px;flex-shrink:0"></span>
     <button class="pp-close" id="pp-close" aria-label="Fermer">✕</button>
   </div>
   <div class="pp-body" id="pp-body"></div>
@@ -2248,7 +2257,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 11/11/2026 - 16:27</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 11/11/2026 - 16:37</footer>
 
 <script>
 
@@ -2864,8 +2873,17 @@ function _portraitOk(img) {
 }
 function _portraitFail(img) {
   const name = img.dataset.pf;
-  const next = +img.dataset.ext + 1;
-  if (_PORTRAIT_FOUND[name] === undefined && next < _PORTRAIT_EXTS.length) {
+  const cur = +img.dataset.ext;
+  // Une autre image du meme joueur a deja trouve la bonne extension pendant que celle-ci
+  // essayait encore la precedente : on prend directement la bonne.
+  const found = _PORTRAIT_FOUND[name];
+  if (found !== undefined && found !== cur) {
+    img.dataset.ext = found;
+    img.src = portraitUrl(name, found);
+    return;
+  }
+  const next = cur + 1;
+  if (found === undefined && next < _PORTRAIT_EXTS.length) {
     img.dataset.ext = next;
     img.src = portraitUrl(name, next);
     return;
@@ -4329,10 +4347,16 @@ function _sfmScoreboardHTML(standings, teamMap) {
 
 function _sfmPerfCard(role, name, cls, statLine, delay) {
   const initials = name.slice(0,2).toUpperCase();
+  // Portrait carre (initiales teintees sans fichier) a cote du nom et de la stat.
   return `<div class="sfm-perf-card sfm-fade-up" style="animation-delay:${delay}s;${cls ? `--perf-team:var(--${cls});` : ""}">
     <div class="sfm-perf-role">${role}</div>
-    <div class="sfm-perf-headline"><span class="sfm-perf-av ${cls}">${initials}</span><span class="sfm-perf-name">${pLink(name)}</span></div>
-    <div class="sfm-perf-stat">${statLine}</div>
+    <div class="sfm-perf-body">
+      <span class="sfm-perf-av pf pf-open ${cls}" data-player="${name}">${initials}${portraitImg(name)}</span>
+      <div class="sfm-perf-txt">
+        <div class="sfm-perf-name">${pLink(name)}</div>
+        <div class="sfm-perf-stat">${statLine}</div>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -4351,7 +4375,7 @@ function _sfmBestCategoryHTML(label, rows, fmtVal, teamOf) {
   const topCls = teamCls(teamOf(top.name));
   const topHtml = `<div class="sfm-best-top">
     <div class="sfm-best-top-wrap">
-      <div class="sfm-best-top-ph pf" style="border-color:var(--${topCls||"text3"})">${ini[top.name]||top.name.slice(0,2).toUpperCase()}${portraitImg(top.name)}</div>
+      <div class="sfm-best-top-ph pf pf-open" data-player="${top.name}" style="border-color:var(--${topCls||"text3"})">${ini[top.name]||top.name.slice(0,2).toUpperCase()}${portraitImg(top.name)}</div>
       <span class="sfm-best-top-medal">${medals[0]}</span>
     </div>
     <div class="sfm-best-top-name">${pLink(top.name)}</div>
@@ -4361,7 +4385,7 @@ function _sfmBestCategoryHTML(label, rows, fmtVal, teamOf) {
     const cls = teamCls(teamOf(r.name));
     return `<div class="sfm-best-row">
     <span class="sfm-best-rank">${medals[i+1]}</span>
-    <span class="sfm-best-mini pf" style="border-color:var(--${cls||"text3"})">${ini[r.name]||r.name.slice(0,2).toUpperCase()}${portraitImg(r.name)}</span>
+    <span class="sfm-best-mini pf pf-open" data-player="${r.name}" style="border-color:var(--${cls||"text3"})">${ini[r.name]||r.name.slice(0,2).toUpperCase()}${portraitImg(r.name)}</span>
     <span class="sfm-best-name">${pLink(r.name)}</span>
     <span class="sfm-best-leader"></span>
     <span class="sfm-best-val">${fmtVal(r)}</span>
@@ -7356,7 +7380,7 @@ function renderJoueurs() {
     const tCls = r.taux >= 75 ? "high" : r.taux >= 40 ? "mid" : "low";
     const chips = chip("❌", r.absences, "danger") + chip("🤕", r.blesses, "warn") + chip("⁉️", r.pasRepondu, "warn") + chip("🎒", r.sac) + chip("👕", r.maillots);
     return `<div class="roster-card">
-      <div class="roster-avatar pf">${initials(r.name)}${portraitImg(r.name, true)}</div>
+      <div class="roster-avatar pf pf-open" data-player="${r.name}" title="Voir la fiche">${initials(r.name)}${portraitImg(r.name, true)}</div>
       <div class="roster-main">
         <button class="roster-name player-link" data-player="${r.name}">${r.name}</button>
         <div class="roster-taux">
@@ -7373,7 +7397,7 @@ function renderJoueurs() {
     const tCls = r.taux >= 75 ? "high" : r.taux >= 40 ? "mid" : "low";
     const chips = chip("❌", r.absences, "danger") + chip("🤕", r.blesses, "warn") + chip("⁉️", r.pasRepondu, "warn") + chip("🎒", r.sac) + chip("👕", r.maillots);
     return `<div class="roster-card">
-      <div class="roster-avatar pf dim">${initials(r.name)}${portraitImg(r.name, true)}</div>
+      <div class="roster-avatar pf pf-open dim" data-player="${r.name}" title="Voir la fiche">${initials(r.name)}${portraitImg(r.name, true)}</div>
       <div class="roster-main">
         <button class="roster-name player-link" data-player="${r.name}">${r.name}</button>
         <div class="roster-taux">
@@ -7388,7 +7412,7 @@ function renderJoueurs() {
 
   function buildAbsentCard(name) {
     return `<div class="roster-card">
-      <div class="roster-avatar pf dim">${initials(name)}${portraitImg(name, true)}</div>
+      <div class="roster-avatar pf pf-open dim" data-player="${name}" title="Voir la fiche">${initials(name)}${portraitImg(name, true)}</div>
       <div class="roster-main">
         <button class="roster-name player-link" data-player="${name}">${name}</button>
         <div class="roster-sub">Absent pour la saison</div>
@@ -7399,7 +7423,7 @@ function renderJoueurs() {
 
   function buildInactifCard(name) {
     return `<div class="roster-card">
-      <div class="roster-avatar pf dim">${initials(name)}${portraitImg(name, true)}</div>
+      <div class="roster-avatar pf pf-open dim" data-player="${name}" title="Voir la fiche">${initials(name)}${portraitImg(name, true)}</div>
       <div class="roster-main">
         <button class="roster-name player-link" data-player="${name}">${name}</button>
         <div class="roster-sub">Inactif</div>
@@ -8140,6 +8164,10 @@ function openPlayerPanel(playerName) {
       const _rate = st.presences / _totalExpected;
       _freqLabel = _rate >= 0.75 ? "Régulier" : _rate >= 0.4 ? "Occasionnel" : "Rare";
     }
+    // Statut d effectif (ex-badge de l en-tete, retire pour ne pas repeter prenom + statut) :
+    // affiche seulement s il dit autre chose que la frequence (ex. « Absent pour la saison »).
+    const _ppS = REGL_STATUTS[(ABSENTS.has(playerName) || INACTIFS.has(playerName)) ? 'quitte' : JOKERS.has(playerName) ? 'plus1' : 'actif'];
+    const _ppStatutHtml = _ppS && _ppS.label !== _freqLabel ? `<span class="regl-badge ${_ppS.badge}" style="margin-left:6px;vertical-align:middle">${_ppS.label}</span>` : "";
     // Portrait : carte entiere, cachee jusqu a son chargement (_pphPortraitLoaded) ; sans
     // fichier, l avatar a initiales reste affiche comme avant.
     const _portraitHtml = _PORTRAIT_MISSING.has(playerName) ? "" :
@@ -8154,6 +8182,7 @@ function openPlayerPanel(playerName) {
           <div class="pph-avatar" style="background:${_avatarBg};color:${_avatarFg}">${_initials}</div>
           <div class="pph-hero-name">${playerName}</div>
           ${_freqLabel ? `<span class="pph-freq-pill">${_freqLabel}</span>` : ""}
+          ${_ppStatutHtml}
         </div>
       </div>
     </div>`;
@@ -8479,13 +8508,6 @@ function openPlayerPanel(playerName) {
   /* Hauts faits */
   h += `<div><div class="pp-section-title">Hauts faits</div>${renderAchievementsGrid(computeAchievementStats(playerName))}</div>`;
 
-  document.getElementById("pp-name").textContent = playerName;
-  const _ppBadgeEl = document.getElementById("pp-statut-badge");
-  if (_ppBadgeEl) {
-    const _ppStatut = (ABSENTS.has(playerName) || INACTIFS.has(playerName)) ? 'quitte' : JOKERS.has(playerName) ? 'plus1' : 'actif';
-    const _ppS = REGL_STATUTS[_ppStatut];
-    _ppBadgeEl.innerHTML = `<span class="regl-badge ${_ppS.badge}">${_ppS.label}</span>`;
-  }
   const ppBody = document.getElementById("pp-body");
   ppBody.innerHTML = h;
   ppBody.style.opacity   = '0';
@@ -10597,7 +10619,7 @@ document.getElementById("mhf-drawer-overlay").addEventListener("click", closeMhf
 document.getElementById("mhf-dr-close").addEventListener("click", closeMhfDrawer);
 document.addEventListener("keydown", e => { if (e.key === "Escape") { if (closePortraitLightbox()) return; closePlayerPanel(); closeMhfDrawer(); } });
 document.addEventListener("click", e => {
-  const btn = e.target.closest(".player-link");
+  const btn = e.target.closest(".player-link, .pf-open");
   if (btn && btn.dataset.player) openPlayerPanel(btn.dataset.player);
 });
 
