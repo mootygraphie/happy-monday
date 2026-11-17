@@ -345,8 +345,10 @@
   .pf { position: relative; overflow: hidden; }
   .pf-open { cursor: pointer; }
   .pf > .pf-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 47%; transform: scale(1.2); }
-  .roster-avatar { width: 44px; height: 44px; border-radius: 12px; background: var(--bg3); color: var(--text2); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0; }
+  .roster-avatar { width: 55px; height: 55px; border-radius: 12px; background: var(--bg3); color: var(--text2); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0; }
   .roster-avatar.dim { opacity: .55; }
+  /* Effectif : cadrage plus serre sur le visage que les autres portraits. */
+  .roster-avatar.pf > .pf-img { object-position: 50% -53%; transform: scale(2.2); }
   .roster-main { flex: 1; min-width: 0; }
   .roster-name { display: block; width: 100%; font-size: 14px; font-weight: 700; margin-bottom: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .roster-taux { display: flex; align-items: center; gap: 8px; }
@@ -2257,7 +2259,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 11/11/2026 - 16:37</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 17/11/2026 - 10:53</footer>
 
 <script>
 
