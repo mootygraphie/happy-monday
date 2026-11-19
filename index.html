@@ -2824,7 +2824,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 16:30</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 16:38</footer>
 
 <script>
 
@@ -12517,7 +12517,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   const TYPE = { p: "Joueur", h: "Haut fait", n: "Fait notable" };
   const CATVAR = { "Attaque": "--hf-attaque", "Défense": "--hf-defense", "Collectif": "--hf-collectif", "Présence": "--hf-presence", "Distinctions": "--hf-distinct", "Secrets": "--hf-secret" };
   const STATS = ["ATT", "PAS", "DEF", "VIC", "FID", "GAR"];
-  const TITLES = { ATT: "Buteur", PAS: "Passeur", DEF: "Défenseur", VIC: "Gagneur", GAR: "Muraille", DEP: "Dépanneur" };
+  const TITLES = { ATT: "Buteur", PAS: "Passeur", DEF: "Défenseur", GAR: "Muraille", GUE: "Guerrier", DEP: "Dépanneur" };
   const MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
   const fdate = s => { const [y, m, d] = (s || "").split("-"); return d ? `${+d} ${MOIS[+m - 1]}` : ""; };
   const ini = n => _saisieInitials(n);
@@ -12597,14 +12597,25 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const role = {};
     const core = names.filter(n => !DEPS.has(n));
     names.forEach(n => { if (!core.includes(n)) role[n] = "DEP"; });
-    const SECK = ["ATT", "PAS", "DEF", "GAR", "VIC"];
-    const fit = (n, k) => !P[n].pres ? (k === "GAR" ? -1 : 42) : k === "ATT" ? (notes.ATT[n] + notes.ATTt[n]) / 2 : k === "PAS" ? (notes.PAS[n] + notes.PASt[n]) / 2 : (notes[k][n] ?? -1);
-    const size = {}; SECK.forEach((k, i) => { size[k] = Math.floor(core.length / 5) + (i < core.length % 5 ? 1 : 0); });
+    /* 4 sections de performance + Guerriers, de taille égale (~ joueurs / 5) :
+       - sans match cette saison → Guerriers d'office ;
+       - s'il reste des places chez les Guerriers, elles vont aux stats les plus moyennes ;
+       - les autres remplissent Buteurs / Passeurs / Défenseurs / Murailles, placements les
+         plus évidents d'abord, fidélité (+2 par soirée) pour départager. */
+    const SECK = ["ATT", "PAS", "DEF", "GAR"];
+    const fit = (n, k) => k === "ATT" ? (notes.ATT[n] + notes.ATTt[n]) / 2 : k === "PAS" ? (notes.PAS[n] + notes.PASt[n]) / 2 : (notes[k][n] ?? -1);
+    const corep = core.filter(n => P[n].pres);
+    core.forEach(n => { if (!P[n].pres) role[n] = "GUE"; });
+    let cap = Object.fromEntries(SECK.map((k, i) => [k, Math.floor(core.length / 5) + (i < core.length % 5 ? 1 : 0)]));
+    if (SECK.reduce((a, k) => a + cap[k], 0) > corep.length) cap = Object.fromEntries(SECK.map((k, i) => [k, Math.floor(corep.length / 4) + (i < corep.length % 4 ? 1 : 0)]));
+    const bestFit = n => Math.max(...SECK.map(k => fit(n, k))) + 2 * P[n].pres;
+    const extra = Math.max(0, corep.length - SECK.reduce((a, k) => a + cap[k], 0));
+    [...corep].sort((a, b) => bestFit(a) - bestFit(b) || a.localeCompare(b, "fr")).slice(0, extra).forEach(n => { role[n] = "GUE"; });
     const cnt = Object.fromEntries(SECK.map(k => [k, 0]));
-    core.flatMap(n => SECK.filter(k => fit(n, k) >= 0).map(k => [fit(n, k) + 2 * P[n].pres, -SECK.indexOf(k), n, k]))
+    corep.filter(n => !role[n]).flatMap(n => SECK.filter(k => fit(n, k) >= 0).map(k => [fit(n, k) + 2 * P[n].pres, -SECK.indexOf(k), n, k]))
       .sort((a, b) => b[0] - a[0] || b[1] - a[1] || a[2].localeCompare(b[2], "fr"))
-      .forEach(([, , n, k]) => { if (!role[n] && cnt[k] < size[k]) { role[n] = k; cnt[k]++; } });
-    core.forEach(n => { if (!role[n]) role[n] = SECK.find(k => cnt[k] < size[k]) || "VIC"; });
+      .forEach(([, , n, k]) => { if (!role[n] && cnt[k] < cap[k]) { role[n] = k; cnt[k]++; } });
+    corep.forEach(n => { if (!role[n]) role[n] = SECK.find(k => cnt[k] < cap[k]) || "GUE"; });
     PLAYERS = pcards.map((c, i) => {
       const tm = Object.entries(c.v.teams).sort((a, b) => b[1] - a[1])[0];
       return { k: "p:" + c.n, ty: "p", n: c.n, o: c.o, s: c.s, t: TITLES[role[c.n]], r: i < nL ? "L" : i < nL + nE ? "E" : i < nL + nE + nR ? "R" : "C", team: tm ? tm[0] : "",
@@ -12859,7 +12870,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
         <div class="drops-bottom"><div class="sel"><select id="vg-secsel" aria-label="Aller à une section de l'album"></select></div></div>
         <div class="vg-foot"><span id="vg-pginfo"></span><span class="swipe">Glisse ou utilise les flèches pour tourner les pages</span></div>
       </section>
-      <p class="vg-legend"><b>Raretés.</b> Joueurs : selon la note générale. Hauts faits : selon le nombre de détenteurs (un seul = légendaire). Faits notables : selon le nombre de fois où ils ont été réalisés (jamais réalisé = légendaire). <b>Notes.</b> ATT = buts par match, PAS = passes par match, DEF = buts encaissés par l'équipe quand il joue, VIC = points par match, FID = soirées jouées, GAR = buts encaissés par mi-temps au but, classées de 42 à 98 parmi les joueurs de la saison. <b>Sections.</b> Les Dépanneurs (statut de l'Effectif) ont leur section ; Réguliers et Occasionnels se répartissent à parts égales selon leur point fort (buts et passes : moitié par match, moitié au total), la fidélité départageant. Les cartes évoluent avec les stats jusqu'en fin de saison. Ton album est enregistré sous ta fiche joueur.</p>`;
+      <p class="vg-legend"><b>Raretés.</b> Joueurs : selon la note générale. Hauts faits : selon le nombre de détenteurs (un seul = légendaire). Faits notables : selon le nombre de fois où ils ont été réalisés (jamais réalisé = légendaire). <b>Notes.</b> ATT = buts par match, PAS = passes par match, DEF = buts encaissés par l'équipe quand il joue, VIC = points par match, FID = soirées jouées, GAR = buts encaissés par mi-temps au but, classées de 42 à 98 parmi les joueurs de la saison. <b>Sections.</b> Réguliers et Occasionnels se répartissent à parts égales entre Buteurs, Passeurs, Défenseurs, Murailles et Guerriers (ceux qui n'ont pas encore joué et les stats les plus moyennes) ; buts et passes comptent à moitié par match, à moitié au total, la fidélité départage. Les Dépanneurs ont leur section. Les cartes évoluent avec les stats jusqu'en fin de saison. Ton album est enregistré sous ta fiche joueur.</p>`;
     if (tab === "booster") renderPack(); else renderAlbum();
   }
   function teaserHTML() {
@@ -13021,7 +13032,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     { id: "passeurs", t: "Les Passeurs", ic: "🎯", col: "#4fc3f7", sub: "Les meilleurs distributeurs de caviars", f: c => c.ty === "p" && c.t === "Passeur" },
     { id: "defenseurs", t: "Les Défenseurs", ic: "🛡️", col: "#5b8def", sub: "Avec eux sur le terrain, l'équipe encaisse le moins", f: c => c.ty === "p" && c.t === "Défenseur" },
     { id: "murailles", t: "Les Murailles", ic: "🧱", col: "#f59e5b", sub: "Les remparts dans les cages", f: c => c.ty === "p" && c.t === "Muraille" },
-    { id: "gagneurs", t: "Les Gagneurs", ic: "🏆", col: "#66d9a0", sub: "Ceux qui ramènent le plus de points", f: c => c.ty === "p" && c.t === "Gagneur" },
+    { id: "guerriers", t: "Les Guerriers", ic: "⚔️", col: "#66d9a0", sub: "Toujours au combat, leur heure viendra", f: c => c.ty === "p" && c.t === "Guerrier" },
     { id: "depanneurs", t: "Les Dépanneurs", ic: "🧰", col: "#b892ff", sub: "Venus en renfort, toujours prêts à rendre service", f: c => c.ty === "p" && c.t === "Dépanneur" },
     { id: "hf", t: "Hauts faits", ic: "🏅", col: "#f5c842", sub: "Les exploits débloqués", f: c => c.ty === "h" },
     { id: "nt", t: "Faits notables", ic: "📌", col: "#e2c58f", sub: "Les moments qui ont marqué les soirées", f: c => c.ty === "n" },
