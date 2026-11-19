@@ -2516,7 +2516,12 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
 #panel-vignettes .vg-stock { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; font-size: 13px; color: var(--text2); }
 #panel-vignettes .vg-stock-n { font-size: 22px; letter-spacing: 2px; }
 #panel-vignettes .vg-stock b { color: var(--text); }
-#panel-vignettes .vg-legend { margin-top: 30px; color: var(--text3); font-size: 12px; line-height: 1.65; border-top: 1px solid var(--border); padding-top: 14px; }
+#panel-vignettes .vg-legend { margin-top: 28px; color: var(--text3); font-size: 12px; line-height: 1.65; }
+#panel-vignettes .vg-legend summary { cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text3); list-style: none; padding: 4px 0; }
+#panel-vignettes .vg-legend summary::-webkit-details-marker { display: none; }
+#panel-vignettes .vg-legend summary::before { content: "ⓘ"; font-size: 13px; }
+#panel-vignettes .vg-legend summary:hover { color: var(--text2); }
+#panel-vignettes .vg-legend p { margin: 8px 0 0; padding: 12px 14px; border-radius: 12px; background: rgba(127,127,127,.05); border: 1px solid var(--border); }
 #panel-vignettes .vg-legend b { color: var(--text2); }
 #panel-vignettes .vg-foot { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 20px; font-size: 12.5px; color: var(--text2); }
 #panel-vignettes .vg-foot .swipe { color: var(--text3); }
@@ -2824,7 +2829,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 16:38</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 16:39</footer>
 
 <script>
 
@@ -12870,7 +12875,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
         <div class="drops-bottom"><div class="sel"><select id="vg-secsel" aria-label="Aller à une section de l'album"></select></div></div>
         <div class="vg-foot"><span id="vg-pginfo"></span><span class="swipe">Glisse ou utilise les flèches pour tourner les pages</span></div>
       </section>
-      <p class="vg-legend"><b>Raretés.</b> Joueurs : selon la note générale. Hauts faits : selon le nombre de détenteurs (un seul = légendaire). Faits notables : selon le nombre de fois où ils ont été réalisés (jamais réalisé = légendaire). <b>Notes.</b> ATT = buts par match, PAS = passes par match, DEF = buts encaissés par l'équipe quand il joue, VIC = points par match, FID = soirées jouées, GAR = buts encaissés par mi-temps au but, classées de 42 à 98 parmi les joueurs de la saison. <b>Sections.</b> Réguliers et Occasionnels se répartissent à parts égales entre Buteurs, Passeurs, Défenseurs, Murailles et Guerriers (ceux qui n'ont pas encore joué et les stats les plus moyennes) ; buts et passes comptent à moitié par match, à moitié au total, la fidélité départage. Les Dépanneurs ont leur section. Les cartes évoluent avec les stats jusqu'en fin de saison. Ton album est enregistré sous ta fiche joueur.</p>`;
+      <details class="vg-legend"><summary>Comment ça marche ?</summary><p><b>Raretés.</b> Joueurs : selon la note générale. Hauts faits : selon le nombre de détenteurs (un seul = légendaire). Faits notables : selon le nombre de fois où ils ont été réalisés (jamais réalisé = légendaire). <b>Notes.</b> ATT = buts par match, PAS = passes par match, DEF = buts encaissés par l'équipe quand il joue, VIC = points par match, FID = soirées jouées, GAR = buts encaissés par mi-temps au but, classées de 42 à 98 parmi les joueurs de la saison. <b>Sections.</b> Réguliers et Occasionnels se répartissent à parts égales entre Buteurs, Passeurs, Défenseurs, Murailles et Guerriers (ceux qui n'ont pas encore joué et les stats les plus moyennes) ; buts et passes comptent à moitié par match, à moitié au total, la fidélité départage. Les Dépanneurs ont leur section. Les cartes évoluent avec les stats jusqu'en fin de saison. Ton album est enregistré sous ta fiche joueur.</p></details>`;
     if (tab === "booster") renderPack(); else renderAlbum();
   }
   function teaserHTML() {
