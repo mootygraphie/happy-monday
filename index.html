@@ -2366,6 +2366,7 @@
 #panel-vignettes .nav-btn { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border2); background: var(--bg2); font-size: 26px; line-height: 1; cursor: pointer; color: var(--text); display: flex; align-items: center; justify-content: center; padding-bottom: 3px; }
 #panel-vignettes .nav-btn:disabled { opacity: .25; cursor: default; }
 #panel-vignettes .book { position: relative; flex: 1; min-width: 0; display: grid; grid-template-columns: 1fr 1fr; perspective: 2400px; border-radius: 10px; box-shadow: 0 30px 60px rgba(0,0,0,.6), 0 0 0 8px #191921, 0 0 0 9px var(--border2); touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+#panel-vignettes .book > .page { min-height: var(--pg-h, 0px); }
 #panel-vignettes .book.single { grid-template-columns: 1fr; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,.6), 0 0 0 6px #191921, 0 0 0 7px var(--border2); }
 #panel-vignettes .book:not(.single)::after { content: ""; position: absolute; top: 0; bottom: 0; left: calc(50% - 22px); width: 44px; z-index: 7; pointer-events: none; background: linear-gradient(90deg, transparent, rgba(0,0,0,.45) 45%, rgba(0,0,0,.6) 50%, rgba(0,0,0,.45) 55%, transparent); }
 #panel-vignettes .page { position: relative; min-width: 0; display: flex; flex-direction: column; padding: 22px 26px 18px; overflow: hidden; isolation: isolate;
@@ -2829,7 +2830,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 17:04</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 17:17</footer>
 
 <script>
 
@@ -13074,6 +13075,26 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const fill = Array.from({ length: per() - p.items.length }, () => `<div class="stk-blank"></div>`).join("");
     return `<div class="${cls}" style="--sc:${s.col}">${head}<div class="stk-grid">${slots}${fill}</div>${foot(s.t)}</div>`;
   }
+
+  // Hauteur fixe de l'album : toutes les pages prennent la hauteur de la plus haute
+  // (mesurée hors écran à la largeur réelle d'une page), pour que le livre ne saute pas en tournant.
+  let _pgH = { key: "", h: 0 };
+  function fixBookHeight(b) {
+    const cur = b.querySelector(":scope > .page"); if (!cur) return;
+    const w = cur.offsetWidth; if (!w) return;
+    const side = single() ? "S" : "L", key = w + "|" + side + "|" + PAGES.length;
+    if (_pgH.key !== key) {
+      const m = document.createElement("div");
+      m.style.cssText = `position:absolute;left:0;top:0;width:${w}px;visibility:hidden;pointer-events:none;z-index:-1;`;
+      b.appendChild(m);
+      let h = 0;
+      PAGES.forEach((p, i) => { m.innerHTML = pageHTML(p, i, side); const el = m.firstElementChild; if (el) h = Math.max(h, el.offsetHeight); });
+      m.remove();
+      _pgH = { key, h };
+    }
+    b.style.setProperty("--pg-h", _pgH.h + "px");
+    b.style.minHeight = _pgH.h + "px"; // la grille étire ses pages jusqu'à cette hauteur
+  }
   function renderAlbum(opts = {}) {
     const b = document.getElementById("vg-book"); if (!b) return;
     PAGES = buildPages();
@@ -13081,6 +13102,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     b.classList.toggle("single", single());
     pg = spreadStart(Math.max(0, Math.min(pg, PAGES.length - 1)));
     b.innerHTML = single() ? pageHTML(PAGES[pg], pg, "S") : pageHTML(PAGES[pg], pg, "L") + pageHTML(PAGES[pg + 1], pg + 1, "R");
+    fixBookHeight(b);
     hideNew = false;
     // les nouvelles vignettes se « collent » une seule fois, puis restent collées (enregistré sous la fiche)
     if (!opts.hideNew) {
@@ -13182,7 +13204,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     if (e.key === "ArrowRight") turn(1); else if (e.key === "ArrowLeft") turn(-1);
   });
   let wasSingle = null;
-  addEventListener("resize", () => { if (!panel.classList.contains("active") || tab !== "album") return; const s = single(); if (s !== wasSingle) { wasSingle = s; if (!turning) renderAlbum(); } });
+  addEventListener("resize", () => { if (!panel.classList.contains("active") || tab !== "album") return; const s = single(); if (s !== wasSingle) { wasSingle = s; if (!turning) renderAlbum(); } else if (!turning) { const b = document.getElementById("vg-book"); if (b) fixBookHeight(b); } });
   // le compte change (connexion, déconnexion) : on recharge l'album de la bonne fiche
   window.renderVignettes = () => { if (panel.classList.contains("active")) render(); };
   window._vgOnShow = () => { render(); };
