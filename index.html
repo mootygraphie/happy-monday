@@ -2816,7 +2816,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 16:06</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 16:14</footer>
 
 <script>
 
@@ -8323,6 +8323,9 @@ const ACH_ABOUT = {
    acquis, même si de nouvelles cartes apparaissent ensuite). Taux enregistrés sous la
    fiche : vignettesBest/{saison}/{joueur} = % (voir l'onglet Vignettes). */
 var _VG_BEST = {}; // { "2026-27": { joueur: % } }
+/* Dépanneurs : liste FIXE (config/depanneurs), joueurs ajoutés ponctuellement hors roster
+   d'origine — section « Dépanneurs » de l'album quel que soit leur statut. */
+var _VG_DEP = new Set(["Chagot", "Marius", "Robin", "Alexi", "Edouard", "Enzo", "Florian", "Matt B"]);
 const _vgSeasonKey = sy => `${sy}-${String((sy + 1) % 100).padStart(2, "0")}`;
 SEASON_DEFS.forEach(sd => {
   const yy = String(sd.sy % 100).padStart(2, "0"), yy1 = String((sd.sy + 1) % 100).padStart(2, "0");
@@ -12111,6 +12114,7 @@ function _accInit() {
   try { _auth = firebase.auth(); } catch (e) { console.warn("auth:", e); _accReadyResolve(); return; }
   const toSet = v => new Set(Array.isArray(v) ? v : Object.values(v || {}));
   _db.ref('vignettesBest').on('value', snap => { _VG_BEST = snap.val() || {}; });
+  _db.ref('config/depanneurs').on('value', snap => { const v = snap.val(); if (v) _VG_DEP = new Set(Array.isArray(v) ? v : Object.values(v)); });
   _db.ref('config/absents').on('value', snap => { _accStatusAbs = toSet(snap.val()); _accRefreshSaisieAccess(); });
   _db.ref('config/inactifs').on('value', snap => { _accStatusInact = toSet(snap.val()); _accRefreshSaisieAccess(); });
   _auth.onAuthStateChanged(async u => {
@@ -12464,7 +12468,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   let ALL = [], BYK = {}, PLAYERS = [], NTEAM = {}, buildSig = "";
   function build() {
     const sessions = SESSIONS.filter(s => _seasonStart(s.date) === SY);
-    const sig = sessions.length + "|" + sessions.map(s => s.date + ":" + (s.matchs || []).length).join(",") + "|" + (CUSTOM_ACH_AWARDS || []).length;
+    const ABSs = (typeof _accStatusAbs !== "undefined" && _accStatusAbs) || ABSENTS;
+    const sig = sessions.length + "|" + sessions.map(s => s.date + ":" + (s.matchs || []).length).join(",") + "|" + (CUSTOM_ACH_AWARDS || []).length + "|" + [..._VG_DEP].join(",") + "|" + [...ABSs].join(",");
     if (sig === buildSig && ALL.length) return;
     buildSig = sig;
     // ── joueurs
@@ -12490,7 +12495,9 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
         (m.notables || []).forEach(nt => { if (nt && nt.player && nt.defiId) { const x = g(nt.player); x.nt[nt.defiId] = (x.nt[nt.defiId] || 0) + 1; } });
       });
     });
-    Object.keys(P).forEach(n => { if (!P[n].pres) delete P[n]; });
+    // Album : sans les joueurs absents pour la saison (sauf les Dépanneurs, toujours présents)
+    const ABS = (typeof _accStatusAbs !== "undefined" && _accStatusAbs) || ABSENTS;
+    Object.keys(P).forEach(n => { if (!P[n].pres || (ABS.has(n) && !_VG_DEP.has(n))) delete P[n]; });
     const names = Object.keys(P);
     const sum = k => names.reduce((a, n) => a + P[n][k], 0);
     const totMj = Math.max(1, sum("mj")), totGk = Math.max(1, sum("gk"));
@@ -12523,7 +12530,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
          (meilleure note de section), avec un bonus de fidélité (+2 par soirée) pour départager.
          Buts et passes comptent à moitié par match, à moitié au total de la saison. */
     const role = {};
-    const core = names.filter(n => !(JOKERS.has(n) || P[n].pres <= 2));
+    const core = names.filter(n => !_VG_DEP.has(n));
     names.forEach(n => { if (!core.includes(n)) role[n] = "DEP"; });
     const SECK = ["ATT", "PAS", "DEF", "GAR", "VIC"];
     const fit = (n, k) => k === "ATT" ? (notes.ATT[n] + notes.ATTt[n]) / 2 : k === "PAS" ? (notes.PAS[n] + notes.PASt[n]) / 2 : (notes[k][n] ?? -1);
@@ -12786,7 +12793,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
         <div class="drops-bottom"><div class="sel"><select id="vg-secsel" aria-label="Aller à une section de l'album"></select></div></div>
         <div class="vg-foot"><span id="vg-pginfo"></span><span class="swipe">Glisse ou utilise les flèches pour tourner les pages</span></div>
       </section>
-      <p class="vg-legend"><b>Raretés.</b> Joueurs : selon la note générale. Hauts faits : selon le nombre de détenteurs (un seul = légendaire). Faits notables : selon le nombre de fois où ils ont été réalisés (jamais réalisé = légendaire). <b>Notes.</b> ATT = buts par match, PAS = passes par match, DEF = buts encaissés par l'équipe quand il joue, VIC = points par match, FID = soirées jouées, GAR = buts encaissés par mi-temps au but, classées de 42 à 98 parmi les joueurs de la saison. <b>Sections.</b> Les occasionnels et ceux venus 2 fois au plus sont Dépanneurs ; les autres se répartissent à parts égales selon leur point fort (buts et passes : moitié par match, moitié au total), la fidélité départageant. Les cartes évoluent avec les stats jusqu'en fin de saison. Ton album est enregistré sous ta fiche joueur.</p>`;
+      <p class="vg-legend"><b>Raretés.</b> Joueurs : selon la note générale. Hauts faits : selon le nombre de détenteurs (un seul = légendaire). Faits notables : selon le nombre de fois où ils ont été réalisés (jamais réalisé = légendaire). <b>Notes.</b> ATT = buts par match, PAS = passes par match, DEF = buts encaissés par l'équipe quand il joue, VIC = points par match, FID = soirées jouées, GAR = buts encaissés par mi-temps au but, classées de 42 à 98 parmi les joueurs de la saison. <b>Sections.</b> Les joueurs ajoutés ponctuellement (hors roster d'origine) sont Dépanneurs ; les autres se répartissent à parts égales selon leur point fort (buts et passes : moitié par match, moitié au total), la fidélité départageant. Les cartes évoluent avec les stats jusqu'en fin de saison. Ton album est enregistré sous ta fiche joueur.</p>`;
     if (tab === "booster") renderPack(); else renderAlbum();
   }
   function teaserHTML() {
@@ -12949,7 +12956,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     { id: "defenseurs", t: "Les Défenseurs", ic: "🛡️", col: "#5b8def", sub: "Avec eux sur le terrain, l'équipe encaisse le moins", f: c => c.ty === "p" && c.t === "Défenseur" },
     { id: "murailles", t: "Les Murailles", ic: "🧱", col: "#f59e5b", sub: "Les remparts dans les cages", f: c => c.ty === "p" && c.t === "Muraille" },
     { id: "gagneurs", t: "Les Gagneurs", ic: "🏆", col: "#66d9a0", sub: "Ceux qui ramènent le plus de points", f: c => c.ty === "p" && c.t === "Gagneur" },
-    { id: "depanneurs", t: "Les Dépanneurs", ic: "🧰", col: "#b892ff", sub: "Les occasionnels, toujours prêts à rendre service", f: c => c.ty === "p" && c.t === "Dépanneur" },
+    { id: "depanneurs", t: "Les Dépanneurs", ic: "🧰", col: "#b892ff", sub: "Venus en renfort, toujours prêts à rendre service", f: c => c.ty === "p" && c.t === "Dépanneur" },
     { id: "hf", t: "Hauts faits", ic: "🏅", col: "#f5c842", sub: "Les exploits débloqués", f: c => c.ty === "h" },
     { id: "nt", t: "Faits notables", ic: "📌", col: "#e2c58f", sub: "Les moments qui ont marqué les soirées", f: c => c.ty === "n" },
   ];
