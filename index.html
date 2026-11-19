@@ -352,7 +352,8 @@
      (Boris.png) : meme cadrage pour une carte carree ou plus haute que large. */
   .roster-avatar.pf > .pf-img { object-position: 50% 50%; transform: scale(2.2); transform-origin: 50% 34%; }
   /* cadrage ajusté au portrait (tête entière, visage centré) */
-  .roster-avatar.pf > .pf-img[data-pf="Boris"], .roster-avatar.pf > .pf-img[data-pf="Raph P"] { transform: scale(2.3); transform-origin: 50% 27%; }
+  .roster-avatar.pf > .pf-img[data-pf="Boris"] { transform: scale(2.5); transform-origin: 50% 28%; }
+  .roster-avatar.pf > .pf-img[data-pf="Raph P"] { transform: scale(3); transform-origin: 50% 23%; }
   .roster-main { flex: 1; min-width: 0; }
   .roster-name { display: block; width: 100%; font-size: 14px; font-weight: 700; margin-bottom: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .roster-taux { display: flex; align-items: center; gap: 8px; }
@@ -2813,7 +2814,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 15:43</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 15:45</footer>
 
 <script>
 
@@ -8315,6 +8316,21 @@ const ACH_ABOUT = {
   cuillere:   'Dans l\'équipe classée dernière de la soirée (soirées à 3 équipes)',
 };
 
+/* Haut fait « Collectionneur AA/BB » : un par saison, paliers selon le meilleur taux de
+   complétion atteint par l'album de vignettes de la saison (un palier atteint reste
+   acquis, même si de nouvelles cartes apparaissent ensuite). Taux enregistrés sous la
+   fiche : vignettesBest/{saison}/{joueur} = % (voir l'onglet Vignettes). */
+var _VG_BEST = {}; // { "2026-27": { joueur: % } }
+const _vgSeasonKey = sy => `${sy}-${String((sy + 1) % 100).padStart(2, "0")}`;
+SEASON_DEFS.forEach(sd => {
+  const yy = String(sd.sy % 100).padStart(2, "0"), yy1 = String((sd.sy + 1) % 100).padStart(2, "0");
+  const id = "coll" + sd.sy;
+  ACH_DEFS.push({ id, name: `Collectionneur ${yy}/${yy1}`, icon: "🎴", tiers: [10, 25, 50, 75, 90, 100], hidden: false, key: id,
+    desc: v => `Album ${yy}/${yy1} complété à ${v} %` });
+  MHF_CAT_BY_ID[id] = "Distinctions";
+  ACH_ABOUT[id] = `Complétion de l'album de vignettes ${yy}/${yy1} (10, 25, 50, 75, 90 et 100 %)`;
+});
+
 // Mur de badges public (onglet Récompenses, visible par tout le monde) : les hauts faits
 // non caches, groupes par categorie (meme regroupement que la matrice admin, MHF_CAT_BY_ID),
 // avec juste l icone/nom/comment-l-avoir — jamais les baremes de niveaux, qui restent dans
@@ -8705,7 +8721,8 @@ function computeAchievementStats(playerName) {
            fantomeStreak, assiduAnnes, cometeAnnes, zeroVict, toutNul, sessionsAvecGA,
            gardiensCleanSheets, gardiensButsEncaisses, gardiensMatchs, gardienRate, remontadas, gardienAssist, gardienButs, mercenaireCount,
            equipeTypeCount, equipeTypeSaisonCount, ballonDorCount,
-           syndromePsg, cuillereBois, butArgent, revenantCount, demenageur };
+           syndromePsg, cuillereBois, butArgent, revenantCount, demenageur,
+           ...Object.fromEntries(SEASON_DEFS.map(sd => ["coll" + sd.sy, ((_VG_BEST[_vgSeasonKey(sd.sy)] || {})[playerName]) || 0])) };
 }
 
 function renderAchievementsGrid(achSt) {
@@ -12091,6 +12108,7 @@ function _accInit() {
   if (!firebase.auth || !_db) { _accReadyResolve(); return; }
   try { _auth = firebase.auth(); } catch (e) { console.warn("auth:", e); _accReadyResolve(); return; }
   const toSet = v => new Set(Array.isArray(v) ? v : Object.values(v || {}));
+  _db.ref('vignettesBest').on('value', snap => { _VG_BEST = snap.val() || {}; });
   _db.ref('config/absents').on('value', snap => { _accStatusAbs = toSet(snap.val()); _accRefreshSaisieAccess(); });
   _db.ref('config/inactifs').on('value', snap => { _accStatusInact = toSet(snap.val()); _accRefreshSaisieAccess(); });
   _auth.onAuthStateChanged(async u => {
@@ -12615,7 +12633,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
       boostRef = _db.ref(root + "/boosters");
       boostRef.on("value", snap => { if (snap.val() && ME === me) BOOST = snap.val(); });
       await syncBoosters(root);
-      if (ME === me) loadedFor = me;
+      if (ME === me) { loadedFor = me; saveBest(); }
     } catch (e) { console.warn("vignettes:", e); loadErr = "Impossible de charger ton album. Vérifie ta connexion et réessaie."; }
     loading = false; render();
   }
@@ -12636,6 +12654,14 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     });
     BOOST = res.snapshot.val() || BOOST;
     return res.committed && consumed;
+  }
+
+  // Meilleur taux de complétion atteint (haut fait « Collectionneur ») : ne baisse jamais.
+  function saveBest() {
+    if (!ME || !ALL.length) return;
+    const pct = Math.floor(ALL.filter(c => COL[c.k]).length / ALL.length * 100);
+    if (!pct) return;
+    _db.ref(`vignettesBest/${SEASON}/${ME}`).transaction(cur => (cur || 0) >= pct ? undefined : pct).catch(() => {});
   }
 
   /* ═════════ effets ═════════ */
@@ -12786,6 +12812,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     try {
       const res = await _db.ref(base() + "/cards").transaction(cur => { cur = cur || {}; cards.forEach(c => { cur[c.k] = (cur[c.k] || 0) + 1; }); return cur; });
       COL = res.snapshot.val() || COL;
+      saveBest();
       _db.ref(`vignettesLog/${SEASON}/${ME}`).push({ at: firebase.database.ServerValue.TIMESTAMP, cards: cards.map(c => c.k) }).catch(() => {});
     } catch (e) {
       console.warn(e); opening = false;
