@@ -2829,7 +2829,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 16:48</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 17:04</footer>
 
 <script>
 
@@ -8350,7 +8350,7 @@ const _vgSeasonKey = sy => `${sy}-${String((sy + 1) % 100).padStart(2, "0")}`;
 SEASON_DEFS.forEach(sd => {
   const yy = String(sd.sy % 100).padStart(2, "0"), yy1 = String((sd.sy + 1) % 100).padStart(2, "0");
   const id = "coll" + sd.sy;
-  ACH_DEFS.push({ id, name: `Collectionneur ${yy}/${yy1}`, icon: "🎴", tiers: [10, 25, 50, 75, 90, 100], hidden: false, key: id,
+  ACH_DEFS.push({ id, name: `Collection ${yy}/${yy1}`, icon: "🎴", tiers: [10, 25, 50, 75, 90, 100], hidden: false, key: id,
     desc: v => `Album ${yy}/${yy1} complété à ${v} %` });
   MHF_CAT_BY_ID[id] = "Distinctions";
   ACH_ABOUT[id] = `Complétion de l'album de vignettes ${yy}/${yy1} (10, 25, 50, 75, 90 et 100 %)`;
