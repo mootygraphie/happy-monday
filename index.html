@@ -2128,6 +2128,388 @@
   .sq-stand-head button { background: none; border: none; color: var(--text2); font-size: 18px; cursor: pointer; padding: 2px 6px; }
   .sq-note { font-size: 11.5px; color: var(--text3); font-style: italic; margin-top: 10px; }
 
+  /* ── Vignettes (onglet) ── */
+#panel-vignettes { --rC: #a3a8b4; --rR: #4fc3f7; --rE: #b892ff; --rL: #f5c842;
+  --t1: #9CA3AF; --t2: #D4863A; --t3: #94A3B8; --t4: #FBBF24; --t5: #34D399; --t6: #A5F3FC; }
+#panel-vignettes .vg-app { container-type: inline-size; container-name: app; max-width: 1120px; margin: 0 auto; }
+#panel-vignettes .art.pf > .pf-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; transform: none; z-index: 1; }
+@media (prefers-reduced-motion: reduce) { #panel-vignettes *, #panel-vignettes *::before, #panel-vignettes *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: .01ms !important; } }
+#panel-vignettes button { font-family: inherit; color: inherit; }
+#panel-vignettes button:focus-visible, #panel-vignettes [role="button"]:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+#panel-vignettes section[hidden] { display: none !important; }
+#panel-vignettes .card { width: var(--w, 100%); aspect-ratio: 5 / 7; container-type: inline-size; perspective: 1100px; position: relative; }
+#panel-vignettes .card-in { position: absolute; inset: 0; font-size: 6.4cqw; transform-style: preserve-3d; transition: transform .65s cubic-bezier(.3,.9,.3,1); }
+#panel-vignettes .card.flipped .card-in { transform: rotateY(180deg); }
+#panel-vignettes .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: .95em; padding: .34em; background: var(--frame); box-shadow: var(--glow, 0 0 0 transparent), 0 .5em 1.4em rgba(0,0,0,.6); }
+#panel-vignettes .face.back { transform: rotateY(180deg); }
+#panel-vignettes .face-in { position: relative; height: 100%; border-radius: .66em; overflow: hidden; background: #121219; display: flex; flex-direction: column; }
+#panel-vignettes .r-C { --rc: var(--rC); --frame: linear-gradient(150deg,#5d616c,#c3c7d0 45%,#7b808c 55%,#4b4f59); }
+#panel-vignettes .r-R { --rc: var(--rR); --frame: linear-gradient(150deg,#0f5a99,#8fe0ff 42%,#2a8fd6 58%,#0c3f72); --glow: 0 0 .9em rgba(79,195,247,.45); }
+#panel-vignettes .r-E { --rc: var(--rE); --frame: linear-gradient(120deg,#4b1fa8,#d9c2ff 25%,#8657f2 45%,#f0e6ff 55%,#6a3bd4 75%,#4b1fa8); --glow: 0 0 1.2em rgba(184,146,255,.6); }
+#panel-vignettes .r-L { --rc: var(--rL); --frame: linear-gradient(120deg,#9c6d05,#ffe680 18%,#f5c842 34%,#fffbe6 48%,#d9a521 64%,#ffe680 80%,#9c6d05); --glow: 0 0 1.5em rgba(245,200,66,.75), 0 0 .3em rgba(255,240,180,.9); }
+#panel-vignettes .r-E .face, #panel-vignettes .r-L .face { background-size: 240% 240%; animation: vg-flow 5s linear infinite; }
+@keyframes vg-flow { to { background-position: 240% 0; } }
+#panel-vignettes .gem { position: absolute; left: 50%; bottom: 0; transform: translate(-50%, 45%); z-index: 6; display: flex; align-items: center; gap: .3em; white-space: nowrap; font-size: .62em; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: .35em .9em; border-radius: 1em; color: #111; background: var(--rc); box-shadow: 0 .2em .6em rgba(0,0,0,.6); }
+#panel-vignettes .r-L .gem { background: linear-gradient(90deg,#d9a521,#fff3b0,#f5c842); }
+#panel-vignettes .r-E .gem { background: linear-gradient(90deg,#8657f2,#e9dcff,#b892ff); }
+#panel-vignettes .holo { position: absolute; inset: 0; pointer-events: none; z-index: 4; opacity: 0; mix-blend-mode: color-dodge;
+  background: linear-gradient(115deg, transparent 22%, rgba(255,255,255,.6) 38%, rgba(255,214,90,.4) 46%, rgba(120,220,255,.35) 54%, rgba(220,150,255,.3) 60%, transparent 74%); background-size: 260% 260%; background-position: var(--hx, 0%) var(--hy, 0%); }
+#panel-vignettes .r-L .holo { opacity: .75; animation: vg-shine 3.2s ease-in-out infinite; }
+#panel-vignettes .r-E .holo { opacity: .5; animation: vg-shine 4.2s ease-in-out infinite; }
+#panel-vignettes .r-R .holo { opacity: .2; animation: vg-shine 6s ease-in-out infinite; }
+#panel-vignettes .card.tilting .holo { animation: none; opacity: .9; }
+@keyframes vg-shine { 0%,100% { background-position: 100% 100%; } 50% { background-position: 0% 0%; } }
+#panel-vignettes .twinkle { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+#panel-vignettes .twinkle i { position: absolute; width: .7em; height: .7em; background: radial-gradient(circle, #fff 0 12%, rgba(255,240,170,.9) 18%, transparent 60%); clip-path: polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%); animation: vg-tw 2.2s ease-in-out infinite; opacity: 0; }
+@keyframes vg-tw { 0%,100% { opacity: 0; transform: scale(.3) rotate(0); } 50% { opacity: 1; transform: scale(1) rotate(45deg); } }
+#panel-vignettes .t-Rouge { --tc: var(--rouge); }
+#panel-vignettes .t-Vert { --tc: var(--vert); }
+#panel-vignettes .t-Bleue { --tc: var(--bleu); }
+#panel-vignettes .art { position: relative; aspect-ratio: 1; flex: none; overflow: hidden; background: #1a1a22; }
+#panel-vignettes .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+#panel-vignettes .gen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .2em; background: radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--tc, #888) 45%, #15151c), #0e0e14 72%); }
+#panel-vignettes .gen::before { content: ""; position: absolute; inset: 12% 10%; border: .08em solid rgba(255,255,255,.12); border-radius: .3em; }
+#panel-vignettes .gen::after { content: ""; position: absolute; left: 50%; top: 12%; bottom: 12%; width: .08em; background: rgba(255,255,255,.12); }
+#panel-vignettes .gen span { position: relative; z-index: 1; font-weight: 700; font-style: italic; font-size: 3.4em; line-height: 1; color: #fff; text-shadow: 0 .06em .4em rgba(0,0,0,.6); }
+#panel-vignettes .gen small { position: relative; z-index: 1; font-size: .48em; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.6); font-weight: 700; }
+#panel-vignettes .ovr { position: absolute; top: .45em; left: .45em; z-index: 3; display: flex; flex-direction: column; align-items: center; padding: .15em .45em .3em; border-radius: .5em; background: rgba(12,12,16,.82); border: .08em solid var(--rc); backdrop-filter: blur(4px); }
+#panel-vignettes .ovr b { font-weight: 700; font-size: 1.85em; line-height: 1; color: var(--rc); font-variant-numeric: tabular-nums; }
+#panel-vignettes .ovr span { font-size: .44em; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; }
+#panel-vignettes .strip { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: .3em; padding: .25em .5em .75em; background: linear-gradient(180deg, color-mix(in srgb, var(--tc, #888) 20%, #15151c), #101016); border-top: .1em solid var(--rc); }
+#panel-vignettes .nm { display: flex; align-items: center; gap: .35em; font-weight: 700; font-style: italic; font-size: .95em; text-transform: uppercase; letter-spacing: .03em; line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#panel-vignettes .nm i { width: .5em; height: .5em; border-radius: 50%; background: var(--tc, #888); flex: none; }
+#panel-vignettes .mini { display: grid; grid-template-columns: repeat(4, 1fr); gap: .2em; }
+#panel-vignettes .mini span { display: flex; flex-direction: column; align-items: center; font-size: .5em; font-weight: 700; letter-spacing: .06em; color: var(--text2); }
+#panel-vignettes .mini b { font-size: 1.7em; font-weight: 700; color: #fff; line-height: 1.05; letter-spacing: 0; }
+#panel-vignettes .ty-h .front .face-in { background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--cc) 30%, #16161e), #101016 70%); align-items: center; text-align: center; padding: 0 .6em .9em; }
+#panel-vignettes .band { align-self: stretch; margin: 0 -.6em; display: flex; justify-content: space-between; align-items: center; padding: .45em .7em; font-size: .5em; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; background: color-mix(in srgb, var(--cc) 22%, #121219); color: var(--cc); border-bottom: .12em solid color-mix(in srgb, var(--cc) 45%, transparent); }
+#panel-vignettes .med { margin: 1em 0 .55em; width: 6.4em; height: 6.4em; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1em; position: relative;
+  background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--cc) 35%, #1d1d27), #121219 70%); border: .16em solid var(--cc); box-shadow: 0 0 1.2em color-mix(in srgb, var(--cc) 45%, transparent), inset 0 0 1em rgba(0,0,0,.5); }
+#panel-vignettes .med::before { content: ""; position: absolute; inset: .35em; border-radius: 50%; border: .06em dashed color-mix(in srgb, var(--cc) 60%, transparent); }
+#panel-vignettes .med span { font-size: 3em; line-height: 1; filter: drop-shadow(0 .06em .1em rgba(0,0,0,.5)); }
+#panel-vignettes .cname { font-weight: 700; font-size: 1.12em; line-height: 1.1; text-wrap: balance; }
+#panel-vignettes .cdesc { font-size: .64em; color: var(--text2); line-height: 1.35; margin-top: .4em; text-wrap: balance; }
+#panel-vignettes .cfoot { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: .35em; font-size: .56em; color: var(--text2); }
+#panel-vignettes .cfoot b { color: #fff; }
+#panel-vignettes .tier { display: inline-block; font-weight: 700; font-size: .95em; letter-spacing: .06em; text-transform: uppercase; padding: .15em .6em; border-radius: 1em; border: .1em solid currentColor; }
+#panel-vignettes .tier.t1 { color: var(--t1); }
+#panel-vignettes .tier.t2 { color: var(--t2); }
+#panel-vignettes .tier.t3 { color: var(--t3); }
+#panel-vignettes .tier.t4 { color: var(--t4); }
+#panel-vignettes .tier.t5 { color: var(--t5); }
+#panel-vignettes .tier.t6 { color: var(--t6); background: linear-gradient(135deg,rgba(167,243,255,.15),rgba(196,181,255,.15)); }
+#panel-vignettes .secret { color: var(--hf-secret); }
+#panel-vignettes .ty-n .front .face-in { background: repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 .1em, transparent .1em .9em), radial-gradient(circle at 50% 28%, #2a2416, #111014 70%); align-items: center; text-align: center; padding: 0 .6em .9em; --cc: var(--gold); }
+#panel-vignettes .polaroid { position: relative; margin: 1.05em 0 .6em; width: 6.2em; height: 6.2em; background: #f4ecda; border-radius: .2em; padding: .35em .35em 1em; transform: rotate(-4deg); box-shadow: 0 .4em .9em rgba(0,0,0,.55); }
+#panel-vignettes .polaroid div { width: 100%; height: 100%; border-radius: .1em; background: radial-gradient(circle at 50% 40%, #3a3320, #17150f); display: flex; align-items: center; justify-content: center; }
+#panel-vignettes .polaroid div span { font-size: 2.6em; line-height: 1; }
+#panel-vignettes .polaroid::after { content: "📌"; position: absolute; top: -.55em; left: 50%; transform: translateX(-50%) rotate(8deg); font-size: 1em; }
+#panel-vignettes .never { color: var(--gold); font-weight: 700; }
+#panel-vignettes .bk { padding: .65em .7em 1em; gap: .38em; background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--cc, var(--tc, #888)) 20%, #16161e), #0f0f15 70%); }
+#panel-vignettes .bk-h { display: flex; justify-content: space-between; align-items: baseline; gap: .4em; }
+#panel-vignettes .bk-h b { font-weight: 700; font-style: italic; font-size: 1em; text-transform: uppercase; line-height: 1.1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#panel-vignettes .bk-h span { font-size: .46em; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--rc); white-space: nowrap; }
+#panel-vignettes .bk-row { display: flex; justify-content: space-between; align-items: center; gap: .5em; font-size: .56em; padding: .3em 0; border-top: .09em solid rgba(255,255,255,.08); color: var(--text2); min-width: 0; }
+#panel-vignettes .bk-row b { color: #fff; font-size: 1.1em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+#panel-vignettes .bk-row .who { display: flex; align-items: center; gap: .4em; min-width: 0; color: #fff; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#panel-vignettes .bk-row .who i { width: .55em; height: .55em; border-radius: 50%; background: var(--tc, #666); flex: none; }
+#panel-vignettes .bk-row .tier { font-size: .82em; }
+#panel-vignettes .bk-bars { display: grid; gap: .26em; margin-top: .1em; }
+#panel-vignettes .bk-bar { display: grid; grid-template-columns: 2.4em 1fr 1.4em; align-items: center; gap: .4em; font-size: .5em; font-weight: 700; letter-spacing: .06em; color: var(--text2); }
+#panel-vignettes .bk-bar u { height: .5em; border-radius: 1em; background: rgba(255,255,255,.08); overflow: hidden; text-decoration: none; }
+#panel-vignettes .bk-bar u i { display: block; height: 100%; background: var(--rc); border-radius: 1em; }
+#panel-vignettes .bk-bar b { color: #fff; text-align: right; font-size: 1.3em; }
+#panel-vignettes .bk-nt { display: flex; flex-wrap: wrap; gap: .25em; font-size: .48em; color: var(--text2); }
+#panel-vignettes .bk-nt span { background: rgba(255,255,255,.07); border-radius: .5em; padding: .2em .5em; }
+#panel-vignettes .bk-more { font-size: .48em; color: var(--text3); text-align: center; }
+#panel-vignettes .bk-f { margin-top: auto; font-size: .4em; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); text-align: center; }
+#panel-vignettes .cover-face { --frame: linear-gradient(150deg,#2b2b38,#55556a 45%,#2b2b38); }
+#panel-vignettes .cover-face .face-in { align-items: center; justify-content: center; gap: .4em; background: repeating-linear-gradient(45deg, rgba(255,255,255,.025) 0 .3em, transparent .3em .6em), radial-gradient(circle at 50% 45%, #23232f, #0f0f13 75%); }
+#panel-vignettes .cover-face .ball { font-size: 3em; line-height: 1; filter: drop-shadow(0 0 .4em rgba(245,200,66,.35)); }
+#panel-vignettes .cover-face b { font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: .05em; font-size: 1em; }
+#panel-vignettes .cover-face b span { color: var(--gold); }
+#panel-vignettes .cover-face small { font-size: .42em; letter-spacing: .18em; color: var(--text3); text-transform: uppercase; font-weight: 700; }
+#panel-vignettes .stage { display: flex; flex-direction: column; align-items: center; gap: 18px; min-height: 520px; }
+#panel-vignettes .pack { position: relative; width: min(240px, 66cqw); aspect-ratio: 5 / 7.6; cursor: pointer; border: none; padding: 0; background: none; filter: drop-shadow(0 18px 30px rgba(0,0,0,.6)); animation: vg-float 3.4s ease-in-out infinite; }
+@keyframes vg-float { 50% { transform: translateY(-8px) rotate(-1deg); } }
+#panel-vignettes .pack-body { position: absolute; inset: 0; border-radius: 14px; overflow: hidden; background: linear-gradient(160deg, #15151d, #2b2b3a 40%, #4a4a60 50%, #2b2b3a 60%, #15151d); background-size: 200% 200%; animation: vg-flow 6s linear infinite; border: 1px solid var(--border2); }
+#panel-vignettes .pack-body::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, rgba(255,255,255,.04) 0 2px, transparent 2px 9px); }
+#panel-vignettes .pack-body::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.18) 45%, transparent 60%); background-size: 250% 100%; animation: vg-shine 3s ease-in-out infinite; }
+#panel-vignettes .pack-label { position: absolute; inset: 15% 9% 15%; border-radius: 12px; background: #0f0f13; border: 1.5px solid var(--gold-border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 10px; }
+#panel-vignettes .pack-label .ball { font-size: 46px; line-height: 1; }
+#panel-vignettes .pack-label b { font-weight: 700; font-style: italic; font-size: 22px; line-height: 1.05; text-transform: uppercase; letter-spacing: .04em; }
+#panel-vignettes .pack-label b span { color: var(--gold); }
+#panel-vignettes .pack-label .kinds { display: flex; gap: 6px; font-size: 18px; }
+#panel-vignettes .pack-label small { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--text2); font-weight: 700; }
+#panel-vignettes .pack-top { position: absolute; left: 0; right: 0; top: 0; height: 10%; border-radius: 14px 14px 0 0; background: linear-gradient(90deg, #8a6512, #ffe68a, #8a6512); z-index: 2; }
+#panel-vignettes .pack-top::after { content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 6px; background: radial-gradient(circle at 4px 0, transparent 3px, #8a6512 3.5px) 0 0 / 8px 6px repeat-x; }
+#panel-vignettes .pack.shake { animation: vg-shake .6s ease; }
+#panel-vignettes .pack.shake.big { animation: vg-shakeBig 1.1s ease; }
+#panel-vignettes .pack.open { animation: none; }
+#panel-vignettes .pack.open .pack-top { animation: vg-tear .45s ease forwards; }
+#panel-vignettes .pack.open .pack-body, #panel-vignettes .pack.open .pack-label { animation: vg-sink .5s ease .25s forwards; }
+#panel-vignettes .pack.has-L::before { content: ""; position: absolute; inset: -60%; z-index: -1; border-radius: 50%; background: repeating-conic-gradient(from 0deg, rgba(255,215,90,.55) 0 6deg, transparent 6deg 22deg); -webkit-mask: radial-gradient(circle, #000 18%, transparent 62%); mask: radial-gradient(circle, #000 18%, transparent 62%); animation: vg-rays 4s linear infinite, vg-fadeIn .6s ease; }
+@keyframes vg-shake { 20%,60% { transform: rotate(-3deg); } 40%,80% { transform: rotate(3deg); } }
+@keyframes vg-shakeBig { 10%,30%,50%,70% { transform: rotate(-5deg) scale(1.04); } 20%,40%,60%,80% { transform: rotate(5deg) scale(1.06); } 100% { transform: scale(1.08); } }
+@keyframes vg-tear { to { transform: translate(50px,-80px) rotate(22deg); opacity: 0; } }
+@keyframes vg-sink { to { transform: translateY(90px) scale(.88); opacity: 0; } }
+@keyframes vg-rays { to { transform: rotate(360deg); } }
+@keyframes vg-fadeIn { from { opacity: 0; } }
+#panel-vignettes .pack-msg { min-height: 22px; font-size: 14px; font-weight: 700; color: var(--gold); text-align: center; animation: vg-fadeIn .4s ease; }
+#panel-vignettes .cta { border: none; background: var(--gold); color: #1b1606; font-weight: 700; font-size: 14px; padding: 12px 22px; border-radius: 12px; cursor: pointer; letter-spacing: .02em; }
+#panel-vignettes .cta.ghost { background: var(--bg2); color: var(--text); border: 1px solid var(--border2); }
+#panel-vignettes .cta:disabled { opacity: .4; cursor: default; }
+#panel-vignettes .hint { color: var(--text2); font-size: 13px; text-align: center; margin: 0; }
+#panel-vignettes .odds { color: var(--text3); font-size: 11.5px; text-align: center; max-width: 60ch; }
+#panel-vignettes .reveal { display: grid; grid-template-columns: repeat(5, minmax(0, 175px)); justify-content: center; gap: 18px 16px; width: 100%; padding-bottom: 10px; }
+@container app (max-width: 780px) {
+#panel-vignettes .reveal { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 10px; }
+}
+#panel-vignettes .slot { position: relative; cursor: pointer; animation: vg-deal .6s cubic-bezier(.2,1.3,.4,1) both; border-radius: 12px; }
+@keyframes vg-deal { from { transform: translateY(-120px) scale(.4) rotate(14deg); opacity: 0; } }
+#panel-vignettes .slot .card { width: 100%; transition: transform .3s; }
+#panel-vignettes .slot:hover:not(.shown) .card { transform: translateY(-6px); }
+#panel-vignettes .slot .card-in { transform: rotateY(180deg); }
+#panel-vignettes .slot.shown .card-in { transform: rotateY(0deg); }
+#panel-vignettes .slot.shown:not(.dup) .card { animation: vg-lift .65s ease; }
+#panel-vignettes .slot.dup .badge { transition: none; }
+@keyframes vg-lift { 40% { transform: scale(1.1) translateY(-10px); } }
+#panel-vignettes .slot:not(.shown).hint-R .cover-face { --glow: 0 0 1em rgba(79,195,247,.55); }
+#panel-vignettes .slot:not(.shown).hint-E .cover-face { --glow: 0 0 1.4em rgba(184,146,255,.75); animation: vg-pulseE 1.4s ease-in-out infinite; }
+#panel-vignettes .slot:not(.shown).hint-L .cover-face { --glow: 0 0 1.8em rgba(245,200,66,.9); animation: vg-pulseL 1s ease-in-out infinite; }
+#panel-vignettes .slot:not(.shown).hint-L.is-new::before { content: ""; position: absolute; inset: -35%; z-index: -1; border-radius: 50%; background: repeating-conic-gradient(rgba(255,215,90,.5) 0 7deg, transparent 7deg 24deg); -webkit-mask: radial-gradient(circle, #000 15%, transparent 60%); mask: radial-gradient(circle, #000 15%, transparent 60%); animation: vg-rays 5s linear infinite; }
+@keyframes vg-pulseE { 50% { box-shadow: 0 0 2.2em rgba(184,146,255,.95), 0 .5em 1.4em rgba(0,0,0,.6); } }
+@keyframes vg-pulseL { 50% { box-shadow: 0 0 3em rgba(245,200,66,1), 0 .5em 1.4em rgba(0,0,0,.6); } }
+#panel-vignettes .badge { position: absolute; top: -9px; right: -6px; z-index: 8; font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 10px; letter-spacing: .08em; opacity: 0; transform: scale(.3); transition: all .35s cubic-bezier(.2,1.6,.4,1) .5s; }
+#panel-vignettes .badge.new { background: var(--good); color: #062; }
+#panel-vignettes .badge.dup { background: var(--bg3); color: var(--text2); border: 1px solid var(--border2); }
+#panel-vignettes .slot.shown .badge { opacity: 1; transform: none; }
+#panel-vignettes .type-tag { position: absolute; bottom: -24px; left: 0; right: 0; text-align: center; font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); }
+#panel-vignettes .reveal-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 14px; }
+#panel-vignettes .spark { position: fixed; z-index: 3100; width: 9px; height: 9px; border-radius: 2px; pointer-events: none; animation: vg-spark 1.2s cubic-bezier(.15,.7,.4,1) forwards; }
+@keyframes vg-spark { to { transform: translate(var(--x), var(--y)) rotate(var(--r)); opacity: 0; } }
+#panel-vignettes .flash { position: fixed; inset: 0; z-index: 3000; pointer-events: none; animation: vg-flashE .7s ease forwards; background: radial-gradient(circle at var(--fx,50%) var(--fy,50%), rgba(200,170,255,.55), transparent 60%); }
+@keyframes vg-flashE { from { opacity: 1; } to { opacity: 0; } }
+@container app (max-width: 560px) {
+#panel-vignettes .season-note, #panel-vignettes .book-foot .swipe { display: none; }
+}
+#panel-vignettes .carousel { position: relative; width: 100%; overflow: hidden; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+#panel-vignettes .car-arrow { position: absolute; top: calc(50% - 8px); transform: translateY(-50%); z-index: 5; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border2); background: rgba(26,26,36,.88); color: var(--text); font-size: 24px; line-height: 1; padding-bottom: 3px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+#panel-vignettes .car-arrow.l { left: 4px; }
+#panel-vignettes .car-arrow.r { right: 4px; }
+#panel-vignettes .car-arrow:disabled { opacity: .2; cursor: default; }
+#panel-vignettes .car-slot .card { pointer-events: none; }
+#panel-vignettes .car-track { display: flex; transition: transform .45s cubic-bezier(.3,.8,.3,1); }
+#panel-vignettes .car-slot { flex: 0 0 100%; display: flex; justify-content: center; padding: 14px 0 30px; }
+#panel-vignettes .car-slot .slot { width: min(215px, 60cqw, 27cqh); animation: none; }
+#panel-vignettes .car-dots { display: flex; gap: 6px; justify-content: center; }
+#panel-vignettes .car-dots i { width: 7px; height: 7px; border-radius: 4px; background: var(--border2); transition: all .25s; }
+#panel-vignettes .car-dots i.seen { background: var(--text3); }
+#panel-vignettes .car-dots i.on { width: 20px; background: var(--gold); }
+#panel-vignettes #carPrev { padding: 12px 16px; }
+#panel-vignettes .wo { position: fixed; inset: 0; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; background: radial-gradient(circle at 50% 50%, rgba(40,30,5,.96), rgba(5,5,8,.985) 70%); animation: vg-fadeIn .35s ease; overflow: hidden; cursor: pointer; }
+#panel-vignettes .wo-rays { position: absolute; left: 50%; top: 50%; width: 220cqmax; height: 220cqmax; margin: -110cqmax 0 0 -110cqmax; background: repeating-conic-gradient(rgba(255,215,90,.22) 0 5deg, transparent 5deg 15deg); -webkit-mask: radial-gradient(circle, #000 4%, transparent 38%); mask: radial-gradient(circle, #000 4%, transparent 38%); animation: vg-raysIn 1.6s ease both, vg-rays 14s linear infinite; }
+@keyframes vg-raysIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+#panel-vignettes .wo-kicker { position: relative; font-size: 12px; font-weight: 700; letter-spacing: .4em; text-transform: uppercase; color: rgba(255,230,150,.75); animation: vg-fadeIn .5s ease .2s both; }
+#panel-vignettes .wo-card { position: relative; width: min(290px, 68cqw, 46cqh); animation: vg-rise 1.7s cubic-bezier(.2,.8,.2,1) .3s both; }
+#panel-vignettes .wo-card .card { width: 100%; }
+#panel-vignettes .wo-card .card-in { transition: none; animation: vg-spin 1.7s cubic-bezier(.3,.6,.2,1) .3s both; }
+@keyframes vg-rise { 0% { transform: translateY(70cqh) scale(.35); } 70% { transform: translateY(-14px) scale(1.06); } 100% { transform: none; } }
+@keyframes vg-spin { from { transform: rotateY(180deg); } to { transform: rotateY(1440deg); } }
+#panel-vignettes .wo-flash { position: absolute; inset: 0; background: radial-gradient(circle, rgba(255,250,220,.95), rgba(255,215,90,.4) 35%, transparent 65%); opacity: 0; animation: vg-boom .9s ease 1.95s both; pointer-events: none; }
+@keyframes vg-boom { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
+#panel-vignettes .wo-ring { position: absolute; left: 50%; top: 50%; width: 200px; height: 200px; margin: -100px 0 0 -100px; border-radius: 50%; border: 4px solid rgba(255,215,90,.9); opacity: 0; animation: vg-ring 1.1s ease-out 2s both; pointer-events: none; }
+@keyframes vg-ring { 0% { opacity: 1; transform: scale(.3); } 100% { opacity: 0; transform: scale(4.5); } }
+#panel-vignettes .wo-title { position: relative; font-size: clamp(30px, 8cqw, 58px); font-weight: 700; font-style: italic; letter-spacing: .12em; text-transform: uppercase; background: linear-gradient(90deg,#c48a0c,#fff3b0,#f5c842,#fff3b0,#c48a0c); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 18px rgba(245,200,66,.6)); animation: vg-slam .55s cubic-bezier(.2,1.6,.4,1) 2s both, vg-flow 3s linear 2.5s infinite; }
+@keyframes vg-slam { from { transform: scale(2.6); opacity: 0; letter-spacing: .6em; } to { transform: none; opacity: 1; } }
+#panel-vignettes .wo-sub { position: relative; color: rgba(255,240,200,.7); font-size: 13px; animation: vg-fadeIn .5s ease 2.7s both; }
+#panel-vignettes .shelf { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 12px; }
+#panel-vignettes .shelf-item { display: flex; align-items: center; gap: 10px; padding: 9px 14px 9px 10px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg2); cursor: pointer; text-align: left; color: var(--text); }
+#panel-vignettes .shelf-item .spine { width: 14px; height: 38px; border-radius: 3px 5px 5px 3px; background: linear-gradient(90deg, #8a6512, var(--gold) 60%, #fff1b0); box-shadow: inset -2px 0 0 rgba(0,0,0,.3); }
+#panel-vignettes .shelf-item b { display: block; font-size: 13.5px; }
+#panel-vignettes .shelf-item small { font-size: 11px; color: var(--text2); }
+#panel-vignettes .shelf-item[aria-current="true"] { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 10%, var(--bg2)); }
+#panel-vignettes .shelf-item.soon { cursor: default; opacity: .55; }
+#panel-vignettes .shelf-item.soon .spine { background: linear-gradient(90deg, #2b2b38, #4a4a5c); }
+#panel-vignettes .tag-live { color: var(--good); font-weight: 700; }
+#panel-vignettes .season-note { flex-basis: 100%; text-align: center; font-size: 12.5px; color: var(--text3); margin: 2px auto 0; max-width: 74ch; }
+#panel-vignettes .live-ed { font-size: 11.5px; font-weight: 700; color: var(--good); letter-spacing: .04em; }
+#panel-vignettes .secs { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 18px; }
+#panel-vignettes .sec-chip { border: 1px solid var(--border2); background: var(--bg2); border-radius: 20px; padding: 6px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; color: var(--text2); display: flex; align-items: center; gap: 6px; }
+#panel-vignettes .sec-chip b { font-size: 11px; color: var(--text3); font-variant-numeric: tabular-nums; }
+#panel-vignettes .sec-chip[aria-current="true"] { color: var(--text); border-color: var(--sc); background: color-mix(in srgb, var(--sc) 14%, var(--bg2)); }
+#panel-vignettes .book-wrap { position: relative; display: flex; align-items: center; gap: 10px; }
+#panel-vignettes .nav-btn { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border2); background: var(--bg2); font-size: 26px; line-height: 1; cursor: pointer; color: var(--text); display: flex; align-items: center; justify-content: center; padding-bottom: 3px; }
+#panel-vignettes .nav-btn:disabled { opacity: .25; cursor: default; }
+#panel-vignettes .book { position: relative; flex: 1; min-width: 0; display: grid; grid-template-columns: 1fr 1fr; perspective: 2400px; border-radius: 10px; box-shadow: 0 30px 60px rgba(0,0,0,.6), 0 0 0 8px #191921, 0 0 0 9px var(--border2); touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+#panel-vignettes .book.single { grid-template-columns: 1fr; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,.6), 0 0 0 6px #191921, 0 0 0 7px var(--border2); }
+#panel-vignettes .book:not(.single)::after { content: ""; position: absolute; top: 0; bottom: 0; left: calc(50% - 22px); width: 44px; z-index: 7; pointer-events: none; background: linear-gradient(90deg, transparent, rgba(0,0,0,.45) 45%, rgba(0,0,0,.6) 50%, rgba(0,0,0,.45) 55%, transparent); }
+#panel-vignettes .page { position: relative; min-width: 0; display: flex; flex-direction: column; padding: 22px 26px 18px; overflow: hidden; isolation: isolate;
+  background: radial-gradient(rgba(255,255,255,.035) 1px, transparent 1.3px) 0 0 / 9px 9px, linear-gradient(180deg, #1e1e2a, #191923); }
+#panel-vignettes .page.L { border-radius: 10px 0 0 10px; }
+#panel-vignettes .page.R { border-radius: 0 10px 10px 0; }
+#panel-vignettes .book.single .page { border-radius: 10px; }
+#panel-vignettes .page.L::before { content: ""; position: absolute; inset: 0 0 0 auto; width: 60px; background: linear-gradient(90deg, transparent, rgba(0,0,0,.3)); pointer-events: none; }
+#panel-vignettes .page.R::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 60px; background: linear-gradient(270deg, transparent, rgba(0,0,0,.3)); pointer-events: none; }
+#panel-vignettes .pg-num { margin-top: auto; padding-top: 16px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text3); letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
+#panel-vignettes .pg-num b { width: 28px; height: 28px; border-radius: 50%; background: var(--sc, var(--gold)); color: #111; display: flex; align-items: center; justify-content: center; font-size: 12px; letter-spacing: 0; }
+#panel-vignettes .page.L .pg-num { flex-direction: row-reverse; }
+#panel-vignettes .sec-head { position: relative; margin: -22px -26px 20px; padding: 18px 26px 16px; color: #fff; overflow: hidden;
+  background: repeating-linear-gradient(-45deg, var(--sc) 0 14px, color-mix(in srgb, var(--sc) 80%, #000) 14px 28px); }
+#panel-vignettes .sec-head::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.6), rgba(0,0,0,.15)); }
+#panel-vignettes .sec-head > * { position: relative; z-index: 1; }
+#panel-vignettes .sec-head small { display: block; font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; opacity: .85; }
+#panel-vignettes .sec-head h2 { margin: 2px 0 0; font-size: clamp(22px, 3.2cqw, 32px); font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: .03em; line-height: 1.05; }
+#panel-vignettes .sec-head p { margin: 4px 0 0; font-size: 13px; opacity: .92; }
+#panel-vignettes .sec-head.mini { padding: 10px 26px; margin-bottom: 18px; }
+#panel-vignettes .sec-head.mini h2 { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#panel-vignettes .stk-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 14px; }
+#panel-vignettes .book.single .stk-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#panel-vignettes .stk { position: relative; border: none; padding: 0; background: none; cursor: pointer; text-align: left; transition: transform .2s; }
+#panel-vignettes .stk:hover { transform: translateY(-3px) rotate(-.6deg); }
+#panel-vignettes .stk .card { width: 100%; }
+#panel-vignettes .stk.new .card { animation: vg-paste .7s cubic-bezier(.2,1.3,.4,1) .05s both; }
+#panel-vignettes .stk.new { border-radius: 10px; outline: 2px dashed rgba(255,255,255,.12); outline-offset: -2px; }
+#panel-vignettes .stk.new::after { content: "NOUVELLE"; position: absolute; top: -9px; left: 50%; transform: translateX(-50%); z-index: 9; background: var(--good); color: #052; font-size: 10px; font-weight: 700; letter-spacing: .1em; padding: 2px 8px; border-radius: 10px; animation: vg-fadeIn .4s ease .9s both; }
+@keyframes vg-paste { 0% { transform: translateY(-46px) scale(1.4) rotate(-8deg); opacity: 0; } 60% { transform: scale(.96) rotate(1deg); opacity: 1; } 100% { transform: none; } }
+#panel-vignettes .stk .count { position: absolute; top: -8px; right: -6px; z-index: 9; background: var(--bg3); border: 1px solid var(--border2); color: var(--text); font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 10px; }
+#panel-vignettes .stk-empty { width: 100%; aspect-ratio: 5 / 7; border-radius: 10px; border: 2px dashed color-mix(in srgb, var(--rc) 55%, transparent); background: color-mix(in srgb, var(--rc) 6%, rgba(0,0,0,.28)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; padding: 8px; position: relative; overflow: hidden; }
+#panel-vignettes .stk-empty .wm { position: absolute; font-size: 74px; opacity: .06; pointer-events: none; }
+#panel-vignettes .stk-empty .no { font-size: 26px; font-weight: 700; font-style: italic; color: color-mix(in srgb, var(--rc) 70%, var(--text2)); line-height: 1; font-variant-numeric: tabular-nums; }
+#panel-vignettes .stk-empty .nm2 { font-size: 13px; font-weight: 700; color: var(--text2); line-height: 1.2; }
+#panel-vignettes .stk-empty .rt { font-size: 9.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: color-mix(in srgb, var(--rc) 80%, var(--text3)); }
+#panel-vignettes .stk-blank { visibility: hidden; aspect-ratio: 5 / 7; }
+#panel-vignettes .cover-pg { align-items: center; justify-content: center; text-align: center; gap: 14px; background: radial-gradient(circle at 50% 35%, rgba(245,200,66,.18), transparent 55%), repeating-linear-gradient(-45deg, #1d1d28 0 18px, #191922 18px 36px); }
+#panel-vignettes .cover-pg .big { font-size: 84px; line-height: 1; filter: drop-shadow(0 0 30px rgba(245,200,66,.45)); }
+#panel-vignettes .cover-pg small { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); font-weight: 700; }
+#panel-vignettes .cover-pg h2 { margin: 0; font-size: clamp(30px, 5cqw, 46px); font-weight: 700; font-style: italic; text-transform: uppercase; line-height: 1; letter-spacing: .03em; }
+#panel-vignettes .cover-pg h2 span { color: var(--gold); display: block; }
+#panel-vignettes .cover-pg .season { font-size: 13px; color: var(--text2); }
+#panel-vignettes .cover-pg .cnt { margin-top: 10px; padding: 8px 16px; border: 1px solid var(--gold-border); border-radius: 30px; font-size: 13px; color: var(--text); }
+#panel-vignettes .cover-pg .cnt b { color: var(--gold); }
+#panel-vignettes .toc h3 { margin: 0 0 4px; font-size: 22px; font-weight: 700; font-style: italic; text-transform: uppercase; }
+#panel-vignettes .toc > p { margin: 0 0 14px; color: var(--text2); font-size: 13px; }
+#panel-vignettes .toc-row { display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 12px; padding: 10px 6px; border: none; border-bottom: 1px dashed var(--border2); cursor: pointer; background: none; width: 100%; text-align: left; color: var(--text); }
+#panel-vignettes .toc-row:hover { background: rgba(255,255,255,.03); }
+#panel-vignettes .toc-row .i { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: color-mix(in srgb, var(--sc) 20%, transparent); border: 1px solid color-mix(in srgb, var(--sc) 50%, transparent); }
+#panel-vignettes .toc-row b { font-size: 15px; font-weight: 700; display: block; }
+#panel-vignettes .toc-row small { font-size: 11.5px; color: var(--text3); }
+#panel-vignettes .toc-row .pr { font-size: 12px; color: var(--text2); text-align: right; font-variant-numeric: tabular-nums; }
+#panel-vignettes .toc-row .pr i { display: block; width: 70px; height: 5px; border-radius: 4px; background: var(--bg3); margin-top: 4px; overflow: hidden; }
+#panel-vignettes .toc-row .pr i u { display: block; height: 100%; background: var(--sc); text-decoration: none; }
+#panel-vignettes .end-pg { align-items: center; justify-content: center; text-align: center; color: var(--text2); gap: 10px; }
+#panel-vignettes .end-pg .big { font-size: 56px; }
+#panel-vignettes .end-pg h3 { margin: 0; color: var(--text); font-style: italic; text-transform: uppercase; }
+#panel-vignettes .blank-pg { background: radial-gradient(rgba(255,255,255,.035) 1px, transparent 1.3px) 0 0 / 9px 9px, #1a1a24; }
+#panel-vignettes .leaf { position: absolute; top: 0; bottom: 0; width: 50%; left: 50%; z-index: 8; transform-style: preserve-3d; transform-origin: left center; }
+#panel-vignettes .leaf.back-turn { left: 0; transform-origin: right center; }
+#panel-vignettes .book.single .leaf { width: 100%; left: 0; transform-origin: left center; }
+#panel-vignettes .leaf > .page { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+#panel-vignettes .leaf > .page.bk-side { transform: rotateY(180deg); }
+#panel-vignettes .leaf > .page::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(0,0,0,.55), transparent 60%); opacity: 0; animation: vg-shade .8s ease; }
+#panel-vignettes .leaf .stk.new .card { animation: none; }
+#panel-vignettes .leaf .stk.new::after { display: none; }
+@keyframes vg-shade { 50% { opacity: 1; } }
+#panel-vignettes .leaf.go-next { animation: vg-turnNext .8s cubic-bezier(.45,.05,.3,1) forwards; }
+#panel-vignettes .leaf.go-prev { animation: vg-turnPrev .8s cubic-bezier(.45,.05,.3,1) forwards; }
+#panel-vignettes .leaf.go-back1 { animation: vg-turnBack1 .8s cubic-bezier(.45,.05,.3,1) forwards; }
+@keyframes vg-turnNext { to { transform: rotateY(-180deg); } }
+@keyframes vg-turnPrev { to { transform: rotateY(180deg); } }
+@keyframes vg-turnBack1 { from { transform: rotateY(-180deg); } to { transform: none; } }
+#panel-vignettes .book-foot { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 22px; font-size: 12.5px; color: var(--text2); }
+#panel-vignettes .book-foot .swipe { color: var(--text3); }
+#panel-vignettes .book-foot .reset { margin-left: auto; }
+@container app (max-width: 760px) {
+#panel-vignettes .book-wrap { gap: 0; }
+#panel-vignettes .nav-btn { position: absolute; z-index: 20; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; background: rgba(26,26,36,.92); }
+#panel-vignettes .nav-btn.prev { left: -12px; }
+#panel-vignettes .nav-btn.next { right: -12px; }
+#panel-vignettes .page { padding: 18px 16px 14px; }
+#panel-vignettes .sec-head { margin: -18px -16px 18px; padding: 14px 16px; }
+#panel-vignettes .sec-head.mini { padding: 10px 16px; }
+#panel-vignettes .stk-grid { gap: 22px 12px; }
+}
+@container (max-width: 165px) {
+#panel-vignettes .mini { display: none; }
+#panel-vignettes .strip { gap: .15em; padding-bottom: 1em; }
+#panel-vignettes .nm { font-size: 1.15em; }
+#panel-vignettes .strip::after { content: attr(data-sub); font-size: .62em; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text2); }
+#panel-vignettes .cdesc, #panel-vignettes .cfoot span:not(.tier) { display: none; }
+#panel-vignettes .ty-n .cfoot { display: none; }
+#panel-vignettes .cname { font-size: 1.22em; }
+#panel-vignettes .band { font-size: .62em; }
+#panel-vignettes .gem { font-size: .8em; }
+#panel-vignettes .ovr b { font-size: 2.1em; }
+#panel-vignettes .ovr span { font-size: .55em; }
+#panel-vignettes .tier { font-size: 1.25em; }
+}
+#panel-vignettes .modal { position: fixed; inset: 0; z-index: 1500; background: rgba(5,5,8,.85); backdrop-filter: blur(6px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 20px; animation: vg-fadeIn .2s ease; }
+#panel-vignettes .modal[hidden] { display: none; }
+#panel-vignettes .modal .card { --w: min(330px, 78cqw, 54cqh); cursor: pointer; animation: vg-pop .35s cubic-bezier(.2,1.4,.4,1); }
+@keyframes vg-pop { from { transform: scale(.7); opacity: 0; } }
+#panel-vignettes .modal-tip { color: var(--text2); font-size: 12.5px; text-align: center; }
+#panel-vignettes .modal-close { position: absolute; top: max(14px, env(safe-area-inset-top, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); background: var(--bg3); border: 1px solid var(--border2); border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer; }
+@media (prefers-reduced-motion: reduce) {
+#panel-vignettes *::before, #panel-vignettes *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: .01ms !important; }
+}
+#panel-vignettes .drops-top, #panel-vignettes .drops-bottom { display: none; }
+#panel-vignettes .sel { position: relative; }
+#panel-vignettes .sel::after { content: "▾"; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--gold); pointer-events: none; font-size: 14px; }
+#panel-vignettes .sel select { -webkit-appearance: none; appearance: none; width: 100%; background: linear-gradient(180deg, #22222f, #1a1a24); border: 1px solid var(--border2); border-radius: 14px; padding: 13px 40px 13px 16px; font: inherit; font-size: 15px; font-weight: 600; color: var(--text); cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,.05); }
+#panel-vignettes .sel select:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
+#panel-vignettes .drops-top { margin-bottom: 14px; }
+#panel-vignettes .drops-top .sel select { border-color: var(--gold-border); }
+#panel-vignettes .drops-bottom { margin-top: 18px; }
+@container app (max-width: 560px) {
+#panel-vignettes .shelf, #panel-vignettes .secs { display: none; }
+#panel-vignettes .drops-top, #panel-vignettes .drops-bottom { display: block; }
+}
+@keyframes vg-acPulse { 50% { box-shadow: 0 0 0 6px rgba(245,200,66,.18); } }
+@keyframes vg-acUp { from { transform: translateY(100%); } }
+@keyframes vg-acZoom { from { transform: scale(.92); opacity: 0; } }
+
+/* ── propres à l'onglet du site ── */
+#panel-vignettes { padding-bottom: 40px; }
+#panel-vignettes .vg-head { text-align: center; margin: 4px 0 18px; }
+#panel-vignettes .vg-head h2 { margin: 0; font-size: 22px; font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: .04em; }
+#panel-vignettes .vg-head h2 span { color: var(--gold); }
+#panel-vignettes .vg-asof { margin: 4px 0 0; font-size: 12px; color: var(--text3); }
+#panel-vignettes .vg-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; margin-bottom: 22px; }
+#panel-vignettes .vg-subtabs { display: inline-flex; background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 4px; gap: 3px; }
+#panel-vignettes .vg-subtab { padding: 9px 16px; border-radius: 9px; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; background: transparent; color: var(--text3); border: none; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+#panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(255,255,255,.11); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,.45); }
+html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(0,0,0,.08); }
+#panel-vignettes .vg-prog { flex: 0 1 330px; min-width: 240px; background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 12px 14px; }
+#panel-vignettes .vg-prog-top { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 7px; }
+#panel-vignettes .vg-prog-top b { color: var(--text); font-size: 13px; letter-spacing: 0; font-variant-numeric: tabular-nums; }
+#panel-vignettes .vg-progbar { height: 7px; border-radius: 7px; background: var(--bg3); overflow: hidden; }
+#panel-vignettes .vg-progbar i { display: block; height: 100%; background: linear-gradient(90deg, #b8860b, var(--gold), #fff1b0); transition: width .6s ease; }
+#panel-vignettes .vg-prog-r { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 9px; }
+#panel-vignettes .vg-prog-r span { font-size: 10.5px; color: var(--text3); display: flex; flex-direction: column; align-items: center; border-radius: 8px; padding: 3px 0; background: rgba(127,127,127,.06); }
+#panel-vignettes .vg-prog-r b { font-size: 13px; font-variant-numeric: tabular-nums; }
+#panel-vignettes .vg-prog-r .C b { color: var(--rC); } #panel-vignettes .vg-prog-r .R b { color: var(--rR); } #panel-vignettes .vg-prog-r .E b { color: var(--rE); } #panel-vignettes .vg-prog-r .L b { color: var(--rL); }
+#panel-vignettes section[hidden] { display: none !important; }
+#panel-vignettes .vg-stock { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; font-size: 13px; color: var(--text2); }
+#panel-vignettes .vg-stock-n { font-size: 22px; letter-spacing: 2px; }
+#panel-vignettes .vg-stock b { color: var(--text); }
+#panel-vignettes .vg-legend { margin-top: 30px; color: var(--text3); font-size: 12px; line-height: 1.65; border-top: 1px solid var(--border); padding-top: 14px; }
+#panel-vignettes .vg-legend b { color: var(--text2); }
+#panel-vignettes .vg-foot { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 20px; font-size: 12.5px; color: var(--text2); }
+#panel-vignettes .vg-foot .swipe { color: var(--text3); }
+#panel-vignettes .vg-locked { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 10px 0 30px; }
+#panel-vignettes .vg-locked h3 { margin: 8px 0 0; font-size: 20px; font-style: italic; text-transform: uppercase; }
+#panel-vignettes .vg-locked p { margin: 0; max-width: 52ch; color: var(--text2); font-size: 14px; }
+#panel-vignettes .vg-locked .vg-muted { color: var(--text3); font-size: 13px; }
+#panel-vignettes .vg-teaser { display: flex; justify-content: center; gap: 14px; margin-bottom: 8px; }
+#panel-vignettes .vg-tcard { width: 150px; }
+#panel-vignettes .vg-tcard:nth-child(1) { transform: rotate(-6deg) translateY(10px); }
+#panel-vignettes .vg-tcard:nth-child(3) { transform: rotate(6deg) translateY(10px); }
+@container app (max-width: 560px) {
+  #panel-vignettes .vg-tcard { width: 100px; }
+  #panel-vignettes .vg-prog { flex-basis: 100%; }
+  #panel-vignettes .vg-bar { justify-content: center; }
+}
+
   /* ── Comptes joueurs : volet connexion / création ── */
   #acc-modal { position: fixed; inset: 0; z-index: 2600; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; padding: 20px; animation: acmFade .2s ease; }
   #acc-modal[hidden] { display: none; }
@@ -2297,6 +2679,7 @@
       <button class="main-tab" data-tab="dashboard">Dashboard</button>
       <button class="main-tab" data-tab="joueurs">Effectif</button>
       <button class="main-tab" data-tab="stats">Récompenses</button>
+      <button class="main-tab" data-tab="vignettes">Vignettes</button>
     </div>
   </div>
   <p id="header-sub"></p>
@@ -2317,6 +2700,7 @@
     <button class="hnav-tab" data-tab="dashboard">Dashboard</button>
     <button class="hnav-tab" data-tab="joueurs">Effectif</button>
     <button class="hnav-tab" data-tab="stats">Récompenses</button>
+    <button class="hnav-tab" data-tab="vignettes">Vignettes</button>
   </div>
   <div class="hnav-drawer-divider"></div>
   <div class="hnav-drawer-actions">
@@ -2385,6 +2769,7 @@
 
   <!-- ── Onglet Stats ── -->
   <div class="tab-panel" id="panel-stats"></div>
+  <div class="tab-panel" id="panel-vignettes"></div>
 
   <!-- ── Onglet Règlement (admin) ── -->
   <div class="tab-panel" id="panel-reglement"></div>
@@ -2415,7 +2800,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 13:27</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 13:50</footer>
 
 <script>
 
@@ -7235,6 +7620,9 @@ document.querySelectorAll(".main-tab").forEach(tab => {
       } else if (tab.dataset.tab === "live") {
         history.replaceState(null, '', '#live');
         renderLive();
+      } else if (tab.dataset.tab === "vignettes") {
+        history.replaceState(null, '', '#vignettes');
+        window._vgOnShow && window._vgOnShow();
       }
       _liveRefresh();
     });
@@ -11693,6 +12081,7 @@ function _accApplyRole() {
   const role = sessionStorage.getItem("hmft_role") || "user";
   applyRole(role);
   updateAdminBtn();
+  if (typeof window.renderVignettes === "function") window.renderVignettes(); // album de la bonne fiche
   // plus de droit de saisie (déconnexion) alors qu'on est sur la Saisie : retour à l'accueil
   if (role === "user" && document.getElementById("panel-saisie")?.classList.contains("active")) {
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
@@ -11960,6 +12349,633 @@ document.getElementById("acc-modal").addEventListener("input", e => {
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.getElementById("acc-modal").hidden) _accClose(); });
 
 
+/* ══════════════════════════════════════════════════════════
+   VIGNETTES — cartes à collectionner (réservé aux comptes joueurs)
+   Données rangées SOUS LA FICHE JOUEUR (jamais sous le compte technique) :
+     vignettes/{saison}/{joueur} = { cards: {clé: nb}, pasted: {clé: true},
+                                     boosters: { stock, day, welcome } }
+     vignettesLog/{saison}/{joueur}/{push} = { at, cards: [...] }  (journal, ajout seul)
+   → un compte recréé et rattaché à la même fiche retrouve tout.
+   Cartes calculées en direct depuis les matchs de la saison (même moteur que le site) :
+   joueurs (notes ATT/PAS/VIC/FID/GAR), hauts faits (ACH_DEFS + computeAchievementStats),
+   faits notables (CUSTOM_ACH_DEFS). Boosters : 5 à l'ouverture de l'album, puis +1 par
+   jour (heure de Paris, horloge du serveur Firebase), 5 en réserve au maximum.
+══════════════════════════════════════════════════════════ */
+(() => {
+  const panel = document.getElementById("panel-vignettes");
+  if (!panel) return;
+  const RL = { L: "Légendaire", E: "Épique", R: "Rare", C: "Commune" };
+  const RO = { L: 0, E: 1, R: 2, C: 3 };
+  const TYPE = { p: "Joueur", h: "Haut fait", n: "Fait notable" };
+  const CATVAR = { "Attaque": "--hf-attaque", "Défense": "--hf-defense", "Collectif": "--hf-collectif", "Présence": "--hf-presence", "Distinctions": "--hf-distinct", "Secrets": "--hf-secret" };
+  const STATS = ["ATT", "PAS", "VIC", "FID", "GAR"];
+  const TITLES = { ATT: "Buteur", PAS: "Passeur", VIC: "Gagneur", FID: "Pilier", GAR: "Muraille" };
+  const MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+  const fdate = s => { const [y, m, d] = (s || "").split("-"); return d ? `${+d} ${MOIS[+m - 1]}` : ""; };
+  const ini = n => _saisieInitials(n);
+  const SY = _currentSeason();
+  const SEASON = `${SY}-${String((SY + 1) % 100).padStart(2, "0")}`;
+  const SEASON_LABEL = `Saison ${SY}-${SY + 1}`;
+
+  /* ═════════ calcul des cartes ═════════ */
+  let ALL = [], BYK = {}, PLAYERS = [], NTEAM = {}, buildSig = "";
+  function build() {
+    const sessions = SESSIONS.filter(s => _seasonStart(s.date) === SY);
+    const sig = sessions.length + "|" + sessions.map(s => s.date + ":" + (s.matchs || []).length).join(",") + "|" + (CUSTOM_ACH_AWARDS || []).length;
+    if (sig === buildSig && ALL.length) return;
+    buildSig = sig;
+    // ── joueurs
+    const P = {};
+    const g = n => P[n] || (P[n] = { pres: 0, mj: 0, v: 0, n: 0, d: 0, b: 0, p: 0, gk: 0, enc: 0, nt: {}, teams: {} });
+    sessions.forEach(s => {
+      const team = {};
+      Object.entries(s.presences || {}).forEach(([p, v]) => { if (v && v.statut === "Présent") { team[p] = v.equipe; const x = g(p); x.pres++; if (v.equipe) x.teams[v.equipe] = (x.teams[v.equipe] || 0) + 1; } });
+      (s.matchs || []).forEach((m, mi) => {
+        const A = m.eqA, B = m.eqB, sa = m.scoreA || 0, sb = m.scoreB || 0;
+        Object.entries(team).forEach(([p, t]) => {
+          if (!t || (t !== A && t !== B) || _isPlayerOutForSessionMatch(s, p, mi)) return;
+          const me = t === A ? sa : sb, ot = t === A ? sb : sa, x = g(p);
+          x.mj++; if (me > ot) x.v++; else if (me === ot) x.n++; else x.d++;
+        });
+        ["A", "B"].forEach(side => {
+          const bs = m["buteurs" + side] || [], ps = m["passeurs" + side] || [];
+          bs.forEach((b, j) => { if (b && b !== "CSC") g(b).b++; if (ps[j] && b !== "CSC") g(ps[j]).p++; });
+          const other = side === "A" ? "B" : "A", gks = m["gardiens" + side] || [];
+          const tot = m["score" + other] || 0, mt1 = m["mt1" + other] || 0;
+          gks.slice(0, 2).forEach((gk, h) => { if (gk) { const x = g(gk); x.gk++; x.enc += h === 0 ? mt1 : Math.max(0, tot - mt1); } });
+        });
+        (m.notables || []).forEach(nt => { if (nt && nt.player && nt.defiId) { const x = g(nt.player); x.nt[nt.defiId] = (x.nt[nt.defiId] || 0) + 1; } });
+      });
+    });
+    Object.keys(P).forEach(n => { if (!P[n].pres) delete P[n]; });
+    const names = Object.keys(P);
+    const sum = k => names.reduce((a, n) => a + P[n][k], 0);
+    const totMj = Math.max(1, sum("mj")), totGk = Math.max(1, sum("gk"));
+    const mg = sum("b") / totMj, mp = sum("p") / totMj, mpts = names.reduce((a, n) => a + 3 * P[n].v + P[n].n, 0) / totMj, mgk = sum("enc") / totGk;
+    const shrink = (num, den, k, mean) => (num + k * mean) / (den + k);
+    const raw = {};
+    names.forEach(n => { const v = P[n]; raw[n] = { ATT: shrink(v.b, v.mj, 15, mg), PAS: shrink(v.p, v.mj, 15, mp), VIC: shrink(3 * v.v + v.n, v.mj, 15, mpts), FID: v.pres, GAR: v.gk >= 4 ? -shrink(v.enc, v.gk, 4, mgk) : null }; });
+    const notes = {};
+    STATS.forEach(k => {
+      const vals = names.filter(n => raw[n][k] != null).map(n => [n, raw[n][k]]).sort((a, b) => a[1] - b[1]);
+      const L = vals.length; notes[k] = {};
+      vals.forEach(([n, x], i) => { const same = vals.map((v, j) => v[1] === x ? j : -1).filter(j => j >= 0); const r = same.reduce((a, b) => a + b, 0) / same.length; notes[k][n] = L > 1 ? Math.round(42 + 56 * (r / (L - 1))) : 70; });
+    });
+    const pcards = names.map(n => {
+      const s = {}; STATS.forEach(k => { s[k] = notes[k][n] ?? null; });
+      let ov = .3 * s.ATT + .22 * s.PAS + .26 * s.VIC + .22 * s.FID;
+      if (s.GAR != null) ov = Math.max(ov, .75 * ov + .25 * s.GAR);
+      ov += 1.5 * Object.values(P[n].nt).reduce((a, b) => a + b, 0);
+      return { n, s, ov, v: P[n] };
+    });
+    const ovs = pcards.map(c => c.ov), lo = Math.min(...ovs), hi = Math.max(...ovs);
+    pcards.forEach(c => { c.o = hi > lo ? Math.round(58 + (c.ov - lo) / (hi - lo) * 36) : 76; });
+    pcards.sort((a, b) => b.ov - a.ov);
+    const N = pcards.length, nL = Math.max(1, Math.round(N * .1)), nE = Math.round(N * .2), nR = Math.round(N * .3);
+    PLAYERS = pcards.map((c, i) => {
+      const best = STATS.filter(k => c.s[k] != null).sort((a, b) => c.s[b] - c.s[a])[0];
+      const tm = Object.entries(c.v.teams).sort((a, b) => b[1] - a[1])[0];
+      return { k: "p:" + c.n, ty: "p", n: c.n, o: c.o, s: c.s, t: TITLES[best], r: i < nL ? "L" : i < nL + nE ? "E" : i < nL + nE + nR ? "R" : "C", team: tm ? tm[0] : "",
+        st: { pres: c.v.pres, mj: c.v.mj, v: c.v.v, nu: c.v.n, d: c.v.d, b: c.v.b, p: c.v.p, gk: c.v.gk, enc: c.v.enc }, nt: Object.entries(c.v.nt), nSess: sessions.length };
+    });
+    PLAYERS.forEach(c => { NTEAM[c.n] = c.team; });
+    // ── hauts faits (débloqués par au moins un joueur)
+    const everyone = [...new Set([...ALL_PLAYERS, ...SESSIONS.flatMap(s => Object.keys(s.presences || {}))])];
+    const stats = {}; everyone.forEach(p => { try { stats[p] = computeAchievementStats(p); } catch (e) { stats[p] = {}; } });
+    const HF = [];
+    ACH_DEFS.forEach(a => {
+      const h = [];
+      everyone.forEach(p => { const v = stats[p][a.key] || 0, lv = _achLevel(v, a.tiers); if (lv > 0) h.push([p, _mhfDisplayLevel(a, lv), _mhfTierName(a, lv), a.desc(v), v]); });
+      if (!h.length) return;
+      h.sort((x, y) => y[1] - x[1] || y[4] - x[4] || x[0].localeCompare(y[0], "fr"));
+      const cat = MHF_CAT_BY_ID[a.id] || "";
+      HF.push({ k: "h:" + a.id, ty: "h", id: a.id, nm: a.name, ic: a.icon, cat, sec: !!a.hidden, ab: (typeof ACH_ABOUT !== "undefined" && ACH_ABOUT[a.id]) || "", h, r: h.length === 1 ? "L" : h.length <= 3 ? "E" : h.length <= 10 ? "R" : "C" });
+    });
+    // ── faits notables (tous, même jamais réalisés)
+    const occ = {}, seen = new Set();
+    sessions.forEach(s => (s.matchs || []).forEach(m => (m.notables || []).forEach(n => {
+      if (!n || !n.defiId) return; seen.add(n.player + "|" + n.defiId + "|" + s.date); (occ[n.defiId] = occ[n.defiId] || []).push([n.player, s.date]);
+    })));
+    (CUSTOM_ACH_AWARDS || []).forEach(a => {
+      if (!a || !a.defiId || !a.date || _seasonStart(a.date) !== SY) return;
+      const key = a.player + "|" + a.defiId + "|" + a.date; if (seen.has(key)) return; seen.add(key);
+      (occ[a.defiId] = occ[a.defiId] || []).push([a.player, a.date]);
+    });
+    const NT = CUSTOM_ACH_DEFS.map(d => { const o = (occ[d.id] || []).sort((a, b) => b[1].localeCompare(a[1])); return { k: "n:" + d.id, ty: "n", id: d.id, nm: d.name, ic: d.icon, ds: d.desc, o, r: !o.length ? "L" : o.length === 1 ? "E" : o.length <= 3 ? "R" : "C" }; });
+    ALL = [...PLAYERS, ...HF, ...NT];
+    BYK = Object.fromEntries(ALL.map(c => [c.k, c]));
+    buildSections();
+  }
+
+  /* ═════════ rendu d'une carte ═════════ */
+  const twinkles = r => r === "L" ? `<div class="twinkle">${[[12, 18, 0], [78, 10, .7], [86, 58, 1.3], [16, 70, 1.8], [52, 40, 1]].map(([x, y, d]) => `<i style="left:${x}%;top:${y}%;animation-delay:${d}s"></i>`).join("")}</div>` : "";
+  const gem = c => `<div class="gem">${c.r === "L" ? "★ " : c.r === "E" ? "◆ " : ""}${RL[c.r]}</div>`;
+  const teamName = t => TEAM_LABEL[t] || "";
+  function frontHTML(c, lazy) {
+    if (c.ty === "p") {
+      return `<div class="face-in"><div class="art pf"><div class="gen"><span>${ini(c.n)}</span><small>Portrait à venir</small></div>${portraitImg(c.n, lazy)}</div><div class="ovr"><b>${c.o}</b><span>${c.t}</span></div>
+        <div class="strip" data-sub="${c.t}${c.team ? " · " + teamName(c.team) : ""}"><div class="nm"><i></i>${c.n}</div><div class="mini">${["ATT", "PAS", "VIC", "FID"].map(k => `<span><b>${c.s[k]}</b>${k}</span>`).join("")}</div></div>
+        <div class="holo"></div>${twinkles(c.r)}</div>${gem(c)}`;
+    }
+    if (c.ty === "h") {
+      const top = c.h[0], n = c.h.length;
+      return `<div class="face-in"><div class="band"><span>Haut fait</span><span>${c.sec ? "🤫 Secret" : c.cat}</span></div>
+        <div class="med"><span>${c.ic}</span></div><div class="cname">${c.nm}</div><div class="cdesc">${c.ab || ""}</div>
+        <div class="cfoot"><span class="tier t${top[1]}">${top[2]}</span><span>Meilleur : <b>${top[0]}</b> · ${n} détenteur${n > 1 ? "s" : ""}</span></div>
+        <div class="holo"></div>${twinkles(c.r)}</div>${gem(c)}`;
+    }
+    const n = c.o.length;
+    return `<div class="face-in"><div class="band"><span>Fait notable</span><span>${n ? `×${n}` : "Inédit"}</span></div>
+      <div class="polaroid"><div><span>${c.ic}</span></div></div><div class="cname">${c.nm}</div><div class="cdesc">${c.ds}</div>
+      <div class="cfoot">${n ? `<span>Réalisé <b>${n} fois</b> · dernier : <b>${c.o[0][0]}</b></span>` : `<span class="never">Jamais réalisé. Qui sera le premier ?</span>`}</div>
+      <div class="holo"></div>${twinkles(c.r)}</div>${gem(c)}`;
+  }
+  const whoHTML = n => `<span class="who t-${NTEAM[n] || ""}"><i></i>${n}</span>`;
+  function backHTML(c) {
+    if (c.ty === "p") {
+      const s = c.st;
+      const bars = STATS.map(k => c.s[k] == null ? "" : `<div class="bk-bar"><span>${k}</span><u><i style="width:${c.s[k]}%"></i></u><b>${c.s[k]}</b></div>`).join("");
+      const nt = c.nt.length ? `<div class="bk-nt">${c.nt.map(([id, k]) => { const d = CUSTOM_ACH_DEFS.find(x => x.id === id); return d ? `<span>${d.icon} ${d.name}${k > 1 ? " ×" + k : ""}</span>` : ""; }).join("")}</div>` : "";
+      const gk = s.gk ? `<div class="bk-row"><span>Au but</span><b>${s.gk} mi-tps · ${(s.enc / s.gk).toFixed(1).replace(".", ",")} enc.</b></div>` : "";
+      return `<div class="face-in bk"><div class="bk-h"><b>${c.n}</b><span>${teamName(c.team)}</span></div>
+        <div class="bk-row"><span>Soirées</span><b>${s.pres} / ${c.nSess}</b></div>
+        <div class="bk-row"><span>Matchs · bilan</span><b>${s.mj} · ${s.v}V ${s.nu}N ${s.d}D</b></div>
+        <div class="bk-row"><span>Buts · passes</span><b>${s.b} · ${s.p}</b></div>${gk}
+        <div class="bk-bars">${bars}</div>${nt}<div class="bk-f">${SEASON_LABEL} · ${RL[c.r]} · évolue jusqu'en fin de saison</div></div>`;
+    }
+    if (c.ty === "h") {
+      const max = 7, rows = c.h.slice(0, max).map(([n, dl, tn, d]) => `<div class="bk-row" title="${String(d).replace(/"/g, "&quot;")}">${whoHTML(n)}<span class="tier t${dl}">${tn}</span></div>`).join("");
+      return `<div class="face-in bk"><div class="bk-h"><b>${c.ic} ${c.nm}</b><span>${c.h.length} détent.</span></div>${rows}
+        ${c.h.length > max ? `<div class="bk-more">+ ${c.h.length - max} autre${c.h.length - max > 1 ? "s" : ""}</div>` : ""}
+        <div class="bk-f">${c.sec ? "Haut fait secret · " : ""}${RL[c.r]}</div></div>`;
+    }
+    const rows = c.o.slice(0, 8).map(([n, d]) => `<div class="bk-row">${whoHTML(n)}<b>${fdate(d)}</b></div>`).join("");
+    return `<div class="face-in bk"><div class="bk-h"><b>${c.ic} ${c.nm}</b><span>${c.o.length ? c.o.length + " fois" : "Inédit"}</span></div>
+      ${rows || `<div class="bk-row"><span>Personne ne l'a encore réalisé cette saison.</span></div>`}<div class="bk-f">Fait notable · ${RL[c.r]}</div></div>`;
+  }
+  const hfStyle = c => c.ty === "h" ? ` style="--cc:var(${CATVAR[c.cat] || "--hf-secret"})"` : "";
+  const cardHTML = (c, lazy) => `<div class="card r-${c.r} ty-${c.ty} t-${c.team || ""}"${hfStyle(c)} data-k="${c.k}"><div class="card-in">
+      <div class="face front">${frontHTML(c, lazy)}</div><div class="face back">${backHTML(c)}</div></div></div>`;
+  const coverHTML = () => `<div class="face-in"><span class="ball">⚽</span><b>Happy <span>Monday</span></b><small>${SEASON_LABEL.replace("Saison ", "Saison ")}</small></div>`;
+
+  /* ═════════ données du joueur connecté (sous sa fiche) ═════════ */
+  let ME = null, COL = {}, PASTED = new Set(), BOOST = null, loadedFor = null, loading = false, loadErr = "", boostRef = null;
+  // jamais d'écriture sans fiche : le chemin est toujours celui d'un joueur précis
+  const base = () => { if (!ME) throw new Error("vignettes : aucune fiche"); return `vignettes/${SEASON}/${ME}`; };
+  function parisDay() {
+    const p = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(_liveNow()));
+    return Math.round(Date.parse(p + "T00:00:00Z") / 86400000);
+  }
+  function msToParisMidnight() {
+    const now = _liveNow(), parts = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(new Date(now)).split(":").map(Number);
+    return ((24 - parts[0]) * 3600 - parts[1] * 60 - parts[2]) * 1000;
+  }
+  async function syncBoosters(root) {
+    const today = parisDay();
+    const res = await _db.ref(root + "/boosters").transaction(b => {
+      if (!b) return { stock: 5, day: today, welcome: true }; // 5 boosters offerts à l'ouverture de l'album
+      const add = Math.max(0, today - (b.day || today));
+      if (!add) return; // rien à créditer
+      return { ...b, stock: Math.min(5, (b.stock || 0) + add), day: today };
+    });
+    BOOST = res.snapshot.val();
+  }
+  async function loadMine() {
+    if (loading || !ME) return; loading = true; loadErr = "";
+    const me = ME, root = `vignettes/${SEASON}/${me}`; // figé : un changement de compte pendant le chargement n'écrit jamais ailleurs
+    try {
+      const v = (await _db.ref(root).once("value")).val() || {};
+      if (ME !== me) { loading = false; return render(); }
+      COL = v.cards || {}; PASTED = new Set(Object.keys(v.pasted || {}));
+      // garde le stock de boosters synchronisé (autre téléphone, nouveau jour) et en cache local
+      if (boostRef) boostRef.off();
+      boostRef = _db.ref(root + "/boosters");
+      boostRef.on("value", snap => { if (snap.val() && ME === me) BOOST = snap.val(); });
+      await syncBoosters(root);
+      if (ME === me) loadedFor = me;
+    } catch (e) { console.warn("vignettes:", e); loadErr = "Impossible de charger ton album. Vérifie ta connexion et réessaie."; }
+    loading = false; render();
+  }
+  // Retire 1 booster du stock. Une transaction Firebase peut d'abord être appelée avec une
+  // valeur locale vide (null) avant de connaître la valeur du serveur : on renvoie alors null
+  // tel quel (Firebase relance avec la vraie valeur) et on ne compte le booster comme consommé
+  // que si le DERNIER passage l'a effectivement retiré.
+  async function consumeBooster() {
+    const today = parisDay();
+    let consumed = false;
+    const res = await _db.ref(base() + "/boosters").transaction(b => {
+      consumed = false;
+      if (!b) return b;
+      const stock = Math.min(5, (b.stock || 0) + Math.max(0, today - (b.day || today)));
+      if (stock < 1) return;
+      consumed = true;
+      return { ...b, stock: stock - 1, day: today };
+    });
+    BOOST = res.snapshot.val() || BOOST;
+    return res.committed && consumed;
+  }
+
+  /* ═════════ effets ═════════ */
+  const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const fxRoot = () => panel;
+  function sparks(x, y, cols, n = 28, dist = 120) {
+    if (reduced()) return;
+    for (let k = 0; k < n; k++) {
+      const s = document.createElement("i"); s.className = "spark";
+      const a = Math.random() * Math.PI * 2, d = dist * (.5 + Math.random());
+      s.style.cssText = `left:${x}px;top:${y}px;background:${cols[k % cols.length]};--x:${Math.cos(a) * d}px;--y:${Math.sin(a) * d}px;--r:${Math.random() * 700 - 350}deg`;
+      fxRoot().appendChild(s); setTimeout(() => s.remove(), 1300);
+    }
+  }
+  const center = el => { const b = el.getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2]; };
+  function legendary(c) {
+    return new Promise(resolve => {
+      const w = document.createElement("div");
+      w.className = "wo"; w.setAttribute("role", "dialog"); w.setAttribute("aria-label", "Carte légendaire");
+      w.innerHTML = `<div class="wo-rays"></div><div class="wo-flash"></div><div class="wo-ring"></div>
+        <div class="wo-kicker">${TYPE[c.ty]}</div><div class="wo-card">${cardHTML(c)}</div>
+        <div class="wo-title">★ Légendaire ★</div><div class="wo-sub">Touche pour continuer</div>`;
+      fxRoot().appendChild(w);
+      let rain;
+      setTimeout(() => {
+        const [x, y] = center(w.querySelector(".wo-card"));
+        sparks(x, y, ["#ffd75a", "#fff3b0", "#f5c842", "#fff", "#e0a91c"], 60, 260);
+        rain = setInterval(() => sparks(Math.random() * innerWidth, -10, ["#ffd75a", "#fff3b0"], 3, 140), 120);
+      }, reduced() ? 0 : 2000);
+      const ready = Date.now() + (reduced() ? 0 : 1800);
+      const close = () => { clearInterval(rain); w.remove(); document.removeEventListener("keydown", key); resolve(); };
+      const key = e => { if ((e.key === "Escape" || e.key === "Enter") && Date.now() >= ready) close(); };
+      w.addEventListener("click", () => { if (Date.now() >= ready) close(); });
+      document.addEventListener("keydown", key);
+    });
+  }
+  async function revealCard(s, c, nw) {
+    if (!nw) { s.classList.add("shown"); return; }
+    if (c.r === "L") { await legendary(c); s.classList.add("shown"); return; }
+    s.classList.add("shown");
+    if (c.r === "E") setTimeout(() => {
+      const [x, y] = center(s); const f = document.createElement("div"); f.className = "flash";
+      f.style.setProperty("--fx", x + "px"); f.style.setProperty("--fy", y + "px");
+      fxRoot().appendChild(f); setTimeout(() => f.remove(), 800);
+      sparks(x, y, ["#c3a2ff", "#e9dcff", "#8a5cf0", "#fff"], 34, 140);
+    }, 300);
+    if (c.r === "R") setTimeout(() => { const [x, y] = center(s); sparks(x, y, ["#4fc3f7", "#bfeaff", "#fff"], 14, 80); }, 300);
+  }
+
+  /* ═════════ structure de l'onglet ═════════ */
+  let tab = "booster";
+  const single = () => (panel.querySelector(".vg-app")?.clientWidth || innerWidth) < 760;
+  function shell() {
+    if (panel.querySelector(".vg-app")) return;
+    panel.innerHTML = `<div class="vg-app">
+      <div class="vg-head"><h2>🎴 Vignettes <span>${SEASON_LABEL.replace("Saison ", "")}</span></h2><p class="vg-asof" id="vg-asof"></p></div>
+      <div id="vg-body"></div></div>
+      <div class="modal" id="vg-modal" hidden role="dialog" aria-modal="true" aria-label="Carte en grand">
+        <button class="modal-close" id="vg-modal-close" aria-label="Fermer">✕</button><div id="vg-modal-card"></div>
+        <div class="modal-tip">Touche la carte pour la retourner · bouge dessus pour l'effet brillant</div></div>`;
+    document.getElementById("vg-modal-close").addEventListener("click", closeModal);
+    document.getElementById("vg-modal").addEventListener("click", e => { if (e.target.id === "vg-modal") closeModal(); });
+  }
+  function render() {
+    shell();
+    build();
+    const body = document.getElementById("vg-body");
+    document.getElementById("vg-asof").textContent = `${ALL.length} cartes · joueurs, hauts faits et faits notables · mises à jour chaque lundi`;
+    const me = (typeof _accPlayer === "function") ? _accPlayer() : null;
+    if (me !== ME) { ME = me; loadedFor = null; COL = {}; PASTED = new Set(); BOOST = null; if (boostRef) { boostRef.off(); boostRef = null; } }
+    if (!ME) { body.innerHTML = teaserHTML(); return; }
+    if (loadedFor !== ME) {
+      body.innerHTML = loadErr ? `<div class="vg-locked"><p>${loadErr}</p><button class="cta" data-vg="retry">Réessayer</button></div>` : `<p class="hint" style="padding:40px 0">Chargement de ton album…</p>`;
+      if (!loadErr) loadMine();
+      return;
+    }
+    const owned = ALL.filter(c => COL[c.k]).length;
+    body.innerHTML = `<div class="vg-bar">
+        <div class="vg-subtabs" role="tablist"><button class="vg-subtab" aria-selected="${tab === "booster"}" data-vg-tab="booster">🎁 Booster</button><button class="vg-subtab" aria-selected="${tab === "album"}" data-vg-tab="album">📒 Album</button></div>
+        <div class="vg-prog"><div class="vg-prog-top"><span>Album de ${ME}</span><b>${owned} / ${ALL.length}</b></div><div class="vg-progbar"><i style="width:${owned / ALL.length * 100}%"></i></div>
+          <div class="vg-prog-r">${["L", "E", "R", "C"].map(r => { const all = ALL.filter(c => c.r === r); return `<span class="${r}"><b>${all.filter(c => COL[c.k]).length}/${all.length}</b>${RL[r]}</span>`; }).join("")}</div></div>
+      </div>
+      <section id="vg-booster"${tab === "booster" ? "" : " hidden"}><div class="stage" id="vg-stage"></div></section>
+      <section id="vg-album"${tab === "album" ? "" : " hidden"}>
+        <div class="drops-top"><div class="sel"><select id="vg-season" aria-label="Choisir l'album"><option selected>📗 ${SEASON_LABEL} · en cours · ${owned}/${ALL.length}</option><option disabled>🔒 Saison ${SY + 1}-${SY + 2} · à la rentrée</option></select></div></div>
+        <div class="secs" id="vg-secs"></div>
+        <div class="book-wrap"><button class="nav-btn prev" id="vg-prev" aria-label="Page précédente">‹</button><div class="book" id="vg-book"></div><button class="nav-btn next" id="vg-next" aria-label="Page suivante">›</button></div>
+        <div class="drops-bottom"><div class="sel"><select id="vg-secsel" aria-label="Aller à une section de l'album"></select></div></div>
+        <div class="vg-foot"><span id="vg-pginfo"></span><span class="swipe">Glisse ou utilise les flèches pour tourner les pages</span></div>
+      </section>
+      <p class="vg-legend"><b>Raretés.</b> Joueurs : selon la note générale. Hauts faits : selon le nombre de détenteurs (un seul = légendaire). Faits notables : selon le nombre de fois où ils ont été réalisés (jamais réalisé = légendaire). <b>Notes.</b> ATT = buts par match, PAS = passes par match, VIC = points par match, FID = soirées jouées, GAR = buts encaissés par mi-temps au but, classées de 42 à 98 parmi les joueurs de la saison. Les cartes évoluent avec les stats jusqu'en fin de saison. Ton album est enregistré sous ta fiche joueur.</p>`;
+    if (tab === "booster") renderPack(); else renderAlbum();
+  }
+  function teaserHTML() {
+    build();
+    const sample = PLAYERS.filter(c => c.r === "L").slice(0, 3);
+    return `<div class="vg-locked">
+      <div class="vg-teaser">${sample.map(c => `<div class="vg-tcard">${cardHTML(c)}</div>`).join("")}</div>
+      <h3>Collectionne les vignettes de la saison</h3>
+      <p>${ALL.length} cartes à collectionner : les joueurs, les hauts faits et les faits notables. 5 boosters offerts pour commencer, puis 1 par jour.</p>
+      <p class="vg-muted">🔐 Les vignettes sont réservées aux comptes joueurs.</p>
+      <button class="cta" data-vg="login">Se connecter ou créer mon compte</button></div>`;
+  }
+
+  /* ═════════ BOOSTER ═════════ */
+  const ODDS = [["L", .05], ["E", .12], ["R", .30], ["C", .53]];
+  const roll = () => { let x = Math.random(); for (const [r, p] of ODDS) { if ((x -= p) < 0) return r; } return "C"; };
+  function pickOf(ty, r) {
+    const order = ["L", "E", "R", "C"], i = order.indexOf(r);
+    for (const rr of [r, ...order.slice(i + 1), ...order.slice(0, i).reverse()]) {
+      const pool = ALL.filter(c => c.ty === ty && c.r === rr);
+      if (pool.length) return pool[Math.floor(Math.random() * pool.length)];
+    }
+  }
+  function drawPack() {
+    const out = ["p", "p", "p", "h", "n"].map(t => pickOf(t, roll())).filter(Boolean);
+    if (!out.some(c => c.r !== "C")) out[0] = pickOf("p", Math.random() < .25 ? "E" : "R");
+    return out.sort((a, b) => RO[b.r] - RO[a.r]);
+  }
+  function stockLine() {
+    const st = BOOST ? BOOST.stock : 0;
+    const ms = msToParisMidnight(), h = Math.floor(ms / 3600000), m = Math.floor(ms % 3600000 / 60000);
+    const next = st >= 5 ? "Réserve pleine (5 maximum)" : `+1 booster dans ${h ? h + " h " : ""}${m} min`;
+    return `<div class="vg-stock"><span class="vg-stock-n">${"🎁".repeat(st) || "—"}</span><span><b>${st} booster${st > 1 ? "s" : ""}</b> disponible${st > 1 ? "s" : ""} · ${next}</span></div>`;
+  }
+  function renderPack() {
+    const st = document.getElementById("vg-stage"); if (!st) return;
+    const n = BOOST ? BOOST.stock : 0;
+    st.innerHTML = `${stockLine()}<div class="pack-msg" id="vg-packmsg"></div>
+      <button class="pack" id="vg-pack" aria-label="Ouvrir le booster"${n < 1 ? " disabled style=\"opacity:.45;filter:grayscale(.6)\"" : ""}>
+        <div class="pack-body"></div><div class="pack-top"></div>
+        <div class="pack-label"><span class="ball">⚽</span><b>Happy <span>Monday</span></b><div class="kinds">👤 🏅 📌</div><small>Booster · 5 cartes</small></div></button>
+      <button class="cta" id="vg-open"${n < 1 ? " disabled" : ""}>${n < 1 ? "Plus de booster pour aujourd'hui" : "Ouvrir un booster"}</button>
+      <p class="odds">3 joueurs, 1 haut fait, 1 fait notable. Chances par carte : légendaire 5 %, épique 12 %, rare 30 %, commune 53 %. Au moins une rare.</p>`;
+    if (n >= 1) { document.getElementById("vg-pack").addEventListener("click", openPack); document.getElementById("vg-open").addEventListener("click", openPack); }
+  }
+  let opening = false;
+  async function openPack() {
+    const pack = document.getElementById("vg-pack");
+    if (!pack || opening) return;
+    opening = true; pack.disabled = true; document.getElementById("vg-open").disabled = true;
+    let ok = false;
+    try { ok = await consumeBooster(); } catch (e) { console.warn(e); }
+    if (!ok) { opening = false; _showToast("Pas de booster disponible pour l'instant."); renderPack(); return; }
+    const cards = drawPack();
+    const isNew = [], seen = new Set();
+    cards.forEach((c, i) => { isNew[i] = !COL[c.k] && !seen.has(c.k); seen.add(c.k); });
+    try {
+      const res = await _db.ref(base() + "/cards").transaction(cur => { cur = cur || {}; cards.forEach(c => { cur[c.k] = (cur[c.k] || 0) + 1; }); return cur; });
+      COL = res.snapshot.val() || COL;
+      _db.ref(`vignettesLog/${SEASON}/${ME}`).push({ at: firebase.database.ServerValue.TIMESTAMP, cards: cards.map(c => c.k) }).catch(() => {});
+    } catch (e) {
+      console.warn(e); opening = false;
+      _showToast("Enregistrement impossible : vérifie ta connexion. Ton booster n'est pas perdu si tu réessaies plus tard.");
+      return;
+    }
+    pack.classList.add("shake");
+    const hasL = !single() && cards.some((c, i) => c.r === "L" && isNew[i]);
+    if (hasL) { pack.classList.add("big", "has-L"); document.getElementById("vg-packmsg").textContent = "✨ Quelque chose brille dans ce booster…"; }
+    const t = hasL ? 1150 : 600;
+    setTimeout(() => pack.classList.add("open"), t);
+    setTimeout(() => { opening = false; (single() ? showCarousel : showReveal)(cards, isNew); refreshProg(); }, t + 650);
+  }
+  function refreshProg() {
+    const owned = ALL.filter(c => COL[c.k]).length, box = panel.querySelector(".vg-prog");
+    if (!box) return;
+    box.querySelector(".vg-prog-top b").textContent = `${owned} / ${ALL.length}`;
+    box.querySelector(".vg-progbar i").style.width = `${owned / ALL.length * 100}%`;
+    box.querySelector(".vg-prog-r").innerHTML = ["L", "E", "R", "C"].map(r => { const all = ALL.filter(c => c.r === r); return `<span class="${r}"><b>${all.filter(c => COL[c.k]).length}/${all.length}</b>${RL[r]}</span>`; }).join("");
+  }
+  const againBtn = () => `<button class="cta" data-vg="again">${BOOST && BOOST.stock > 0 ? `Ouvrir un autre booster (${BOOST.stock})` : "Retour"}</button>`;
+  function showReveal(cards, isNew) {
+    const st = document.getElementById("vg-stage");
+    st.innerHTML = `<p class="hint">Touche les cartes pour les retourner. Les dos qui brillent cachent une carte rare.</p>
+      <div class="reveal">${cards.map((c, i) => `<div class="slot${isNew[i] ? ` hint-${c.r} is-new` : " dup"}" data-i="${i}" style="animation-delay:${i * .1}s" tabindex="0" role="button" aria-label="Retourner la carte ${i + 1}">
+        <div class="card r-${c.r} ty-${c.ty} t-${c.team || ""}"${hfStyle(c)}><div class="card-in"><div class="face front">${frontHTML(c)}</div><div class="face back cover-face">${coverHTML()}</div></div></div>
+        <span class="badge ${isNew[i] ? "new" : "dup"}">${isNew[i] ? "NOUVELLE" : "DOUBLE"}</span><span class="type-tag">${TYPE[c.ty]}</span></div>`).join("")}</div>
+      <div class="reveal-actions"><button class="cta ghost" id="vg-flipall">Tout retourner</button>${againBtn()}</div>`;
+    const slots = [...st.querySelectorAll(".slot")];
+    let busy = false;
+    const flip = async s => {
+      const c = cards[+s.dataset.i];
+      if (s.classList.contains("shown")) { openModal(c.k); return; }
+      await revealCard(s, c, isNew[+s.dataset.i]);
+      if (slots.every(x => x.classList.contains("shown"))) document.getElementById("vg-flipall").disabled = true;
+    };
+    slots.forEach(s => {
+      s.addEventListener("click", () => { if (!busy) flip(s); });
+      s.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && !busy) { e.preventDefault(); flip(s); } });
+    });
+    document.getElementById("vg-flipall").addEventListener("click", async () => {
+      busy = true;
+      for (const s of slots) { if (!s.classList.contains("shown")) { await flip(s); await new Promise(r => setTimeout(r, 260)); } }
+      busy = false;
+    });
+  }
+  function showCarousel(cards, isNew) {
+    const st = document.getElementById("vg-stage");
+    st.innerHTML = `<p class="hint">Glisse vers la gauche pour découvrir la carte suivante.</p>
+      <div class="carousel" id="vg-car"><button class="car-arrow l" id="vg-carL" aria-label="Carte précédente">‹</button><button class="car-arrow r" id="vg-carR" aria-label="Carte suivante">›</button><div class="car-track" id="vg-track">${cards.map((c, i) => `<div class="car-slot"><div class="slot${isNew[i] ? "" : " dup"}" data-i="${i}">
+        <div class="card r-${c.r} ty-${c.ty} t-${c.team || ""}"${hfStyle(c)}><div class="card-in"><div class="face front">${frontHTML(c)}</div><div class="face back cover-face">${coverHTML()}</div></div></div>
+        <span class="badge ${isNew[i] ? "new" : "dup"}">${isNew[i] ? "NOUVELLE" : "DOUBLE"}</span><span class="type-tag">${TYPE[c.ty]}</span></div></div>`).join("")}</div></div>
+      <div class="car-dots" id="vg-dots">${cards.map(() => "<i></i>").join("")}</div>
+      <div class="reveal-actions"><button class="cta ghost" id="vg-carPrev" aria-label="Carte précédente">‹</button><button class="cta" id="vg-carNext">Carte suivante ›</button></div>`;
+    const track = document.getElementById("vg-track"), slots = [...st.querySelectorAll(".car-slot .slot")], dots = [...st.querySelectorAll("#vg-dots i")];
+    const seen = new Set(); let idx = -1, busy = false; const last = cards.length - 1;
+    const btns = () => {
+      document.getElementById("vg-carPrev").disabled = idx <= 0 || busy;
+      document.getElementById("vg-carL").disabled = idx <= 0 || busy;
+      document.getElementById("vg-carR").disabled = idx >= last || busy;
+      const nb = document.getElementById("vg-carNext"); nb.disabled = busy;
+      nb.textContent = idx === last ? (BOOST && BOOST.stock > 0 ? `Ouvrir un autre booster (${BOOST.stock})` : "Terminer") : "Carte suivante ›";
+      dots.forEach((d, i) => { d.className = i === idx ? "on" : seen.has(i) ? "seen" : ""; });
+    };
+    const go = async i => {
+      if (busy || i < 0 || i > last || i === idx) return;
+      idx = i; busy = true; btns();
+      track.style.transform = `translateX(-${idx * 100}%)`;
+      await new Promise(r => setTimeout(r, reduced() ? 0 : 450));
+      if (!seen.has(idx)) { seen.add(idx); await revealCard(slots[idx], cards[idx], isNew[idx]); }
+      busy = false; btns();
+    };
+    document.getElementById("vg-carPrev").addEventListener("click", () => go(idx - 1));
+    document.getElementById("vg-carL").addEventListener("click", e => { e.stopPropagation(); go(idx - 1); });
+    document.getElementById("vg-carR").addEventListener("click", e => { e.stopPropagation(); go(idx + 1); });
+    document.getElementById("vg-carNext").addEventListener("click", () => { if (idx === last && !busy) renderPack(); else go(idx + 1); });
+    const car = document.getElementById("vg-car");
+    let x0 = null, dx = 0, moved = false;
+    car.addEventListener("pointerdown", e => { if (busy || e.target.closest(".car-arrow")) return; x0 = e.clientX; dx = 0; moved = false; track.style.transition = "none"; });
+    car.addEventListener("pointermove", e => {
+      if (x0 === null) return; dx = e.clientX - x0; if (Math.abs(dx) > 6) moved = true;
+      const d = (idx === 0 && dx > 0) || (idx === last && dx < 0) ? dx * .3 : dx;
+      track.style.transform = `translateX(calc(-${idx * 100}% + ${d}px))`;
+    });
+    const endDrag = () => {
+      if (x0 === null) return; x0 = null; track.style.transition = "";
+      const ni = idx + (dx < 0 ? 1 : -1);
+      if (Math.abs(dx) > Math.min(70, car.clientWidth * .18) && ni >= 0 && ni <= last) { go(ni); return; }
+      track.style.transform = `translateX(-${idx * 100}%)`;
+    };
+    ["pointerup", "pointercancel", "pointerleave"].forEach(ev => car.addEventListener(ev, endDrag));
+    car.addEventListener("click", e => { if (moved) { moved = false; return; } const s = e.target.closest(".slot.shown"); if (s && !busy) openModal(cards[+s.dataset.i].k); });
+    btns(); setTimeout(() => go(0), reduced() ? 0 : 350);
+  }
+
+  /* ═════════ ALBUM ═════════ */
+  const SECS = [
+    { id: "buteurs", t: "Les Buteurs", ic: "⚽", col: "#ff5c7a", sub: "Ceux qui marquent le plus par match", f: c => c.ty === "p" && c.t === "Buteur" },
+    { id: "passeurs", t: "Les Passeurs", ic: "🎯", col: "#4fc3f7", sub: "Les meilleurs distributeurs de caviars", f: c => c.ty === "p" && c.t === "Passeur" },
+    { id: "gagneurs", t: "Les Gagneurs", ic: "🏆", col: "#66d9a0", sub: "Ceux qui ramènent le plus de points", f: c => c.ty === "p" && c.t === "Gagneur" },
+    { id: "piliers", t: "Les Piliers", ic: "📅", col: "#b892ff", sub: "Toujours là, lundi après lundi", f: c => c.ty === "p" && c.t === "Pilier" },
+    { id: "murailles", t: "Les Murailles", ic: "🧱", col: "#f59e5b", sub: "Les remparts dans les cages", f: c => c.ty === "p" && c.t === "Muraille" },
+    { id: "hf", t: "Hauts faits", ic: "🏅", col: "#f5c842", sub: "Les exploits débloqués", f: c => c.ty === "h" },
+    { id: "nt", t: "Faits notables", ic: "📌", col: "#e2c58f", sub: "Les moments qui ont marqué les soirées", f: c => c.ty === "n" },
+  ];
+  const CATORD = ["Attaque", "Défense", "Collectif", "Présence", "Distinctions", "Secrets"];
+  function buildSections() {
+    SECS.forEach(s => {
+      s.items = ALL.filter(s.f).sort((a, b) => a.ty === "h" ? (CATORD.indexOf(a.cat) - CATORD.indexOf(b.cat) || RO[a.r] - RO[b.r]) : (RO[a.r] - RO[b.r] || (a.ty === "p" ? b.o - a.o : 0)));
+    });
+    let no = 0; SECS.forEach(s => s.items.forEach(c => { c.no = ++no; }));
+  }
+  const per = () => single() ? 4 : 6;
+  let PAGES = [], pg = 0, turning = false, hideNew = false;
+  function buildPages() {
+    const P = [{ kind: "cover" }, { kind: "toc" }], PER = per();
+    SECS.forEach(s => { s.page = P.length; for (let i = 0; i < s.items.length; i += PER) P.push({ kind: "sec", s, items: s.items.slice(i, i + PER), first: i === 0 }); });
+    P.push({ kind: "end" }); if (P.length % 2) P.push({ kind: "blank" });
+    return P;
+  }
+  const spreadStart = i => single() ? i : i - (i % 2);
+  const ownedN = () => ALL.filter(c => COL[c.k]).length;
+  function pageHTML(p, i, side) {
+    const cls = `page ${side}`, foot = label => `<div class="pg-num"><span>${label}</span><b>${i + 1}</b></div>`;
+    if (!p) return `<div class="${cls} blank-pg"></div>`;
+    if (p.kind === "cover") return `<div class="${cls} cover-pg"><small>Album officiel</small><div class="big">⚽</div><h2>Happy<span>Monday</span></h2>
+      <div class="season">${SEASON_LABEL} · ${ALL.length} vignettes</div><div class="live-ed">● Édition vivante · figée en fin de saison</div><div class="cnt"><b>${ownedN()}</b> / ${ALL.length} collées</div></div>`;
+    if (p.kind === "toc") return `<div class="${cls} toc"><h3>Sommaire</h3><p>Touche une section pour y aller.</p>
+      ${SECS.map(s => { const got = s.items.filter(c => COL[c.k]).length; return `<button class="toc-row" data-go="${s.page}" style="--sc:${s.col}"><span class="i">${s.ic}</span><span><b>${s.t}</b><small>${s.sub} · p. ${s.page + 1}</small></span><span class="pr">${got} / ${s.items.length}<i><u style="width:${s.items.length ? got / s.items.length * 100 : 0}%"></u></i></span></button>`; }).join("")}${foot("Sommaire")}</div>`;
+    if (p.kind === "end") { const left = ALL.length - ownedN(); return `<div class="${cls} end-pg"><div class="big">🏁</div><h3>Fin de l'album</h3><p>${left ? `Encore ${left} vignette${left > 1 ? "s" : ""} à trouver.` : "Album complet. Bravo !"}</p>${foot("")}</div>`; }
+    if (p.kind === "blank") return `<div class="${cls} blank-pg">${foot("")}</div>`;
+    const s = p.s;
+    const head = `<div class="sec-head"><small>${p.first ? "Section" : "Section · suite"}</small><h2>${s.ic} ${s.t}</h2><p>${s.sub}</p></div>`;
+    const slots = p.items.map(c => COL[c.k] && (PASTED.has(c.k) || !hideNew)
+      ? `<button class="stk${PASTED.has(c.k) ? "" : " new"}" data-k="${c.k}" aria-label="Vignette ${c.no} : ${c.n || c.nm}">${cardHTML(c, true)}${COL[c.k] > 1 ? `<span class="count">×${COL[c.k]}</span>` : ""}</button>`
+      : `<div class="stk-empty" style="--rc:var(--r${c.r})"><span class="wm">${c.ty === "p" ? "👤" : c.ic}</span><span class="no">N° ${String(c.no).padStart(2, "0")}</span><span class="nm2">${c.n || c.nm}</span><span class="rt">${RL[c.r]}</span></div>`).join("");
+    const fill = Array.from({ length: per() - p.items.length }, () => `<div class="stk-blank"></div>`).join("");
+    return `<div class="${cls}" style="--sc:${s.col}">${head}<div class="stk-grid">${slots}${fill}</div>${foot(s.t)}</div>`;
+  }
+  function renderAlbum(opts = {}) {
+    const b = document.getElementById("vg-book"); if (!b) return;
+    PAGES = buildPages();
+    hideNew = !!opts.hideNew;
+    b.classList.toggle("single", single());
+    pg = spreadStart(Math.max(0, Math.min(pg, PAGES.length - 1)));
+    b.innerHTML = single() ? pageHTML(PAGES[pg], pg, "S") : pageHTML(PAGES[pg], pg, "L") + pageHTML(PAGES[pg + 1], pg + 1, "R");
+    hideNew = false;
+    // les nouvelles vignettes se « collent » une seule fois, puis restent collées (enregistré sous la fiche)
+    if (!opts.hideNew) {
+      const fresh = [...b.querySelectorAll(".stk.new")].map(x => x.dataset.k);
+      if (fresh.length) { fresh.forEach(k => PASTED.add(k)); _db.ref(base() + "/pasted").update(Object.fromEntries(fresh.map(k => [k, true]))).catch(() => {}); }
+    }
+    updateNav();
+  }
+  function updateNav() {
+    const step = single() ? 1 : 2;
+    document.getElementById("vg-prev").disabled = pg <= 0;
+    document.getElementById("vg-next").disabled = pg + step >= PAGES.length;
+    const vis = [PAGES[pg], single() ? null : PAGES[pg + 1]].find(p => p && p.kind === "sec");
+    document.getElementById("vg-secs").innerHTML = SECS.map(s => { const got = s.items.filter(c => COL[c.k]).length; return `<button class="sec-chip" data-go="${s.page}" style="--sc:${s.col}" aria-current="${!!vis && vis.s === s}">${s.ic} ${s.t.replace(/^Les /, "")} <b>${got}/${s.items.length}</b></button>`; }).join("");
+    document.getElementById("vg-secsel").innerHTML = `<option value="0"${vis ? "" : " selected"}>📖 Couverture et sommaire</option>` + SECS.map(s => { const got = s.items.filter(c => COL[c.k]).length; return `<option value="${s.page}"${vis && vis.s === s ? " selected" : ""}>${s.ic} ${s.t.replace(/^Les /, "")} · ${got}/${s.items.length}</option>`; }).join("");
+    document.getElementById("vg-pginfo").textContent = single() ? `Page ${pg + 1} / ${PAGES.length}` : `Pages ${pg + 1}-${pg + 2} / ${PAGES.length}`;
+  }
+  function turn(dir) {
+    if (turning) return;
+    const step = single() ? 1 : 2, target = pg + dir * step;
+    if (target < 0 || target >= PAGES.length) return;
+    if (reduced()) { pg = target; renderAlbum(); return; }
+    turning = true;
+    const b = document.getElementById("vg-book"), leaf = document.createElement("div");
+    hideNew = true;
+    const back = html => html.replace(/^<div class="page (\w)/, '<div class="page $1 bk-side');
+    if (single()) {
+      if (dir > 0) { b.innerHTML = pageHTML(PAGES[target], target, "S"); leaf.className = "leaf go-next"; leaf.innerHTML = pageHTML(PAGES[pg], pg, "S") + `<div class="page S bk-side blank-pg"></div>`; }
+      else { b.innerHTML = pageHTML(PAGES[pg], pg, "S"); leaf.className = "leaf go-back1"; leaf.innerHTML = pageHTML(PAGES[target], target, "S") + `<div class="page S bk-side blank-pg"></div>`; }
+    } else if (dir > 0) {
+      b.innerHTML = pageHTML(PAGES[pg], pg, "L") + pageHTML(PAGES[target + 1], target + 1, "R");
+      leaf.className = "leaf go-next"; leaf.innerHTML = pageHTML(PAGES[pg + 1], pg + 1, "R") + back(pageHTML(PAGES[target], target, "L"));
+    } else {
+      b.innerHTML = pageHTML(PAGES[target], target, "L") + pageHTML(PAGES[pg + 1], pg + 1, "R");
+      leaf.className = "leaf back-turn go-prev"; leaf.innerHTML = pageHTML(PAGES[pg], pg, "L") + back(pageHTML(PAGES[target + 1], target + 1, "R"));
+    }
+    hideNew = false;
+    b.appendChild(leaf);
+    leaf.addEventListener("animationend", e => { if (e.target !== leaf) return; pg = target; turning = false; renderAlbum(); });
+  }
+  function goTo(i) {
+    if (turning) return;
+    const step = single() ? 1 : 2, t = spreadStart(i);
+    if (t === pg) return;
+    const dir = t > pg ? 1 : -1;
+    pg = t - dir * step; renderAlbum({ hideNew: true }); turn(dir);
+  }
+
+  /* ═════════ carte en grand ═════════ */
+  function tilt(card) {
+    card.addEventListener("pointermove", e => {
+      const r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      if (x < 0 || x > 1 || y < 0 || y > 1) return;
+      card.classList.add("tilting");
+      card.querySelector(".card-in").style.transform = `rotateY(${(card.classList.contains("flipped") ? 180 : 0) + (x - .5) * 24}deg) rotateX(${(.5 - y) * 18}deg)`;
+      card.style.setProperty("--hx", `${x * 100}%`); card.style.setProperty("--hy", `${y * 100}%`);
+    });
+    card.addEventListener("pointerleave", () => { card.classList.remove("tilting"); card.querySelector(".card-in").style.transform = ""; });
+  }
+  function openModal(k) {
+    const c = BYK[k]; if (!c) return;
+    document.getElementById("vg-modal-card").innerHTML = cardHTML(c);
+    const card = document.querySelector("#vg-modal-card .card");
+    card.addEventListener("click", () => { card.classList.toggle("flipped"); card.querySelector(".card-in").style.transform = ""; });
+    tilt(card);
+    document.getElementById("vg-modal").hidden = false; document.getElementById("vg-modal-close").focus();
+  }
+  function closeModal() { const m = document.getElementById("vg-modal"); if (m) m.hidden = true; }
+
+  /* ═════════ événements ═════════ */
+  panel.addEventListener("click", e => {
+    const t = e.target.closest("[data-vg-tab]");
+    if (t) { tab = t.dataset.vgTab; render(); return; }
+    const a = e.target.closest("[data-vg]");
+    if (a) {
+      if (a.dataset.vg === "login") _accOpen(_accUser ? "me" : "login");
+      else if (a.dataset.vg === "retry") { loadErr = ""; render(); }
+      else if (a.dataset.vg === "again") renderPack();
+      return;
+    }
+    if (e.target.closest("#vg-prev")) { turn(-1); return; }
+    if (e.target.closest("#vg-next")) { turn(1); return; }
+    const g = e.target.closest("#vg-secs [data-go], #vg-book [data-go]"); if (g) { goTo(+g.dataset.go); return; }
+    const s = e.target.closest("#vg-book .stk"); if (s && !swiped) openModal(s.dataset.k);
+    swiped = false;
+  });
+  panel.addEventListener("change", e => { if (e.target.id === "vg-secsel") goTo(+e.target.value); });
+  let sx = null, swiped = false;
+  panel.addEventListener("pointerdown", e => { if (e.target.closest("#vg-book")) { sx = e.clientX; swiped = false; } });
+  panel.addEventListener("pointerup", e => {
+    if (sx === null) return; const dx = e.clientX - sx; sx = null;
+    if (Math.abs(dx) > 50) { swiped = true; turn(dx < 0 ? 1 : -1); }
+  });
+  document.addEventListener("keydown", e => {
+    if (!panel.classList.contains("active")) return;
+    const m = document.getElementById("vg-modal");
+    if (e.key === "Escape" && m && !m.hidden) { closeModal(); return; }
+    if (tab !== "album" || (m && !m.hidden) || document.querySelector("#panel-vignettes .wo")) return;
+    if (e.key === "ArrowRight") turn(1); else if (e.key === "ArrowLeft") turn(-1);
+  });
+  let wasSingle = null;
+  addEventListener("resize", () => { if (!panel.classList.contains("active") || tab !== "album") return; const s = single(); if (s !== wasSingle) { wasSingle = s; if (!turning) renderAlbum(); } });
+  // le compte change (connexion, déconnexion) : on recharge l'album de la bonne fiche
+  window.renderVignettes = () => { if (panel.classList.contains("active")) render(); };
+  window._vgOnShow = () => { render(); };
+})();
+
 /* ── Init async ── */
 (async function() {
   await _fbLoad();
@@ -11979,7 +12995,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     } else {
       history.replaceState(null, '', '#session');
     }
-  } else if (_hash === "joueurs" || _hash === "sessions" || _hash === "stats" || _hash === "reglement") {
+  } else if (_hash === "joueurs" || _hash === "sessions" || _hash === "stats" || _hash === "reglement" || _hash === "vignettes") {
     const _tabKey = _hash === "sessions" ? "session" : _hash;
     document.querySelectorAll(".main-tab").forEach(t => t.classList.toggle("active", t.dataset.tab === _tabKey));
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === `panel-${_tabKey}`));
@@ -12034,6 +13050,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   applyRole(_storedRole === "admin" ? "admin" : _storedRole === "saisie" ? "saisie" : _storedRole === "compte" ? "compte" : "user");
   if (_storedRole === "saisie") _goToSaisie();
   updateAdminBtn();
+  if (document.getElementById("panel-vignettes")?.classList.contains("active") && window._vgOnShow) window._vgOnShow();
   document.getElementById("loading-screen").style.display = "none";
 })();
 </script>
