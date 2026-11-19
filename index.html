@@ -2829,7 +2829,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 16:39</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 16:48</footer>
 
 <script>
 
@@ -4133,9 +4133,9 @@ function computeGardiensRanking(sessions) {
       // sheet pour le gardien de cette mi-temps (deux gardiens differents qui se relaient
       // sur un 0-0 recoivent donc chacun 1). Si le meme gardien tient les 2 mi-temps
       // consecutives du match, ca ne compte qu une fois pour ce match, pas deux.
-      const cleanBy = {};
-      halves.forEach(([p,c]) => { if (p && p.trim() && c === 0) cleanBy[p] = true; });
-      Object.keys(cleanBy).forEach(p => { if (!stats[p]) stats[p] = { matchs: 0, buts: 0, cleanSheets: 0 }; stats[p].cleanSheets++; });
+      // Clean sheet PAR MI-TEMPS : chaque mi-temps gardée sans encaisser vaut 1 (un 0-0 tenu
+      // sur les deux mi-temps par le même gardien en vaut donc 2).
+      halves.forEach(([p,c]) => { if (p && p.trim() && c === 0) stats[p].cleanSheets++; });
     });
   });
   return Object.entries(stats)
@@ -4201,9 +4201,8 @@ function _dbxTeamScopedEquipeType(sessions, color) {
         });
         // Clean sheet par mi-temps (cf computeGardiensRanking) : dedupe par gardien pour
         // ce match, pas par mi-temps.
-        const cleanBy = {};
-        gsHalves.forEach(([p,c]) => { if (c === 0) cleanBy[p] = true; });
-        Object.keys(cleanBy).forEach(p => { gkMap[p] = gkMap[p] || { matchs:0, buts:0, cleanSheets:0 }; gkMap[p].cleanSheets++; });
+        // Clean sheet par mi-temps (cf computeGardiensRanking) : 1 par mi-temps gardée sans encaisser.
+        gsHalves.forEach(([p,c]) => { if (c === 0) gkMap[p].cleanSheets++; });
       }
     });
   });
@@ -8560,7 +8559,7 @@ function computeAchievementStats(playerName) {
   const _ss = [...SESSIONS].sort((a,b)=>new Date(a.date)-new Date(b.date));
   let buts=0,passes=0,presences=0,absences=0,injuries=0,sessionsBlesses=0,sac=0,maillots=0;
   let hattricks=0,quadrick=0,assistHattricks=0,patronCount=0,doubleDouble=0,cleanSheets=0,mvp=0,soireeParfaite=0,invincible=0,csc=0,zeroVict=0,toutNul=0;
-  let gardiensCleanSheets=0,gardiensButsEncaisses=0,gardiensMatchs=0,remontadas=0,gardienAssist=0,gardienButs=0,mercenaireCount=0;
+  let gardiensCleanSheets=0,gardiensButsEncaisses=0,gardiensMatchs=0,gardiensMitemps=0,remontadas=0,gardienAssist=0,gardienButs=0,mercenaireCount=0;
   let syndromePsg=0,cuillereBois=0,butArgent=0,revenantCount=0,demenageur=0,horsJeuRun=0;
   const chelemColors=new Set(), duoMap={};
   let inEp=false, bestStreak=0, curStreak=0, fantomeStreak=0, sessionsAvecGA=0;
@@ -8634,13 +8633,12 @@ function computeAchievementStats(playerName) {
           // Clean sheet par mi-temps : chaque mi-temps gardee a 0 but encaisse vaut 1 —
           // mais si le joueur tient les 2 mi-temps consecutives du meme match, ca ne
           // compte qu une fois pour ce match, pas deux.
-          const inA = gA[0]===playerName || gA[1]===playerName;
-          const inB = gB[0]===playerName || gB[1]===playerName;
-          if(inA || inB){
+          // Clean sheet PAR MI-TEMPS : chaque mi-temps gardée sans encaisser vaut 1.
+          const myHalves=[[gA[0],mt1Ac],[gA[1],mt2Ac],[gB[0],mt1Bc],[gB[1],mt2Bc]].filter(([p])=>p===playerName);
+          if(myHalves.length){
             gardiensMatchs++;
-            const cleanHalf = (gA[0]===playerName && mt1Ac===0) || (gA[1]===playerName && mt2Ac===0)
-                            || (gB[0]===playerName && mt1Bc===0) || (gB[1]===playerName && mt2Bc===0);
-            if(cleanHalf) gardiensCleanSheets++;
+            gardiensMitemps+=myHalves.length;
+            gardiensCleanSheets+=myHalves.filter(([,c])=>c===0).length;
           }
         }
         if(inMatch){
@@ -8736,7 +8734,7 @@ function computeAchievementStats(playerName) {
   })();
 
   // Note gardien : taux de clean sheets, à partir de 3 matchs gardés (sinon pas assez de données)
-  const gardienRate = gardiensMatchs>=3 ? Math.round(gardiensCleanSheets/gardiensMatchs*100) : 0;
+  const gardienRate = gardiensMatchs>=3 ? Math.round(gardiensCleanSheets/gardiensMitemps*100) : 0; // % des mi-temps gardées sans encaisser
   const equipeTypeCount = _computeEquipeTypeAppearances()[playerName] || 0;
   const equipeTypeSaisonCount = _computeSeasonEquipeTypeAppearances()[playerName] || 0;
   const ballonDorCount = _computeBallonDorWins()[playerName] || 0;
