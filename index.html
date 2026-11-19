@@ -379,7 +379,7 @@
   .roster-actions { display: flex; gap: 3px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; max-width: 118px; }
   /* Statut (admin) : pilule colorée selon le statut, flèche assortie */
   .roster-status { position: relative; flex-shrink: 0; --sc: var(--good); }
-  .roster-status.st-joker { --sc: #4fc3f7; } .roster-status.st-absent { --sc: #f5a742; } .roster-status.st-inactif { --sc: var(--text3); }
+  .roster-status.st-joker { --sc: #4fc3f7; } .roster-status.st-absent { --sc: #b892ff; } .roster-status.st-inactif { --sc: var(--text3); }
   .roster-status::after { content: ""; position: absolute; right: 10px; top: 50%; width: 6px; height: 6px; border-right: 1.6px solid var(--sc); border-bottom: 1.6px solid var(--sc); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
   .roster-status-sel { -webkit-appearance: none; appearance: none; background: color-mix(in srgb, var(--sc) 13%, var(--bg2)); border: 1px solid color-mix(in srgb, var(--sc) 45%, transparent); border-radius: 999px; padding: 6px 26px 6px 12px; font: inherit; font-size: 12px; font-weight: 700; letter-spacing: .02em; color: var(--sc); cursor: pointer; max-width: 150px; box-shadow: inset 0 1px 0 rgba(255,255,255,.05); transition: background .15s, border-color .15s; }
   .roster-status-sel:hover { background: color-mix(in srgb, var(--sc) 20%, var(--bg2)); border-color: var(--sc); }
@@ -1012,6 +1012,13 @@
   .saisie-cycle-btn[data-cur="Pas répondu"] { color: var(--text2); }
 
   .saisie-joker-add { display: flex; gap: 8px; margin-top: 14px; }
+  .saisie-dep-add { margin-top: 16px; padding: 12px; border: 1px dashed color-mix(in srgb, #b892ff 45%, transparent); border-radius: 14px; background: color-mix(in srgb, #b892ff 6%, transparent); }
+  .saisie-dep-title { font-size: 12px; font-weight: 700; color: #b892ff; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+  .saisie-dep-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .saisie-dep-sel { position: relative; flex: 1 1 160px; min-width: 0; }
+  .saisie-dep-sel::after { content: ""; position: absolute; right: 12px; top: 50%; width: 7px; height: 7px; border-right: 1.6px solid #b892ff; border-bottom: 1.6px solid #b892ff; transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+  .saisie-dep-sel select { -webkit-appearance: none; appearance: none; width: 100%; background: var(--bg3); border: 1px solid color-mix(in srgb, #b892ff 45%, transparent); border-radius: 10px; padding: 9px 30px 9px 12px; font: inherit; font-size: 16px; color: var(--text); cursor: pointer; }
+  .saisie-dep-row input { flex: 1 1 160px; min-width: 0; }
   .saisie-joker-add input { flex: 1; max-width: 220px; }
 
   .saisie-auto-teams { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 16px 0 4px; }
@@ -1375,6 +1382,7 @@
   .regl-name-sel { flex: 1; min-width: 0; }
   .regl-submit-btn { padding: 10px 22px; border-radius: 8px; border: none; background: var(--gold); color: #000; font-weight: 800; font-size: 14px; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
   .regl-submit-btn:disabled { opacity: .3; cursor: not-allowed; }
+  .regl-closed-vote { margin: 6px 0 18px; padding: 14px 16px; border-radius: 12px; background: var(--bg2); border: 1px solid var(--border2); color: var(--text2); font-weight: 600; text-align: center; }
   .regl-msg { margin-top: 1rem; padding: 12px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; display: none; }
   .regl-msg.ok  { display: block; background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.3); color: #10B981; }
   .regl-msg.err { display: block; background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); color: #EF4444; }
@@ -2816,7 +2824,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 16:14</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 16:30</footer>
 
 <script>
 
@@ -3342,6 +3350,14 @@ let ABSENTS = new Set(JSON.parse(localStorage.getItem('hmft_absents') || 'null')
 /* Inactifs : desactives par un admin, masques de tout le monde sauf des admins
    (contrairement aux Absents, visibles de tous dans Effectif). */
 let INACTIFS = new Set(JSON.parse(localStorage.getItem('hmft_inactifs') || 'null') || ["Laury"]);
+/* Statuts : Réguliers / Occasionnels (JOKERS) / Dépanneurs (liste « absents » en base,
+   nom interne conservé : joueurs ajoutés ponctuellement hors roster d'origine) /
+   Inactifs cette saison (INACTIFS). */
+function _isDepanneur(p) { return ABSENTS.has(p) && !INACTIFS.has(p); }
+// Occasionnels et Dépanneurs : exclus des classements de régularité (présences, séries, Ballon de Plomb)
+function _isOccOrDep(p) { return JOKERS.has(p) || ABSENTS.has(p); }
+// « Pas répondu » non compté pour les Dépanneurs et Inactifs (jamais sollicités par défaut)
+function _ignoreNR(p) { return ABSENTS.has(p) || INACTIFS.has(p); }
 function _saveJokers() {
   const arr = [...JOKERS];
   localStorage.setItem('hmft_jokers', JSON.stringify(arr));
@@ -3863,7 +3879,7 @@ function computeStats(sessions) {
       if      (info.statut==="Présent")     ps[p].presences++;
       else if (info.statut==="Absent")      ps[p].absences++;
       else if (info.statut==="Blessé")      ps[p].blesses++;
-      else if (info.statut==="Pas répondu") ps[p].pasRepondu++;
+      else if (info.statut==="Pas répondu" && !_ignoreNR(p)) ps[p].pasRepondu++;
     });
     (s.matchs||[]).forEach((m, mIdx) => {
       ["A","B"].forEach(side => {
@@ -3920,8 +3936,8 @@ function computeStats(sessions) {
   allMatchs.forEach(m => { goalsPerTeam[m.eqA] = (goalsPerTeam[m.eqA]||0) + m.scoreA; goalsPerTeam[m.eqB] = (goalsPerTeam[m.eqB]||0) + m.scoreB; });
 
   const byAlpha = (a,b) => a[0].localeCompare(b[0], "fr");
-  const top3Pres    = Object.entries(ps).filter(([n,p])=>p.presences>0&&!JOKERS.has(n)).sort((a,b)=>b[1].presences-a[1].presences||byAlpha(a,b)).slice(0,3);
-  const top3Abs     = Object.entries(ps).filter(([n,p])=>p.absences>0&&!JOKERS.has(n))
+  const top3Pres    = Object.entries(ps).filter(([n,p])=>p.presences>0&&!_isOccOrDep(n)).sort((a,b)=>b[1].presences-a[1].presences||byAlpha(a,b)).slice(0,3);
+  const top3Abs     = Object.entries(ps).filter(([n,p])=>p.absences>0&&!_isOccOrDep(n))
     .sort((a,b)=>b[1].absences-a[1].absences||byAlpha(a,b)).slice(0,3);
   const top3Bles    = Object.entries(ps).filter(([,p])=>p.episodesBlessures>0)
     .sort((a,b)=>b[1].episodesBlessures-a[1].episodesBlessures||b[1].matchsBlessures-a[1].matchsBlessures||byAlpha(a,b)).slice(0,3);
@@ -5349,7 +5365,7 @@ function _sfmBindTicker(container) {
 
 function computeBestAllTimeStreak() {
   let best = null;
-  ALL_PLAYERS.filter(p => !JOKERS.has(p)).forEach(player => {
+  ALL_PLAYERS.filter(p => !_isOccOrDep(p)).forEach(player => {
     const st = computePlayerDetailStats(player);
     const cs = st.currentStreak;
     const hs = st.bestHistoricalStreak;
@@ -5439,7 +5455,7 @@ function buildBallonDePlombHtml() {
   SESSIONS.filter(s => _seasonStart(s.date) === year).forEach(s => {
     const pres = s.presences || {};
     Object.entries(pres).forEach(([p, info]) => {
-      if (info.statut !== "Présent" || !info.equipe || JOKERS.has(p)) return;
+      if (info.statut !== "Présent" || !info.equipe || _isOccOrDep(p)) return;
       (s.matchs || []).forEach((m, mIdx) => {
         if (m.eqA !== info.equipe && m.eqB !== info.equipe) return;
         if (_isPlayerOutForSessionMatch(s, p, mIdx)) return;
@@ -7323,7 +7339,7 @@ function _dbxPlayerOptsHtml(selected) {
   const grp = (label, list) => list.length
     ? `<optgroup label="${label}">${list.map(p => `<option value="${p}"${p===selected?' selected':''}>${p}</option>`).join("")}</optgroup>`
     : '';
-  return grp("Réguliers", roster) + grp("Occasionnels", jokers) + grp("Absents", absents);
+  return grp("Réguliers", roster) + grp("Occasionnels", jokers) + grp("Dépanneurs", absents);
 }
 
 function _dbxRenderContext() {
@@ -7724,7 +7740,7 @@ function _guardStaleEditDraft(afterDiscard, onCancel) {
 }
 function _goToSaisie() {
   if (sessionStorage.getItem("hmft_role") === "compte" && _accSaisieBlocked()) {
-    _showToast("Saisie indisponible : ta fiche est indiquée absente pour la saison ou inactive.");
+    _showToast("Saisie indisponible : ta fiche est Dépanneur ou Inactif cette saison.");
     return;
   }
   _editMode = false;
@@ -7793,7 +7809,7 @@ function computePlayerStats() {
       if      (info.statut === "Présent")     ps[p].presences++;
       else if (info.statut === "Absent")      ps[p].absences++;
       else if (info.statut === "Blessé")      ps[p].blesses++;
-      else if (info.statut === "Pas répondu") ps[p].pasRepondu++;
+      else if (info.statut === "Pas répondu" && !_ignoreNR(p)) ps[p].pasRepondu++;
     });
     if (s.sac     && ps[s.sac])     ps[s.sac].sac++;
     if (s.maillots && ps[s.maillots]) ps[s.maillots].maillots++;
@@ -7972,8 +7988,8 @@ function renderJoueurs() {
   const _EFF_STATUSES = [
     { status: "roster",  action: "to-roster",  icon: "👤", title: "Régulier",      short: "Rég." },
     { status: "joker",   action: "to-joker",   icon: "🔄", title: "Occasionnel",   short: "Occ." },
-    { status: "absent",  action: "to-absent",  icon: "💤", title: "Absent saison", short: "Abs." },
-    { status: "inactif", action: "to-inactif", icon: "🚫", title: "Inactif",       short: "Inactif" },
+    { status: "absent",  action: "to-absent",  icon: "🧰", title: "Dépanneur",     short: "Dép." },
+    { status: "inactif", action: "to-inactif", icon: "🚫", title: "Inactif cette saison", short: "Inact." },
   ];
   const _effShort = innerWidth < 560; // téléphone : libellés courts
   // Un seul menu déroulant compact (statut actuel affiché) au lieu de 4 boutons ronds.
@@ -8022,7 +8038,7 @@ function renderJoueurs() {
       <div class="roster-avatar pf pf-open dim" data-player="${name}" title="Voir la fiche">${initials(name)}${portraitImg(name, true)}</div>
       <div class="roster-main">
         <button class="roster-name player-link" data-player="${name}">${name}</button>
-        <div class="roster-sub">Absent pour la saison</div>
+        <div class="roster-sub">Dépanneur</div>
       </div>
       ${_effActionsHtml(name, "absent")}
     </div>`;
@@ -8033,7 +8049,7 @@ function renderJoueurs() {
       <div class="roster-avatar pf pf-open dim" data-player="${name}" title="Voir la fiche">${initials(name)}${portraitImg(name, true)}</div>
       <div class="roster-main">
         <button class="roster-name player-link" data-player="${name}">${name}</button>
-        <div class="roster-sub">Inactif</div>
+        <div class="roster-sub">Inactif cette saison</div>
       </div>
       ${_effActionsHtml(name, "inactif")}
     </div>`;
@@ -8052,12 +8068,12 @@ function renderJoueurs() {
     <div class="roster-list">${jokerCards}</div>` : '';
 
   const absentSection = absentNames.length > 0 ? `
-    <div class="joueurs-section-label" style="margin-top:2rem">Absents pour la saison (${absentNames.length})</div>
+    <div class="joueurs-section-label" style="margin-top:2rem">Dépanneurs (${absentNames.length})</div>
     <div class="roster-list">${absentCards}</div>` : '';
 
   // Inactifs : reserve aux admins, invisible du reste des utilisateurs.
   const inactifSection = (isAdmin && inactifNames.length > 0) ? `
-    <div class="joueurs-section-label" style="margin-top:2rem">Inactifs (${inactifNames.length})</div>
+    <div class="joueurs-section-label" style="margin-top:2rem">Inactifs cette saison (${inactifNames.length})</div>
     <div class="roster-list">${inactifCards}</div>` : '';
 
   container.innerHTML = `
@@ -8795,7 +8811,9 @@ function openPlayerPanel(playerName) {
     }
     // Statut d effectif (ex-badge de l en-tete, retire pour ne pas repeter prenom + statut) :
     // affiche seulement s il dit autre chose que la frequence (ex. « Absent pour la saison »).
-    const _ppS = REGL_STATUTS[(ABSENTS.has(playerName) || INACTIFS.has(playerName)) ? 'quitte' : JOKERS.has(playerName) ? 'plus1' : 'actif'];
+    const _ppS = INACTIFS.has(playerName) ? { label: "Inactif cette saison", badge: "regl-badge-quitte" }
+      : ABSENTS.has(playerName) ? { label: "Dépanneur", badge: "regl-badge-plus1" }
+      : REGL_STATUTS[JOKERS.has(playerName) ? 'plus1' : 'actif'];
     const _ppStatutHtml = _ppS && _ppS.label !== _freqLabel ? `<span class="regl-badge ${_ppS.badge}" style="margin-left:6px;vertical-align:middle">${_ppS.label}</span>` : "";
     // Portrait : carte entiere, cachee jusqu a son chargement (_pphPortraitLoaded) ; sans
     // fichier, l avatar a initiales reste affiche comme avant.
@@ -9508,10 +9526,29 @@ function _saisiePresRowHTML(p, isOcc, removable, hidden) {
   const statut = info.statut || "Pas répondu";
   const removeBtn = removable ? `<button class="saisie-cycle-btn" data-act="saisie-remove-temp-joker" data-player="${p}" title="Retirer" style="min-width:auto;padding:8px 10px">✕</button>` : "";
   return `<div class="saisie-pres-row${hidden ? " hidden" : ""}" data-player="${p}" data-statut="${statut}">
-    <span class="saisie-pres-row-name">${p}${isOcc ? '<span class="saisie-chip-tag">Occ.</span>' : ""}</span>
+    <span class="saisie-pres-row-name">${p}${isOcc ? `<span class="saisie-chip-tag">${JOKERS.has(p) ? "Occ." : "Dép."}</span>` : ""}</span>
     <div class="saisie-pres-row-controls">
       <button class="saisie-cycle-btn" data-cur="${statut}" data-act="saisie-status-cycle" data-player="${p}">${{"Présent":"✅","Absent":"❌","Blessé":"🤕","Pas répondu":"❓"}[statut]} ${statut}</button>
       ${removeBtn}
+    </div>
+  </div>`;
+}
+// « Ajouter un dépanneur » : menu stylisé (dépanneurs connus pas encore ajoutés ce soir,
+// ou « Nouveau dépanneur… » avec saisie du nom).
+let _saisieDepNew = false;
+function _saisieDepAddHTML() {
+  const already = new Set(_draft.tempJokers || []);
+  const known = ALL_PLAYERS.filter(p => _isDepanneur(p) && !already.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
+  return `<div class="saisie-dep-add">
+    <div class="saisie-dep-title">🧰 Ajouter un dépanneur</div>
+    <div class="saisie-dep-row">
+      <div class="saisie-dep-sel"><select id="saisie-dep-select" aria-label="Choisir un dépanneur">
+        <option value="">— Choisir —</option>
+        ${known.map(p => `<option value="${p}">${p}</option>`).join("")}
+        <option value="__new"${_saisieDepNew ? " selected" : ""}>➕ Nouveau dépanneur…</option>
+      </select></div>
+      ${_saisieDepNew ? `<input type="text" id="saisie-new-joker-input" placeholder="Nom du dépanneur" class="saisie-date-input">` : ""}
+      <button class="saisie-btn secondary" data-act="saisie-add-temp-joker">Ajouter</button>
     </div>
   </div>`;
 }
@@ -9553,10 +9590,7 @@ function _buildPresencesScreenHTML() {
       ${filterTabs.map(([key,icon,n]) => `<button class="saisie-pres-filter${_saisiePresFilter===key?" active":""}" data-act="saisie-pres-filter" data-filter="${key}">${icon} <span class="n">${n}</span></button>`).join("")}
     </div>
     <div class="saisie-pres-list">${rowsHtml}</div>
-    <div class="saisie-joker-add">
-      <input type="text" id="saisie-new-joker-input" placeholder="Nom de l'occasionnel" class="saisie-date-input">
-      <button class="saisie-btn secondary" data-act="saisie-add-temp-joker">+ Ajouter</button>
-    </div>
+    ${_saisieDepAddHTML()}
   </div>`;
 }
 
@@ -10132,6 +10166,8 @@ async function _commitSession() {
 
   const finalPresences = {};
   Object.entries(_draft.presences).forEach(([p, info]) => {
+    // Dépanneur / Inactif pas ajouté ce soir : pas enregistré en « Pas répondu »
+    if (info.statut === "Pas répondu" && _ignoreNR(p) && !(_draft.tempJokers || []).includes(p)) return;
     finalPresences[p] = { statut: info.statut, equipe: info.equipe || "" };
     if ((JOKERS.has(p) || (_draft.tempJokers||[]).includes(p)) && info.statut === "Présent") finalPresences[p].joker = true;
   });
@@ -10235,11 +10271,11 @@ async function _commitSession() {
     }
   }
 
-  /* Persister les nouveaux temp jokers dans ALL_PLAYERS + JOKERS */
+  /* Nouveaux dépanneurs ajoutés ce soir : enregistrés dans l'effectif avec le statut Dépanneur */
   const _newJokers = (_draft.tempJokers || []).filter(n => !ALL_PLAYERS.includes(n));
   if (_newJokers.length) {
-    _newJokers.forEach(n => { ALL_PLAYERS.push(n); JOKERS.add(n); });
-    _saveJokers();
+    _newJokers.forEach(n => { ALL_PLAYERS.push(n); ABSENTS.add(n); });
+    _saveAbsents();
     _saveExtraPlayers();
   }
 
@@ -10609,11 +10645,20 @@ document.getElementById("saisie-content").addEventListener("click", e => {
 
 
   if (e.target.closest('[data-act="saisie-add-temp-joker"]')) {
+    const sel = document.getElementById("saisie-dep-select")?.value || "";
+    // dépanneur déjà connu : ajouté pour ce soir
+    if (sel && sel !== "__new") {
+      if (!_draft.tempJokers) _draft.tempJokers = [];
+      if (!_draft.tempJokers.includes(sel)) _draft.tempJokers.push(sel);
+      _draft.presences[sel] = { statut: "Présent", equipe: "", joker: true };
+      _saisieDepNew = false;
+      _saveDraft(); renderSaisie(); return;
+    }
     const input = document.getElementById("saisie-new-joker-input");
     const name = (input?.value || "").trim();
-    if (!name) return;
+    if (!name) { if (!sel) alert("Choisis un dépanneur dans la liste, ou « Nouveau dépanneur… »."); return; }
     if (ALL_PLAYERS.includes(name) || (_draft.tempJokers||[]).includes(name)) {
-      alert(`"${name}" est déjà dans la liste.`); return;
+      alert(`"${name}" est déjà dans l'effectif. Choisis-le dans la liste.`); return;
     }
     if (/[.#$\/\[\]]/.test(name)) {
       alert(`Le nom "${name}" contient un caractère interdit ( . # $ / [ ] ).\nVeuillez le modifier.`); return;
@@ -10621,6 +10666,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     if (!_draft.tempJokers) _draft.tempJokers = [];
     _draft.tempJokers.push(name);
     _draft.presences[name] = { statut: "Présent", equipe: "", joker: true, temp: true };
+    _saisieDepNew = false;
     _saveDraft();
     renderSaisie(); return;
   }
@@ -10629,10 +10675,15 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   if (rmTempBtn) {
     const name = rmTempBtn.dataset.player;
     _draft.tempJokers = (_draft.tempJokers||[]).filter(p => p !== name);
-    delete _draft.presences[name];
+    // dépanneur connu retiré pour ce soir : il redevient « non ajouté » (pas compté)
+    if (ALL_PLAYERS.includes(name)) _draft.presences[name] = { statut: "Pas répondu", equipe: "" };
+    else delete _draft.presences[name];
     _saveDraft();
     renderSaisie(); return;
   }
+});
+document.getElementById("saisie-content").addEventListener("change", e => {
+  if (e.target.id === "saisie-dep-select") { _saisieDepNew = e.target.value === "__new"; renderSaisie(); setTimeout(() => document.getElementById("saisie-new-joker-input")?.focus(), 30); }
 });
 
 document.getElementById("saisie-content").addEventListener("change", e => {
@@ -10802,7 +10853,9 @@ function renderReglement() {
 
   <hr class="regl-divider">
 
-  <!-- Statut saison prochaine -->
+  <!-- Statut saison prochaine : vote clos (réponses conservées) -->
+  <div class="regl-closed-vote">🔒 Le vote est clos. Merci à tous pour vos réponses !</div>
+  <div id="regl-vote-zone" hidden>
   <div class="regl-statut-title" id="regl-statut-title">Pour la saison prochaine, je souhaite être considéré comme :</div>
   <div class="regl-radio-group" id="regl-radio-group">
     <label class="regl-radio-row" id="regl-radio-row-actif">
@@ -10853,6 +10906,7 @@ function renderReglement() {
   <div class="regl-msg" id="regl-msg"></div>
 
   <!-- Section admin -->
+  </div>
   <div class="regl-admin-wrap" id="regl-admin-wrap" style="display:none">
     <div class="regl-admin-bar">
       <span class="regl-admin-title section-label" style="margin:0">Réponses — admin</span>
@@ -12157,8 +12211,15 @@ function _accApplyRole() {
   const role = sessionStorage.getItem("hmft_role") || "user";
   applyRole(role);
   updateAdminBtn();
-  // Onglet Vignettes : visible uniquement avec un compte rattaché à une fiche
+  // Onglet Vignettes et Règlement : visibles uniquement avec un compte rattaché à une fiche
   const vgOn = !!(_accUser && _accProfile);
+  const rb = document.getElementById("footer-reglement-btn"); if (rb) rb.style.display = vgOn ? "" : "none";
+  if (!vgOn && document.getElementById("panel-reglement")?.classList.contains("active")) {
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    document.getElementById("panel-session").classList.add("active");
+    document.querySelector('.main-tab[data-tab="session"]')?.classList.add("active");
+    history.replaceState(null, '', '#sessions');
+  }
   ["vg-tab-btn", "vg-drawer-btn"].forEach(id => { const b = document.getElementById(id); if (b) b.style.display = vgOn ? "" : "none"; });
   if (!vgOn && document.getElementById("panel-vignettes")?.classList.contains("active")) {
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
@@ -12210,8 +12271,8 @@ function _accPlayersList() {
   }));
   return [...new Set(ALL_PLAYERS)].sort((a, b) => a.localeCompare(b, "fr")).map(n => {
     const t = teams[n] ? Object.entries(teams[n]).sort((a, b) => b[1] - a[1])[0][0] : "";
-    const statut = (ABSENTS.has(n) || INACTIFS.has(n)) ? "quitte" : JOKERS.has(n) ? "plus1" : "actif";
-    return { n, team: t, pres: pres[n] || 0, statut: REGL_STATUTS[statut]?.label || "" };
+    const statut = INACTIFS.has(n) ? "Inactif cette saison" : ABSENTS.has(n) ? "Dépanneur" : JOKERS.has(n) ? "Occasionnel" : "Régulier";
+    return { n, team: t, pres: pres[n] || 0, statut };
   });
 }
 function _accAvHTML(n, team, big) {
@@ -12240,7 +12301,7 @@ function _accRender(keepFocus) {
     const p = _accPlayer();
     h = `<div class="acm-me">${_accAvHTML(p, "", true)}<h5>${p}</h5>${_accIsSuper ? `<span class="acm-badge">Super admin</span>` : `<span class="acm-badge" style="color:var(--good);border-color:color-mix(in srgb,var(--good) 40%,transparent);background:color-mix(in srgb,var(--good) 12%,transparent)">Compte joueur</span>`}
       <p class="acm-sub" style="margin:4px 0 10px">Tu es connecté sur ce téléphone.</p>
-      ${_accSaisieBlocked() ? `<p class="acm-sub" style="margin:0 0 12px">⏸️ Saisie indisponible : ta fiche est indiquée absente pour la saison ou inactive. Elle s'ouvre si tu es coché présent pour la soirée.</p>` : ""}</div>
+      ${_accSaisieBlocked() ? `<p class="acm-sub" style="margin:0 0 12px">⏸️ Saisie indisponible : ta fiche est Dépanneur ou Inactif cette saison. Elle s'ouvre les soirs où tu es coché présent.</p>` : ""}</div>
       <button class="acm-btn" data-a="fiche">Voir ma fiche</button>
       ${_accIsSuper ? `<button class="acm-btn ghost" data-a="accounts">👥 Comptes activés</button>` : ""}
       <button class="acm-btn ghost" data-a="logout">Se déconnecter</button>`;
@@ -12468,8 +12529,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   let ALL = [], BYK = {}, PLAYERS = [], NTEAM = {}, buildSig = "";
   function build() {
     const sessions = SESSIONS.filter(s => _seasonStart(s.date) === SY);
-    const ABSs = (typeof _accStatusAbs !== "undefined" && _accStatusAbs) || ABSENTS;
-    const sig = sessions.length + "|" + sessions.map(s => s.date + ":" + (s.matchs || []).length).join(",") + "|" + (CUSTOM_ACH_AWARDS || []).length + "|" + [..._VG_DEP].join(",") + "|" + [...ABSs].join(",");
+    const ABSs = (typeof _accStatusAbs !== "undefined" && _accStatusAbs) || ABSENTS, INAs = (typeof _accStatusInact !== "undefined" && _accStatusInact) || INACTIFS;
+    const sig = sessions.length + "|" + sessions.map(s => s.date + ":" + (s.matchs || []).length).join(",") + "|" + (CUSTOM_ACH_AWARDS || []).length + "|" + [...ABSs].join(",") + "|" + [...INAs].join(",") + "|" + ALL_PLAYERS.length;
     if (sig === buildSig && ALL.length) return;
     buildSig = sig;
     // ── joueurs
@@ -12495,25 +12556,29 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
         (m.notables || []).forEach(nt => { if (nt && nt.player && nt.defiId) { const x = g(nt.player); x.nt[nt.defiId] = (x.nt[nt.defiId] || 0) + 1; } });
       });
     });
-    // Album : sans les joueurs absents pour la saison (sauf les Dépanneurs, toujours présents)
-    const ABS = (typeof _accStatusAbs !== "undefined" && _accStatusAbs) || ABSENTS;
-    Object.keys(P).forEach(n => { if (!P[n].pres || (ABS.has(n) && !_VG_DEP.has(n))) delete P[n]; });
+    // Album : Réguliers et Occasionnels (tous, même sans match cette saison) + Dépanneurs
+    // venus au moins une fois ; jamais les Inactifs cette saison.
+    const INA = (typeof _accStatusInact !== "undefined" && _accStatusInact) || INACTIFS;
+    const DEPS = new Set([...((typeof _accStatusAbs !== "undefined" && _accStatusAbs) || ABSENTS)].filter(n => !INA.has(n)));
+    ALL_PLAYERS.forEach(n => { if (!INA.has(n) && !DEPS.has(n)) g(n); });
+    Object.keys(P).forEach(n => { if (INA.has(n) || (DEPS.has(n) && !P[n].pres)) delete P[n]; });
     const names = Object.keys(P);
-    const sum = k => names.reduce((a, n) => a + P[n][k], 0);
+    const played = names.filter(n => P[n].mj > 0 || P[n].pres > 0);
+    const sum = k => played.reduce((a, n) => a + P[n][k], 0);
     const totMj = Math.max(1, sum("mj")), totGk = Math.max(1, sum("gk"));
     const mga = sum("ga") / totMj;
     const mg = sum("b") / totMj, mp = sum("p") / totMj, mpts = names.reduce((a, n) => a + 3 * P[n].v + P[n].n, 0) / totMj, mgk = sum("enc") / totGk;
     const shrink = (num, den, k, mean) => (num + k * mean) / (den + k);
     const raw = {};
-    names.forEach(n => { const v = P[n]; raw[n] = { ATTt: v.b, PASt: v.p, DEF: -shrink(v.ga, v.mj, 15, mga), ATT: shrink(v.b, v.mj, 15, mg), PAS: shrink(v.p, v.mj, 15, mp), VIC: shrink(3 * v.v + v.n, v.mj, 15, mpts), FID: v.pres, GAR: v.gk >= 4 ? -shrink(v.enc, v.gk, 4, mgk) : null }; });
+    played.forEach(n => { const v = P[n]; raw[n] = { ATTt: v.b, PASt: v.p, DEF: -shrink(v.ga, v.mj, 15, mga), ATT: shrink(v.b, v.mj, 15, mg), PAS: shrink(v.p, v.mj, 15, mp), VIC: shrink(3 * v.v + v.n, v.mj, 15, mpts), FID: v.pres, GAR: v.gk >= 4 ? -shrink(v.enc, v.gk, 4, mgk) : null }; });
     const notes = {};
     [...STATS, "ATTt", "PASt"].forEach(k => {
-      const vals = names.filter(n => raw[n][k] != null).map(n => [n, raw[n][k]]).sort((a, b) => a[1] - b[1]);
+      const vals = played.filter(n => raw[n][k] != null).map(n => [n, raw[n][k]]).sort((a, b) => a[1] - b[1]);
       const L = vals.length; notes[k] = {};
       vals.forEach(([n, x], i) => { const same = vals.map((v, j) => v[1] === x ? j : -1).filter(j => j >= 0); const r = same.reduce((a, b) => a + b, 0) / same.length; notes[k][n] = L > 1 ? Math.round(42 + 56 * (r / (L - 1))) : 70; });
     });
     const pcards = names.map(n => {
-      const s = {}; STATS.forEach(k => { s[k] = notes[k][n] ?? null; });
+      const s = {}; STATS.forEach(k => { s[k] = notes[k][n] ?? (P[n].pres ? null : (k === "GAR" ? null : 42)); });
       let ov = .3 * s.ATT + .22 * s.PAS + .26 * s.VIC + .22 * s.FID;
       if (s.GAR != null) ov = Math.max(ov, .75 * ov + .25 * s.GAR);
       ov += 1.5 * Object.values(P[n].nt).reduce((a, b) => a + b, 0);
@@ -12530,10 +12595,10 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
          (meilleure note de section), avec un bonus de fidélité (+2 par soirée) pour départager.
          Buts et passes comptent à moitié par match, à moitié au total de la saison. */
     const role = {};
-    const core = names.filter(n => !_VG_DEP.has(n));
+    const core = names.filter(n => !DEPS.has(n));
     names.forEach(n => { if (!core.includes(n)) role[n] = "DEP"; });
     const SECK = ["ATT", "PAS", "DEF", "GAR", "VIC"];
-    const fit = (n, k) => k === "ATT" ? (notes.ATT[n] + notes.ATTt[n]) / 2 : k === "PAS" ? (notes.PAS[n] + notes.PASt[n]) / 2 : (notes[k][n] ?? -1);
+    const fit = (n, k) => !P[n].pres ? (k === "GAR" ? -1 : 42) : k === "ATT" ? (notes.ATT[n] + notes.ATTt[n]) / 2 : k === "PAS" ? (notes.PAS[n] + notes.PASt[n]) / 2 : (notes[k][n] ?? -1);
     const size = {}; SECK.forEach((k, i) => { size[k] = Math.floor(core.length / 5) + (i < core.length % 5 ? 1 : 0); });
     const cnt = Object.fromEntries(SECK.map(k => [k, 0]));
     core.flatMap(n => SECK.filter(k => fit(n, k) >= 0).map(k => [fit(n, k) + 2 * P[n].pres, -SECK.indexOf(k), n, k]))
@@ -12581,7 +12646,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   function frontHTML(c, lazy) {
     if (c.ty === "p") {
       return `<div class="face-in"><div class="art pf"><div class="gen"><span>${ini(c.n)}</span><small>Portrait à venir</small></div>${portraitImg(c.n, lazy)}</div><div class="ovr"><b>${c.o}</b><span>${c.t}</span></div>
-        <div class="strip" data-sub="${c.t}${c.team ? " · " + teamName(c.team) : ""}"><div class="nm"><i></i>${c.n}</div><div class="mini">${["ATT", "PAS", "VIC", "FID"].map(k => `<span><b>${c.s[k]}</b>${k}</span>`).join("")}</div></div>
+        <div class="strip" data-sub="${c.st.pres ? c.t + (c.team ? " · " + teamName(c.team) : "") : "Pas encore joué"}"><div class="nm"><i></i>${c.n}</div><div class="mini">${["ATT", "PAS", "VIC", "FID"].map(k => `<span><b>${c.s[k]}</b>${k}</span>`).join("")}</div></div>
         <div class="holo"></div>${twinkles(c.r)}</div>${gem(c)}`;
     }
     if (c.ty === "h" && lockedSecret(c)) {
@@ -12612,6 +12677,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
       const nt = c.nt.length ? `<div class="bk-nt">${c.nt.map(([id, k]) => { const d = CUSTOM_ACH_DEFS.find(x => x.id === id); return d ? `<span>${d.icon} ${d.name}${k > 1 ? " ×" + k : ""}</span>` : ""; }).join("")}</div>` : "";
       const gk = s.gk ? `<div class="bk-row"><span>Au but</span><b>${s.gk} mi-tps · ${(s.enc / s.gk).toFixed(1).replace(".", ",")} enc.</b></div>` : "";
       return `<div class="face-in bk"><div class="bk-h"><b>${c.n}</b><span>${teamName(c.team)}</span></div>
+        ${s.pres ? "" : `<div class="bk-row"><span>Pas encore joué cette saison</span></div>`}
         <div class="bk-row"><span>Soirées</span><b>${s.pres} / ${c.nSess}</b></div>
         <div class="bk-row"><span>Matchs · bilan</span><b>${s.mj} · ${s.v}V ${s.nu}N ${s.d}D</b></div>
         <div class="bk-row"><span>Buts · passes</span><b>${s.b} · ${s.p}</b></div>${gk}
@@ -12793,7 +12859,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
         <div class="drops-bottom"><div class="sel"><select id="vg-secsel" aria-label="Aller à une section de l'album"></select></div></div>
         <div class="vg-foot"><span id="vg-pginfo"></span><span class="swipe">Glisse ou utilise les flèches pour tourner les pages</span></div>
       </section>
-      <p class="vg-legend"><b>Raretés.</b> Joueurs : selon la note générale. Hauts faits : selon le nombre de détenteurs (un seul = légendaire). Faits notables : selon le nombre de fois où ils ont été réalisés (jamais réalisé = légendaire). <b>Notes.</b> ATT = buts par match, PAS = passes par match, DEF = buts encaissés par l'équipe quand il joue, VIC = points par match, FID = soirées jouées, GAR = buts encaissés par mi-temps au but, classées de 42 à 98 parmi les joueurs de la saison. <b>Sections.</b> Les joueurs ajoutés ponctuellement (hors roster d'origine) sont Dépanneurs ; les autres se répartissent à parts égales selon leur point fort (buts et passes : moitié par match, moitié au total), la fidélité départageant. Les cartes évoluent avec les stats jusqu'en fin de saison. Ton album est enregistré sous ta fiche joueur.</p>`;
+      <p class="vg-legend"><b>Raretés.</b> Joueurs : selon la note générale. Hauts faits : selon le nombre de détenteurs (un seul = légendaire). Faits notables : selon le nombre de fois où ils ont été réalisés (jamais réalisé = légendaire). <b>Notes.</b> ATT = buts par match, PAS = passes par match, DEF = buts encaissés par l'équipe quand il joue, VIC = points par match, FID = soirées jouées, GAR = buts encaissés par mi-temps au but, classées de 42 à 98 parmi les joueurs de la saison. <b>Sections.</b> Les Dépanneurs (statut de l'Effectif) ont leur section ; Réguliers et Occasionnels se répartissent à parts égales selon leur point fort (buts et passes : moitié par match, moitié au total), la fidélité départageant. Les cartes évoluent avec les stats jusqu'en fin de saison. Ton album est enregistré sous ta fiche joueur.</p>`;
     if (tab === "booster") renderPack(); else renderAlbum();
   }
   function teaserHTML() {
@@ -13127,7 +13193,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     } else {
       history.replaceState(null, '', '#session');
     }
-  } else if (_hash === "vignettes" && !(_accUser && _accProfile)) {
+  } else if ((_hash === "vignettes" || _hash === "reglement") && !(_accUser && _accProfile)) {
     history.replaceState(null, '', '#sessions');
   } else if (_hash === "joueurs" || _hash === "sessions" || _hash === "stats" || _hash === "reglement" || _hash === "vignettes") {
     const _tabKey = _hash === "sessions" ? "session" : _hash;
