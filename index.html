@@ -372,6 +372,11 @@
     .roster-chip-ico { font-size: 12px; }
   }
   .roster-actions { display: flex; gap: 3px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; max-width: 118px; }
+  .roster-status { position: relative; flex-shrink: 0; }
+  .roster-status::after { content: "▾"; position: absolute; right: 9px; top: 50%; transform: translateY(-50%); font-size: 10px; color: var(--text3); pointer-events: none; }
+  .roster-status-sel { -webkit-appearance: none; appearance: none; background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 6px 24px 6px 9px; font: inherit; font-size: 12px; font-weight: 600; color: var(--text); cursor: pointer; max-width: 140px; }
+  .roster-status-sel:hover { border-color: var(--text3); }
+  .roster-status-sel:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   .roster-actions button { width: 27px; height: 27px; border-radius: 50%; border: 1px solid var(--border2); background: #1A1A1F; font-size: 13.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); }
   .roster-actions button:hover { background: var(--border2); }
   .roster-actions button.current { background: var(--border2); border-color: var(--text3); color: var(--text); cursor: default; }
@@ -2802,7 +2807,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 15:31</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 15:33</footer>
 
 <script>
 
@@ -7958,15 +7963,14 @@ function renderJoueurs() {
   const _EFF_STATUSES = [
     { status: "roster",  action: "to-roster",  icon: "👤", title: "Régulier" },
     { status: "joker",   action: "to-joker",   icon: "🔄", title: "Occasionnel" },
-    { status: "absent",  action: "to-absent",  icon: "💤", title: "Absent pour la saison" },
+    { status: "absent",  action: "to-absent",  icon: "💤", title: "Absent saison" },
     { status: "inactif", action: "to-inactif", icon: "🚫", title: "Inactif" },
   ];
+  // Un seul menu déroulant compact (statut actuel affiché) au lieu de 4 boutons ronds.
   function _effActionsHtml(name, current) {
     if (!isAdmin) return "";
-    const btns = _EFF_STATUSES.map(o =>
-      `<button data-action="${o.action}" data-player="${name}" title="${o.title}"${o.status===current?' class="current"':''}>${o.icon}</button>`
-    ).join("");
-    return `<div class="roster-actions">${btns}</div>`;
+    const opts = _EFF_STATUSES.map(o => `<option value="${o.action}"${o.status === current ? " selected" : ""}>${o.icon} ${o.title}</option>`).join("");
+    return `<div class="roster-status"><select class="roster-status-sel" data-player="${name}" aria-label="Statut de ${name}">${opts}</select></div>`;
   }
 
   function buildRosterCard(r) {
@@ -8056,17 +8060,20 @@ function renderJoueurs() {
   bindSortRow("jokers-sort", jokerSort);
 }
 
-document.getElementById("joueurs-content").addEventListener("click", e => {
-  const btn = e.target.closest('[data-action]');
-  if (!btn || !['to-roster','to-joker','to-absent','to-inactif'].includes(btn.dataset.action)) return;
-  e.stopPropagation();
-  const player = btn.dataset.player;
-  const action = btn.dataset.action;
+function _effApplyStatus(player, action) {
   if (action === 'to-roster')  { JOKERS.delete(player); ABSENTS.delete(player); INACTIFS.delete(player); _saveJokers(); _saveAbsents(); _saveInactifs(); }
   if (action === 'to-joker')   { ABSENTS.delete(player); INACTIFS.delete(player); JOKERS.add(player);    _saveAbsents(); _saveInactifs(); _saveJokers(); }
   if (action === 'to-absent')  { JOKERS.delete(player); INACTIFS.delete(player); ABSENTS.add(player);    _saveJokers(); _saveInactifs(); _saveAbsents(); }
   if (action === 'to-inactif') { JOKERS.delete(player); ABSENTS.delete(player); INACTIFS.add(player);    _saveJokers(); _saveAbsents(); _saveInactifs(); }
   renderJoueurs();
+}
+document.getElementById("joueurs-content").addEventListener("change", e => {
+  const sel = e.target.closest(".roster-status-sel");
+  if (!sel || !['to-roster','to-joker','to-absent','to-inactif'].includes(sel.value)) return;
+  _effApplyStatus(sel.dataset.player, sel.value);
+});
+document.getElementById("joueurs-content").addEventListener("click", e => {
+  if (e.target.closest(".roster-status")) e.stopPropagation(); // ouvrir le menu n'ouvre pas la fiche
 });
 
 /* ══════════════════════════════════════════════════════════
