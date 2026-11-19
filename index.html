@@ -2127,10 +2127,81 @@
   .sq-stand-head h4 { margin: 0; font-size: 15px; }
   .sq-stand-head button { background: none; border: none; color: var(--text2); font-size: 18px; cursor: pointer; padding: 2px 6px; }
   .sq-note { font-size: 11.5px; color: var(--text3); font-style: italic; margin-top: 10px; }
+
+  /* ── Comptes joueurs : volet connexion / création ── */
+  #acc-modal { position: fixed; inset: 0; z-index: 2600; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; padding: 20px; animation: acmFade .2s ease; }
+  #acc-modal[hidden] { display: none; }
+  @keyframes acmFade { from { opacity: 0; } }
+  .acm-card { position: relative; width: min(440px, 100%); max-height: calc(100vh - 40px); overflow-y: auto; background: var(--bg2); border: 1px solid var(--border2); border-radius: 22px; padding: 22px 22px 24px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  @media (max-width: 560px) {
+    #acc-modal { align-items: flex-end; padding: 0; }
+    .acm-card { width: 100%; max-height: 92vh; border-radius: 22px 22px 0 0; padding: 14px 18px calc(26px + env(safe-area-inset-bottom, 0px)); animation: acmUp .3s cubic-bezier(.2,.9,.3,1); }
+    .acm-card::before { content: ""; display: block; width: 40px; height: 4px; border-radius: 3px; background: var(--border2); margin: 0 auto 14px; }
+  }
+  @keyframes acmUp { from { transform: translateY(100%); } }
+  .acm-close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border2); background: transparent; color: var(--text2); font-size: 15px; cursor: pointer; font-family: inherit; }
+  .acm-seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--bg); border: 1px solid var(--border2); border-radius: 12px; padding: 4px; margin: 4px 36px 18px 0; }
+  .acm-seg button { border: none; background: none; padding: 9px 6px; border-radius: 9px; font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); cursor: pointer; }
+  .acm-seg button[aria-pressed="true"] { background: rgba(255,255,255,.11); color: var(--text); }
+  html.light .acm-seg button[aria-pressed="true"] { background: rgba(0,0,0,.08); }
+  .acm-top { display: flex; align-items: center; gap: 8px; margin: 0 36px 4px 0; min-height: 24px; }
+  .acm-back { background: none; border: none; color: var(--text2); font: inherit; font-size: 22px; cursor: pointer; padding: 0 6px 0 0; line-height: 1; }
+  .acm-kicker { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+  .acm-prog { display: flex; gap: 6px; margin: 6px 0 16px; }
+  .acm-prog i { flex: 1; height: 4px; border-radius: 3px; background: var(--bg3); }
+  .acm-prog i.on { background: var(--gold); }
+  .acm-h { margin: 0 0 4px; font-size: 19px; font-weight: 700; }
+  .acm-sub { margin: 0 0 16px; font-size: 13px; color: var(--text2); line-height: 1.5; }
+  .acm-field { margin-bottom: 14px; }
+  .acm-field label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; }
+  .acm-input { position: relative; }
+  .acm-input input { width: 100%; background: var(--bg3); border: 1.5px solid var(--border2); border-radius: 12px; padding: 12px 44px 12px 14px; font: inherit; font-size: 16px; color: var(--text); outline: none; }
+  .acm-input input:focus { border-color: var(--gold-border); }
+  .acm-input input.ok { border-color: color-mix(in srgb, var(--good) 70%, transparent); }
+  .acm-input input.bad { border-color: var(--bad); }
+  .acm-eye { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text3); font-size: 16px; cursor: pointer; padding: 6px; }
+  .acm-help { font-size: 11.5px; color: var(--text3); margin-top: 6px; line-height: 1.45; min-height: 1em; }
+  .acm-help.ok { color: var(--good); } .acm-help.bad { color: var(--bad); }
+  .acm-err { font-size: 13px; color: var(--bad); background: var(--bad-bg); border: 1px solid var(--bad-border); border-radius: 10px; padding: 9px 12px; margin-bottom: 14px; }
+  .acm-private { display: flex; gap: 8px; align-items: flex-start; background: rgba(127,127,127,.07); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; font-size: 12px; color: var(--text2); margin-bottom: 16px; line-height: 1.45; }
+  .acm-btn { width: 100%; border: none; background: var(--gold); color: #1b1606; font: inherit; font-weight: 700; font-size: 15px; padding: 14px; border-radius: 13px; cursor: pointer; }
+  .acm-btn:disabled { background: var(--bg3); color: var(--text3); cursor: default; }
+  .acm-btn.ghost { background: transparent; color: var(--text2); border: 1px solid var(--border2); margin-top: 10px; }
+  .acm-link { display: block; width: 100%; text-align: center; margin-top: 14px; background: none; border: none; color: var(--text2); font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer; }
+  .acm-link.small { font-size: 11.5px; color: var(--text3); margin-top: 8px; }
+  .acm-search { margin-bottom: 12px; }
+  .acm-search input { padding-right: 14px; }
+  .acm-list { display: flex; flex-direction: column; gap: 6px; max-height: 46vh; overflow-y: auto; margin-bottom: 12px; padding-right: 2px; }
+  .acm-pl { display: grid; grid-template-columns: 42px 1fr auto; gap: 12px; align-items: center; padding: 8px 10px; border-radius: 13px; border: 1.5px solid var(--border); background: var(--bg); cursor: pointer; text-align: left; color: var(--text); font: inherit; }
+  .acm-pl[aria-checked="true"] { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 9%, var(--bg)); }
+  .acm-pl:disabled { opacity: .45; cursor: default; }
+  .acm-av { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; background: var(--bg3); border: 2px solid var(--tc, var(--border2)); flex: none; }
+  .acm-av.pf > .pf-img { object-position: 50% 50%; transform: scale(2.2); transform-origin: 50% 34%; }
+  .acm-av.big { width: 92px; height: 92px; border-radius: 18px; font-size: 26px; border-width: 3px; }
+  .acm-pl b { display: block; font-size: 14.5px; }
+  .acm-pl small { font-size: 11.5px; color: var(--text3); }
+  .acm-tick { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 12px; }
+  .acm-pl[aria-checked="true"] .acm-tick { background: var(--gold); border-color: var(--gold); color: #1b1606; }
+  .acm-taken { font-size: 10.5px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; }
+  .acm-recap { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 18px; padding: 18px 16px; margin-bottom: 14px; }
+  .acm-recap h5 { margin: 4px 0 0; font-size: 20px; font-style: italic; text-transform: uppercase; }
+  .acm-recap p { margin: 0; font-size: 12.5px; color: var(--text2); }
+  .acm-recap .pz { font-size: 12px; color: var(--text3); }
+  .acm-unlock { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 7px; }
+  .acm-unlock li { display: flex; gap: 10px; align-items: center; font-size: 13px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 9px 12px; }
+  .acm-check { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--text2); margin-bottom: 14px; cursor: pointer; }
+  .acm-check input { width: 20px; height: 20px; accent-color: var(--gold); flex: none; margin: 0; }
+  .acm-me { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 6px 0 4px; }
+  .acm-me h5 { margin: 6px 0 0; font-size: 22px; font-style: italic; text-transform: uppercase; }
+  .acm-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; color: var(--gold); border: 1px solid var(--gold-border); background: var(--gold-bg); }
+  /* fiche joueur en plein écran (arrivée après connexion) */
+  #player-panel.pp-full { width: 100vw; }
+  #player-panel.pp-full > * { max-width: 760px; margin-left: auto; margin-right: auto; }
 </style>
 <script>if(localStorage.getItem('hmft_theme')==='light')document.documentElement.classList.add('light');</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
 <body>
 
@@ -2139,6 +2210,13 @@
   <div style="color:var(--text2);font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:600">Chargement…</div>
 </div>
 <style>@keyframes ldPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.1);opacity:.7}}</style>
+
+<div id="acc-modal" hidden>
+  <div class="acm-card" role="dialog" aria-modal="true" aria-label="Compte joueur">
+    <button class="acm-close" id="acm-close" aria-label="Fermer">✕</button>
+    <div id="acm-body"></div>
+  </div>
+</div>
 
 <div id="lock-screen" style="display:none">
   <div class="lock-card">
@@ -2337,7 +2415,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 11:10</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 13:20</footer>
 
 <script>
 
@@ -2345,15 +2423,18 @@
 function applyRole(role) {
   const isAdmin  = role === "admin";
   const isSaisie = role === "saisie";
+  // "compte" = compte joueur connecte : acces a la Saisie EN PLUS de tous les onglets
+  // (contrairement a l ancien mot de passe "saisie", qui masque le reste du site).
+  const canSaisie = isAdmin || isSaisie || role === "compte";
   const coefBtn = document.getElementById("footer-coef-btn");
   if (coefBtn) coefBtn.style.display = isAdmin ? "inline" : "none";
   const pronosWrap = document.getElementById("footer-pronos-wrap");
   if (pronosWrap) pronosWrap.style.display = isAdmin ? "inline" : "none";
-  document.getElementById("saisie-nav-btn").style.display     = (isAdmin || isSaisie) ? "flex" : "none";
+  document.getElementById("saisie-nav-btn").style.display     = canSaisie ? "flex" : "none";
   document.getElementById("delete-session-btn").style.display = isAdmin ? "inline-flex" : "none";
   document.querySelector(".main-tabs").style.display = isSaisie ? "none" : "";
   const hnavSaisieRow = document.getElementById("hnav-saisie-row");
-  if (hnavSaisieRow) hnavSaisieRow.style.display = (isAdmin || isSaisie) ? "flex" : "none";
+  if (hnavSaisieRow) hnavSaisieRow.style.display = canSaisie ? "flex" : "none";
   /* Mode saisie : le tiroir mobile ne doit donner acces qu'au theme, a l'actualisation
      et a la sortie du mode — pas aux autres onglets (Sessions/Dashboard/Effectif/Recompenses). */
   const hnavDrawerTabs = document.getElementById("hnav-drawer-tabs");
@@ -2375,11 +2456,12 @@ function updateAdminBtn() {
   const btn = document.getElementById("admin-btn");
   if (!btn) return;
   const role = sessionStorage.getItem("hmft_role");
-  const loggedIn = role === "admin" || role === "saisie";
+  const loggedIn = role === "admin" || role === "saisie" || role === "compte";
   const LOCK   = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6.5" width="10" height="6.5" rx="1.5"/><path d="M4.5 6.5V5a2.5 2.5 0 0 1 5 0v1.5"/></svg>`;
   const UNLOCK = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6.5" width="10" height="6.5" rx="1.5"/><path d="M4.5 6.5V5A2.5 2.5 0 0 1 9.5 5"/></svg>`;
+  const accName = (typeof _accPlayer === "function") ? _accPlayer() : null;
   btn.innerHTML = loggedIn ? UNLOCK : LOCK;
-  btn.title = role === "admin" ? "Quitter le mode admin" : role === "saisie" ? "Quitter le mode saisie" : "Connexion admin";
+  btn.title = accName ? `Mon compte (${accName})` : role === "admin" ? "Quitter le mode admin" : role === "saisie" ? "Quitter le mode saisie" : "Connexion";
   btn.style.color = loggedIn ? "var(--gold)" : "";
 }
 
@@ -2389,6 +2471,7 @@ async function tryAdminUnlock() {
   const role = hash === HASH_ADMIN ? "admin" : hash === HASH_SAISIE ? "saisie" : null;
   if (role) {
     sessionStorage.setItem("hmft_role", role);
+    sessionStorage.setItem("hmft_role_src", "pwd"); // rôle venu d un ancien mot de passe (pas d un compte)
     document.getElementById("lock-screen").style.display = "none";
     document.getElementById("pwd-input").value = "";
     document.getElementById("pwd-err").textContent = "";
@@ -2521,12 +2604,23 @@ document.getElementById("refresh-btn").addEventListener("click", () => {
   location.reload();
 });
 
+// Ancien écran « mot de passe admin » : toujours disponible pendant la transition vers
+// les comptes, via le lien « Accès admin (mot de passe) » du volet de connexion.
+function _openAdminPwd() {
+  document.getElementById("pwd-input").value = "";
+  document.getElementById("pwd-err").textContent = "";
+  document.getElementById("lock-screen").style.display = "flex";
+  setTimeout(() => document.getElementById("pwd-input").focus(), 50);
+}
 document.getElementById("admin-btn").addEventListener("click", () => {
   const role = sessionStorage.getItem("hmft_role");
-  if (role === "admin" || role === "saisie") {
+  // Connecté avec un compte joueur : le bouton ouvre « Mon compte » (fiche, déconnexion).
+  if (_accUser) { _accOpen("me"); return; }
+  if ((role === "admin" || role === "saisie") && sessionStorage.getItem("hmft_role_src") !== "account") {
     // Se deconnecter en pleine edition non enregistree passe aussi par le garde-fou.
     _guardStaleEditDraft(() => {
       sessionStorage.removeItem("hmft_role");
+      sessionStorage.removeItem("hmft_role_src");
       applyRole("user");
       updateAdminBtn();
       if (role === "saisie") {
@@ -2538,10 +2632,7 @@ document.getElementById("admin-btn").addEventListener("click", () => {
       }
     });
   } else {
-    document.getElementById("pwd-input").value = "";
-    document.getElementById("pwd-err").textContent = "";
-    document.getElementById("lock-screen").style.display = "flex";
-    setTimeout(() => document.getElementById("pwd-input").focus(), 50);
+    _accOpen("login");
   }
 });
 
@@ -8600,7 +8691,7 @@ function openPlayerPanel(playerName) {
 
 function closePlayerPanel() {
   document.getElementById("player-panel-overlay").classList.remove("open");
-  document.getElementById("player-panel").classList.remove("open");
+  document.getElementById("player-panel").classList.remove("open", "pp-full"); // pp-full : fiche plein écran après connexion
   document.body.style.overflow = "";
 }
 
@@ -9285,6 +9376,14 @@ function _saisieGkColHTML(idx, side, eq, gardienPool, phase) {
     ${bancHtml}
   </div>`;
 }
+// Un brouillon pas encore validé peut être supprimé par n importe qui en Saisie ; un match
+// déjà validé (partagé avec les autres téléphones) uniquement par un admin.
+function _saisieCanRemoveMatch(m) {
+  if (sessionStorage.getItem("hmft_role") === "admin") return true;
+  if (!m) return false;
+  if (_editMode) return false;
+  return !(m._id && (_liveValidatedMatchs || []).some(vm => vm._id === m._id));
+}
 function _saisieMatchEditorHTML(idx) {
   const m = _draft.matchs[idx];
   const teams = _activeTeams();
@@ -9370,7 +9469,7 @@ function _saisieMatchEditorHTML(idx) {
     ${finalActionHtml}
 
     <div class="saisie-me-actions">
-      <button class="saisie-btn danger" data-act="saisie-remove-match" data-match="${idx}">Supprimer ce match</button>
+      ${_saisieCanRemoveMatch(m) ? `<button class="saisie-btn danger" data-act="saisie-remove-match" data-match="${idx}">Supprimer ce match</button>` : ""}
       <button class="saisie-btn secondary" data-act="saisie-collapse-match">Réduire</button>
     </div>
   </div>`;
@@ -9802,6 +9901,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   if (rmBtn) {
     const idx = Number(rmBtn.dataset.match);
     const match = _draft.matchs[idx];
+    if (!_saisieCanRemoveMatch(match)) { alert("Seul un super admin peut supprimer un match déjà validé."); return; }
     if (confirm("Supprimer ce match ?")) {
       if (match && match._id && !_editMode) {
         _pronoForgetMatch(match._id);
@@ -11147,7 +11247,7 @@ function _liveNotablesHTML(ids, date) {
 function _pronoSyncSafe() { try { _pronoSync(); } catch (e) { console.warn('pronos sync:', e); } }
 function _pronoSync() {
   const role = _liveRoleName();
-  if (!_db || !_pronosEnabled || (role !== "admin" && role !== "saisie")) return;
+  if (!_db || !_pronosEnabled || (role !== "admin" && role !== "saisie" && role !== "compte")) return;
   if (!_draft || !_draft.liveKey || !Array.isArray(_draft.matchs)) return;
   const key = _draft.liveKey;
   if (_livePronosKey !== key) { _liveWatchPronos(key); return; }
@@ -11512,16 +11612,310 @@ function _renderPronosSeason() {
   }).catch(() => { wrap.innerHTML = ""; });
 }
 
+/* ══════════════════════════════════════════════════════════
+   COMPTES JOUEURS (Firebase Authentication)
+   - Pseudo + mot de passe. Le pseudo devient un e-mail technique invisible
+     (pseudo@happymonday.local) : seul le nom de joueur est affiché sur le site.
+   - users/{uid} = { player, createdAt }   ·   playerAccounts/{joueur} = uid
+     (une fiche = un seul compte, réservée par transaction : premier arrivé).
+   - Les données (pronos, règlement, vignettes) sont rangées par FICHE JOUEUR, pas par
+     compte : un compte recréé après un mot de passe perdu retrouve tout.
+   - Rôles : "compte" (Saisie + tout le site) ; super admin = fiche listée dans
+     config/superAdmins → rôle "admin". Les anciens mots de passe restent valables.
+══════════════════════════════════════════════════════════ */
+const ACC_DOMAIN = "happymonday.local";
+var _auth = null, _accUser = null, _accProfile = null, _accIsSuper = false, _accOpenAfterLogin = false;
+let _accReadyResolve;
+const _accReady = new Promise(r => { _accReadyResolve = r; });
+let _acc = { view: "login", step: 1, pseudo: "", pwd: "", pwd2: "", show: false, q: "", pick: null, ok: false, err: "", busy: false, taken: {} };
+
+function _accPlayer() { return _accUser && _accProfile ? _accProfile.player : null; }
+function _accEmail(pseudo) { return pseudo.trim().toLowerCase() + "@" + ACC_DOMAIN; }
+
+function _accInit() {
+  if (!firebase.auth || !_db) { _accReadyResolve(); return; }
+  try { _auth = firebase.auth(); } catch (e) { console.warn("auth:", e); _accReadyResolve(); return; }
+  _auth.onAuthStateChanged(async u => {
+    _accUser = u; _accProfile = null; _accIsSuper = false;
+    if (u) {
+      try {
+        const p = await _db.ref('users/' + u.uid).once('value');
+        _accProfile = p.val();
+        if (_accProfile && _accProfile.player) {
+          const s = await _db.ref('config/superAdmins/' + _accProfile.player).once('value');
+          _accIsSuper = s.val() === true;
+        }
+      } catch (e) { console.warn("profil compte:", e); }
+    }
+    _accApplyRole();
+    _accReadyResolve();
+    if (u && _accOpenAfterLogin) {
+      // connexion manuelle : fiche en plein écran, ou choix de la fiche si le compte n'en a pas encore
+      _accOpenAfterLogin = false; _acc.busy = false;
+      if (_accProfile) { _accClose(); _accShowMyFiche(); }
+      else { _acc.view = "bind"; _acc.err = ""; _acc.pick = null; _accRender(); _accLoadTaken(); }
+    } else if (u && !_accProfile && !_acc.busy && !document.getElementById("acc-modal").hidden) { _acc.view = "bind"; _accRender(); _accLoadTaken(); }
+  });
+  setTimeout(() => _accReadyResolve(), 4000); // réseau lent : on n'attend pas indéfiniment
+}
+
+// Rôle de session à partir du compte. Un rôle venu d'un ancien mot de passe admin n'est
+// jamais écrasé ; à la déconnexion du compte, seul le rôle qu'il avait donné est retiré.
+function _accApplyRole() {
+  const src = sessionStorage.getItem("hmft_role_src");
+  const cur = sessionStorage.getItem("hmft_role");
+  if (_accUser && _accProfile) {
+    if (!(cur === "admin" && src === "pwd")) {
+      sessionStorage.setItem("hmft_role", _accIsSuper ? "admin" : "compte");
+      sessionStorage.setItem("hmft_role_src", "account");
+    }
+  } else if (src === "account") {
+    sessionStorage.removeItem("hmft_role"); sessionStorage.removeItem("hmft_role_src");
+  }
+  const role = sessionStorage.getItem("hmft_role") || "user";
+  applyRole(role);
+  updateAdminBtn();
+  // plus de droit de saisie (déconnexion) alors qu'on est sur la Saisie : retour à l'accueil
+  if (role === "user" && document.getElementById("panel-saisie")?.classList.contains("active")) {
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
+    document.getElementById("panel-dashboard").classList.add("active");
+    document.querySelector('.main-tab[data-tab="dashboard"]')?.classList.add("active");
+    history.replaceState(null, '', '#dashboard');
+    renderDashboard();
+  }
+}
+
+function _accShowMyFiche() {
+  const p = _accPlayer(); if (!p) return;
+  openPlayerPanel(p);
+  document.getElementById("player-panel").classList.add("pp-full");
+}
+
+/* ── Volet ── */
+function _accOpen(view) {
+  _acc = { ..._acc, view: _accUser && !_accProfile ? "bind" : view, step: 1, err: "", busy: false, ok: false, show: false };
+  if (view === "login") { _acc.pwd = ""; _acc.pwd2 = ""; }
+  document.getElementById("acc-modal").hidden = false;
+  _accRender();
+  if (_acc.view === "bind") _accLoadTaken();
+  setTimeout(() => document.querySelector("#acm-body input")?.focus(), 60);
+}
+function _accClose() { document.getElementById("acc-modal").hidden = true; }
+
+async function _accLoadTaken() {
+  try { const s = await _db.ref('playerAccounts').once('value'); _acc.taken = s.val() || {}; } catch (e) { _acc.taken = {}; }
+  _accRender(true);
+}
+
+function _accPlayersList() {
+  const pres = {}, teams = {};
+  SESSIONS.forEach(s => Object.entries(s.presences || {}).forEach(([p, v]) => {
+    if (!v || v.statut !== "Présent") return;
+    pres[p] = (pres[p] || 0) + 1;
+    if (v.equipe) { teams[p] = teams[p] || {}; teams[p][v.equipe] = (teams[p][v.equipe] || 0) + 1; }
+  }));
+  return [...new Set(ALL_PLAYERS)].sort((a, b) => a.localeCompare(b, "fr")).map(n => {
+    const t = teams[n] ? Object.entries(teams[n]).sort((a, b) => b[1] - a[1])[0][0] : "";
+    const statut = (ABSENTS.has(n) || INACTIFS.has(n)) ? "quitte" : JOKERS.has(n) ? "plus1" : "actif";
+    return { n, team: t, pres: pres[n] || 0, statut: REGL_STATUTS[statut]?.label || "" };
+  });
+}
+function _accAvHTML(n, team, big) {
+  const col = team === "Rouge" ? "var(--rouge)" : team === "Vert" ? "var(--vert)" : team === "Bleue" ? "var(--bleu)" : "var(--border2)";
+  return `<span class="acm-av pf${big ? " big" : ""}" style="--tc:${col}">${_saisieInitials(n)}${portraitImg(n, !big)}</span>`;
+}
+function _accPseudoState() {
+  const p = _acc.pseudo.trim().toLowerCase();
+  if (!p) return ["", "Sert uniquement à te connecter. Lettres, chiffres, point, tiret."];
+  if (!/^[a-z0-9._-]{3,20}$/.test(p)) return ["bad", "3 à 20 caractères : lettres sans accent, chiffres, point, tiret."];
+  return ["ok", "✓ Format valide"];
+}
+function _accPwdState() { return !_acc.pwd ? ["", "6 caractères minimum."] : _acc.pwd.length < 6 ? ["bad", `Encore ${6 - _acc.pwd.length} caractère${6 - _acc.pwd.length > 1 ? "s" : ""}.`] : ["ok", "✓ Mot de passe valide"]; }
+function _accPwd2State() { return !_acc.pwd2 ? ["", ""] : _acc.pwd2 === _acc.pwd ? ["ok", "✓ Les deux mots de passe correspondent"] : ["bad", "Les deux mots de passe sont différents."]; }
+const _accEsc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const _accProg = n => `<div class="acm-prog">${[1, 2, 3].map(i => `<i class="${i <= n ? "on" : ""}"></i>`).join("")}</div>`;
+
+function _accRender(keepFocus) {
+  const body = document.getElementById("acm-body");
+  const fid = keepFocus && document.activeElement && body.contains(document.activeElement) ? document.activeElement.id : null;
+  const caret = fid ? document.activeElement.selectionStart : null;
+  const listScroll = body.querySelector(".acm-list")?.scrollTop || 0;
+  const a = _acc, err = a.err ? `<div class="acm-err">${a.err}</div>` : "";
+  let h = "";
+  if (a.view === "me") {
+    const p = _accPlayer();
+    h = `<div class="acm-me">${_accAvHTML(p, "", true)}<h5>${p}</h5>${_accIsSuper ? `<span class="acm-badge">Super admin</span>` : `<span class="acm-badge" style="color:var(--good);border-color:color-mix(in srgb,var(--good) 40%,transparent);background:color-mix(in srgb,var(--good) 12%,transparent)">Compte joueur</span>`}
+      <p class="acm-sub" style="margin:4px 0 10px">Tu es connecté sur ce téléphone.</p></div>
+      <button class="acm-btn" data-a="fiche">Voir ma fiche</button>
+      <button class="acm-btn ghost" data-a="logout">Se déconnecter</button>`;
+  } else if (a.view === "login" || a.view === "create0") {
+    const seg = `<div class="acm-seg"><button aria-pressed="${a.view === "login"}" data-a="tab" data-t="login">Se connecter</button><button aria-pressed="${a.view !== "login"}" data-a="tab" data-t="create0">Créer un compte</button></div>`;
+    h = seg + (a.view === "login"
+      ? `${err}<form id="acm-login" autocomplete="on">
+          <div class="acm-field"><label for="acm-lp">Pseudo</label><div class="acm-input"><input id="acm-lp" autocomplete="username" autocapitalize="none" spellcheck="false" value="${_accEsc(a.pseudo)}"></div></div>
+          <div class="acm-field"><label for="acm-lw">Mot de passe</label><div class="acm-input"><input id="acm-lw" type="${a.show ? "text" : "password"}" autocomplete="current-password" value="${_accEsc(a.pwd)}"><button type="button" class="acm-eye" data-a="eye" aria-label="Afficher le mot de passe">${a.show ? "🙈" : "👁"}</button></div></div>
+          <button class="acm-btn" type="submit"${a.busy ? " disabled" : ""}>${a.busy ? "Connexion…" : "Se connecter"}</button></form>
+        <button class="acm-link" data-a="tab" data-t="create0">Pas encore de compte ? Créer mon compte</button>
+        <button class="acm-link small" data-a="adminpwd">Accès admin (mot de passe)</button>`
+      : `<p class="acm-sub" style="margin-top:4px">En 3 étapes : tes identifiants, ta fiche joueur, puis une vérification. Ça prend une minute.</p>
+         <div class="acm-private"><span>🔐</span><span>Un compte est nécessaire pour saisir les matchs, participer aux pronos et collectionner les vignettes. Sans compte, le site reste consultable.</span></div>
+         <button class="acm-btn" data-a="start">Commencer</button>`);
+  } else if (a.view === "create" && a.step === 1) {
+    const [ps, pm] = _accPseudoState(), [ws, wm] = _accPwdState(), [w2s, w2m] = _accPwd2State();
+    const can = ps === "ok" && ws === "ok" && w2s === "ok";
+    h = `<div class="acm-top"><button class="acm-back" data-a="back" aria-label="Retour">‹</button><span class="acm-kicker">Étape 1 sur 3</span></div>${_accProg(1)}
+      <h4 class="acm-h">Mes identifiants</h4><p class="acm-sub">Pour te connecter sur tous tes appareils.</p>
+      <div class="acm-private"><span>🙈</span><span>Ton pseudo reste <b>privé</b>. Sur le site, tout le monde voit seulement ton nom de joueur.</span></div>${err}
+      <div class="acm-field"><label for="acm-p">Pseudo</label><div class="acm-input"><input id="acm-p" autocomplete="username" autocapitalize="none" spellcheck="false" value="${_accEsc(a.pseudo)}" class="${ps}"></div><div class="acm-help ${ps}">${pm}</div></div>
+      <div class="acm-field"><label for="acm-w">Mot de passe</label><div class="acm-input"><input id="acm-w" type="${a.show ? "text" : "password"}" autocomplete="new-password" value="${_accEsc(a.pwd)}" class="${ws}"><button type="button" class="acm-eye" data-a="eye" aria-label="Afficher le mot de passe">${a.show ? "🙈" : "👁"}</button></div><div class="acm-help ${ws}">${wm}</div></div>
+      <div class="acm-field"><label for="acm-w2">Confirme le mot de passe</label><div class="acm-input"><input id="acm-w2" type="${a.show ? "text" : "password"}" autocomplete="new-password" value="${_accEsc(a.pwd2)}" class="${w2s}"></div><div class="acm-help ${w2s}">${w2m}</div></div>
+      <button class="acm-btn" data-a="next1"${can ? "" : " disabled"}>Continuer</button>`;
+  } else if ((a.view === "create" && a.step === 2) || a.view === "bind") {
+    const q = a.q.trim().toLowerCase();
+    const list = _accPlayersList().filter(p => !q || p.n.toLowerCase().includes(q));
+    const bind = a.view === "bind";
+    h = `<div class="acm-top">${bind ? "" : `<button class="acm-back" data-a="back" aria-label="Retour">‹</button><span class="acm-kicker">Étape 2 sur 3</span>`}</div>${bind ? "" : _accProg(2)}
+      <h4 class="acm-h">Qui es-tu ?</h4><p class="acm-sub">${bind ? "Ton compte n'est rattaché à aucune fiche. " : ""}Choisis ta fiche joueur. Elle sera rattachée à ton compte.</p>${err}
+      <div class="acm-input acm-search"><input id="acm-q" value="${_accEsc(a.q)}" placeholder="🔎 Rechercher un joueur" autocomplete="off"></div>
+      <div class="acm-list" role="radiogroup" aria-label="Fiche joueur">${list.map(p => {
+        const taken = !!a.taken[p.n];
+        return `<button class="acm-pl" role="radio" aria-checked="${a.pick === p.n}" data-a="pick" data-n="${_accEsc(p.n)}"${taken ? " disabled" : ""}>${_accAvHTML(p.n, p.team)}<span><b>${p.n}</b><small>${[p.statut, p.pres ? `${p.pres} soirée${p.pres > 1 ? "s" : ""}` : ""].filter(Boolean).join(" · ")}</small></span>${taken ? `<span class="acm-taken">Déjà prise</span>` : `<span class="acm-tick">${a.pick === p.n ? "✓" : ""}</span>`}</button>`;
+      }).join("") || `<p class="acm-sub">Aucun joueur trouvé.</p>`}</div>
+      <button class="acm-btn" data-a="${bind ? "bindok" : "next2"}"${a.pick && !a.busy ? "" : " disabled"}>${bind ? (a.busy ? "Rattachement…" : "Rattacher cette fiche") : `Continuer${a.pick ? ` avec ${a.pick}` : ""}`}</button>
+      <p class="acm-help" style="text-align:center;margin-top:10px">Tu n'es pas dans la liste ? Demande à un super admin de t'ajouter à l'effectif.</p>
+      ${bind ? `<button class="acm-link small" data-a="logout">Se déconnecter</button>` : ""}`;
+  } else if (a.view === "create" && a.step === 3) {
+    const p = _accPlayersList().find(x => x.n === a.pick) || { n: a.pick, team: "", pres: 0, statut: "" };
+    h = `<div class="acm-top"><button class="acm-back" data-a="back" aria-label="Retour">‹</button><span class="acm-kicker">Étape 3 sur 3</span></div>${_accProg(3)}
+      <h4 class="acm-h">Vérifie et valide</h4><p class="acm-sub">Voilà ce que les autres verront.</p>${err}
+      <div class="acm-recap">${_accAvHTML(p.n, p.team, true)}<h5>${p.n}</h5><p>${[p.statut, p.pres ? `${p.pres} soirée${p.pres > 1 ? "s" : ""}` : ""].filter(Boolean).join(" · ")}</p><span class="pz">Pseudo de connexion : ${_accEsc(a.pseudo.trim().toLowerCase())} (privé)</span></div>
+      <ul class="acm-unlock"><li>⚽ Accès à la saisie des matchs</li><li>🎯 Participation aux pronos <span style="color:var(--text3)">(bientôt)</span></li><li>🎴 Ton propre album de vignettes <span style="color:var(--text3)">(bientôt)</span></li><li>✍️ Signature du règlement en un clic <span style="color:var(--text3)">(bientôt)</span></li></ul>
+      <label class="acm-check"><input type="checkbox" id="acm-ok"${a.ok ? " checked" : ""}><span>Je confirme être <b>${p.n}</b>. Un super admin peut détacher un compte rattaché par erreur.</span></label>
+      <button class="acm-btn" data-a="create"${a.ok && !a.busy ? "" : " disabled"}>${a.busy ? "Création…" : "Créer mon compte"}</button>
+      <button class="acm-btn ghost" data-a="back">Changer de fiche</button>`;
+  }
+  body.innerHTML = h;
+  const l = body.querySelector(".acm-list"); if (l) l.scrollTop = listScroll;
+  if (fid) { const el = document.getElementById(fid); if (el) { el.focus(); try { el.setSelectionRange(caret, caret); } catch (e) {} } }
+}
+
+const _ACC_ERR = {
+  "auth/invalid-credential": "Pseudo ou mot de passe incorrect.", "auth/invalid-login-credentials": "Pseudo ou mot de passe incorrect.",
+  "auth/wrong-password": "Pseudo ou mot de passe incorrect.", "auth/user-not-found": "Pseudo ou mot de passe incorrect.",
+  "auth/invalid-email": "Pseudo invalide.", "auth/too-many-requests": "Trop d'essais. Réessaie dans quelques minutes.",
+  "auth/network-request-failed": "Pas de connexion internet. Réessaie dans un instant.",
+  "auth/email-already-in-use": "Ce pseudo est déjà pris. Choisis-en un autre.", "auth/weak-password": "Mot de passe trop faible (6 caractères minimum).",
+  "auth/operation-not-allowed": "La création de compte n'est pas encore activée. Préviens un super admin.",
+};
+const _accErrMsg = e => _ACC_ERR[e && e.code] || "Une erreur est survenue. Réessaie dans un instant.";
+
+// Réserve la fiche (transaction : échoue si quelqu'un l'a déjà) puis écrit le profil.
+async function _accClaim(uid, player) {
+  const res = await _db.ref('playerAccounts/' + player).transaction(cur => cur ? undefined : uid);
+  if (!res.committed) return false;
+  await _db.ref('users/' + uid).set({ player, createdAt: firebase.database.ServerValue.TIMESTAMP });
+  return true;
+}
+async function _accAfterClaim(uid, player) {
+  _accProfile = { player };
+  try { _accIsSuper = (await _db.ref('config/superAdmins/' + player).once('value')).val() === true; } catch (e) {}
+  _accApplyRole();
+  _accClose();
+  _accShowMyFiche();
+  _showToast(`Bienvenue <b>${player}</b> ! Ton compte est prêt.`);
+}
+
+async function _accDoLogin() {
+  const pseudo = (document.getElementById("acm-lp")?.value || "").trim(), pwd = document.getElementById("acm-lw")?.value || "";
+  _acc.pseudo = pseudo; _acc.pwd = pwd;
+  if (!pseudo || !pwd) { _acc.err = "Renseigne ton pseudo et ton mot de passe."; _accRender(); return; }
+  _acc.busy = true; _acc.err = ""; _accRender();
+  try {
+    _accOpenAfterLogin = true;
+    await _auth.signInWithEmailAndPassword(_accEmail(pseudo), pwd);
+    _acc.pwd = "";
+  } catch (e) { _accOpenAfterLogin = false; _acc.busy = false; _acc.err = _accErrMsg(e); _accRender(); }
+}
+async function _accDoCreate() {
+  const a = _acc; a.busy = true; a.err = ""; _accRender();
+  let cred;
+  try { cred = await _auth.createUserWithEmailAndPassword(_accEmail(a.pseudo), a.pwd); }
+  catch (e) { a.busy = false; a.err = _accErrMsg(e); if (e && e.code === "auth/email-already-in-use") a.step = 1; _accRender(); return; }
+  let ok = false;
+  try { ok = await _accClaim(cred.user.uid, a.pick); } catch (e) { ok = false; }
+  if (!ok) {
+    try { await cred.user.delete(); } catch (e) {}
+    a.busy = false; a.step = 2; a.pick = null; a.err = "Cette fiche vient d'être prise par quelqu'un d'autre. Choisis à nouveau.";
+    _accLoadTaken(); _accRender(); return;
+  }
+  a.pwd = ""; a.pwd2 = ""; a.busy = false;
+  _accAfterClaim(cred.user.uid, a.pick);
+}
+async function _accDoBind() {
+  const a = _acc; if (!_accUser || !a.pick) return;
+  a.busy = true; a.err = ""; _accRender();
+  let ok = false;
+  try { ok = await _accClaim(_accUser.uid, a.pick); } catch (e) { ok = false; }
+  a.busy = false;
+  if (!ok) { a.pick = null; a.err = "Cette fiche est déjà prise. Choisis-en une autre."; _accLoadTaken(); _accRender(); return; }
+  _accAfterClaim(_accUser.uid, a.pick);
+}
+function _accLogout() {
+  _guardStaleEditDraft(() => {
+    _auth && _auth.signOut().catch(() => {});
+    _accClose();
+    closePlayerPanel();
+  });
+}
+
+document.getElementById("acc-modal").addEventListener("click", e => {
+  if (e.target.id === "acc-modal" || e.target.closest("#acm-close")) { _accClose(); return; }
+  const t = e.target.closest("[data-a]"); if (!t) return;
+  const a = _acc, act = t.dataset.a;
+  if (act === "tab") { a.view = t.dataset.t; a.err = ""; }
+  else if (act === "start") { a.view = "create"; a.step = 1; a.err = ""; }
+  else if (act === "eye") a.show = !a.show;
+  else if (act === "next1") { a.step = 2; a.err = ""; _accLoadTaken(); }
+  else if (act === "pick") { a.pick = t.dataset.n; a.err = ""; }
+  else if (act === "next2") { a.step = 3; a.ok = false; a.err = ""; }
+  else if (act === "back") { a.err = ""; if (a.view === "create" && a.step > 1) a.step--; else a.view = "create0"; }
+  else if (act === "create") { _accDoCreate(); return; }
+  else if (act === "bindok") { _accDoBind(); return; }
+  else if (act === "fiche") { _accClose(); _accShowMyFiche(); return; }
+  else if (act === "logout") { _accLogout(); return; }
+  else if (act === "adminpwd") { _accClose(); _openAdminPwd(); return; }
+  else return;
+  _accRender();
+});
+document.getElementById("acc-modal").addEventListener("submit", e => { if (e.target.id === "acm-login") { e.preventDefault(); _accDoLogin(); } });
+document.getElementById("acc-modal").addEventListener("input", e => {
+  const id = e.target.id, a = _acc;
+  if (id === "acm-p") a.pseudo = e.target.value;
+  else if (id === "acm-w") a.pwd = e.target.value;
+  else if (id === "acm-w2") a.pwd2 = e.target.value;
+  else if (id === "acm-q") a.q = e.target.value;
+  else if (id === "acm-ok") a.ok = e.target.checked;
+  else if (id === "acm-lp") { a.pseudo = e.target.value; return; }
+  else if (id === "acm-lw") { a.pwd = e.target.value; return; }
+  else return;
+  _accRender(true);
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.getElementById("acc-modal").hidden) _accClose(); });
+
+
 /* ── Init async ── */
 (async function() {
   await _fbLoad();
   _liveInit();
+  _accInit();
+  await _accReady; // compte joueur deja connecte sur ce telephone ? (role "compte" / super admin)
 
   const _hash = location.hash.slice(1);
   const _storedRole = sessionStorage.getItem("hmft_role");
   let _loadSaisie = false;
   if (_hash === "saisie") {
-    if (_storedRole === "admin" || _storedRole === "saisie") {
+    if (_storedRole === "admin" || _storedRole === "saisie" || _storedRole === "compte") {
       document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
       document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
       document.getElementById("panel-saisie").classList.add("active");
@@ -11581,7 +11975,7 @@ function _renderPronosSeason() {
       `<p class="no-data" style="margin-top:1rem">Aucune session enregistrée.</p>`;
   }
 
-  applyRole(_storedRole === "admin" ? "admin" : _storedRole === "saisie" ? "saisie" : "user");
+  applyRole(_storedRole === "admin" ? "admin" : _storedRole === "saisie" ? "saisie" : _storedRole === "compte" ? "compte" : "user");
   if (_storedRole === "saisie") _goToSaisie();
   updateAdminBtn();
   document.getElementById("loading-screen").style.display = "none";
