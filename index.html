@@ -2415,7 +2415,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 13:20</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 13:27</footer>
 
 <script>
 
@@ -11016,7 +11016,8 @@ function _liveMatchSync() {
       liveKey: _draft.liveKey, eqA: m.eqA, eqB: m.eqB, phase: m._phase || "mt1",
       scoreA, scoreB, mt1A: m.mt1A || 0, mt1B: m.mt1B || 0,
       buteursA: (m.buteursA || []).slice(0, scoreA), buteursB: (m.buteursB || []).slice(0, scoreB),
-      passeursA: (m.passeursA || []).slice(0, scoreA), passeursB: (m.passeursB || []).slice(0, scoreB)
+      passeursA: (m.passeursA || []).slice(0, scoreA), passeursB: (m.passeursB || []).slice(0, scoreB),
+      bancA: (m.bancA || []).filter(Boolean), bancB: (m.bancB || []).filter(Boolean)
     };
     const sig = JSON.stringify(data);
     if (_liveMatchSent[m._id] === sig) return;
@@ -11265,7 +11266,7 @@ function _pronoSync() {
     if (!entry) {
       if (!m.eqA || !m.eqB || (m._phase || "mt1") !== "mt1" || _pronoCreating.has(m._id)) return;
       const rest = restOf(m.eqA, m.eqB);
-      if (!rest) return; // soiree a 2 equipes : personne au repos, pas de pronos
+      // soirée à 2 équipes : plus d'équipe au repos, mais les absents votent avec leur compte
       _pronoCreating.add(m._id);
       _db.ref(base + m._id + '/live').set({
         eqA: m.eqA, eqB: m.eqB, rest, phase: "mt1", scoreA, scoreB,
@@ -11277,7 +11278,7 @@ function _pronoSync() {
     if (entry.phase === "mt1" && (m.eqA !== entry.eqA || m.eqB !== entry.eqB)) {
       // Equipes corrigees apres l ouverture : les votes portaient sur un autre match.
       const rest = m.eqA && m.eqB ? restOf(m.eqA, m.eqB) : "";
-      if (!rest) { _db.ref(base + m._id).remove().catch(() => {}); return; }
+      if (!m.eqA || !m.eqB) { _db.ref(base + m._id).remove().catch(() => {}); return; }
       _db.ref(base + m._id).set({ live: {
         eqA: m.eqA, eqB: m.eqB, rest, phase: "mt1", scoreA, scoreB, openedAt: entry.openedAt,
         odds: _pronoOdds(m.eqA, m.eqB, _liveValidatedMatchs)
@@ -11454,8 +11455,8 @@ function _livePronoHTML() {
   const L = cur.live, votes = cur.votes || {};
   const label = o => o === "A" ? TEAM_LABEL[L.eqA] : o === "B" ? TEAM_LABEL[L.eqB] : "Nul";
   const names = Object.keys(votes).sort((a, b) => (votes[a].at || 0) - (votes[b].at || 0));
-  const voters = _livePresentOf(L.rest);
-  const match = `<div class="lv-match">${_liveTeamHTML(L.eqA)}<span>–</span>${_liveTeamHTML(L.eqB)}<span class="rest">· ${TEAM_LABEL[L.rest] || ""} au repos</span></div>`;
+  const me = _accPlayer();
+  const match = `<div class="lv-match">${_liveTeamHTML(L.eqA)}<span>–</span>${_liveTeamHTML(L.eqB)}${L.rest ? `<span class="rest">· ${TEAM_LABEL[L.rest] || ""} au repos</span>` : ""}</div>`;
   const voteRows = reveal => names.map(n => {
     const v = votes[n];
     let pick = `<span class="pick hidden">caché</span>`;
@@ -11474,18 +11475,26 @@ function _livePronoHTML() {
   }).join("");
 
   if (cur.open) {
-    if (_lvVote.matchId !== cur.id) _lvVote = { matchId: cur.id, me: null, out: null, exact: false, a: 0, b: 0, err: "", sending: false };
-    const remaining = voters.filter(p => !votes[p]);
-    if (_lvVote.me && !remaining.includes(_lvVote.me)) _lvVote.me = null;
+    if (_lvVote.matchId !== cur.id) _lvVote = { matchId: cur.id, out: null, exact: false, a: 0, b: 0, err: "", sending: false };
     const optCls = o => o === "A" ? teamCls(L.eqA) : o === "B" ? teamCls(L.eqB) : "nul";
     const opts = ["A", "N", "B"].map(o => `<button class="lv-opt ${optCls(o)}${_lvVote.out === o ? " on" : ""}" data-lv-out="${o}"><span class="c">${_pronoFmt((L.odds || {})[o] || 0)}</span><span class="l">${o === "N" ? "Nul" : "Victoire " + label(o)}</span></button>`).join("");
     const gain = _lvVote.out ? `<div class="lv-gain">Gain possible : <b>${_pronoFmt(((L.odds || {})[_lvVote.out] || 0) * (_lvVote.exact ? 2 : 1))} pts</b>${_lvVote.exact ? " si le score exact tombe" : ""}</div>` : "";
-    const form = remaining.length ? `
-      <div class="lv-step"><span class="lv-step-l">1 · Qui vote ?</span>
-        <div class="lv-chips">${remaining.map(p => `<button class="lv-chip${_lvVote.me === p ? " on" : ""}" data-lv-me="${p}">${p}</button>`).join("")}</div></div>
-      <div class="lv-step"><span class="lv-step-l">2 · Issue du match</span><div class="lv-opts">${opts}</div></div>
+    // Vote par compte : le vote part au nom de la fiche du compte connecté. Tout le monde
+    // vote, sauf ceux qui jouent ce match (ses 2 équipes + remplaçants venus du repos).
+    let form;
+    if (!me) {
+      form = `<div class="lv-opts" style="pointer-events:none;opacity:.6">${opts}</div>
+        <p class="lv-muted" style="margin:0">🔐 Les pronos se font avec ton compte joueur.</p>
+        <button class="lv-send" data-lv-login="1">Se connecter pour pronostiquer</button>`;
+    } else if (votes[me]) {
+      const v = votes[me];
+      form = `<span class="lv-allvoted">✓ Ton prono est enregistré : ${label(v.out)}${_pronoHasScore(v) ? ` · ${v.a} - ${v.b}` : ""}</span>`;
+    } else if (_pronoIsOnField(me, L, cur.id)) {
+      form = `<span class="lv-muted">⚽ Tu joues ce match : pas de prono pour toi cette fois.</span>`;
+    } else form = `
+      <div class="lv-step"><span class="lv-step-l">1 · Issue du match</span><div class="lv-opts">${opts}</div></div>
       <div class="lv-step">
-        <label class="lv-toggle"><input type="checkbox" id="lv-exact"${_lvVote.exact ? " checked" : ""}> 3 · Tenter le score exact (gain doublé)</label>
+        <label class="lv-toggle"><input type="checkbox" id="lv-exact"${_lvVote.exact ? " checked" : ""}> 2 · Tenter le score exact (gain doublé)</label>
         ${_lvVote.exact ? `<div class="lv-score">
           <div class="lv-stepper"><button data-lv-sc="a-" aria-label="Un but de moins ${label("A")}">−</button><span class="v">${_lvVote.a}</span><button data-lv-sc="a+" aria-label="Un but de plus ${label("A")}">+</button></div>
           <span style="color:var(--text3);font-size:22px">-</span>
@@ -11493,12 +11502,11 @@ function _livePronoHTML() {
         </div>` : ""}
       </div>
       ${gain}<div class="lv-err">${_lvVote.err || ""}</div>
-      <button class="lv-send" data-lv-send="1"${_lvVote.sending ? " disabled" : ""}>${_lvVote.sending ? "Envoi…" : "Valider le prono"}</button>`
-      : (voters.length ? `<span class="lv-allvoted">Toute l'équipe au repos a voté ✓</span>` : `<span class="lv-muted">Personne au repos pour ce match.</span>`);
+      <button class="lv-send" data-lv-send="1"${_lvVote.sending ? " disabled" : ""}>${_lvVote.sending ? "Envoi…" : `Valider le prono de ${me}`}</button>`;
     return `<div class="lv-card lv-prono open">
       <div class="lv-prono-h"><span class="lv-prono-ttl"><span class="lv-pulse"></span>Votes ouverts</span><span class="lv-prono-when">jusqu'à la mi-temps</span></div>
       ${match}${form}
-      ${names.length ? `<div class="lv-step"><span class="lv-step-l">Ont voté (${names.length}/${voters.length || names.length})</span><div class="lv-votes">${voteRows(false)}</div></div>` : ""}
+      ${names.length ? `<div class="lv-step"><span class="lv-step-l">Ont voté (${names.length})</span><div class="lv-votes">${voteRows(false)}</div></div>` : ""}
     </div>`;
   }
   const done = !!cur.result;
@@ -11531,28 +11539,38 @@ function _liveNightRankingHTML() {
 }
 
 /* ── Vote ── */
+// Sur le terrain pour ce match : présent dans l'une des 2 équipes qui jouent, ou remplaçant
+// (banc) venu de l'équipe au repos — d'après le match en direct publié par la Saisie.
+function _pronoIsOnField(name, L, matchId) {
+  const p = _liveDraft && _liveDraft.presences && _liveDraft.presences[name];
+  if (p && p.statut === "Présent" && p.equipe && (p.equipe === L.eqA || p.equipe === L.eqB)) return true;
+  const lm = (_liveMatchsMap || {})[matchId];
+  if (lm && [..._lvArr(lm.bancA), ..._lvArr(lm.bancB)].includes(name)) return true;
+  return false;
+}
 function _lvSubmit() {
   const cur = _pronoCurrent();
   if (!cur || !cur.open || cur.id !== _lvVote.matchId) { _lvVote.err = "Les votes sont clos pour ce match."; renderLive(); return; }
-  if (!_lvVote.me) { _lvVote.err = "Choisis d'abord le joueur qui vote."; renderLive(); return; }
+  const me = _accPlayer();
+  if (!me) { _accOpen("login"); return; }
+  if (_pronoIsOnField(me, cur.live, cur.id)) { _lvVote.err = "Tu joues ce match : pas de prono pour toi."; renderLive(); return; }
   if (!_lvVote.out) { _lvVote.err = "Choisis l'issue du match."; renderLive(); return; }
   if (_lvVote.exact && _pronoOutcome(_lvVote.a, _lvVote.b) !== _lvVote.out) { _lvVote.err = "Le score ne correspond pas à l'issue choisie."; renderLive(); return; }
   const vote = { out: _lvVote.out, at: _liveNow() };
   if (_lvVote.exact) { vote.a = _lvVote.a; vote.b = _lvVote.b; }
-  const who = _lvVote.me;
+  const who = me;
   _lvVote.sending = true; _lvVote.err = ""; renderLive();
   // Ecriture unique : un vote deja present n est jamais ecrase.
   _db.ref(`pronos/${_livePronosKey}/${cur.id}/votes/${who}`).transaction(v => v === null ? vote : undefined)
     .then(res => {
-      _lvVote = { matchId: cur.id, me: null, out: null, exact: false, a: 0, b: 0, err: res.committed ? "" : `${who} a déjà voté.`, sending: false };
+      _lvVote = { matchId: cur.id, out: null, exact: false, a: 0, b: 0, err: res.committed ? "" : `${who} a déjà voté.`, sending: false };
       if (res.committed) _showToast(`Prono de <b>${who}</b> enregistré`);
       renderLive();
     })
     .catch(err => { _lvVote.sending = false; _lvVote.err = "Envoi impossible, réessaie dans un instant."; console.warn('vote:', err); renderLive(); });
 }
 document.getElementById("live-content").addEventListener("click", e => {
-  const me = e.target.closest("[data-lv-me]");
-  if (me) { _lvVote.me = me.dataset.lvMe; _lvVote.err = ""; renderLive(); return; }
+  if (e.target.closest("[data-lv-login]")) { _accOpen("login"); return; }
   const out = e.target.closest("[data-lv-out]");
   if (out) { _lvVote.out = out.dataset.lvOut; _lvVote.err = ""; renderLive(); return; }
   const sc = e.target.closest("[data-lv-sc]");
@@ -11748,7 +11766,18 @@ function _accRender(keepFocus) {
     h = `<div class="acm-me">${_accAvHTML(p, "", true)}<h5>${p}</h5>${_accIsSuper ? `<span class="acm-badge">Super admin</span>` : `<span class="acm-badge" style="color:var(--good);border-color:color-mix(in srgb,var(--good) 40%,transparent);background:color-mix(in srgb,var(--good) 12%,transparent)">Compte joueur</span>`}
       <p class="acm-sub" style="margin:4px 0 10px">Tu es connecté sur ce téléphone.</p></div>
       <button class="acm-btn" data-a="fiche">Voir ma fiche</button>
+      ${_accIsSuper ? `<button class="acm-btn ghost" data-a="accounts">👥 Comptes activés</button>` : ""}
       <button class="acm-btn ghost" data-a="logout">Se déconnecter</button>`;
+  } else if (a.view === "accounts") {
+    // Super admin : liste des comptes créés (fiche rattachée + date), avec « Détacher ».
+    const rows = a.accounts;
+    const total = new Set(ALL_PLAYERS).size;
+    h = `<div class="acm-top"><button class="acm-back" data-a="tome" aria-label="Retour">‹</button><span class="acm-kicker">Super admin</span></div>
+      <h4 class="acm-h">Comptes activés</h4>
+      <p class="acm-sub">${rows ? `<b>${rows.length}</b> joueur${rows.length > 1 ? "s" : ""} sur ${total} ${rows.length > 1 ? "ont créé leur" : "a créé son"} compte.` : "Chargement…"}</p>${err}
+      <div class="acm-list" style="max-height:52vh">${(rows || []).map(r => `<div class="acm-pl" style="cursor:default">${_accAvHTML(r.player, "")}<span><b>${r.player}</b><small>${r.createdAt ? "Créé le " + new Date(r.createdAt).toLocaleDateString("fr", { day: "numeric", month: "long", year: "numeric" }) : "Compte rattaché"}${r.super ? " · Super admin" : ""}</small></span>
+        ${r.uid === (_accUser && _accUser.uid) ? `<span class="acm-taken">Toi</span>` : `<button class="acm-link small" style="width:auto;margin:0" data-a="detach" data-n="${_accEsc(r.player)}">${a.confirmDetach === r.player ? "Confirmer ?" : "Détacher"}</button>`}</div>`).join("")}</div>
+      <p class="acm-help">Détacher libère la fiche : la personne devra se rattacher à nouveau à sa fiche à sa prochaine connexion. Ses pronos et ses données restent sous la fiche.</p>`;
   } else if (a.view === "login" || a.view === "create0") {
     const seg = `<div class="acm-seg"><button aria-pressed="${a.view === "login"}" data-a="tab" data-t="login">Se connecter</button><button aria-pressed="${a.view !== "login"}" data-a="tab" data-t="create0">Créer un compte</button></div>`;
     h = seg + (a.view === "login"
@@ -11861,6 +11890,26 @@ async function _accDoBind() {
   if (!ok) { a.pick = null; a.err = "Cette fiche est déjà prise. Choisis-en une autre."; _accLoadTaken(); _accRender(); return; }
   _accAfterClaim(_accUser.uid, a.pick);
 }
+async function _accLoadAccounts() {
+  try {
+    const [pa, us, sa] = await Promise.all(["playerAccounts", "users", "config/superAdmins"].map(p => _db.ref(p).once("value")));
+    const users = us.val() || {}, supers = sa.val() || {};
+    _acc.accounts = Object.entries(pa.val() || {}).map(([player, uid]) => ({ player, uid, createdAt: users[uid] && users[uid].createdAt, super: supers[player] === true }))
+      .sort((x, y) => (y.createdAt || 0) - (x.createdAt || 0));
+  } catch (e) { _acc.accounts = []; _acc.err = "Impossible de charger la liste. Réessaie dans un instant."; }
+  if (_acc.view === "accounts") _accRender();
+}
+// Détacher : libère la fiche et efface le profil. Le compte de connexion reste, sans fiche :
+// à sa prochaine connexion, la personne choisit à nouveau sa fiche.
+async function _accDetach(player) {
+  if (!_accIsSuper) return;
+  const r = (_acc.accounts || []).find(x => x.player === player); if (!r) return;
+  try {
+    await _db.ref().update({ ["playerAccounts/" + player]: null, ["users/" + r.uid]: null });
+    _showToast(`Compte détaché de la fiche <b>${player}</b>`);
+  } catch (e) { _acc.err = "Le détachement a échoué. Réessaie dans un instant."; }
+  _acc.confirmDetach = null; _accLoadAccounts();
+}
 function _accLogout() {
   _guardStaleEditDraft(() => {
     _auth && _auth.signOut().catch(() => {});
@@ -11883,6 +11932,13 @@ document.getElementById("acc-modal").addEventListener("click", e => {
   else if (act === "create") { _accDoCreate(); return; }
   else if (act === "bindok") { _accDoBind(); return; }
   else if (act === "fiche") { _accClose(); _accShowMyFiche(); return; }
+  else if (act === "accounts") { a.view = "accounts"; a.accounts = null; a.err = ""; a.confirmDetach = null; _accRender(); _accLoadAccounts(); return; }
+  else if (act === "tome") { a.view = "me"; }
+  else if (act === "detach") {
+    const n = t.dataset.n;
+    if (a.confirmDetach !== n) { a.confirmDetach = n; _accRender(); setTimeout(() => { if (_acc.confirmDetach === n) { _acc.confirmDetach = null; if (_acc.view === "accounts") _accRender(); } }, 4000); return; }
+    _accDetach(n); return;
+  }
   else if (act === "logout") { _accLogout(); return; }
   else if (act === "adminpwd") { _accClose(); _openAdminPwd(); return; }
   else return;
