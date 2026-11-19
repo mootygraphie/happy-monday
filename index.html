@@ -2500,6 +2500,92 @@
 #panel-vignettes .vg-head h2 span { color: var(--gold); }
 #panel-vignettes .vg-asof { margin: 4px 0 0; font-size: 12px; color: var(--text3); }
 #panel-vignettes .vg-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; margin-bottom: 22px; }
+#panel-vignettes .vt-seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 14px; max-width: 520px; }
+#panel-vignettes .vt-seg button { position: relative; border: none; background: none; color: var(--text3); font: inherit; font-size: 13px; font-weight: 600; padding: 10px 0 11px; cursor: pointer; border-bottom: 2px solid transparent; }
+#panel-vignettes .vt-seg button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--gold); }
+#panel-vignettes .vt-bd, .vg-subtab .vt-bd { display: inline-flex; align-items: center; justify-content: center; min-width: 17px; height: 17px; padding: 0 4px; margin-left: 5px; border-radius: 9px; background: var(--bad); color: #fff; font-size: 10.5px; font-weight: 700; letter-spacing: 0; vertical-align: 1px; }
+#panel-vignettes .vt-wrap { max-width: 520px; }
+#panel-vignettes .vt-intro { font-size: 13px; color: var(--text2); margin: 0 0 12px; line-height: 1.5; }
+#panel-vignettes .vt-sub { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); margin: 4px 0 8px; }
+#panel-vignettes .vt-search { width: 100%; background: var(--bg3); border: 1.5px solid var(--border2); border-radius: 12px; padding: 12px 14px; font: inherit; font-size: 16px; color: var(--text); outline: none; margin-bottom: 12px; box-sizing: border-box; }
+#panel-vignettes .vt-search:focus { border-color: var(--gold-border); }
+#panel-vignettes .vt-av { width: 42px; height: 42px; flex: none; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: var(--text2); background: var(--bg3); border: 2px solid var(--tc, var(--border2)); box-sizing: border-box; }
+#panel-vignettes .vt-av.pf > .pf-img { object-position: 50% 50%; transform: scale(2.2); transform-origin: 50% 34%; }
+#panel-vignettes .vt-pl { display: grid; grid-template-columns: 42px 1fr auto; gap: 12px; align-items: center; width: 100%; padding: 9px 10px; border-radius: 13px; border: 1.5px solid var(--border); background: var(--bg2); cursor: pointer; text-align: left; color: var(--text); font: inherit; margin-bottom: 6px; }
+#panel-vignettes .vt-pl:hover { border-color: var(--border2); }
+#panel-vignettes .vt-pl b { display: block; font-size: 14.5px; }
+#panel-vignettes .vt-pl small { font-size: 11.5px; color: var(--text3); line-height: 1.4; display: block; }
+#panel-vignettes .vt-pl small i { font-style: normal; color: var(--good); font-weight: 600; }
+#panel-vignettes .vt-pl .go { color: var(--gold); font-size: 20px; }
+#panel-vignettes .vt-partner { display: flex; align-items: center; gap: 10px; background: color-mix(in srgb, var(--gold) 8%, var(--bg2)); border: 1.5px solid var(--gold-border); border-radius: 14px; padding: 8px 10px; margin-bottom: 4px; }
+#panel-vignettes .vt-partner b { display: block; font-size: 15px; }
+#panel-vignettes .vt-partner small { font-size: 11.5px; color: var(--text3); }
+#panel-vignettes .vt-partner .x { margin-left: auto; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); cursor: pointer; flex: none; }
+#panel-vignettes .vt-pick-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 16px 0 8px; }
+#panel-vignettes .vt-pick-h b { font-size: 14px; }
+#panel-vignettes .vt-pick-h small { font-size: 11.5px; color: var(--text3); text-align: right; }
+#panel-vignettes .vt-pick-h small.full { color: var(--gold); font-weight: 700; }
+#panel-vignettes .vt-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 8px 4px 10px; scrollbar-width: none; scroll-snap-type: x proximity; }
+#panel-vignettes .vt-scroll::-webkit-scrollbar { display: none; }
+#panel-vignettes .vt-opt { flex: none; width: 92px; padding: 0; border: none; background: none; cursor: pointer; position: relative; border-radius: 8px; scroll-snap-align: start; transition: transform .15s; }
+#panel-vignettes .vt-opt .card { width: 100%; }
+#panel-vignettes .vt-opt::after { content: ""; position: absolute; inset: -3px -3px 18px; border-radius: 10px; border: 2.5px solid transparent; pointer-events: none; transition: border-color .15s; }
+#panel-vignettes .vt-opt[aria-pressed="true"] { transform: translateY(-3px); }
+#panel-vignettes .vt-opt[aria-pressed="true"]::after { border-color: var(--gold); box-shadow: 0 0 14px rgba(245,200,66,.45); }
+#panel-vignettes .vt-opt .chk { position: absolute; top: -6px; right: -6px; z-index: 9; width: 22px; height: 22px; border-radius: 50%; background: var(--gold); color: #1b1606; font-size: 12px; font-weight: 800; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,.5); }
+#panel-vignettes .vt-opt[aria-pressed="true"] .chk { display: flex; }
+#panel-vignettes .vt-opt .cnt { display: block; margin-top: 10px; font-size: 10.5px; color: var(--text3); text-align: center; }
+#panel-vignettes .vt-secret { aspect-ratio: 5 / 7; border-radius: 8px; background: repeating-linear-gradient(135deg, #22222c 0 6px, #1b1b23 6px 12px); border: 1.5px dashed var(--border2); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--text3); box-sizing: border-box; }
+#panel-vignettes .vt-secret span { font-size: 1.4em; }
+#panel-vignettes .vt-secret b { font-size: 9px; text-transform: uppercase; letter-spacing: .08em; }
+#panel-vignettes .vt-none { font-size: 13px; color: var(--text3); padding: 10px 12px; border: 1px dashed var(--border2); border-radius: 12px; }
+#panel-vignettes .vt-sum { position: sticky; bottom: 0; z-index: 5; margin-top: 16px; padding: 12px 0 8px; background: linear-gradient(transparent, var(--bg) 22%); }
+#panel-vignettes .vt-sum p { margin: 0 0 8px; font-size: 12px; color: var(--text2); text-align: center; }
+#panel-vignettes .vt-btn { width: 100%; border: none; background: var(--gold); color: #1b1606; font: inherit; font-weight: 700; font-size: 15px; padding: 13px; border-radius: 13px; cursor: pointer; }
+#panel-vignettes .vt-btn:disabled { background: var(--bg3); color: var(--text3); cursor: default; }
+#panel-vignettes .vt-btn.ghost { background: transparent; color: var(--text2); border: 1px solid var(--border2); }
+#panel-vignettes .vt-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 12px; margin-bottom: 10px; }
+#panel-vignettes .vt-box.dim { opacity: .62; }
+#panel-vignettes .vt-who { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+#panel-vignettes .vt-who .vt-av { width: 38px; height: 38px; }
+#panel-vignettes .vt-who b { display: block; font-size: 14.5px; }
+#panel-vignettes .vt-who small { font-size: 11.5px; color: var(--text3); }
+#panel-vignettes .vt-who .exp { margin-left: auto; font-size: 10.5px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+#panel-vignettes .vt-who .exp.soon { color: #f0a050; }
+#panel-vignettes .vt-swap { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; }
+#panel-vignettes .vt-swap .arrow { font-size: 18px; color: var(--gold); }
+#panel-vignettes .vt-side { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+#panel-vignettes .vt-side > small { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
+#panel-vignettes .vt-cards { display: flex; gap: 5px; }
+#panel-vignettes .vt-c { width: min(64px, calc((100% - 10px) / 3)); flex: none; cursor: zoom-in; }
+#panel-vignettes .vt-c .card { width: 100%; }
+#panel-vignettes .vt-gift { font-size: 12px; color: var(--gold); font-weight: 600; padding: 8px 0; }
+#panel-vignettes .vt-acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+#panel-vignettes .vt-acts.one { grid-template-columns: 1fr; }
+#panel-vignettes .vt-acts .vt-btn { padding: 11px; font-size: 14px; }
+#panel-vignettes .vt-warn { margin-top: 10px; font-size: 12px; color: var(--bad); }
+#panel-vignettes .vt-st { display: inline-block; margin-left: auto; font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 8px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+#panel-vignettes .vt-st.wait { background: var(--gold-bg); color: var(--gold); }
+#panel-vignettes .vt-st.ok { background: color-mix(in srgb, var(--good) 15%, transparent); color: var(--good); }
+#panel-vignettes .vt-st.ko { background: rgba(255,255,255,.06); color: var(--text3); }
+#panel-vignettes .vt-got { position: fixed; inset: 0; z-index: 2000; background: radial-gradient(circle at 50% 40%, rgba(245,200,66,.16), transparent 60%), rgba(10,10,14,.97); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 22px; text-align: center; animation: vg-fadeIn .25s ease; }
+#panel-vignettes .vt-got h4 { margin: 0 0 4px; font-size: 24px; font-style: italic; text-transform: uppercase; color: #fff; }
+#panel-vignettes .vt-got > p { margin: 0 0 22px; font-size: 13px; color: var(--text2); max-width: 36ch; }
+#panel-vignettes .vt-got .row { display: flex; gap: 12px; justify-content: center; margin-bottom: 22px; width: 100%; max-width: 380px; }
+#panel-vignettes .vt-got .it { width: min(116px, calc((100% - 24px) / 3)); animation: vt-stick .7s cubic-bezier(.2,1.4,.4,1) both; }
+#panel-vignettes .vt-got .it.dup { animation: none; }
+#panel-vignettes .vt-got .it .card { width: 100%; }
+#panel-vignettes .vt-got .it em { display: block; margin-top: 12px; font-style: normal; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--good); }
+#panel-vignettes .vt-got .it.dup em { color: var(--text3); }
+#panel-vignettes .vt-prog { width: 100%; max-width: 280px; margin: 0 auto 20px; }
+#panel-vignettes .vt-prog div { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+#panel-vignettes .vt-prog div b { color: #fff; }
+#panel-vignettes .vt-prog u { display: block; height: 6px; border-radius: 4px; background: var(--bg3); overflow: hidden; }
+#panel-vignettes .vt-prog u i { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), #ffe08a); border-radius: 4px; }
+#panel-vignettes .vt-got .vt-btn { max-width: 280px; }
+@keyframes vt-stick { 0% { transform: scale(1.7) rotate(-10deg); opacity: 0; } 60% { transform: scale(.94) rotate(2deg); opacity: 1; } 100% { transform: none; } }
+.vt-tabbd { display: inline-flex; align-items: center; justify-content: center; min-width: 17px; height: 17px; padding: 0 4px; margin-left: 5px; border-radius: 9px; background: var(--bad); color: #fff; font-size: 10.5px; font-weight: 700; vertical-align: 1px; }
+@container app (max-width: 560px) { #panel-vignettes .vg-subtab { padding: 9px 9px; letter-spacing: .03em; } }
 #panel-vignettes .vg-subtabs { display: inline-flex; background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 4px; gap: 3px; }
 #panel-vignettes .vg-subtab { padding: 9px 16px; border-radius: 9px; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; background: transparent; color: var(--text3); border: none; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
 #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(255,255,255,.11); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,.45); }
@@ -2830,7 +2916,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 17:17</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 17:30</footer>
 
 <script>
 
@@ -12853,6 +12939,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const body = document.getElementById("vg-body");
     document.getElementById("vg-asof").textContent = `${ALL.length} cartes · joueurs, hauts faits et faits notables · mises à jour chaque lundi`;
     const me = (typeof _accPlayer === "function") ? _accPlayer() : null;
+    watchTrades();
     if (me !== ME) { ME = me; loadedFor = null; COL = {}; PASTED = new Set(); BOOST = null; if (boostRef) { boostRef.off(); boostRef = null; } }
     if (!ME) { body.innerHTML = teaserHTML(); return; }
     if (loadedFor !== ME) {
@@ -12862,7 +12949,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     }
     const owned = ALL.filter(c => COL[c.k]).length;
     body.innerHTML = `<div class="vg-bar">
-        <div class="vg-subtabs" role="tablist"><button class="vg-subtab" aria-selected="${tab === "booster"}" data-vg-tab="booster">🎁 Booster</button><button class="vg-subtab" aria-selected="${tab === "album"}" data-vg-tab="album">📒 Album</button></div>
+        <div class="vg-subtabs" role="tablist"><button class="vg-subtab" aria-selected="${tab === "booster"}" data-vg-tab="booster">🎁 Booster</button><button class="vg-subtab" aria-selected="${tab === "album"}" data-vg-tab="album">📒 Album</button><button class="vg-subtab" aria-selected="${tab === "trades"}" data-vg-tab="trades">🔄 Échanges<span class="vt-bd" id="vt-subbd" hidden></span></button></div>
         <div class="vg-prog"><div class="vg-prog-top"><span>Album de ${ME}</span><b>${owned} / ${ALL.length}</b></div><div class="vg-progbar"><i style="width:${owned / ALL.length * 100}%"></i></div>
           <div class="vg-prog-r">${["L", "E", "R", "C"].map(r => { const all = ALL.filter(c => c.r === r); return `<span class="${r}"><b>${all.filter(c => COL[c.k]).length}/${all.length}</b>${RL[r]}</span>`; }).join("")}</div></div>
       </div>
@@ -12874,8 +12961,10 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
         <div class="drops-bottom"><div class="sel"><select id="vg-secsel" aria-label="Aller à une section de l'album"></select></div></div>
         <div class="vg-foot"><span id="vg-pginfo"></span><span class="swipe">Glisse ou utilise les flèches pour tourner les pages</span></div>
       </section>
-      <details class="vg-legend"><summary>Comment ça marche ?</summary><p><b>Raretés.</b> Joueurs : selon la note générale. Hauts faits : selon le nombre de détenteurs (un seul = légendaire). Faits notables : selon le nombre de fois où ils ont été réalisés (jamais réalisé = légendaire). <b>Notes.</b> ATT = buts par match, PAS = passes par match, DEF = buts encaissés par l'équipe quand il joue, VIC = points par match, FID = soirées jouées, GAR = buts encaissés par mi-temps au but, classées de 42 à 98 parmi les joueurs de la saison. <b>Sections.</b> Réguliers et Occasionnels se répartissent à parts égales entre Buteurs, Passeurs, Défenseurs, Murailles et Guerriers (ceux qui n'ont pas encore joué et les stats les plus moyennes) ; buts et passes comptent à moitié par match, à moitié au total, la fidélité départage. Les Dépanneurs ont leur section. Les cartes évoluent avec les stats jusqu'en fin de saison. Ton album est enregistré sous ta fiche joueur.</p></details>`;
-    if (tab === "booster") renderPack(); else renderAlbum();
+      <section id="vg-trades"${tab === "trades" ? "" : " hidden"}></section>
+      <details class="vg-legend"><summary>Comment ça marche ?</summary><p><b>Raretés.</b> Joueurs : selon la note générale. Hauts faits : selon le nombre de détenteurs (un seul = légendaire). Faits notables : selon le nombre de fois où ils ont été réalisés (jamais réalisé = légendaire). <b>Notes.</b> ATT = buts par match, PAS = passes par match, DEF = buts encaissés par l'équipe quand il joue, VIC = points par match, FID = soirées jouées, GAR = buts encaissés par mi-temps au but, classées de 42 à 98 parmi les joueurs de la saison. <b>Sections.</b> Réguliers et Occasionnels se répartissent à parts égales entre Buteurs, Passeurs, Défenseurs, Murailles et Guerriers (ceux qui n'ont pas encore joué et les stats les plus moyennes) ; buts et passes comptent à moitié par match, à moitié au total, la fidélité départage. Les Dépanneurs ont leur section. Les cartes évoluent avec les stats jusqu'en fin de saison. Ton album est enregistré sous ta fiche joueur. <b>Échanges.</b> Seulement des doubles, 3 cartes maximum de chaque côté, rareté libre, dons permis. Une proposition expire au bout de 3 jours.</p></details>`;
+    if (tab === "booster") renderPack(); else if (tab === "trades") renderTrades(); else renderAlbum();
+    trBadge();
   }
   function teaserHTML() {
     build();
@@ -13172,8 +13261,232 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   }
   function closeModal() { const m = document.getElementById("vg-modal"); if (m) m.hidden = true; }
 
+
+  /* ═════════ ÉCHANGES DE DOUBLES ═════════
+     Règles validées : uniquement des doubles, 3 cartes maximum de chaque côté, rareté libre,
+     dons permis (rien demandé en retour), une proposition expire au bout de 3 jours.
+     Les propositions sont rangées DANS vignettes/{saison}/_trades : accepter un échange est
+     une seule transaction sur vignettes/{saison} qui revérifie le statut et les doubles des
+     deux joueurs, déplace les cartes et passe la proposition en « ok » — tout ou rien. */
+  const TR_MAX = 3, TR_TTL = 3 * 86400000, TRK = "_trades";
+  let ALBUMS = {}, albumsRef = null, watchFor = null, trSince = 0;
+  const TR = { sub: "swap", q: "", partner: null, gSel: [], rSel: [], busy: false, told: new Set() };
+  const RORD = { L: 0, E: 1, R: 2, C: 3 };
+  const byRar = (a, b) => RORD[BYK[a].r] - RORD[BYK[b].r] || a.localeCompare(b, "fr");
+  const cardsOf = n => (n === ME && loadedFor === ME) ? COL : ((ALBUMS[n] && ALBUMS[n].cards) || {});
+  const nOf = (n, k) => cardsOf(n)[k] || 0;
+  const dupsOf = n => Object.keys(cardsOf(n)).filter(k => BYK[k] && nOf(n, k) >= 2);
+  const trGive = x => dupsOf(ME).filter(k => !nOf(x, k)).sort(byRar);   // mes doubles qui lui manquent
+  const trGet = x => dupsOf(x).filter(k => !nOf(ME, k)).sort(byRar);    // mes manques qu'il a en double
+  const ownedOf = n => Object.keys(cardsOf(n)).filter(k => BYK[k]).length;
+  const trNorm = x => x.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  const trPartners = () => Object.keys(ALBUMS).filter(n => n !== TRK && n !== ME && ALBUMS[n] && ALBUMS[n].cards && Object.keys(ALBUMS[n].cards).length).sort((a, b) => a.localeCompare(b, "fr"));
+  const trList = () => Object.entries(ALBUMS[TRK] || {}).map(([id, t]) => ({ id, ...t, give: t.give || [], get: t.get || [] }));
+  const trExpired = t => _liveNow() > (t.at || 0) + TR_TTL;
+  const trValid = t => t.give.every(k => nOf(t.from, k) >= 2) && t.get.every(k => nOf(t.to, k) >= 2);
+  const trPending = () => trList().filter(t => t.to === watchFor && t.status === "wait" && !trExpired(t) && trValid(t));
+  const trLeft = t => { const ms = (t.at || 0) + TR_TTL - _liveNow(), h = Math.ceil(ms / 3600000); return h > 24 ? `expire dans ${Math.ceil(h / 24)} j` : `expire dans ${Math.max(1, h)} h`; };
+  const trAv = n => `<span class="vt-av pf" style="--tc:${NTEAM[n] === "Rouge" ? "var(--rouge)" : NTEAM[n] === "Vert" ? "var(--vert)" : NTEAM[n] === "Bleue" ? "var(--bleu)" : "var(--border2)"}">${n.slice(0, 2).toUpperCase()}${portraitImg(n, true)}</span>`;
+  const trCard = k => lockedSecret(BYK[k]) ? `<div class="vt-secret"><span>🤫</span><b>Secret</b></div>` : cardHTML(BYK[k], true);
+  const trMini = k => `<div class="vt-c" data-vt="zoom" data-k="${k}">${trCard(k)}</div>`;
+  const trLabel = k => lockedSecret(BYK[k]) ? "🤫 Secret" : BYK[k].ty === "p" ? BYK[k].n : BYK[k].nm;
+
+  // Écoute les albums de la saison (doubles et manques des autres) et les propositions.
+  function watchTrades() {
+    const me = (typeof _accPlayer === "function") ? _accPlayer() : null;
+    if (me === watchFor) return;
+    if (albumsRef) albumsRef.off();
+    albumsRef = null; ALBUMS = {}; watchFor = me; trSince = _liveNow();
+    Object.assign(TR, { sub: "swap", q: "", partner: null, gSel: [], rSel: [], told: new Set() });
+    trBadge();
+    if (!me) return;
+    albumsRef = _db.ref(`vignettes/${SEASON}`);
+    albumsRef.on("value", snap => {
+      if (watchFor !== me) return;
+      ALBUMS = snap.val() || {};
+      // mon album a pu changer ailleurs (échange accepté par l'autre joueur, autre téléphone)
+      if (ME === me && loadedFor === me && !opening && ALBUMS[me] && ALBUMS[me].cards) { COL = ALBUMS[me].cards; saveBest(); refreshProg(); }
+      // mes propositions acceptées depuis l'ouverture du site
+      trList().forEach(t => {
+        if (t.from === me && t.status === "ok" && (t.doneAt || 0) > trSince && !TR.told.has(t.id)) {
+          TR.told.add(t.id); _showToast(`🔄 ${t.to} a accepté ${t.get.length ? "ton échange" : "ton cadeau"} !`);
+        }
+      });
+      trBadge();
+      if (panel.classList.contains("active") && tab === "trades" && !TR.busy) {
+        const sx = [...panel.querySelectorAll(".vt-scroll")].map(x => x.scrollLeft), q = document.activeElement && document.activeElement.id === "vt-q";
+        renderTrades();
+        panel.querySelectorAll(".vt-scroll").forEach((x, j) => { x.scrollLeft = sx[j] || 0; });
+        if (q) { const el = document.getElementById("vt-q"); if (el) { el.focus(); const l = el.value.length; try { el.setSelectionRange(l, l); } catch (er) {} } }
+      }
+    });
+  }
+  function trBadge() {
+    const n = watchFor ? trPending().length : 0;
+    const sb = document.getElementById("vt-subbd"); if (sb) { sb.hidden = !n; sb.textContent = n; }
+    const rb = document.getElementById("vt-recvbd"); if (rb) { rb.hidden = !n; rb.textContent = n; }
+    ["vg-tab-btn", "vg-drawer-btn"].forEach(id => {
+      const b = document.getElementById(id); if (!b) return;
+      let s = b.querySelector(".vt-tabbd");
+      if (!n) { if (s) s.remove(); return; }
+      if (!s) { s = document.createElement("span"); s.className = "vt-tabbd"; b.appendChild(s); }
+      s.textContent = n;
+    });
+  }
+
+  function trSide(label, keys, empty) {
+    return `<div class="vt-side"><small>${label}</small>${keys.length ? `<div class="vt-cards">${keys.map(trMini).join("")}</div>` : `<div class="vt-gift">${empty}</div>`}</div>`;
+  }
+  function trPlRow(n) {
+    const g = trGive(n).length, r = trGet(n).length;
+    return `<button class="vt-pl" data-vt="partner" data-n="${n}">${trAv(n)}<span><b>${n}</b><small><i>${r}</i> de tes manques en double · <i>${g}</i> de tes doubles lui manquent</small></span><span class="go">›</span></button>`;
+  }
+  function trSwapHTML() {
+    const search = `<input class="vt-search" id="vt-q" value="${TR.q.replace(/"/g, "&quot;")}" placeholder="🔎 Avec qui veux-tu échanger ?" autocomplete="off">`;
+    const all = trPartners();
+    if (!TR.partner) {
+      if (!all.length) return `<p class="vt-intro">Personne d'autre n'a encore commencé son album. Les échanges arriveront avec les premiers collectionneurs !</p>`;
+      const q = trNorm(TR.q.trim());
+      if (q) { const res = all.filter(n => trNorm(n).includes(q)); return search + (res.map(trPlRow).join("") || `<div class="vt-none">Aucun collectionneur trouvé.</div>`); }
+      const best = all.map(n => ({ n, sc: Math.min(trGive(n).length, trGet(n).length), r: trGet(n).length })).filter(x => x.r).sort((a, b) => b.sc - a.sc || b.r - a.r).slice(0, 3);
+      return search + (best.length ? `<div class="vt-sub">Suggestions pour toi</div>${best.map(x => trPlRow(x.n)).join("")}` : `<p class="vt-intro">Cherche un joueur pour voir ses doubles et ce qui lui manque.</p>`);
+    }
+    const n = TR.partner, g = trGive(n), r = trGet(n);
+    TR.gSel = TR.gSel.filter(k => g.includes(k)); TR.rSel = TR.rSel.filter(k => r.includes(k));
+    const opt = (k, sel, side) => `<button class="vt-opt" data-vt="tog" data-side="${side}" data-k="${k}" aria-pressed="${sel.includes(k)}"><span class="chk">✓</span>${trCard(k)}<span class="cnt">${side === "g" ? `Tu en as ${nOf(ME, k)}` : `Il en a ${nOf(n, k)}`}</span></button>`;
+    const gift = TR.gSel.length && !TR.rSel.length;
+    const btn = !TR.gSel.length ? `<button class="vt-btn" disabled>Choisis au moins un de tes doubles</button>`
+      : gift ? `<button class="vt-btn" data-vt="send">🎁 Offrir ${TR.gSel.length > 1 ? `ces ${TR.gSel.length} cartes` : "cette carte"} à ${n}</button>`
+      : `<button class="vt-btn" data-vt="send">Envoyer la proposition</button>`;
+    return `<div class="vt-partner">${trAv(n)}<span><b>${n}</b><small>Album ${ownedOf(n)} / ${ALL.length} · ${dupsOf(n).length} doubles</small></span><button class="x" data-vt="clear" aria-label="Changer de joueur">✕</button></div>
+      <div class="vt-pick-h"><b>Mes doubles</b><small class="${TR.gSel.length === TR_MAX ? "full" : ""}">qui lui manquent · ${TR.gSel.length} / ${TR_MAX}</small></div>
+      ${g.length ? `<div class="vt-scroll">${g.map(k => opt(k, TR.gSel, "g")).join("")}</div>` : `<div class="vt-none">Aucun de tes doubles ne lui manque.</div>`}
+      <div class="vt-pick-h"><b>Mes manques</b><small class="${TR.rSel.length === TR_MAX ? "full" : ""}">qu'il a en double · ${TR.rSel.length} / ${TR_MAX}</small></div>
+      ${r.length ? `<div class="vt-scroll">${r.map(k => opt(k, TR.rSel, "r")).join("")}</div>` : `<div class="vt-none">${n} n'a aucun double qui te manque. Tu peux quand même lui faire un don.</div>`}
+      <div class="vt-sum"><p>${TR.gSel.length ? `Tu donnes ${TR.gSel.length} carte${TR.gSel.length > 1 ? "s" : ""}` : "Touche les cartes pour les sélectionner"}${TR.rSel.length ? ` · tu reçois ${TR.rSel.length} carte${TR.rSel.length > 1 ? "s" : ""}` : gift ? " · rien en retour (don)" : ""}${TR.gSel.length ? " · expire dans 3 j" : ""}</p>${btn}</div>`;
+  }
+  function trRecvHTML() {
+    const L = trList().filter(t => t.to === ME && t.status === "wait" && !trExpired(t)).sort((a, b) => (b.at || 0) - (a.at || 0));
+    if (!L.length) return `<div class="vt-none">Aucune proposition reçue pour l'instant.</div>`;
+    return `<p class="vt-intro">Tu as 3 jours pour répondre. Passé ce délai, la proposition disparaît toute seule.</p>` + L.map(t => {
+      const ok = trValid(t), gift = !t.get.length, left = (t.at || 0) + TR_TTL - _liveNow();
+      return `<div class="vt-box${ok ? "" : " dim"}"><div class="vt-who">${trAv(t.from)}<span><b>${t.from}</b><small>${gift ? "t'offre un cadeau 🎁" : "te propose un échange"}</small></span><span class="exp${left < 12 * 3600000 ? " soon" : ""}">${ok ? trLeft(t) : "Caduque"}</span></div>
+        <div class="vt-swap">${trSide("Tu reçois", t.give, "")}<span class="arrow">${gift ? "🎁" : "⇄"}</span>${trSide("Tu donnes", t.get, "Rien du tout !")}</div>
+        ${ok ? `<div class="vt-acts"><button class="vt-btn ghost" data-vt="refuse" data-id="${t.id}">Refuser</button><button class="vt-btn" data-vt="accept" data-id="${t.id}">${gift ? "Merci, j'accepte" : "Accepter"}</button></div>`
+          : `<div class="vt-warn">⚠️ Une des cartes n'est plus disponible en double. La proposition n'est plus valable.</div><div class="vt-acts one"><button class="vt-btn ghost" data-vt="refuse" data-id="${t.id}">Retirer</button></div>`}</div>`;
+    }).join("");
+  }
+  function trSentHTML() {
+    const L = trList().filter(t => t.from === ME && (t.status === "wait" || _liveNow() - (t.doneAt || t.at || 0) < 7 * 86400000)).sort((a, b) => (b.at || 0) - (a.at || 0));
+    if (!L.length) return `<div class="vt-none">Tu n'as envoyé aucune proposition ces derniers jours.</div>`;
+    return L.map(t => {
+      const gift = !t.get.length, exp = t.status === "wait" && trExpired(t), stale = t.status === "wait" && !exp && !trValid(t);
+      const [cls, lab] = t.status === "ok" ? ["ok", "Accepté"] : t.status === "ko" ? ["ko", "Refusé"] : t.status === "cancel" ? ["ko", "Annulé"] : exp ? ["ko", "Expiré"] : stale ? ["ko", "Caduque"] : ["wait", "En attente"];
+      return `<div class="vt-box${cls === "ko" ? " dim" : ""}"><div class="vt-who">${trAv(t.to)}<span><b>Pour ${t.to}</b><small>${gift ? "Don" : "Échange"}${t.status === "wait" && !exp && !stale ? " · " + trLeft(t) : ""}</small></span><span class="vt-st ${cls}">${lab}</span></div>
+        <div class="vt-swap">${trSide("Tu donnes", t.give, "")}<span class="arrow">${gift ? "🎁" : "⇄"}</span>${trSide("Tu reçois", t.get, "Rien (don)")}</div>
+        ${t.status === "wait" && !exp ? `<div class="vt-acts one"><button class="vt-btn ghost" data-vt="cancel" data-id="${t.id}">${stale ? "Retirer" : "Annuler la proposition"}</button></div>` : ""}</div>`;
+    }).join("");
+  }
+  function renderTrades() {
+    const sec = document.getElementById("vg-trades"); if (!sec || !ME || loadedFor !== ME) return;
+    const n = trPending().length;
+    sec.innerHTML = `<div class="vt-wrap"><div class="vt-seg" role="tablist">${[["swap", "🔄 Échanger"], ["recu", "Reçues"], ["env", "Envoyées"]].map(([id, l]) =>
+      `<button role="tab" aria-selected="${TR.sub === id}" data-vt="sub" data-t="${id}">${l}${id === "recu" ? `<span class="vt-bd" id="vt-recvbd"${n ? "" : " hidden"}>${n}</span>` : ""}</button>`).join("")}</div>
+      <p class="vt-intro">Ton album : <b style="color:var(--text)">${ownedOf(ME)} / ${ALL.length}</b> · ${dupsOf(ME).length} double${dupsOf(ME).length > 1 ? "s" : ""} échangeable${dupsOf(ME).length > 1 ? "s" : ""}</p>
+      ${TR.sub === "swap" ? trSwapHTML() : TR.sub === "recu" ? trRecvHTML() : trSentHTML()}</div>`;
+  }
+  function trGot(title, sub, got) {
+    const o = document.createElement("div"); o.className = "vt-got"; o.setAttribute("role", "dialog"); o.setAttribute("aria-label", title);
+    const own = ownedOf(ME);
+    o.innerHTML = `<h4>${title}</h4><p>${sub}</p>
+      <div class="row">${got.map(([k, isNew], i) => `<div class="it${isNew ? "" : " dup"}" style="animation-delay:${.15 + i * .25}s">${trCard(k)}<em>${isNew ? "✓ Nouvelle" : "Double"}</em></div>`).join("")}</div>
+      <div class="vt-prog"><div><span>Ton album</span><b>${own} / ${ALL.length}</b></div><u><i style="width:${own / ALL.length * 100}%"></i></u></div>
+      <button class="vt-btn" data-vt="gotok">Super !</button>`;
+    panel.appendChild(o);
+  }
+
+  async function trSend() {
+    const n = TR.partner, give = [...TR.gSel], get = [...TR.rSel];
+    if (!n || !give.length || give.length > TR_MAX || get.length > TR_MAX) return;
+    if (!give.every(k => nOf(ME, k) >= 2)) { _showToast("Une de tes cartes n'est plus en double."); renderTrades(); return; }
+    TR.busy = true;
+    try {
+      await _db.ref(`vignettes/${SEASON}/${TRK}`).push({ from: ME, to: n, give, get, at: firebase.database.ServerValue.TIMESTAMP, status: "wait" });
+      _showToast(get.length ? `Proposition envoyée à ${n}` : `🎁 Cadeau envoyé à ${n}`);
+      Object.assign(TR, { sub: "env", partner: null, q: "", gSel: [], rSel: [] });
+    } catch (e) { console.warn(e); _showToast("Envoi impossible : vérifie ta connexion."); }
+    TR.busy = false; renderTrades();
+  }
+  async function trAccept(id) {
+    const me = ME; let out = null;
+    TR.busy = true;
+    try {
+      const res = await _db.ref(`vignettes/${SEASON}`).transaction(root => {
+        out = null;
+        if (!root) return root; // valeur locale pas encore connue : Firebase relance avec la vraie
+        const T = root[TRK] && root[TRK][id];
+        if (!T || T.to !== me || T.status !== "wait") { out = "gone"; return; }
+        if (_liveNow() > (T.at || 0) + TR_TTL) { out = "exp"; return; }
+        const give = T.give || [], get = T.get || [];
+        const A = root[T.from] && root[T.from].cards, B = root[me] && root[me].cards;
+        if (!A || !B || !give.every(k => (A[k] || 0) >= 2) || !get.every(k => (B[k] || 0) >= 2)) { out = "stale"; return; }
+        const got = give.map(k => [k, !B[k]]);
+        give.forEach(k => { A[k]--; B[k] = (B[k] || 0) + 1; });
+        get.forEach(k => { B[k]--; A[k] = (A[k] || 0) + 1; });
+        T.status = "ok"; T.doneAt = _liveNow();
+        out = { got, T };
+        return root;
+      });
+      if (res.committed && out && out.got) {
+        const v = res.snapshot.val() || {};
+        if (v[me] && v[me].cards) COL = v[me].cards;
+        saveBest(); refreshProg();
+        const T = out.T, at = firebase.database.ServerValue.TIMESTAMP;
+        _db.ref(`vignettesLog/${SEASON}/${me}`).push({ at, trade: id, with: T.from, got: T.give || [], gave: T.get || [] }).catch(() => {});
+        _db.ref(`vignettesLog/${SEASON}/${T.from}`).push({ at, trade: id, with: me, got: T.get || [], gave: T.give || [] }).catch(() => {});
+        const gift = !(T.get || []).length, nb = (T.give || []).length;
+        trGot(gift ? "Cadeau reçu !" : "Échange réussi !", `${T.from} ${gift ? "t'a offert" : "t'a donné"} ${nb > 1 ? `ces ${nb} cartes` : "cette carte"}. Les nouvelles t'attendent dans l'album.`, out.got);
+      } else _showToast(out === "stale" ? "Une des cartes n'est plus disponible : échange impossible." : out === "exp" ? "Cette proposition a expiré." : "Cette proposition n'est plus valable.");
+    } catch (e) { console.warn(e); _showToast("Échange impossible : vérifie ta connexion et réessaie."); }
+    TR.busy = false; renderTrades(); trBadge();
+  }
+  async function trSetStatus(id, status, who) {
+    TR.busy = true;
+    try {
+      await _db.ref(`vignettes/${SEASON}/${TRK}/${id}`).transaction(t => {
+        if (!t) return t;
+        if (t.status !== "wait" || t[who] !== ME) return;
+        return { ...t, status, doneAt: _liveNow() };
+      });
+    } catch (e) { console.warn(e); _showToast("Action impossible : vérifie ta connexion."); }
+    TR.busy = false; renderTrades(); trBadge();
+  }
+  function trClick(el) {
+    const a = el.dataset.vt;
+    if (TR.busy && a !== "gotok") return;
+    if (a === "sub") Object.assign(TR, { sub: el.dataset.t, partner: null, q: "", gSel: [], rSel: [] });
+    else if (a === "partner") Object.assign(TR, { partner: el.dataset.n, q: "", gSel: [], rSel: [] });
+    else if (a === "clear") Object.assign(TR, { partner: null, q: "", gSel: [], rSel: [] });
+    else if (a === "zoom") { const c = BYK[el.dataset.k]; if (!c) return; if (lockedSecret(c)) _showToast("🤫 Haut fait secret : tu le découvriras en le débloquant sur le terrain."); else openModal(c.k); return; }
+    else if (a === "tog") {
+      const arr = el.dataset.side === "g" ? TR.gSel : TR.rSel, k = el.dataset.k, i = arr.indexOf(k);
+      if (i >= 0) arr.splice(i, 1); else if (arr.length >= TR_MAX) { _showToast(`${TR_MAX} cartes maximum de chaque côté`); return; } else arr.push(k);
+      const sx = [...panel.querySelectorAll(".vt-scroll")].map(x => x.scrollLeft);
+      renderTrades(); panel.querySelectorAll(".vt-scroll").forEach((x, j) => { x.scrollLeft = sx[j] || 0; });
+      return;
+    }
+    else if (a === "send") { trSend(); return; }
+    else if (a === "accept") { trAccept(el.dataset.id); return; }
+    else if (a === "refuse") { trSetStatus(el.dataset.id, "ko", "to"); return; }
+    else if (a === "cancel") { trSetStatus(el.dataset.id, "cancel", "from"); return; }
+    else if (a === "gotok") { panel.querySelectorAll(".vt-got").forEach(x => x.remove()); return; }
+    renderTrades();
+  }
+
   /* ═════════ événements ═════════ */
   panel.addEventListener("click", e => {
+    const vt = e.target.closest("[data-vt]");
+    if (vt) { trClick(vt); return; }
     const t = e.target.closest("[data-vg-tab]");
     if (t) { tab = t.dataset.vgTab; render(); return; }
     const a = e.target.closest("[data-vg]");
@@ -13190,6 +13503,12 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     swiped = false;
   });
   panel.addEventListener("change", e => { if (e.target.id === "vg-secsel") goTo(+e.target.value); });
+  panel.addEventListener("input", e => {
+    if (e.target.id !== "vt-q") return;
+    TR.q = e.target.value; const c = e.target.selectionStart;
+    renderTrades();
+    const el = document.getElementById("vt-q"); if (el) { el.focus(); try { el.setSelectionRange(c, c); } catch (er) {} }
+  });
   let sx = null, swiped = false;
   panel.addEventListener("pointerdown", e => { if (e.target.closest("#vg-book")) { sx = e.clientX; swiped = false; } });
   panel.addEventListener("pointerup", e => {
@@ -13206,7 +13525,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   let wasSingle = null;
   addEventListener("resize", () => { if (!panel.classList.contains("active") || tab !== "album") return; const s = single(); if (s !== wasSingle) { wasSingle = s; if (!turning) renderAlbum(); } else if (!turning) { const b = document.getElementById("vg-book"); if (b) fixBookHeight(b); } });
   // le compte change (connexion, déconnexion) : on recharge l'album de la bonne fiche
-  window.renderVignettes = () => { if (panel.classList.contains("active")) render(); };
+  window.renderVignettes = () => { watchTrades(); if (panel.classList.contains("active")) render(); };
+  _accReady.then(() => watchTrades()).catch(() => {});
   window._vgOnShow = () => { render(); };
 })();
 
