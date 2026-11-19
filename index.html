@@ -2092,7 +2092,12 @@
 
   /* Animation de but (onglet Session en cours uniquement) */
   .gb-burst { position: fixed; inset: 0; z-index: 3500; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #f0f0f4; background: radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--tc) 38%, #0f0f13), rgba(8,8,12,.96) 72%); animation: gbIn .25s ease, gbOut .45s ease 2.9s forwards; cursor: pointer; overflow: hidden; }
-  .gb-burst.rouge { --tc: var(--rouge); } .gb-burst.vert { --tc: var(--vert); } .gb-burst.bleu { --tc: var(--bleu); }
+  .gb-burst.rouge { --tc: var(--rouge); } .gb-burst.vert { --tc: var(--vert); } .gb-burst.bleu { --tc: var(--bleu); } .gb-burst.gold { --tc: var(--gold); }
+  .gb-burst.notable { padding: 0 20px; text-align: center; }
+  .gb-burst.notable .gb-but { font-size: clamp(34px, 9vw, 54px); line-height: 1.05; max-width: 92vw; text-wrap: balance; }
+  .gb-kicker { font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--tc); animation: gbUp .4s ease both; }
+  .gb-desc { max-width: 340px; font-size: 14px; line-height: 1.45; color: #b4b4c4; animation: gbUp .4s ease .6s both; }
+  .lv-notable.fresh { animation: lvFresh 2.5s ease; }
   .gb-ball { font-size: 52px; animation: gbDrop .8s cubic-bezier(.3,1.5,.5,1); }
   .gb-but { font-size: 64px; font-weight: 900; letter-spacing: .04em; color: var(--tc); text-shadow: 0 0 26px color-mix(in srgb, var(--tc) 60%, transparent); animation: gbSlam .5s cubic-bezier(.2,1.6,.4,1) .15s both; }
   .gb-ph { width: 132px; height: 132px; border-radius: 22px; border: 3px solid var(--tc); background: #1a1a24; display: flex; align-items: center; justify-content: center; font-size: 38px; font-weight: 800; animation: gbPop .5s cubic-bezier(.2,1.5,.4,1) .3s both, gbRing 1.2s ease .8s; }
@@ -2332,7 +2337,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 11:07</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 11:10</footer>
 
 <script>
 
@@ -10858,6 +10863,7 @@ function _liveInit() {
   _db.ref('config/customAch').on('value', s => {
     const v = s.val();
     _liveCustomAch = Array.isArray(v) ? v : Object.values(v || {});
+    try { _liveDetectNotables(_liveCustomAch); } catch (e) { console.warn('live notables:', e); }
     _liveRefresh();
   });
   setInterval(() => { _liveRefresh(true); }, 15000);
@@ -10972,27 +10978,61 @@ function _liveDetectGoals() {
   if (onLive && !document.hidden) _liveGoalBurst(fresh);
 }
 
+// Celebration plein ecran (but ou fait notable). Si une autre est deja affichee, celle-ci
+// attend qu elle se termine plutot que de la couper.
+var _liveBurstUntil = 0;
+function _liveShowBurst(cls, inner) {
+  const wait = Math.max(0, _liveBurstUntil - Date.now());
+  _liveBurstUntil = Date.now() + wait + 3500;
+  setTimeout(() => {
+    const conf = Array.from({ length: 26 }, (_, k) => {
+      const ang = Math.random() * Math.PI * 2, d = 140 + Math.random() * 160;
+      const c = ["var(--tc)", "var(--gold)", "#fff"][k % 3];
+      return `<i style="--c:${c};--x:${Math.round(Math.cos(ang) * d)}px;--y:${Math.round(Math.sin(ang) * d)}px;--r:${Math.round(Math.random() * 720 - 360)}deg"></i>`;
+    }).join("");
+    const el = document.createElement("div");
+    el.className = "gb-burst " + cls;
+    el.setAttribute("role", "status");
+    el.innerHTML = conf + inner;
+    el.addEventListener("click", () => { el.remove(); _liveBurstUntil = Math.min(_liveBurstUntil, Date.now()); });
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3500);
+  }, wait);
+}
 function _liveGoalBurst(g) {
-  document.querySelector(".gb-burst")?.remove();
   const team = g.s === "A" ? g.m.eqA : g.m.eqB;
   const csc = g.b === "CSC";
   const name = csc ? "Contre son camp" : g.b;
   const a = g.m.scoreA || 0, b = g.m.scoreB || 0;
-  const conf = Array.from({ length: 26 }, (_, k) => {
-    const ang = Math.random() * Math.PI * 2, d = 140 + Math.random() * 160;
-    const c = ["var(--tc)", "var(--gold)", "#fff"][k % 3];
-    return `<i style="--c:${c};--x:${Math.round(Math.cos(ang) * d)}px;--y:${Math.round(Math.sin(ang) * d)}px;--r:${Math.round(Math.random() * 720 - 360)}deg"></i>`;
-  }).join("");
-  const el = document.createElement("div");
-  el.className = "gb-burst " + teamCls(team);
-  el.setAttribute("role", "status");
-  el.innerHTML = `${conf}<span class="gb-ball">⚽</span><div class="gb-but">BUT !</div>
+  _liveShowBurst(teamCls(team), `<span class="gb-ball">⚽</span><div class="gb-but">BUT !</div>
     <div class="gb-ph pf">${csc ? "⚽" : _saisieInitials(name)}${csc ? "" : portraitImg(name)}</div>
     <div class="gb-nm">${name}</div>
-    <div class="gb-sc">${dot(g.m.eqA)}${TEAM_LABEL[g.m.eqA] || g.m.eqA} <b class="${g.s === "A" ? "hit" : ""}">${a}</b> – <b class="${g.s === "B" ? "hit" : ""}">${b}</b> ${TEAM_LABEL[g.m.eqB] || g.m.eqB}${dot(g.m.eqB)}</div>`;
-  el.addEventListener("click", () => el.remove());
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 3500);
+    <div class="gb-sc">${dot(g.m.eqA)}${TEAM_LABEL[g.m.eqA] || g.m.eqA} <b class="${g.s === "A" ? "hit" : ""}">${a}</b> – <b class="${g.s === "B" ? "hit" : ""}">${b}</b> ${TEAM_LABEL[g.m.eqB] || g.m.eqB}${dot(g.m.eqB)}</div>`);
+}
+// Fait notable : meme celebration, en or, avec l icone et le nom du fait a la place de BUT.
+function _liveNotableBurst(a, defi) {
+  _liveShowBurst("gold notable", `<span class="gb-kicker">📌 Fait notable</span><span class="gb-ball">${defi.icon}</span><div class="gb-but">${defi.name}</div>
+    <div class="gb-ph pf">${_saisieInitials(a.player)}${portraitImg(a.player)}</div>
+    <div class="gb-nm">${a.player}</div>
+    ${defi.desc ? `<div class="gb-desc">${defi.desc}</div>` : ""}`);
+}
+// Nouveau fait notable de la soiree : surligne dans la liste + celebration si l onglet est affiche.
+var _liveAchSeen = null;
+var _liveFreshAch = null; // { id, at }
+function _liveDetectNotables(list) {
+  const ids = list.filter(a => a && a.id).map(a => a.id);
+  if (_liveAchSeen === null) { _liveAchSeen = new Set(ids); return; }
+  const fresh = list.filter(a => a && a.id && !_liveAchSeen.has(a.id));
+  _liveAchSeen = new Set(ids);
+  if (!fresh.length || !_liveIsOn()) return;
+  const tonightIds = new Set([...(_liveValidatedMatchs || []), ..._liveCurrentMatchs()].map(m => m._id));
+  const onLive = document.getElementById("panel-live")?.classList.contains("active");
+  fresh.filter(a => tonightIds.has(a.matchId) || (_liveDraft.date && a.date === _liveDraft.date)).forEach(a => {
+    const defi = CUSTOM_ACH_DEFS.find(d => d.id === a.defiId);
+    if (!defi) return;
+    _liveFreshAch = { id: a.id, at: Date.now() };
+    if (onLive && !document.hidden) _liveNotableBurst(a, defi);
+  });
 }
 
 // Tableau du classement : matchs valides + matchs en cours (provisoires). Fleches et
@@ -11096,7 +11136,8 @@ function _liveNotablesHTML(ids, date) {
   const rows = list.map(a => {
     const defi = CUSTOM_ACH_DEFS.find(d => d.id === a.defiId);
     if (!defi) return "";
-    return `<div class="lv-notable" title="${(defi.desc || "").replace(/"/g, "&quot;")}"><span class="ico">${defi.icon}</span>${_liveAvHTML(a.player)}<span class="txt"><b>${a.player}</b> <span>— ${defi.name}</span></span></div>`;
+    const fresh = _liveFreshAch && _liveFreshAch.id === a.id && Date.now() - _liveFreshAch.at < 4000 ? " fresh" : "";
+    return `<div class="lv-notable${fresh}" title="${(defi.desc || "").replace(/"/g, "&quot;")}"><span class="ico">${defi.icon}</span>${_liveAvHTML(a.player)}<span class="txt"><b>${a.player}</b> <span>— ${defi.name}</span></span></div>`;
   }).join("");
   if (!rows) return "";
   return `<div class="lv-card"><div class="lv-card-t"><span>📌 Faits notables du soir</span></div><div class="lv-notables">${rows}</div></div>`;
