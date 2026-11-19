@@ -2816,7 +2816,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 15:47</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 15:53</footer>
 
 <script>
 
@@ -12560,6 +12560,13 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
         <div class="strip" data-sub="${c.t}${c.team ? " · " + teamName(c.team) : ""}"><div class="nm"><i></i>${c.n}</div><div class="mini">${["ATT", "PAS", "VIC", "FID"].map(k => `<span><b>${c.s[k]}</b>${k}</span>`).join("")}</div></div>
         <div class="holo"></div>${twinkles(c.r)}</div>${gem(c)}`;
     }
+    if (c.ty === "h" && lockedSecret(c)) {
+      const n = c.h.length;
+      return `<div class="face-in"><div class="band"><span>Haut fait</span><span>🤫 Secret</span></div>
+        <div class="med"><span>🤫</span></div><div class="cname">Secret</div><div class="cdesc">Débloque ce haut fait pour révéler la carte</div>
+        <div class="cfoot"><span>Débloqué par <b>${n} joueur${n > 1 ? "s" : ""}</b></span></div>
+        <div class="holo"></div>${twinkles(c.r)}</div>${gem(c)}`;
+    }
     if (c.ty === "h") {
       const top = c.h[0], n = c.h.length;
       return `<div class="face-in"><div class="band"><span>Haut fait</span><span>${c.sec ? "🤫 Secret" : c.cat}</span></div>
@@ -12586,6 +12593,11 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
         <div class="bk-row"><span>Buts · passes</span><b>${s.b} · ${s.p}</b></div>${gk}
         <div class="bk-bars">${bars}</div>${nt}<div class="bk-f">${SEASON_LABEL} · ${RL[c.r]} · évolue jusqu'en fin de saison</div></div>`;
     }
+    if (c.ty === "h" && lockedSecret(c)) {
+      return `<div class="face-in bk"><div class="bk-h"><b>🤫 Haut fait secret</b><span>${c.h.length} détent.</span></div>
+        <div class="bk-row"><span>Ce haut fait est secret. Débloque-le pour découvrir son nom, comment l'obtenir et qui l'a déjà.</span></div>
+        <div class="bk-f">Haut fait secret · ${RL[c.r]}</div></div>`;
+    }
     if (c.ty === "h") {
       const max = 7, rows = c.h.slice(0, max).map(([n, dl, tn, d]) => `<div class="bk-row" title="${String(d).replace(/"/g, "&quot;")}">${whoHTML(n)}<span class="tier t${dl}">${tn}</span></div>`).join("");
       return `<div class="face-in bk"><div class="bk-h"><b>${c.ic} ${c.nm}</b><span>${c.h.length} détent.</span></div>${rows}
@@ -12596,6 +12608,9 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     return `<div class="face-in bk"><div class="bk-h"><b>${c.ic} ${c.nm}</b><span>${c.o.length ? c.o.length + " fois" : "Inédit"}</span></div>
       ${rows || `<div class="bk-row"><span>Personne ne l'a encore réalisé cette saison.</span></div>`}<div class="bk-f">Fait notable · ${RL[c.r]}</div></div>`;
   }
+  // Haut fait secret pas encore débloqué par le joueur connecté : affiché « Secret » dans SON
+  // album (carte et emplacement). Il se révèle dès que ce joueur le débloque à son tour.
+  function lockedSecret(c) { return c.ty === "h" && c.sec && !(ME && c.h.some(x => x[0] === ME)); }
   const hfStyle = c => c.ty === "h" ? ` style="--cc:var(${CATVAR[c.cat] || "--hf-secret"})"` : "";
   const cardHTML = (c, lazy) => `<div class="card r-${c.r} ty-${c.ty} t-${c.team || ""}"${hfStyle(c)} data-k="${c.k}"><div class="card-in">
       <div class="face front">${frontHTML(c, lazy)}</div><div class="face back">${backHTML(c)}</div></div></div>`;
@@ -12950,7 +12965,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const head = `<div class="sec-head"><small>${p.first ? "Section" : "Section · suite"}</small><h2>${s.ic} ${s.t}</h2><p>${s.sub}</p></div>`;
     const slots = p.items.map(c => COL[c.k] && (PASTED.has(c.k) || !hideNew)
       ? `<button class="stk${PASTED.has(c.k) ? "" : " new"}" data-k="${c.k}" aria-label="Vignette ${c.no} : ${c.n || c.nm}">${cardHTML(c, true)}${COL[c.k] > 1 ? `<span class="count">×${COL[c.k]}</span>` : ""}</button>`
-      : `<div class="stk-empty" style="--rc:var(--r${c.r})"><span class="wm">${c.ty === "p" ? "👤" : c.ic}</span><span class="no">N° ${String(c.no).padStart(2, "0")}</span><span class="nm2">${c.n || c.nm}</span><span class="rt">${RL[c.r]}</span></div>`).join("");
+      : `<div class="stk-empty" style="--rc:var(--r${c.r})"><span class="wm">${c.ty === "p" ? "👤" : lockedSecret(c) ? "🤫" : c.ic}</span><span class="no">N° ${String(c.no).padStart(2, "0")}</span><span class="nm2">${lockedSecret(c) ? "🤫 Secret" : (c.n || c.nm)}</span><span class="rt">${RL[c.r]}</span></div>`).join("");
     const fill = Array.from({ length: per() - p.items.length }, () => `<div class="stk-blank"></div>`).join("");
     return `<div class="${cls}" style="--sc:${s.col}">${head}<div class="stk-grid">${slots}${fill}</div>${foot(s.t)}</div>`;
   }
