@@ -1,0 +1,37 @@
+# Des qu une photo est deposee dans portraits/, la reduit a 900 px de large (meme nom, meme
+# format), la recommite, puis relance la publication du site.
+name: Reduire les portraits
+
+on:
+  push:
+    branches: [main]
+    paths: ["portraits/**"]
+  schedule:
+    - cron: "0 0 * * *" # tous les jours vers 01:00 (heure de Paris, UTC+1 en hiver)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  resize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pillow==11.0.0
+      - name: Reduire les portraits trop grands
+        run: python .github/scripts/resize_portraits.py
+      - name: Enregistrer et republier
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet; then echo "Rien a enregistrer."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Portraits reduits a 900 px (automatique)"
+          git push
+          gh api -X POST "repos/${{ github.repository }}/pages/builds" || true
