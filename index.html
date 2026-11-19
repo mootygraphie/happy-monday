@@ -372,10 +372,14 @@
     .roster-chip-ico { font-size: 12px; }
   }
   .roster-actions { display: flex; gap: 3px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; max-width: 118px; }
-  .roster-status { position: relative; flex-shrink: 0; }
-  .roster-status::after { content: "▾"; position: absolute; right: 9px; top: 50%; transform: translateY(-50%); font-size: 10px; color: var(--text3); pointer-events: none; }
-  .roster-status-sel { -webkit-appearance: none; appearance: none; background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 6px 24px 6px 9px; font: inherit; font-size: 12px; font-weight: 600; color: var(--text); cursor: pointer; max-width: 140px; }
-  .roster-status-sel:hover { border-color: var(--text3); }
+  /* Statut (admin) : pilule colorée selon le statut, flèche assortie */
+  .roster-status { position: relative; flex-shrink: 0; --sc: var(--good); }
+  .roster-status.st-joker { --sc: #4fc3f7; } .roster-status.st-absent { --sc: #f5a742; } .roster-status.st-inactif { --sc: var(--text3); }
+  .roster-status::after { content: ""; position: absolute; right: 10px; top: 50%; width: 6px; height: 6px; border-right: 1.6px solid var(--sc); border-bottom: 1.6px solid var(--sc); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+  .roster-status-sel { -webkit-appearance: none; appearance: none; background: color-mix(in srgb, var(--sc) 13%, var(--bg2)); border: 1px solid color-mix(in srgb, var(--sc) 45%, transparent); border-radius: 999px; padding: 6px 26px 6px 12px; font: inherit; font-size: 12px; font-weight: 700; letter-spacing: .02em; color: var(--sc); cursor: pointer; max-width: 150px; box-shadow: inset 0 1px 0 rgba(255,255,255,.05); transition: background .15s, border-color .15s; }
+  .roster-status-sel:hover { background: color-mix(in srgb, var(--sc) 20%, var(--bg2)); border-color: var(--sc); }
+  .roster-status-sel option { color: var(--text); background: var(--bg2); }
+  @media (max-width: 560px) { .roster-status-sel { padding: 5px 22px 5px 10px; font-size: 11.5px; } .roster-status::after { right: 8px; } }
   .roster-status-sel:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   .roster-actions button { width: 27px; height: 27px; border-radius: 50%; border: 1px solid var(--border2); background: #1A1A1F; font-size: 13.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); }
   .roster-actions button:hover { background: var(--border2); }
@@ -2807,7 +2811,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 15:33</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 15:36</footer>
 
 <script>
 
@@ -7961,16 +7965,17 @@ function renderJoueurs() {
      boutons Present/Blesse/Non convoque de la Saisie) — on clique directement le statut
      cible au lieu de suivre des fleches contextuelles, plus simple pour reassigner. */
   const _EFF_STATUSES = [
-    { status: "roster",  action: "to-roster",  icon: "👤", title: "Régulier" },
-    { status: "joker",   action: "to-joker",   icon: "🔄", title: "Occasionnel" },
-    { status: "absent",  action: "to-absent",  icon: "💤", title: "Absent saison" },
-    { status: "inactif", action: "to-inactif", icon: "🚫", title: "Inactif" },
+    { status: "roster",  action: "to-roster",  icon: "👤", title: "Régulier",      short: "Rég." },
+    { status: "joker",   action: "to-joker",   icon: "🔄", title: "Occasionnel",   short: "Occ." },
+    { status: "absent",  action: "to-absent",  icon: "💤", title: "Absent saison", short: "Abs." },
+    { status: "inactif", action: "to-inactif", icon: "🚫", title: "Inactif",       short: "Inactif" },
   ];
+  const _effShort = innerWidth < 560; // téléphone : libellés courts
   // Un seul menu déroulant compact (statut actuel affiché) au lieu de 4 boutons ronds.
   function _effActionsHtml(name, current) {
     if (!isAdmin) return "";
-    const opts = _EFF_STATUSES.map(o => `<option value="${o.action}"${o.status === current ? " selected" : ""}>${o.icon} ${o.title}</option>`).join("");
-    return `<div class="roster-status"><select class="roster-status-sel" data-player="${name}" aria-label="Statut de ${name}">${opts}</select></div>`;
+    const opts = _EFF_STATUSES.map(o => `<option value="${o.action}"${o.status === current ? " selected" : ""}>${_effShort ? o.short : o.icon + " " + o.title}</option>`).join("");
+    return `<div class="roster-status st-${current}"><select class="roster-status-sel" data-player="${name}" aria-label="Statut de ${name}">${opts}</select></div>`;
   }
 
   function buildRosterCard(r) {
