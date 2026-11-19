@@ -2051,6 +2051,77 @@
   .lv-mrow .bar { color: var(--border2); margin: 0 6px; }
   .lv-admin { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 8px; }
   .pronos-season-note { font-size: 12px; color: var(--text3); margin-top: 6px; }
+
+  /* ── Session en cours : match en direct, buteurs/passeurs, faits notables ── */
+  .lv-mv { font-size: 9.5px; font-weight: 800; margin-left: 5px; }
+  .lv-mv.up { color: var(--good); } .lv-mv.down { color: var(--bad); }
+  .lv-delta { color: var(--gold); font-size: 10.5px; font-weight: 700; margin-left: 3px; }
+  .lv-tag { display: inline-flex; align-items: center; gap: 6px; color: var(--bad); }
+  .lv-now { border-color: color-mix(in srgb, var(--rouge) 40%, transparent); background: linear-gradient(160deg, color-mix(in srgb, var(--rouge) 8%, transparent), transparent 60%), var(--bg2); }
+  .lv-now-score { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 10px; }
+  .lv-now-side { display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .03em; min-width: 0; }
+  .lv-now-side.rouge { color: var(--rouge); } .lv-now-side.vert { color: var(--vert); } .lv-now-side.bleu { color: var(--bleu); }
+  .lv-now-nums { display: flex; align-items: center; gap: 10px; font-variant-numeric: tabular-nums; }
+  .lv-now-big { font-size: 52px; font-weight: 800; line-height: 1; display: inline-block; }
+  .lv-now-big.bump { animation: lvBump .7s cubic-bezier(.3,1.6,.5,1); color: var(--gold); }
+  @keyframes lvBump { 40% { transform: scale(1.45); } }
+  .lv-now-dash { font-size: 24px; color: var(--text3); }
+  .lv-goals { display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--border); padding-top: 10px; }
+  .lv-goal { display: flex; align-items: center; gap: 8px; font-size: 13px; border-radius: 8px; padding: 1px 4px; }
+  .lv-goal .who { font-weight: 700; }
+  .lv-goal .pas { color: var(--text3); font-size: 12px; }
+  .lv-goal .mt { margin-left: auto; font-size: 10.5px; font-weight: 700; color: var(--text3); }
+  .lv-goal.pending { color: var(--text3); font-style: italic; }
+  .lv-goal.fresh { animation: lvFresh 2.5s ease; }
+  @keyframes lvFresh { 0%, 40% { background: var(--gold-bg); } }
+  .lv-av { width: 24px; height: 24px; border-radius: 6px; flex: none; display: inline-flex; align-items: center; justify-content: center; font-size: 9.5px; font-weight: 800; color: var(--text2); background: var(--bg3); border: 1.5px solid var(--border2); }
+  .lv-av.rouge { border-color: var(--rouge); } .lv-av.vert { border-color: var(--vert); } .lv-av.bleu { border-color: var(--bleu); }
+  .lv-av.pf > .pf-img, .gb-ph.pf > .pf-img { object-position: 50% 50%; transform: scale(2.2); transform-origin: 50% 34%; }
+  .lv-tops { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 14px; }
+  .lv-top-t { font-size: 11.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; }
+  .lv-trow { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 5px 2px; border-top: 1px solid var(--border); min-width: 0; }
+  .lv-trow .rk { width: 14px; color: var(--text3); font-weight: 800; font-size: 11px; flex: none; }
+  .lv-trow .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+  .lv-trow .n { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .lv-trow .plus { color: var(--gold); font-size: 10.5px; font-weight: 800; }
+  .lv-notables { display: flex; flex-direction: column; gap: 6px; }
+  .lv-notable { display: flex; align-items: center; gap: 8px; font-size: 13px; background: var(--bg3); border-radius: 10px; padding: 7px 10px; }
+  .lv-notable .ico { font-size: 17px; flex: none; }
+  .lv-notable .txt { min-width: 0; }
+  .lv-notable .txt span { color: var(--text2); }
+
+  /* Animation de but (onglet Session en cours uniquement) */
+  .gb-burst { position: fixed; inset: 0; z-index: 3500; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #f0f0f4; background: radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--tc) 38%, #0f0f13), rgba(8,8,12,.96) 72%); animation: gbIn .25s ease, gbOut .45s ease 2.9s forwards; cursor: pointer; overflow: hidden; }
+  .gb-burst.rouge { --tc: var(--rouge); } .gb-burst.vert { --tc: var(--vert); } .gb-burst.bleu { --tc: var(--bleu); }
+  .gb-ball { font-size: 52px; animation: gbDrop .8s cubic-bezier(.3,1.5,.5,1); }
+  .gb-but { font-size: 64px; font-weight: 900; letter-spacing: .04em; color: var(--tc); text-shadow: 0 0 26px color-mix(in srgb, var(--tc) 60%, transparent); animation: gbSlam .5s cubic-bezier(.2,1.6,.4,1) .15s both; }
+  .gb-ph { width: 132px; height: 132px; border-radius: 22px; border: 3px solid var(--tc); background: #1a1a24; display: flex; align-items: center; justify-content: center; font-size: 38px; font-weight: 800; animation: gbPop .5s cubic-bezier(.2,1.5,.4,1) .3s both, gbRing 1.2s ease .8s; }
+  .gb-nm { font-size: 24px; font-weight: 800; animation: gbUp .4s ease .45s both; }
+  .gb-sc { font-size: 16px; font-weight: 700; color: #b4b4c4; font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 7px; animation: gbUp .4s ease .6s both; }
+  .gb-sc b { color: #f0f0f4; font-size: 20px; } .gb-sc b.hit { color: var(--tc); }
+  .gb-burst i { position: absolute; left: 50%; top: 42%; width: 9px; height: 14px; border-radius: 2px; background: var(--c); opacity: 0; animation: gbConf 1.5s cubic-bezier(.15,.7,.4,1) .2s forwards; }
+  @keyframes gbIn { from { opacity: 0; } } @keyframes gbOut { to { opacity: 0; visibility: hidden; } }
+  @keyframes gbDrop { from { transform: translateY(-200px) rotate(-200deg); } }
+  @keyframes gbSlam { from { transform: scale(2.4); opacity: 0; } }
+  @keyframes gbPop { from { transform: scale(.3); opacity: 0; } }
+  @keyframes gbRing { from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--tc) 70%, transparent); } to { box-shadow: 0 0 0 30px transparent; } }
+  @keyframes gbUp { from { transform: translateY(12px); opacity: 0; } }
+  @keyframes gbConf { 0% { opacity: 1; transform: translate(-50%,-50%); } 100% { opacity: 0; transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) rotate(var(--r)); } }
+  @media (prefers-reduced-motion: reduce) { .gb-burst, .gb-burst * { animation: none !important; } .gb-burst i { display: none; } .lv-now-big.bump, .lv-goal.fresh { animation: none; } }
+
+  /* Saisie : bouton « Voir classement » + volet */
+  .saisie-screen[data-screen="matchs"] { padding-bottom: 72px; }
+  .sq-stand-fab { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 900; display: flex; align-items: center; gap: 7px; background: var(--bg3); border: 1.5px solid var(--gold); color: var(--text); border-radius: 999px; padding: 11px 16px; font: inherit; font-size: 13.5px; font-weight: 800; box-shadow: 0 6px 20px rgba(0,0,0,.45); cursor: pointer; }
+  .sq-stand-fab .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--bad); display: inline-block; animation: lvPulse 1.6s ease-in-out infinite; }
+  .sq-stand-scrim { position: fixed; inset: 0; z-index: 950; background: rgba(0,0,0,.5); }
+  .sq-stand-sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 960; max-width: 640px; margin: 0 auto; max-height: 80vh; overflow-y: auto; background: var(--bg2); border: 1px solid var(--gold-border); border-bottom: none; border-radius: 20px 20px 0 0; padding: 8px max(16px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); animation: sqUp .25s ease; }
+  @keyframes sqUp { from { transform: translateY(100%); } }
+  @media (prefers-reduced-motion: reduce) { .sq-stand-sheet { animation: none; } }
+  .sq-grab { width: 40px; height: 4px; border-radius: 4px; background: var(--border2); margin: 0 auto 12px; }
+  .sq-stand-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .sq-stand-head h4 { margin: 0; font-size: 15px; }
+  .sq-stand-head button { background: none; border: none; color: var(--text2); font-size: 18px; cursor: pointer; padding: 2px 6px; }
+  .sq-note { font-size: 11.5px; color: var(--text3); font-style: italic; margin-top: 10px; }
 </style>
 <script>if(localStorage.getItem('hmft_theme')==='light')document.documentElement.classList.add('light');</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -2261,7 +2332,7 @@
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 08:52</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 11:07</footer>
 
 <script>
 
@@ -8624,6 +8695,7 @@ function _newDraft() {
 }
 
 function _resetSaisieUiState() {
+  _saisieStandOpen = false;
   _saisieStep = "presences";
   _saisieFocusedMatch = undefined;
   _saisiePicker = null;
@@ -8739,6 +8811,7 @@ function _saveDraft() {
   const { matchs, ...sharedDraft } = _draft;
   if (_db) _db.ref('config/draft').update(sharedDraft).catch(e => console.error('FB draft save:', e));
   _pronoSyncSafe();
+  _liveMatchSyncSafe();
 }
 
 function _presentList() {
@@ -9434,6 +9507,7 @@ function renderSaisie() {
 
     <div class="saisie-screen${_saisieStep==="matchs"?" active":""}" data-screen="matchs">
       ${_buildMatchsScreenHTML()}
+      ${_saisieStep === "matchs" && !_editMode ? _saisieStandingsHTML() : ""}
       <div class="saisie-screen-nav">
         <button class="saisie-btn secondary" data-act="saisie-go-step" data-step="repartition">← Équipes</button>
         <button class="saisie-btn primary" data-act="saisie-go-step" data-step="logistique">Logistique →</button>
@@ -9616,6 +9690,7 @@ async function _commitSession() {
   // Supprime aussi config/draft/matchsMap (sous-noeud de config/draft) — la session est
   // maintenant dans sessions/{date}, plus besoin de garder ces matchs en brouillon partage.
   if (_db) _db.ref('config/draft').remove().catch(() => {});
+  _liveMatchForgetAll();
 
   // Naviguer vers la session validée
   const dateNav = finalSession.date;
@@ -9633,6 +9708,9 @@ async function _commitSession() {
 document.getElementById("saisie-content").addEventListener("click", e => {
   if (!_draft) return;
 
+  if (e.target.closest('[data-act="saisie-stand-open"]')) { _saisieStandOpen = true; renderSaisie(); return; }
+  if (e.target.closest('[data-act="saisie-stand-close"]')) { _saisieStandOpen = false; renderSaisie(); return; }
+
   const stepBtn = e.target.closest('[data-act="saisie-go-step"]');
   if (stepBtn) {
     // On quitte l ecran Equipes : les couleurs choisies mais pas encore validees sont
@@ -9643,7 +9721,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
       const missing = _presentList().filter(p => !_draft.presences[p]?.equipe);
       if (missing.length && !confirm(`⚠️ Ces joueurs présents n'ont pas d'équipe :\n${missing.map(n => "• " + n).join("\n")}\n\nContinuer quand même ?`)) return;
     }
-    _saisieStep = stepBtn.dataset.step; _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
+    _saisieStep = stepBtn.dataset.step; _saisieStandOpen = false; _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
     _draft.step = _saisieStep;
     if (_saisieStep === "matchs") _liveMarkStarted();
     _saveDraft();
@@ -9690,6 +9768,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   if (e.target.id === "saisie-clear") {
     if (confirm("Effacer le brouillon en cours ?\n\nCela efface aussi les matchs déjà validés ce soir par tous les téléphones connectés.")) {
       _pronoForgetAll();
+      _liveMatchForgetAll();
       _draft = _newDraft(); _draftSavedAt = null;
       _liveValidatedMatchs = [];
       _resetSaisieUiState();
@@ -10621,7 +10700,7 @@ document.getElementById("player-panel-overlay").addEventListener("click", closeP
 document.getElementById("pp-close").addEventListener("click", closePlayerPanel);
 document.getElementById("mhf-drawer-overlay").addEventListener("click", closeMhfDrawer);
 document.getElementById("mhf-dr-close").addEventListener("click", closeMhfDrawer);
-document.addEventListener("keydown", e => { if (e.key === "Escape") { if (closePortraitLightbox()) return; closePlayerPanel(); closeMhfDrawer(); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { if (closePortraitLightbox()) return; if (_saisieStandOpen) { _saisieStandOpen = false; renderSaisie(); return; } document.querySelector(".gb-burst")?.remove(); closePlayerPanel(); closeMhfDrawer(); } });
 document.addEventListener("click", e => {
   const btn = e.target.closest(".player-link, .pf-open");
   if (btn && btn.dataset.player) openPlayerPanel(btn.dataset.player);
@@ -10770,6 +10849,17 @@ function _liveInit() {
     _liveWatchPronos(_liveDraft && _liveDraft.liveKey);
     _liveRefresh();
   });
+  _db.ref('liveMatchs').on('value', s => {
+    _liveMatchsMap = s.val() || {};
+    try { _liveDetectGoals(); } catch (e) { console.warn('live goals:', e); }
+    _liveRefresh();
+    if (_saisieStandOpen && document.getElementById("panel-saisie")?.classList.contains("active")) renderSaisie();
+  });
+  _db.ref('config/customAch').on('value', s => {
+    const v = s.val();
+    _liveCustomAch = Array.isArray(v) ? v : Object.values(v || {});
+    _liveRefresh();
+  });
   setInterval(() => { _liveRefresh(true); }, 15000);
 }
 function _liveWatchPronos(key) {
@@ -10788,6 +10878,229 @@ function _liveWatchPronos(key) {
 }
 // Appelee quand la liste des matchs valides change (listener existant de la Saisie).
 function _liveOnMatchsChanged() { _liveRefresh(); _pronoSyncSafe(); }
+
+/* ── Match en cours partage en direct : liveMatchs/{matchId} ──
+   Ecrit par le telephone de la Saisie a chaque _saveDraft (score, buteurs, passeurs du
+   match pas encore valide), independamment des pronos. Lu par l onglet Session en cours.
+   Noeud separe de config/draft : rien ici n est lu par _commitSession ni par les stats,
+   une panne ne peut donc pas faire perdre un match. Supprime a la validation du match,
+   a sa suppression, a la validation de la soiree et au bouton Effacer. */
+var _liveMatchSent = {};       // id -> derniere version envoyee par CE telephone
+var _liveMatchsMap = {};       // copie lecture seule de liveMatchs
+var _liveCustomAch = null;     // copie lecture seule de config/customAch (faits notables)
+var _liveGoalSeen = null;      // cles "id|cote|n" des buts deja vus (null = pas encore amorce)
+var _liveFreshGoal = null;     // { key, at } : dernier but arrive, surligne quelques secondes
+var _liveLastScores = {};      // id -> "a-b", pour faire rebondir le score qui change
+var _liveBump = null;          // { id, side, at }
+var _saisieStandOpen = false;  // volet « Voir classement » de la Saisie
+const LIVE_MATCH_STALE_MS = 45 * 60 * 1000; // match abandonne sans mise a jour : on l ignore
+
+function _lvArr(v) { return Array.isArray(v) ? v : Object.values(v || {}); }
+
+function _liveMatchSyncSafe() { try { _liveMatchSync(); } catch (e) { console.warn('live match sync:', e); } }
+function _liveMatchSync() {
+  if (!_db || _editMode || !_draft || !_draft.liveKey || !Array.isArray(_draft.matchs)) return;
+  const validated = new Set(_liveValidatedMatchs.map(m => m._id));
+  const keep = new Set();
+  _draft.matchs.forEach(m => {
+    if (!m || !m._id || !m.eqA || !m.eqB || validated.has(m._id)) return;
+    keep.add(m._id);
+    const scoreA = (m.mt1A || 0) + (m._mt2A || 0), scoreB = (m.mt1B || 0) + (m._mt2B || 0);
+    const data = {
+      liveKey: _draft.liveKey, eqA: m.eqA, eqB: m.eqB, phase: m._phase || "mt1",
+      scoreA, scoreB, mt1A: m.mt1A || 0, mt1B: m.mt1B || 0,
+      buteursA: (m.buteursA || []).slice(0, scoreA), buteursB: (m.buteursB || []).slice(0, scoreB),
+      passeursA: (m.passeursA || []).slice(0, scoreA), passeursB: (m.passeursB || []).slice(0, scoreB)
+    };
+    const sig = JSON.stringify(data);
+    if (_liveMatchSent[m._id] === sig) return;
+    _liveMatchSent[m._id] = sig;
+    _db.ref('liveMatchs/' + m._id).set({ ...data, updatedAt: firebase.database.ServerValue.TIMESTAMP })
+      .catch(() => { delete _liveMatchSent[m._id]; });
+  });
+  Object.keys(_liveMatchSent).forEach(id => {
+    if (keep.has(id)) return;
+    delete _liveMatchSent[id];
+    _db.ref('liveMatchs/' + id).remove().catch(() => {});
+  });
+}
+function _liveMatchForgetAll() {
+  try { _liveMatchSent = {}; if (_db) _db.ref('liveMatchs').remove().catch(() => {}); } catch (e) {}
+}
+
+// Matchs en cours (pas encore valides) de la soiree, le plus recemment modifie en tete.
+function _liveCurrentMatchs() {
+  if (!_liveIsOn()) return [];
+  const validated = new Set((_liveValidatedMatchs || []).map(m => m._id));
+  const key = _liveDraft.liveKey;
+  return Object.entries(_liveMatchsMap || {})
+    .map(([id, m]) => ({ ...(m || {}), _id: id }))
+    .filter(m => m.eqA && m.eqB && !validated.has(m._id) && (!key || m.liveKey === key)
+      && (!m.updatedAt || _liveNow() - m.updatedAt < LIVE_MATCH_STALE_MS))
+    .map(m => ({ ...m, scoreA: m.scoreA || 0, scoreB: m.scoreB || 0,
+      buteursA: _lvArr(m.buteursA), buteursB: _lvArr(m.buteursB),
+      passeursA: _lvArr(m.passeursA), passeursB: _lvArr(m.passeursB) }))
+    .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+}
+
+// Nouveau buteur choisi sur un match en cours : animation (uniquement si l onglet est
+// affiche). Le premier instantane recu ne fait qu amorcer, sans rien animer.
+function _liveDetectGoals() {
+  const goals = {};
+  const validated = new Set((_liveValidatedMatchs || []).map(m => m._id));
+  Object.entries(_liveMatchsMap || {}).forEach(([id, m]) => {
+    if (!m) return;
+    const sc = `${m.scoreA || 0}-${m.scoreB || 0}`;
+    const prev = _liveLastScores[id];
+    if (prev && prev !== sc && _liveGoalSeen !== null) {
+      const [pa, pb] = prev.split("-").map(Number);
+      if ((m.scoreA || 0) > pa) _liveBump = { id, side: "A", at: Date.now() };
+      else if ((m.scoreB || 0) > pb) _liveBump = { id, side: "B", at: Date.now() };
+    }
+    _liveLastScores[id] = sc;
+    ["A", "B"].forEach(s => _lvArr(m["buteurs" + s]).forEach((b, j) => {
+      if (b) goals[`${id}|${s}|${j}`] = { id, s, b, m };
+    }));
+  });
+  if (_liveGoalSeen === null) { _liveGoalSeen = new Set(Object.keys(goals)); return; }
+  let fresh = null, freshKey = null;
+  Object.keys(goals).forEach(k => { if (!_liveGoalSeen.has(k)) { fresh = goals[k]; freshKey = k; } });
+  _liveGoalSeen = new Set(Object.keys(goals));
+  if (!fresh || validated.has(fresh.id)) return;
+  _liveFreshGoal = { key: freshKey, at: Date.now() };
+  const onLive = document.getElementById("panel-live")?.classList.contains("active");
+  if (onLive && !document.hidden) _liveGoalBurst(fresh);
+}
+
+function _liveGoalBurst(g) {
+  document.querySelector(".gb-burst")?.remove();
+  const team = g.s === "A" ? g.m.eqA : g.m.eqB;
+  const csc = g.b === "CSC";
+  const name = csc ? "Contre son camp" : g.b;
+  const a = g.m.scoreA || 0, b = g.m.scoreB || 0;
+  const conf = Array.from({ length: 26 }, (_, k) => {
+    const ang = Math.random() * Math.PI * 2, d = 140 + Math.random() * 160;
+    const c = ["var(--tc)", "var(--gold)", "#fff"][k % 3];
+    return `<i style="--c:${c};--x:${Math.round(Math.cos(ang) * d)}px;--y:${Math.round(Math.sin(ang) * d)}px;--r:${Math.round(Math.random() * 720 - 360)}deg"></i>`;
+  }).join("");
+  const el = document.createElement("div");
+  el.className = "gb-burst " + teamCls(team);
+  el.setAttribute("role", "status");
+  el.innerHTML = `${conf}<span class="gb-ball">⚽</span><div class="gb-but">BUT !</div>
+    <div class="gb-ph pf">${csc ? "⚽" : _saisieInitials(name)}${csc ? "" : portraitImg(name)}</div>
+    <div class="gb-nm">${name}</div>
+    <div class="gb-sc">${dot(g.m.eqA)}${TEAM_LABEL[g.m.eqA] || g.m.eqA} <b class="${g.s === "A" ? "hit" : ""}">${a}</b> – <b class="${g.s === "B" ? "hit" : ""}">${b}</b> ${TEAM_LABEL[g.m.eqB] || g.m.eqB}${dot(g.m.eqB)}</div>`;
+  el.addEventListener("click", () => el.remove());
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+// Tableau du classement : matchs valides + matchs en cours (provisoires). Fleches et
+// "+pts" par rapport au classement des seuls matchs valides.
+function _liveStandingsTableHTML(matchs, live, teams) {
+  const pad = st => { (teams || []).forEach(t => { if (!st.some(r => r.team === t)) st.push({ team: t, pj: 0, v: 0, n: 0, d: 0, pts: 0, gf: 0, ga: 0, diff: 0 }); }); return st; };
+  const before = pad(_sfmStandings(matchs));
+  const now = pad(_sfmStandings([...matchs, ...live]));
+  const rows = now.map((r, i) => {
+    const oi = before.findIndex(x => x.team === r.team);
+    const mv = live.length && oi !== -1 ? (oi > i ? "up" : oi < i ? "down" : "") : "";
+    const add = live.length && oi !== -1 ? r.pts - before[oi].pts : 0;
+    return `<tr><td class="rk">${i + 1}</td><td>${_liveTeamHTML(r.team)}${mv ? `<span class="lv-mv ${mv}">${mv === "up" ? "▲" : "▼"}</span>` : ""}</td><td>${r.pj}</td><td>${r.v}</td><td>${r.n}</td><td>${r.d}</td><td>${r.gf}</td><td>${r.ga}</td><td>${r.diff > 0 ? "+" : ""}${r.diff}</td><td class="pts">${r.pts}${add ? `<span class="lv-delta">+${add}</span>` : ""}</td></tr>`;
+  }).join("");
+  return `<div class="lv-tbl-wrap"><table class="lv-tbl"><thead><tr><th></th><th>Équipe</th><th>J</th><th>V</th><th>N</th><th>D</th><th>BP</th><th>BC</th><th>Diff</th><th>Pts</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+// Saisie : bouton flottant « Voir classement » + volet (ecran Matchs uniquement).
+function _saisieStandingsHTML() {
+  const validated = _liveValidatedMatchs || [];
+  const vIds = new Set(validated.map(m => m._id));
+  const localIds = new Set();
+  const live = [];
+  (_draft.matchs || []).forEach(m => {
+    if (!m || !m.eqA || !m.eqB || vIds.has(m._id)) return;
+    if (m._id) localIds.add(m._id);
+    live.push({ eqA: m.eqA, eqB: m.eqB, scoreA: (m.mt1A || 0) + (m._mt2A || 0), scoreB: (m.mt1B || 0) + (m._mt2B || 0) });
+  });
+  _liveCurrentMatchs().forEach(m => { if (!localIds.has(m._id)) live.push(m); });
+  const fab = `<button class="sq-stand-fab" data-act="saisie-stand-open">${live.length ? `<span class="live-dot"></span>` : ""}🏆 Voir classement</button>`;
+  if (!_saisieStandOpen) return fab;
+  const body = validated.length || live.length
+    ? _liveStandingsTableHTML(validated, live, _activeTeams()) + (live.length ? `<div class="sq-note">Provisoire : inclut le match en cours, pas encore validé.</div>` : "")
+    : `<p class="saisie-empty">Aucun match pour l'instant.</p>`;
+  return `<div class="sq-stand-scrim" data-act="saisie-stand-close"></div>
+    <div class="sq-stand-sheet" role="dialog" aria-label="Classement de la soirée">
+      <div class="sq-grab"></div>
+      <div class="sq-stand-head"><h4>🏆 Classement de la soirée</h4><button data-act="saisie-stand-close" aria-label="Fermer">✕</button></div>
+      ${body}
+    </div>`;
+}
+
+/* ── Session en cours : blocs du match en direct ── */
+function _liveAvHTML(name) {
+  const eq = _liveDraft?.presences?.[name]?.equipe;
+  return `<span class="lv-av pf ${eq ? teamCls(eq) : ""}">${_saisieInitials(name)}${portraitImg(name, true)}</span>`;
+}
+function _liveNowCardHTML(m, num) {
+  const bumpA = _liveBump && _liveBump.id === m._id && _liveBump.side === "A" && Date.now() - _liveBump.at < 1500 ? " bump" : "";
+  const bumpB = _liveBump && _liveBump.id === m._id && _liveBump.side === "B" && Date.now() - _liveBump.at < 1500 ? " bump" : "";
+  const goals = [];
+  ["A", "B"].forEach(s => {
+    const n = s === "A" ? m.scoreA : m.scoreB, mt1 = (s === "A" ? m.mt1A : m.mt1B) || 0;
+    for (let j = 0; j < n; j++) goals.push({ s, j, b: m["buteurs" + s][j] || "", p: m["passeurs" + s][j] || "", mt: m.phase === "mt2" && j >= mt1 ? 2 : 1 });
+  });
+  goals.sort((x, y) => y.mt - x.mt || y.j - x.j);
+  const rows = goals.map(g => {
+    const team = g.s === "A" ? m.eqA : m.eqB;
+    const key = `${m._id}|${g.s}|${g.j}`;
+    const fresh = _liveFreshGoal && _liveFreshGoal.key === key && Date.now() - _liveFreshGoal.at < 4000 ? " fresh" : "";
+    if (!g.b) return `<div class="lv-goal pending">${dot(team)}⚽ But des ${TEAM_LABEL[team] || team}, buteur en cours de saisie…</div>`;
+    if (g.b === "CSC") return `<div class="lv-goal${fresh}">${dot(team)}<span class="who">CSC</span>${g.p ? `<span class="pas">par ${g.p}</span>` : ""}<span class="mt">MT${g.mt}</span></div>`;
+    return `<div class="lv-goal${fresh}">${_liveAvHTML(g.b)}<span class="who">${g.b}</span>${g.p ? `<span class="pas">passe de ${g.p}</span>` : ""}<span class="mt">MT${g.mt}</span></div>`;
+  }).join("");
+  return `<div class="lv-card lv-now">
+    <div class="lv-card-t"><span class="lv-tag"><span class="lv-pulse"></span>Match en cours</span><span>${m.phase === "mt2" ? "2e" : "1re"} mi-temps · match n°${num}</span></div>
+    <div class="lv-now-score">
+      <div class="lv-now-side ${teamCls(m.eqA)}">${dot(m.eqA)}${TEAM_LABEL[m.eqA] || m.eqA}</div>
+      <div class="lv-now-nums"><span class="lv-now-big${bumpA}">${m.scoreA}</span><span class="lv-now-dash">–</span><span class="lv-now-big${bumpB}">${m.scoreB}</span></div>
+      <div class="lv-now-side ${teamCls(m.eqB)}">${dot(m.eqB)}${TEAM_LABEL[m.eqB] || m.eqB}</div>
+    </div>
+    ${rows ? `<div class="lv-goals">${rows}</div>` : ""}
+  </div>`;
+}
+function _liveTopsHTML(all, live) {
+  const count = (field, list) => {
+    const c = {};
+    list.forEach(m => ["A", "B"].forEach(s => {
+      const bs = _lvArr(m["buteurs" + s]);
+      _lvArr(m[field + s]).forEach((n, j) => {
+        if (!n || n === "CSC") return;
+        if (field === "passeurs" && bs[j] === "CSC") return; // auteur du CSC, pas un passeur
+        c[n] = (c[n] || 0) + 1;
+      });
+    }));
+    return c;
+  };
+  const col = (field, title) => {
+    const tot = count(field, all), now = count(field, live);
+    const list = Object.entries(tot).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "fr")).slice(0, 5);
+    if (!list.length) return `<div><div class="lv-top-t">${title}</div><p class="lv-muted" style="margin:4px 0 0">Personne pour l'instant.</p></div>`;
+    return `<div><div class="lv-top-t">${title}</div>${list.map(([n, k], i) =>
+      `<div class="lv-trow"><span class="rk">${i + 1}</span>${_liveAvHTML(n)}<span class="nm">${n}</span>${now[n] ? `<span class="plus">+${now[n]}</span>` : ""}<span class="n">${k}</span></div>`).join("")}</div>`;
+  };
+  return `<div class="lv-card"><div class="lv-tops">${col("buteurs", "⚽ Buteurs du soir")}${col("passeurs", "🎯 Passeurs du soir")}</div></div>`;
+}
+function _liveNotablesHTML(ids, date) {
+  const list = (_liveCustomAch || CUSTOM_ACH_AWARDS || [])
+    .filter(a => a && (ids.has(a.matchId) || (date && a.date === date)))
+    .sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0));
+  const rows = list.map(a => {
+    const defi = CUSTOM_ACH_DEFS.find(d => d.id === a.defiId);
+    if (!defi) return "";
+    return `<div class="lv-notable" title="${(defi.desc || "").replace(/"/g, "&quot;")}"><span class="ico">${defi.icon}</span>${_liveAvHTML(a.player)}<span class="txt"><b>${a.player}</b> <span>— ${defi.name}</span></span></div>`;
+  }).join("");
+  if (!rows) return "";
+  return `<div class="lv-card"><div class="lv-card-t"><span>📌 Faits notables du soir</span></div><div class="lv-notables">${rows}</div></div>`;
+}
 
 /* ── Ecriture cote Saisie : ouverture / score / fermeture / resultat ── */
 function _pronoSyncSafe() { try { _pronoSync(); } catch (e) { console.warn('pronos sync:', e); } }
@@ -10886,7 +11199,9 @@ function _liveRefresh(fromTimer) {
   try {
     const on = _liveIsOn();
     const role = _liveRoleName();
-    const showTab = on && role !== "saisie";
+    // Onglet visible pour tout le monde, pronos actives ou non. Seul le telephone de la
+    // Saisie n est jamais bascule automatiquement dessus, ni encombre du bandeau.
+    const showTab = on;
     const cur = on && _pronosEnabled ? _pronoCurrent() : null;
     const voteOpen = !!(cur && cur.open);
     const sig = [showTab, voteOpen, cur ? cur.id + cur.live.phase : ""].join("|");
@@ -10901,7 +11216,7 @@ function _liveRefresh(fromTimer) {
     const onLive = panel && panel.classList.contains("active");
     const banner = document.getElementById("live-banner");
     if (banner) {
-      banner.hidden = !showTab || onLive;
+      banner.hidden = !showTab || onLive || role === "saisie";
       banner.classList.toggle("open", voteOpen);
       banner.innerHTML = voteOpen
         ? `<span class="live-dot"></span><span>Pronos ouverts : <b>${TEAM_LABEL[cur.live.eqA]} – ${TEAM_LABEL[cur.live.eqB]}</b> · Voter</span>`
@@ -10911,7 +11226,7 @@ function _liveRefresh(fromTimer) {
     if (pronosBtn) pronosBtn.textContent = _pronosEnabled ? "Pronos : activés" : "Pronos : désactivés";
 
     if (!showTab && onLive) { document.querySelector('.main-tab[data-tab="session"]')?.click(); return; }
-    if (showTab && !_liveAutoOpened && !_liveUserNavigated) {
+    if (showTab && role !== "saisie" && !_liveAutoOpened && !_liveUserNavigated) {
       _liveAutoOpened = true;
       const h = location.hash.slice(1);
       if (!h || h === "live" || h === "sessions" || h === "session") { _liveOpenTab(); return; }
@@ -10943,21 +11258,28 @@ function renderLive() {
   let h = `<div class="lv-wrap">
     <div class="lv-head"><h2>${dateStr ? _sfmHeroDate(dateStr) : "Ce soir"}</h2><span>${presentCount} présent${presentCount > 1 ? "s" : ""}</span></div>`;
 
+  const live = _liveCurrentMatchs();
+  live.forEach((m, i) => { h += _liveNowCardHTML(m, matchs.length + live.length - i); });
+
   if (_pronosEnabled) h += _livePronoHTML();
 
-  if (!matchs.length && teams.length) {
+  if (!matchs.length && !live.length && teams.length) {
     h += `<div class="lv-card"><div class="lv-card-t"><span>Équipes du soir</span></div><div class="lv-compo">
       ${teams.map(t => `<div><b>${_liveTeamHTML(t)}</b>${_livePresentOf(t).map(p => pLink(p)).join("")}</div>`).join("")}
     </div></div>`;
   }
 
+  if (matchs.length || live.length) {
+    const sub = live.length
+      ? "provisoire · inclut le match en cours"
+      : `${matchs.length} match${matchs.length > 1 ? "s" : ""} enregistré${matchs.length > 1 ? "s" : ""}`;
+    h += `<div class="lv-card"><div class="lv-card-t"><span>Classement de la soirée</span><span>${sub}</span></div>
+      ${_liveStandingsTableHTML(matchs, live, teams)}</div>`;
+    h += _liveTopsHTML([...matchs, ...live], live);
+  }
+  h += _liveNotablesHTML(new Set([...matchs, ...live].map(m => m._id)), d.date);
+
   if (matchs.length) {
-    const st = _sfmStandings(matchs);
-    teams.forEach(t => { if (!st.some(r => r.team === t)) st.push({ team: t, pj: 0, v: 0, n: 0, d: 0, pts: 0, gf: 0, ga: 0, diff: 0 }); });
-    h += `<div class="lv-card"><div class="lv-card-t"><span>Classement de la soirée</span><span>${matchs.length} match${matchs.length > 1 ? "s" : ""} enregistré${matchs.length > 1 ? "s" : ""}</span></div>
-      <div class="lv-tbl-wrap"><table class="lv-tbl"><thead><tr><th></th><th>Équipe</th><th>J</th><th>V</th><th>N</th><th>D</th><th>BP</th><th>BC</th><th>Diff</th><th>Pts</th></tr></thead><tbody>
-      ${st.map((r, i) => `<tr><td class="rk">${i + 1}</td><td>${_liveTeamHTML(r.team)}</td><td>${r.pj}</td><td>${r.v}</td><td>${r.n}</td><td>${r.d}</td><td>${r.gf}</td><td>${r.ga}</td><td>${r.diff > 0 ? "+" : ""}${r.diff}</td><td class="pts">${r.pts}</td></tr>`).join("")}
-      </tbody></table></div></div>`;
 
     const rows = matchs.map((m, i) => {
       const sc = scoreColors(m);
