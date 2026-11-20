@@ -2164,6 +2164,14 @@
 #panel-vignettes .card { width: var(--w, 100%); aspect-ratio: 5 / 7; container-type: inline-size; perspective: 1100px; position: relative; }
 #panel-vignettes .card-in { position: absolute; inset: 0; font-size: 6.4cqw; transform-style: preserve-3d; transition: transform .65s cubic-bezier(.3,.9,.3,1); }
 #panel-vignettes .card.flipped .card-in { transform: rotateY(180deg); }
+/* Safari (iPhone, iPad) ignore backface-visibility dès qu'une face contient un mix-blend-mode (reflet .holo)
+   ou sous un backdrop-filter : les deux faces se superposent. On masque donc explicitement la face cachée,
+   au moment où la carte est de profil (~0,12 s dans la rotation). Valable sur tous les navigateurs. */
+#panel-vignettes .card-in { -webkit-transform-style: preserve-3d; }
+#panel-vignettes .face.front, #panel-vignettes .face.back { transition: visibility 0s linear .12s; }
+#panel-vignettes .face.back { visibility: hidden; }
+#panel-vignettes .card.flipped .face.front, #panel-vignettes .slot:not(.shown) .face.front { visibility: hidden; }
+#panel-vignettes .card.flipped .face.back, #panel-vignettes .slot:not(.shown) .face.back { visibility: visible; }
 #panel-vignettes .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: .95em; padding: .34em; background: var(--frame); box-shadow: var(--glow, 0 0 0 transparent), 0 .5em 1.4em rgba(0,0,0,.6); }
 #panel-vignettes .face.back { transform: rotateY(180deg); }
 #panel-vignettes .face-in { position: relative; height: 100%; border-radius: .66em; overflow: hidden; background: #121219; display: flex; flex-direction: column; }
@@ -2500,8 +2508,8 @@
 #panel-vignettes .vg-head h2 span { color: var(--gold); }
 #panel-vignettes .vg-asof { margin: 4px 0 0; font-size: 12px; color: var(--text3); }
 #panel-vignettes .vg-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; margin-bottom: 22px; }
-#panel-vignettes .vt-seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 14px; max-width: 520px; }
-#panel-vignettes .vt-seg button { position: relative; border: none; background: none; color: var(--text3); font: inherit; font-size: 13px; font-weight: 600; padding: 10px 0 11px; cursor: pointer; border-bottom: 2px solid transparent; }
+#panel-vignettes .vt-seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 14px; max-width: 520px; }
+#panel-vignettes .vt-seg button { position: relative; border: none; background: none; color: var(--text3); font: inherit; font-size: 12.5px; font-weight: 600; padding: 10px 0 11px; cursor: pointer; border-bottom: 2px solid transparent; }
 #panel-vignettes .vt-seg button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--gold); }
 #panel-vignettes .vt-bd, .vg-subtab .vt-bd { display: inline-flex; align-items: center; justify-content: center; min-width: 17px; height: 17px; padding: 0 4px; margin-left: 5px; border-radius: 9px; background: var(--bad); color: #fff; font-size: 10.5px; font-weight: 700; letter-spacing: 0; vertical-align: 1px; }
 #panel-vignettes .vt-wrap { max-width: 520px; }
@@ -2568,6 +2576,15 @@
 #panel-vignettes .vt-st.wait { background: var(--gold-bg); color: var(--gold); }
 #panel-vignettes .vt-st.ok { background: color-mix(in srgb, var(--good) 15%, transparent); color: var(--good); }
 #panel-vignettes .vt-st.ko { background: rgba(255,255,255,.06); color: var(--text3); }
+#panel-vignettes .vt-done { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+#panel-vignettes .vt-drow { padding: 9px 12px; border-top: 1px solid var(--border); font-size: 12.5px; }
+#panel-vignettes .vt-drow:first-child { border-top: none; }
+#panel-vignettes .vt-drow .h { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+#panel-vignettes .vt-drow .h b { font-size: 13.5px; }
+#panel-vignettes .vt-drow .h .vt-st { margin-left: 0; }
+#panel-vignettes .vt-drow .h small { margin-left: auto; color: var(--text3); font-variant-numeric: tabular-nums; }
+#panel-vignettes .vt-drow .l { color: var(--text3); }
+#panel-vignettes .vt-drow .l span { color: var(--text2); }
 #panel-vignettes .vt-got { position: fixed; inset: 0; z-index: 2000; background: radial-gradient(circle at 50% 40%, rgba(245,200,66,.16), transparent 60%), rgba(10,10,14,.97); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 22px; text-align: center; animation: vg-fadeIn .25s ease; }
 #panel-vignettes .vt-got h4 { margin: 0 0 4px; font-size: 24px; font-style: italic; text-transform: uppercase; color: #fff; }
 #panel-vignettes .vt-got > p { margin: 0 0 22px; font-size: 13px; color: var(--text2); max-width: 36ch; }
@@ -2916,7 +2933,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 19/11/2026 - 17:30</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 10:17</footer>
 
 <script>
 
@@ -13377,8 +13394,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     }).join("");
   }
   function trSentHTML() {
-    const L = trList().filter(t => t.from === ME && (t.status === "wait" || _liveNow() - (t.doneAt || t.at || 0) < 7 * 86400000)).sort((a, b) => (b.at || 0) - (a.at || 0));
-    if (!L.length) return `<div class="vt-none">Tu n'as envoyé aucune proposition ces derniers jours.</div>`;
+    const L = trList().filter(t => t.from === ME && t.status === "wait" && !trExpired(t)).sort((a, b) => (b.at || 0) - (a.at || 0));
+    if (!L.length) return `<div class="vt-none">Aucune proposition en attente. Les échanges acceptés, refusés ou expirés sont dans « Terminés ».</div>`;
     return L.map(t => {
       const gift = !t.get.length, exp = t.status === "wait" && trExpired(t), stale = t.status === "wait" && !exp && !trValid(t);
       const [cls, lab] = t.status === "ok" ? ["ok", "Accepté"] : t.status === "ko" ? ["ko", "Refusé"] : t.status === "cancel" ? ["ko", "Annulé"] : exp ? ["ko", "Expiré"] : stale ? ["ko", "Caduque"] : ["wait", "En attente"];
@@ -13387,13 +13404,27 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
         ${t.status === "wait" && !exp ? `<div class="vt-acts one"><button class="vt-btn ghost" data-vt="cancel" data-id="${t.id}">${stale ? "Retirer" : "Annuler la proposition"}</button></div>` : ""}</div>`;
     }).join("");
   }
+  // Terminés : format compact, juste les noms des cartes (pas d'aperçu)
+  function trDoneHTML() {
+    const when = t => t.status === "wait" ? (t.at || 0) + TR_TTL : (t.doneAt || t.at || 0);
+    const L = trList().filter(t => (t.from === ME || t.to === ME) && (t.status !== "wait" || trExpired(t))).sort((a, b) => when(b) - when(a));
+    if (!L.length) return `<div class="vt-none">Aucun échange terminé pour l'instant.</div>`;
+    const d = ms => { const x = new Date(ms); return `${String(x.getDate()).padStart(2, "0")}/${String(x.getMonth() + 1).padStart(2, "0")}`; };
+    const names = ks => ks.length ? ks.filter(k => BYK[k]).map(trLabel).join(", ") || "—" : "rien";
+    return `<div class="vt-done">${L.map(t => {
+      const mine = t.from === ME, other = mine ? t.to : t.from, gave = mine ? t.give : t.get, got = mine ? t.get : t.give, gift = !t.get.length;
+      const [cls, lab] = t.status === "ok" ? ["ok", "Accepté"] : t.status === "ko" ? ["ko", mine ? `Refusé par ${other}` : "Refusé"] : t.status === "cancel" ? ["ko", "Annulé"] : ["ko", "Expiré"];
+      return `<div class="vt-drow"><div class="h"><b>${gift ? "🎁" : "⇄"} ${other}</b><span class="vt-st ${cls}">${lab}</span><small>${d(when(t))}</small></div>
+        <div class="l">${mine ? "Tu donnes" : "Tu reçois"} : <span>${names(mine ? gave : got)}</span></div>${gift ? "" : `<div class="l">${mine ? "Tu reçois" : "Tu donnes"} : <span>${names(mine ? got : gave)}</span></div>`}</div>`;
+    }).join("")}</div>`;
+  }
   function renderTrades() {
     const sec = document.getElementById("vg-trades"); if (!sec || !ME || loadedFor !== ME) return;
     const n = trPending().length;
-    sec.innerHTML = `<div class="vt-wrap"><div class="vt-seg" role="tablist">${[["swap", "🔄 Échanger"], ["recu", "Reçues"], ["env", "Envoyées"]].map(([id, l]) =>
+    sec.innerHTML = `<div class="vt-wrap"><div class="vt-seg" role="tablist">${[["swap", "Échanger"], ["recu", "Reçues"], ["env", "Envoyées"], ["done", "Terminés"]].map(([id, l]) =>
       `<button role="tab" aria-selected="${TR.sub === id}" data-vt="sub" data-t="${id}">${l}${id === "recu" ? `<span class="vt-bd" id="vt-recvbd"${n ? "" : " hidden"}>${n}</span>` : ""}</button>`).join("")}</div>
       <p class="vt-intro">Ton album : <b style="color:var(--text)">${ownedOf(ME)} / ${ALL.length}</b> · ${dupsOf(ME).length} double${dupsOf(ME).length > 1 ? "s" : ""} échangeable${dupsOf(ME).length > 1 ? "s" : ""}</p>
-      ${TR.sub === "swap" ? trSwapHTML() : TR.sub === "recu" ? trRecvHTML() : trSentHTML()}</div>`;
+      ${TR.sub === "swap" ? trSwapHTML() : TR.sub === "recu" ? trRecvHTML() : TR.sub === "env" ? trSentHTML() : trDoneHTML()}</div>`;
   }
   function trGot(title, sub, got) {
     const o = document.createElement("div"); o.className = "vt-got"; o.setAttribute("role", "dialog"); o.setAttribute("aria-label", title);
