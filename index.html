@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Happy Monday Football Team</title>
 <link rel="icon" type="image/png" href="icons/favicon-64.png?v=2">
-<link rel="manifest" href="manifest.webmanifest?v=2">
+<link rel="manifest" href="manifest.webmanifest?v=3">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#e30b0b">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -497,6 +497,12 @@
     transition: transform .28s cubic-bezier(.4,0,.2,1);
   }
   #player-panel.open { transform: translateX(0); }
+  /* Téléphone : « Voir ma fiche » depuis le menu ☰ s'ouvre comme une page (pas de volet, pas de voile),
+     la barre du bas reste visible et accessible */
+  @media (max-width: 760px) {
+    body.bn-on #player-panel.pp-page { width: 100vw; border-left: none; transition: none; z-index: 790; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); padding-top: env(safe-area-inset-top, 0px); background: var(--bg); }
+    body.bn-on #player-panel-overlay.pp-page { display: none; }
+  }
   .pp-header {
     /* Juste le bouton fermer, flottant : prenom + statut sont dans la carte du haut. */
     display: flex; align-items: flex-start; justify-content: flex-end; gap: 12px;
@@ -3191,7 +3197,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 15:50</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 16:00</footer>
 
 <script>
 
@@ -9536,7 +9542,8 @@ function openPlayerPanel(playerName) {
 function closePlayerPanel() {
   const afterLogin = document.getElementById("player-panel").classList.contains("pp-full");
   document.getElementById("player-panel-overlay").classList.remove("open");
-  document.getElementById("player-panel").classList.remove("open", "pp-full"); // pp-full : fiche plein écran après connexion
+  document.getElementById("player-panel").classList.remove("open", "pp-full", "pp-page"); // pp-full : fiche plein écran après connexion ; pp-page : ouverte depuis le menu
+  document.getElementById("player-panel-overlay").classList.remove("pp-page");
   document.body.style.overflow = "";
   if (afterLogin) {
     const shown = id => { const b = document.getElementById(id); return b && b.style.display !== "none"; };
@@ -14273,7 +14280,12 @@ function _svApply() {
     const PANEL = { "panel-session": "session", "panel-live": "live", "panel-vote": "vote", "panel-saisie": "saisie", "panel-stats": "stats", "panel-vignettes": "vignettes", "panel-joueurs": "joueurs", "panel-dashboard": "dashboard" };
     const goTab = k => {
       if (k === "saisie") { $("saisie-nav-btn")?.click(); return; }
-      if (k === "fiche") { const p = me(); if (p && typeof openPlayerPanel === "function") openPlayerPanel(p); return; }
+      if (k === "fiche") {
+        const p = me(); if (!p || typeof openPlayerPanel !== "function") return;
+        const pp = $("player-panel"), ov = $("player-panel-overlay");
+        pp.classList.add("pp-page"); ov.classList.add("pp-page");
+        openPlayerPanel(p); pp.scrollTop = 0; return;
+      }
       document.querySelector(`.main-tab[data-tab="${k}"]`)?.click();
     };
     const vg = () => { try { return (typeof window._vgInfo === "function" && window._vgInfo()) || null; } catch (e) { return null; } };
@@ -14378,8 +14390,8 @@ function _svApply() {
         <span class="bm-lbl">Réglages</span><div class="bm-rows">
           ${pwaRows()}
           <button type="button" class="bm-row" data-bm="__theme" aria-pressed="${!light}">${ic("moon")}<span class="grow">Mode sombre</span><span class="sw"></span></button>
-          ${acc() ? `<button type="button" class="bm-row" data-bm="__account">${ic("user")}<span class="grow">Mon compte</span>${ic("chev", "chev")}</button>
-            <button type="button" class="bm-row danger" data-bm="__logout">${ic("out")}<span class="grow">Se déconnecter</span></button>`
+          ${acc() && typeof _accIsSuper !== "undefined" && _accIsSuper ? `<button type="button" class="bm-row" data-bm="__accounts">${ic("team")}<span class="grow">Comptes activés <small>· super admin</small></span>${ic("chev", "chev")}</button>` : ""}
+          ${acc() ? `<button type="button" class="bm-row danger" data-bm="__logout">${ic("out")}<span class="grow">Se déconnecter</span></button>`
             : `<button type="button" class="bm-row" data-bm="__admin">${ic("key")}<span class="grow">Accès admin (mot de passe)</span>${ic("chev", "chev")}</button>`}
         </div>
         ${""}${shown("footer-pronos-wrap") ? `<div class="bm-rows"><button type="button" class="bm-row" data-bm="__pronos">${ic("trophy")}<span class="grow">${esc(($("footer-pronos-btn") || {}).textContent || "Pronos")}</span><small>super admin</small></button></div>` : ""}
@@ -14418,7 +14430,12 @@ function _svApply() {
     document.addEventListener("click", e => {
       try {
         const b = e.target.closest("[data-bn]");
-        if (b) { const k = b.dataset.bn; if (k === "__menu") { menuOpen = !menuOpen; notifOpen = false; } else { close(); goTab(k); window.scrollTo(0, 0); } render(); return; }
+        if (b) {
+          const k = b.dataset.bn;
+          if ($("player-panel")?.classList.contains("pp-page") && typeof closePlayerPanel === "function") closePlayerPanel();
+          if (k === "__menu") { menuOpen = !menuOpen; notifOpen = false; } else { close(); goTab(k); window.scrollTo(0, 0); }
+          render(); return;
+        }
         if (e.target.closest("#bticker")) { const g = $("bticker").dataset.go; close(); if (g) goTab(g); render(); return; }
         if (e.target.closest("#bell-btn")) { notifOpen = !notifOpen; menuOpen = false; render(); return; }
         if (e.target.id === "bnotif-scrim") { notifOpen = false; render(); return; }
@@ -14444,7 +14461,7 @@ function _svApply() {
           close(); render();
           if (k === "fiche") goTab("fiche");
           else if (k === "login") { typeof _accOpen === "function" && _accOpen("login"); }
-          else if (k === "__account") { typeof _accOpen === "function" && _accOpen("me"); }
+          else if (k === "__accounts") { if (typeof _accOpen === "function") { _accOpen("accounts"); typeof _accLoadAccounts === "function" && _accLoadAccounts(); } }
           else if (k === "__logout") { typeof _accLogout === "function" && _accLogout(); }
           else if (k === "__admin") { typeof _openAdminPwd === "function" && _openAdminPwd(); }
           else if (k === "__rules") $("footer-reglement-btn")?.click();
@@ -14459,6 +14476,30 @@ function _svApply() {
       } catch (er) { console.warn("menu du bas:", er); }
     });
     // rafraîchissement léger (barre, bandeau, cloche) : le menu et les notifications ouverts ne sont pas reconstruits
+    // Glisser le menu vers le bas pour le fermer (seulement quand sa liste est tout en haut,
+    // ou depuis la poignée) ; en dessous de 90 px, il revient en place.
+    (function () {
+      const m = $("bmenu"); let y0 = null, dy = 0, inn = null;
+      m.addEventListener("touchstart", e => {
+        inn = m.querySelector(".bm-in"); y0 = null; dy = 0;
+        if (!inn || (inn.scrollTop > 0 && !e.target.closest(".bm-grab"))) return;
+        y0 = e.touches[0].clientY; inn.style.transition = "none";
+      }, { passive: true });
+      m.addEventListener("touchmove", e => {
+        if (y0 == null || !inn) return;
+        dy = e.touches[0].clientY - y0;
+        if (dy > 0) { inn.style.transform = `translateY(${dy}px)`; if (e.cancelable) e.preventDefault(); }
+        else inn.style.transform = "";
+      }, { passive: false });
+      const end = () => {
+        if (y0 == null || !inn) return;
+        const el = inn; el.style.transition = "transform .2s ease";
+        if (dy > 90) { el.style.transform = "translateY(100%)"; setTimeout(() => { menuOpen = false; render(); }, 190); }
+        else el.style.transform = "";
+        y0 = null; dy = 0;
+      };
+      m.addEventListener("touchend", end); m.addEventListener("touchcancel", end);
+    })();
     window._bnRefresh = light;
     setInterval(light, 3000);
     render();
