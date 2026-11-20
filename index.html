@@ -3208,7 +3208,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 16:26</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 16:29</footer>
 
 <script>
 
@@ -5992,7 +5992,7 @@ const MHF_CAT_BY_ID = {
   buteur:'Attaque', passeur:'Attaque', ga:'Attaque', dbl:'Attaque', serie:'Attaque', hattrick:'Attaque',
   defenseFer:'Défense', mur:'Défense', passoire:'Défense',
   invic:'Collectif', duo:'Collectif',
-  fidele:'Présence', sac:'Présence', maillots:'Présence', assidu:'Présence', comete:'Présence',
+  fidele:'Présence', sac:'Présence', maillots:'Présence', greffier:'Présence', assidu:'Présence', comete:'Présence',
   mvp:'Distinctions', soiree:'Distinctions', remontada:'Distinctions', chelem:'Distinctions',
   gardienAssist:'Distinctions', chilavert:'Distinctions', willgrigg:'Distinctions', mesutozil:'Distinctions', patron:'Distinctions', mercenaire:'Distinctions', butargent:'Distinctions', revenant:'Distinctions', demenageur:'Distinctions', equipetype:'Distinctions', totsaison:'Distinctions', bdor:'Distinctions', legende:'Distinctions',
   bonnet:'Secrets', infirm:'Secrets', pois:'Secrets', fantome:'Secrets', zerovic:'Secrets', toutnul:'Secrets', psg:'Secrets', cuillere:'Secrets',
@@ -8644,6 +8644,7 @@ const ACH_DEFS = [
   { id:'fidele',   name:'Fidèle',          icon:'📅', tiers:[5,15,30,50,75,100],   hidden:false, key:'presences',      desc:v=>`${v} session${v>1?'s':''} jouée${v>1?'s':''}` },
   { id:'sac',      name:'Porteur de sac',  icon:'🎒', tiers:[1,3,7,15,25,40],      hidden:false, key:'sac',            desc:v=>`Sac amené ${v} fois` },
   { id:'maillots', name:'Intendant',       icon:'👕', tiers:[1,3,7,15,25,40],      hidden:false, key:'maillots',       desc:v=>`Maillots amenés ${v} fois` },
+  { id:'greffier', name:'Greffier',        icon:'✍️', tiers:[1], fixedTier:6,      hidden:false, key:'greffier',       desc:v=>`${v} soirée${v>1?'s':''} saisie${v>1?'s':''}` },
   { id:'assidu',   name:'Assidu',          icon:'🗓️', tiers:[1,2,3,4],  tierOffset:2,  hidden:false, key:'assiduAnnes',  desc:v=>v===4?'1 an à ≥90% de présence':v===3?'1 an à ≥80% de présence':v===2?'1 an à ≥70% de présence':'1 an à ≥60% de présence' },
   { id:'comete',   name:'La Comète',       icon:'🌠', tiers:[1,2,3,4],  tierOffset:2,  tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'cometeAnnes',  desc:v=>v===4?'1 an à ≤10% de présence':v===3?'1 an à ≤20% de présence':v===2?'1 an à ≤30% de présence':'1 an à ≤40% de présence' },
   // ── Distinctions ──
@@ -8683,6 +8684,7 @@ const ACH_ABOUT = {
   fidele:     'Sessions jouées',
   sac:        'Sac amené à la session',
   maillots:   'Maillots amenés à la session',
+  greffier:   'Avoir saisi et validé au moins un match d\'une soirée avec son compte',
   bonnet:     'Absences',
   infirm:     'Sessions passé blessé',
   serie:      'Matchs consécutifs avec au moins 1 G/A',
@@ -8725,6 +8727,20 @@ const ACH_ABOUT = {
    acquis, même si de nouvelles cartes apparaissent ensuite). Taux enregistrés sous la
    fiche : vignettesBest/{saison}/{joueur} = % (voir l'onglet Vignettes). */
 var _VG_BEST = {}; // { "2026-27": { joueur: % } }
+// Haut fait « Greffier » : saisieLog/{AAAA-MM-JJ}/{joueur} = true dès que ce compte valide un match de la soirée.
+// Compteur = soirées (sessions enregistrées) où il a validé au moins un match.
+var _SAISIE_LOG = {};
+function _greffierCount(p) {
+  const dates = new Set((SESSIONS || []).map(s => s.date));
+  return Object.entries(_SAISIE_LOG || {}).filter(([d, v]) => v && v[p] && dates.has(d)).length;
+}
+function _saisieLogMark() {
+  try {
+    const p = typeof _accPlayer === "function" ? _accPlayer() : null, d = _draft && _draft.date;
+    if (!p || !d || !_db || /[.#$\/\[\]]/.test(p) || !/^\d{4}-\d{2}-\d{2}$/.test(d)) return;
+    _db.ref(`saisieLog/${d}/${p}`).set(true).catch(() => {});
+  } catch (e) {}
+}
 /* Dépanneurs : liste FIXE (config/depanneurs), joueurs ajoutés ponctuellement hors roster
    d'origine — section « Dépanneurs » de l'album quel que soit leur statut. */
 var _VG_DEP = new Set(["Chagot", "Marius", "Robin", "Alexi", "Edouard", "Enzo", "Florian", "Matt B"]);
@@ -9128,6 +9144,7 @@ function computeAchievementStats(playerName) {
            gardiensCleanSheets, gardiensButsEncaisses, gardiensMatchs, gardienRate, remontadas, gardienAssist, gardienButs, mercenaireCount,
            equipeTypeCount, equipeTypeSaisonCount, ballonDorCount,
            syndromePsg, cuillereBois, butArgent, revenantCount, demenageur,
+           greffier: _greffierCount(playerName),
            ...Object.fromEntries(SEASON_DEFS.map(sd => ["coll" + sd.sy, ((_VG_BEST[_vgSeasonKey(sd.sy)] || {})[playerName]) || 0])) };
 }
 
@@ -10935,6 +10952,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     if (overlay) overlay.style.display = "flex";
     _fbValidateMatch(match._id, payload).then(() => {
       if (overlay) overlay.style.display = "none";
+      _saisieLogMark(); // haut fait « Greffier »
       // Optimiste : ajoute tout de suite a la liste partagee locale — le listener Firebase
       // la remplacera ensuite par la copie faisant foi (identique en pratique).
       const already = _liveValidatedMatchs.some(vm => vm._id === match._id);
@@ -12575,6 +12593,7 @@ function _accInit() {
   try { _auth = firebase.auth(); } catch (e) { console.warn("auth:", e); _accReadyResolve(); return; }
   const toSet = v => new Set(Array.isArray(v) ? v : Object.values(v || {}));
   _db.ref('vignettesBest').on('value', snap => { _VG_BEST = snap.val() || {}; });
+  _db.ref('saisieLog').on('value', snap => { _SAISIE_LOG = snap.val() || {}; });
   _db.ref('config/depanneurs').on('value', snap => { const v = snap.val(); if (v) _VG_DEP = new Set(Array.isArray(v) ? v : Object.values(v)); });
   _db.ref('config/absents').on('value', snap => { _accStatusAbs = toSet(snap.val()); _accRefreshSaisieAccess(); });
   _db.ref('config/inactifs').on('value', snap => { _accStatusInact = toSet(snap.val()); _accRefreshSaisieAccess(); });
