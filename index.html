@@ -2839,7 +2839,15 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
        (règlement, coefficients et pronos sont dans le menu ☰) */
     body.bn-on header h1 { font-size: clamp(26px, 8vw, 32px); line-height: 1.1; white-space: nowrap; letter-spacing: .03em; }
     body.bn-on header .h1-ft, body.bn-on header .logo, body.bn-on #header-sub { display: none !important; }
-    body.bn-on header { padding-top: 14px; padding-bottom: 12px; }
+    body.bn-on header { padding-top: 14px; padding-bottom: 15px; }
+    /* Barre de titre aux couleurs de l'écusson HMFT : rouge vif en dégradé, titre blanc,
+       double liseré blanc + noir en bas (comme le contour de l'icône) */
+    body.bn-on header { background: radial-gradient(130% 160% at 50% 0%, #ff2b1c 0%, #e30b0b 45%, #a50000 100%); border-bottom: none;
+      box-shadow: inset 0 -3px 0 #0b0b0d, inset 0 -5px 0 rgba(255,255,255,.9), 0 6px 16px rgba(0,0,0,.35); }
+    body.bn-on header h1 { color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,.35), 0 0 16px rgba(0,0,0,.18); }
+    body.bn-on #bell-btn { background: rgba(0,0,0,.28); border-color: rgba(255,255,255,.4); color: #fff; }
+    body.bn-on #bell-btn[aria-expanded="true"] { background: #fff; border-color: #fff; color: #c40000; }
+    body.bn-on #bell-btn .bn-bd { background: #fff; color: #c40000; box-shadow: 0 0 0 2px #a50000; }
     body.bn-on footer { display: none; }
     body.bn-on .sq-stand-fab { bottom: calc(var(--bn-pad, 90px) + 10px + env(safe-area-inset-bottom, 0px)); }
     body.bn-on .hmft-toast { bottom: calc(var(--bn-pad, 90px) + 12px + env(safe-area-inset-bottom, 0px)); }
@@ -3139,7 +3147,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 15:07</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 15:08</footer>
 
 <script>
 
