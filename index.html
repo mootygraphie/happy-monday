@@ -2890,10 +2890,12 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #bticker.live { border-color: rgba(239,83,80,.5); background: color-mix(in srgb, var(--bad) 12%, var(--bg3)); }
   #bticker.live .go { color: var(--bad); }
   #bticker .lv { width: 8px; height: 8px; border-radius: 50%; background: var(--bad); flex: none; animation: lvPulse 1.6s ease-in-out infinite; }
-  #bmenu { position: fixed; inset: 0; z-index: 790; background: rgba(0,0,0,.5); align-items: flex-end; }
+  /* le menu s'arrête au-dessus de la barre du bas : rien n'est jamais caché derrière elle */
+  #bmenu { position: fixed; top: 0; left: 0; right: 0; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); z-index: 790; background: rgba(0,0,0,.5); align-items: flex-end; }
   #bmenu.open { display: flex; }
-  #bmenu .bm-in { width: 100%; max-height: 86vh; overflow-y: auto; background: var(--bg2); border-top: 1px solid var(--border2); border-radius: 22px 22px 0 0; padding: 10px 14px calc(98px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 12px; animation: bnUp .26s cubic-bezier(.2,.9,.3,1); }
+  #bmenu .bm-in { width: 100%; max-height: calc(100vh - 80px - env(safe-area-inset-bottom, 0px) - 48px); max-height: calc(100dvh - 80px - env(safe-area-inset-bottom, 0px) - 48px); overflow-y: auto; touch-action: pan-y; background: var(--bg2); border-top: 1px solid var(--border2); border-radius: 22px 22px 0 0; padding: 10px 14px 22px; display: flex; flex-direction: column; gap: 12px; animation: bnUp .26s cubic-bezier(.2,.9,.3,1); }
   @keyframes bnUp { from { transform: translateY(100%); } }
+  #bmenu .bm-in > * { flex-shrink: 0; } /* les blocs ne se tassent jamais : le menu défile */
   #bmenu .bm-grab { width: 38px; height: 4px; border-radius: 3px; background: var(--border2); margin: 0 auto; flex: none; }
   #bmenu .bm-prof { display: flex; align-items: center; gap: 10px; border: 1px solid var(--gold-border); background: var(--gold-bg); border-radius: 14px; padding: 9px 10px; cursor: pointer; text-align: left; font: inherit; color: var(--text); }
   #bmenu .bm-prof .av { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; background: var(--bg3); border: 2px solid var(--border2); flex: none; overflow: hidden; position: relative; }
@@ -3206,7 +3208,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 16:12</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 16:26</footer>
 
 <script>
 
