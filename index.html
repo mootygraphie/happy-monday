@@ -2854,11 +2854,17 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
     body.bn-on .header-main { padding-right: 46px; min-width: 0; }
     /* Téléphone : « Happy Monday » seul, plus grand, sans ballon ni sous-titre ; pas de pied de page
        (règlement, coefficients et pronos sont dans le menu ☰) */
-    body.bn-on header h1 { font-size: clamp(23px, 6.7vw, 27px); line-height: 1.1; white-space: nowrap; letter-spacing: .03em; }
+    body.bn-on header h1 { font-size: clamp(21px, 6.1vw, 24px); line-height: 1.1; white-space: nowrap; letter-spacing: .03em; transition: font-size .22s ease; }
     body.bn-on header .h1-ft, body.bn-on header .logo, body.bn-on #header-sub { display: none !important; }
-    body.bn-on header .hdr-dragon { display: block; height: 40px; width: auto; flex: none; filter: drop-shadow(0 1px 0 rgba(255,255,255,.25)); }
+    body.bn-on header .hdr-dragon { display: block; height: 34px; width: auto; flex: none; filter: drop-shadow(0 1px 0 rgba(255,255,255,.25)); transition: height .22s ease; }
     body.bn-on .header-main { gap: 10px; }
-    body.bn-on header { padding-top: calc(22px + env(safe-area-inset-top, 0px)); padding-bottom: 22px; }
+    body.bn-on header { padding-top: calc(12px + env(safe-area-inset-top, 0px)); padding-bottom: 14px; transition: padding .22s ease; }
+    body.bn-on #bell-btn { width: 34px; height: 34px; transition: width .22s ease, height .22s ease; }
+    /* au défilement : l'en-tête se resserre (et reprend sa taille en revenant en haut) */
+    body.bn-on.hdr-mini header { padding-top: calc(7px + env(safe-area-inset-top, 0px)); padding-bottom: 9px; }
+    body.bn-on.hdr-mini header h1 { font-size: 19px; }
+    body.bn-on.hdr-mini header .hdr-dragon { height: 26px; }
+    body.bn-on.hdr-mini #bell-btn { width: 30px; height: 30px; }
     /* Barre de titre aux couleurs de l'écusson HMFT : rouge vif en dégradé, titre blanc,
        double liseré blanc + noir en bas (comme le contour de l'icône) */
     body.bn-on header { background: radial-gradient(130% 160% at 50% 0%, #ff2b1c 0%, #e30b0b 45%, #a50000 100%); border-bottom: none;
@@ -2929,7 +2935,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #bmenu .bm-rules { display: flex; align-items: center; justify-content: center; gap: 6px; border: none; background: none; color: var(--text3); font: inherit; font-size: 12px; cursor: pointer; padding: 2px 0 0; }
   #bmenu .bm-rules svg { width: 15px; height: 15px; }
   #bnotif-scrim { position: fixed; inset: 0; z-index: 805; background: rgba(0,0,0,.35); }
-  #bnotif { position: fixed; left: 10px; right: 10px; top: calc(78px + env(safe-area-inset-top, 0px)); z-index: 806; max-height: 70vh; overflow-y: auto; background: var(--bg2); border: 1px solid var(--border2); border-radius: 18px; box-shadow: 0 18px 40px rgba(0,0,0,.55); padding: 10px; flex-direction: column; gap: 6px; }
+  #bnotif { position: fixed; left: 10px; right: 10px; top: calc(68px + env(safe-area-inset-top, 0px)); z-index: 806; max-height: 70vh; overflow-y: auto; background: var(--bg2); border: 1px solid var(--border2); border-radius: 18px; box-shadow: 0 18px 40px rgba(0,0,0,.55); padding: 10px; flex-direction: column; gap: 6px; }
   #bnotif.open, #bnotif-scrim.open { display: flex; }
   #bnotif .bn-h { display: flex; align-items: center; justify-content: space-between; padding: 2px 4px 6px; }
   #bnotif .bn-h b { font-size: 14.5px; }
@@ -2969,6 +2975,27 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #push-compose .pc-sel::after { content: ""; position: absolute; right: 14px; top: 50%; width: 7px; height: 7px; border-right: 1.6px solid var(--text2); border-bottom: 1.6px solid var(--text2); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
   #push-compose .pc-send { border: none; border-radius: 12px; padding: 13px; font: inherit; font-size: 15px; font-weight: 700; background: #e30b0b; color: #fff; cursor: pointer; }
   #push-compose .pc-note { margin: 0; font-size: 12px; color: var(--text3); }
+  #push-compose .pc-lbl { font-size: 12px; font-weight: 600; color: var(--text2); }
+  #push-compose .pc-seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; background: var(--bg); border: 1px solid var(--border2); border-radius: 11px; padding: 3px; }
+  #push-compose .pc-seg button { border: none; background: none; border-radius: 8px; padding: 8px 4px; font: inherit; font-size: 13px; font-weight: 600; color: var(--text3); cursor: pointer; }
+  #push-compose .pc-seg button[aria-pressed="true"] { background: #e30b0b; color: #fff; }
+  #push-compose .pc-q { font: inherit; font-size: 16px; color: var(--text); background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 12px; width: 100%; box-sizing: border-box; }
+  #push-compose .pc-list { display: flex; flex-direction: column; max-height: 34vh; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; overscroll-behavior: contain; }
+  #push-compose .pc-pl { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: none; border-top: 1px solid var(--border); background: var(--bg3); font: inherit; font-size: 14px; color: var(--text); text-align: left; cursor: pointer; }
+  #push-compose .pc-pl:first-child { border-top: none; }
+  #push-compose .pc-ck { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #fff; flex: none; }
+  #push-compose .pc-pl[aria-pressed="true"] .pc-ck { background: #e30b0b; border-color: #e30b0b; }
+  #push-compose .pc-histlink { align-self: center; border: none; background: none; color: var(--text3); font: inherit; font-size: 12px; cursor: pointer; padding: 2px 6px; text-decoration: underline; text-underline-offset: 3px; }
+  #push-compose .pc-back { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); cursor: pointer; font-size: 18px; margin-right: 8px; }
+  #push-compose .pc-h b { flex: 1; }
+  #push-compose .pc-hlist { display: flex; flex-direction: column; gap: 8px; }
+  #push-compose .pc-hi { background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+  #push-compose .pc-hi-t { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+  #push-compose .pc-hi-t b { font-size: 14px; }
+  #push-compose .pc-hi-t small { font-size: 11.5px; color: var(--text3); white-space: nowrap; }
+  #push-compose .pc-hi p { margin: 0; font-size: 13px; color: var(--text2); }
+  #push-compose .pc-hi-m { display: flex; justify-content: space-between; gap: 10px; font-size: 11.5px; color: var(--text3); flex-wrap: wrap; }
+  #push-compose .pc-hi-m .ok { color: var(--good); }
   #push-compose .pc-hist { display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; }
   #push-compose .pc-hist > span { font-size: 11px; font-weight: 600; font-style: italic; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
   #push-compose .pc-hist div { display: flex; flex-wrap: wrap; gap: 4px 8px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
@@ -3213,7 +3240,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 16:51</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 17:02</footer>
 
 <script>
 
@@ -14540,6 +14567,13 @@ function _svApply() {
       m.addEventListener("touchend", end); m.addEventListener("touchcancel", end);
     })();
     window._bnRefresh = light;
+    // en-tête qui se resserre au défilement (avec une marge pour éviter les à-coups)
+    let mini = false;
+    addEventListener("scroll", () => {
+      const y = window.scrollY || 0;
+      if (!mini && y > 60) { mini = true; document.body.classList.add("hdr-mini"); }
+      else if (mini && y < 16) { mini = false; document.body.classList.remove("hdr-mini"); }
+    }, { passive: true });
     window._bnOpenMenu = () => { menuOpen = true; notifOpen = false; render(); };
     setInterval(light, 3000);
     render();
@@ -14613,34 +14647,64 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     function compose() {
       document.getElementById("push-compose")?.remove();
       const p = me();
-      document.body.insertAdjacentHTML("beforeend", `<div id="push-compose" role="dialog" aria-label="Envoyer une notification"><div class="pc-in">
-        <div class="pc-h"><b>📣 Envoyer une notification</b><button type="button" class="pc-x" aria-label="Fermer">✕</button></div>
-        <label>Titre<input id="pc-title" maxlength="60" value="Happy Monday"></label>
-        <label>Message<textarea id="pc-body" maxlength="200" rows="3" placeholder="Ex. Terrain changé ce soir : rendez-vous à 19h45"></textarea></label>
-        <label>Destinataires<span class="pc-sel"><select id="pc-to"><option value="${esc(p)}">Moi seulement (test)</option><option value="__all">Tous les abonnés…</option></select></span></label>
-        <button type="button" class="pc-send" id="pc-send">Envoyer</button>
-        <p class="pc-note">Envoi dans les 10 minutes environ (passage automatique). Seuls les joueurs qui ont activé les notifications la reçoivent.</p>
-        <div class="pc-hist" id="pc-hist"></div></div></div>`);
-      const box = document.getElementById("push-compose");
-      box.addEventListener("click", e => { if (e.target === box || e.target.closest(".pc-x")) box.remove(); });
-      _db.ref("pushSubs").once("value").then(snap => {
-        const subs = snap.val() || {}, names = Object.keys(subs).sort((a, b) => a.localeCompare(b, "fr"));
-        const sel = document.getElementById("pc-to"); if (!sel) return;
-        sel.innerHTML = `<option value="${esc(p)}">Moi seulement (test)</option><option value="__all">Tous les abonnés (${names.length})</option>` + names.filter(n => n !== p).map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("");
-      }).catch(() => {});
-      _db.ref("pushQueue").orderByChild("at").limitToLast(5).once("value").then(snap => {
-        const L = Object.values(snap.val() || {}).sort((a, b) => (b.at || 0) - (a.at || 0));
-        const h = document.getElementById("pc-hist"); if (!h || !L.length) return;
-        h.innerHTML = `<span>Derniers envois</span>` + L.map(q => `<div><b>${esc(q.title || "")}</b> · ${esc(q.to === "__all" ? "tous" : q.to)}<small>${q.sentAt ? `envoyée à ${q.count || 0} appareil${(q.count || 0) > 1 ? "s" : ""}` : "en attente"}</small></div>`).join("");
-      }).catch(() => {});
-      document.getElementById("pc-send").addEventListener("click", async () => {
-        const title = document.getElementById("pc-title").value.trim() || "Happy Monday", body = document.getElementById("pc-body").value.trim(), to = document.getElementById("pc-to").value;
-        if (!body) { toast("Écris un message."); return; }
-        if (to === "__all" && !confirm(`Envoyer « ${title} » à tous les abonnés ?`)) return;
-        try {
-          await _db.ref("pushQueue").push({ by: p, title, body, to, at: firebase.database.ServerValue.TIMESTAMP });
-          box.remove(); toast(to === p ? "Test envoyé : il arrive dans les 10 minutes" : "Notification programmée : envoi dans les 10 minutes");
-        } catch (e) { toast("Envoi impossible : vérifie ta connexion."); }
+      const st = { mode: "me", picked: new Set(), q: "", subs: [] };
+      document.body.insertAdjacentHTML("beforeend", `<div id="push-compose" role="dialog" aria-label="Envoyer une notification"><div class="pc-in" id="pc-in"></div></div>`);
+      const box = document.getElementById("push-compose"), inn = document.getElementById("pc-in");
+      const toLabel = t => Array.isArray(t) ? t.join(", ") : t === "__all" ? "tous les abonnés" : t;
+      const when = ms => { const d = new Date(ms || 0); return d.toLocaleDateString("fr", { day: "numeric", month: "short" }) + " · " + d.toLocaleTimeString("fr", { hour: "2-digit", minute: "2-digit" }); };
+      const status = q => q.refused ? "refusée" : q.sentAt ? `envoyée à ${q.count || 0} appareil${(q.count || 0) > 1 ? "s" : ""}` : "en attente";
+      function formView() {
+        const list = st.subs.filter(n => n !== p && (!st.q || n.toLowerCase().includes(st.q.toLowerCase())));
+        inn.innerHTML = `<div class="pc-h"><b>📣 Envoyer une notification</b><button type="button" class="pc-x" aria-label="Fermer">✕</button></div>
+          <label>Titre<input id="pc-title" maxlength="60" value="${esc(st.title || "Happy Monday")}"></label>
+          <label>Message<textarea id="pc-body" maxlength="200" rows="3" placeholder="Ex. Terrain changé ce soir : rendez-vous à 19h45">${esc(st.body || "")}</textarea></label>
+          <span class="pc-lbl">Destinataires</span>
+          <div class="pc-seg">${[["me", "Moi (test)"], ["pick", "Choisir…"], ["all", `Tous (${st.subs.length})`]].map(([k, l]) => `<button type="button" data-pc="mode" data-m="${k}" aria-pressed="${st.mode === k}">${l}</button>`).join("")}</div>
+          ${st.mode === "pick" ? `<input id="pc-q" class="pc-q" placeholder="🔎 Rechercher un joueur" value="${esc(st.q)}" autocomplete="off">
+            <div class="pc-list">${list.map(n => `<button type="button" class="pc-pl" data-pc="pick" data-n="${esc(n)}" aria-pressed="${st.picked.has(n)}"><span class="pc-ck">${st.picked.has(n) ? "✓" : ""}</span>${esc(n)}</button>`).join("") || `<p class="pc-note">${st.subs.length ? "Aucun joueur trouvé." : "Personne n'a encore activé les notifications."}</p>`}</div>
+            <p class="pc-note">${st.picked.size ? `${st.picked.size} joueur${st.picked.size > 1 ? "s" : ""} sélectionné${st.picked.size > 1 ? "s" : ""} : ${esc([...st.picked].join(", "))}` : "Coche un ou plusieurs joueurs. Seuls ceux qui ont activé les notifications apparaissent."}</p>` : ""}
+          <button type="button" class="pc-send" data-pc="send">Envoyer</button>
+          <p class="pc-note">Envoi dans les 10 minutes environ.</p>
+          <button type="button" class="pc-histlink" data-pc="hist">Historique des envois ›</button>`;
+      }
+      function histView(L) {
+        inn.innerHTML = `<div class="pc-h"><button type="button" class="pc-back" data-pc="back" aria-label="Retour">‹</button><b>Historique des envois</b><button type="button" class="pc-x" aria-label="Fermer">✕</button></div>
+          <div class="pc-hlist">${L.map(q => `<div class="pc-hi"><div class="pc-hi-t"><b>${esc(q.title || "Happy Monday")}</b><small>${when(q.at)}</small></div>
+            <p>${esc(q.body || "")}</p><div class="pc-hi-m"><span>De ${esc(q.by || "?")} → ${esc(toLabel(q.to))}</span><span class="${q.sentAt && !q.refused ? "ok" : ""}">${status(q)}</span></div></div>`).join("") || `<p class="pc-note">Aucune notification envoyée pour l'instant.</p>`}</div>`;
+      }
+      formView();
+      _db.ref("pushSubs").once("value").then(snap => { st.subs = Object.keys(snap.val() || {}).sort((a, b) => a.localeCompare(b, "fr")); if (inn.querySelector("#pc-title")) formView(); }).catch(() => {});
+      const keepForm = () => { const t = inn.querySelector("#pc-title"), b = inn.querySelector("#pc-body"); if (t) st.title = t.value; if (b) st.body = b.value; };
+      box.addEventListener("input", e => {
+        if (e.target.id !== "pc-q") return;
+        keepForm(); st.q = e.target.value; const c = e.target.selectionStart; formView();
+        const q = inn.querySelector("#pc-q"); if (q) { q.focus(); try { q.setSelectionRange(c, c); } catch (er) {} }
+      });
+      box.addEventListener("click", async e => {
+        if (e.target === box || e.target.closest(".pc-x")) { box.remove(); return; }
+        const t = e.target.closest("[data-pc]"); if (!t) return;
+        const a = t.dataset.pc;
+        if (a === "mode") { keepForm(); st.mode = t.dataset.m; formView(); return; }
+        if (a === "pick") { keepForm(); const n = t.dataset.n; st.picked.has(n) ? st.picked.delete(n) : st.picked.add(n); formView(); return; }
+        if (a === "back") { formView(); return; }
+        if (a === "hist") {
+          keepForm(); inn.innerHTML = `<p class="pc-note">Chargement…</p>`;
+          try { const snap = await _db.ref("pushQueue").once("value"); histView(Object.values(snap.val() || {}).sort((x, y) => (y.at || 0) - (x.at || 0))); }
+          catch (er) { inn.innerHTML = `<p class="pc-note">Historique indisponible. Vérifie ta connexion.</p><button type="button" class="pc-histlink" data-pc="back">‹ Retour</button>`; }
+          return;
+        }
+        if (a === "send") {
+          keepForm();
+          const title = (st.title || "").trim() || "Happy Monday", body = (st.body || "").trim();
+          const to = st.mode === "me" ? p : st.mode === "all" ? "__all" : [...st.picked];
+          if (!body) { toast("Écris un message."); return; }
+          if (Array.isArray(to) && !to.length) { toast("Coche au moins un joueur."); return; }
+          if (to === "__all" && !confirm(`Envoyer « ${title} » à tous les abonnés ?`)) return;
+          try {
+            await _db.ref("pushQueue").push({ by: p, title, body, to: Array.isArray(to) && to.length === 1 ? to[0] : to, at: firebase.database.ServerValue.TIMESTAMP });
+            box.remove(); toast(to === p ? "Test envoyé : il arrive dans les 10 minutes" : "Notification programmée : envoi dans les 10 minutes");
+          } catch (er) { toast("Envoi impossible : vérifie ta connexion."); }
+        }
       });
     }
     const esc = x => String(x == null ? "" : x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");

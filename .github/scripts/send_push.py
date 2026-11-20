@@ -7,7 +7,7 @@ Notifications :
   - « plus que 3 h » (dès 18h30)    → abonnés qui n'ont pas répondu, une fois
   - booster disponible (dès 10h)    → abonnés qui ont au moins 1 booster et n'en ont ouvert aucun aujourd'hui, une fois par jour
   - proposition d'échange reçue     → le destinataire, une fois par proposition
-  - message d'un super admin        → pushQueue/{id} = {by, title, body, to: joueur | "__all"}
+  - message d'un super admin        → pushQueue/{id} = {by, title, body, to: joueur | [joueurs] | "__all"}
 Préférences : pushPrefs/{joueur} = {trades: false, boosters: false} pour les couper
 (le sondage ne peut pas être coupé).
 """
@@ -105,7 +105,13 @@ def main():
             if not DRY:
                 req(f"pushQueue/{qid}", "PATCH", {"sentAt": int(time.time() * 1000), "count": 0, "refused": True})
             continue
-        targets = list(subs) if q.get("to") == "__all" else [q.get("to")] if q.get("to") in subs else []
+        to = q.get("to")
+        if to == "__all":
+            targets = list(subs)
+        elif isinstance(to, (list, dict)):  # plusieurs joueurs choisis
+            targets = [t for t in (to.values() if isinstance(to, dict) else to) if t in subs]
+        else:
+            targets = [to] if to in subs else []
         before = stats["envoyées"]
         print("Message de", q.get("by"), "→", q.get("to"), ":", q.get("title"))
         results = [send(p, (q.get("title") or "Happy Monday")[:60], (q.get("body") or "")[:200], "./", f"msg-{qid}") for p in targets]
