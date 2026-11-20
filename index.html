@@ -2927,6 +2927,13 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #bnotif .bn-empty { text-align: center; font-size: 13px; color: var(--text3); padding: 16px 6px; }
   #bmenu .bm-sub { display: flex; align-items: center; gap: 10px; padding: 9px 12px 9px 44px; font: inherit; font-size: 13px; font-weight: 500; background: var(--bg2); border: none; border-top: 1px solid var(--border); text-align: left; color: var(--text2); cursor: pointer; }
   #bmenu .bm-sub small { font-size: 11px; color: var(--text3); }
+  #bmenu .bm-opts { color: var(--text); font-weight: 600; }
+  #bmenu .bm-opts .chev { transition: transform .2s; }
+  #bmenu .bm-opts[aria-expanded="true"] .chev { transform: rotate(90deg); }
+  /* menu ou notifications ouverts : la page en fond ne défile plus (Android, iPhone) */
+  html.bn-lock, html.bn-lock body { overflow: hidden !important; overscroll-behavior: none; }
+  #bmenu .bm-in, #bnotif { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+  #bmenu .bm-in.still { animation: none; }
   #bmenu .bm-ck { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #fff; flex: none; }
   #bmenu .bm-ck.on { background: #e30b0b; border-color: #e30b0b; }
   #bmenu .bm-ck.locked { opacity: .55; }
@@ -3184,7 +3191,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 15:35</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 15:46</footer>
 
 <script>
 
@@ -14251,7 +14258,7 @@ function _svApply() {
     const shown = id => { const b = $(id); return !!b && b.style.display !== "none"; };
     const esc = x => String(x).replace(/&/g, "&amp;").replace(/</g, "&lt;");
     const MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
-    let menuOpen = false, notifOpen = false;
+    let menuOpen = false, notifOpen = false, optsOpen = false;
 
     document.body.insertAdjacentHTML("beforeend", `<nav id="bnav" aria-label="Navigation"></nav><button id="bticker" type="button"></button>
       <div id="bmenu" role="dialog" aria-label="Menu"></div><div id="bnotif-scrim"></div><div id="bnotif" role="dialog" aria-label="Notifications"></div>`);
@@ -14342,6 +14349,7 @@ function _svApply() {
     }
     function renderNotif() {
       const p = $("bnotif"), sc = $("bnotif-scrim");
+      document.documentElement.classList.toggle("bn-lock", menuOpen || notifOpen);
       p.classList.toggle("open", notifOpen); sc.classList.toggle("open", notifOpen);
       if (!notifOpen) return;
       const r = readSet(), L = notifs().sort((a, b) => r.has(a.id) - r.has(b.id)), n = L.filter(x => !r.has(x.id)).length;
@@ -14350,8 +14358,10 @@ function _svApply() {
     }
     // ── menu ☰ : seulement ce qui n'est pas déjà dans la barre
     function renderMenu() {
-      const m = $("bmenu"); m.classList.toggle("open", menuOpen);
-      if (!menuOpen) { m.innerHTML = ""; return; }
+      const m = $("bmenu"), was = m.querySelector(".bm-in"), keep = was ? was.scrollTop : 0;
+      m.classList.toggle("open", menuOpen);
+      document.documentElement.classList.toggle("bn-lock", menuOpen || notifOpen);
+      if (!menuOpen) { m.innerHTML = ""; optsOpen = false; return; }
       const p = me(), light = document.documentElement.classList.contains("light");
       const row = (k, i, l, sub) => `<button type="button" class="bm-row" data-bm="${k}">${ic(i)}<span class="grow">${l}${sub ? ` <small>· ${sub}</small>` : ""}</span>${ic("chev", "chev")}</button>`;
       const pages = [];
@@ -14372,9 +14382,10 @@ function _svApply() {
             <button type="button" class="bm-row danger" data-bm="__logout">${ic("out")}<span class="grow">Se déconnecter</span></button>`
             : `<button type="button" class="bm-row" data-bm="__admin">${ic("key")}<span class="grow">Accès admin (mot de passe)</span>${ic("chev", "chev")}</button>`}
         </div>
-        ${shown("footer-pronos-wrap") ? `<div class="bm-rows"><button type="button" class="bm-row" data-bm="__pronos">${ic("trophy")}<span class="grow">${esc(($("footer-pronos-btn") || {}).textContent || "Pronos")}</span><small>super admin</small></button></div>` : ""}
+        ${""}${shown("footer-pronos-wrap") ? `<div class="bm-rows"><button type="button" class="bm-row" data-bm="__pronos">${ic("trophy")}<span class="grow">${esc(($("footer-pronos-btn") || {}).textContent || "Pronos")}</span><small>super admin</small></button></div>` : ""}
         <div class="bm-links">${shown("footer-reglement-btn") ? `<button type="button" class="bm-rules" data-bm="__rules">${ic("rules")}Règlement 26/27</button>` : ""}
           ${shown("footer-coef-btn") ? `<button type="button" class="bm-rules" data-bm="__coef">${ic("dash")}Coefficients joueurs</button>` : ""}</div></div>`;
+      if (was) { const inn = m.querySelector(".bm-in"); inn.classList.add("still"); inn.scrollTop = keep; }
     }
     // Appli installable + notifications push (module « WEBAPP » plus bas)
     function pwaRows() {
@@ -14386,6 +14397,9 @@ function _svApply() {
         const sub = st === "denied" ? "bloquées dans les réglages" : st === "install" ? "installe d'abord l'appli" : "";
         h += `<button type="button" class="bm-row" data-bm="__push" aria-pressed="${st === "on"}">${ic("bell")}<span class="grow">Notifications${sub ? ` <small>· ${sub}</small>` : ""}</span><span class="sw"></span></button>`;
         if (st === "on") {
+          h += `<button type="button" class="bm-sub bm-opts" data-bm="__opts" aria-expanded="${optsOpen}"><span class="grow">Choisir les notifications</span>${ic("chev", "chev")}</button>`;
+        }
+        if (st === "on" && optsOpen) {
           const pr = pw.prefs();
           h += `<div class="bm-sub"><span class="bm-ck on locked">✓</span><span class="grow">Sondage : ouverture et rappel 3 h</span><small>toujours</small></div>
             <button type="button" class="bm-sub" data-bm="__pref" data-k="trades" aria-pressed="${pr.trades}"><span class="bm-ck${pr.trades ? " on" : ""}">${pr.trades ? "✓" : ""}</span><span class="grow">Échanges reçus</span></button>
@@ -14421,9 +14435,10 @@ function _svApply() {
         const m = e.target.closest("[data-bm]");
         if (m) {
           const k = m.dataset.bm;
-          if (k === "__theme") { $("theme-btn")?.click(); render(); return; }
-          if (k === "__push") { const pw = window._pwa; if (pw) pw.toggle().finally(() => render()); return; }
-          if (k === "__pref") { const pw = window._pwa; if (pw) { pw.setPref(m.dataset.k, !pw.prefs()[m.dataset.k]); } setTimeout(render, 300); return; }
+          if (k === "__theme") { $("theme-btn")?.click(); renderMenu(); return; }
+          if (k === "__push") { const pw = window._pwa; if (pw) pw.toggle().finally(() => { renderMenu(); renderBell(); }); return; }
+          if (k === "__opts") { optsOpen = !optsOpen; renderMenu(); return; }
+          if (k === "__pref") { const pw = window._pwa; if (pw) { pw.setPref(m.dataset.k, !pw.prefs()[m.dataset.k]); } setTimeout(renderMenu, 300); return; }
           if (k === "__compose") { const pw = window._pwa; close(); render(); if (pw) pw.compose(); return; }
           if (k === "__install") { const pw = window._pwa; close(); render(); if (pw) pw.install(); return; }
           close(); render();
