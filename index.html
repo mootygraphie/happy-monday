@@ -502,6 +502,7 @@
   @media (max-width: 760px) {
     body.bn-on #player-panel.pp-page { width: 100vw; border-left: none; transition: none; z-index: 790; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); padding-top: env(safe-area-inset-top, 0px); background: var(--bg); }
     body.bn-on #player-panel-overlay.pp-page { display: none; }
+    body.bn-on #player-panel.pp-page #pp-close { display: none; }
   }
   .pp-header {
     /* Juste le bouton fermer, flottant : prenom + statut sont dans la carte du haut. */
@@ -2898,6 +2899,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #bmenu .bm-prof .av { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; background: var(--bg3); border: 2px solid var(--border2); flex: none; overflow: hidden; position: relative; }
   #bmenu .bm-prof .av.pf > .pf-img { object-position: 50% 50%; transform: scale(2.2); transform-origin: 50% 34%; }
   #bmenu .bm-prof b { display: block; font-size: 14.5px; }
+  #bmenu .bm-prof > span:nth-child(2) { flex: 1; min-width: 0; }
   #bmenu .bm-prof small { font-size: 11.5px; color: var(--gold); }
   #bmenu .bm-lbl { font-size: 10.5px; font-weight: 600; font-style: italic; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
   #bmenu .bm-rows { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 13px; overflow: hidden; }
@@ -2940,6 +2942,8 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   html.bn-lock, html.bn-lock body { overflow: hidden !important; overscroll-behavior: none; }
   #bmenu .bm-in, #bnotif { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
   #bmenu .bm-in.still { animation: none; }
+  html:has(#acc-modal:not([hidden])), html:has(#acc-modal:not([hidden])) body { overflow: hidden !important; overscroll-behavior: none; }
+  #acc-modal .acm-card, #acc-modal .acm-list { overscroll-behavior: contain; }
   #bmenu .bm-ck { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #fff; flex: none; }
   #bmenu .bm-ck.on { background: #e30b0b; border-color: #e30b0b; }
   #bmenu .bm-ck.locked { opacity: .55; }
@@ -3197,7 +3201,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 16:00</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 16:04</footer>
 
 <script>
 
@@ -12652,7 +12656,7 @@ function _accShowMyFiche() {
 
 /* ── Volet ── */
 function _accOpen(view) {
-  _acc = { ..._acc, view: _accUser && !_accProfile ? "bind" : view, step: 1, err: "", busy: false, ok: false, show: false };
+  _acc = { ..._acc, view: _accUser && !_accProfile ? "bind" : view, step: 1, err: "", busy: false, ok: false, show: false, fromMenu: false };
   if (view === "login") { _acc.pwd = ""; _acc.pwd2 = ""; }
   document.getElementById("acc-modal").hidden = false;
   _accRender();
@@ -12874,7 +12878,7 @@ document.getElementById("acc-modal").addEventListener("click", e => {
   else if (act === "bindok") { _accDoBind(); return; }
   else if (act === "fiche") { _accClose(); _accShowMyFiche(); return; }
   else if (act === "accounts") { a.view = "accounts"; a.accounts = null; a.err = ""; a.confirmDetach = null; _accRender(); _accLoadAccounts(); return; }
-  else if (act === "tome") { a.view = "me"; }
+  else if (act === "tome") { if (a.fromMenu) { _accClose(); window._bnOpenMenu && window._bnOpenMenu(); return; } a.view = "me"; }
   else if (act === "super") {
     const n = t.dataset.n, row = (a.accounts || []).find(r => r.player === n);
     if (!row) return;
@@ -14461,7 +14465,7 @@ function _svApply() {
           close(); render();
           if (k === "fiche") goTab("fiche");
           else if (k === "login") { typeof _accOpen === "function" && _accOpen("login"); }
-          else if (k === "__accounts") { if (typeof _accOpen === "function") { _accOpen("accounts"); typeof _accLoadAccounts === "function" && _accLoadAccounts(); } }
+          else if (k === "__accounts") { if (typeof _accOpen === "function") { _accOpen("accounts"); _acc.fromMenu = true; typeof _accLoadAccounts === "function" && _accLoadAccounts(); } }
           else if (k === "__logout") { typeof _accLogout === "function" && _accLogout(); }
           else if (k === "__admin") { typeof _openAdminPwd === "function" && _openAdminPwd(); }
           else if (k === "__rules") $("footer-reglement-btn")?.click();
@@ -14501,6 +14505,7 @@ function _svApply() {
       m.addEventListener("touchend", end); m.addEventListener("touchcancel", end);
     })();
     window._bnRefresh = light;
+    window._bnOpenMenu = () => { menuOpen = true; notifOpen = false; render(); };
     setInterval(light, 3000);
     render();
   } catch (e) { console.warn("menu du bas désactivé:", e); document.body.classList.remove("bn-on"); }
