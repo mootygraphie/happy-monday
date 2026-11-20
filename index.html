@@ -2,9 +2,16 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Happy Monday Football Team</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚽</text></svg>">
+<link rel="icon" type="image/png" href="icons/favicon-64.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#e30b0b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Happy Monday">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
@@ -2831,7 +2838,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   /* ═══ Menu du bas (téléphone) : barre plate + bandeau d'info + menu ☰ + cloche ═══ */
   #bnav, #bticker, #bmenu, #bnotif, #bnotif-scrim, #bell-btn { display: none; }
   @media (max-width: 760px) {
-    body.bn-on { padding-bottom: calc(var(--bn-pad, 90px) + env(safe-area-inset-bottom, 0px)); }
+    body.bn-on { padding-bottom: calc(var(--bn-pad, 104px) + env(safe-area-inset-bottom, 0px)); }
     body.bn-on .hnav-burger { display: none !important; }
     body.bn-on #bnav { display: grid; }
     body.bn-on #bell-btn { display: flex; }
@@ -2840,7 +2847,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
        (règlement, coefficients et pronos sont dans le menu ☰) */
     body.bn-on header h1 { font-size: clamp(23px, 6.7vw, 27px); line-height: 1.1; white-space: nowrap; letter-spacing: .03em; }
     body.bn-on header .h1-ft, body.bn-on header .logo, body.bn-on #header-sub { display: none !important; }
-    body.bn-on header { padding-top: 22px; padding-bottom: 22px; }
+    body.bn-on header { padding-top: calc(22px + env(safe-area-inset-top, 0px)); padding-bottom: 22px; }
     /* Barre de titre aux couleurs de l'écusson HMFT : rouge vif en dégradé, titre blanc,
        double liseré blanc + noir en bas (comme le contour de l'icône) */
     body.bn-on header { background: radial-gradient(130% 160% at 50% 0%, #ff2b1c 0%, #e30b0b 45%, #a50000 100%); border-bottom: none;
@@ -2853,9 +2860,9 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
     body.bn-on .sq-stand-fab { bottom: calc(var(--bn-pad, 90px) + 10px + env(safe-area-inset-bottom, 0px)); }
     body.bn-on .hmft-toast { bottom: calc(var(--bn-pad, 90px) + 12px + env(safe-area-inset-bottom, 0px)); }
   }
-  #bnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 800; grid-template-columns: repeat(var(--bn-n, 5), 1fr); height: calc(66px + env(safe-area-inset-bottom, 0px)); padding: 3px 4px env(safe-area-inset-bottom, 0px); background: #fff; box-shadow: inset 0 3px 0 #e30b0b, 0 -1px 0 #0b0b0d, 0 -6px 16px rgba(0,0,0,.3); }
-  #bnav button { border: none; background: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font: inherit; font-size: 10.5px; font-weight: 600; color: #8a8a97; cursor: pointer; position: relative; white-space: nowrap; min-width: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  #bnav button::before { content: ""; position: absolute; top: 0; left: 22%; right: 22%; height: 3px; border-radius: 0 0 3px 3px; background: transparent; transition: background .2s; }
+  #bnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 800; grid-template-columns: repeat(var(--bn-n, 5), 1fr); height: calc(80px + env(safe-area-inset-bottom, 0px)); padding: 9px 4px calc(6px + env(safe-area-inset-bottom, 0px)); background: #fff; box-shadow: inset 0 3px 0 #e30b0b, 0 -1px 0 #0b0b0d, 0 -6px 16px rgba(0,0,0,.3); }
+  #bnav button { border: none; background: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font: inherit; font-size: 10.5px; font-weight: 600; color: #8a8a97; cursor: pointer; position: relative; white-space: nowrap; min-width: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  #bnav button::before { content: ""; position: absolute; top: -6px; left: 22%; right: 22%; height: 3px; border-radius: 0 0 3px 3px; background: transparent; transition: background .2s; }
   #bnav button[aria-current="true"] { color: #e30b0b; }
   #bnav button[aria-current="true"]::before { background: #e30b0b; }
   #bnav svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -2867,7 +2874,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #bell-btn[aria-expanded="true"] { border-color: var(--gold-border); background: var(--gold-bg); color: var(--gold); }
   #bell-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   #bell-btn .bn-bd { top: -6px; right: -6px; }
-  #bticker { position: fixed; left: 10px; right: 10px; bottom: calc(74px + env(safe-area-inset-bottom, 0px)); z-index: 801; align-items: center; gap: 9px; border-radius: 14px; padding: 9px 10px 9px 12px; font: inherit; font-size: 13px; cursor: pointer; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); text-align: left; box-shadow: 0 8px 22px rgba(0,0,0,.35); }
+  #bticker { position: fixed; left: 10px; right: 10px; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); z-index: 801; align-items: center; gap: 9px; border-radius: 14px; padding: 9px 10px 9px 12px; font: inherit; font-size: 13px; cursor: pointer; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); text-align: left; box-shadow: 0 8px 22px rgba(0,0,0,.35); }
   @media (max-width: 760px) { body.bn-on.bn-tk #bticker { display: flex; } }
   #bticker .t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   #bticker .go { color: var(--gold); font-weight: 700; white-space: nowrap; }
@@ -2878,7 +2885,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #bticker .lv { width: 8px; height: 8px; border-radius: 50%; background: var(--bad); flex: none; animation: lvPulse 1.6s ease-in-out infinite; }
   #bmenu { position: fixed; inset: 0; z-index: 790; background: rgba(0,0,0,.5); align-items: flex-end; }
   #bmenu.open { display: flex; }
-  #bmenu .bm-in { width: 100%; max-height: 86vh; overflow-y: auto; background: var(--bg2); border-top: 1px solid var(--border2); border-radius: 22px 22px 0 0; padding: 10px 14px calc(84px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 12px; animation: bnUp .26s cubic-bezier(.2,.9,.3,1); }
+  #bmenu .bm-in { width: 100%; max-height: 86vh; overflow-y: auto; background: var(--bg2); border-top: 1px solid var(--border2); border-radius: 22px 22px 0 0; padding: 10px 14px calc(98px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 12px; animation: bnUp .26s cubic-bezier(.2,.9,.3,1); }
   @keyframes bnUp { from { transform: translateY(100%); } }
   #bmenu .bm-grab { width: 38px; height: 4px; border-radius: 3px; background: var(--border2); margin: 0 auto; flex: none; }
   #bmenu .bm-prof { display: flex; align-items: center; gap: 10px; border: 1px solid var(--gold-border); background: var(--gold-bg); border-radius: 14px; padding: 9px 10px; cursor: pointer; text-align: left; font: inherit; color: var(--text); }
@@ -2903,7 +2910,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #bmenu .bm-rules { display: flex; align-items: center; justify-content: center; gap: 6px; border: none; background: none; color: var(--text3); font: inherit; font-size: 12px; cursor: pointer; padding: 2px 0 0; }
   #bmenu .bm-rules svg { width: 15px; height: 15px; }
   #bnotif-scrim { position: fixed; inset: 0; z-index: 805; background: rgba(0,0,0,.35); }
-  #bnotif { position: fixed; left: 10px; right: 10px; top: 64px; z-index: 806; max-height: 70vh; overflow-y: auto; background: var(--bg2); border: 1px solid var(--border2); border-radius: 18px; box-shadow: 0 18px 40px rgba(0,0,0,.55); padding: 10px; flex-direction: column; gap: 6px; }
+  #bnotif { position: fixed; left: 10px; right: 10px; top: calc(78px + env(safe-area-inset-top, 0px)); z-index: 806; max-height: 70vh; overflow-y: auto; background: var(--bg2); border: 1px solid var(--border2); border-radius: 18px; box-shadow: 0 18px 40px rgba(0,0,0,.55); padding: 10px; flex-direction: column; gap: 6px; }
   #bnotif.open, #bnotif-scrim.open { display: flex; }
   #bnotif .bn-h { display: flex; align-items: center; justify-content: space-between; padding: 2px 4px 6px; }
   #bnotif .bn-h b { font-size: 14.5px; }
@@ -2918,6 +2925,38 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #bnotif .bn-it.read { opacity: .55; }
   #bnotif .bn-it.read .u { background: transparent; }
   #bnotif .bn-empty { text-align: center; font-size: 13px; color: var(--text3); padding: 16px 6px; }
+  #bmenu .bm-sub { display: flex; align-items: center; gap: 10px; padding: 9px 12px 9px 44px; font: inherit; font-size: 13px; font-weight: 500; background: var(--bg2); border: none; border-top: 1px solid var(--border); text-align: left; color: var(--text2); cursor: pointer; }
+  #bmenu .bm-sub small { font-size: 11px; color: var(--text3); }
+  #bmenu .bm-ck { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #fff; flex: none; }
+  #bmenu .bm-ck.on { background: #e30b0b; border-color: #e30b0b; }
+  #bmenu .bm-ck.locked { opacity: .55; }
+  #push-compose { position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; justify-content: center; }
+  #push-compose .pc-in { width: 100%; max-width: 520px; max-height: 92vh; overflow-y: auto; background: var(--bg2); border-top: 1px solid var(--border2); border-radius: 22px 22px 0 0; padding: 16px 18px calc(22px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 12px; }
+  #push-compose .pc-h { display: flex; align-items: center; justify-content: space-between; font-size: 17px; }
+  #push-compose .pc-x { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); cursor: pointer; }
+  #push-compose label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--text2); }
+  #push-compose input, #push-compose textarea, #push-compose select { font: inherit; font-size: 16px; color: var(--text); background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 12px; resize: vertical; width: 100%; box-sizing: border-box; }
+  #push-compose .pc-sel { position: relative; }
+  #push-compose select { -webkit-appearance: none; appearance: none; padding-right: 34px; }
+  #push-compose .pc-sel::after { content: ""; position: absolute; right: 14px; top: 50%; width: 7px; height: 7px; border-right: 1.6px solid var(--text2); border-bottom: 1.6px solid var(--text2); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+  #push-compose .pc-send { border: none; border-radius: 12px; padding: 13px; font: inherit; font-size: 15px; font-weight: 700; background: #e30b0b; color: #fff; cursor: pointer; }
+  #push-compose .pc-note { margin: 0; font-size: 12px; color: var(--text3); }
+  #push-compose .pc-hist { display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; }
+  #push-compose .pc-hist > span { font-size: 11px; font-weight: 600; font-style: italic; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
+  #push-compose .pc-hist div { display: flex; flex-wrap: wrap; gap: 4px 8px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
+  #push-compose .pc-hist small { margin-left: auto; color: var(--text3); }
+  /* Guide « installer l'appli » sur iPhone */
+  #pwa-guide { position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; justify-content: center; }
+  #pwa-guide .pg-in { width: 100%; max-width: 480px; background: var(--bg2); border-top: 1px solid var(--border2); border-radius: 22px 22px 0 0; padding: 18px 18px calc(24px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 14px; }
+  #pwa-guide .pg-h { display: flex; align-items: center; gap: 12px; }
+  #pwa-guide .pg-h img { width: 52px; height: 52px; border-radius: 12px; }
+  #pwa-guide .pg-h b { display: block; font-size: 17px; }
+  #pwa-guide .pg-h small { color: var(--text2); font-size: 12.5px; }
+  #pwa-guide ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; counter-reset: pg; }
+  #pwa-guide li { counter-increment: pg; display: flex; align-items: center; gap: 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: 13px; padding: 11px 12px; font-size: 14px; }
+  #pwa-guide li::before { content: counter(pg); width: 26px; height: 26px; border-radius: 50%; background: #e30b0b; color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; flex: none; }
+  #pwa-guide li svg { width: 22px; height: 22px; fill: none; stroke: var(--bleu); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; margin-left: auto; }
+  #pwa-guide button { border: none; border-radius: 12px; padding: 13px; font: inherit; font-size: 15px; font-weight: 700; background: #e30b0b; color: #fff; cursor: pointer; }
   /* fiche joueur en plein écran (arrivée après connexion) */
   #player-panel.pp-full { width: 100vw; }
   #player-panel.pp-full > * { max-width: 760px; margin-left: auto; margin-right: auto; }
@@ -3145,7 +3184,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 15:14</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 15:35</footer>
 
 <script>
 
@@ -14201,6 +14240,7 @@ function _svApply() {
       key: '<circle cx="8" cy="14" r="4"/><path d="M11 11l8-8M16 6l2 2M14 8l2 2"/>',
       user: '<circle cx="12" cy="9" r="3.6"/><path d="M5.5 19.5a6.5 6.5 0 0 1 13 0"/>',
       chev: '<path d="M9 6l6 6-6 6"/>',
+      dl: '<path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/>',
       bell: '<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
       clock: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 3h5"/>',
       gift: '<rect x="4" y="9" width="16" height="11.5" rx="2"/><path d="M3 9h18M12 9v11.5"/><path d="M12 9c-1.5-4-6-4.5-6-1.5S12 9 12 9zM12 9c1.5-4 6-4.5 6-1.5S12 9 12 9z"/>',
@@ -14274,7 +14314,7 @@ function _svApply() {
       }
       const on = !!h && !menuOpen;
       document.body.classList.toggle("bn-tk", on);
-      document.body.style.setProperty("--bn-pad", on ? "136px" : "90px");
+      document.body.style.setProperty("--bn-pad", on ? "152px" : "104px");
       if (on) { t.className = cls; t.dataset.go = go; t.innerHTML = h; }
     }
     // ── notifications (lues : mémorisées sur ce téléphone)
@@ -14326,6 +14366,7 @@ function _svApply() {
       m.innerHTML = `<div class="bm-in"><div class="bm-grab"></div>${prof}
         <span class="bm-lbl">Autres pages</span><div class="bm-rows">${pages.join("")}</div>
         <span class="bm-lbl">Réglages</span><div class="bm-rows">
+          ${pwaRows()}
           <button type="button" class="bm-row" data-bm="__theme" aria-pressed="${!light}">${ic("moon")}<span class="grow">Mode sombre</span><span class="sw"></span></button>
           ${acc() ? `<button type="button" class="bm-row" data-bm="__account">${ic("user")}<span class="grow">Mon compte</span>${ic("chev", "chev")}</button>
             <button type="button" class="bm-row danger" data-bm="__logout">${ic("out")}<span class="grow">Se déconnecter</span></button>`
@@ -14334,6 +14375,25 @@ function _svApply() {
         ${shown("footer-pronos-wrap") ? `<div class="bm-rows"><button type="button" class="bm-row" data-bm="__pronos">${ic("trophy")}<span class="grow">${esc(($("footer-pronos-btn") || {}).textContent || "Pronos")}</span><small>super admin</small></button></div>` : ""}
         <div class="bm-links">${shown("footer-reglement-btn") ? `<button type="button" class="bm-rules" data-bm="__rules">${ic("rules")}Règlement 26/27</button>` : ""}
           ${shown("footer-coef-btn") ? `<button type="button" class="bm-rules" data-bm="__coef">${ic("dash")}Coefficients joueurs</button>` : ""}</div></div>`;
+    }
+    // Appli installable + notifications push (module « WEBAPP » plus bas)
+    function pwaRows() {
+      const pw = window._pwa; if (!pw) return "";
+      let h = "";
+      if (pw.canInstall()) h += `<button type="button" class="bm-row" data-bm="__install">${ic("dl")}<span class="grow">Installer l'appli</span>${ic("chev", "chev")}</button>`;
+      const st = acc() ? pw.pushState() : "unsupported";
+      if (st !== "unsupported") {
+        const sub = st === "denied" ? "bloquées dans les réglages" : st === "install" ? "installe d'abord l'appli" : "";
+        h += `<button type="button" class="bm-row" data-bm="__push" aria-pressed="${st === "on"}">${ic("bell")}<span class="grow">Notifications${sub ? ` <small>· ${sub}</small>` : ""}</span><span class="sw"></span></button>`;
+        if (st === "on") {
+          const pr = pw.prefs();
+          h += `<div class="bm-sub"><span class="bm-ck on locked">✓</span><span class="grow">Sondage : ouverture et rappel 3 h</span><small>toujours</small></div>
+            <button type="button" class="bm-sub" data-bm="__pref" data-k="trades" aria-pressed="${pr.trades}"><span class="bm-ck${pr.trades ? " on" : ""}">${pr.trades ? "✓" : ""}</span><span class="grow">Échanges reçus</span></button>
+            <button type="button" class="bm-sub" data-bm="__pref" data-k="boosters" aria-pressed="${pr.boosters}"><span class="bm-ck${pr.boosters ? " on" : ""}">${pr.boosters ? "✓" : ""}</span><span class="grow">Boosters à ouvrir</span></button>`;
+        }
+      }
+      if (typeof _accIsSuper !== "undefined" && _accIsSuper && acc()) h += `<button type="button" class="bm-row" data-bm="__compose">${ic("bell")}<span class="grow">Envoyer une notification <small>· super admin</small></span>${ic("chev", "chev")}</button>`;
+      return h;
     }
     function render() {
       try { renderBar(); renderTicker(); renderBell(); renderMenu(); renderNotif(); } catch (e) { console.warn("menu du bas:", e); }
@@ -14362,6 +14422,10 @@ function _svApply() {
         if (m) {
           const k = m.dataset.bm;
           if (k === "__theme") { $("theme-btn")?.click(); render(); return; }
+          if (k === "__push") { const pw = window._pwa; if (pw) pw.toggle().finally(() => render()); return; }
+          if (k === "__pref") { const pw = window._pwa; if (pw) { pw.setPref(m.dataset.k, !pw.prefs()[m.dataset.k]); } setTimeout(render, 300); return; }
+          if (k === "__compose") { const pw = window._pwa; close(); render(); if (pw) pw.compose(); return; }
+          if (k === "__install") { const pw = window._pwa; close(); render(); if (pw) pw.install(); return; }
           close(); render();
           if (k === "fiche") goTab("fiche");
           else if (k === "login") { typeof _accOpen === "function" && _accOpen("login"); }
@@ -14384,6 +14448,151 @@ function _svApply() {
     setInterval(light, 3000);
     render();
   } catch (e) { console.warn("menu du bas désactivé:", e); document.body.classList.remove("bn-on"); }
+})();
+
+
+/* ══════════ WEBAPP : appli installable + notifications push ══════════
+   sw.js (à la racine) n'affiche que les notifications : aucun cache, le site reste toujours
+   à jour. L'abonnement push de CE téléphone est rangé sous la fiche du compte connecté :
+   pushSubs/{joueur}/{id} = {endpoint, keys}. La GitHub Action « Notifications push » envoie
+   toutes les 10 min ce qui est dû (sondage ouvert, rappel 3 h, booster, échange reçu).
+   Clé publique d'envoi (VAPID) ci-dessous ; la clé privée est dans les secrets GitHub. */
+const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uqWRJcHpdj6495CgZGqiRWVVK5Rv0";
+(function () {
+  try {
+    const hasSW = "serviceWorker" in navigator;
+    const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const standalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+    const pushOK = () => hasSW && "PushManager" in window && "Notification" in window;
+    const OWNER = "hmft_push_owner";
+    let reg = null, sub = null, deferred = null;
+    const me = () => (typeof _accPlayer === "function" ? _accPlayer() : null);
+    const refresh = () => { try { window._bnRefresh && window._bnRefresh(); } catch (e) {} };
+    const toast = m => { try { _showToast(m); } catch (e) {} };
+    const b64 = x => { const p = "=".repeat((4 - x.length % 4) % 4); const r = atob((x + p).replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from(r, c => c.charCodeAt(0)); };
+    const subId = async endpoint => { const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(endpoint)); return [...new Uint8Array(h)].slice(0, 12).map(x => x.toString(16).padStart(2, "0")).join(""); };
+    const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+    const lsSet = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} };
+    async function save(player) {
+      const j = sub.toJSON(), id = await subId(j.endpoint);
+      await _db.ref(`pushSubs/${player}/${id}`).set({ endpoint: j.endpoint, keys: j.keys, at: firebase.database.ServerValue.TIMESTAMP, ua: navigator.userAgent.slice(0, 120) });
+      lsSet(OWNER, player);
+    }
+    async function drop(player) { if (!sub || !player) return; const id = await subId(sub.endpoint); await _db.ref(`pushSubs/${player}/${id}`).remove(); }
+    // l'abonnement de ce téléphone suit le compte connecté (changement de compte, déconnexion)
+    async function sync() {
+      try {
+        if (!sub || !_db) return;
+        const owner = lsGet(OWNER), p = me();
+        if (owner === p) return;
+        if (owner) await drop(owner).catch(() => {});
+        if (p) await save(p); else lsSet(OWNER, null);
+      } catch (e) {}
+    }
+    function guide() {
+      document.getElementById("pwa-guide")?.remove();
+      const share = '<svg viewBox="0 0 24 24"><path d="M12 15V3M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/></svg>';
+      const plus = '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v8M8 12h8"/></svg>';
+      document.body.insertAdjacentHTML("beforeend", `<div id="pwa-guide" role="dialog" aria-label="Installer l'appli"><div class="pg-in">
+        <div class="pg-h"><img src="icons/apple-touch-icon.png" alt=""><span><b>Installer Happy Monday</b><small>Sur iPhone, les notifications ne marchent que depuis l'appli installée.</small></span></div>
+        <ol><li>Dans Safari, touche « Partager » en bas de l'écran ${share}</li>
+          <li>Choisis « Sur l'écran d'accueil » ${plus}</li>
+          <li>Ouvre Happy Monday depuis ton écran d'accueil, reconnecte-toi une fois, puis active les notifications dans le menu ☰</li></ol>
+        <button type="button">J'ai compris</button></div></div>`);
+      const g = document.getElementById("pwa-guide");
+      g.addEventListener("click", e => { if (e.target === g || e.target.closest("button")) g.remove(); });
+    }
+    // préférences de notification de la fiche : le sondage est toujours actif ; échanges et boosters au choix
+    let prefs = {}, prefsRef = null, prefsFor = null;
+    function watchPrefs() {
+      const p = me();
+      if (p === prefsFor || !_db) return;
+      if (prefsRef) prefsRef.off();
+      prefsFor = p; prefs = {}; prefsRef = null;
+      if (!p) return;
+      prefsRef = _db.ref(`pushPrefs/${p}`);
+      prefsRef.on("value", snap => { prefs = snap.val() || {}; refresh(); });
+    }
+    // envoi à la demande (super admin) : la demande va dans pushQueue, la GitHub Action l'envoie
+    function compose() {
+      document.getElementById("push-compose")?.remove();
+      const p = me();
+      document.body.insertAdjacentHTML("beforeend", `<div id="push-compose" role="dialog" aria-label="Envoyer une notification"><div class="pc-in">
+        <div class="pc-h"><b>📣 Envoyer une notification</b><button type="button" class="pc-x" aria-label="Fermer">✕</button></div>
+        <label>Titre<input id="pc-title" maxlength="60" value="Happy Monday"></label>
+        <label>Message<textarea id="pc-body" maxlength="200" rows="3" placeholder="Ex. Terrain changé ce soir : rendez-vous à 19h45"></textarea></label>
+        <label>Destinataires<span class="pc-sel"><select id="pc-to"><option value="${esc(p)}">Moi seulement (test)</option><option value="__all">Tous les abonnés…</option></select></span></label>
+        <button type="button" class="pc-send" id="pc-send">Envoyer</button>
+        <p class="pc-note">Envoi dans les 10 minutes environ (passage automatique). Seuls les joueurs qui ont activé les notifications la reçoivent.</p>
+        <div class="pc-hist" id="pc-hist"></div></div></div>`);
+      const box = document.getElementById("push-compose");
+      box.addEventListener("click", e => { if (e.target === box || e.target.closest(".pc-x")) box.remove(); });
+      _db.ref("pushSubs").once("value").then(snap => {
+        const subs = snap.val() || {}, names = Object.keys(subs).sort((a, b) => a.localeCompare(b, "fr"));
+        const sel = document.getElementById("pc-to"); if (!sel) return;
+        sel.innerHTML = `<option value="${esc(p)}">Moi seulement (test)</option><option value="__all">Tous les abonnés (${names.length})</option>` + names.filter(n => n !== p).map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("");
+      }).catch(() => {});
+      _db.ref("pushQueue").orderByChild("at").limitToLast(5).once("value").then(snap => {
+        const L = Object.values(snap.val() || {}).sort((a, b) => (b.at || 0) - (a.at || 0));
+        const h = document.getElementById("pc-hist"); if (!h || !L.length) return;
+        h.innerHTML = `<span>Derniers envois</span>` + L.map(q => `<div><b>${esc(q.title || "")}</b> · ${esc(q.to === "__all" ? "tous" : q.to)}<small>${q.sentAt ? `envoyée à ${q.count || 0} appareil${(q.count || 0) > 1 ? "s" : ""}` : "en attente"}</small></div>`).join("");
+      }).catch(() => {});
+      document.getElementById("pc-send").addEventListener("click", async () => {
+        const title = document.getElementById("pc-title").value.trim() || "Happy Monday", body = document.getElementById("pc-body").value.trim(), to = document.getElementById("pc-to").value;
+        if (!body) { toast("Écris un message."); return; }
+        if (to === "__all" && !confirm(`Envoyer « ${title} » à tous les abonnés ?`)) return;
+        try {
+          await _db.ref("pushQueue").push({ by: p, title, body, to, at: firebase.database.ServerValue.TIMESTAMP });
+          box.remove(); toast(to === p ? "Test envoyé : il arrive dans les 10 minutes" : "Notification programmée : envoi dans les 10 minutes");
+        } catch (e) { toast("Envoi impossible : vérifie ta connexion."); }
+      });
+    }
+    const esc = x => String(x == null ? "" : x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+    window._pwa = {
+      prefs: () => ({ trades: prefs.trades !== false, boosters: prefs.boosters !== false }),
+      setPref: (k, v) => { const p = me(); if (p && _db) _db.ref(`pushPrefs/${p}/${k}`).set(v).catch(() => toast("Réglage non enregistré : vérifie ta connexion.")); },
+      compose,
+      canInstall: () => !standalone() && (!!deferred || isIOS),
+      pushState: () => {
+        if (!pushOK()) return isIOS && !standalone() ? "install" : "unsupported";
+        if (Notification.permission === "denied") return "denied";
+        return sub ? "on" : "off";
+      },
+      async install() {
+        if (deferred) { deferred.prompt(); try { await deferred.userChoice; } catch (e) {} deferred = null; refresh(); }
+        else if (isIOS) guide();
+      },
+      async toggle() {
+        const st = this.pushState();
+        if (st === "install") { guide(); return; }
+        if (st === "denied") { toast("Les notifications sont bloquées : autorise-les dans les réglages du téléphone."); return; }
+        const p = me();
+        if (st === "on") {
+          try { await drop(lsGet(OWNER) || p); } catch (e) {}
+          try { await sub.unsubscribe(); } catch (e) {}
+          sub = null; lsSet(OWNER, null); toast("Notifications désactivées sur ce téléphone"); return;
+        }
+        if (!p) { toast("Connecte-toi pour recevoir les notifications."); return; }
+        const perm = await Notification.requestPermission(); // appelé directement au toucher (exigé par iOS)
+        if (perm !== "granted") { toast("Notifications non autorisées."); return; }
+        try {
+          reg = reg || await navigator.serviceWorker.ready;
+          sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(_PWA_VAPID) });
+          await save(p);
+          toast("Notifications activées sur ce téléphone");
+        } catch (e) { console.warn("push:", e); toast("Activation impossible pour l'instant. Réessaie dans un moment."); }
+      },
+    };
+    if (hasSW) navigator.serviceWorker.register("sw.js").then(async r => {
+      reg = r;
+      if (pushOK()) { try { sub = await r.pushManager.getSubscription(); } catch (e) {} }
+      refresh(); sync();
+    }).catch(e => console.warn("sw:", e));
+    window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferred = e; refresh(); });
+    window.addEventListener("appinstalled", () => { deferred = null; refresh(); toast("Appli installée !"); });
+    setInterval(() => { sync(); watchPrefs(); }, 15000);
+    setTimeout(watchPrefs, 3000);
+  } catch (e) { console.warn("webapp désactivée:", e); }
 })();
 
 /* ── Init async ── */
