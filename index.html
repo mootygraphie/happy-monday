@@ -2694,6 +2694,14 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .acm-av.pf > .pf-img { object-position: 50% 50%; transform: scale(2.2); transform-origin: 50% 34%; }
   .acm-av.big { width: 92px; height: 92px; border-radius: 18px; font-size: 26px; border-width: 3px; }
   .acm-pl b { display: block; font-size: 14.5px; }
+  /* Comptes activés (30+ membres) : lignes compactes, super admins marqués d'une pilule */
+  .acm-accl { gap: 4px; }
+  .acm-accl .acm-pl { grid-template-columns: 26px minmax(0, 1fr) auto auto; gap: 8px; padding: 4px 8px; border-radius: 9px; border-width: 1px; min-height: 36px; }
+  .acm-accl .acm-av { width: 26px; height: 26px; border-radius: 7px; font-size: 10px; border-width: 1.5px; }
+  .acm-accl .acm-pl b { font-size: 13.5px; display: flex; align-items: center; gap: 6px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .acm-accl .acm-pl small { font-size: 11px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .acm-accl .acm-link.small { font-size: 11px; }
+  .acm-sapill { font-size: 9.5px; font-weight: 700; letter-spacing: .03em; padding: 1px 7px; border-radius: 20px; color: var(--gold); background: var(--gold-bg); border: 1px solid var(--gold-border); white-space: nowrap; }
   .acm-pl small { font-size: 11.5px; color: var(--text3); }
   .acm-tick { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 12px; }
   .acm-pl[aria-checked="true"] .acm-tick { background: var(--gold); border-color: var(--gold); color: #1b1606; }
@@ -2933,7 +2941,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 10:17</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 11:36</footer>
 
 <script>
 
@@ -12419,7 +12427,7 @@ function _accRender(keepFocus) {
     h = `<div class="acm-top"><button class="acm-back" data-a="tome" aria-label="Retour">‹</button><span class="acm-kicker">Super admin</span></div>
       <h4 class="acm-h">Comptes activés</h4>
       <p class="acm-sub">${rows ? `<b>${rows.length}</b> joueur${rows.length > 1 ? "s" : ""} sur ${total} ${rows.length > 1 ? "ont créé leur" : "a créé son"} compte.` : "Chargement…"}</p>${err}
-      <div class="acm-list" style="max-height:52vh">${(rows || []).map(r => `<div class="acm-pl" style="cursor:default">${_accAvHTML(r.player, "")}<span><b>${r.player}</b><small>${r.createdAt ? "Créé le " + new Date(r.createdAt).toLocaleDateString("fr", { day: "numeric", month: "long", year: "numeric" }) : "Compte rattaché"}${r.super ? " · Super admin" : ""}</small></span>
+      <div class="acm-list acm-accl" style="max-height:56vh">${(rows || []).map(r => `<div class="acm-pl" style="cursor:default">${_accAvHTML(r.player, "")}<b>${r.player}${r.super ? `<span class="acm-sapill">★ Super admin</span>` : ""}</b><small title="Date de création du compte">${r.createdAt ? new Date(r.createdAt).toLocaleDateString("fr", { day: "numeric", month: "short" }) : "—"}</small>
         ${r.uid === (_accUser && _accUser.uid) ? `<span class="acm-taken">Toi</span>` : `<button class="acm-link small" style="width:auto;margin:0" data-a="detach" data-n="${_accEsc(r.player)}">${a.confirmDetach === r.player ? "Confirmer ?" : "Détacher"}</button>`}</div>`).join("")}</div>
       <p class="acm-help">Détacher libère la fiche : la personne devra se rattacher à nouveau à sa fiche à sa prochaine connexion. Ses pronos et ses données restent sous la fiche.</p>`;
   } else if (a.view === "login" || a.view === "create0") {
@@ -12539,7 +12547,7 @@ async function _accLoadAccounts() {
     const [pa, us, sa] = await Promise.all(["playerAccounts", "users", "config/superAdmins"].map(p => _db.ref(p).once("value")));
     const users = us.val() || {}, supers = sa.val() || {};
     _acc.accounts = Object.entries(pa.val() || {}).map(([player, uid]) => ({ player, uid, createdAt: users[uid] && users[uid].createdAt, super: supers[player] === true }))
-      .sort((x, y) => (y.createdAt || 0) - (x.createdAt || 0));
+      .sort((x, y) => (y.super - x.super) || (y.createdAt || 0) - (x.createdAt || 0)); // super admins en tête
   } catch (e) { _acc.accounts = []; _acc.err = "Impossible de charger la liste. Réessaie dans un instant."; }
   if (_acc.view === "accounts") _accRender();
 }
