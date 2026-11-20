@@ -2914,6 +2914,11 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #bmenu .sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--text2); transition: transform .2s; }
   #bmenu .bm-row[aria-pressed="true"] .sw { background: color-mix(in srgb, var(--gold) 35%, var(--bg3)); border-color: var(--gold); }
   #bmenu .bm-row[aria-pressed="true"] .sw::after { transform: translateX(16px); background: #fff; }
+  /* bloc réservé aux super admins : doré, étoile en tête de ligne */
+  #bmenu .bm-lbl.sa { color: var(--gold); font-style: normal; letter-spacing: .1em; }
+  #bmenu .bm-rows.sa { border-color: var(--gold-border); background: var(--gold-bg); }
+  #bmenu .bm-rows.sa .bm-row { background: color-mix(in srgb, var(--gold) 7%, var(--bg3)); border-top-color: var(--gold-border); }
+  #bmenu .bm-star { width: 20px; text-align: center; color: var(--gold); font-size: 16px; flex: none; }
   #bmenu .bm-links { display: flex; justify-content: center; align-items: center; gap: 4px 16px; flex-wrap: wrap; }
   #bmenu .bm-rules { display: flex; align-items: center; justify-content: center; gap: 6px; border: none; background: none; color: var(--text3); font: inherit; font-size: 12px; cursor: pointer; padding: 2px 0 0; }
   #bmenu .bm-rules svg { width: 15px; height: 15px; }
@@ -3201,7 +3206,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 16:09</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 16:12</footer>
 
 <script>
 
@@ -14394,11 +14399,14 @@ function _svApply() {
         <span class="bm-lbl">Réglages</span><div class="bm-rows">
           ${pwaRows()}
           <button type="button" class="bm-row" data-bm="__theme" aria-pressed="${!light}">${ic("moon")}<span class="grow">Mode sombre</span><span class="sw"></span></button>
-          ${acc() && typeof _accIsSuper !== "undefined" && _accIsSuper ? `<button type="button" class="bm-row" data-bm="__accounts">${ic("team")}<span class="grow">Comptes activés <small>· super admin</small></span>${ic("chev", "chev")}</button>` : ""}
-          ${acc() ? `<button type="button" class="bm-row danger" data-bm="__logout">${ic("out")}<span class="grow">Se déconnecter</span></button>`
-            : `<button type="button" class="bm-row" data-bm="__admin">${ic("key")}<span class="grow">Accès admin (mot de passe)</span>${ic("chev", "chev")}</button>`}
+          ${acc() ? "" : `<button type="button" class="bm-row" data-bm="__admin">${ic("key")}<span class="grow">Accès admin (mot de passe)</span>${ic("chev", "chev")}</button>`}
         </div>
-        ${""}${shown("footer-pronos-wrap") ? `<div class="bm-rows"><button type="button" class="bm-row" data-bm="__pronos">${ic("trophy")}<span class="grow">${esc(($("footer-pronos-btn") || {}).textContent || "Pronos")}</span><small>super admin</small></button></div>` : ""}
+        ${acc() && typeof _accIsSuper !== "undefined" && _accIsSuper ? `<span class="bm-lbl sa">★ Super admin</span><div class="bm-rows sa">
+          <button type="button" class="bm-row" data-bm="__compose"><span class="bm-star">★</span><span class="grow">Envoyer une notification</span>${ic("chev", "chev")}</button>
+          <button type="button" class="bm-row" data-bm="__accounts"><span class="bm-star">★</span><span class="grow">Comptes activés</span>${ic("chev", "chev")}</button>
+          ${shown("footer-pronos-wrap") ? `<button type="button" class="bm-row" data-bm="__pronos"><span class="bm-star">★</span><span class="grow">${esc(($("footer-pronos-btn") || {}).textContent || "Pronos")}</span></button>` : ""}
+        </div>` : ""}
+        ${acc() ? `<div class="bm-rows"><button type="button" class="bm-row danger" data-bm="__logout">${ic("out")}<span class="grow">Se déconnecter</span></button></div>` : ""}
         <div class="bm-links">${shown("footer-reglement-btn") ? `<button type="button" class="bm-rules" data-bm="__rules">${ic("rules")}Règlement 26/27</button>` : ""}
           ${shown("footer-coef-btn") ? `<button type="button" class="bm-rules" data-bm="__coef">${ic("dash")}Coefficients joueurs</button>` : ""}</div></div>`;
       if (was) { const inn = m.querySelector(".bm-in"); inn.classList.add("still"); inn.scrollTop = keep; }
@@ -14422,7 +14430,6 @@ function _svApply() {
             <button type="button" class="bm-sub" data-bm="__pref" data-k="boosters" aria-pressed="${pr.boosters}"><span class="bm-ck${pr.boosters ? " on" : ""}">${pr.boosters ? "✓" : ""}</span><span class="grow">Boosters à ouvrir</span></button>`;
         }
       }
-      if (typeof _accIsSuper !== "undefined" && _accIsSuper && acc()) h += `<button type="button" class="bm-row" data-bm="__compose">${ic("bell")}<span class="grow">Envoyer une notification <small>· super admin</small></span>${ic("chev", "chev")}</button>`;
       return h;
     }
     function render() {
