@@ -2723,6 +2723,104 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .acm-me { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 6px 0 4px; }
   .acm-me h5 { margin: 6px 0 0; font-size: 22px; font-style: italic; text-transform: uppercase; }
   .acm-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; color: var(--gold); border: 1px solid var(--gold-border); background: var(--gold-bg); }
+
+/* ═══ Prochaine session : vote de présence ═══ */
+#panel-vote { --ok: #2ecc71; --no: #e74c3c; --hurt: #f39c12; --dep: #b892ff; }
+#panel-vote .sv-wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 30px; }
+#panel-vote .sv-sec { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 14px; display: flex; flex-direction: column; gap: 12px; }
+#panel-vote .sv-st { font-size: 11px; font-weight: 600; text-transform: uppercase; font-style: italic; letter-spacing: .08em; color: var(--text3); }
+#panel-vote .sv-date { font-size: 24px; font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: .03em; line-height: 1.1; margin: 0; }
+#panel-vote .sv-lock { font-size: 12.5px; color: var(--text2); background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 8px 11px; }
+#panel-vote .sv-lock b { color: var(--text); }
+#panel-vote .sv-cd { border-radius: 14px; padding: 12px 12px 14px; text-align: center; border: 1.5px solid rgba(243,156,18,.55); background: radial-gradient(circle at 50% 0%, rgba(243,156,18,.22), rgba(243,156,18,.06) 70%); animation: sv-pulse 1.6s ease-in-out infinite; }
+#panel-vote .sv-cd span { display: block; font-size: 12.5px; font-weight: 700; color: var(--hurt); text-transform: uppercase; letter-spacing: .05em; }
+#panel-vote .sv-cd b { display: block; font-size: 44px; line-height: 1.1; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text); margin-top: 2px; }
+#panel-vote .sv-cd.last { border-color: rgba(231,76,60,.6); background: radial-gradient(circle at 50% 0%, rgba(231,76,60,.25), rgba(231,76,60,.06) 70%); }
+#panel-vote .sv-cd.last span, #panel-vote .sv-cd.last b { color: var(--no); }
+#panel-vote .sv-cd.closed { animation: none; padding: 14px 12px; }
+#panel-vote .sv-cd.closed b { font-size: 22px; line-height: 1.2; margin: 0; }
+@keyframes sv-pulse { 50% { box-shadow: 0 0 22px rgba(243,156,18,.35); } }
+#panel-vote .sv-lbl { font-size: 11px; font-weight: 600; font-style: italic; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
+#panel-vote .sv-vote, #panel-vote .sv-two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+#panel-vote .sv-vb { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; border-radius: 14px; padding: 14px 8px 12px; cursor: pointer; font: inherit; border: 1.5px solid color-mix(in srgb, var(--c) 40%, transparent); background: color-mix(in srgb, var(--c) 9%, var(--bg3)); color: var(--c); }
+#panel-vote .sv-vb i { font-style: normal; font-size: 26px; line-height: 1.1; }
+#panel-vote .sv-vb b { font-size: 14.5px; }
+#panel-vote .sv-vb small { font-size: 11px; color: var(--text2); }
+#panel-vote .sv-vb.P { --c: var(--ok); } #panel-vote .sv-vb.A { --c: var(--no); } #panel-vote .sv-vb.B { --c: var(--hurt); } #panel-vote .sv-vb.D { --c: var(--dep); border-style: dashed; }
+#panel-vote .sv-vb[aria-pressed="true"] { background: color-mix(in srgb, var(--c) 24%, var(--bg3)); border-color: var(--c); box-shadow: 0 0 0 1px var(--c), 0 6px 18px color-mix(in srgb, var(--c) 25%, transparent); }
+#panel-vote .sv-vb[aria-pressed="true"]::after { content: "✓"; position: absolute; top: 7px; right: 9px; width: 20px; height: 20px; border-radius: 50%; background: var(--c); color: #111; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+#panel-vote .sv-btn { width: 100%; border: none; border-radius: 10px; padding: 12px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; background: var(--gold); color: #241c04; }
+#panel-vote .sv-btn:disabled { background: var(--border2); color: var(--text3); cursor: not-allowed; }
+#panel-vote .sv-btn.green { background: var(--ok); color: #111; }
+#panel-vote .sv-btn.sec { background: var(--bg3); color: var(--text); border: 1px solid var(--border2); font-weight: 600; }
+#panel-vote .sv-btn.danger { background: transparent; color: var(--no); border: 1px solid color-mix(in srgb, var(--no) 30%, transparent); font-weight: 600; }
+#panel-vote .sv-btn.danger.full { background: var(--no); color: #fff; border: none; }
+#panel-vote .sv-mine { display: flex; align-items: center; gap: 10px; border-radius: 12px; padding: 10px 12px; border: 1.5px solid color-mix(in srgb, var(--c) 45%, transparent); background: color-mix(in srgb, var(--c) 12%, var(--bg3)); }
+#panel-vote .sv-mine.P { --c: var(--ok); } #panel-vote .sv-mine.A { --c: var(--no); } #panel-vote .sv-mine.B { --c: var(--hurt); } #panel-vote .sv-mine.N { --c: var(--text3); }
+#panel-vote .sv-mine i { font-style: normal; font-size: 22px; }
+#panel-vote .sv-mine span { flex: 1; font-size: 12px; color: var(--text2); }
+#panel-vote .sv-mine span b { display: block; font-size: 15px; color: var(--c); }
+#panel-vote .sv-mine button { font: inherit; border: 1px solid var(--border2); background: var(--bg2); color: var(--text); border-radius: 8px; padding: 7px 11px; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+#panel-vote .sv-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+#panel-vote .sv-flt { font: inherit; padding: 6px 11px; border-radius: 20px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+#panel-vote .sv-flt.P { color: var(--ok); } #panel-vote .sv-flt.A { color: var(--no); } #panel-vote .sv-flt.B { color: var(--hurt); } #panel-vote .sv-flt.D { color: var(--dep); }
+#panel-vote .sv-flt.on, #panel-vote .sv-flt[aria-expanded="true"] { background: var(--gold); border-color: var(--gold); color: #171708; }
+#panel-vote .sv-volet { border: 1px solid var(--border2); border-radius: 14px; background: var(--bg3); padding: 4px 10px 6px; }
+#panel-vote .sv-volet-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0 4px; font-size: 13px; font-weight: 700; }
+#panel-vote .sv-x { font: inherit; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border2); background: var(--bg2); color: var(--text2); cursor: pointer; font-size: 13px; flex: none; }
+#panel-vote .sv-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 2px; border-bottom: 1px solid var(--border); }
+#panel-vote .sv-row:last-child { border-bottom: none; }
+#panel-vote .sv-nm { display: flex; align-items: baseline; gap: 6px; min-width: 0; flex: 1; font-size: 13.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#panel-vote .sv-nm.me { color: var(--gold); }
+#panel-vote .sv-nm small { font-size: 10.5px; font-weight: 500; color: var(--dep); }
+#panel-vote .sv-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text3); background: var(--bg2); border-radius: 4px; padding: 1px 5px; }
+#panel-vote .sv-tag.dep { color: var(--dep); background: color-mix(in srgb, var(--dep) 14%, transparent); }
+#panel-vote .sv-pill { display: inline-flex; align-items: center; gap: 5px; border: 1.5px solid var(--border2); background: var(--bg2); border-radius: 10px; padding: 6px 9px; font: inherit; font-size: 12px; font-weight: 700; white-space: nowrap; color: var(--text2); }
+#panel-vote .sv-pill.P { background: rgba(46,204,113,.14); border-color: rgba(46,204,113,.45); color: var(--ok); }
+#panel-vote .sv-pill.A { background: rgba(231,76,60,.14); border-color: rgba(231,76,60,.45); color: var(--no); }
+#panel-vote .sv-pill.B { background: rgba(243,156,18,.16); border-color: rgba(243,156,18,.5); color: var(--gold); }
+#panel-vote button.sv-pill { cursor: pointer; }
+#panel-vote .sv-ssel { position: relative; flex: none; }
+#panel-vote .sv-ssel::after { content: ""; position: absolute; right: 10px; top: 50%; width: 6px; height: 6px; border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor; transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+#panel-vote .sv-ssel select { -webkit-appearance: none; appearance: none; border: 1.5px solid var(--border2); background: var(--bg2); border-radius: 10px; padding: 6px 26px 6px 9px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; color: inherit; }
+#panel-vote .sv-ssel.P { color: var(--ok); } #panel-vote .sv-ssel.P select { background: rgba(46,204,113,.14); border-color: rgba(46,204,113,.45); }
+#panel-vote .sv-ssel.A { color: var(--no); } #panel-vote .sv-ssel.A select { background: rgba(231,76,60,.14); border-color: rgba(231,76,60,.45); }
+#panel-vote .sv-ssel.B { color: var(--gold); } #panel-vote .sv-ssel.B select { background: rgba(243,156,18,.16); border-color: rgba(243,156,18,.5); }
+#panel-vote .sv-ssel.N { color: var(--text2); }
+#panel-vote .sv-search { width: 100%; box-sizing: border-box; background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 9px 12px; font: inherit; font-size: 16px; color: var(--text); outline: none; }
+#panel-vote .sv-search:focus { border-color: var(--gold-border); }
+#panel-vote .sv-warn { font-size: 12.5px; color: var(--hurt); background: rgba(243,156,18,.1); border: 1px solid rgba(243,156,18,.35); border-radius: 10px; padding: 8px 11px; }
+#panel-vote .sv-dep { padding: 12px; border: 1px dashed color-mix(in srgb, var(--dep) 45%, transparent); border-radius: 14px; background: color-mix(in srgb, var(--dep) 6%, transparent); display: flex; flex-direction: column; gap: 8px; }
+#panel-vote .sv-dep-t { font-size: 12px; font-weight: 700; color: var(--dep); text-transform: uppercase; letter-spacing: .06em; }
+#panel-vote .sv-dep-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+#panel-vote .sv-dsel { position: relative; flex: 1 1 150px; min-width: 0; }
+#panel-vote .sv-dsel::after { content: ""; position: absolute; right: 12px; top: 50%; width: 7px; height: 7px; border-right: 1.6px solid var(--dep); border-bottom: 1.6px solid var(--dep); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+#panel-vote .sv-dsel select { -webkit-appearance: none; appearance: none; width: 100%; background: var(--bg3); border: 1px solid color-mix(in srgb, var(--dep) 45%, transparent); border-radius: 10px; padding: 9px 30px 9px 12px; font: inherit; font-size: 16px; color: var(--text); cursor: pointer; }
+#panel-vote .sv-inp { flex: 1 1 150px; min-width: 0; box-sizing: border-box; background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 9px 12px; font: inherit; font-size: 16px; color: var(--text); outline: none; }
+#panel-vote .sv-sbtn { font: inherit; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--border2); font-size: 13px; font-weight: 600; cursor: pointer; background: var(--bg2); color: var(--text); white-space: nowrap; }
+#panel-vote .sv-sbtn:disabled { opacity: .45; cursor: not-allowed; }
+#panel-vote .sv-reasons { display: flex; flex-wrap: wrap; gap: 6px; }
+#panel-vote .sv-reasons button { font: inherit; padding: 7px 11px; border-radius: 20px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); font-size: 12.5px; font-weight: 700; cursor: pointer; }
+#panel-vote .sv-reasons button[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); color: #171708; }
+#panel-vote .sv-radio { display: flex; flex-direction: column; gap: 6px; }
+#panel-vote .sv-radio label { display: flex; align-items: center; gap: 9px; font-size: 13px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 9px 11px; cursor: pointer; flex-wrap: wrap; }
+#panel-vote .sv-radio input[type=radio] { accent-color: var(--gold); width: 17px; height: 17px; margin: 0; }
+#panel-vote .sv-radio input[type=date] { margin-left: auto; background: var(--bg2); border: 1px solid var(--border2); border-radius: 8px; padding: 5px 8px; font: inherit; font-size: 14px; color: var(--text); }
+#panel-vote .sv-off { text-align: center; border-radius: var(--radius-lg); padding: 22px 16px; background: var(--bg2); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; align-items: center; }
+#panel-vote .sv-off .big { font-size: 42px; line-height: 1.1; }
+#panel-vote .sv-off h3 { margin: 0; font-size: 20px; font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: .03em; }
+#panel-vote .sv-off p { margin: 0; font-size: 13px; color: var(--text2); }
+#panel-vote .sv-off .msg { font-size: 15px; font-weight: 700; color: var(--gold); margin-top: 4px; }
+#panel-vote .sv-off.cx { background: color-mix(in srgb, var(--no) 8%, var(--bg2)); border-color: color-mix(in srgb, var(--no) 35%, transparent); }
+#panel-vote .sv-off.cx h3 { color: var(--no); }
+#panel-vote .sv-preview { border-radius: 14px; border: 1px dashed var(--border2); padding: 12px; }
+#panel-vote .sv-err { font-size: 12.5px; color: var(--no); }
+#panel-vote .sv-cyc { font: inherit; display: flex; align-items: center; justify-content: center; gap: 5px; border: 1.5px solid var(--border2); background: var(--bg3); border-radius: 10px; padding: 7px 10px; font-size: 12px; font-weight: 700; color: var(--text2); cursor: pointer; min-width: 112px; }
+#panel-vote .sv-cyc.P { background: rgba(46,204,113,.14); border-color: rgba(46,204,113,.45); color: var(--ok); }
+#panel-vote .sv-cyc.A { background: rgba(231,76,60,.14); border-color: rgba(231,76,60,.45); color: var(--no); }
+#panel-vote .sv-cyc.B { background: rgba(243,156,18,.16); border-color: rgba(243,156,18,.5); color: var(--gold); }
+.saisie-sv-import { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--gold-border); background: var(--gold-bg); font-size: 12.5px; color: var(--text2); }
+.saisie-sv-import b { color: var(--text); }
   /* fiche joueur en plein écran (arrivée après connexion) */
   #player-panel.pp-full { width: 100vw; }
   #player-panel.pp-full > * { max-width: 760px; margin-left: auto; margin-right: auto; }
@@ -2822,6 +2920,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="hnav-tabsrow">
     <div class="main-tabs">
       <button class="main-tab" data-tab="live" id="live-tab-btn" style="display:none"><span class="live-dot"></span>Session en cours</button>
+      <button class="main-tab" data-tab="vote" id="sv-tab-btn" style="display:none">Prochaine session</button>
       <button class="main-tab active" data-tab="session">Sessions</button>
       <button class="main-tab" data-tab="dashboard">Dashboard</button>
       <button class="main-tab" data-tab="joueurs">Effectif</button>
@@ -2843,6 +2942,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   </div>
   <div class="hnav-drawer-tabs" id="hnav-drawer-tabs">
     <button class="hnav-tab" data-tab="live" id="live-drawer-btn" style="display:none"><span class="live-dot"></span>Session en cours</button>
+    <button class="hnav-tab" data-tab="vote" id="sv-drawer-btn" style="display:none">Prochaine session</button>
     <button class="hnav-tab" data-tab="session">Sessions</button>
     <button class="hnav-tab" data-tab="dashboard">Dashboard</button>
     <button class="hnav-tab" data-tab="joueurs">Effectif</button>
@@ -2917,6 +3017,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <!-- ── Onglet Stats ── -->
   <div class="tab-panel" id="panel-stats"></div>
   <div class="tab-panel" id="panel-vignettes"></div>
+  <div class="tab-panel" id="panel-vote"></div>
 
   <!-- ── Onglet Règlement (admin) ── -->
   <div class="tab-panel" id="panel-reglement"></div>
@@ -2947,7 +3048,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 12:43</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 13:46</footer>
 
 <script>
 
@@ -7805,6 +7906,9 @@ document.querySelectorAll(".main-tab").forEach(tab => {
       } else if (tab.dataset.tab === "vignettes") {
         history.replaceState(null, '', '#vignettes');
         window._vgOnShow && window._vgOnShow();
+      } else if (tab.dataset.tab === "vote") {
+        history.replaceState(null, '', '#vote');
+        window._svOnShow && window._svOnShow();
       }
       _liveRefresh();
     });
@@ -9706,6 +9810,7 @@ function _buildPresencesScreenHTML() {
 
   return `<div class="saisie-section">
     <div class="saisie-section-title">👥 Présences</div>
+    ${typeof _svImportHTML === "function" ? _svImportHTML() : ""}
     <input type="text" class="saisie-pres-search" id="saisie-pres-search" placeholder="Rechercher un joueur…" value="${_saisiePresSearch.replace(/"/g,"&quot;")}">
     <div class="saisie-pres-filters">
       ${filterTabs.map(([key,icon,n]) => `<button class="saisie-pres-filter${_saisiePresFilter===key?" active":""}" data-act="saisie-pres-filter" data-filter="${key}">${icon} <span class="n">${n}</span></button>`).join("")}
@@ -10447,6 +10552,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     renderSaisie(); window.scrollTo({top:0, behavior:"smooth"}); return;
   }
 
+  if (e.target.closest('[data-act="sv-import"]')) { _svImport(); return; }
   const statusCycleBtn = e.target.closest('[data-act="saisie-status-cycle"]');
   if (statusCycleBtn) {
     const p = statusCycleBtn.dataset.player;
@@ -12341,7 +12447,15 @@ function _accApplyRole() {
     document.querySelector('.main-tab[data-tab="session"]')?.classList.add("active");
     history.replaceState(null, '', '#sessions');
   }
-  ["vg-tab-btn", "vg-drawer-btn"].forEach(id => { const b = document.getElementById(id); if (b) b.style.display = vgOn ? "" : "none"; });
+  ["vg-tab-btn", "vg-drawer-btn", "sv-tab-btn", "sv-drawer-btn"].forEach(id => { const b = document.getElementById(id); if (b) b.style.display = vgOn ? "" : "none"; });
+  if (!vgOn && document.getElementById("panel-vote")?.classList.contains("active")) {
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
+    document.getElementById("panel-session").classList.add("active");
+    document.querySelector('.main-tab[data-tab="session"]')?.classList.add("active");
+    history.replaceState(null, '', '#sessions');
+  }
+  if (typeof window._svRender === "function") window._svRender();
   if (!vgOn && document.getElementById("panel-vignettes")?.classList.contains("active")) {
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
     document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
@@ -12434,7 +12548,7 @@ function _accRender(keepFocus) {
       <h4 class="acm-h">Comptes activés</h4>
       <p class="acm-sub">${rows ? `<b>${rows.length}</b> joueur${rows.length > 1 ? "s" : ""} sur ${total} ${rows.length > 1 ? "ont créé leur" : "a créé son"} compte.` : "Chargement…"}</p>${err}
       <div class="acm-list acm-accl" style="max-height:56vh">${(rows || []).map(r => `<div class="acm-pl${r.uid === (_accUser && _accUser.uid) ? " me" : ""}" style="cursor:default">${_accAvHTML(r.player, "")}<b>${r.player}${r.super ? `<span class="acm-sapill">★<span class="t"> Super admin</span></span>` : ""}</b><small title="Date de création du compte">${r.createdAt ? new Date(r.createdAt).toLocaleDateString("fr", { day: "numeric", month: "short" }) : "—"}</small>
-        ${r.uid === (_accUser && _accUser.uid) ? `<span class="acm-you">Toi</span>` : `<span class="acm-acts"><button class="acm-act${r.super ? "" : " gold"}" data-a="super" data-n="${_accEsc(r.player)}">${a.confirmSuper === r.player ? "Confirmer ?" : r.super ? "Retirer Super Admin" : "Passer Super Admin"}</button><button class="acm-act" data-a="detach" data-n="${_accEsc(r.player)}">${a.confirmDetach === r.player ? "Confirmer ?" : "Détacher"}</button></span>`}</div>`).join("")}</div>
+        ${r.uid === (_accUser && _accUser.uid) ? `<span class="acm-you">Toi</span>` : `<span class="acm-acts"><button class="acm-act${r.super ? "" : " gold"}" title="${r.super ? "Retirer les droits Super Admin" : "Passer Super Admin"}" data-a="super" data-n="${_accEsc(r.player)}">${a.confirmSuper === r.player ? "Confirmer ?" : r.super ? "↓ Admin" : "↑ Sup. Admin."}</button><button class="acm-act" data-a="detach" data-n="${_accEsc(r.player)}">${a.confirmDetach === r.player ? "Confirmer ?" : "Détacher"}</button></span>`}</div>`).join("")}</div>
       <p class="acm-help">Passer Super Admin donne tous les droits (supprimer un match validé, Effacer, coefficients, comptes) dès sa prochaine connexion. Détacher libère la fiche : la personne devra se rattacher à nouveau à sa fiche à sa prochaine connexion. Ses pronos et ses données restent sous la fiche.</p>`;
   } else if (a.view === "login" || a.view === "create0") {
     const seg = `<div class="acm-seg"><button aria-pressed="${a.view === "login"}" data-a="tab" data-t="login">Se connecter</button><button aria-pressed="${a.view !== "login"}" data-a="tab" data-t="create0">Créer un compte</button></div>`;
@@ -13586,6 +13700,327 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   window._vgOnShow = () => { render(); };
 })();
 
+
+/* ══════════ PROCHAINE SESSION : vote de présence (phase 1) ══════════
+   Un super admin annonce le lundi qui suit : « Ouvrir la session » (vote) ou « Pas de session »
+   (raison + message). Chaque compte vote Présent / Absent / Blessé, et peut ajouter un +1
+   (dépanneur). Votes modifiables jusqu'au dimanche 21h30 (heure de Paris), compte à rebours
+   géant dès 18h30. Les super admins peuvent tout modifier, à tout moment.
+   Données : sessionVotes/{AAAA-MM-JJ} = { status: open|none|cancelled, by, at, closesAt,
+   reason, msg, backDate, votes: { joueur: P|A|B }, plus: { id: { n, by } } }.
+   AUCUN effet sur la Saisie ni sur les stats : la Saisie peut seulement IMPORTER les réponses,
+   sur clic (bouton « Importer les réponses du vote » de l'étape Présences). */
+let _svData = null, _svDate = null;
+const _SV_MAP = { P: "Présent", A: "Absent", B: "Blessé" };
+function _svParis(ms) {
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", weekday: "short", hour12: false })
+    .formatToParts(new Date(ms)).map(x => [x.type, x.value]));
+  return { y: +p.year, m: +p.month, d: +p.day, h: +p.hour % 24, mi: +p.minute, wd: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(p.weekday) };
+}
+// Date (heure de Paris) → timestamp
+function _svParisMs(y, m, d, h, mi) {
+  let t = Date.UTC(y, m - 1, d, h, mi);
+  for (let i = 0; i < 2; i++) { const p = _svParis(t); t += (Date.UTC(y, m - 1, d, h, mi) - Date.UTC(p.y, p.m - 1, p.d, p.h, p.mi)); }
+  return t;
+}
+const _svIso = t => new Date(t).toISOString().slice(0, 10);
+// Le lundi concerné : aujourd'hui si on est lundi, sinon le lundi qui suit
+function _svTarget() {
+  const p = _svParis(_liveNow()), base = Date.UTC(p.y, p.m - 1, p.d);
+  return _svIso(base + ((8 - p.wd) % 7) * 86400000);
+}
+// Clôture : la veille (dimanche) à 21h30, heure de Paris
+function _svClosesAt(iso) { const t = Date.parse(iso + "T12:00:00Z") - 86400000, d = new Date(t); return _svParisMs(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate(), 21, 30); }
+function _svImportHTML() {
+  const d = _svData;
+  if (!d || d.status !== "open" || !_draft || _draft.date !== _svDate) return "";
+  const n = Object.keys(d.votes || {}).length + Object.keys(d.plus || {}).length;
+  if (!n) return "";
+  return `<div class="saisie-sv-import"><span>🗓️ Vote de présence : <b>${n} réponse${n > 1 ? "s" : ""}</b></span><button class="saisie-btn secondary" data-act="sv-import">📥 Importer les réponses du vote</button></div>`;
+}
+function _svImport() {
+  const d = _svData; if (!d || _draft.date !== _svDate) return;
+  const votes = d.votes || {}, plus = Object.values(d.plus || {});
+  if (!confirm(`Importer les réponses du vote dans les présences ?\nLes statuts des ${Object.keys(votes).length + plus.length} joueurs concernés seront remplacés. Les autres ne changent pas.`)) return;
+  Object.entries(votes).forEach(([p, v]) => {
+    if (!_SV_MAP[v]) return;
+    if (!_draft.presences[p]) _draft.presences[p] = { statut: "Pas répondu", equipe: "" };
+    _draft.presences[p].statut = _SV_MAP[v];
+    if (v !== "P") _draft.presences[p].equipe = "";
+  });
+  plus.forEach(({ n }) => {
+    if (!n || /[.#$\/\[\]]/.test(n)) return;
+    if (ALL_PLAYERS.includes(n) && !_isDepanneur(n)) { _draft.presences[n] = { ...(_draft.presences[n] || { equipe: "" }), statut: "Présent" }; return; }
+    if (!_draft.tempJokers) _draft.tempJokers = [];
+    if (!_draft.tempJokers.includes(n)) _draft.tempJokers.push(n);
+    _draft.presences[n] = { statut: "Présent", equipe: (_draft.presences[n] && _draft.presences[n].equipe) || "", joker: true, ...(ALL_PLAYERS.includes(n) ? {} : { temp: true }) };
+  });
+  _saveDraft(); renderSaisie(); _showToast("Réponses du vote importées");
+}
+
+(function () {
+  const panel = document.getElementById("panel-vote");
+  if (!panel) return;
+  const ST = { P: ["✅", "Présent"], A: ["❌", "Absent"], B: ["🤕", "Blessé"], N: ["❓", "Pas répondu"] };
+  const CYC = ["N", "P", "A", "B"];
+  const REASONS = [["🎉", "Jour férié"], ["🏖️", "Vacances"], ["🎄", "Noël"], ["🥂", "Nouvel an"], ["✏️", "Autre"]];
+  const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+  const JOURS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
+  const fdate = iso => { const d = new Date(iso + "T12:00:00Z"); return `${JOURS[d.getUTCDay()]} ${d.getUTCDate() === 1 ? "1er" : d.getUTCDate()} ${MOIS[d.getUTCMonth()]}`; };
+  const esc = x => String(x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+  const ui = { draft: null, editing: false, plus: false, depSel: "", depNew: "", open: null, q: "", pres: false, pq: "", pf: "all",
+    mode: "open", reason: "Noël", other: "", msg: "next", back: "", confirmCancel: false, busy: false, err: "" };
+  let ref = null;
+
+  const me = () => (typeof _accPlayer === "function" ? _accPlayer() : null);
+  const isSA = () => !!(me() && _accIsSuper);
+  const ref0 = () => _db.ref("sessionVotes/" + _svDate);
+  const closesAt = () => (_svData && _svData.closesAt) || _svClosesAt(_svDate);
+  const left = () => closesAt() - _liveNow();
+  const closed = () => left() <= 0;
+  const roster = () => {
+    const reg = ALL_PLAYERS.filter(p => !JOKERS.has(p) && !ABSENTS.has(p) && !INACTIFS.has(p));
+    const occ = ALL_PLAYERS.filter(p => JOKERS.has(p) && !INACTIFS.has(p));
+    return { reg, occ };
+  };
+  function rows() {
+    const d = _svData || {}, votes = d.votes || {}, { reg, occ } = roster();
+    const out = [...reg, ...occ].map(n => ({ n, v: votes[n] || "N", occ: occ.includes(n) }));
+    Object.entries(d.plus || {}).forEach(([id, x]) => out.push({ n: x.n, v: "P", dep: true, by: x.by, id }));
+    return out;
+  }
+
+  // ── écoute du lundi concerné (le lundi change à minuit)
+  function watch() {
+    if (!_db) return;
+    const t = _svTarget();
+    if (t === _svDate && ref) return;
+    if (ref) ref.off();
+    _svDate = t; _svData = null;
+    ref = _db.ref("sessionVotes/" + t);
+    ref.on("value", snap => {
+      _svData = snap.val();
+      if (panel.classList.contains("active") && !ui.busy) render(true);
+      if (document.getElementById("panel-saisie")?.classList.contains("active") && typeof _saisieStep !== "undefined" && _saisieStep === "presences" && document.querySelector(".saisie-pres-list")) {
+        const box = document.querySelector(".saisie-sv-import"), html = _svImportHTML();
+        if (box && !html) box.remove();
+        else if (!box && html) document.querySelector(".saisie-section-title")?.insertAdjacentHTML("afterend", html);
+      }
+    });
+  }
+
+  async function write(fn, okMsg) {
+    ui.busy = true; ui.err = "";
+    try { await fn(); if (okMsg) _showToast(okMsg); }
+    catch (e) { console.warn("vote:", e); ui.err = "Enregistrement impossible. Vérifie ta connexion et réessaie."; }
+    ui.busy = false; render(true);
+  }
+
+  // ── vues
+  function offHTML(o) {
+    const e = (REASONS.find(r => r[1] === o.reason) || ["✏️"])[0];
+    return `<div class="sv-off"><div class="big">${e}</div><h3>Pas de session ${fdate(_svDate)}</h3><p>${esc(o.reason || "")}</p>
+      <div class="msg">${o.msg === "date" && o.backDate ? `On se revoit le ${fdate(o.backDate)} !` : "On se revoit la semaine prochaine !"}</div></div>`;
+  }
+  function vCreate() {
+    const none = ui.mode === "none", rLbl = ui.reason === "Autre" ? (ui.other.trim() || "Autre") : ui.reason;
+    if (!ui.back) { const t = Date.parse(_svDate + "T12:00:00Z") + 7 * 86400000; ui.back = _svIso(t); }
+    return `<div class="sv-sec"><span class="sv-st">🗓️ Prochaine session</span><h3 class="sv-date">${fdate(_svDate)}</h3>
+      <div class="sv-two"><button class="sv-vb P" data-sv="mode" data-m="open" aria-pressed="${!none}"><i>✅</i><b>Ouvrir la session</b></button>
+        <button class="sv-vb A" data-sv="mode" data-m="none" aria-pressed="${none}"><i>🚫</i><b>Pas de session</b></button></div>
+      ${none ? `<span class="sv-lbl">Raison</span><div class="sv-reasons">${REASONS.map(([e, r]) => `<button data-sv="reason" data-r="${r}" aria-pressed="${ui.reason === r}">${e} ${r}</button>`).join("")}</div>
+        ${ui.reason === "Autre" ? `<input class="sv-inp" id="sv-other" placeholder="Ex. terrain fermé" value="${esc(ui.other)}">` : ""}
+        <span class="sv-lbl">Message</span>
+        <div class="sv-radio"><label><input type="radio" name="sv-msg" value="next"${ui.msg === "next" ? " checked" : ""}> On se revoit la semaine prochaine !</label>
+          <label><input type="radio" name="sv-msg" value="date"${ui.msg === "date" ? " checked" : ""}> On se revoit le… <input type="date" id="sv-back" value="${ui.back}"></label></div>
+        <span class="sv-lbl">Aperçu</span><div class="sv-preview">${offHTML({ reason: rLbl, msg: ui.msg, backDate: ui.back })}</div>
+        <button class="sv-btn" data-sv="publishNone"${ui.busy ? " disabled" : ""}>Annoncer : pas de session</button>`
+      : `<div class="sv-lock">Réponses jusqu'au <b>${fdate(_svIso(Date.parse(_svDate + "T12:00:00Z") - 86400000))} à 21h30</b></div>
+        <button class="sv-btn green" data-sv="publishOpen"${ui.busy ? " disabled" : ""}>Ouvrir la session</button>`}
+      ${ui.err ? `<p class="sv-err">${ui.err}</p>` : ""}</div>`;
+  }
+  const fmtCd = ms => { const t = Math.ceil(ms / 1000), h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), x = t % 60; return [h, m, x].map(v => String(v).padStart(2, "0")).join(":"); };
+  function lockLine() {
+    const l = left();
+    if (l <= 0) return `<div class="sv-cd last closed"><b>Le sondage est fermé 🔒</b></div>`;
+    if (l <= 3 * 3600000) return `<div class="sv-cd${l < 600000 ? " last" : ""}" id="sv-cd"><span>⚠️ Attention, clôture du sondage dans</span><b id="sv-cdv">${fmtCd(l)}</b></div>`;
+    const d = Math.floor(l / 86400000), h = Math.floor(l % 86400000 / 3600000);
+    return `<div class="sv-lock">⏳ Tu peux répondre ou changer d'avis jusqu'à <b>dimanche 21h30</b> (dans ${d ? `${d} j ${h} h` : `${h} h`})</div>`;
+  }
+  function depBlock(mode) {
+    const R = rows(), taken = new Set(R.filter(r => r.v === "P").map(r => r.n));
+    const deps = ALL_PLAYERS.filter(p => _isDepanneur(p));
+    const list = (mode === "admin" ? [...deps, ...R.filter(r => !r.dep && r.v !== "P").map(r => r.n)] : deps)
+      .filter((n, i, a) => a.indexOf(n) === i && !taken.has(n)).sort((a, b) => a.localeCompare(b, "fr"));
+    return `<div class="sv-dep"><div class="sv-dep-t">${mode === "admin" ? "🧰 Ajouter quelqu'un" : "🧰 +1 : j'amène un dépanneur"}</div><div class="sv-dep-row">
+      <div class="sv-dsel"><select id="sv-dsel" aria-label="Choisir"><option value="">— Choisir —</option>
+        ${list.map(n => `<option value="${esc(n)}"${ui.depSel === n ? " selected" : ""}>${esc(n)}${deps.includes(n) ? "" : " (joueur)"}</option>`).join("")}
+        <option value="__new"${ui.depSel === "__new" ? " selected" : ""}>➕ Nouveau dépanneur…</option></select></div>
+      ${ui.depSel === "__new" ? `<input class="sv-inp" id="sv-dnew" placeholder="Nom du dépanneur" value="${esc(ui.depNew)}">` : ""}
+      <button class="sv-sbtn" data-sv="depAdd" data-m="${mode}"${ui.depSel && (ui.depSel !== "__new" || ui.depNew.trim()) && !ui.busy ? "" : " disabled"}>Ajouter</button></div></div>`;
+  }
+  function rowHTML(r, cycle) {
+    const sa = isSA(), who = me();
+    const tag = r.dep ? `<span class="sv-tag dep">Dép.</span>` : r.occ ? `<span class="sv-tag">Occ.</span>` : "";
+    let ctl;
+    if (sa && cycle && !r.dep) ctl = `<button class="sv-cyc ${r.v}" data-sv="cyc" data-n="${esc(r.n)}">${ST[r.v][0]} ${ST[r.v][1]}</button>`;
+    else if (sa) ctl = `<span class="sv-ssel ${r.v}"><select data-svsel="${esc(r.n)}" data-id="${r.id || ""}" aria-label="Statut de ${esc(r.n)}">${(r.dep ? ["P"] : ["P", "A", "B", "N"]).map(k => `<option value="${k}"${r.v === k ? " selected" : ""}>${ST[k][0]} ${ST[k][1]}</option>`).join("")}${r.dep ? `<option value="X">🗑️ Retirer</option>` : ""}</select></span>`;
+    else ctl = `<span class="sv-pill ${r.v}">${ST[r.v][0]} ${ST[r.v][1]}</span>${r.by === who && !closed() ? `<button class="sv-x" data-sv="rmplus" data-id="${r.id}" aria-label="Retirer ${esc(r.n)}">✕</button>` : ""}`;
+    return `<div class="sv-row"><span class="sv-nm${r.n === who ? " me" : ""}">${esc(r.n)}${tag}${r.by ? `<small>+1 de ${esc(r.by)}</small>` : ""}</span>${ctl}</div>`;
+  }
+  function recapHTML() {
+    const R = rows(), sa = isSA();
+    const F = [["P", "✅", "Présents"], ["A", "❌", "Absents"], ["B", "🤕", "Blessés"], ["N", "❓", "Pas répondu"], ["D", "🧰", "Dépanneurs"]];
+    const inF = (r, k) => k === "D" ? r.dep : r.v === k, byN = (a, b) => a.n.localeCompare(b.n, "fr");
+    const canSearch = sa && closed(), q = canSearch ? ui.q.trim().toLowerCase() : "";
+    const nP = R.filter(r => r.v === "P").length;
+    let volet = "";
+    if (q) { const L = R.filter(r => r.n.toLowerCase().includes(q)).sort(byN);
+      volet = `<div class="sv-volet"><div class="sv-volet-h"><span>🔎 « ${esc(ui.q.trim())} » · ${L.length}</span><button class="sv-x" data-sv="clearq" aria-label="Effacer la recherche">✕</button></div>${L.map(r => rowHTML(r)).join("") || `<p class="sv-lock">Aucun joueur.</p>`}</div>`; }
+    else if (ui.open) { const f = F.find(x => x[0] === ui.open), L = R.filter(r => inF(r, ui.open)).sort(byN);
+      volet = `<div class="sv-volet"><div class="sv-volet-h"><span>${f[1]} ${f[2]} · ${L.length}</span><button class="sv-x" data-sv="closeVolet" aria-label="Fermer">✕</button></div>${L.map(r => rowHTML(r)).join("") || `<p class="sv-lock">Personne.</p>`}</div>`; }
+    return `<div class="sv-sec"><span class="sv-st">👥 La situation</span>
+      ${sa && nP < 10 ? `<div class="sv-warn">⚠️ ${nP} présent${nP > 1 ? "s" : ""}</div>` : ""}
+      ${canSearch ? `<input class="sv-search" id="sv-q" placeholder="🔎 Chercher un prénom" value="${esc(ui.q)}" autocomplete="off">` : ""}
+      <div class="sv-filters">${F.map(([k, e, l]) => `<button class="sv-flt ${k}" data-sv="flt" data-k="${k}" aria-expanded="${!q && ui.open === k}">${e} ${l} <span>${R.filter(r => inF(r, k)).length}</span></button>`).join("")}</div>
+      ${volet}${sa ? depBlock("admin") : ""}</div>`;
+  }
+  // Super admin : l'écran Présences « comme dans la Saisie » (bouton qu'on touche plusieurs fois)
+  function vPres() {
+    const R = rows(), q = ui.pq.trim().toLowerCase();
+    const F = [["all", "👥", R.length], ["P", "✅", R.filter(r => r.v === "P").length], ["A", "❌", R.filter(r => r.v === "A").length], ["B", "🤕", R.filter(r => r.v === "B").length], ["N", "❓", R.filter(r => r.v === "N").length]];
+    const L = R.filter(r => (ui.pf === "all" || r.v === ui.pf) && (!q || r.n.toLowerCase().includes(q))).sort((a, b) => (!!a.dep - !!b.dep) || (!!a.occ - !!b.occ) || a.n.localeCompare(b.n, "fr"));
+    return `<div class="sv-sec"><button class="sv-btn sec" data-sv="presClose">← Retour au vote</button>
+      <span class="sv-st">👥 Présences · ${fdate(_svDate)}</span>
+      <input class="sv-search" id="sv-pq" placeholder="Rechercher un joueur…" value="${esc(ui.pq)}" autocomplete="off">
+      <div class="sv-filters">${F.map(([k, e, n]) => `<button class="sv-flt${ui.pf === k ? " on" : ""}" data-sv="pf" data-k="${k}">${e} <span>${n}</span></button>`).join("")}</div>
+      <div>${L.map(r => rowHTML(r, true)).join("") || `<p class="sv-lock">Personne.</p>`}</div>
+      ${depBlock("admin")}</div>`;
+  }
+  function vVote() {
+    if (ui.pres && isSA()) return vPres();
+    const d = _svData, who = me(), mine = (d.votes || {})[who] || null, locked = closed() && !isSA();
+    const choosing = !locked && !closed() && (!mine || ui.editing) || (isSA() && closed() && ui.editing);
+    let h = `<div class="sv-sec"><span class="sv-st">🗓️ Prochaine session</span><h3 class="sv-date">${fdate(_svDate)}</h3>${lockLine()}`;
+    if (choosing) {
+      const dv = ui.draft || mine;
+      h += `<span class="sv-lbl">Tu viens lundi ?</span><div class="sv-vote">
+        ${["P", "A", "B"].map(k => `<button class="sv-vb ${k}" data-sv="pick" data-k="${k}" aria-pressed="${dv === k}"><i>${ST[k][0]}</i><b>${ST[k][1]}</b></button>`).join("")}
+        <button class="sv-vb D" data-sv="plusOpen" aria-pressed="${ui.plus}"><i>🧰</i><b>+1</b><small>J'amène un dépanneur</small></button></div>
+        ${ui.plus ? depBlock("plus") : ""}
+        <button class="sv-btn" data-sv="validate"${dv && !ui.busy ? "" : " disabled"}>${dv ? `Valider : ${ST[dv][0]} ${ST[dv][1]}` : "Choisis ta réponse"}</button>
+        ${ui.editing ? `<button class="sv-btn sec" data-sv="noedit">Garder ma réponse</button>` : ""}`;
+    } else {
+      const k = mine || "N";
+      h += `<div class="sv-mine ${k}"><i>${ST[k][0]}</i><span>Ta réponse<b>${ST[k][1]}</b></span>${locked ? "" : `<button data-sv="edit">Modifier</button>`}</div>
+        ${locked || closed() ? "" : ui.plus ? depBlock("plus") : `<button class="sv-vb D" data-sv="plusOpen" style="flex-direction:row;justify-content:center;gap:8px;padding:11px"><i style="font-size:18px">🧰</i><b>Ajouter un +1</b></button>`}`;
+    }
+    h += `${ui.err ? `<p class="sv-err">${ui.err}</p>` : ""}</div>`;
+    if (mine || closed() || isSA()) h += recapHTML();
+    if (isSA()) h += `<div class="sv-sec"><span class="sv-st">★ Super admin</span><button class="sv-btn sec" data-sv="presOpen">👥 Remplir les présences</button>
+      <button class="sv-btn danger${ui.confirmCancel ? " full" : ""}" data-sv="cancel">${ui.confirmCancel ? "Confirmer l'annulation de la session" : "Annuler la session"}</button></div>`;
+    return h;
+  }
+  function body() {
+    const d = _svData;
+    if (!_svDate) return `<p class="sv-lock">Chargement…</p>`;
+    if (!d) return isSA() ? vCreate() : `<div class="sv-off"><div class="big">⏳</div><h3>Rien d'annoncé pour ${fdate(_svDate)}</h3></div>`;
+    if (d.status === "none") return offHTML(d) + (isSA() ? `<button class="sv-btn sec" data-sv="reannounce">Changer d'avis : ouvrir la session</button>` : "");
+    if (d.status === "cancelled") return `<div class="sv-off cx"><div class="big">🚫</div><h3>Session annulée</h3><p>${fdate(_svDate)}</p><div class="msg">On se revoit la semaine prochaine !</div></div>`
+      + (isSA() ? `<button class="sv-btn sec" data-sv="reopen">Rétablir la session</button>` : "");
+    return vVote();
+  }
+  function render(keep) {
+    if (!panel.classList.contains("active")) return;
+    watch();
+    const y = window.scrollY, f = document.activeElement && document.activeElement.id, c = f && document.activeElement.selectionStart;
+    if (!me()) { panel.innerHTML = `<div class="sv-wrap"><div class="sv-off"><div class="big">🔐</div><h3>Réservé aux comptes joueurs</h3></div></div>`; return; }
+    panel.innerHTML = `<div class="sv-wrap">${body()}</div>`;
+    if (keep) window.scrollTo(0, y);
+    if (f && ["sv-q", "sv-pq", "sv-dnew", "sv-other"].includes(f)) { const el = document.getElementById(f); if (el) { el.focus(); try { el.setSelectionRange(c, c); } catch (e) {} } }
+  }
+
+  // ── actions
+  panel.addEventListener("click", e => {
+    const t = e.target.closest("[data-sv]"); if (!t || ui.busy) return;
+    const a = t.dataset.sv, who = me(), sa = isSA();
+    if (a === "mode") ui.mode = t.dataset.m;
+    else if (a === "reason") ui.reason = t.dataset.r;
+    else if (a === "publishOpen" && sa) return write(() => ref0().transaction(cur => cur ? undefined : { status: "open", by: who, at: Date.now(), closesAt: _svClosesAt(_svDate) }), "Session ouverte : le vote est lancé");
+    else if (a === "publishNone" && sa) { const reason = ui.reason === "Autre" ? (ui.other.trim() || "Autre") : ui.reason;
+      return write(() => ref0().transaction(cur => cur ? undefined : { status: "none", by: who, at: Date.now(), reason, msg: ui.msg, backDate: ui.msg === "date" ? ui.back : null }), "Annonce publiée"); }
+    else if (a === "reannounce" && sa) return write(() => ref0().update({ status: "open", reason: null, msg: null, backDate: null, closesAt: _svClosesAt(_svDate), by: who }), "Session ouverte : le vote est lancé");
+    else if (a === "reopen" && sa) return write(() => ref0().update({ status: "open" }), "Session rétablie");
+    else if (a === "cancel" && sa) {
+      if (!ui.confirmCancel) { ui.confirmCancel = true; render(true); setTimeout(() => { ui.confirmCancel = false; render(true); }, 4000); return; }
+      ui.confirmCancel = false; return write(() => ref0().update({ status: "cancelled", cancelledBy: who, cancelledAt: Date.now() }), "Session annulée");
+    }
+    else if (a === "pick") ui.draft = t.dataset.k;
+    else if (a === "validate") {
+      const v = ui.draft || ((_svData.votes || {})[who]); if (!v) return;
+      if (closed() && !sa) { ui.err = "Le sondage est fermé."; return render(true); }
+      ui.draft = null; ui.editing = false;
+      return write(() => ref0().child("votes/" + who).set(v), `Réponse enregistrée : ${ST[v][1]}`);
+    }
+    else if (a === "edit") { ui.editing = true; ui.draft = (_svData.votes || {})[who] || null; }
+    else if (a === "noedit") { ui.editing = false; ui.draft = null; }
+    else if (a === "plusOpen") { ui.plus = !ui.plus; ui.depSel = ""; ui.depNew = ""; }
+    else if (a === "depAdd") {
+      const n = ui.depSel === "__new" ? ui.depNew.trim() : ui.depSel; if (!n) return;
+      if (/[.#$\/\[\]]/.test(n)) { ui.err = `Le nom « ${n} » contient un caractère interdit ( . # $ / [ ] ).`; return render(true); }
+      const R = rows(), mode = t.dataset.m;
+      if (R.some(r => r.n === n && r.v === "P")) { ui.err = `${n} est déjà présent.`; return render(true); }
+      ui.depSel = ""; ui.depNew = ""; ui.err = "";
+      if (mode === "admin" && R.some(r => r.n === n && !r.dep)) return write(() => ref0().child("votes/" + n).set("P"), `${n} ajouté aux présents`);
+      if (mode === "plus" && closed() && !sa) return;
+      ui.plus = false;
+      return write(() => ref0().child("plus").push({ n, by: who }), `${n} ajouté : +1 de ${who}`);
+    }
+    else if (a === "rmplus") { const id = t.dataset.id; return write(() => ref0().child("plus/" + id).remove(), "Retiré"); }
+    else if (a === "flt") ui.open = ui.open === t.dataset.k ? null : t.dataset.k;
+    else if (a === "closeVolet") ui.open = null;
+    else if (a === "clearq") ui.q = "";
+    else if (a === "presOpen") { ui.pres = true; window.scrollTo(0, 0); }
+    else if (a === "presClose") { ui.pres = false; window.scrollTo(0, 0); }
+    else if (a === "pf") ui.pf = t.dataset.k;
+    else if (a === "cyc" && sa) {
+      const n = t.dataset.n, cur = (_svData.votes || {})[n] || "N", nx = CYC[(CYC.indexOf(cur) + 1) % CYC.length];
+      return write(() => nx === "N" ? ref0().child("votes/" + n).remove() : ref0().child("votes/" + n).set(nx));
+    }
+    else return;
+    render(true);
+  });
+  panel.addEventListener("change", e => {
+    const el = e.target;
+    if (el.dataset.svsel !== undefined && isSA()) {
+      const n = el.dataset.svsel, v = el.value, id = el.dataset.id;
+      if (id) return write(() => v === "X" ? ref0().child("plus/" + id).remove() : Promise.resolve(), v === "X" ? `${n} retiré` : "");
+      return write(() => v === "N" ? ref0().child("votes/" + n).remove() : ref0().child("votes/" + n).set(v), `${n} : ${ST[v][1]}`);
+    }
+    if (el.id === "sv-dsel") { ui.depSel = el.value; ui.depNew = ""; render(true); if (ui.depSel === "__new") document.getElementById("sv-dnew")?.focus(); }
+    else if (el.name === "sv-msg") { ui.msg = el.value; render(true); }
+    else if (el.id === "sv-back") { ui.back = el.value || ui.back; ui.msg = "date"; render(true); }
+  });
+  panel.addEventListener("input", e => {
+    const id = e.target.id;
+    if (id === "sv-q") ui.q = e.target.value; else if (id === "sv-pq") ui.pq = e.target.value;
+    else if (id === "sv-dnew") ui.depNew = e.target.value; else if (id === "sv-other") ui.other = e.target.value; else return;
+    render(true);
+  });
+  // compte à rebours en direct + passage automatique à « fermé » + changement de lundi à minuit
+  setInterval(() => {
+    if (!_db) return;
+    if (_svDate && _svTarget() !== _svDate) { watch(); render(true); return; }
+    if (!panel.classList.contains("active") || !_svData || _svData.status !== "open") return;
+    const l = left(), v = document.getElementById("sv-cdv");
+    if (l <= 3 * 3600000 && l > 0 && !v) return render(true);
+    if (v) { v.textContent = fmtCd(Math.max(0, l)); document.getElementById("sv-cd").classList.toggle("last", l < 600000); if (l <= 0) render(true); }
+  }, 1000);
+  window._svRender = () => { watch(); render(true); };
+  window._svOnShow = () => { watch(); render(); };
+  _accReady.then(() => watch()).catch(() => {});
+})();
+
 /* ── Init async ── */
 (async function() {
   await _fbLoad();
@@ -13605,9 +14040,9 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     } else {
       history.replaceState(null, '', '#session');
     }
-  } else if ((_hash === "vignettes" || _hash === "reglement") && !(_accUser && _accProfile)) {
+  } else if ((_hash === "vignettes" || _hash === "reglement" || _hash === "vote") && !(_accUser && _accProfile)) {
     history.replaceState(null, '', '#sessions');
-  } else if (_hash === "joueurs" || _hash === "sessions" || _hash === "stats" || _hash === "reglement" || _hash === "vignettes") {
+  } else if (_hash === "joueurs" || _hash === "sessions" || _hash === "stats" || _hash === "reglement" || _hash === "vignettes" || _hash === "vote") {
     const _tabKey = _hash === "sessions" ? "session" : _hash;
     document.querySelectorAll(".main-tab").forEach(t => t.classList.toggle("active", t.dataset.tab === _tabKey));
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === `panel-${_tabKey}`));
