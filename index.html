@@ -2701,6 +2701,12 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .acm-accl .acm-pl b { font-size: 13.5px; display: flex; align-items: center; gap: 6px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .acm-accl .acm-pl small { font-size: 11px; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .acm-accl .acm-link.small { font-size: 11px; }
+  .acm-accl .acm-pl.me { border-color: var(--gold-border); background: color-mix(in srgb, var(--gold) 8%, var(--bg)); }
+  .acm-you { flex: none; white-space: nowrap; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; background: var(--gold); color: #1b1606; }
+  .acm-acts { display: flex; gap: 5px; }
+  .acm-act { font: inherit; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 7px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); cursor: pointer; white-space: nowrap; }
+  .acm-act.gold { color: var(--gold); border-color: var(--gold-border); background: var(--gold-bg); }
+  @media (max-width: 480px) { .acm-accl .acm-pl small { display: none; } .acm-act { padding: 4px 6px; font-size: 10.5px; } .acm-sapill .t { display: none; } .acm-accl .acm-pl b { overflow: visible; } }
   .acm-sapill { font-size: 9.5px; font-weight: 700; letter-spacing: .03em; padding: 1px 7px; border-radius: 20px; color: var(--gold); background: var(--gold-bg); border: 1px solid var(--gold-border); white-space: nowrap; }
   .acm-pl small { font-size: 11.5px; color: var(--text3); }
   .acm-tick { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 12px; }
@@ -2941,7 +2947,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 11:36</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 12:43</footer>
 
 <script>
 
@@ -12427,9 +12433,9 @@ function _accRender(keepFocus) {
     h = `<div class="acm-top"><button class="acm-back" data-a="tome" aria-label="Retour">‹</button><span class="acm-kicker">Super admin</span></div>
       <h4 class="acm-h">Comptes activés</h4>
       <p class="acm-sub">${rows ? `<b>${rows.length}</b> joueur${rows.length > 1 ? "s" : ""} sur ${total} ${rows.length > 1 ? "ont créé leur" : "a créé son"} compte.` : "Chargement…"}</p>${err}
-      <div class="acm-list acm-accl" style="max-height:56vh">${(rows || []).map(r => `<div class="acm-pl" style="cursor:default">${_accAvHTML(r.player, "")}<b>${r.player}${r.super ? `<span class="acm-sapill">★ Super admin</span>` : ""}</b><small title="Date de création du compte">${r.createdAt ? new Date(r.createdAt).toLocaleDateString("fr", { day: "numeric", month: "short" }) : "—"}</small>
-        ${r.uid === (_accUser && _accUser.uid) ? `<span class="acm-taken">Toi</span>` : `<button class="acm-link small" style="width:auto;margin:0" data-a="detach" data-n="${_accEsc(r.player)}">${a.confirmDetach === r.player ? "Confirmer ?" : "Détacher"}</button>`}</div>`).join("")}</div>
-      <p class="acm-help">Détacher libère la fiche : la personne devra se rattacher à nouveau à sa fiche à sa prochaine connexion. Ses pronos et ses données restent sous la fiche.</p>`;
+      <div class="acm-list acm-accl" style="max-height:56vh">${(rows || []).map(r => `<div class="acm-pl${r.uid === (_accUser && _accUser.uid) ? " me" : ""}" style="cursor:default">${_accAvHTML(r.player, "")}<b>${r.player}${r.super ? `<span class="acm-sapill">★<span class="t"> Super admin</span></span>` : ""}</b><small title="Date de création du compte">${r.createdAt ? new Date(r.createdAt).toLocaleDateString("fr", { day: "numeric", month: "short" }) : "—"}</small>
+        ${r.uid === (_accUser && _accUser.uid) ? `<span class="acm-you">Toi</span>` : `<span class="acm-acts"><button class="acm-act${r.super ? "" : " gold"}" data-a="super" data-n="${_accEsc(r.player)}">${a.confirmSuper === r.player ? "Confirmer ?" : r.super ? "Retirer Super Admin" : "Passer Super Admin"}</button><button class="acm-act" data-a="detach" data-n="${_accEsc(r.player)}">${a.confirmDetach === r.player ? "Confirmer ?" : "Détacher"}</button></span>`}</div>`).join("")}</div>
+      <p class="acm-help">Passer Super Admin donne tous les droits (supprimer un match validé, Effacer, coefficients, comptes) dès sa prochaine connexion. Détacher libère la fiche : la personne devra se rattacher à nouveau à sa fiche à sa prochaine connexion. Ses pronos et ses données restent sous la fiche.</p>`;
   } else if (a.view === "login" || a.view === "create0") {
     const seg = `<div class="acm-seg"><button aria-pressed="${a.view === "login"}" data-a="tab" data-t="login">Se connecter</button><button aria-pressed="${a.view !== "login"}" data-a="tab" data-t="create0">Créer un compte</button></div>`;
     h = seg + (a.view === "login"
@@ -12586,6 +12592,17 @@ document.getElementById("acc-modal").addEventListener("click", e => {
   else if (act === "fiche") { _accClose(); _accShowMyFiche(); return; }
   else if (act === "accounts") { a.view = "accounts"; a.accounts = null; a.err = ""; a.confirmDetach = null; _accRender(); _accLoadAccounts(); return; }
   else if (act === "tome") { a.view = "me"; }
+  else if (act === "super") {
+    const n = t.dataset.n, row = (a.accounts || []).find(r => r.player === n);
+    if (!row) return;
+    if (a.confirmSuper !== n) { a.confirmSuper = n; _accRender(); setTimeout(() => { if (_acc.confirmSuper === n) { _acc.confirmSuper = null; if (_acc.view === "accounts") _accRender(); } }, 4000); return; }
+    a.confirmSuper = null;
+    const ref = _db.ref("config/superAdmins/" + n);
+    (row.super ? ref.remove() : ref.set(true))
+      .then(() => { _showToast(row.super ? `${n} n'est plus Super Admin` : `${n} est maintenant Super Admin`); _accLoadAccounts(); })
+      .catch(() => { a.err = "Modification impossible. Réessaie dans un instant."; _accRender(); });
+    return;
+  }
   else if (act === "detach") {
     const n = t.dataset.n;
     if (a.confirmDetach !== n) { a.confirmDetach = n; _accRender(); setTimeout(() => { if (_acc.confirmDetach === n) { _acc.confirmDetach = null; if (_acc.view === "accounts") _accRender(); } }, 4000); return; }
