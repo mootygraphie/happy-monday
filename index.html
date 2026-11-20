@@ -2835,7 +2835,12 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
     body.bn-on #bnav { display: grid; }
     body.bn-on #bell-btn { display: flex; }
     body.bn-on .header-main { padding-right: 46px; min-width: 0; }
-    body.bn-on header h1 { font-size: clamp(15px, 4.6vw, 20px); white-space: nowrap; }
+    /* Téléphone : « Happy Monday » seul, plus grand, sans ballon ni sous-titre ; pas de pied de page
+       (règlement, coefficients et pronos sont dans le menu ☰) */
+    body.bn-on header h1 { font-size: 24px; white-space: nowrap; letter-spacing: .03em; }
+    body.bn-on header .h1-ft, body.bn-on header .logo, body.bn-on #header-sub { display: none !important; }
+    body.bn-on header { padding-top: 14px; padding-bottom: 12px; }
+    body.bn-on footer { display: none; }
     body.bn-on .sq-stand-fab { bottom: calc(var(--bn-pad, 90px) + 10px + env(safe-area-inset-bottom, 0px)); }
     body.bn-on .hmft-toast { bottom: calc(var(--bn-pad, 90px) + 12px + env(safe-area-inset-bottom, 0px)); }
   }
@@ -2888,6 +2893,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #bmenu .sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--text2); transition: transform .2s; }
   #bmenu .bm-row[aria-pressed="true"] .sw { background: color-mix(in srgb, var(--gold) 35%, var(--bg3)); border-color: var(--gold); }
   #bmenu .bm-row[aria-pressed="true"] .sw::after { transform: translateX(16px); background: #fff; }
+  #bmenu .bm-links { display: flex; justify-content: center; align-items: center; gap: 4px 16px; flex-wrap: wrap; }
   #bmenu .bm-rules { display: flex; align-items: center; justify-content: center; gap: 6px; border: none; background: none; color: var(--text3); font: inherit; font-size: 12px; cursor: pointer; padding: 2px 0 0; }
   #bmenu .bm-rules svg { width: 15px; height: 15px; }
   #bnotif-scrim { position: fixed; inset: 0; z-index: 805; background: rgba(0,0,0,.35); }
@@ -2976,7 +2982,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="hnav-toprow">
     <div class="header-main">
       <span class="logo">⚽</span>
-      <h1>Happy Monday Football Team</h1>
+      <h1>Happy Monday<span class="h1-ft"> Football Team</span></h1>
     </div>
     <span class="spacer"></span>
     <div class="header-actions">
@@ -3133,7 +3139,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 15:01</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 15:06</footer>
 
 <script>
 
@@ -14319,7 +14325,9 @@ function _svApply() {
             <button type="button" class="bm-row danger" data-bm="__logout">${ic("out")}<span class="grow">Se déconnecter</span></button>`
             : `<button type="button" class="bm-row" data-bm="__admin">${ic("key")}<span class="grow">Accès admin (mot de passe)</span>${ic("chev", "chev")}</button>`}
         </div>
-        ${shown("footer-reglement-btn") ? `<button type="button" class="bm-rules" data-bm="__rules">${ic("rules")}Règlement 26/27</button>` : ""}</div>`;
+        ${shown("footer-pronos-wrap") ? `<div class="bm-rows"><button type="button" class="bm-row" data-bm="__pronos">${ic("trophy")}<span class="grow">${esc(($("footer-pronos-btn") || {}).textContent || "Pronos")}</span><small>super admin</small></button></div>` : ""}
+        <div class="bm-links">${shown("footer-reglement-btn") ? `<button type="button" class="bm-rules" data-bm="__rules">${ic("rules")}Règlement 26/27</button>` : ""}
+          ${shown("footer-coef-btn") ? `<button type="button" class="bm-rules" data-bm="__coef">${ic("dash")}Coefficients joueurs</button>` : ""}</div></div>`;
     }
     function render() {
       try { renderBar(); renderTicker(); renderBell(); renderMenu(); renderNotif(); } catch (e) { console.warn("menu du bas:", e); }
@@ -14355,6 +14363,8 @@ function _svApply() {
           else if (k === "__logout") { typeof _accLogout === "function" && _accLogout(); }
           else if (k === "__admin") { typeof _openAdminPwd === "function" && _openAdminPwd(); }
           else if (k === "__rules") $("footer-reglement-btn")?.click();
+          else if (k === "__coef") $("footer-coef-btn")?.click();
+          else if (k === "__pronos") $("footer-pronos-btn")?.click();
           else goTab(k);
           return;
         }
