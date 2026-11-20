@@ -15,6 +15,7 @@ import datetime, json, os, sys, tempfile, time, urllib.request, zoneinfo
 
 DB = "https://happy-monday-a2404-default-rtdb.europe-west1.firebasedatabase.app"
 SITE = "https://mootygraphie.github.io/happy-monday/"
+VAPID_SUB = "https://mootygraphie.github.io"  # identifiant de l'expéditeur : adresse web SANS chemin (exigé par py_vapid)
 PARIS = zoneinfo.ZoneInfo("Europe/Paris")
 DRY = os.environ.get("DRY_RUN", "").strip() in ("1", "true", "oui")
 MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
@@ -58,7 +59,7 @@ def main():
             try:
                 webpush(subscription_info={"endpoint": s["endpoint"], "keys": s["keys"]},
                         data=json.dumps({"title": title, "body": body, "url": url, "tag": tag}),
-                        vapid_private_key=keyfile, vapid_claims={"sub": SITE}, ttl=6 * 3600)
+                        vapid_private_key=keyfile, vapid_claims={"sub": VAPID_SUB}, ttl=6 * 3600)
                 stats["envoyées"] += 1
             except WebPushException as e:
                 code = getattr(e.response, "status_code", None)
@@ -68,6 +69,9 @@ def main():
                 else:
                     stats["échecs"] += 1
                     print("échec", player, code, str(e)[:200])
+            except Exception as e:  # une erreur sur un abonnement n'arrête pas les autres envois
+                stats["échecs"] += 1
+                print("échec", player, type(e).__name__, str(e)[:200])
 
     if test:
         if test not in subs:
