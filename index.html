@@ -107,6 +107,7 @@
   .header-main { display: flex; align-items: center; gap: 14px; }
   .header-actions { display: flex; align-items: center; gap: 8px; }
   header .logo { font-size: 26px; }
+  header .hdr-dragon { display: none; }
   header h1 { font-size: 20px; font-weight: 700; text-transform: uppercase; font-style: italic; letter-spacing: .04em; }
   header .spacer { flex: 1; }
   #header-sub { display: none; }
@@ -2854,6 +2855,8 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
        (règlement, coefficients et pronos sont dans le menu ☰) */
     body.bn-on header h1 { font-size: clamp(23px, 6.7vw, 27px); line-height: 1.1; white-space: nowrap; letter-spacing: .03em; }
     body.bn-on header .h1-ft, body.bn-on header .logo, body.bn-on #header-sub { display: none !important; }
+    body.bn-on header .hdr-dragon { display: block; height: 40px; width: auto; flex: none; filter: drop-shadow(0 1px 0 rgba(255,255,255,.25)); }
+    body.bn-on .header-main { gap: 10px; }
     body.bn-on header { padding-top: calc(22px + env(safe-area-inset-top, 0px)); padding-bottom: 22px; }
     /* Barre de titre aux couleurs de l'écusson HMFT : rouge vif en dégradé, titre blanc,
        double liseré blanc + noir en bas (comme le contour de l'icône) */
@@ -3051,6 +3054,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="hnav-toprow">
     <div class="header-main">
       <span class="logo">⚽</span>
+      <img class="hdr-dragon" src="icons/dragon.png?v=1" alt="" aria-hidden="true">
       <h1>Happy Monday<span class="h1-ft"> Football Team</span></h1>
     </div>
     <span class="spacer"></span>
@@ -3208,7 +3212,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 16:29</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 16:32</footer>
 
 <script>
 
