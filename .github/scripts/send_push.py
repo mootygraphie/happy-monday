@@ -5,7 +5,7 @@ Déjà envoyé  : pushSent/... (pour ne jamais envoyer deux fois la même chose)
 Notifications :
   - sondage ouvert                  → tous les abonnés, une fois par lundi
   - « plus que 3 h » (dès 18h30)    → abonnés qui n'ont pas répondu, une fois
-  - booster disponible (dès 12h)    → abonnés qui ont un album et au moins 1 booster, une fois par jour
+  - booster disponible (dès 10h)    → abonnés qui ont au moins 1 booster et n'en ont ouvert aucun aujourd'hui, une fois par jour
   - proposition d'échange reçue     → le destinataire, une fois par proposition
   - message d'un super admin        → pushQueue/{id} = {by, title, body, to: joueur | "__all"}
 Préférences : pushPrefs/{joueur} = {trades: false, boosters: false} pour les couper
@@ -133,11 +133,16 @@ def main():
         season = seasons[-1]
         V = req(f"vignettes/{season}") or {}
         day = (today - datetime.date(1970, 1, 1)).days
-        if now.hour >= 12:
+        if now.hour >= 10:
             done = (sent.get("boost") or {}).get(today.isoformat()) or {}
+            midnight = datetime.datetime.combine(today, datetime.time(0, 0), PARIS).timestamp() * 1000
+            logs = req(f"vignettesLog/{season}") or {}
             for p in subs:
                 b = (V.get(p) or {}).get("boosters")
                 if not b or done.get(p) or not allowed(p, "boosters"):
+                    continue
+                # déjà ouvert un booster aujourd'hui (journal des ouvertures, hors échanges) : pas de rappel
+                if any(isinstance(e, dict) and e.get("cards") and (e.get("at") or 0) >= midnight for e in (logs.get(p) or {}).values()):
                     continue
                 stock = min(5, (b.get("stock") or 0) + max(0, day - (b.get("day") or day)))
                 if stock > 0:

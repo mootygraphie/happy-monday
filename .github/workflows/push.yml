@@ -1,0 +1,39 @@
+# Notifications push : toutes les 10 minutes, regarde la base et envoie ce qui est dû
+# (sondage ouvert, rappel 3 h avant la clôture, booster dispo, échange reçu).
+# La clé privée d'envoi est dans le secret VAPID_PRIVATE_KEY (jamais dans le code).
+name: Notifications push
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+    inputs:
+      test_player:
+        description: "Envoyer une notification de test à ce joueur (nom de fiche, ex. Boris)"
+        required: false
+        default: ""
+      dry_run:
+        description: "Simulation : afficher sans rien envoyer (1 = oui)"
+        required: false
+        default: ""
+
+concurrency:
+  group: push
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pywebpush==1.14.0
+      - name: Envoyer les notifications dues
+        env:
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          TEST_PLAYER: ${{ github.event.inputs.test_player }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: python .github/scripts/send_push.py
