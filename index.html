@@ -979,6 +979,11 @@
   .saisie-step-line { flex: 0 0 auto; width: clamp(20px, 6vw, 56px); height: 2px; background: var(--border2); margin: 0 6px; }
   .saisie-step-line.done { background: #2ecc71; }
   @media (max-width: 560px) { .saisie-step-pill .lbl { display: none; } }
+  /* Téléphone : les étapes dans un menu déroulant stylisé (le stepper reste sur ordinateur) */
+  .saisie-stepsel { display: none; position: relative; margin: 0 auto 1.2rem; width: 98%; }
+  .saisie-stepsel::after { content: ""; position: absolute; right: 16px; top: 50%; width: 8px; height: 8px; border-right: 2px solid var(--gold); border-bottom: 2px solid var(--gold); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+  .saisie-stepsel select { -webkit-appearance: none; appearance: none; width: 100%; background: linear-gradient(180deg, var(--bg3), var(--bg2)); border: 1px solid var(--gold-border); border-radius: 14px; padding: 13px 40px 13px 14px; font: inherit; font-size: 16px; font-weight: 700; color: var(--text); cursor: pointer; }
+  @media (max-width: 560px) { .saisie-stepper { display: none; } .saisie-stepsel { display: block; } }
 
   .saisie-screen { display: none; }
   .saisie-screen.active { display: block; }
@@ -3048,7 +3053,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 13:46</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 14:23</footer>
 
 <script>
 
@@ -9391,9 +9396,16 @@ function openPlayerPanel(playerName) {
 }
 
 function closePlayerPanel() {
+  const afterLogin = document.getElementById("player-panel").classList.contains("pp-full");
   document.getElementById("player-panel-overlay").classList.remove("open");
   document.getElementById("player-panel").classList.remove("open", "pp-full"); // pp-full : fiche plein écran après connexion
   document.body.style.overflow = "";
+  if (afterLogin) {
+    const shown = id => { const b = document.getElementById(id); return b && b.style.display !== "none"; };
+    const voteOpen = typeof _svData !== "undefined" && _svData && _svData.status === "open" && _liveNow() < (_svData.closesAt || 0);
+    const target = shown("live-tab-btn") ? "live" : (voteOpen && shown("sv-tab-btn")) ? "vote" : "session";
+    if (!document.getElementById("panel-saisie")?.classList.contains("active")) document.querySelector(`.main-tab[data-tab="${target}"]`)?.click();
+  }
 }
 
 /* Fenetre "choisir un haut fait" : attribution ET retrait manuel (admin) d un haut fait
@@ -9905,13 +9917,15 @@ function _buildRepartitionScreenHTML() {
 
   const anyAssigned = presents.some(p => _draft.presences[p]?.equipe);
   const nPending = Object.keys(_saisieRepartPending).length;
+  // Tous les présents ont une équipe (2 équipes au moins) : « Valider les équipes » mène aux Matchs
+  const teamsComplete = presents.every(p => _draft.presences[p]?.equipe) && new Set(presents.map(p => _draft.presences[p]?.equipe)).size >= 2;
 
   return `<div class="saisie-section">
     <div class="saisie-section-title">⚖️ Répartition des équipes</div>
     <p class="saisie-repart-hint">Touchez un joueur pour choisir sa couleur, puis validez.</p>
     <div class="saisie-repart-cols n${visibleZonesCount}">${colsHtml}</div>
     <div class="validate-row">
-      <button class="saisie-repart-validate" data-act="saisie-repart-validate"${nPending ? "" : " disabled"}>${nPending ? "Valider la répartition" : (anyAssigned ? "✓ Répartition validée" : "Valider la répartition")}</button>
+      <button class="saisie-repart-validate" data-act="saisie-repart-validate"${nPending || teamsComplete ? "" : " disabled"}>${nPending ? "Valider la répartition" : teamsComplete ? "✓ Valider les équipes" : (anyAssigned ? "✓ Répartition validée" : "Valider la répartition")}</button>
     </div>
     <div class="saisie-auto-teams-note" style="text-align:center">${nPending
       ? `${nPending} changement${nPending>1?"s":""} en attente — rien ne bouge tant que vous ne validez pas`
@@ -10259,6 +10273,7 @@ function _buildMatchsScreenHTML() {
 }
 
 function renderSaisie() {
+  if (typeof _svAutoImport === "function") _svAutoImport();
   if (!_draft) _loadDraft();
   // Chaque appel remplace tout le contenu du panneau (innerHTML) : ceci recree entierement
   // .saisie-pres-list, qui a son propre defilement interne (overflow-y:auto) — recreer
@@ -10309,6 +10324,7 @@ function renderSaisie() {
     </div>
 
     <div class="saisie-stepper">${stepperHTML}</div>
+    <div class="saisie-stepsel"><select id="saisie-stepsel" aria-label="Étape de la saisie">${_SAISIE_STEPS.map((st, i) => `<option value="${st.key}"${st.key === _saisieStep ? " selected" : ""}>${i + 1}. ${st.icon} ${st.label}${i < doneIdx ? " ✓" : ""}</option>`).join("")}</select></div>
 
     <div class="saisie-screen${_saisieStep==="presences"?" active":""}" data-screen="presences">
       ${_buildPresencesScreenHTML()}
@@ -10570,7 +10586,15 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     _saisieRepartPending[p] = _saisieRepartNextColor(_saisieRepartColorOf(p));
     renderSaisie(); return;
   }
-  if (e.target.closest('[data-act="saisie-repart-validate"]')) { _saisieRepartCommitPending(); renderSaisie(); return; }
+  if (e.target.closest('[data-act="saisie-repart-validate"]')) {
+    _saisieRepartCommitPending(); renderSaisie();
+    const pres = _presentList(), teams = new Set(pres.map(p => _draft.presences[p]?.equipe).filter(Boolean));
+    if (_saisieStep === "repartition" && pres.length && pres.every(p => _draft.presences[p]?.equipe) && teams.size >= 2) {
+      document.querySelector('.saisie-step-pill[data-step="matchs"]')?.click();
+      if (_saisieStep === "matchs") _showToast("Équipes validées : place aux matchs !");
+    }
+    return;
+  }
   const presFilterBtn = e.target.closest('[data-act="saisie-pres-filter"]');
   if (presFilterBtn) {
     _saisiePresFilter = presFilterBtn.dataset.filter;
@@ -13738,10 +13762,26 @@ function _svImportHTML() {
   if (!n) return "";
   return `<div class="saisie-sv-import"><span>🗓️ Vote de présence : <b>${n} réponse${n > 1 ? "s" : ""}</b></span><button class="saisie-btn secondary" data-act="sv-import">📥 Importer les réponses du vote</button></div>`;
 }
+function _svAutoImport() {
+  const d = _svData;
+  if (!d || d.status !== "open" || !_draft || _draft.svAuto || (typeof _editMode !== "undefined" && _editMode) || _draft.date !== _svDate) return;
+  if (!Object.keys(d.votes || {}).length && !Object.keys(d.plus || {}).length) return;
+  const blank = Object.values(_draft.presences || {}).every(v => !v || !v.statut || v.statut === "Pas répondu") && !(_draft.tempJokers || []).length;
+  if (!blank) return;
+  _draft.svAuto = true;
+  _svApply();
+  _saveDraft();
+  setTimeout(() => _showToast("Présences remplies avec les réponses du vote"), 50);
+}
 function _svImport() {
   const d = _svData; if (!d || _draft.date !== _svDate) return;
   const votes = d.votes || {}, plus = Object.values(d.plus || {});
   if (!confirm(`Importer les réponses du vote dans les présences ?\nLes statuts des ${Object.keys(votes).length + plus.length} joueurs concernés seront remplacés. Les autres ne changent pas.`)) return;
+  _svApply();
+  _saveDraft(); renderSaisie(); _showToast("Réponses du vote importées");
+}
+function _svApply() {
+  const d = _svData, votes = d.votes || {}, plus = Object.values(d.plus || {});
   Object.entries(votes).forEach(([p, v]) => {
     if (!_SV_MAP[v]) return;
     if (!_draft.presences[p]) _draft.presences[p] = { statut: "Pas répondu", equipe: "" };
@@ -13755,7 +13795,6 @@ function _svImport() {
     if (!_draft.tempJokers.includes(n)) _draft.tempJokers.push(n);
     _draft.presences[n] = { statut: "Présent", equipe: (_draft.presences[n] && _draft.presences[n].equipe) || "", joker: true, ...(ALL_PLAYERS.includes(n) ? {} : { temp: true }) };
   });
-  _saveDraft(); renderSaisie(); _showToast("Réponses du vote importées");
 }
 
 (function () {
@@ -13901,7 +13940,13 @@ function _svImport() {
     if (ui.pres && isSA()) return vPres();
     const d = _svData, who = me(), mine = (d.votes || {})[who] || null, locked = closed() && !isSA();
     const choosing = !locked && !closed() && (!mine || ui.editing) || (isSA() && closed() && ui.editing);
-    let h = `<div class="sv-sec"><span class="sv-st">🗓️ Prochaine session</span><h3 class="sv-date">${fdate(_svDate)}</h3>${lockLine()}`;
+    const p = _svParis(_liveNow()), tonight = p.wd === 1 && _svIso(Date.UTC(p.y, p.m - 1, p.d)) === _svDate && p.h >= 18;
+    const canSaisie = document.getElementById("saisie-nav-btn") && document.getElementById("saisie-nav-btn").style.display !== "none";
+    const liveOn = document.getElementById("live-tab-btn") && document.getElementById("live-tab-btn").style.display !== "none";
+    const tonightHTML = tonight ? `<div class="sv-sec"><span class="sv-st">⚽ C'est ce soir !</span>
+      ${canSaisie ? `<button class="sv-btn green" data-sv="goSaisie">⚖️ Aller à la Saisie</button>` : ""}
+      ${liveOn ? `<button class="sv-btn sec" data-sv="goLive">● Session en cours</button>` : ""}</div>` : "";
+    let h = tonightHTML + `<div class="sv-sec"><span class="sv-st">🗓️ Prochaine session</span><h3 class="sv-date">${fdate(_svDate)}</h3>${lockLine()}`;
     if (choosing) {
       const dv = ui.draft || mine;
       h += `<span class="sv-lbl">Tu viens lundi ?</span><div class="sv-vote">
@@ -13955,6 +14000,8 @@ function _svImport() {
       if (!ui.confirmCancel) { ui.confirmCancel = true; render(true); setTimeout(() => { ui.confirmCancel = false; render(true); }, 4000); return; }
       ui.confirmCancel = false; return write(() => ref0().update({ status: "cancelled", cancelledBy: who, cancelledAt: Date.now() }), "Session annulée");
     }
+    else if (a === "goSaisie") { document.getElementById("saisie-nav-btn")?.click(); return; }
+    else if (a === "goLive") { document.querySelector('.main-tab[data-tab="live"]')?.click(); return; }
     else if (a === "pick") ui.draft = t.dataset.k;
     else if (a === "validate") {
       const v = ui.draft || ((_svData.votes || {})[who]); if (!v) return;
@@ -14017,6 +14064,12 @@ function _svImport() {
     if (v) { v.textContent = fmtCd(Math.max(0, l)); document.getElementById("sv-cd").classList.toggle("last", l < 600000); if (l <= 0) render(true); }
   }, 1000);
   window._svRender = () => { watch(); render(true); };
+  document.addEventListener("change", e => {
+    if (e.target.id !== "saisie-stepsel") return;
+    const v = e.target.value;
+    document.querySelector(`.saisie-step-pill[data-step="${v}"]`)?.click();
+    if (_saisieStep !== v) renderSaisie(); // confirmation refusée : le menu revient sur l'étape actuelle
+  });
   window._svOnShow = () => { watch(); render(); };
   _accReady.then(() => watch()).catch(() => {});
 })();
