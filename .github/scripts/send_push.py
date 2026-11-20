@@ -52,26 +52,34 @@ def main():
     stats = {"envoyées": 0, "échecs": 0, "abonnements expirés": 0}
 
     def send(player, title, body, url, tag):
-        for sid, s in (subs.get(player) or {}).items():
+        """Renvoie True si c'est « réglé » (au moins un envoi réussi, ou plus aucun abonnement valide)."""
+        ok = False
+        items = list((subs.get(player) or {}).items())
+        expired = 0
+        for sid, s in items:
             if DRY:
                 print(f"  (simulation) → {player} : {title} · {body}")
+                ok = True
                 continue
             try:
                 webpush(subscription_info={"endpoint": s["endpoint"], "keys": s["keys"]},
                         data=json.dumps({"title": title, "body": body, "url": url, "tag": tag}),
                         vapid_private_key=keyfile, vapid_claims={"sub": VAPID_SUB}, ttl=6 * 3600)
                 stats["envoyées"] += 1
+                ok = True
             except WebPushException as e:
                 code = getattr(e.response, "status_code", None)
                 if code in (404, 410):  # abonnement expiré ou révoqué : on le supprime
                     req(f"pushSubs/{player}/{sid}", "DELETE")
                     stats["abonnements expirés"] += 1
+                    expired += 1
                 else:
                     stats["échecs"] += 1
                     print("échec", player, code, str(e)[:200])
             except Exception as e:  # une erreur sur un abonnement n'arrête pas les autres envois
                 stats["échecs"] += 1
                 print("échec", player, type(e).__name__, str(e)[:200])
+        return ok or (items and expired == len(items))
 
     if test:
         if test not in subs:
@@ -100,10 +108,12 @@ def main():
         targets = list(subs) if q.get("to") == "__all" else [q.get("to")] if q.get("to") in subs else []
         before = stats["envoyées"]
         print("Message de", q.get("by"), "→", q.get("to"), ":", q.get("title"))
-        for p in targets:
-            send(p, (q.get("title") or "Happy Monday")[:60], (q.get("body") or "")[:200], "./", f"msg-{qid}")
-        if not DRY:
+        results = [send(p, (q.get("title") or "Happy Monday")[:60], (q.get("body") or "")[:200], "./", f"msg-{qid}") for p in targets]
+        tries = (q.get("tries") or 0) + 1
+        if not DRY and (any(results) or not targets or tries >= 6):  # réessaie aux passages suivants (6 fois max)
             req(f"pushQueue/{qid}", "PATCH", {"sentAt": int(time.time() * 1000), "count": stats["envoyées"] - before})
+        elif not DRY:
+            req(f"pushQueue/{qid}", "PATCH", {"tries": tries})
 
     sent = req("pushSent") or {}
     now = datetime.datetime.now(PARIS)
@@ -119,16 +129,16 @@ def main():
         votes = vote.get("votes") or {}
         if not (sent.get("open") or {}).get(mon_iso):
             print("Sondage ouvert :", mon_iso)
-            for p in subs:
-                send(p, "🗓️ Le sondage est ouvert", f"Tu viens {mon_lbl} ? Réponds avant dimanche 21h30.", "./?n=vote#vote", f"open-{mon_iso}")
-            mark(f"pushSent/open/{mon_iso}")
+            results = [send(p, "🗓️ Le sondage est ouvert", f"Tu viens {mon_lbl} ? Réponds avant dimanche 21h30.", "./?n=vote#vote", f"open-{mon_iso}") for p in subs]
+            if any(results):
+                mark(f"pushSent/open/{mon_iso}")
         if vote["closesAt"] - now_ms <= 3 * 3600 * 1000:
             done = (sent.get("rem3h") or {}).get(mon_iso) or {}
             for p in subs:
                 if p not in votes and not done.get(p):
                     print("Rappel 3 h :", p)
-                    send(p, "⏳ Plus que 3 h pour répondre", f"Le sondage pour {mon_lbl} se ferme ce soir à 21h30.", "./?n=vote#vote", f"rem-{mon_iso}")
-                    mark(f"pushSent/rem3h/{mon_iso}/{p}")
+                    if send(p, "⏳ Plus que 3 h pour répondre", f"Le sondage pour {mon_lbl} se ferme ce soir à 21h30.", "./?n=vote#vote", f"rem-{mon_iso}"):
+                        mark(f"pushSent/rem3h/{mon_iso}/{p}")
 
     # ── vignettes : boosters et échanges (saison la plus récente)
     with urllib.request.urlopen(f"{DB}/vignettes.json?shallow=true", timeout=30) as resp:
@@ -151,8 +161,8 @@ def main():
                 stock = min(5, (b.get("stock") or 0) + max(0, day - (b.get("day") or day)))
                 if stock > 0:
                     print("Boosters :", p, stock)
-                    send(p, "🎁 " + ("Un booster t'attend" if stock == 1 else f"{stock} boosters t'attendent"), "Ouvre-les dans Vignettes.", "./?n=vg#vignettes", f"boost-{today.isoformat()}")
-                    mark(f"pushSent/boost/{today.isoformat()}/{p}")
+                    if send(p, "🎁 " + ("Un booster t'attend" if stock == 1 else f"{stock} boosters t'attendent"), "Ouvre-les dans Vignettes.", "./?n=vg#vignettes", f"boost-{today.isoformat()}"):
+                        mark(f"pushSent/boost/{today.isoformat()}/{p}")
         done = sent.get("trade") or {}
         for tid, t in (V.get("_trades") or {}).items():
             if t.get("status") != "wait" or done.get(tid) or t.get("to") not in subs or not allowed(t.get("to"), "trades"):
@@ -161,9 +171,9 @@ def main():
                 continue
             gift = not t.get("get")
             print("Échange :", tid, t.get("from"), "→", t.get("to"))
-            send(t["to"], ("🎁 " if gift else "🔄 ") + (f"{t.get('from')} t'offre un cadeau" if gift else f"{t.get('from')} te propose un échange"),
-                 "À voir dans Vignettes · Échanges.", "./?n=vg#vignettes", f"trade-{tid}")
-            mark(f"pushSent/trade/{tid}")
+            if send(t["to"], ("🎁 " if gift else "🔄 ") + (f"{t.get('from')} t'offre un cadeau" if gift else f"{t.get('from')} te propose un échange"),
+                    "À voir dans Vignettes · Échanges.", "./?n=vg#vignettes", f"trade-{tid}"):
+                mark(f"pushSent/trade/{tid}")
     print(stats)
 
 

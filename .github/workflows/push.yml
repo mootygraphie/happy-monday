@@ -30,7 +30,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install pywebpush==1.14.0
+      - run: pip install "pywebpush>=2.0.3,<3"
       - name: Envoyer les notifications dues
         env:
           VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
