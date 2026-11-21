@@ -500,7 +500,7 @@
   #player-panel.open { transform: translateX(0); }
   /* Téléphone : « Voir ma fiche » depuis le menu ☰ s'ouvre comme une page (pas de volet, pas de voile),
      la barre du bas reste visible et accessible */
-  @media (max-width: 760px) {
+  @media all {
     body.bn-on #player-panel.pp-page { width: 100vw; border-left: none; transition: none; z-index: 790; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); padding-top: env(safe-area-inset-top, 0px); background: var(--bg); }
     body.bn-on #player-panel-overlay.pp-page { display: none; }
     body.bn-on #player-panel.pp-page #pp-close { display: none; }
@@ -2846,7 +2846,11 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
 
   /* ═══ Menu du bas (téléphone) : barre plate + bandeau d'info + menu ☰ + cloche ═══ */
   #bnav, #bticker, #bmenu, #bnotif, #bnotif-scrim, #bell-btn { display: none; }
-  @media (max-width: 760px) {
+  /* mode « téléphone » : body.bn-on (téléphone, et aussi iPad / tablettes tactiles) */
+  @media all {
+    body.bn-on .hnav-tabsrow, body.bn-on .header-actions, body.bn-on header .spacer { display: none !important; }
+    body.bn-on .hnav-toprow { position: relative; justify-content: flex-start; }
+    body.bn-on header { align-items: center; padding-left: 16px; padding-right: 16px; gap: 6px; }
     body.bn-on { padding-bottom: calc(var(--bn-pad, 104px) + env(safe-area-inset-bottom, 0px)); }
     body.bn-on .hnav-burger { display: none !important; }
     body.bn-on #bnav { display: grid; }
@@ -2887,7 +2891,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #bell-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   #bell-btn .bn-bd { top: -6px; right: -6px; }
   #bticker { position: fixed; left: 10px; right: 10px; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); z-index: 801; align-items: center; gap: 9px; border-radius: 14px; padding: 9px 10px 9px 12px; font: inherit; font-size: 13px; cursor: pointer; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); text-align: left; box-shadow: 0 8px 22px rgba(0,0,0,.35); }
-  @media (max-width: 760px) { body.bn-on.bn-tk #bticker { display: flex; } }
+  body.bn-on.bn-tk #bticker { display: flex; }
   #bticker .t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   #bticker .go { color: var(--gold); font-weight: 700; white-space: nowrap; }
   #bticker.warn { border-color: var(--gold-border); background: color-mix(in srgb, var(--gold) 10%, var(--bg3)); }
@@ -3235,7 +3239,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 20/11/2026 - 17:13</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 08:38</footer>
 
 <script>
 
@@ -12894,7 +12898,7 @@ async function _accLoadAccounts() {
     const apps = ai.val() || {};
     const users = us.val() || {}, supers = sa.val() || {};
     _acc.accounts = Object.entries(pa.val() || {}).map(([player, uid]) => ({ player, uid, createdAt: users[uid] && users[uid].createdAt, super: supers[player] === true, app: apps[player] || null }))
-      .sort((x, y) => (y.super - x.super) || (y.createdAt || 0) - (x.createdAt || 0)); // super admins en tête
+      .sort((x, y) => (y.super - x.super) || x.player.localeCompare(y.player, "fr")); // super admins en tête, puis ordre alphabétique
   } catch (e) { _acc.accounts = []; _acc.err = "Impossible de charger la liste. Réessaie dans un instant."; }
   if (_acc.view === "accounts") _accRender();
 }
@@ -14328,7 +14332,10 @@ function _svApply() {
     document.body.insertAdjacentHTML("beforeend", `<nav id="bnav" aria-label="Navigation"></nav><button id="bticker" type="button"></button>
       <div id="bmenu" role="dialog" aria-label="Menu"></div><div id="bnotif-scrim"></div><div id="bnotif" role="dialog" aria-label="Notifications"></div>`);
     document.querySelector("header .hnav-toprow")?.insertAdjacentHTML("beforeend", `<button id="bell-btn" type="button" aria-label="Notifications" aria-expanded="false"></button>`);
-    document.body.classList.add("bn-on");
+    // Mode « téléphone » (barre du bas, en-tête compact) : écran étroit OU tablette tactile (iPad, Android)
+    const isTablet = () => { try { return matchMedia("(pointer: coarse)").matches && Math.min(screen.width, screen.height) >= 600 && Math.max(screen.width, screen.height) <= 1400; } catch (e) { return false; } };
+    const applyMode = () => document.body.classList.toggle("bn-on", innerWidth <= 760 || isTablet());
+    applyMode(); addEventListener("resize", applyMode);
 
     const acc = () => !!(typeof _accUser !== "undefined" && _accUser && typeof _accProfile !== "undefined" && _accProfile);
     const me = () => (typeof _accPlayer === "function" ? _accPlayer() : null);
@@ -14613,7 +14620,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       const plus = '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v8M8 12h8"/></svg>';
       document.body.insertAdjacentHTML("beforeend", `<div id="pwa-guide" role="dialog" aria-label="Installer l'appli"><div class="pg-in">
         <div class="pg-h"><img src="icons/apple-touch-icon.png" alt=""><span><b>Installer Happy Monday</b><small>Sur iPhone, les notifications ne marchent que depuis l'appli installée.</small></span></div>
-        <ol><li>Dans Safari, touche « Partager » en bas de l'écran ${share}</li>
+        <ol><li>Dans Safari, touche « Partager » ${/iPad/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ? "en haut à droite" : "en bas de l'écran"} ${share}</li>
           <li>Choisis « Sur l'écran d'accueil » ${plus}</li>
           <li>Ouvre Happy Monday depuis ton écran d'accueil, reconnecte-toi une fois, puis active les notifications dans le menu ☰</li></ol>
         <button type="button">J'ai compris</button></div></div>`);
