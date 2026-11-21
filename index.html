@@ -3174,6 +3174,10 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #chat .ch-emo { display: flex; justify-content: space-between; background: var(--bg3); border-radius: 30px; padding: 6px 10px; }
   #chat .ch-emo button { border: none; background: none; font-size: 26px; cursor: pointer; border-radius: 50%; width: 44px; height: 44px; }
   #chat .ch-emo button[aria-pressed="true"] { background: var(--gold-bg); }
+  #chat .ch-emo button.more { font-size: 22px; font-weight: 700; color: var(--text2); border: 1.5px dashed var(--border2); }
+  #chat .ch-emoin { display: flex; gap: 8px; align-items: center; }
+  #chat .ch-emoin input { flex: 1; min-width: 0; background: var(--bg3); border: 1.5px solid var(--gold-border); border-radius: 30px; padding: 12px 16px; font: inherit; font-size: 16px; color: var(--text); outline: none; }
+  #chat .ch-emoin button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); cursor: pointer; flex: none; }
   #chat .ch-act { display: flex; align-items: center; gap: 10px; border: none; background: var(--bg3); border-radius: 12px; padding: 12px; font: inherit; font-size: 14.5px; font-weight: 600; cursor: pointer; text-align: left; color: var(--text); }
   #chat .ch-act.sa { background: var(--gold-bg); color: var(--gold); }
   #chat .ch-act.danger { color: var(--bad); }
@@ -3486,7 +3490,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 10:18</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 10:22</footer>
 
 <script>
 
@@ -15333,7 +15337,10 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const r = R(V.room), p = me(), mine = m.reacts || {}, pinned = r.pinned && r.pinned.id === m.id;
     return `<div class="ch-sheet" data-ch="closeSheet"><div class="ch-sheet-in" data-stop="1"><div class="ch-grab"></div>
       <div class="ch-prev"><b>${esc(m.by)}</b> · ${esc(plain(m.text))}</div>
-      <div class="ch-emo">${EMO.map(e => `<button type="button" data-ch="react" data-id="${m.id}" data-e="${e}" aria-pressed="${!!(mine[e] && mine[e][p])}">${e}</button>`).join("")}</div>
+      ${V.emoMore === m.id
+        ? `<div class="ch-emoin"><input id="ch-emoin" autocomplete="off" enterkeyhint="done" placeholder="Choisis un émoji sur ton clavier 😀" aria-label="Réagir avec un émoji du clavier"><button type="button" data-ch="emoLess" aria-label="Revenir aux émojis rapides">✕</button></div>
+           <p class="ch-note">Touche la touche émoji 😀 de ton clavier, puis l'émoji de ton choix.</p>`
+        : `<div class="ch-emo">${EMO.map(e => `<button type="button" data-ch="react" data-id="${m.id}" data-e="${e}" aria-pressed="${!!(mine[e] && mine[e][p])}">${e}</button>`).join("")}<button type="button" class="more" data-ch="emoMore" data-id="${m.id}" aria-label="Choisir un autre émoji">＋</button></div>`}
       <button type="button" class="ch-act" data-ch="replyTo" data-id="${m.id}">↩️ Répondre</button>
       <button type="button" class="ch-act" data-ch="copy" data-id="${m.id}">📋 Copier le texte</button>
       ${isSA() ? `<button type="button" class="ch-act sa" data-ch="${pinned ? "unpin" : "pin"}" data-id="${m.id}">★ 📌 ${pinned ? "Désépingler" : "Épingler en haut du salon"}</button>` : ""}
@@ -15490,15 +15497,11 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     }
     if (a === "vote") { closeChat(); document.querySelector('.main-tab[data-tab="vote"]')?.click(); return; }
     if (!r) return;
-    if (a === "sheet") { if (e.target.closest(".ch-quote") || e.target.closest(".mention")) return; V.sheet = t.dataset.id; V.confirmDel = null; return render(); }
-    if (a === "closeSheet") { V.sheet = null; return render(); }
-    if (a === "react") {
-      const m = (msgs[r.id] || []).find(x => x.id === t.dataset.id); if (!m) return;
-      const has = !!(m.reacts && m.reacts[t.dataset.e] && m.reacts[t.dataset.e][p]);
-      V.sheet = null; render();
-      _db.ref(`chat/msgs/${r.id}/${m.id}/reacts/${t.dataset.e}/${p}`).set(has ? null : true).catch(() => toast("Réaction non enregistrée."));
-      return;
-    }
+    if (a === "sheet") { if (e.target.closest(".ch-quote") || e.target.closest(".mention")) return; V.sheet = t.dataset.id; V.confirmDel = null; V.emoMore = null; return render(); }
+    if (a === "closeSheet") { V.sheet = null; V.emoMore = null; return render(); }
+    if (a === "react") return doReact(t.dataset.id, t.dataset.e);
+    if (a === "emoMore") { V.emoMore = t.dataset.id; render(); setTimeout(() => $("ch-emoin")?.focus(), 50); return; }
+    if (a === "emoLess") { V.emoMore = null; return render(); }
     if (a === "replyTo") { const m = (msgs[r.id] || []).find(x => x.id === t.dataset.id); V.reply = m ? { id: m.id, by: m.by, text: m.text } : null; V.sheet = null; render(); $("ch-tx")?.focus(); return; }
     if (a === "copy") { const m = (msgs[r.id] || []).find(x => x.id === t.dataset.id); try { await navigator.clipboard.writeText(m ? m.text : ""); toast("Texte copié"); } catch (er) {} V.sheet = null; return render(); }
     if (a === "delMsg") {
@@ -15520,6 +15523,22 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       V.draft[V.room] = before + v.slice(c); V.sugg = null; renderComp();
       const n = $("ch-tx"); n.value = V.draft[V.room]; n.focus(); n.setSelectionRange(before.length, before.length); return;
     }
+  });
+  // Réaction avec n'importe quel émoji du clavier du téléphone (on garde le premier émoji tapé)
+  const firstEmoji = str => {
+    try { const g = [...new Intl.Segmenter("fr", { granularity: "grapheme" }).segment(str)].map(x => x.segment); return g.find(x => /\p{Extended_Pictographic}|\p{Regional_Indicator}/u.test(x)) || null; }
+    catch (e) { const m = str.match(/\p{Extended_Pictographic}\uFE0F?/u); return m ? m[0] : null; }
+  };
+  function doReact(mid, e) {
+    const r = R(V.room), p = me(), m = r && (msgs[r.id] || []).find(x => x.id === mid); if (!m || !e) return;
+    const has = !!(m.reacts && m.reacts[e] && m.reacts[e][p]);
+    V.sheet = null; V.emoMore = null; render();
+    _db.ref(`chat/msgs/${r.id}/${m.id}/reacts/${e}/${p}`).set(has ? null : true).catch(() => toast("Réaction non enregistrée."));
+  }
+  box.addEventListener("input", e => {
+    if (e.target.id !== "ch-emoin") return;
+    const em = firstEmoji(e.target.value);
+    if (em) { e.target.blur(); doReact(V.emoMore, em); } else if (e.target.value.trim()) { e.target.value = ""; toast("Choisis un émoji (touche 😀 du clavier)."); }
   });
   box.addEventListener("change", e => {
     const cb = e.target.closest("input[data-m]"); if (!cb || !V.form) return;
