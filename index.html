@@ -3473,7 +3473,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 09:59</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 10:03</footer>
 
 <script>
 
@@ -12865,8 +12865,22 @@ function _accInit() {
     _accUser = u; _accProfile = null; _accIsSuper = false;
     if (u) {
       try {
-        const p = await _db.ref('users/' + u.uid).once('value');
+        // Juste après la connexion, la base peut encore traiter la demande comme « visiteur » (refus
+        // depuis le verrouillage des règles) : on réessaie quelques fois avant de conclure.
+        let p = null;
+        for (let i = 0; i < 6; i++) {
+          try { if (i) await u.getIdToken(i > 2); p = await _db.ref('users/' + u.uid).once('value'); break; }
+          catch (er) { if (i === 5) throw er; await new Promise(r => setTimeout(r, 400 * (i + 1))); }
+        }
         _accProfile = p.val();
+        // Fiche déjà rattachée à ce compte mais profil absent : on le recrée au lieu de redemander « qui es-tu »
+        if (!_accProfile) {
+          try {
+            const pa = (await _db.ref('playerAccounts').once('value')).val() || {};
+            const mine = Object.keys(pa).find(k => pa[k] === u.uid);
+            if (mine) { await _db.ref('users/' + u.uid).set({ player: mine, createdAt: firebase.database.ServerValue.TIMESTAMP }); _accProfile = { player: mine }; }
+          } catch (er) {}
+        }
         if (_accProfile && _accProfile.player) {
           const s = await _db.ref('config/superAdmins/' + _accProfile.player).once('value');
           _accIsSuper = s.val() === true;
@@ -13041,7 +13055,7 @@ function _accRender(keepFocus) {
       <h4 class="acm-h">Qui es-tu ?</h4><p class="acm-sub">${bind ? "Ton compte n'est rattaché à aucune fiche. " : ""}Choisis ta fiche joueur. Elle sera rattachée à ton compte.</p>${err}
       <div class="acm-input acm-search"><input id="acm-q" value="${_accEsc(a.q)}" placeholder="🔎 Rechercher un joueur" autocomplete="off"></div>
       <div class="acm-list" role="radiogroup" aria-label="Fiche joueur">${list.map(p => {
-        const taken = !!a.taken[p.n];
+        const taken = !!a.taken[p.n] && !(_accUser && a.taken[p.n] === _accUser.uid); // sa propre fiche reste sélectionnable
         return `<button class="acm-pl" role="radio" aria-checked="${a.pick === p.n}" data-a="pick" data-n="${_accEsc(p.n)}"${taken ? " disabled" : ""}>${_accAvHTML(p.n, p.team)}<span><b>${p.n}</b><small>${[p.statut, p.pres ? `${p.pres} soirée${p.pres > 1 ? "s" : ""}` : ""].filter(Boolean).join(" · ")}</small></span>${taken ? `<span class="acm-taken">Déjà prise</span>` : `<span class="acm-tick">${a.pick === p.n ? "✓" : ""}</span>`}</button>`;
       }).join("") || `<p class="acm-sub">Aucun joueur trouvé.</p>`}</div>
       <button class="acm-btn" data-a="${bind ? "bindok" : "next2"}"${a.pick && !a.busy ? "" : " disabled"}>${bind ? (a.busy ? "Rattachement…" : "Rattacher cette fiche") : `Continuer${a.pick ? ` avec ${a.pick}` : ""}`}</button>
@@ -13074,7 +13088,7 @@ const _accErrMsg = e => _ACC_ERR[e && e.code] || "Une erreur est survenue. Rées
 
 // Réserve la fiche (transaction : échoue si quelqu'un l'a déjà) puis écrit le profil.
 async function _accClaim(uid, player) {
-  const res = await _db.ref('playerAccounts/' + player).transaction(cur => cur ? undefined : uid);
+  const res = await _db.ref('playerAccounts/' + player).transaction(cur => cur && cur !== uid ? undefined : uid);
   if (!res.committed) return false;
   await _db.ref('users/' + uid).set({ player, createdAt: firebase.database.ServerValue.TIMESTAMP });
   return true;
