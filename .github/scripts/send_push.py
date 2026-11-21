@@ -8,6 +8,9 @@ Notifications :
   - booster disponible (dès 10h)    → abonnés qui ont au moins 1 booster et n'en ont ouvert aucun aujourd'hui, une fois par jour
   - proposition d'échange reçue     → le destinataire, une fois par proposition
   - message d'un super admin        → pushQueue/{id} = {by, title, body, to: joueur | [joueurs] | "__all"}
+  - Le Vestiaire (chat)              → membres du salon abonnés, sauf salon coupé (chat/mute) ; une @mention passe toujours
+                                       (bêta : super admins seulement tant que config/chatOpen n'est pas à true)
+  + message « sondage fermé » posté dans le Vestiaire général à la clôture
 Préférences : pushPrefs/{joueur} = {trades: false, boosters: false} pour les couper
 (le sondage ne peut pas être coupé).
 """
@@ -146,6 +149,22 @@ def main():
                     if send(p, "⏳ Plus que 3 h pour répondre", f"Le sondage pour {mon_lbl} se ferme ce soir à 21h30.", "./?n=vote#vote", f"rem-{mon_iso}"):
                         mark(f"pushSent/rem3h/{mon_iso}/{p}")
 
+    # ── clôture du sondage : message automatique dans le Vestiaire général
+    if vote and vote.get("status") == "open" and (vote.get("closesAt") or 0) <= now_ms < (vote.get("closesAt") or 0) + 86400 * 1000 \
+            and not (sent.get("chatClose") or {}).get(mon_iso):
+        votes = vote.get("votes") or {}
+        n = sum(1 for v in votes.values() if v == "P") + len(vote.get("plus") or {})
+        print("Vestiaire : sondage fermé", mon_iso, n)
+        if not DRY:
+            req("chat/msgs/g", "POST", {"sys": "close", "text": f"Le sondage est fermé : {n} présent{'s' if n > 1 else ''} {mon_lbl}.", "at": {".sv": "timestamp"}})
+        mark(f"pushSent/chatClose/{mon_iso}")
+
+    # ── Le Vestiaire : nouveaux messages
+    try:
+        chat_push(subs, supers, sent, now_ms, send)
+    except Exception as e:
+        print("Vestiaire : erreur", type(e).__name__, str(e)[:200])
+
     # ── vignettes : boosters et échanges (saison la plus récente)
     with urllib.request.urlopen(f"{DB}/vignettes.json?shallow=true", timeout=30) as resp:
         seasons = sorted(k for k in (json.load(resp) or {}) if "-" in k)
@@ -181,6 +200,58 @@ def main():
                     "À voir dans Vignettes · Échanges.", "./?n=vg#vignettes", f"trade-{tid}"):
                 mark(f"pushSent/trade/{tid}")
     print(stats)
+
+
+def chat_push(subs, supers, sent, now_ms, send):
+    """Un push par salon et par personne, regroupant les messages arrivés depuis le dernier passage."""
+    import re
+    open_all = req("config/chatOpen") is True
+    rooms = req("chat/rooms") or {}
+    rooms.setdefault("g", {})
+    reads = req("chat/read") or {}
+    mutes = req("chat/mute") or {}
+    done = sent.get("chat") or {}
+    allowed_people = set(subs) if open_all else {p for p in subs if supers.get(p) is True}
+    window = now_ms - 2 * 3600 * 1000  # rien de plus vieux que 2 h (premier passage, panne de l'Action)
+    for rid, room in rooms.items():
+        if not isinstance(room, dict):
+            continue
+        gen = rid == "g"
+        if not gen and not room.get("name"):
+            continue
+        name = "Le Vestiaire" if gen else room.get("name")
+        members = allowed_people if gen else {p for p in (room.get("members") or {}) if p in allowed_people}
+        if not members:
+            continue
+        with urllib.request.urlopen(f"{DB}/chat/msgs/{rid}.json?orderBy=%22$key%22&limitToLast=30", timeout=30) as resp:
+            msgs = json.load(resp) or {}
+        L = sorted(((k, m) for k, m in msgs.items() if isinstance(m, dict)), key=lambda x: x[0])
+        for p in members:
+            since = max(window, (done.get(p) or {}).get(rid) or 0, (reads.get(p) or {}).get(rid) or 0, (reads.get(p) or {}).get("_init") or 0)
+            new = [m for _, m in L if (m.get("at") or 0) > since and m.get("by") != p and m.get("sys") not in ("open", "club")]
+            if not new:
+                continue
+            top = max(m.get("at") or 0 for m in new)
+            ment = [m for m in new if not m.get("sys") and re.search("@" + re.escape(p) + r"(?![\wÀ-ÿ])", m.get("text") or "")]
+            if (mutes.get(p) or {}).get(rid) and not ment:
+                mark_val(f"pushSent/chat/{p}/{rid}", top)
+                continue
+            last = ment[-1] if ment else new[-1]
+            line = (last.get("text") or "") if last.get("sys") else f"{last.get('by')} : {last.get('text') or ''}"
+            if ment:
+                title = f"@ {ment[-1].get('by')} t'a mentionné · {name}"
+            else:
+                title = f"💬 {name}" + (f" · {len(new)} nouveaux messages" if len(new) > 1 else "")
+            print("Vestiaire :", p, rid, len(new), "mention" if ment else "")
+            if send(p, title[:60], line[:180], f"./?n=chat&r={rid}", f"chat-{rid}"):
+                mark_val(f"pushSent/chat/{p}/{rid}", top)
+
+
+def mark_val(path, value):
+    if DRY:
+        print("  (simulation) marquer", path, value)
+    else:
+        req(path, "PUT", value)
 
 
 if __name__ == "__main__":
