@@ -3714,7 +3714,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 15:02</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 15:09</footer>
 
 <script>
 
@@ -14788,7 +14788,7 @@ function _svApply() {
   const JOURS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
   const fdate = iso => { const d = new Date(iso + "T12:00:00Z"); return `${JOURS[d.getUTCDay()]} ${d.getUTCDate() === 1 ? "1er" : d.getUTCDate()} ${MOIS[d.getUTCMonth()]}`; };
   const esc = x => String(x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
-  const ui = { draft: null, editing: false, plus: false, depSel: "", depNew: "", open: null, q: "", pres: false, pq: "", pf: "all",
+  const ui = { draft: null, editing: false, plus: false, depSel: "", depNew: "", open: "P", q: "", pres: false, pq: "", pf: "all",
     mode: "open", reason: "Noël", other: "", msg: "next", back: "", confirmCancel: false, busy: false, err: "" };
   let ref = null;
 
