@@ -3739,7 +3739,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 15:54</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 15:58</footer>
 
 <script>
 
@@ -8571,10 +8571,16 @@ function _crModel(s) {
   const pres = {}; Object.entries(s.presences || {}).forEach(([p, v]) => { if (v && v.statut === "Présent") pres[p] = v.equipe || ""; });
   const team = p => pres[p] || "", st = {}, B = {}, P = {}, K = {}, notes = [], ND = Object.fromEntries(CUSTOM_ACH_DEFS.map(d => [d.id, d])), MB = {}, MP = {};
   const addM = (o, p, i) => { (o[p] = o[p] || new Set()).add(i); };
+  const XB = {}, XP = {}, XGA = {}; // plus gros match de chaque joueur (buts, passes, buts + passes)
   (s.matchs || []).forEach((m, i) => {
     [m.eqA, m.eqB].forEach(t => { st[t] = st[t] || { t, j: 0, v: 0, n: 0, d: 0, gf: 0, ga: 0, pts: 0 }; });
     const a = st[m.eqA], b = st[m.eqB], sa = m.scoreA || 0, sb = m.scoreB || 0;
     a.j++; b.j++; a.gf += sa; a.ga += sb; b.gf += sb; b.ga += sa;
+    const mb = {}, mp = {};
+    ["A", "B"].forEach(sd => (m["buteurs" + sd] || []).forEach((x, j) => { if (x && x !== "CSC") { mb[x] = (mb[x] || 0) + 1; const pa = (m["passeurs" + sd] || [])[j]; if (pa && pa !== "CSC") mp[pa] = (mp[pa] || 0) + 1; } }));
+    Object.entries(mb).forEach(([q, n]) => { XB[q] = Math.max(XB[q] || 0, n); });
+    Object.entries(mp).forEach(([q, n]) => { XP[q] = Math.max(XP[q] || 0, n); });
+    new Set([...Object.keys(mb), ...Object.keys(mp)]).forEach(q => { XGA[q] = Math.max(XGA[q] || 0, (mb[q] || 0) + (mp[q] || 0)); });
     if (sa > sb) { a.v++; b.d++; a.pts += 3; } else if (sb > sa) { b.v++; a.d++; b.pts += 3; } else { a.n++; b.n++; a.pts++; b.pts++; }
     ["A", "B"].forEach(sd => {
       (m["buteurs" + sd] || []).forEach((x, j) => { if (x && x !== "CSC") { B[x] = (B[x] || 0) + 1; addM(MB, x, i); const pa = (m["passeurs" + sd] || [])[j]; if (pa && pa !== "CSC") { P[pa] = (P[pa] || 0) + 1; addM(MP, pa, i); } } });
@@ -8596,17 +8602,24 @@ function _crModel(s) {
   // Départage des héros : à égalité, celui qui a marqué / fait la passe dans le plus de matchs différents passe devant
   // (gardiens : le plus de mi-temps). Égalité en tête : jusqu'à 3 portraits sur la carte.
   const nb = p => (MB[p] || new Set()).size, np = p => (MP[p] || new Set()).size, nga = p => new Set([...(MB[p] || []), ...(MP[p] || [])]).size;
-  const R = {
-    mvp: people.filter(p => ga(p)).sort((x, y) => ga(y) - ga(x) || nga(y) - nga(x) || (B[y] || 0) - (B[x] || 0) || x.localeCompare(y, "fr")),
-    but: people.filter(p => B[p]).sort((x, y) => B[y] - B[x] || nb(y) - nb(x) || x.localeCompare(y, "fr")),
-    pas: people.filter(p => P[p]).sort((x, y) => P[y] - P[x] || np(y) - np(x) || x.localeCompare(y, "fr")),
-    gk: Object.keys(K).filter(g => K[g].h >= 2).sort((x, y) => K[x].enc / K[x].h - K[y].enc / K[y].h || K[y].h - K[x].h || x.localeCompare(y, "fr")),
-  };
+  // Départage (validé le 21/11) : 1. total ; 2. le plus de matchs différents (gardiens : le plus de mi-temps) ;
+  // 3. la plus grosse perf sur un match (gardiens : le moins de buts encaissés sur la soirée) ; 4. ordre alphabétique.
   const val = { mvp: p => ga(p), but: p => B[p], pas: p => P[p], gk: p => +(K[p].enc / K[p].h).toFixed(3) };
   const sub = { mvp: nga, but: nb, pas: np, gk: p => K[p].h };
+  const perf = { mvp: p => XGA[p] || 0, but: p => XB[p] || 0, pas: p => XP[p] || 0, gk: p => -K[p].enc };
+  const cmp = id => (x, y) => (id === "gk" ? val.gk(x) - val.gk(y) : val[id](y) - val[id](x)) || sub[id](y) - sub[id](x) || perf[id](y) - perf[id](x) || x.localeCompare(y, "fr");
+  const R = {
+    mvp: people.filter(p => ga(p)).sort(cmp("mvp")),
+    but: people.filter(p => B[p]).sort(cmp("but")),
+    pas: people.filter(p => P[p]).sort(cmp("pas")),
+    gk: Object.keys(K).filter(g => K[g].h >= 2).sort(cmp("gk")),
+  };
   const lead = id => { const L = R[id]; if (!L.length) return null; const v = val[id](L[0]), g = L.filter(p => val[id](p) === v);
     // départage : plus de matchs (★ « X devant ») ; à égalité parfaite, ordre alphabétique avec « Égalité parfaite » / « Ex æquo »
-    return { all: g, show: g.slice(0, 3), more: Math.max(0, g.length - 3), decided: g.length > 1 && sub[id](g[0]) > sub[id](g[1]), sub: sub[id] }; };
+    const decided = g.length > 1 && (sub[id](g[0]) !== sub[id](g[1]) || perf[id](g[0]) !== perf[id](g[1]));
+    const why = !decided ? "" : sub[id](g[0]) !== sub[id](g[1]) ? (id === "gk" ? "plus de mi-temps" : "plus de matchs") : (id === "gk" ? "moins de buts encaissés" : "plus grosse perf");
+    const same = q => sub[id](q) === sub[id](g[0]) && perf[id](q) === perf[id](g[0]);
+    return { all: g, show: g.slice(0, 3), more: Math.max(0, g.length - 3), decided, why, perfect: g.slice(0, 3).every(same), sub: sub[id], perf: perf[id] }; };
   const LEAD = { mvp: lead("mvp"), but: lead("but"), pas: lead("pas"), gk: lead("gk") };
   return { s, pres, stand, B, P, K, notes, ND, mvp: R.mvp[0], tb: R.but[0] ? [R.but[0], B[R.but[0]]] : null, tp: R.pas[0] ? [R.pas[0], P[R.pas[0]]] : null, gk: R.gk[0] ? [R.gk[0], K[R.gk[0]]] : null, kRank, out, goals, teams, team, ranked: R.mvp, R, LEAD, nPres: people.length, nM: (s.matchs || []).length };
 }
@@ -8722,8 +8735,8 @@ function renderSessionDetailV3(session) {
   const heroesH = `<div class="cr-heroes">${heroes.map(([id, c, t, p0, big, unit]) => { const T = tops[id], pod = [T[1], T[0], T[2]], Ld = M.LEAD[id] || { show: [p0], more: 0, sub: () => 0 };
     const S1 = Ld.show, p = S1[0], multi = S1.length > 1;
     const front = multi
-      ? `<span class="multi">${S1.map((q, j) => `<span class="col ${_crTC[M.team(q)] || ""}${j === 0 && Ld.decided ? " first" : ""}">${_crPh(q, M.team(q), "big")}${j === 0 && Ld.decided ? `<span class="star" title="Départagé : plus de matchs">★</span>` : ""}<span class="cn">${_crEsc(q)}</span><span class="cm">${plu(Ld.sub(q), UNIT[id])}</span></span>`).join("")}</span>
-         <span class="chip">${c ? "👑 " : ""}${t}${Ld.decided ? "" : " · ex æquo"}</span><span class="bot multi-bot"><b>${Ld.decided ? `${_crEsc(p)} devant` : S1.every(q => Ld.sub(q) === Ld.sub(p)) ? "Égalité parfaite" : "Ex æquo"}${Ld.more ? ` <small>+${Ld.more}</small>` : ""}</b><span class="num">${big}<small>${unit}</small></span></span>`
+      ? `<span class="multi">${S1.map((q, j) => `<span class="col ${_crTC[M.team(q)] || ""}${j === 0 && Ld.decided ? " first" : ""}">${_crPh(q, M.team(q), "big")}${j === 0 && Ld.decided ? `<span class="star" title="Départagé : ${Ld.why}">★</span>` : ""}<span class="cn">${_crEsc(q)}</span><span class="cm">${plu(Ld.sub(q), UNIT[id])}</span></span>`).join("")}</span>
+         <span class="chip">${c ? "👑 " : ""}${t}${Ld.decided ? "" : " · ex æquo"}</span><span class="bot multi-bot"><b>${Ld.decided ? `${_crEsc(p)} devant` : Ld.perfect ? "Égalité parfaite" : "Ex æquo"}${Ld.more ? ` <small>+${Ld.more}</small>` : ""}</b><span class="num">${big}<small>${unit}</small></span></span>`
       : `${_crPh(p, M.team(p), "big")}<span class="chip">${c ? "👑 " : ""}${t}</span><span class="bot"><b>${_crEsc(p)}</b><span class="num">${big}<small>${unit}</small></span></span>`;
     return `<button type="button" class="cr-hero ${c} ${_crTC[M.team(p)] || ""}${multi ? " is-multi" : ""}${_CR.flip[id] ? " flipped" : ""}" data-crflip="${id}" aria-label="${t} : voir le top 5"><span class="hin">
       <span class="face front">${front}</span>
