@@ -2973,6 +2973,53 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #upd-bar { position: fixed; left: 50%; transform: translateX(-50%); top: calc(74px + env(safe-area-inset-top, 0px)); z-index: 2600; display: flex; align-items: center; gap: 8px; max-width: calc(100% - 24px); white-space: nowrap; border: 1px solid var(--gold-border); background: color-mix(in srgb, var(--gold) 16%, var(--bg2)); color: var(--text); font: inherit; font-size: 13px; padding: 9px 14px; border-radius: 24px; box-shadow: 0 10px 28px rgba(0,0,0,.45); cursor: pointer; animation: chFade .25s ease; }
   #upd-bar span { overflow: hidden; text-overflow: ellipsis; }
   #upd-bar b { color: var(--gold); }
+
+  /* ═══ Ordinateur : mêmes repères que sur téléphone ═══
+     en-tête rouge de l'écusson (dragon + HAPPY MONDAY), 💬 🔔 ☰ à droite, onglets dans un bandeau blanc
+     comme la barre du bas, menu ☰ identique (panneau à droite), cloche en liste déroulante. */
+  #dmenu-btn { display: none; }
+  @media all {
+    body:not(.bn-on) header { background: radial-gradient(130% 220% at 50% 0%, #ff2b1c 0%, #e30b0b 45%, #a50000 100%); border-bottom: none; padding: 14px 24px 0; gap: 12px; align-items: stretch;
+      box-shadow: 0 6px 16px rgba(0,0,0,.3); }
+    body:not(.bn-on) .hnav-toprow { position: relative; justify-content: flex-start; gap: 10px; }
+    body:not(.bn-on) header .spacer { display: block; flex: 1; }
+    body:not(.bn-on) header .logo, body:not(.bn-on) header .h1-ft, body:not(.bn-on) #header-sub, body:not(.bn-on) .hnav-burger { display: none !important; }
+    body:not(.bn-on) header .hdr-dragon { display: block; height: 40px; width: auto; filter: drop-shadow(0 1px 0 rgba(255,255,255,.25)); }
+    body:not(.bn-on) .header-main { gap: 12px; }
+    body:not(.bn-on) header h1 { color: #fff; font-size: 26px; line-height: 1.1; letter-spacing: .03em; text-shadow: 0 2px 0 rgba(0,0,0,.35), 0 0 16px rgba(0,0,0,.18); white-space: nowrap; }
+    body:not(.bn-on) .header-actions { display: flex; order: 4; }
+    body:not(.bn-on) #refresh-btn, body:not(.bn-on) #theme-btn, body:not(.bn-on) #admin-btn { display: none !important; }
+    body:not(.bn-on) #saisie-nav-btn { background: rgba(0,0,0,.28); border-color: rgba(255,255,255,.45); color: #fff; height: 38px; }
+    body:not(.bn-on) #saisie-nav-btn:hover { background: #fff; color: #c40000; border-color: #fff; }
+    body:not(.bn-on) #chat-btn { order: 5; }
+    body:not(.bn-on) #bell-btn { order: 6; }
+    body:not(.bn-on) #dmenu-btn { order: 7; }
+    body:not(.bn-on) #chat-btn, body:not(.bn-on) #bell-btn, body:not(.bn-on) #dmenu-btn { position: relative; right: auto; top: auto; transform: none; width: 38px; height: 38px; border-radius: 11px; border: 1px solid rgba(255,255,255,.45); background: rgba(0,0,0,.28); color: #fff; align-items: center; justify-content: center; cursor: pointer; padding: 0; flex: none; }
+    body:not(.bn-on) #bell-btn, body:not(.bn-on) #dmenu-btn { display: flex; }
+    body:not(.bn-on) #chat-btn[hidden] { display: none; }
+    body:not(.bn-on) #chat-btn:hover, body:not(.bn-on) #bell-btn:hover, body:not(.bn-on) #dmenu-btn:hover,
+    body:not(.bn-on) #bell-btn[aria-expanded="true"], body:not(.bn-on) #dmenu-btn[aria-expanded="true"] { background: #fff; border-color: #fff; color: #c40000; }
+    body:not(.bn-on) #dmenu-btn svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+    body:not(.bn-on) #bell-btn .bn-bd, body:not(.bn-on) #chat-btn .bn-bd { top: -6px; right: -6px; background: #fff; color: #c40000; box-shadow: 0 0 0 2px #a50000; }
+    body:not(.bn-on) #chat-btn .bn-bd.at { background: var(--gold); color: #241c04; }
+    /* onglets : bandeau blanc, onglet actif en rouge avec un trait (comme la barre du bas) */
+    body:not(.bn-on) .hnav-tabsrow { display: flex; justify-content: center; width: auto; margin: 0 -24px; background: #fff; box-shadow: inset 0 3px 0 #0b0b0d, inset 0 5px 0 rgba(255,255,255,.9); padding: 5px 16px 0; overflow-x: auto; scrollbar-width: none; }
+    body:not(.bn-on) .hnav-tabsrow::-webkit-scrollbar { display: none; }
+    body:not(.bn-on) .main-tabs { background: none; border: none; border-radius: 0; padding: 0; gap: 6px; margin: 0 auto; }
+    body:not(.bn-on) .main-tab { position: relative; background: none !important; box-shadow: none !important; border-radius: 0; color: #8a8a97 !important; padding: 13px 14px 12px; font-size: 12.5px; font-weight: 700; }
+    body:not(.bn-on) .main-tab:hover:not(.active) { color: #3a3a46 !important; }
+    body:not(.bn-on) .main-tab.active { color: #e30b0b !important; }
+    body:not(.bn-on) .main-tab::after { content: ""; position: absolute; left: 14%; right: 14%; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: transparent; transition: background .2s; }
+    body:not(.bn-on) .main-tab.active::after { background: #e30b0b; }
+    /* cloche : liste déroulante sous le bouton */
+    body:not(.bn-on) #bnotif { left: auto; right: 24px; width: 400px; top: 70px; }
+    /* menu ☰ : panneau à droite, sans « Autres pages » (les onglets sont visibles) */
+    body:not(.bn-on) #bmenu { bottom: 0; justify-content: flex-end; align-items: stretch; }
+    body:not(.bn-on) #bmenu .bm-in { width: 400px; max-height: none; height: 100%; border-radius: 0; border-top: none; border-left: 1px solid var(--border2); padding: 18px 16px 24px; animation: bnRight .26s cubic-bezier(.2,.9,.3,1); }
+    body:not(.bn-on) #bmenu .bm-in.still { animation: none; }
+    body:not(.bn-on) #bmenu .bm-grab, body:not(.bn-on) #bmenu .bm-pg { display: none; }
+  }
+  @keyframes bnRight { from { transform: translateX(100%); } }
   /* ═══ Le Vestiaire : chat (bouton 💬 dans l'en-tête, écran plein) ═══ */
   #chat-btn { position: relative; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; flex: none; }
   #chat-btn[hidden] { display: none; }
@@ -3399,7 +3446,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 09:26</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 09:35</footer>
 
 <script>
 
@@ -14519,7 +14566,7 @@ function _svApply() {
 
     document.body.insertAdjacentHTML("beforeend", `<nav id="bnav" aria-label="Navigation"></nav><button id="bticker" type="button"></button>
       <div id="bmenu" role="dialog" aria-label="Menu"></div><div id="bnotif-scrim"></div><div id="bnotif" role="dialog" aria-label="Notifications"></div>`);
-    document.querySelector("header .hnav-toprow")?.insertAdjacentHTML("beforeend", `<button id="bell-btn" type="button" aria-label="Notifications" aria-expanded="false"></button>`);
+    document.querySelector("header .hnav-toprow")?.insertAdjacentHTML("beforeend", `<button id="bell-btn" type="button" aria-label="Notifications" aria-expanded="false"></button><button id="dmenu-btn" type="button" data-bn="__menu" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>`);
     // Mode « téléphone » (barre du bas, en-tête compact) : écran étroit OU tablette tactile (iPad, Android)
     const isTablet = () => { try { return matchMedia("(pointer: coarse)").matches && Math.min(screen.width, screen.height) >= 600 && Math.max(screen.width, screen.height) <= 1400; } catch (e) { return false; } };
     const applyMode = () => document.body.classList.toggle("bn-on", innerWidth <= 760 || isTablet());
@@ -14610,6 +14657,7 @@ function _svApply() {
       b.style.visibility = acc() ? "" : "hidden";
       const r = readSet(), n = notifs().filter(x => !r.has(x.id)).length;
       b.setAttribute("aria-expanded", String(notifOpen));
+      $("dmenu-btn")?.setAttribute("aria-expanded", String(menuOpen));
       b.innerHTML = ic("bell") + (n ? `<span class="bn-bd">${n}</span>` : "");
     }
     function renderNotif() {
@@ -14639,7 +14687,7 @@ function _svApply() {
         ? `<button type="button" class="bm-prof" data-bm="fiche"><span class="av pf">${esc((p || "").slice(0, 2).toUpperCase())}${typeof portraitImg === "function" ? portraitImg(p, true) : ""}</span><span><b>${esc(p)}</b><small>${typeof _accIsSuper !== "undefined" && _accIsSuper ? "★ Super admin · " : ""}voir ma fiche</small></span>${ic("chev", "chev")}</button>`
         : `<button type="button" class="bm-prof" data-bm="login"><span class="av">${ic("user")}</span><span><b>Se connecter</b><small>ou créer mon compte joueur</small></span>${ic("chev", "chev")}</button>`;
       m.innerHTML = `<div class="bm-in"><div class="bm-grab"></div>${prof}
-        <span class="bm-lbl">Autres pages</span><div class="bm-rows">${pages.join("")}</div>
+        <span class="bm-lbl bm-pg">Autres pages</span><div class="bm-rows bm-pg">${pages.join("")}</div>
         <span class="bm-lbl">Réglages</span><div class="bm-rows">
           ${pwaRows()}
           <button type="button" class="bm-row" data-bm="__theme" aria-pressed="${!light}">${ic("moon")}<span class="grow">Mode sombre</span><span class="sw"></span></button>
