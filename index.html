@@ -2192,7 +2192,7 @@
   .sq-note { font-size: 11.5px; color: var(--text3); font-style: italic; margin-top: 10px; }
 
   /* ── Vignettes (onglet) ── */
-#panel-vignettes { --rC: #a3a8b4; --rR: #4fc3f7; --rE: #b892ff; --rL: #f5c842;
+#panel-vignettes { --rC: #a3a8b4; --rR: #4fc3f7; --rE: #b892ff; --rL: #f5c842; --rM: #ff3b2f;
   --t1: #9CA3AF; --t2: #D4863A; --t3: #94A3B8; --t4: #FBBF24; --t5: #34D399; --t6: #A5F3FC; }
 #panel-vignettes .vg-app { container-type: inline-size; container-name: app; max-width: 1120px; margin: 0 auto; }
 #panel-vignettes .art.pf > .pf-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; transform: none; z-index: 1; }
@@ -2218,14 +2218,14 @@
 #panel-vignettes .r-R { --rc: var(--rR); --frame: linear-gradient(150deg,#0f5a99,#8fe0ff 42%,#2a8fd6 58%,#0c3f72); --glow: 0 0 .9em rgba(79,195,247,.45); }
 #panel-vignettes .r-E { --rc: var(--rE); --frame: linear-gradient(120deg,#4b1fa8,#d9c2ff 25%,#8657f2 45%,#f0e6ff 55%,#6a3bd4 75%,#4b1fa8); --glow: 0 0 1.2em rgba(184,146,255,.6); }
 #panel-vignettes .r-L { --rc: var(--rL); --frame: linear-gradient(120deg,#9c6d05,#ffe680 18%,#f5c842 34%,#fffbe6 48%,#d9a521 64%,#ffe680 80%,#9c6d05); --glow: 0 0 1.5em rgba(245,200,66,.75), 0 0 .3em rgba(255,240,180,.9); }
-#panel-vignettes .r-E .face, #panel-vignettes .r-L .face { background-size: 240% 240%; animation: vg-flow 5s linear infinite; }
+#panel-vignettes .r-E .face, #panel-vignettes .r-L .face, #panel-vignettes .r-M .face { background-size: 240% 240%; animation: vg-flow 5s linear infinite; }
 @keyframes vg-flow { to { background-position: 240% 0; } }
 #panel-vignettes .gem { position: absolute; left: 50%; bottom: 0; transform: translate(-50%, 45%); z-index: 6; display: flex; align-items: center; gap: .3em; white-space: nowrap; font-size: .62em; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: .35em .9em; border-radius: 1em; color: #111; background: var(--rc); box-shadow: 0 .2em .6em rgba(0,0,0,.6); }
 #panel-vignettes .r-L .gem { background: linear-gradient(90deg,#d9a521,#fff3b0,#f5c842); }
 #panel-vignettes .r-E .gem { background: linear-gradient(90deg,#8657f2,#e9dcff,#b892ff); }
 #panel-vignettes .holo { position: absolute; inset: 0; pointer-events: none; z-index: 4; opacity: 0; mix-blend-mode: color-dodge;
   background: linear-gradient(115deg, transparent 22%, rgba(255,255,255,.6) 38%, rgba(255,214,90,.4) 46%, rgba(120,220,255,.35) 54%, rgba(220,150,255,.3) 60%, transparent 74%); background-size: 260% 260%; background-position: var(--hx, 0%) var(--hy, 0%); }
-#panel-vignettes .r-L .holo { opacity: .75; animation: vg-shine 3.2s ease-in-out infinite; }
+#panel-vignettes .r-L .holo, #panel-vignettes .r-M .holo { opacity: .75; animation: vg-shine 3.2s ease-in-out infinite; }
 #panel-vignettes .r-E .holo { opacity: .5; animation: vg-shine 4.2s ease-in-out infinite; }
 #panel-vignettes .r-R .holo { opacity: .2; animation: vg-shine 6s ease-in-out infinite; }
 #panel-vignettes .card.tilting .holo { animation: none; opacity: .9; }
@@ -2676,10 +2676,10 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
 #panel-vignettes .vg-prog-top b { color: var(--text); font-size: 13px; letter-spacing: 0; font-variant-numeric: tabular-nums; }
 #panel-vignettes .vg-progbar { height: 7px; border-radius: 7px; background: var(--bg3); overflow: hidden; }
 #panel-vignettes .vg-progbar i { display: block; height: 100%; background: linear-gradient(90deg, #b8860b, var(--gold), #fff1b0); transition: width .6s ease; }
-#panel-vignettes .vg-prog-r { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 9px; }
+#panel-vignettes .vg-prog-r { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin-top: 9px; }
 #panel-vignettes .vg-prog-r span { font-size: 10.5px; color: var(--text3); display: flex; flex-direction: column; align-items: center; border-radius: 8px; padding: 3px 0; background: rgba(127,127,127,.06); }
 #panel-vignettes .vg-prog-r b { font-size: 13px; font-variant-numeric: tabular-nums; }
-#panel-vignettes .vg-prog-r .C b { color: var(--rC); } #panel-vignettes .vg-prog-r .R b { color: var(--rR); } #panel-vignettes .vg-prog-r .E b { color: var(--rE); } #panel-vignettes .vg-prog-r .L b { color: var(--rL); }
+#panel-vignettes .vg-prog-r .C b { color: var(--rC); } #panel-vignettes .vg-prog-r .R b { color: var(--rR); } #panel-vignettes .vg-prog-r .E b { color: var(--rE); } #panel-vignettes .vg-prog-r .L b { color: var(--rL); } #panel-vignettes .vg-prog-r .M b { color: #ff3b2f; }
 #panel-vignettes section[hidden] { display: none !important; }
 #panel-vignettes .vg-stock { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; font-size: 13px; color: var(--text2); }
 #panel-vignettes .vg-stock-n { font-size: 22px; letter-spacing: 2px; }
@@ -3747,7 +3747,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 16:23</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 16:24</footer>
 
 <script>
 
@@ -13787,8 +13787,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
 (() => {
   const panel = document.getElementById("panel-vignettes");
   if (!panel) return;
-  const RL = { L: "Légendaire", E: "Épique", R: "Rare", C: "Commune" };
-  const RO = { L: 0, E: 1, R: 2, C: 3 };
+  const RL = { M: "Mythique", L: "Légendaire", E: "Épique", R: "Rare", C: "Commune" };
+  const RO = { M: -1, L: 0, E: 1, R: 2, C: 3 };
   const TYPE = { p: "Joueur", h: "Haut fait", n: "Fait notable" };
   const CATVAR = { "Attaque": "--hf-attaque", "Défense": "--hf-defense", "Collectif": "--hf-collectif", "Présence": "--hf-presence", "Distinctions": "--hf-distinct", "Secrets": "--hf-secret" };
   const STATS = ["ATT", "PAS", "DEF", "VIC", "FID", "GAR"];
@@ -13927,9 +13927,9 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const NT = CUSTOM_ACH_DEFS.map(d => { const o = (occ[d.id] || []).sort((a, b) => b[1].localeCompare(a[1])); return { k: "n:" + d.id, ty: "n", id: d.id, nm: d.name, ic: d.icon, ds: d.desc, o, r: !o.length ? "L" : o.length === 1 ? "E" : o.length <= 3 ? "R" : "C" }; });
     // ── le club : cartes offertes d'office à tout le monde (jamais dans les boosters ni les échanges)
     const CLUB = [
-      { k: "g:logo", ty: "g", nm: "Happy Monday Football Team", ic: "🐉", img: "portraits/Logo.jpeg", sub: "L'écusson du club", r: "L", nSess: sessions.length },
-      { k: "g:gymnase", ty: "g", nm: "Gymnase Alain Fournier", ic: "🏟️", img: "portraits/gr_gymnase_fournier.webp", sub: "Là où tout se joue, chaque lundi soir", r: "L", nSess: sessions.length }];
-    const VINT = { k: VINT_KEY, ty: "g", nm: "Équipement Vintage", ic: "🎽", vint: true, sub: "Les maillots des débuts", r: "L", nSess: sessions.length };
+      { k: "g:logo", ty: "g", nm: "Happy Monday Football Team", ic: "🐉", img: "portraits/Logo.jpeg", sub: "L'écusson du club", r: "M", nSess: sessions.length },
+      { k: "g:gymnase", ty: "g", nm: "Gymnase Alain Fournier", ic: "🏟️", img: "portraits/gr_gymnase_fournier.webp", sub: "Là où tout se joue, chaque lundi soir", r: "M", nSess: sessions.length }];
+    const VINT = { k: VINT_KEY, ty: "g", nm: "Équipement Vintage", ic: "🎽", vint: true, sub: "Les maillots des débuts", r: "M", nSess: sessions.length };
     const vOwn = VINT_OWN.has(ME);
     ALL = [...CLUB, ...(vOwn ? [VINT] : []), ...PLAYERS, ...HF, ...NT];
     BYK = Object.fromEntries(ALL.map(c => [c.k, c]));
@@ -13938,8 +13938,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   }
 
   /* ═════════ rendu d'une carte ═════════ */
-  const twinkles = r => r === "L" ? `<div class="twinkle">${[[12, 18, 0], [78, 10, .7], [86, 58, 1.3], [16, 70, 1.8], [52, 40, 1]].map(([x, y, d]) => `<i style="left:${x}%;top:${y}%;animation-delay:${d}s"></i>`).join("")}</div>` : "";
-  const gem = c => `<div class="gem">${c.ty === "g" ? "★ Mythique" : `${c.r === "L" ? "★ " : c.r === "E" ? "◆ " : ""}${RL[c.r]}`}</div>`; // cartes du Club : rareté « Mythique »
+  const twinkles = r => r === "L" || r === "M" ? `<div class="twinkle">${[[12, 18, 0], [78, 10, .7], [86, 58, 1.3], [16, 70, 1.8], [52, 40, 1]].map(([x, y, d]) => `<i style="left:${x}%;top:${y}%;animation-delay:${d}s"></i>`).join("")}</div>` : "";
+  const gem = c => `<div class="gem">${c.r === "L" || c.r === "M" ? "★ " : c.r === "E" ? "◆ " : ""}${RL[c.r]}</div>`; // « Mythique » = cartes du Club
   const teamName = t => TEAM_LABEL[t] || "";
   function frontHTML(c, lazy) {
     if (c.ty === "g") {
@@ -14161,7 +14161,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     body.innerHTML = `<div class="vg-bar">
         <div class="vg-subtabs" role="tablist"><button class="vg-subtab" aria-selected="${tab === "booster"}" data-vg-tab="booster">🎁 Booster</button><button class="vg-subtab" aria-selected="${tab === "album"}" data-vg-tab="album">📒 Album</button><button class="vg-subtab" aria-selected="${tab === "trades"}" data-vg-tab="trades">🔄 Échanges<span class="vt-bd" id="vt-subbd" hidden></span></button></div>
         <div class="vg-prog"><div class="vg-prog-top"><span>Album de ${ME}</span><b>${owned} / ${ALL.length}</b></div><div class="vg-progbar"><i style="width:${owned / ALL.length * 100}%"></i></div>
-          <div class="vg-prog-r">${["L", "E", "R", "C"].map(r => { const all = ALL.filter(c => c.r === r); return `<span class="${r}"><b>${all.filter(c => COL[c.k]).length}/${all.length}</b>${RL[r]}</span>`; }).join("")}</div></div>
+          <div class="vg-prog-r">${["M", "L", "E", "R", "C"].map(r => { const all = ALL.filter(c => c.r === r); return `<span class="${r}"><b>${all.filter(c => COL[c.k]).length}/${all.length}</b>${RL[r]}</span>`; }).join("")}</div></div>
       </div>
       <section id="vg-booster"${tab === "booster" ? "" : " hidden"}><div class="stage" id="vg-stage"></div></section>
       <section id="vg-album"${tab === "album" ? "" : " hidden"}>
@@ -14252,7 +14252,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     if (!box) return;
     box.querySelector(".vg-prog-top b").textContent = `${owned} / ${ALL.length}`;
     box.querySelector(".vg-progbar i").style.width = `${owned / ALL.length * 100}%`;
-    box.querySelector(".vg-prog-r").innerHTML = ["L", "E", "R", "C"].map(r => { const all = ALL.filter(c => c.r === r); return `<span class="${r}"><b>${all.filter(c => COL[c.k]).length}/${all.length}</b>${RL[r]}</span>`; }).join("");
+    box.querySelector(".vg-prog-r").innerHTML = ["M", "L", "E", "R", "C"].map(r => { const all = ALL.filter(c => c.r === r); return `<span class="${r}"><b>${all.filter(c => COL[c.k]).length}/${all.length}</b>${RL[r]}</span>`; }).join("");
   }
   const againBtn = () => `<button class="cta" data-vg="again">${BOOST && BOOST.stock > 0 ? `Ouvrir un autre booster (${BOOST.stock})` : "Retour"}</button>`;
   function showReveal(cards, isNew) {
@@ -14491,7 +14491,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   const TR_MAX = 3, TR_TTL = 3 * 86400000, TRK = "_trades";
   let ALBUMS = {}, albumsRef = null, watchFor = null, trSince = 0, albumsLoaded = false;
   const TR = { sub: "swap", q: "", partner: null, gSel: [], rSel: [], busy: false, told: new Set() };
-  const RORD = { L: 0, E: 1, R: 2, C: 3 };
+  const RORD = { M: -1, L: 0, E: 1, R: 2, C: 3 };
   const byRar = (a, b) => RORD[BYK[a].r] - RORD[BYK[b].r] || a.localeCompare(b, "fr");
   const cardsOf = n => (n === ME && loadedFor === ME) ? COL : withClub(Object.assign({}, (ALBUMS[n] && ALBUMS[n].cards) || {}), n);
   const nOf = (n, k) => cardsOf(n)[k] || 0;
