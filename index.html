@@ -369,6 +369,7 @@
   .roster-avatar.pf > .pf-img[data-pf="Madani"] { transform: scale(2.6); transform-origin: 51% 28%; }
   .roster-avatar.pf > .pf-img[data-pf="Jérémie"] { transform: scale(2.5); transform-origin: 55% 27%; }
   .roster-avatar.pf > .pf-img[data-pf="Pierre-Olivier"] { transform: scale(3); transform-origin: 49% 28%; }
+  .roster-avatar.pf > .pf-img[data-pf="Jordan"] { transform: scale(2.7); transform-origin: 41% 32%; }
   .roster-main { flex: 1; min-width: 0; }
   .roster-name { display: block; width: 100%; font-size: 14px; font-weight: 700; margin-bottom: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .roster-taux { display: flex; align-items: center; gap: 8px; }
@@ -3020,6 +3021,27 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
     body:not(.bn-on) #bmenu .bm-grab, body:not(.bn-on) #bmenu .bm-pg { display: none; }
   }
   @keyframes bnRight { from { transform: translateX(100%); } }
+  /* fenêtre des infos « pour tous » */
+  html.np-lock, html.np-lock body { overflow: hidden !important; }
+  #npop { position: fixed; inset: 0; z-index: 2700; background: rgba(0,0,0,.62); display: flex; align-items: center; justify-content: center; padding: 18px; animation: chFade .2s ease; }
+  #npop .np-card { width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; background: var(--bg2); border: 1px solid var(--border2); border-radius: 22px; box-shadow: 0 24px 60px rgba(0,0,0,.6); animation: npIn .28s cubic-bezier(.2,.9,.3,1.2); }
+  @keyframes npIn { from { transform: scale(.92); opacity: 0; } }
+  #npop .np-top { padding: 16px 16px 14px; background: linear-gradient(160deg, color-mix(in srgb, var(--c) 28%, var(--bg2)), var(--bg2) 75%); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 9px; }
+  #npop .np-k { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--c); }
+  #npop .np-k span:last-child { color: var(--text3); letter-spacing: .04em; }
+  #npop .np-h { display: flex; gap: 12px; align-items: center; }
+  #npop .np-ic { width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex: none; background: color-mix(in srgb, var(--c) 20%, var(--bg3)); border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); }
+  #npop h4 { margin: 0; font-size: 19px; line-height: 1.25; }
+  #npop .np-b { padding: 14px 16px 6px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+  #npop .np-meta { padding: 0 16px 12px; font-size: 11.5px; color: var(--text3); }
+  #npop .np-dots { display: flex; justify-content: center; gap: 6px; padding-bottom: 12px; }
+  #npop .np-dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--border2); }
+  #npop .np-dots i.on { background: var(--gold); border-color: var(--gold); width: 18px; border-radius: 4px; }
+  #npop .np-act { display: flex; flex-direction: column; gap: 8px; padding: 0 16px 14px; }
+  #npop .np-act button { border: none; border-radius: 13px; padding: 13px; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
+  #npop .np-act .pri { background: var(--gold); color: #241c04; }
+  #npop .np-act .sec { background: color-mix(in srgb, var(--good) 16%, var(--bg3)); color: var(--good); border: 1px solid color-mix(in srgb, var(--good) 45%, transparent); }
+  #npop .np-skip { display: block; width: 100%; border: none; background: none; color: var(--text3); font: inherit; font-size: 12.5px; text-decoration: underline; cursor: pointer; padding: 0 0 14px; }
   /* ═══ Le Vestiaire : chat (bouton 💬 dans l'en-tête, écran plein) ═══ */
   #chat-btn { position: relative; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; flex: none; }
   #chat-btn[hidden] { display: none; }
@@ -3446,7 +3468,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 09:35</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 09:49</footer>
 
 <script>
 
@@ -3501,10 +3523,10 @@ function _accRefreshSaisieAccess() {
   if (role === "compte") applyRole(role);
 }
 
-const HASH_ADMIN  = "cea45f18ea39c9ece6711634075f9402f52b3727a59e08927043c8cca10182c8";
+const HASH_ADMIN  = null; // anciens mots de passe supprimés le 21/11/2026 : comptes joueurs uniquement
 /* Compte "saisie" : accede uniquement a l ecran de saisie (creation d une
    nouvelle session), pour une utilisation sans risque le lundi soir. */
-const HASH_SAISIE = "af7fbef617fad5abac74887f303c51a22a65f54f7b6961a4b6959b7169a9bfbd";
+const HASH_SAISIE = null;
 
 async function _sha256(str) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
@@ -3525,9 +3547,7 @@ function updateAdminBtn() {
 }
 
 async function tryAdminUnlock() {
-  const val = document.getElementById("pwd-input").value;
-  const hash = await _sha256(val);
-  const role = hash === HASH_ADMIN ? "admin" : hash === HASH_SAISIE ? "saisie" : null;
+  const role = null; // accès par mot de passe supprimé : il faut un compte joueur
   if (role) {
     sessionStorage.setItem("hmft_role", role);
     sessionStorage.setItem("hmft_role_src", "pwd"); // rôle venu d un ancien mot de passe (pas d un compte)
@@ -3666,6 +3686,7 @@ document.getElementById("refresh-btn").addEventListener("click", () => {
 // Ancien écran « mot de passe admin » : toujours disponible pendant la transition vers
 // les comptes, via le lien « Accès admin (mot de passe) » du volet de connexion.
 function _openAdminPwd() {
+  if (typeof _accOpen === "function") { _accOpen("login"); return; } // plus d'accès par mot de passe
   document.getElementById("pwd-input").value = "";
   document.getElementById("pwd-err").textContent = "";
   document.getElementById("lock-screen").style.display = "flex";
@@ -4088,7 +4109,7 @@ function pLink(name, extra) {
    pose l image par-dessus les initiales du conteneur (.pf). Si aucune n existe, l image est
    retiree et les initiales restent. Trouvailles et absences sont memorisees pour ne pas
    redemander les fichiers a chaque rendu. */
-const _PORTRAIT_EXTS = ["png", "jpeg", "jpg", "webp"];
+const _PORTRAIT_EXTS = ["jpeg", "jpg", "png", "webp"]; // jpeg d'abord : c'est le format de presque tous les portraits (moins de requêtes en échec)
 const _PORTRAIT_MISSING = new Set();
 const _PORTRAIT_FOUND = {}; // nom -> index d extension qui a charge
 function portraitUrl(name, extIdx) {
@@ -12862,13 +12883,12 @@ function _accInit() {
 // Rôle de session à partir du compte. Un rôle venu d'un ancien mot de passe admin n'est
 // jamais écrasé ; à la déconnexion du compte, seul le rôle qu'il avait donné est retiré.
 function _accApplyRole() {
-  const src = sessionStorage.getItem("hmft_role_src");
-  const cur = sessionStorage.getItem("hmft_role");
+  let src = sessionStorage.getItem("hmft_role_src");
+  // anciens mots de passe supprimés : un rôle qui ne vient pas d'un compte est retiré
+  if (sessionStorage.getItem("hmft_role") && src !== "account") { sessionStorage.removeItem("hmft_role"); sessionStorage.removeItem("hmft_role_src"); src = null; }
   if (_accUser && _accProfile) {
-    if (!(cur === "admin" && src === "pwd")) {
-      sessionStorage.setItem("hmft_role", _accIsSuper ? "admin" : "compte");
-      sessionStorage.setItem("hmft_role_src", "account");
-    }
+    sessionStorage.setItem("hmft_role", _accIsSuper ? "admin" : "compte");
+    sessionStorage.setItem("hmft_role_src", "account");
   } else if (src === "account") {
     sessionStorage.removeItem("hmft_role"); sessionStorage.removeItem("hmft_role_src");
   }
@@ -12994,8 +13014,7 @@ function _accRender(keepFocus) {
           <div class="acm-field"><label for="acm-lp">Pseudo</label><div class="acm-input"><input id="acm-lp" autocomplete="username" autocapitalize="none" spellcheck="false" value="${_accEsc(a.pseudo)}"></div></div>
           <div class="acm-field"><label for="acm-lw">Mot de passe</label><div class="acm-input"><input id="acm-lw" type="${a.show ? "text" : "password"}" autocomplete="current-password" value="${_accEsc(a.pwd)}"><button type="button" class="acm-eye" data-a="eye" aria-label="Afficher le mot de passe">${a.show ? "🙈" : "👁"}</button></div></div>
           <button class="acm-btn" type="submit"${a.busy ? " disabled" : ""}>${a.busy ? "Connexion…" : "Se connecter"}</button></form>
-        <button class="acm-link" data-a="tab" data-t="create0">Pas encore de compte ? Créer mon compte</button>
-        <button class="acm-link small" data-a="adminpwd">Accès admin (mot de passe)</button>`
+        <button class="acm-link" data-a="tab" data-t="create0">Pas encore de compte ? Créer mon compte</button>`
       : `<p class="acm-sub" style="margin-top:4px">En 3 étapes : tes identifiants, ta fiche joueur, puis une vérification. Ça prend une minute.</p>
          <div class="acm-private"><span>🔐</span><span>Un compte est nécessaire pour saisir les matchs, participer aux pronos et collectionner les vignettes. Sans compte, le site reste consultable.</span></div>
          <button class="acm-btn" data-a="start">Commencer</button>`);
@@ -14625,7 +14644,7 @@ function _svApply() {
           const L = typeof TEAM_LABEL !== "undefined" ? TEAM_LABEL : {};
           h = `<span class="lv"></span><span class="t"><b>${esc(L[m.eqA] || m.eqA)} ${m.scoreA || 0} – ${m.scoreB || 0} ${esc(L[m.eqB] || m.eqB)}</b></span><span class="go">Direct ›</span>`; cls = "live"; go = "live";
         }
-      } else if (acc() && voteOpen() && cur !== "panel-vote") {
+      } else if (acc() && voteOpen() && !myVote() && cur !== "panel-vote") { // seulement tant que le joueur n'a pas répondu
         const v = myVote(), n = Object.values((vote() || {}).votes || {}).filter(x => x === "P").length + Object.keys((vote() || {}).plus || {}).length;
         if (!v) { h = `<span class="t">🗓️ Lundi ${dLabel()} · <b>pas répondu</b></span><span class="go">Répondre ›</span>`; cls = "warn"; }
         else { const lab = { P: "Présent", A: "Absent", B: "Blessé" }[v] || ""; h = `<span class="t">🗓️ Lundi ${dLabel()} · <b>${lab}</b> · ${n} présent${n > 1 ? "s" : ""}</span><span class="go">Voir ›</span>`; cls = "ok"; }
@@ -14638,16 +14657,53 @@ function _svApply() {
     }
     // ── notifications (lues : mémorisées sur ce téléphone)
     const READ_KEY = "hmft_notif_read";
-    const readSet = () => { try { return new Set(JSON.parse(localStorage.getItem(READ_KEY) || "[]")); } catch (e) { return new Set(); } };
-    const saveRead = s => { try { localStorage.setItem(READ_KEY, JSON.stringify([...s].slice(-200))); } catch (e) {} };
+    // Lu = sur ce téléphone (localStorage) OU sur le compte (notifRead/{joueur}) : lu une fois, lu partout.
+    let srvRead = {}, srvP = null, srvOff = null, clubQ = {}, qOff = null, srvLoaded = false, qLoaded = false;
+    const readSet = () => { let r; try { r = new Set(JSON.parse(localStorage.getItem(READ_KEY) || "[]")); } catch (e) { r = new Set(); } Object.keys(srvRead || {}).forEach(k => r.add(k)); return r; };
+    const saveRead = s => {
+      try { localStorage.setItem(READ_KEY, JSON.stringify([...s].slice(-200))); } catch (e) {}
+      const p = me(); if (!p || typeof _db === "undefined" || !_db) return;
+      const up = {}; s.forEach(k => { if (!srvRead[k] && /^[\w-]+$/.test(k)) up[k] = true; });
+      if (Object.keys(up).length) { Object.assign(srvRead, up); _db.ref(`notifRead/${p}`).update(up).catch(() => {}); }
+    };
+    function syncSrv() {
+      const p = acc() ? me() : null;
+      if (p === srvP || typeof _db === "undefined" || !_db) return;
+      if (srvOff) srvOff(); if (qOff) qOff(); srvOff = qOff = null; srvRead = {}; clubQ = {}; srvLoaded = qLoaded = false; srvP = p;
+      if (!p) return;
+      const r = _db.ref(`notifRead/${p}`), h = r.on("value", sn => { srvRead = sn.val() || {}; srvLoaded = true; light(); maybePop(); }, () => { srvLoaded = true; });
+      srvOff = () => r.off("value", h);
+      const q = _db.ref("pushQueue").limitToLast(40), h2 = q.on("value", sn => { clubQ = sn.val() || {}; qLoaded = true; light(); maybePop(); }, () => { qLoaded = true; });
+      qOff = () => q.off("value", h2);
+    }
     function notifs() {
       if (!acc()) return [];
       const L = [], d = vote(), v = vg();
       if (voteOpen()) {
-        L.push({ id: `open-${_svDate}`, ic: "next", c: "var(--gold)", t: "Le sondage est ouvert", d: `Lundi ${dLabel()} · réponds avant dimanche 21h30`, go: "vote" });
+        // « all » = info pour tous : consultable en fenêtre, et affichée à l'ouverture si on n'a pas l'appli
+        L.push({ id: `open-${_svDate}`, ic: "next", c: "var(--gold)", t: "Le sondage est ouvert", d: `Lundi ${dLabel()} · réponds avant dimanche 21h30`, go: "vote", all: true, at: d.at || 0,
+          k: "Sondage", e: "🗓️", body: `Tu viens lundi ${dLabel()} ? Réponds avant dimanche à 21h30.`, act: myVote() ? "" : "Répondre au sondage ›" });
         const left = (d.closesAt || 0) - _liveNow();
-        if (!myVote() && left <= 3 * 3600000) L.push({ id: `3h-${_svDate}`, ic: "clock", c: "var(--bad)", t: "Plus que 3 h pour répondre", d: "Clôture du sondage dimanche à 21h30", go: "vote" });
+        if (!myVote() && left <= 3 * 3600000) L.push({ id: `3h-${_svDate}`, ic: "clock", c: "var(--bad)", t: "Plus que 3 h pour répondre", d: "Clôture du sondage dimanche à 21h30", go: "vote", all: true, at: (d.closesAt || 0) - 3 * 3600000,
+          k: "Sondage", e: "⏳", body: `Le sondage pour lundi ${dLabel()} se ferme ce soir à 21h30.`, act: "Répondre maintenant ›" });
+      } else if (d && d.status === "open" && _liveNow() >= (d.closesAt || 0) && _liveNow() < (d.closesAt || 0) + 24 * 3600000) {
+        const n = Object.values(d.votes || {}).filter(x => x === "P").length + Object.keys(d.plus || {}).length;
+        L.push({ id: `close-${_svDate}`, ic: "next", c: "var(--text2)", t: "Le sondage est fermé", d: `${n} présent${n > 1 ? "s" : ""} lundi ${dLabel()}`, go: "vote", all: true, at: d.closesAt || 0,
+          k: "Sondage", e: "🔒", body: `${n} présent${n > 1 ? "s" : ""} lundi ${dLabel()}. Les équipes seront faites lundi soir.` });
+      } else if (d && d.status === "none") {
+        const why = [d.reason, d.msg === "date" && d.backDate ? `On se revoit le ${d.backDate.split("-").reverse().slice(0, 2).join("/")} !` : "On se revoit la semaine prochaine !"].filter(Boolean).join(" · ");
+        L.push({ id: `none-${_svDate}`, ic: "next", c: "var(--bleu)", t: `Pas de session lundi ${dLabel()}`, d: why, go: "vote", all: true, at: d.at || 0, k: "Annonce", e: "🏖️", body: why });
+      } else if (d && d.status === "cancelled") {
+        L.push({ id: `cancel-${_svDate}`, ic: "next", c: "var(--bad)", t: `Session annulée lundi ${dLabel()}`, d: "La session de lundi n'aura pas lieu.", go: "vote", all: true, at: d.cancelledAt || 0, k: "Annonce", e: "🚫", body: "La session de lundi n'aura pas lieu. On se revoit la semaine prochaine !" });
       }
+      // Infos Club : messages des super admins envoyés à tous (ou à ce joueur), gardés 7 jours
+      const p = me(), now = Date.now();
+      Object.entries(clubQ || {}).forEach(([key, q]) => {
+        if (!q || q.refused || !q.at || now - q.at > 7 * 86400000) return;
+        const to = q.to, mine = to === "__all" || to === p || (Array.isArray(to) && to.includes(p)) || (to && typeof to === "object" && Object.values(to).includes(p));
+        if (!mine || q.by === p) return; // l'auteur connaît déjà son message
+        L.push({ id: `club-${key}`, ic: "bell", c: "var(--gold)", t: `📣 ${q.title || "Infos Club"}`, d: q.body || "", go: "", all: true, at: q.at, k: "Infos Club", e: "📣", body: q.body || "", title: q.title || "Infos Club", by: q.by });
+      });
       if (v && v.boosters) L.push({ id: `boost-${v.day}-${v.boosters}`, ic: "gift", c: "#b892ff", t: v.boosters > 1 ? `${v.boosters} boosters t'attendent` : "Un booster t'attend", d: "À ouvrir dans Vignettes", go: "boost" });
       if (v && v.trades) L.push({ id: `trade-${v.tradeKey}`, ic: "swap", c: "var(--good)", t: v.trades > 1 ? `${v.trades} propositions d'échange` : "Une proposition d'échange", d: "À voir dans Vignettes · Échanges", go: "trades" });
       return L;
@@ -14669,6 +14725,44 @@ function _svApply() {
       p.innerHTML = `<div class="bn-h"><b>Notifications</b><button type="button" data-bnn="__all"${n ? "" : " disabled"}>✓ Tout marquer comme lu</button></div>
         ${L.map(x => `<button type="button" class="bn-it${r.has(x.id) ? " read" : ""}" data-bnn="${x.id}" data-go="${x.go}" style="--c:${x.c}"><span class="ic">${ic(x.ic)}</span><span><b>${esc(x.t)}</b><small>${esc(x.d)}</small></span><span class="u"></span></button>`).join("") || `<div class="bn-empty">Rien de neuf pour l'instant.</div>`}`;
     }
+    // ── fenêtre des infos « pour tous » (une par une) ; à l'ouverture du site si on n'a pas l'appli
+    let popL = null, popI = 0, popDone = false, srvAt = 0;
+    const hasAppPush = () => { try { return !!(window._pwa && window._pwa.pushState() === "on" && (matchMedia("(display-mode: standalone)").matches || navigator.standalone)); } catch (e) { return false; } };
+    function maybePop() {
+      if (popDone || popL || !acc() || !srvLoaded || !qLoaded) return;
+      if (!srvAt) srvAt = Date.now();
+      if (_svDate == null && Date.now() - srvAt < 5000) return; // on laisse le temps au sondage de se charger
+      popDone = true;
+      if (hasAppPush()) return; // déjà reçu en notification : tout est dans la cloche
+      const r = readSet(), L = notifs().filter(x => x.all && !r.has(x.id)).sort((a, b) => (a.at || 0) - (b.at || 0));
+      if (L.length) setTimeout(() => { if (!popL && !document.querySelector("#acc-modal:not([hidden])")) showPop(L); }, 900);
+    }
+    function showPop(L) { popL = L; popI = 0; renderPop(); }
+    function popRead(ids) { const r = readSet(); ids.forEach(i => r.add(i)); saveRead(r); }
+    function renderPop() {
+      let el = $("npop");
+      if (!popL) { if (el) el.remove(); document.documentElement.classList.remove("np-lock"); light(); return; }
+      if (!el) { el = document.createElement("div"); el.id = "npop"; document.body.appendChild(el); }
+      document.documentElement.classList.add("np-lock");
+      const x = popL[popI], last = popI === popL.length - 1, many = popL.length > 1;
+      const ago = x.at ? (() => { const m = Math.max(1, Math.round((Date.now() - x.at) / 60000)); return m < 60 ? `il y a ${m} min` : m < 1440 ? `il y a ${Math.round(m / 60)} h` : `il y a ${Math.round(m / 1440)} j`; })() : "";
+      el.innerHTML = `<div class="np-card" role="dialog" aria-modal="true" aria-label="${esc(x.k)}" style="--c:${x.c}">
+        <div class="np-top"><div class="np-k"><span>${esc(x.k)}</span><span>${many ? `${popI + 1} sur ${popL.length}` : ""}</span></div>
+          <div class="np-h"><span class="np-ic">${x.e}</span><h4>${esc(x.title || x.t)}</h4></div></div>
+        <div class="np-b">${esc(x.body || x.d)}</div><div class="np-meta">${x.by ? `Par ${esc(x.by)} · ` : ""}${ago}</div>
+        ${many ? `<div class="np-dots">${popL.map((_, i) => `<i class="${i === popI ? "on" : ""}"></i>`).join("")}</div>` : ""}
+        <div class="np-act">${x.act ? `<button type="button" class="sec" data-np="go">${esc(x.act)}</button>` : ""}<button type="button" class="pri" data-np="next">${last ? "C'est noté ✓" : "Suivant ›"}</button></div>
+        ${many && !last ? `<button type="button" class="np-skip" data-np="skip">Tout marquer comme lu</button>` : ""}</div>`;
+      el.querySelector('[data-np="next"]').focus();
+    }
+    document.addEventListener("click", e => {
+      const b = e.target.closest("[data-np]"); if (!b || !popL) return;
+      const a = b.dataset.np, x = popL[popI];
+      if (a === "next") { popRead([x.id]); if (popI < popL.length - 1) { popI++; renderPop(); } else { popL = null; renderPop(); } }
+      else if (a === "skip") { popRead(popL.map(i => i.id)); popL = null; renderPop(); }
+      else if (a === "go") { popRead([x.id]); popL = null; renderPop(); goTab(x.go || "vote"); window.scrollTo(0, 0); }
+    });
+
     // ── menu ☰ : seulement ce qui n'est pas déjà dans la barre
     function renderMenu() {
       const m = $("bmenu"), was = m.querySelector(".bm-in"), keep = was ? was.scrollTop : 0;
@@ -14692,7 +14786,6 @@ function _svApply() {
           ${pwaRows()}
           <button type="button" class="bm-row" data-bm="__theme" aria-pressed="${!light}">${ic("moon")}<span class="grow">Mode sombre</span><span class="sw"></span></button>
           <button type="button" class="bm-row" data-bm="__update">${ic("swap")}<span class="grow">Mettre à jour l'appli${typeof window._hmVersion === "function" && window._hmVersion() ? ` <small>· version du ${esc(window._hmVersion().replace(/\/\d{4} - /, " à "))}</small>` : ""}</span>${ic("chev", "chev")}</button>
-          ${acc() ? "" : `<button type="button" class="bm-row" data-bm="__admin">${ic("key")}<span class="grow">Accès admin (mot de passe)</span>${ic("chev", "chev")}</button>`}
         </div>
         ${acc() && typeof _accIsSuper !== "undefined" && _accIsSuper ? `<span class="bm-lbl sa">★ Super admin</span><div class="bm-rows sa">
           <button type="button" class="bm-row" data-bm="__compose"><span class="bm-star">★</span><span class="grow">Envoyer une notification</span>${ic("chev", "chev")}</button>
@@ -14730,7 +14823,7 @@ function _svApply() {
       try { renderBar(); renderTicker(); renderBell(); renderMenu(); renderNotif(); } catch (e) { console.warn("menu du bas:", e); }
     }
     const close = () => { menuOpen = false; notifOpen = false; };
-    const light = () => { try { renderBar(); renderTicker(); renderBell(); } catch (e) {} };
+    const light = () => { try { syncSrv(); renderBar(); renderTicker(); renderBell(); maybePop(); } catch (e) {} };
 
     document.addEventListener("click", e => {
       try {
@@ -14748,6 +14841,8 @@ function _svApply() {
         if (n) {
           const r = readSet();
           if (n.dataset.bnn === "__all") { notifs().forEach(x => r.add(x.id)); saveRead(r); render(); return; }
+          const it = notifs().find(x => x.id === n.dataset.bnn);
+          if (it && it.all) { close(); render(); showPop([it]); return; }
           r.add(n.dataset.bnn); saveRead(r); close();
           const g = n.dataset.go;
           if (g === "boost" || g === "trades") { try { window._vgSetTab && window._vgSetTab(g === "boost" ? "booster" : "trades", g === "trades" ? "recu" : null); } catch (er) {} goTab("vignettes"); try { window._vgOnShow && window._vgOnShow(); } catch (er) {} }
