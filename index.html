@@ -3702,7 +3702,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 14:39</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 14:40</footer>
 
 <script>
 
@@ -8560,8 +8560,9 @@ function _crModel(s) {
 const _crAv = (n, t, size) => `<span class="cr-av roster-avatar pf ${_crTC[t] || ""}"${size ? ` style="--s:${size}px"` : ""}>${_saisieInitials(n)}${portraitImg(n, true)}</span>`;
 const _crPh = (n, t, cls) => `<span class="cr-ph pf ${cls || ""} ${_crTC[t] || ""}"><span class="ini">${_saisieInitials(n)}</span>${portraitImg(n, true)}</span>`;
 const _crLine = (M, n) => { const b = M.B[n] || 0, p = M.P[n] || 0; return [b ? `${b} but${b > 1 ? "s" : ""}` : "", p ? `${p} passe${p > 1 ? "s" : ""}` : ""].filter(Boolean).join(" · ") || "—"; };
-const _CR_TWORD = { Rouge: /(?<![\wÀ-ÿ])(roses?)(?![\wÀ-ÿ])/i, Vert: /(?<![\wÀ-ÿ])(jaunes?)(?![\wÀ-ÿ])/i, Bleue: /(?<![\wÀ-ÿ])(bleu(?:e|s|es)?)(?![\wÀ-ÿ])/i };
-function _crBox(html, teams) { teams.forEach(t => { if (_CR_TWORD[t]) html = html.replace(_CR_TWORD[t], m => `<span class="cr-tbox" style="background:${_crTV[t]};color:${t === "Vert" ? "#111" : "#fff"}">${m}</span>`); }); return html; }
+// (sans « lookbehind » : les anciens iPhone ne le comprennent pas)
+const _CR_TWORD = { Rouge: /(^|[^\wÀ-ÿ])(roses?)(?![\wÀ-ÿ])/i, Vert: /(^|[^\wÀ-ÿ])(jaunes?)(?![\wÀ-ÿ])/i, Bleue: /(^|[^\wÀ-ÿ])(bleu(?:e|s|es)?)(?![\wÀ-ÿ])/i };
+function _crBox(html, teams) { teams.forEach(t => { if (_CR_TWORD[t]) html = html.replace(_CR_TWORD[t], (m, pre, w) => `${pre}<span class="cr-tbox" style="background:${_crTV[t]};color:${t === "Vert" ? "#111" : "#fff"}">${w}</span>`); }); return html; }
 function _crHeadline(M) {
   const w = M.stand[0], s2 = M.stand[1]; if (!w) return { t: "Soirée sans match", teams: [] };
   const W = _crTL(w.t), X = s2 ? _crTL(s2.t) : "";
