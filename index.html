@@ -6,7 +6,7 @@
 <title>Happy Monday Football Team</title>
 <link rel="icon" type="image/png" href="icons/favicon-64.png?v=2">
 <link rel="manifest" href="manifest.webmanifest?v=4">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=2">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=3">
 <meta name="theme-color" content="#e30b0b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -2272,6 +2272,16 @@ html:has(#vg-modal:not([hidden])), html:has(#vg-modal:not([hidden])) body { over
 #panel-vignettes .tier.t6 { color: var(--t6); background: linear-gradient(135deg,rgba(167,243,255,.15),rgba(196,181,255,.15)); }
 #panel-vignettes .secret { color: var(--hf-secret); }
 #panel-vignettes .ty-g { --tc: #e30b0b; }
+#panel-vignettes .ty-g .art.vint { background: radial-gradient(circle at 50% 40%, #6b4a2a, #2a1b0f 75%); }
+#panel-vignettes .ty-g .art.vint svg { position: absolute; inset: 8% 10%; width: 80%; height: 84%; filter: sepia(.35) drop-shadow(0 .4em .6em rgba(0,0,0,.55)); }
+#panel-vignettes .ty-g .art.vint .prov { position: absolute; z-index: 3; right: 6%; bottom: 5%; font-size: .5em; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,240,210,.7); background: rgba(0,0,0,.35); border-radius: 1em; padding: .15em .6em; }
+#panel-vignettes .ty-g.vt .strip { background: linear-gradient(180deg, #3a2614, #140d07); border-top-color: #c9a46a; }
+#panel-vignettes .ty-g.vt .nm i { background: #c9a46a; }
+#panel-vignettes .card.locked { filter: grayscale(1) brightness(.55); }
+#panel-vignettes .card.locked .holo, #panel-vignettes .card.locked .twinkle { display: none; }
+#panel-vignettes .card.locked * { animation: none !important; }
+#vg-modal-card .card.locked .card-in { transition: none; }
+
 #panel-vignettes .ty-g .nm { white-space: normal; font-size: .82em; }
 #panel-vignettes .ty-g .art.logo { background: radial-gradient(circle at 50% 40%, #3a0d0d, #120708 75%); }
 #panel-vignettes .ty-g .art.logo img { object-fit: contain; padding: 10%; filter: drop-shadow(0 .3em .6em rgba(0,0,0,.6)); }
@@ -3704,7 +3714,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 14:43</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 15:02</footer>
 
 <script>
 
@@ -13724,11 +13734,14 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   /* ═════════ calcul des cartes ═════════ */
   let ALL = [], BYK = {}, PLAYERS = [], NTEAM = {}, buildSig = "";
   const CLUB_KEYS = ["g:logo", "g:gymnase"];
-  const withClub = c => { c = c || {}; CLUB_KEYS.forEach(k => { if (!c[k]) c[k] = 1; }); return c; }; // cartes du club : possédées par tous
+  // « Équipement Vintage » : légendaire unique, offerte d'office à ces joueurs seulement (ni booster ni échange).
+  // Pour les autres : visible en gris dans l'album, sans animation, et non comptée dans leur total.
+  const VINT_KEY = "g:vintage", VINT_OWN = new Set(["Boris", "Sylvain", "Guy", "Cédric", "Mahdi", "Raph P", "Ben", "JB", "Loïc", "Houari", "Tof", "Virgile", "Pierre-Olivier", "Yassir"]);
+  const withClub = (c, who) => { c = c || {}; CLUB_KEYS.forEach(k => { if (!c[k]) c[k] = 1; }); if (VINT_OWN.has(who) && !c[VINT_KEY]) c[VINT_KEY] = 1; return c; }; // cartes du club
   function build() {
     const sessions = SESSIONS.filter(s => _seasonStart(s.date) === SY);
     const ABSs = (typeof _accStatusAbs !== "undefined" && _accStatusAbs) || ABSENTS, INAs = (typeof _accStatusInact !== "undefined" && _accStatusInact) || INACTIFS;
-    const sig = sessions.length + "|" + sessions.map(s => s.date + ":" + (s.matchs || []).length).join(",") + "|" + (CUSTOM_ACH_AWARDS || []).length + "|" + [...ABSs].join(",") + "|" + [...INAs].join(",") + "|" + ALL_PLAYERS.length;
+    const sig = sessions.length + "|" + sessions.map(s => s.date + ":" + (s.matchs || []).length).join(",") + "|" + (CUSTOM_ACH_AWARDS || []).length + "|" + [...ABSs].join(",") + "|" + [...INAs].join(",") + "|" + ALL_PLAYERS.length + "|" + ME;
     if (sig === buildSig && ALL.length) return;
     buildSig = sig;
     // ── joueurs
@@ -13845,11 +13858,14 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const NT = CUSTOM_ACH_DEFS.map(d => { const o = (occ[d.id] || []).sort((a, b) => b[1].localeCompare(a[1])); return { k: "n:" + d.id, ty: "n", id: d.id, nm: d.name, ic: d.icon, ds: d.desc, o, r: !o.length ? "L" : o.length === 1 ? "E" : o.length <= 3 ? "R" : "C" }; });
     // ── le club : cartes offertes d'office à tout le monde (jamais dans les boosters ni les échanges)
     const CLUB = [
-      { k: "g:logo", ty: "g", nm: "Happy Monday Football Team", ic: "🐉", img: "icons/icon-512.png?v=4", logo: true, sub: "L'écusson du club", r: "L", nSess: sessions.length },
+      { k: "g:logo", ty: "g", nm: "Happy Monday Football Team", ic: "🐉", img: "portraits/Logo.jpeg", sub: "L'écusson du club", r: "L", nSess: sessions.length },
       { k: "g:gymnase", ty: "g", nm: "Gymnase Alain Fournier", ic: "🏟️", img: "portraits/gr_gymnase_fournier.webp", sub: "Là où tout se joue, chaque lundi soir", r: "L", nSess: sessions.length }];
-    ALL = [...CLUB, ...PLAYERS, ...HF, ...NT];
+    const VINT = { k: VINT_KEY, ty: "g", nm: "Équipement Vintage", ic: "🎽", vint: true, sub: "Les maillots des débuts", r: "L", nSess: sessions.length };
+    const vOwn = VINT_OWN.has(ME);
+    ALL = [...CLUB, ...(vOwn ? [VINT] : []), ...PLAYERS, ...HF, ...NT];
     BYK = Object.fromEntries(ALL.map(c => [c.k, c]));
     buildSections();
+    if (!vOwn) { const lk = { ...VINT, locked: true }; BYK[VINT_KEY] = lk; const club = SECS.find(x => x.id === "club"); if (club) { club.items.push(lk); lk.no = club.items.length; } }
   }
 
   /* ═════════ rendu d'une carte ═════════ */
@@ -13858,7 +13874,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   const teamName = t => TEAM_LABEL[t] || "";
   function frontHTML(c, lazy) {
     if (c.ty === "g") {
-      return `<div class="face-in"><div class="art${c.logo ? " logo" : ""}"><img src="${c.img}" alt="" ${lazy ? 'loading="lazy" ' : ""}decoding="async"></div><div class="ovr"><b>${c.ic}</b><span>Le Club</span></div>
+      const art = c.vint ? `<div class="art vint">${VINT_SVG}<span class="prov">Visuel provisoire</span></div>` : `<div class="art${c.logo ? " logo" : ""}"><img src="${c.img}" alt="" ${lazy ? 'loading="lazy" ' : ""}decoding="async"></div>`;
+      return `<div class="face-in">${art}<div class="ovr"><b>${c.ic}</b><span>Le Club</span></div>
         <div class="strip"><div class="nm"><i></i>${c.nm}</div><div class="gsub">${c.sub}</div></div>
         <div class="holo"></div>${twinkles(c.r)}</div>${gem(c)}`;
     }
@@ -13926,7 +13943,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   // album (carte et emplacement). Il se révèle dès que ce joueur le débloque à son tour.
   function lockedSecret(c) { return c.ty === "h" && c.sec && !(ME && c.h.some(x => x[0] === ME)); }
   const hfStyle = c => c.ty === "h" ? ` style="--cc:var(${CATVAR[c.cat] || "--hf-secret"})"` : "";
-  const cardHTML = (c, lazy) => `<div class="card r-${c.r} ty-${c.ty} t-${c.team || ""}"${hfStyle(c)} data-k="${c.k}"><div class="card-in">
+  const VINT_SVG = `<svg viewBox="0 0 200 200" aria-hidden="true"><defs><pattern id="vgst" width="28" height="200" patternUnits="userSpaceOnUse"><rect width="14" height="200" fill="#b3261e"/><rect x="14" width="14" height="200" fill="#efe4cf"/></pattern></defs><path d="M62 22 L84 14 Q100 30 116 14 L138 22 L178 52 L160 84 L142 72 L142 184 L58 184 L58 72 L40 84 L22 52 Z" fill="url(#vgst)" stroke="#2a1b0f" stroke-width="4" stroke-linejoin="round"/><path d="M84 14 Q100 34 116 14" fill="none" stroke="#2a1b0f" stroke-width="7"/><path d="M84 14 Q100 30 116 14" fill="none" stroke="#efe4cf" stroke-width="3"/><circle cx="122" cy="62" r="11" fill="#2a1b0f"/><text x="122" y="66" font-size="11" text-anchor="middle" fill="#efe4cf" font-family="Georgia,serif" font-weight="700">HM</text></svg>`;
+  const cardHTML = (c, lazy) => `<div class="card r-${c.r} ty-${c.ty}${c.vint ? " vt" : ""}${c.locked ? " locked" : ""} t-${c.team || ""}"${hfStyle(c)} data-k="${c.k}"><div class="card-in">
       <div class="face front">${frontHTML(c, lazy)}</div><div class="face back">${backHTML(c)}</div></div></div>`;
   const coverHTML = () => `<div class="face-in"><span class="ball">⚽</span><b>Happy <span>Monday</span></b><small>${SEASON_LABEL.replace("Saison ", "Saison ")}</small></div>`;
 
@@ -13958,7 +13976,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     try {
       const v = (await _db.ref(root).once("value")).val() || {};
       if (ME !== me) { loading = false; return render(); }
-      COL = withClub(v.cards || {}); PASTED = new Set([...Object.keys(v.pasted || {}), ...CLUB_KEYS]);
+      COL = withClub(v.cards || {}, me); PASTED = new Set([...Object.keys(v.pasted || {}), ...CLUB_KEYS, VINT_KEY]);
       // garde le stock de boosters synchronisé (autre téléphone, nouveau jour) et en cache local
       if (boostRef) boostRef.off();
       boostRef = _db.ref(root + "/boosters");
@@ -14145,7 +14163,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     cards.forEach((c, i) => { isNew[i] = !COL[c.k] && !seen.has(c.k); seen.add(c.k); });
     try {
       const res = await _db.ref(base() + "/cards").transaction(cur => { cur = cur || {}; cards.forEach(c => { cur[c.k] = (cur[c.k] || 0) + 1; }); return cur; });
-      COL = withClub(res.snapshot.val() || COL);
+      COL = withClub(res.snapshot.val() || COL, ME);
       saveBest();
       _db.ref(`vignettesLog/${SEASON}/${ME}`).push({ at: firebase.database.ServerValue.TIMESTAMP, cards: cards.map(c => c.k) }).catch(() => {});
     } catch (e) {
@@ -14282,7 +14300,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     if (p.kind === "blank") return `<div class="${cls} blank-pg">${foot("")}</div>`;
     const s = p.s;
     const head = `<div class="sec-head"><small>${p.first ? "Section" : "Section · suite"}</small><h2>${s.ic} ${s.t}</h2><p>${s.sub}</p></div>`;
-    const slots = p.items.map(c => COL[c.k] && (PASTED.has(c.k) || !hideNew)
+    const slots = p.items.map(c => c.locked ? `<button class="stk" data-k="${c.k}" aria-label="${c.nm} (grisée)">${cardHTML(c, true)}</button>` : COL[c.k] && (PASTED.has(c.k) || !hideNew)
       ? `<button class="stk${PASTED.has(c.k) ? "" : " new"}" data-k="${c.k}" aria-label="Vignette ${c.no} : ${c.n || c.nm}">${cardHTML(c, true)}${COL[c.k] > 1 ? `<span class="count">×${COL[c.k]}</span>` : ""}</button>`
       : `<div class="stk-empty" style="--rc:var(--r${c.r})"><span class="wm">${c.ty === "p" ? "👤" : lockedSecret(c) ? "🤫" : c.ic}</span><span class="no">N° ${String(c.no).padStart(2, "0")}</span><span class="nm2">${lockedSecret(c) ? "🤫 Secret" : (c.n || c.nm)}</span><span class="rt">${RL[c.r]}</span></div>`).join("");
     const fill = Array.from({ length: per() - p.items.length }, () => `<div class="stk-blank"></div>`).join("");
@@ -14388,8 +14406,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const c = BYK[k]; if (!c) return;
     document.getElementById("vg-modal-card").innerHTML = cardHTML(c);
     const card = document.querySelector("#vg-modal-card .card");
-    card.addEventListener("click", () => { card.classList.toggle("flipped"); card.querySelector(".card-in").style.transform = ""; });
-    tilt(card);
+    if (c.ty !== "g") card.addEventListener("click", () => { card.classList.toggle("flipped"); card.querySelector(".card-in").style.transform = ""; }); // cartes du Club : pas de verso
+    if (!c.locked) tilt(card);
     document.getElementById("vg-modal").hidden = false; document.getElementById("vg-modal-close").focus();
   }
   function closeModal() { const m = document.getElementById("vg-modal"); if (m) m.hidden = true; }
@@ -14406,7 +14424,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   const TR = { sub: "swap", q: "", partner: null, gSel: [], rSel: [], busy: false, told: new Set() };
   const RORD = { L: 0, E: 1, R: 2, C: 3 };
   const byRar = (a, b) => RORD[BYK[a].r] - RORD[BYK[b].r] || a.localeCompare(b, "fr");
-  const cardsOf = n => (n === ME && loadedFor === ME) ? COL : withClub(Object.assign({}, (ALBUMS[n] && ALBUMS[n].cards) || {}));
+  const cardsOf = n => (n === ME && loadedFor === ME) ? COL : withClub(Object.assign({}, (ALBUMS[n] && ALBUMS[n].cards) || {}), n);
   const nOf = (n, k) => cardsOf(n)[k] || 0;
   const dupsOf = n => Object.keys(cardsOf(n)).filter(k => BYK[k] && nOf(n, k) >= 2);
   const trGive = x => dupsOf(ME).filter(k => !nOf(x, k)).sort(byRar);   // mes doubles qui lui manquent
@@ -14438,7 +14456,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
       if (watchFor !== me) return;
       ALBUMS = snap.val() || {}; albumsLoaded = true;
       // mon album a pu changer ailleurs (échange accepté par l'autre joueur, autre téléphone)
-      if (ME === me && loadedFor === me && !opening && ALBUMS[me] && ALBUMS[me].cards) { COL = withClub(Object.assign({}, ALBUMS[me].cards)); saveBest(); refreshProg(); }
+      if (ME === me && loadedFor === me && !opening && ALBUMS[me] && ALBUMS[me].cards) { COL = withClub(Object.assign({}, ALBUMS[me].cards), me); saveBest(); refreshProg(); }
       // mes propositions acceptées depuis l'ouverture du site
       trList().forEach(t => {
         if (t.from === me && t.status === "ok" && (t.doneAt || 0) > trSince && !TR.told.has(t.id)) {

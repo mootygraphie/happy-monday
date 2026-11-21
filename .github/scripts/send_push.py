@@ -11,6 +11,7 @@ Notifications :
   - Le Vestiaire (chat)              → membres du salon abonnés, sauf salon coupé (chat/mute) ; une @mention passe toujours
                                        (bêta : super admins seulement tant que config/chatOpen n'est pas à true)
   + message « sondage fermé » posté dans le Vestiaire général à la clôture
+  - récap de la soirée prêt          → tous les abonnés, une fois, dès que la soirée est enregistrée (sessions/{date})
 Préférences : pushPrefs/{joueur} = {trades: false, boosters: false} pour les couper
 (le sondage ne peut pas être coupé).
 """
@@ -174,6 +175,33 @@ def main():
                     print("Rappel 3 h :", p)
                     if send(p, "⏳ Plus que 3 h pour répondre", f"Le sondage pour {mon_lbl} se ferme ce soir à 21h30.", "./?n=vote#vote", f"rem-{mon_iso}"):
                         mark(f"pushSent/rem3h/{mon_iso}/{p}")
+
+    # ── récap de la soirée prêt : dès qu'une soirée récente (aujourd'hui ou hier) est enregistrée
+    try:
+        dates = sorted(fetch(f"{DB}/sessions.json?shallow=true") or {})
+        recent = [d for d in dates if d >= (today - datetime.timedelta(days=1)).isoformat() and d <= today.isoformat()]
+        for d in recent:
+            if (sent.get("recap") or {}).get(d):
+                continue
+            ses = req(f"sessions/{d}") or {}
+            ms = ses.get("matchs") or []
+            if not ms:
+                continue
+            pts, goals = {}, 0
+            for m in ms:
+                a, b, sa, sb = m.get("eqA"), m.get("eqB"), m.get("scoreA") or 0, m.get("scoreB") or 0
+                goals += sa + sb
+                pts[a] = pts.get(a, 0) + (3 if sa > sb else 1 if sa == sb else 0)
+                pts[b] = pts.get(b, 0) + (3 if sb > sa else 1 if sa == sb else 0)
+            TL = {"Rouge": "Roses", "Vert": "Jaunes", "Bleue": "Bleus"}
+            best = sorted(pts.items(), key=lambda x: -x[1])
+            win = f"Les {TL.get(best[0][0], best[0][0])} remportent la soirée" if best and (len(best) < 2 or best[0][1] > best[1][1]) else "Soirée à égalité en tête"
+            print("Récap prêt :", d)
+            results = [send(p, "📰 Le récap de la soirée est prêt", f"{win} · {goals} buts. Temps forts et héros à découvrir.", "./?n=recap#sessions", f"recap-{d}") for p in subs]
+            if any(results) or not subs:
+                mark(f"pushSent/recap/{d}")
+    except Exception as e:
+        print("Récap : erreur", type(e).__name__, str(e)[:200])
 
     # ── clôture du sondage : message automatique dans le Vestiaire général
     if vote and vote.get("status") == "open" and (vote.get("closesAt") or 0) <= now_ms < (vote.get("closesAt") or 0) + 86400 * 1000 \
