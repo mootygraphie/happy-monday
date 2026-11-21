@@ -3001,6 +3001,27 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #upd-bar span { overflow: hidden; text-overflow: ellipsis; }
   #upd-bar b { color: var(--gold); }
 
+  /* ── bouton central en écusson (forme du blason) ; encoche dans la barre pour la Saisie */
+  #bnav .bn-c.sh::before { display: none; }
+  #bnav .bn-c.sh .bn-tile { position: relative; width: 46px; height: 52px; margin-top: -26px; background: none; border-radius: 0; box-shadow: none !important; }
+  #bnav .bn-c.sh .bn-tile::before, #bnav .bn-c.sh .bn-tile::after { content: ""; position: absolute; clip-path: polygon(50% 100%, 7% 79%, 0 0, 100% 0, 93% 79%); }
+  #bnav .bn-c.sh .bn-tile::before { inset: 0; background: #fff; }
+  #bnav .bn-c.sh .bn-tile::after { inset: 3px; background: radial-gradient(120% 120% at 50% 12%, #ff2b1c, #e30b0b 55%, #a50000); }
+  #bnav .bn-c.sh .bn-tile svg { position: relative; z-index: 1; width: 19px; height: 19px; margin-top: -5px; color: #fff; }
+  #bnav .bn-c.sh-r .bn-tile, #bnav .bn-c.sh-n .bn-tile { filter: drop-shadow(0 6px 10px rgba(227,11,11,.4)); }
+  #bnav .bn-c.sh-g .bn-tile { filter: drop-shadow(0 4px 8px rgba(0,0,0,.22)); }
+  #bnav .bn-c.sh-g .bn-tile::after { background: linear-gradient(180deg, #b4b4be, #8a8a97); }
+  #bnav .bn-c.sh-g:not([aria-current="true"]) { color: #8a8a97; }
+  #bnav .bn-c.sh-n .bn-tile { margin-top: -31px; }
+  #bnav .bn-c.sh-n .bn-tile::before { display: none; }
+  #bnav .bn-c.sh-n .bn-tile::after { inset: 0; }
+  #bnav .bn-eb { position: absolute; z-index: 2; top: -4px; right: -7px; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; line-height: 1; color: #fff; box-shadow: 0 0 0 2px #fff, 0 2px 5px rgba(0,0,0,.3); }
+  #bnav .bn-eb.eN { background: #f5c842; color: #241c04; } #bnav .bn-eb.eP { background: #1fa463; } #bnav .bn-eb.eA { background: #c62828; } #bnav .bn-eb.eB { background: #e08a00; }
+  #bnav.notch { background: transparent; box-shadow: 0 -6px 16px rgba(0,0,0,.3); }
+  #bnav.notch::before { content: ""; position: absolute; inset: 0; background: #fff; pointer-events: none;
+    -webkit-mask: radial-gradient(circle 31px at 50% 0, transparent 30px, #000 31px); mask: radial-gradient(circle 31px at 50% 0, transparent 30px, #000 31px); }
+  #bnav.notch::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; pointer-events: none;
+    background: linear-gradient(90deg, #e30b0b calc(50% - 32px), transparent calc(50% - 32px), transparent calc(50% + 32px), #e30b0b calc(50% + 32px)); }
   /* ═══ Ordinateur : mêmes repères que sur téléphone ═══
      en-tête rouge de l'écusson (dragon + HAPPY MONDAY), 💬 🔔 ☰ à droite, onglets dans un bandeau blanc
      comme la barre du bas, menu ☰ identique (panneau à droite), cloche en liste déroulante. */
@@ -3498,7 +3519,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 10:34</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 13:12</footer>
 
 <script>
 
@@ -14664,8 +14685,10 @@ function _svApply() {
       const L = [];
       L.push(soiree() ? { k: "live", ic: "live", l: "En direct", dot: true } : { k: "session", ic: "sessions", l: "Sessions" });
       L.push({ k: "stats", ic: "trophy", l: "Récomp." });
-      if (soiree() && canSaisie()) L.push({ k: "saisie", ic: "saisie", l: "Saisie", center: true, red: true });
-      else if (acc()) L.push({ k: "vote", ic: "next", l: "Prochaine", center: true });
+      // Bouton central en écusson : grisé si rien d'urgent, rouge pendant le sondage (pastille = ta réponse),
+      // et posé dans une encoche de la barre le lundi soir pour la Saisie.
+      if (soiree() && canSaisie()) L.push({ k: "saisie", ic: "saisie", l: "Saisie", center: true, red: true, sh: "n" });
+      else if (acc()) { const op = voteOpen(), v = myVote(); L.push({ k: "vote", ic: "next", l: "Prochaine", center: true, sh: op ? "r" : "g", eb: op ? (v ? { P: ["P", "✓"], A: ["A", "✕"], B: ["B", "✚"] }[v] : ["N", "!"]) : null }); }
       if (acc()) { const v = vg(); L.push({ k: "vignettes", ic: "cards", l: "Vignettes", bd: v && v.boosters ? v.boosters : 0 }); }
       else L.push({ k: "joueurs", ic: "team", l: "Effectif" });
       L.push({ k: "__menu", ic: "menu", l: "Menu" });
@@ -14674,10 +14697,11 @@ function _svApply() {
     function renderBar() {
       const L = items(), cur = PANEL[activePanel()];
       const nav = $("bnav"); nav.style.setProperty("--bn-n", L.length);
+      nav.classList.toggle("notch", L.some(it => it.sh === "n"));
       nav.innerHTML = L.map(it => {
         const on = it.k === "__menu" ? menuOpen : (!menuOpen && cur === it.k);
-        const inner = it.center ? `<span class="bn-tile">${ic(it.ic)}</span><span>${it.l}</span>` : `${ic(it.ic)}<span>${it.l}</span>`;
-        return `<button type="button" class="${it.center ? `bn-c${it.red ? " saisie" : ""}` : ""}" data-bn="${it.k}" aria-current="${on}" aria-label="${it.l}">${it.dot ? `<span class="bn-dot"></span>` : ""}${it.bd ? `<span class="bn-bd">${it.bd}</span>` : ""}${inner}</button>`;
+        const inner = it.center ? `<span class="bn-tile">${ic(it.ic)}${it.eb ? `<span class="bn-eb e${it.eb[0]}">${it.eb[1]}</span>` : ""}</span><span>${it.l}</span>` : `${ic(it.ic)}<span>${it.l}</span>`;
+        return `<button type="button" class="${it.center ? `bn-c${it.red ? " saisie" : ""}${it.sh ? ` sh sh-${it.sh}` : ""}` : ""}" data-bn="${it.k}" aria-current="${on}" aria-label="${it.l}">${it.dot ? `<span class="bn-dot"></span>` : ""}${it.bd ? `<span class="bn-bd">${it.bd}</span>` : ""}${inner}</button>`;
       }).join("");
     }
     // ── bandeau : score en direct pendant la soirée, sinon ta réponse au vote
