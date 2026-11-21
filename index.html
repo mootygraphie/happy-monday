@@ -3103,6 +3103,26 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #npop .np-act .pri { background: var(--gold); color: #241c04; }
   #npop .np-act .sec { background: color-mix(in srgb, var(--good) 16%, var(--bg3)); color: var(--good); border: 1px solid color-mix(in srgb, var(--good) 45%, transparent); }
   #npop .np-skip { display: block; width: 100%; border: none; background: none; color: var(--text3); font: inherit; font-size: 12.5px; text-decoration: underline; cursor: pointer; padding: 0 0 14px; }
+  /* ── Effectif : liste épurée */
+  .eff-wrap { max-width: 680px; margin: 0 auto; }
+  .eff-stats { display: flex; gap: 6px; margin: 4px 0 14px; padding: 6px 0; }
+  .eff-stats button { flex: 1 1 0; min-width: 0; border: 1px solid var(--border2); background: var(--bg2); border-radius: 12px; padding: 8px 0; font: inherit; font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; filter: grayscale(.6); opacity: .8; color: var(--text); transition: flex-grow .2s, background .2s; }
+  .eff-stats button[aria-pressed="true"] { flex-grow: 3.2; filter: none; opacity: 1; background: var(--gold-bg); border-color: var(--gold); color: var(--gold); font-size: 13.5px; font-weight: 700; }
+  .eff-stats button .w { display: none; white-space: nowrap; } .eff-stats button[aria-pressed="true"] .w { display: inline; }
+  .eff-sec { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); margin: 18px 2px 6px; }
+  .eff-row { display: flex; align-items: center; gap: 11px; padding: 8px 4px; border-bottom: 1px solid var(--border); }
+  .eff-row .eff-av { width: 40px; height: 40px; border-radius: 11px; font-size: 12px; position: relative; overflow: hidden; cursor: pointer; }
+  .eff-row .eff-av.dim { opacity: .85; }
+  .eff-mid { flex: 1; min-width: 0; }
+  .eff-mid .roster-name { margin-bottom: 0; font-size: 14.5px; font-weight: 600; text-align: left; }
+  .eff-bar { height: 4px; border-radius: 3px; background: var(--bg3); margin-top: 6px; overflow: hidden; }
+  .eff-bar i { display: block; height: 100%; border-radius: 3px; background: var(--c); }
+  .eff-val { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 44px; text-align: right; }
+  .eff-val.zero { color: var(--text3); font-weight: 500; }
+  .eff-sts { position: relative; flex: none; }
+  .eff-sts select { -webkit-appearance: none; appearance: none; font: inherit; font-size: 11.5px; font-weight: 700; border-radius: 9px; padding: 6px 18px 6px 8px; cursor: pointer; border: 1px solid var(--sc); color: var(--sc); background: color-mix(in srgb, var(--sc) 12%, var(--bg2)); width: 66px; }
+  .eff-sts::after { content: ""; position: absolute; right: 7px; top: 50%; width: 5px; height: 5px; border-right: 1.5px solid var(--sc); border-bottom: 1.5px solid var(--sc); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+  .eff-sts.s-roster { --sc: var(--good); } .eff-sts.s-joker { --sc: var(--bleu); } .eff-sts.s-absent { --sc: #b892ff; } .eff-sts.s-inactif { --sc: var(--text3); }
   /* ═══ Le Vestiaire : chat (bouton 💬 dans l'en-tête, écran plein) ═══ */
   #chat-btn { position: relative; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; flex: none; }
   #chat-btn[hidden] { display: none; }
@@ -3533,7 +3553,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 13:37</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 13:39</footer>
 
 <script>
 
@@ -8505,6 +8525,7 @@ document.getElementById("delete-session-btn").addEventListener("click", () => {
 ══════════════════════════════════════════════════════════ */
 
 let rosterSort = { col: "taux", dir: 1 };
+let _effStat = { k: "taux", dir: -1 }; // Effectif : stat affichée et sens du tri
 let jokerSort  = { col: "taux", dir: 1 };
 
 function computePlayerStats() {
@@ -8765,35 +8786,32 @@ function renderJoueurs() {
     </div>`;
   }
 
-  const rosterCards = sortArr(rosterRows, rosterSort).map(buildRosterCard).join("");
-  const jokerCards  = sortArr(jokerRows, jokerSort).map(buildJokerCard).join("");
-  const absentNames = [...ABSENTS].filter(n => !INACTIFS.has(n)).sort((a,b) => a.localeCompare(b,'fr'));
-  const absentCards = absentNames.map(buildAbsentCard).join("");
-  const inactifNames = [...INACTIFS].sort((a,b) => a.localeCompare(b,'fr'));
-  const inactifCards = inactifNames.map(buildInactifCard).join("");
-
-  const jokerSection = jokerRows.length > 0 ? `
-    <div class="joueurs-section-label" style="margin-top:2rem">Occasionnels (${jokerRows.length})</div>
-    ${buildSortRow("jokers-sort", colDef, jokerSort)}
-    <div class="roster-list">${jokerCards}</div>` : '';
-
-  const absentSection = absentNames.length > 0 ? `
-    <div class="joueurs-section-label" style="margin-top:2rem">Dépanneurs (${absentNames.length})</div>
-    <div class="roster-list">${absentCards}</div>` : '';
-
-  // Inactifs : reserve aux admins, invisible du reste des utilisateurs.
-  const inactifSection = (isAdmin && inactifNames.length > 0) ? `
-    <div class="joueurs-section-label" style="margin-top:2rem">Inactifs cette saison (${inactifNames.length})</div>
-    <div class="roster-list">${inactifCards}</div>` : '';
-
-  container.innerHTML = `
-    <div class="joueurs-section-label">Réguliers (${rosterRows.length})</div>
-    ${buildSortRow("roster-sort", colDef, rosterSort)}
-    <div class="roster-list">${rosterCards}</div>
-    ${jokerSection}${absentSection}${inactifSection}`;
-
-  bindSortRow("roster-sort", rosterSort);
-  bindSortRow("jokers-sort", jokerSort);
+  /* ── Liste épurée (validée le 21/11/2026) : classée par présence, sans icône sur les joueurs.
+     La barre d'icônes trie (du plus grand au plus petit, re-toucher inverse) et n'affiche que la stat choisie.
+     Super admins : statut du joueur en pastille-menu à droite, groupe Inactifs visible. */
+  const EFF_ST = [["taux", "✅", "Présence"], ["absences", "❌", "Absences"], ["blesses", "🤕", "Blessures"], ["pasRepondu", "⁉️", "Pas répondu"], ["sac", "🎒", "Sac"], ["maillots", "👕", "Maillots"]];
+  const EFF_COL = { taux: "var(--good)", absences: "var(--bad)", blesses: "#f39c12", pasRepondu: "var(--text3)", sac: "var(--bleu)", maillots: "#b892ff" };
+  const byName = Object.fromEntries(rowsWithTaux.map(r => [r.name, r]));
+  const rowOf = n => byName[n] || { name: n, taux: 0, absences: 0, blesses: 0, pasRepondu: 0, sac: 0, maillots: 0 };
+  const absentNames = [...ABSENTS].filter(n => !INACTIFS.has(n));
+  const inactifNames = [...INACTIFS];
+  const groups = [["roster", "Réguliers", rosterRows], ["joker", "Occasionnels", jokerRows], ["absent", "Dépanneurs", absentNames.map(rowOf)]];
+  if (isAdmin) groups.push(["inactif", "Inactifs cette saison", inactifNames.map(rowOf)]);
+  const st = _effStat, k = st.k, max = Math.max(1, ...rowsWithTaux.map(r => r[k] || 0));
+  const sortRows = L => [...L].sort((a, b) => ((a[k] || 0) - (b[k] || 0)) * st.dir || a.name.localeCompare(b.name, "fr"));
+  const STS = [["roster", "to-roster", "Rég."], ["joker", "to-joker", "Occ."], ["absent", "to-absent", "Dép."], ["inactif", "to-inactif", "Inact."]];
+  const stsHTML = (n, g) => isAdmin ? `<label class="eff-sts s-${g} roster-status"><select class="roster-status-sel" data-player="${n}" aria-label="Statut de ${n}">${STS.map(([gg, act, sh]) => `<option value="${act}"${gg === g ? " selected" : ""}>${sh}</option>`).join("")}</select></label>` : "";
+  const rowHTML = (r, g) => { const v = r[k] || 0, w = k === "taux" ? v : v / max * 100;
+    return `<div class="eff-row" style="--c:${EFF_COL[k]}"><div class="roster-avatar pf pf-open eff-av${g === "roster" ? "" : " dim"}" data-player="${r.name}" title="Voir la fiche">${initials(r.name)}${portraitImg(r.name, true)}</div>
+      <div class="eff-mid"><button class="roster-name player-link" data-player="${r.name}">${r.name}</button><div class="eff-bar"><i style="width:${w}%"></i></div></div>
+      <span class="eff-val${v ? "" : " zero"}">${k === "taux" ? v + " %" : v}</span>${stsHTML(r.name, g)}</div>`; };
+  const bar = `<div class="eff-stats" role="group" aria-label="Trier l'effectif">${EFF_ST.map(([kk, e, w]) => `<button type="button" data-eff="${kk}" aria-pressed="${k === kk}" title="${w}">${e}<span class="w">${w} ${st.dir < 0 ? "↓" : "↑"}</span></button>`).join("")}</div>`;
+  container.innerHTML = `<div class="eff-wrap">${bar}${groups.map(([g, l, L]) => L.length ? `<div class="eff-sec">${l} · ${L.length}</div>${sortRows(L).map(r => rowHTML(r, g)).join("")}` : "").join("")}</div>`;
+  container.querySelectorAll("[data-eff]").forEach(btn => btn.addEventListener("click", () => {
+    const kk = btn.dataset.eff;
+    if (_effStat.k === kk) _effStat.dir *= -1; else { _effStat.k = kk; _effStat.dir = -1; }
+    renderJoueurs();
+  }));
 }
 
 function _effApplyStatus(player, action) {
