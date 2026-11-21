@@ -2987,7 +2987,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   html.ch-lock .hmft-toast { bottom: auto; top: calc(80px + env(safe-area-inset-top, 0px)); }
   #chat { position: fixed; inset: 0; z-index: 2500; background: rgba(0,0,0,.6); display: flex; justify-content: center; }
   #chat[hidden] { display: none; }
-  #chat .ch-in { position: relative; width: 100%; max-width: 560px; height: 100%; height: 100dvh; background: var(--bg); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 40px rgba(0,0,0,.5); }
+  #chat .ch-in { position: relative; width: 100%; max-width: 560px; height: 100%; background: var(--bg); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 40px rgba(0,0,0,.5); }
   #chat .ch-hdr { flex: none; display: flex; align-items: center; gap: 8px; padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 13px; background: radial-gradient(130% 160% at 50% 0%, #ff2b1c 0%, #e30b0b 45%, #a50000 100%); box-shadow: inset 0 -3px 0 #0b0b0d, inset 0 -5px 0 rgba(255,255,255,.9); position: relative; z-index: 5; color: #fff; }
   #chat .ch-hb { position: relative; width: 34px; height: 34px; border-radius: 10px; border: 1px solid rgba(255,255,255,.4); background: rgba(0,0,0,.28); color: #fff; display: flex; align-items: center; justify-content: center; font: inherit; font-size: 17px; cursor: pointer; flex: none; padding: 0; }
   #chat .ch-hb svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
@@ -3397,7 +3397,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 09:24</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 09:25</footer>
 
 <script>
 
@@ -15200,8 +15200,20 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     box.hidden = false; document.documentElement.classList.add("ch-lock");
     if (!V.pushed) { try { history.pushState({ hmChat: 1 }, ""); V.pushed = true; } catch (e) {} }
     if (rid && R(rid)) enterRoom(rid); else { V.room = null; render(); }
+    fitVV();
   }
-  function hide() { V.open = false; V.room = null; V.form = null; V.sheet = null; V.drop = false; box.hidden = true; box.innerHTML = ""; document.documentElement.classList.remove("ch-lock"); renderBtn(); }
+  // Clavier du téléphone : on cale le chat sur la zone réellement visible (visualViewport),
+  // sinon iPhone/Android font remonter tout l'écran et le dernier message passe sous le clavier.
+  const vv = window.visualViewport;
+  function fitVV() {
+    if (!V.open || !vv) return;
+    const f = $("ch-feed"), near = f && f.scrollHeight - f.scrollTop - f.clientHeight < 120;
+    box.style.top = vv.offsetTop + "px"; box.style.height = vv.height + "px"; box.style.bottom = "auto";
+    if (f && near) f.scrollTop = f.scrollHeight;
+  }
+  if (vv) { vv.addEventListener("resize", fitVV); vv.addEventListener("scroll", fitVV); }
+  box.addEventListener("focusin", e => { if (e.target.id === "ch-tx") setTimeout(fitVV, 60); setTimeout(fitVV, 350); });
+  function hide() { box.style.top = ""; box.style.height = ""; box.style.bottom = ""; V.open = false; V.room = null; V.form = null; V.sheet = null; V.drop = false; box.hidden = true; box.innerHTML = ""; document.documentElement.classList.remove("ch-lock"); renderBtn(); }
   function closeChat() { if (V.room) markRead(V.room); if (V.pushed) { V.pushed = false; hide(); try { history.back(); } catch (e) {} } else hide(); }
   addEventListener("popstate", () => { if (V.open) { V.pushed = false; if (V.room) markRead(V.room); hide(); } });
   function enterRoom(id) {
@@ -15217,7 +15229,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const m = { by: me(), text: text.slice(0, 1000), at: TS() };
     if (V.reply) m.reply = { id: V.reply.id, by: V.reply.by || "", text: plain(V.reply.text).slice(0, 120) };
     V.draft[V.room] = ""; V.reply = null; V.sugg = null; t.value = ""; autoGrow(t); renderComp(); $("ch-tx")?.focus();
-    try { await _db.ref(`chat/msgs/${r.id}`).push(m); renderFeed(true); }
+    const f0 = $("ch-feed"); if (f0) f0.scrollTop = f0.scrollHeight;
+    try { await _db.ref(`chat/msgs/${r.id}`).push(m); renderFeed(true); fitVV(); }
     catch (e) { V.draft[V.room] = text; renderComp(); toast("Message non envoyé : vérifie ta connexion."); }
   }
   function flash(idv) { const el = box.querySelector(`.ch-msg[data-id="${CSS.escape(idv)}"], .ch-sys[data-id="${CSS.escape(idv)}"]`); if (!el) { toast("Message trop ancien pour être affiché."); return; } el.scrollIntoView({ block: "center", behavior: "smooth" }); el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1400); }
