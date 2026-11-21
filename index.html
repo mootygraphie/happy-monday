@@ -3134,6 +3134,144 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .eff-sts select { -webkit-appearance: none; appearance: none; font: inherit; font-size: 11.5px; font-weight: 700; border-radius: 9px; padding: 6px 18px 6px 8px; cursor: pointer; border: 1px solid var(--sc); color: var(--sc); background: color-mix(in srgb, var(--sc) 12%, var(--bg2)); width: 66px; }
   .eff-sts::after { content: ""; position: absolute; right: 7px; top: 50%; width: 5px; height: 5px; border-right: 1.5px solid var(--sc); border-bottom: 1.5px solid var(--sc); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
   .eff-sts.s-roster { --sc: var(--good); } .eff-sts.s-joker { --sc: var(--bleu); } .eff-sts.s-absent { --sc: #b892ff; } .eff-sts.s-inactif { --sc: var(--text3); }
+  /* ═══ Compte-rendu de soirée (page Sessions) ═══ */
+  #panel-session .session-selector > label, #sess-dd-row { display: none !important; }
+  #panel-session .session-selector { margin-bottom: 0; justify-content: flex-end; min-height: 0; }
+  .cr { --tR: var(--rouge); --tV: var(--vert); --tB: var(--bleu); max-width: 1100px; margin: 0 auto; padding-bottom: 20px; }
+  .cr .tR { --tc: var(--rouge); } .cr .tV { --tc: var(--vert); } .cr .tB { --tc: var(--bleu); }
+  .cr-dates { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 2px 0 6px; margin-bottom: 14px; }
+  .cr-dates::-webkit-scrollbar { display: none; }
+  .cr-dt { flex: none; border: 1px solid var(--border2); background: var(--bg2); border-radius: 10px; padding: 6px 10px; cursor: pointer; text-align: center; min-width: 54px; font: inherit; color: var(--text); }
+  .cr-dt b { display: block; font-size: 17px; line-height: 1.1; } .cr-dt small { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; }
+  .cr-dt[aria-pressed="true"] { background: var(--gold-bg); color: var(--gold); border-color: var(--gold); } .cr-dt[aria-pressed="true"] small { color: var(--gold); }
+  .cr-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 30px; align-items: start; }
+  .cr-grid > div { min-width: 0; }
+  @media (min-width: 900px) { .cr-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); } }
+  .cr-h2 { font-size: 11px; font-weight: 700; font-style: italic; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); margin: 22px 0 10px; }
+  .cr-h2 span { text-transform: none; letter-spacing: 0; font-weight: 500; opacity: .8; }
+  .cr-title { padding: 6px 0 4px; }
+  .cr-title .date { display: block; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); }
+  .cr-title .head { margin: 8px 0 12px; font-size: clamp(32px, 8vw, 52px); line-height: 1.04; font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: -.015em; text-wrap: balance; }
+  .cr-title .kick { margin: 0 0 6px; font-size: 13px; color: var(--text3); }
+  .cr-tbox { display: inline-block; padding: 0 .2em; margin: 0 -.04em; border-radius: .14em; line-height: 1.12; transform: rotate(-1.5deg); box-shadow: 0 6px 18px rgba(0,0,0,.35); }
+  .cr-empty { margin-top: 18px; padding: 26px; text-align: center; color: var(--text2); background: var(--bg2); border: 1px solid var(--border); border-radius: 18px; }
+  /* avatars (mêmes cadrages que l'Effectif) */
+  .cr .cr-av.roster-avatar { width: var(--s, 36px); height: var(--s, 36px); border-radius: 50%; font-size: calc(var(--s, 36px) * .3); border: 2px solid var(--tc, var(--border2)); flex: none; }
+  .cr-ph { position: relative; display: block; background: color-mix(in srgb, var(--tc, #555) 25%, var(--bg3)); overflow: hidden; }
+  .cr-ph .ini { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; color: rgba(255,255,255,.55); font-size: 22px; }
+  .cr-ph.pf > .pf-img { z-index: 1; transform: scale(1.35); transform-origin: 50% 28%; object-position: 50% 30%; }
+  .cr-ph.big { position: absolute; inset: 0; } .cr-ph.big .ini { font-size: 46px; }
+  .cr-ph.big.pf > .pf-img { transform: scale(1.7); transform-origin: 50% 27%; }
+  /* temps forts */
+  .cr-tf { position: relative; border-radius: 22px; border: 1px solid rgba(245,200,66,.3); background: linear-gradient(135deg, rgba(245,200,66,.16), transparent 65%), var(--bg2); overflow: hidden; min-height: 158px; }
+  .cr-tf .slide { position: absolute; inset: 0; padding: 18px 18px 34px; opacity: 0; transform: translateX(24px); transition: opacity .45s ease, transform .45s ease; pointer-events: none; }
+  .cr-tf .slide.on { position: relative; opacity: 1; transform: none; pointer-events: auto; }
+  .cr-tf .main { display: flex; align-items: center; gap: 16px; }
+  .cr-tf .stick { flex: none; position: relative; width: 82px; height: 82px; border-radius: 16px; background: #f4ecda; display: flex; align-items: center; justify-content: center; font-size: 44px; transform: rotate(-6deg); box-shadow: 0 10px 24px rgba(0,0,0,.5); }
+  .cr-tf .slide.on .stick { animation: crPop .7s cubic-bezier(.2,.9,.3,1.3) both; }
+  .cr-tf .stick .cr-av { position: absolute; right: -14px; bottom: -12px; border-color: #fff; transform: rotate(6deg); }
+  .cr-tf .stick .tdot { position: absolute; right: -6px; bottom: -6px; width: 22px; height: 22px; border-radius: 50%; background: var(--tc); border: 3px solid #fff; transform: rotate(6deg); }
+  .cr-tf .tx { min-width: 0; } .cr-tf h3 { margin: 0; font-size: 22px; font-weight: 700; font-style: italic; text-transform: uppercase; line-height: 1.1; }
+  .cr-tf p { margin: 5px 0 0; font-size: 13.5px; color: var(--text2); } .cr-tf p b { color: var(--text); }
+  .cr-tf .ctx { margin-top: 6px; font-size: 11.5px; color: var(--text3); } .cr-tf .nb { color: var(--gold); font-weight: 700; }
+  .cr-tf .prog { position: absolute; left: 18px; right: 18px; bottom: 12px; display: flex; gap: 6px; }
+  .cr-tf .prog button { flex: 1; height: 4px; border: none; padding: 0; border-radius: 3px; background: var(--border2); overflow: hidden; cursor: pointer; }
+  .cr-tf .prog button i { display: block; height: 100%; width: 0; background: var(--gold); }
+  .cr-tf .prog button.done i { width: 100%; } .cr-tf .prog button.run i { animation: crRun 4s linear forwards; }
+  .cr-confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .cr-confetti i { position: absolute; left: 50%; top: 45%; width: 7px; height: 11px; border-radius: 2px; animation: crConf 1.6s cubic-bezier(.2,.7,.3,1) forwards; animation-delay: var(--d); }
+  @keyframes crRun { from { width: 0; } to { width: 100%; } }
+  @keyframes crPop { 0% { transform: scale(.6) rotate(-10deg); opacity: 0; } 70% { transform: scale(1.08) rotate(3deg); opacity: 1; } 100% { transform: rotate(-6deg); } }
+  @keyframes crConf { 0% { transform: translate(0, 0) rotate(0); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) rotate(var(--r)); opacity: 0; } }
+  @keyframes crMarq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  /* héros : grandes photos, podium au verso */
+  .cr-heroes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 250px; gap: 8px; }
+  @media (min-width: 900px) { .cr-heroes { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .cr-hero { all: unset; position: relative; display: block; perspective: 800px; cursor: pointer; }
+  .cr-hero:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 16px; }
+  .cr-hero .hin { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .55s cubic-bezier(.2,.8,.2,1); }
+  .cr-hero.flipped .hin { transform: rotateY(180deg); }
+  .cr-hero .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 16px; overflow: hidden; border: 2px solid var(--tc, var(--border2)); background: var(--bg2); }
+  .cr-hero.mvp .face { box-shadow: 0 0 18px rgba(245,200,66,.22); }
+  .cr-hero .chip { position: absolute; z-index: 2; left: 8px; top: 8px; font-size: 10px; font-weight: 800; font-style: italic; letter-spacing: .06em; text-transform: uppercase; background: rgba(10,10,14,.78); color: #fff; border-radius: 8px; padding: 3px 8px; }
+  .cr-hero.mvp .chip { background: var(--gold); color: #241c04; }
+  .cr-hero .bot { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; display: flex; align-items: flex-end; justify-content: space-between; gap: 6px; padding: 26px 10px 9px; background: linear-gradient(180deg, transparent, rgba(8,8,12,.92) 55%); color: #fff; }
+  .cr-hero .bot b { font-size: 14px; line-height: 1.1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cr-hero .num { flex: none; font-size: 26px; font-weight: 700; font-style: italic; line-height: .9; color: var(--tc, var(--gold)); text-align: right; } .cr-hero.mvp .num { color: var(--gold); }
+  .cr-hero .num small { display: block; font-size: 9px; font-style: normal; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #9898aa; margin-top: 3px; }
+  .cr-hero .back { transform: rotateY(180deg); display: flex; flex-direction: column; padding: 10px; gap: 8px; }
+  .cr-hero .tag { font-size: 10px; font-weight: 700; font-style: italic; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); } .cr-hero .tag em { text-transform: none; letter-spacing: 0; }
+  .cr-hero .pod { display: grid; grid-template-columns: 1fr 1.15fr 1fr; align-items: end; gap: 4px; margin-top: 2px; }
+  .cr-hero .pp { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
+  .cr-hero .pp .cr-ph { width: 78%; aspect-ratio: 1; border-radius: 10px; border: 2.5px solid var(--tc, var(--border2)); } .cr-hero .pp.p1 .cr-ph { width: 88%; }
+  .cr-hero .pp .v { font-size: 14px; font-weight: 700; font-style: italic; } .cr-hero .pp.p1 .v { color: var(--gold); font-size: 16px; }
+  .cr-hero .pp .n { font-size: 10px; color: var(--text2); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cr-hero .pp .step { width: 100%; margin-top: 2px; text-align: center; font-size: 11px; font-weight: 800; color: var(--text3); background: var(--bg3); border-radius: 6px 6px 0 0; }
+  .cr-hero .pp.p1 .step { height: 26px; line-height: 26px; color: #241c04; background: var(--gold); } .cr-hero .pp.p2 .step { height: 18px; line-height: 18px; } .cr-hero .pp.p3 .step { height: 12px; line-height: 12px; font-size: 9px; }
+  .cr-hero .rest { display: flex; flex-direction: column; gap: 4px; border-top: 1px solid var(--border); padding-top: 6px; }
+  .cr-hero .rr { display: grid; grid-template-columns: 12px 22px 1fr auto; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); }
+  .cr-hero .rr em { font-style: normal; color: var(--text3); font-size: 11px; text-align: right; } .cr-hero .rr .n { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .cr-hero .rr b { color: var(--text); }
+  /* classement : la ligne se retourne sur la composition */
+  .cr-stand { display: flex; flex-direction: column; gap: 8px; }
+  .cr-stand .st { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+  .cr-stand .rk, .cr-stand .pts { font-size: 20px; font-weight: 700; font-style: italic; } .cr-stand .rk { color: var(--text3); text-align: center; } .cr-stand .st:first-child .rk { color: var(--gold); }
+  .cr-stand .pts { min-width: 34px; text-align: right; } .cr-stand .pts small { display: block; font-size: 10px; font-weight: 500; font-style: normal; color: var(--text3); margin-top: -3px; }
+  .cr-stand .bar { all: unset; position: relative; display: block; height: 56px; perspective: 600px; cursor: pointer; min-width: 0; }
+  .cr-stand .bar .in { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+  .cr-stand .bar.flipped .in { transform: rotateX(180deg); }
+  .cr-stand .f { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 12px; border: 1px solid var(--border); background: var(--bg2); display: flex; align-items: center; gap: 10px; padding: 0 10px; overflow: hidden; }
+  .cr-stand .f.front > i { position: absolute; left: 0; top: 0; bottom: 0; width: var(--w); background: linear-gradient(90deg, color-mix(in srgb, var(--tc) 22%, transparent), color-mix(in srgb, var(--tc) 6%, transparent)); border-right: 2px solid var(--tc); }
+  .cr-stand .f.front > b, .cr-stand .f.front > .pile, .cr-stand .f.front > small { position: relative; }
+  .cr-stand .f.front b { font-size: 14px; } .cr-stand .f.front small { font-size: 11.5px; color: var(--text2); margin-left: auto; white-space: nowrap; }
+  .cr-stand .pile { display: flex; } .cr-stand .pile .cr-av { margin-left: -8px; box-shadow: 0 0 0 2px var(--bg2); } .cr-stand .pile .cr-av:first-child { margin-left: 0; }
+  .cr-stand .f.back { transform: rotateX(180deg); justify-content: center; background: color-mix(in srgb, var(--tc) 12%, var(--bg2)); border-color: color-mix(in srgb, var(--tc) 40%, transparent); }
+  .cr-stand .faces { display: flex; gap: 6px; }
+  /* bandeau des résultats */
+  .cr-tick { display: flex; align-items: center; height: 38px; border-radius: 12px; overflow: hidden; background: var(--bg2); border: 1px solid var(--border); }
+  .cr-tick .tag { flex: none; position: relative; z-index: 2; height: 100%; display: flex; align-items: center; padding: 0 12px; background: color-mix(in srgb, var(--gold) 14%, var(--bg2)); box-shadow: 6px 0 10px var(--bg2); color: var(--gold); font-weight: 700; font-style: italic; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+  .cr-tick .run { display: flex; gap: 26px; white-space: nowrap; padding-left: 16px; animation: crMarq 40s linear infinite; font-size: 12.5px; color: var(--text2); }
+  .cr-tick .run b { color: var(--text); margin: 0 3px; } .cr-tick .run i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--tc); margin: 0 5px; }
+  /* équipe-type isométrique */
+  .cr-iso { position: relative; height: 200px; perspective: 900px; overflow: hidden; border-radius: 18px; background: var(--bg2); border: 1px solid var(--border); }
+  .cr-iso .pitch { position: absolute; left: 50%; top: 71%; width: 260px; height: 168px; margin: -109px 0 0 -130px; transform: rotateX(58deg) rotateZ(-30deg); transform-style: preserve-3d; border-radius: 8px;
+    background: repeating-linear-gradient(90deg, var(--tt-pitch-floor, #5a8770) 0 26px, color-mix(in srgb, var(--tt-pitch-floor, #5a8770) 88%, #fff) 26px 52px); box-shadow: 0 30px 50px rgba(0,0,0,.45), inset 0 0 0 3px rgba(255,255,255,.6); }
+  .cr-iso .pitch::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 3px; background: rgba(255,255,255,.6); margin-left: -1.5px; }
+  .cr-iso .pitch::after { content: ""; position: absolute; left: 50%; top: 50%; width: 50px; height: 50px; margin: -25px; border-radius: 50%; border: 3px solid rgba(255,255,255,.6); }
+  .cr-iso .goal { position: absolute; top: 50%; width: 30px; height: 66px; margin-top: -33px; border: 3px solid rgba(255,255,255,.6); } .cr-iso .goal.l { left: -3px; border-left: none; } .cr-iso .goal.r { right: -3px; border-right: none; }
+  .cr-iso .pl { position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -100%) rotateZ(30deg) rotateX(-58deg); transform-origin: 50% 100%; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .cr-iso .pl .cr-av { box-shadow: 0 6px 10px rgba(0,0,0,.5); }
+  .cr-iso .pl b { font-size: 10.5px; color: #fff; background: rgba(0,0,0,.72); border-radius: 6px; padding: 1px 6px; white-space: nowrap; }
+  .cr-iso .pl small { font-size: 9px; color: var(--gold); background: rgba(0,0,0,.72); border-radius: 6px; padding: 0 5px; white-space: nowrap; }
+  @media (min-width: 900px) { .cr-iso { height: 340px; } .cr-iso .pitch { width: 340px; height: 214px; margin: -142px 0 0 -170px; top: 62%; } .cr-iso .pl .cr-av { --s: 40px !important; } .cr-iso .pl b { font-size: 11px; } }
+  /* en bref + le saviez-vous */
+  .cr-chocs .lc { display: flex; align-items: center; gap: 12px; padding: 11px 2px; border-bottom: 1px solid var(--border); }
+  .cr-chocs .ic { font-size: 22px; width: 30px; text-align: center; flex: none; }
+  .cr-chocs b { display: block; font-size: 16.5px; font-weight: 700; font-style: italic; text-transform: uppercase; line-height: 1.15; } .cr-chocs .cr-tbox { transform: none; box-shadow: none; }
+  .cr-chocs small { font-size: 12px; color: var(--text3); }
+  .cr-chiffres { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  .cr-chiffres .cc { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 16px; border: 1px solid var(--border); background: var(--bg2); }
+  .cr-chiffres .n { flex: none; min-width: 56px; text-align: center; font-size: 34px; font-weight: 700; font-style: italic; line-height: 1; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .cr-chiffres .cc.tR .n, .cr-chiffres .cc.tV .n, .cr-chiffres .cc.tB .n { color: var(--tc); }
+  .cr-chiffres .t { flex: 1; min-width: 0; } .cr-chiffres .t b { display: block; font-size: 13.5px; line-height: 1.25; } .cr-chiffres .t small { font-size: 11.5px; color: var(--text3); }
+  /* détails des matchs : discret, exhaustif */
+  .cr-volet { margin-top: 18px; border-top: 1px solid var(--border); }
+  .cr-volet summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 12px 2px; font-size: 13px; font-weight: 600; color: var(--text2); }
+  .cr-volet summary::-webkit-details-marker { display: none; } .cr-volet summary span { color: var(--text3); font-weight: 500; }
+  .cr-volet summary::after { content: "›"; margin-left: auto; color: var(--text3); font-size: 20px; transition: transform .2s; } .cr-volet[open] summary::after { transform: rotate(90deg); }
+  .cr-md { display: grid; grid-template-columns: 1fr; gap: 10px; padding: 4px 0 14px; }
+  @media (min-width: 900px) { .cr-md { grid-template-columns: 1fr 1fr; } }
+  .cr-md .mm { border: 1px solid var(--border); border-radius: 14px; padding: 10px; background: var(--bg2); }
+  .cr-md .mh { display: flex; align-items: baseline; gap: 10px; font-size: 12px; color: var(--text3); margin-bottom: 8px; flex-wrap: wrap; } .cr-md .mh b { color: var(--text); font-size: 13.5px; } .cr-md .mh .mt { margin-left: auto; }
+  .cr-md .sides { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .cr-md .sd { border: 1px solid var(--border); border-radius: 10px; padding: 8px 9px; font-size: 12px; min-width: 0; }
+  .cr-md .sd .nm { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 12.5px; margin-bottom: 5px; } .cr-md .sd .nm i { width: 9px; height: 9px; border-radius: 50%; background: var(--tc); }
+  .cr-md .sd .nm em { margin-left: auto; font-style: normal; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--tc); }
+  .cr-md .sd.win { border-color: var(--tc); } .cr-md .sd.win .nm { color: var(--tc); } .cr-md .sd.lose { opacity: .72; }
+  .cr-md ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; } .cr-md li { display: flex; flex-direction: column; } .cr-md li small { font-size: 11px; color: var(--text3); padding-left: 18px; }
+  .cr-md .none { margin: 0; color: var(--text3); font-size: 11.5px; }
+  .cr-md .gk { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border); font-size: 11.5px; line-height: 1.5; } .cr-md .gk small { color: var(--text3); }
+  .cr-md .nts { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; font-size: 11.5px; } .cr-md .nts span { background: var(--gold-bg); color: var(--gold); border-radius: 20px; padding: 2px 9px; } .cr-md .nts b { color: var(--text); }
+  @media (prefers-reduced-motion: reduce) { .cr-tick .run, .cr-confetti i, .cr-tf .stick { animation: none !important; } }
   /* ═══ Le Vestiaire : chat (bouton 💬 dans l'en-tête, écran plein) ═══ */
   #chat-btn { position: relative; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; flex: none; }
   #chat-btn[hidden] { display: none; }
@@ -3564,7 +3702,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 14:21</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 14:39</footer>
 
 <script>
 
@@ -8380,6 +8518,203 @@ function populateSessionSelect() {
 }
 
 
+/* ══════════ COMPTE-RENDU DE SOIRÉE (page Sessions, version validée le 21/11/2026) ══════════
+   Titre qui varie, temps forts qui défilent (toujours 3), héros en photos qui se retournent sur le top 5,
+   classement qui se retourne sur la composition, bandeau des résultats, équipe-type isométrique,
+   « En bref » + « Le saviez-vous ? » tirés d'une réserve de stats, détail exhaustif des matchs.
+   Tout est calculé à partir de la soirée : ça marche pour toutes les soirées, y compris passées. */
+const _CR = { date: null, tf: 0, flip: {}, flipT: {}, timer: null, pause: false };
+const _crTC = { Rouge: "tR", Vert: "tV", Bleue: "tB" }, _crTV = { Rouge: "var(--rouge)", Vert: "var(--vert)", Bleue: "var(--bleu)" };
+const _crEsc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+const _crHash = s => { let h = 2166136261; for (const c of s) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
+const _crPick = (L, key) => L[_crHash(_CR.date + "|" + key) % L.length];
+const _crF1 = x => x.toFixed(1).replace(".", ",");
+const _crTL = t => TEAM_LABEL[t] || t;
+function _crModel(s) {
+  const pres = {}; Object.entries(s.presences || {}).forEach(([p, v]) => { if (v && v.statut === "Présent") pres[p] = v.equipe || ""; });
+  const team = p => pres[p] || "", st = {}, B = {}, P = {}, K = {}, notes = [], ND = Object.fromEntries(CUSTOM_ACH_DEFS.map(d => [d.id, d]));
+  (s.matchs || []).forEach((m, i) => {
+    [m.eqA, m.eqB].forEach(t => { st[t] = st[t] || { t, j: 0, v: 0, n: 0, d: 0, gf: 0, ga: 0, pts: 0 }; });
+    const a = st[m.eqA], b = st[m.eqB], sa = m.scoreA || 0, sb = m.scoreB || 0;
+    a.j++; b.j++; a.gf += sa; a.ga += sb; b.gf += sb; b.ga += sa;
+    if (sa > sb) { a.v++; b.d++; a.pts += 3; } else if (sb > sa) { b.v++; a.d++; b.pts += 3; } else { a.n++; b.n++; a.pts++; b.pts++; }
+    ["A", "B"].forEach(sd => {
+      (m["buteurs" + sd] || []).forEach((x, j) => { if (x && x !== "CSC") { B[x] = (B[x] || 0) + 1; const pa = (m["passeurs" + sd] || [])[j]; if (pa && pa !== "CSC") P[pa] = (P[pa] || 0) + 1; } });
+      const o = sd === "A" ? "B" : "A", tot = m["score" + o] || 0, mt = m["mt1" + o] || 0;
+      (m["gardiens" + sd] || []).slice(0, 2).forEach((g, h) => { if (!g) return; K[g] = K[g] || { h: 0, enc: 0 }; K[g].h++; K[g].enc += h ? Math.max(0, tot - mt) : mt; });
+    });
+    (m.notables || []).forEach(n => { if (n && n.defiId && ND[n.defiId]) notes.push({ ...n, d: ND[n.defiId], i, m }); });
+  });
+  const stand = Object.values(st).sort((x, y) => y.pts - x.pts || (y.gf - y.ga) - (x.gf - x.ga) || y.gf - x.gf);
+  const people = Object.keys(pres), ga = p => (B[p] || 0) + (P[p] || 0);
+  const ranked = people.filter(p => ga(p)).sort((x, y) => ga(y) - ga(x) || (B[y] || 0) - (B[x] || 0));
+  const kRank = Object.entries(K).filter(([, v]) => v.h >= 2).sort((x, y) => x[1].enc / x[1].h - y[1].enc / y[1].h);
+  const top = o => Object.entries(o).sort((x, y) => y[1] - x[1])[0];
+  const gk = kRank[0];
+  const out = people.filter(p => !gk || p !== gk[0]).sort((x, y) => ga(y) - ga(x) || (B[y] || 0) - (B[x] || 0)).slice(0, 4);
+  const goals = (s.matchs || []).reduce((a, m) => a + (m.scoreA || 0) + (m.scoreB || 0), 0);
+  const teams = {}; people.forEach(p => { const t = team(p); if (t) (teams[t] = teams[t] || []).push(p); });
+  Object.values(teams).forEach(L => L.sort((a, b) => a.localeCompare(b, "fr")));
+  return { s, pres, stand, B, P, K, notes, ND, mvp: ranked[0], tb: top(B), tp: top(P), gk, kRank, out, goals, teams, team, ranked, nPres: people.length, nM: (s.matchs || []).length };
+}
+const _crAv = (n, t, size) => `<span class="cr-av roster-avatar pf ${_crTC[t] || ""}"${size ? ` style="--s:${size}px"` : ""}>${_saisieInitials(n)}${portraitImg(n, true)}</span>`;
+const _crPh = (n, t, cls) => `<span class="cr-ph pf ${cls || ""} ${_crTC[t] || ""}"><span class="ini">${_saisieInitials(n)}</span>${portraitImg(n, true)}</span>`;
+const _crLine = (M, n) => { const b = M.B[n] || 0, p = M.P[n] || 0; return [b ? `${b} but${b > 1 ? "s" : ""}` : "", p ? `${p} passe${p > 1 ? "s" : ""}` : ""].filter(Boolean).join(" · ") || "—"; };
+const _CR_TWORD = { Rouge: /(?<![\wÀ-ÿ])(roses?)(?![\wÀ-ÿ])/i, Vert: /(?<![\wÀ-ÿ])(jaunes?)(?![\wÀ-ÿ])/i, Bleue: /(?<![\wÀ-ÿ])(bleu(?:e|s|es)?)(?![\wÀ-ÿ])/i };
+function _crBox(html, teams) { teams.forEach(t => { if (_CR_TWORD[t]) html = html.replace(_CR_TWORD[t], m => `<span class="cr-tbox" style="background:${_crTV[t]};color:${t === "Vert" ? "#111" : "#fff"}">${m}</span>`); }); return html; }
+function _crHeadline(M) {
+  const w = M.stand[0], s2 = M.stand[1]; if (!w) return { t: "Soirée sans match", teams: [] };
+  const W = _crTL(w.t), X = s2 ? _crTL(s2.t) : "";
+  if (s2 && s2.pts === w.pts) return { t: _crPick([`Coude à coude entre les ${W} et les ${X}`, `${W} et ${X} se neutralisent`, `Impossible de départager les ${W} et les ${X}`], "h"), teams: [w.t, s2.t] };
+  const gap = s2 ? w.pts - s2.pts : 99;
+  const L = gap >= 6 ? [`Les ${W} écrasent la soirée`, `Récital des ${W}`, `Personne n'arrête les ${W}`, `Les ${W} au-dessus du lot`]
+    : gap >= 3 ? [`Les ${W} raflent la mise`, `Soirée ${({ Rouge: "rose", Vert: "jaune", Bleue: "bleue" })[w.t] || W.toLowerCase()} !`, `Les ${W} prennent le pouvoir`, `Les ${W} s'imposent`]
+    : [`Les ${W} l'emportent sur le fil`, `Les ${W} gagnent d'un souffle`, `Victoire au finish pour les ${W}`];
+  return { t: _crPick(L, "h"), teams: [w.t] };
+}
+const _CR_NT = {
+  sniper: ["Une frappe de loin, en pleine lucarne.", "De 20 mètres, sans trembler.", "Le gardien n'a rien vu partir."],
+  arretfolie: ["Un arrêt qui a fait lever tout le banc.", "La parade de la soirée.", "Une claquette impossible."],
+  varvalidee: ["Le but tient après vérification.", "La vidéo a parlé : but accordé."], varrefusee: ["La vidéo a tout annulé.", "But refusé, la VAR ne pardonne pas."],
+  immanquable: ["Le but était vide… et pourtant.", "Seul face au but, raté.", "On en parlera encore la semaine prochaine."],
+  sangfroid: ["Le penalty décisif, avec le calme d'un pro."], poteau: ["Trois fois le poteau dans le même match."], vengeur: ["But contre son ancienne équipe de la soirée."],
+  reprisecanon: ["Une reprise de volée en pleine course."], ciseau: ["Un retourné acrobatique qui fait mouche."], jinglebells: ["Un ballon là où ça fait mal."],
+};
+function _crTempsForts(M) {
+  const L = M.notes.map(n => ({ ic: n.d.icon, t: n.d.name, who: n.player, txt: _crPick(_CR_NT[n.defiId] || [n.d.desc], "n" + n.i + n.player), ctx: `Match ${n.i + 1} · ${_crTL(n.m.eqA)} ${n.m.scoreA}–${n.m.scoreB} ${_crTL(n.m.eqB)}`, notable: true }));
+  const ms = (M.s.matchs || []).map((m, i) => ({ m, i, tot: (m.scoreA || 0) + (m.scoreB || 0), diff: Math.abs((m.scoreA || 0) - (m.scoreB || 0)) })), G = [];
+  const big = [...ms].sort((a, b) => b.diff - a.diff || b.tot - a.tot)[0];
+  if (big && big.diff >= 2) { const m = big.m, wa = m.scoreA > m.scoreB, W = _crTL(wa ? m.eqA : m.eqB), Lo = _crTL(wa ? m.eqB : m.eqA), hi = Math.max(m.scoreA, m.scoreB), lo = Math.min(m.scoreA, m.scoreB);
+    G.push({ ic: "💥", t: _crPick(["La démonstration", "La correction", "Le rouleau compresseur"], "big"), team: wa ? m.eqA : m.eqB, txt: _crPick([`Les ${W} corrigent les ${Lo} ${hi}–${lo}.`, `${hi}–${lo} : les ${Lo} s'en souviendront.`], "bigt"), ctx: `Match ${big.i + 1}` }); }
+  const fest = [...ms].sort((a, b) => b.tot - a.tot)[0];
+  if (fest && fest.tot >= 4 && (!big || fest.i !== big.i)) G.push({ ic: "🎆", t: _crPick(["Le festival", "Feu d'artifice", "Ça a canardé"], "fest"), team: fest.m.eqA, txt: `${fest.tot} buts dans le même match.`, ctx: `Match ${fest.i + 1} · ${_crTL(fest.m.eqA)} ${fest.m.scoreA}–${fest.m.scoreB} ${_crTL(fest.m.eqB)}` });
+  let multi = null; ms.forEach(({ m, i }) => ["A", "B"].forEach(sd => { const c = {}; (m["buteurs" + sd] || []).forEach(b => { if (b && b !== "CSC") c[b] = (c[b] || 0) + 1; }); Object.entries(c).forEach(([p, n]) => { if (n >= 2 && (!multi || n > multi.n)) multi = { p, n, i }; }); }));
+  if (multi) G.push({ ic: "🎩", t: multi.n >= 3 ? "Le coup du chapeau" : "Le doublé", who: multi.p, txt: _crPick([`${multi.p} plante ${multi.n} fois dans le même match.`, `${multi.n} buts pour ${multi.p}, rien que ça.`], "multi"), ctx: `Match ${multi.i + 1}` });
+  const rem = ms.find(({ m }) => (m.mt1A || 0) < (m.mt1B || 0) && m.scoreA > m.scoreB || (m.mt1B || 0) < (m.mt1A || 0) && m.scoreB > m.scoreA);
+  if (rem) { const wa = rem.m.scoreA > rem.m.scoreB; G.push({ ic: "🌅", t: "La remontada", team: wa ? rem.m.eqA : rem.m.eqB, txt: `Menés à la pause, les ${_crTL(wa ? rem.m.eqA : rem.m.eqB)} renversent tout.`, ctx: `Match ${rem.i + 1}` }); }
+  if (M.gk && M.gk[1].enc === 0) G.push({ ic: "🧤", t: "Le mur", who: M.gk[0], txt: _crPick([`${M.gk[0]} n'encaisse rien de la soirée.`, `Rien ne passe devant ${M.gk[0]}.`], "wall"), ctx: "Gardien" });
+  const tight = ms.filter(x => x.diff === 0 && x.tot >= 2)[0]; if (tight) G.push({ ic: "⚖️", t: "Le match le plus serré", team: tight.m.eqA, txt: `${tight.m.scoreA}–${tight.m.scoreB}, personne ne lâche rien.`, ctx: `Match ${tight.i + 1}` });
+  if (M.mvp) G.push({ ic: "👑", t: "L'homme de la soirée", who: M.mvp, txt: `${M.mvp} : ${_crLine(M, M.mvp)}.`, ctx: "Meilleur total buts + passes" });
+  G.push({ ic: "⚽", t: "La soirée en chiffres", txt: `${M.goals} buts en ${M.nM} matchs.`, ctx: `${M.nPres} présents` });
+  return [...L, ...G].slice(0, 3);
+}
+function _crStatPool(M) {
+  const ms = M.s.matchs || [], P = [], TL = _crTL, pick = _crPick, f1 = _crF1;
+  const duo = {}; ms.forEach(m => ["A", "B"].forEach(sd => (m["buteurs" + sd] || []).forEach((b, j) => { const p = (m["passeurs" + sd] || [])[j]; if (b && p && b !== "CSC") { const k = p + "|" + b; duo[k] = (duo[k] || 0) + 1; } })));
+  const d = Object.entries(duo).sort((a, b) => b[1] - a[1])[0];
+  if (d && d[1] >= 2) { const [p, b] = d[0].split("|"); P.push({ k: "duo", ic: "🤝", t: pick([`${p} sert, ${b} finit`, `Le duo ${p} – ${b}`, `${p} → ${b}, la connexion`], "duo"), s: `${d[1]} buts sur la même combinaison`, n: d[1], nt: `buts de ${b} sur une passe de ${p}`, ns: "Le duo de la soirée", who: b }); }
+  let best = null; Object.keys(M.teams).forEach(t => { let c = 0, mx = 0; ms.forEach(m => { if (m.eqA !== t && m.eqB !== t) return; const w = (m.eqA === t && m.scoreA > m.scoreB) || (m.eqB === t && m.scoreB > m.scoreA); c = w ? c + 1 : 0; mx = Math.max(mx, c); }); if (!best || mx > best.n) best = { t, n: mx }; });
+  if (best && best.n >= 2) P.push({ k: "serie", ic: "🔥", t: `${best.n} victoires à la suite`, s: `Les ${TL(best.t)}, la plus longue série de la soirée`, n: best.n, nt: `victoires d'affilée pour les ${TL(best.t)}`, ns: "La plus longue série", team: best.t });
+  let first = null, last = null; ms.forEach((m, i) => ["A", "B"].forEach(sd => (m["buteurs" + sd] || []).forEach(b => { if (b && b !== "CSC") { if (!first) first = { b, i }; last = { b, i }; } })));
+  if (first) P.push({ k: "first", ic: "🎬", t: pick([`${first.b} ouvre le bal`, `${first.b} donne le coup d'envoi`, `Premier but signé ${first.b}`], "first"), s: `Premier but de la soirée, match ${first.i + 1}`, n: "#" + (first.i + 1), nt: `: le match du premier but, signé ${first.b}`, ns: "Il a ouvert le bal", who: first.b });
+  if (last && (!first || last.b !== first.b)) P.push({ k: "last", ic: "🏁", t: pick([`Le mot de la fin pour ${last.b}`, `${last.b} ferme la marque`], "last"), s: `Dernier but de la soirée, match ${last.i + 1}`, n: "#" + (last.i + 1), nt: `: le match du dernier but, signé ${last.b}`, ns: "Le mot de la fin", who: last.b });
+  const sy = _seasonStart(M.s.date), all = SESSIONS.filter(x => _seasonStart(x.date) === sy).flatMap(x => x.matchs || []);
+  const avgS = all.length ? all.reduce((a, m) => a + (m.scoreA || 0) + (m.scoreB || 0), 0) / all.length : 0, avgT = ms.length ? M.goals / ms.length : 0, diff = avgT - avgS;
+  P.push({ k: "moy", ic: Math.abs(diff) < .05 ? "⚖️" : diff > 0 ? "📈" : "📉", t: Math.abs(diff) < .05 ? "Pile dans la moyenne" : diff > 0 ? pick(["Plus de buts que d'habitude", "Une soirée prolifique"], "moy") : pick(["Moins de buts que d'habitude", "Les défenses ont pris le dessus"], "moy"), s: `${f1(avgT)} buts par match, pour ${f1(avgS)} en moyenne cette saison`, n: f1(avgT), nt: `buts par match, pour ${f1(avgS)} en moyenne cette saison`, ns: "Comparé à la saison" });
+  const h1 = ms.reduce((a, m) => a + (m.mt1A || 0) + (m.mt1B || 0), 0), h2 = M.goals - h1;
+  if (M.goals) P.push({ k: "mt", ic: "⏱️", t: h2 > h1 ? "Tout s'est joué en 2e mi-temps" : h1 > h2 ? "Tout s'est joué d'entrée" : "Autant de buts avant qu'après la pause", s: `${h1} buts en 1re mi-temps, ${h2} en 2e`, n: Math.max(h1, h2), nt: h2 >= h1 ? `buts en 2e mi-temps, contre ${h1} en 1re` : `buts en 1re mi-temps, contre ${h2} en 2e`, ns: "Avant ou après la pause" });
+  const st = M.stand.filter(s => s.j), def = [...st].sort((a, b) => a.ga / a.j - b.ga / b.j)[0], att = [...st].sort((a, b) => b.gf / b.j - a.gf / a.j)[0];
+  if (def) P.push({ k: "def", ic: "🛡️", t: `La défense des ${TL(def.t)}`, s: `${f1(def.ga / def.j)} but encaissé par match, la plus solide`, n: f1(def.ga / def.j), nt: `but encaissé par match pour les ${TL(def.t)}`, ns: "La défense la plus solide", team: def.t });
+  if (att) P.push({ k: "att", ic: "💣", t: `L'attaque des ${TL(att.t)}`, s: `${f1(att.gf / att.j)} buts marqués par match, la plus prolifique`, n: f1(att.gf / att.j), nt: `buts marqués par match pour les ${TL(att.t)}`, ns: "La meilleure attaque", team: att.t });
+  const wins = {}; ms.forEach(m => { const w = m.scoreA > m.scoreB ? m.eqA : m.scoreB > m.scoreA ? m.eqB : null; if (w) (M.teams[w] || []).forEach(p => { wins[p] = (wins[p] || 0) + 1; }); });
+  const wb = Object.entries(wins).sort((a, b) => b[1] - a[1])[0];
+  if (wb) P.push({ k: "lucky", ic: "🍀", t: pick([`${wb[0]}, le porte-bonheur`, `Avec ${wb[0]}, on gagne`], "lucky"), s: `${wb[1]} matchs gagnés dans la soirée`, n: wb[1], nt: `matchs gagnés pour ${wb[0]}`, ns: "Le porte-bonheur", who: wb[0] });
+  const hk = Object.entries(M.K).sort((a, b) => b[1].h - a[1].h)[0];
+  if (hk) P.push({ k: "gk", ic: "🧤", t: `${hk[0]}, l'homme des cages`, s: `${hk[1].h} mi-temps dans les buts`, n: hk[1].h, nt: `mi-temps dans les cages pour ${hk[0]}`, ns: "Le gardien le plus sollicité", who: hk[0] });
+  const nb = Object.keys(M.B).length; if (nb) P.push({ k: "nbut", ic: "🎯", t: nb >= 8 ? "Tout le monde a marqué ou presque" : `${nb} buteurs différents`, s: `${nb} joueurs ont trouvé le chemin des filets`, n: nb, nt: "buteurs différents dans la soirée", ns: "Le partage des buts" });
+  const withP = ms.reduce((a, m) => a + ["A", "B"].reduce((x, sd) => x + (m["passeurs" + sd] || []).filter((p, j) => p && (m["buteurs" + sd] || [])[j] && m["buteurs" + sd][j] !== "CSC").length, 0), 0);
+  if (M.goals) { const pc = Math.round(withP / M.goals * 100); P.push({ k: "jeu", ic: "🔗", t: pc >= 60 ? "Du beau jeu collectif" : pc <= 30 ? "Des exploits individuels" : "Entre jeu collectif et exploits", s: `${pc} % des buts sur une passe décisive`, n: pc + " %", nt: "des buts marqués sur une passe décisive", ns: "Le jeu collectif" }); }
+  const draws = ms.filter(m => m.scoreA === m.scoreB).length;
+  if (ms.length) P.push({ k: "nul", ic: "🤝", t: draws ? `${draws} match${draws > 1 ? "s" : ""} nul${draws > 1 ? "s" : ""}` : "Aucun match nul", s: draws ? "Personne n'a voulu lâcher" : "À chaque match, un vainqueur", n: draws, nt: `match${draws > 1 ? "s" : ""} nul${draws > 1 ? "s" : ""} sur ${ms.length}`, ns: "Les matchs nuls" });
+  const S2 = P.map(x => ({ ...x, r: _crHash(M.s.date + "|" + x.k) })).sort((a, b) => a.r - b.r);
+  return { bref: S2.slice(0, 4), savez: S2.slice(4, 8) };
+}
+function _crConfetti(n) { const C = ["#f5c842", "#FF2D95", "#00BBFF", "#edff00", "#fff", "#2ecc71"]; let h = ""; for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, r = 80 + Math.random() * 140; h += `<i style="background:${C[i % C.length]};--dx:${Math.cos(a) * r}px;--dy:${Math.sin(a) * r - 40}px;--r:${Math.random() * 720 - 360}deg;--d:${(Math.random() * .25).toFixed(2)}s"></i>`; } return `<div class="cr-confetti" aria-hidden="true">${h}</div>`; }
+function _crMatches(M) {
+  const ND = M.ND, side = (m, sd, win, draw) => { const t = m["eq" + sd], o = sd === "A" ? "B" : "A";
+    const goals = (m["buteurs" + sd] || []).map((b, j) => b ? `<li><span>⚽ ${b === "CSC" ? "CSC" : pLink(b)}</span>${(m["passeurs" + sd] || [])[j] ? `<small>passe ${pLink(m["passeurs" + sd][j])}</small>` : ""}</li>` : "").join("");
+    const gk = (m["gardiens" + sd] || []).slice(0, 2), mt = m["mt1" + o] || 0, tot = m["score" + o] || 0;
+    const gkh = gk.filter(Boolean).length ? `<div class="gk">🧤 ${gk[0] && gk[0] === gk[1] ? `${pLink(gk[0])} <small>tout le match · ${tot} enc.</small>` : gk.map((g, h) => g ? `${pLink(g)} <small>${h ? "2e" : "1re"} mi-tps · ${h ? Math.max(0, tot - mt) : mt} enc.</small>` : "").filter(Boolean).join("<br>")}</div>` : "";
+    return `<div class="sd ${_crTC[t] || ""}${win ? " win" : draw ? "" : " lose"}"><div class="nm"><i></i>${_crTL(t)}${win ? ` <em>Victoire</em>` : ""}</div>${goals ? `<ul>${goals}</ul>` : `<p class="none">Pas de but</p>`}${gkh}</div>`; };
+  return `<details class="cr-volet"><summary>Détails des matchs <span>· ${M.nM}</span></summary><div class="cr-md">${(M.s.matchs || []).map((m, i) => {
+    const wa = m.scoreA > m.scoreB, wb = m.scoreB > m.scoreA, dr = !wa && !wb;
+    const nt = (m.notables || []).map(n => ND[n.defiId] ? `<span>${ND[n.defiId].icon} ${_crEsc(ND[n.defiId].name)} · <b>${_crEsc(n.player)}</b></span>` : "").join("");
+    return `<div class="mm"><div class="mh"><span>Match ${i + 1}</span><b>${_crTL(m.eqA)} ${m.scoreA} – ${m.scoreB} ${_crTL(m.eqB)}</b><span class="mt">mi-temps ${m.mt1A || 0}–${m.mt1B || 0}</span></div>
+      <div class="sides">${side(m, "A", wa, dr)}${side(m, "B", wb, dr)}</div>${nt ? `<div class="nts">${nt}</div>` : ""}</div>`; }).join("")}</div></details>`;
+}
+function renderSessionDetailV3(session) {
+  if (_CR.date !== session.date) { _CR.date = session.date; _CR.tf = 0; _CR.flip = {}; _CR.flipT = {}; }
+  const M = _crModel(session), H = _crHeadline(M), TL = _crTL, enc = g => _crF1(g[1].enc / g[1].h);
+  const sorted = [...SESSIONS].sort((a, b) => a.date.localeCompare(b.date));
+  const dates = `<div class="cr-dates">${sorted.map(s => { const d = new Date(s.date + "T12:00:00"); return `<button type="button" class="cr-dt" data-crdate="${s.date}" aria-pressed="${s.date === session.date}"><b>${d.getDate()}</b><small>${["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."][d.getMonth()]}</small></button>`; }).join("")}</div>`;
+  const dLong = (() => { const d = new Date(session.date + "T12:00:00"); return d.toLocaleDateString("fr", { weekday: "long", day: "numeric", month: "long", year: "numeric" }); })();
+  const title = `<div class="cr-title"><span class="date">${dLong}</span><h2 class="head">${_crBox(_crEsc(H.t), H.teams)}</h2>
+    <p class="kick">${M.nPres} présents · ${M.nM} matchs · ${M.goals} buts · ${M.nM ? _crF1(M.goals / M.nM) : "0"} par match</p></div>`;
+  if (!M.nM) return `<div class="cr">${dates}${title}<div class="cr-empty">🌒 Aucun match enregistré pour cette soirée pour le moment.</div></div>`;
+  const TF = _crTempsForts(M), k = _CR.tf % TF.length;
+  const tf = `<div class="cr-tf" data-crtf-box>${TF.map((x, i) => `<div class="slide${i === k ? " on" : ""}" data-notable="${x.notable ? 1 : 0}">${i === k ? _crConfetti(x.notable ? 26 : 14) : ""}<div class="main"><div class="stick">${x.ic}${x.who ? _crAv(x.who, M.team(x.who), 40) : x.team ? `<span class="tdot ${_crTC[x.team]}"></span>` : ""}</div><div class="tx"><h3>${_crEsc(x.t)}</h3><p>${x.who ? `<b>${_crEsc(x.who)}</b> · ` : ""}${_crEsc(x.txt)}</p><div class="ctx">${_crEsc(x.ctx)}${x.notable ? ` · <span class="nb">Fait notable</span>` : ""}</div></div></div></div>`).join("")}
+    <div class="prog">${TF.map((_, i) => `<button type="button" data-crtf="${i}" aria-label="Temps fort ${i + 1}" class="${i < k ? "done" : i === k ? "run" : ""}"><i></i></button>`).join("")}</div></div>`;
+  const ppl = Object.keys(M.pres);
+  const tops = {
+    mvp: M.ranked.slice(0, 5).map(p => [p, `${M.B[p] || 0}-${M.P[p] || 0}`]),
+    but: ppl.filter(p => M.B[p]).sort((a, b) => M.B[b] - M.B[a]).slice(0, 5).map(p => [p, M.B[p]]),
+    pas: ppl.filter(p => M.P[p]).sort((a, b) => M.P[b] - M.P[a]).slice(0, 5).map(p => [p, M.P[p]]),
+    gk: M.kRank.slice(0, 5).map(g => [g[0], enc(g)]),
+  };
+  const TT = { mvp: "Top 5 MVP <em>(B-P)</em>", but: "Top 5 buteurs", pas: "Top 5 passeurs", gk: "Top 5 murailles <em>(buts/mt)</em>" };
+  const heroes = [M.mvp && ["mvp", "mvp", "MVP de la soirée", M.mvp, `${M.B[M.mvp] || 0}-${M.P[M.mvp] || 0}`, "B-P"], M.tb && ["but", "", "Buteur", M.tb[0], M.tb[1], "buts"], M.tp && ["pas", "", "Passeur", M.tp[0], M.tp[1], "passes"], M.gk && ["gk", "", "Muraille", M.gk[0], enc(M.gk), "buts/mt"]].filter(Boolean);
+  const heroesH = `<div class="cr-heroes">${heroes.map(([id, c, t, p, big, unit]) => { const T = tops[id], pod = [T[1], T[0], T[2]];
+    return `<button type="button" class="cr-hero ${c} ${_crTC[M.team(p)] || ""}${_CR.flip[id] ? " flipped" : ""}" data-crflip="${id}" aria-label="${t} : voir le top 5"><span class="hin">
+      <span class="face front">${_crPh(p, M.team(p), "big")}<span class="chip">${c ? "👑 " : ""}${t}</span><span class="bot"><b>${_crEsc(p)}</b><span class="num">${big}<small>${unit}</small></span></span></span>
+      <span class="face back"><span class="tag">${TT[id]}</span><span class="pod">${pod.map((x, j) => x ? `<span class="pp p${[2, 1, 3][j]}">${_crPh(x[0], M.team(x[0]))}<span class="v">${x[1]}</span><span class="n">${_crEsc(x[0])}</span><span class="step">${[2, 1, 3][j]}</span></span>` : "<span></span>").join("")}</span>
+        <span class="rest">${T.slice(3).map(([q, v], j) => `<span class="rr"><em>${j + 4}</em>${_crAv(q, M.team(q), 22)}<span class="n">${_crEsc(q)}</span><b>${v}</b></span>`).join("")}</span></span></span></button>`; }).join("")}</div>`;
+  const max = Math.max(1, ...M.stand.map(s => s.pts));
+  const stand = `<div class="cr-stand">${M.stand.map((s, i) => { const L = M.teams[s.t] || [];
+    return `<div class="st ${_crTC[s.t] || ""}"><span class="rk">${i + 1}</span><button type="button" class="bar${_CR.flipT[s.t] ? " flipped" : ""}" data-crflipt="${s.t}" aria-label="${TL(s.t)} : voir la composition"><span class="in">
+      <span class="f front"><i style="--w:${s.pts / max * 100}%"></i><b>${TL(s.t)}</b><span class="pile">${L.slice(0, 6).map(p => _crAv(p, s.t, 24)).join("")}</span><small>${s.v}V ${s.n}N ${s.d}D · ${s.gf - s.ga > 0 ? "+" : ""}${s.gf - s.ga}</small></span>
+      <span class="f back"><span class="faces">${L.map(p => `<span title="${_crEsc(p)}">${_crAv(p, s.t, 34)}</span>`).join("")}</span></span></span></button><span class="pts">${s.pts}<small>pts</small></span></div>`; }).join("")}</div>`;
+  const run = (M.s.matchs || []).map((m, i) => `<span>#${i + 1} <i class="${_crTC[m.eqA] || ""}"></i>${TL(m.eqA)} <b>${m.scoreA}–${m.scoreB}</b> ${TL(m.eqB)}<i class="${_crTC[m.eqB] || ""}"></i>${(m.notables || []).map(n => M.ND[n.defiId] ? ` ${M.ND[n.defiId].icon}` : "").join("")}</span>`).join("");
+  const ticker = `<div class="cr-tick"><span class="tag">Résultats</span><div class="run" style="animation-duration:${Math.max(30, M.nM * 6)}s">${run}${run}</div></div>`;
+  const P = []; if (M.gk) P.push([M.gk[0], 7, 50, `${enc(M.gk)} enc.`]);
+  [[34, 14], [34, 86], [70, 28], [70, 72]].forEach((xy, i) => { const p = M.out[i]; if (p) P.push([p, xy[0], xy[1], _crLine(M, p).replace(/ buts?/, " B").replace(/ passes?/, " P")]); });
+  const iso = `<div class="cr-iso"><div class="pitch"><span class="goal l"></span><span class="goal r"></span>${P.map(([n, x, y, l]) => `<div class="pl" style="--x:${x}%;--y:${y}%">${_crAv(n, M.team(n), 34)}<b>${_crEsc(n)}</b><small>${l}</small></div>`).join("")}</div></div>`;
+  const SPk = _crStatPool(M);
+  const bref = `<div class="cr-chocs">${SPk.bref.map(c => `<div class="lc"><span class="ic">${c.ic}</span><span><b>${_crBox(_crEsc(c.t), Object.keys(_crTC))}</b><small>${_crEsc(c.s)}</small></span></div>`).join("")}</div>`;
+  const savez = `<div class="cr-chiffres">${SPk.savez.map(c => `<div class="cc${c.team ? " " + _crTC[c.team] : ""}"><span class="n">${c.n}</span><span class="t"><b>${_crEsc(c.nt.replace(/^: /, ""))}</b><small>${_crEsc(c.ns)}</small></span>${c.who ? _crAv(c.who, M.team(c.who), 34) : ""}</div>`).join("")}</div>`;
+  const h2 = (t, hint) => `<div class="cr-h2">${t}${hint ? ` <span>· ${hint}</span>` : ""}</div>`;
+  const left = `${title}${h2("Les temps forts")}${tf}${h2("Les héros", "touche une carte pour le top 5")}${heroesH}`;
+  const right = `${h2("Classement", "touche une équipe pour sa composition")}${stand}${h2("Les matchs")}${ticker}${h2("Équipe-type")}${iso}${h2("En bref")}${bref}${SPk.savez.length ? h2("Le saviez-vous ?") + savez : ""}`;
+  return `<div class="cr">${dates}<div class="cr-grid"><div>${left}</div><div>${right}</div></div>${_crMatches(M)}</div>`;
+}
+function _crShowTf(k) {
+  const box = document.querySelector("#session-results [data-crtf-box]"); if (!box) return;
+  const sl = [...box.querySelectorAll(".slide")], pr = [...box.querySelectorAll(".prog button")];
+  sl.forEach((x, i) => { x.classList.toggle("on", i === k); x.querySelector(".cr-confetti")?.remove(); });
+  if (sl[k]) sl[k].insertAdjacentHTML("afterbegin", _crConfetti(sl[k].dataset.notable === "1" ? 26 : 14));
+  pr.forEach((b, i) => { b.className = i < k ? "done" : ""; });
+  if (pr[k]) { void pr[k].offsetWidth; pr[k].className = "run"; }
+}
+function _crStartTf() {
+  clearInterval(_CR.timer);
+  _CR.timer = setInterval(() => {
+    const box = document.querySelector("#session-results [data-crtf-box]");
+    if (!box || _CR.pause || document.hidden || !document.getElementById("panel-session").classList.contains("active")) return;
+    _CR.tf = (_CR.tf + 1) % (box.querySelectorAll(".slide").length || 1); _crShowTf(_CR.tf);
+  }, 4000);
+}
+(function () {
+  const root = document.getElementById("session-results"); if (!root) return;
+  root.addEventListener("click", e => {
+    const d = e.target.closest("[data-crdate]");
+    if (d) { const sel = document.getElementById("session-date"); sel.value = d.dataset.crdate; sel.dispatchEvent(new Event("change")); return; }
+    const ft = e.target.closest("[data-crflipt]"); if (ft) { const t = ft.dataset.crflipt; _CR.flipT[t] = !_CR.flipT[t]; ft.classList.toggle("flipped", _CR.flipT[t]); return; }
+    const fl = e.target.closest("[data-crflip]"); if (fl) { const id = fl.dataset.crflip; _CR.flip[id] = !_CR.flip[id]; fl.classList.toggle("flipped", _CR.flip[id]); return; }
+    const tb = e.target.closest("[data-crtf]"); if (tb) { _CR.tf = +tb.dataset.crtf; _crStartTf(); _crShowTf(_CR.tf); }
+  });
+  root.addEventListener("pointerover", e => { _CR.pause = !!e.target.closest("[data-crtf-box]"); });
+  root.addEventListener("pointerleave", () => { _CR.pause = false; });
+})();
+
 function renderSessionResults(date) {
   const container = document.getElementById("session-results");
   const session = SESSIONS.find(s => s.date === date);
@@ -8387,10 +8722,9 @@ function renderSessionResults(date) {
     container.innerHTML = `<p class="no-data" style="margin-top:1rem">Aucune donnée pour cette session.</p>`;
     return;
   }
-  container.innerHTML = renderSessionDetailV2(session);
-  animateView(container);
-  _sfmBindTicker(container);
-  _sfmWireBestSlider(container);
+  container.innerHTML = renderSessionDetailV3(session);
+  const selD = container.querySelector('.cr-dt[aria-pressed="true"]'); if (selD) { const box = selD.parentElement; box.scrollLeft = selD.offsetLeft - box.clientWidth + selD.offsetWidth + 8; }
+  _crStartTf();
 }
 
 /* ══════════════════════════════════════════════════════════
