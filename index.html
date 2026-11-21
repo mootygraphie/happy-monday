@@ -2780,6 +2780,12 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
 #panel-vote .sv-vb small { font-size: 11px; color: var(--text2); }
 #panel-vote .sv-vb.P { --c: var(--ok); } #panel-vote .sv-vb.A { --c: var(--no); } #panel-vote .sv-vb.B { --c: var(--hurt); } #panel-vote .sv-vb.D { --c: var(--dep); border-style: dashed; }
 #panel-vote .sv-vb[aria-pressed="true"] { background: color-mix(in srgb, var(--c) 24%, var(--bg3)); border-color: var(--c); box-shadow: 0 0 0 1px var(--c), 0 6px 18px color-mix(in srgb, var(--c) 25%, transparent); }
+/* Tu viens lundi ? : 4 cases carrées identiques sur une ligne, espacements égaux */
+#panel-vote .sv-vote { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; max-width: 460px; margin-left: auto; margin-right: auto; }
+#panel-vote .sv-vote .sv-vb { aspect-ratio: 1 / 1; justify-content: center; gap: 6px; padding: 6px 4px; min-width: 0; }
+#panel-vote .sv-vote .sv-vb i { font-size: clamp(24px, 7.5vw, 32px); }
+#panel-vote .sv-vote .sv-vb b { font-size: clamp(12px, 3.4vw, 14.5px); white-space: nowrap; }
+#panel-vote .sv-vote .sv-vb[aria-pressed="true"]::after { top: 5px; right: 5px; width: 16px; height: 16px; font-size: 10px; }
 #panel-vote .sv-vb[aria-pressed="true"]::after { content: "✓"; position: absolute; top: 7px; right: 9px; width: 20px; height: 20px; border-radius: 50%; background: var(--c); color: #111; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
 #panel-vote .sv-btn { width: 100%; border: none; border-radius: 10px; padding: 12px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; background: var(--gold); color: #241c04; }
 #panel-vote .sv-btn:disabled { background: var(--border2); color: var(--text3); cursor: not-allowed; }
@@ -3480,7 +3486,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 10:12</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 10:18</footer>
 
 <script>
 
@@ -14447,7 +14453,7 @@ function _svApply() {
       const dv = ui.draft || mine;
       h += `<span class="sv-lbl">Tu viens lundi ?</span><div class="sv-vote">
         ${["P", "A", "B"].map(k => `<button class="sv-vb ${k}" data-sv="pick" data-k="${k}" aria-pressed="${dv === k}"><i>${ST[k][0]}</i><b>${ST[k][1]}</b></button>`).join("")}
-        <button class="sv-vb D" data-sv="plusOpen" aria-pressed="${ui.plus}"><i>🧰</i><b>+1</b><small>J'amène un dépanneur</small></button></div>
+        <button class="sv-vb D" data-sv="plusOpen" aria-pressed="${ui.plus}" aria-label="+1 : j'amène un dépanneur" title="J'amène un dépanneur"><i>🧰</i><b>+1</b></button></div>
         ${ui.plus ? depBlock("plus") : ""}
         <button class="sv-btn" data-sv="validate"${dv && !ui.busy ? "" : " disabled"}>${dv ? `Valider : ${ST[dv][0]} ${ST[dv][1]}` : "Choisis ta réponse"}</button>
         ${ui.editing ? `<button class="sv-btn sec" data-sv="noedit">Garder ma réponse</button>` : ""}`;
