@@ -3480,7 +3480,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 10:10</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 10:11</footer>
 
 <script>
 
@@ -14417,7 +14417,7 @@ function _svApply() {
       volet = `<div class="sv-volet"><div class="sv-volet-h"><span>${f[1]} ${f[2]} · ${L.length}</span><button class="sv-x" data-sv="closeVolet" aria-label="Fermer">✕</button></div>${L.map(r => rowHTML(r)).join("") || `<p class="sv-lock">Personne.</p>`}</div>`; }
     return `<div class="sv-sec"><span class="sv-st">👥 La situation</span>
       ${canSearch ? `<input class="sv-search" id="sv-q" placeholder="🔎 Chercher un prénom" value="${esc(ui.q)}" autocomplete="off">` : ""}
-      <div class="sv-filters">${F.map(([k, e, l]) => `<button class="sv-flt ${k}${k === "P" && sa && nP < 10 ? " low" : ""}" data-sv="flt" data-k="${k}" aria-expanded="${!q && ui.open === k}"${k === "P" && sa && nP < 10 ? ` title="Moins de 10 présents"` : ` title="${l}"`}>${e}${k === "P" && sa && nP < 10 ? "⚠️" : ""}<span class="lb"> ${l}</span> <span>${R.filter(r => inF(r, k)).length}</span></button>`).join("")}</div>
+      <div class="sv-filters">${F.map(([k, e, l]) => `<button class="sv-flt ${k}${k === "P" && sa && nP < 10 ? " low" : ""}" data-sv="flt" data-k="${k}" aria-expanded="${!q && ui.open === k}"${k === "P" && sa && nP < 10 ? ` title="Moins de 10 présents"` : ` title="${l}"`}>${e}<span class="lb"> ${l}</span> <span>${R.filter(r => inF(r, k)).length}</span>${k === "P" && sa && nP < 10 ? " ⚠️" : ""}</button>`).join("")}</div>
       ${volet}</div>`;
   }
   // Super admin : l'écran Présences « comme dans la Saisie » (bouton qu'on touche plusieurs fois)
