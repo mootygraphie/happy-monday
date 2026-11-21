@@ -2276,8 +2276,16 @@ html:has(#vg-modal:not([hidden])), html:has(#vg-modal:not([hidden])) body { over
 #panel-vignettes .ty-g .art.vint { background: radial-gradient(circle at 50% 40%, #6b4a2a, #2a1b0f 75%); }
 #panel-vignettes .ty-g .art.vint svg { position: absolute; inset: 8% 10%; width: 80%; height: 84%; filter: sepia(.35) drop-shadow(0 .4em .6em rgba(0,0,0,.55)); }
 #panel-vignettes .ty-g .art.vint .prov { position: absolute; z-index: 3; right: 6%; bottom: 5%; font-size: .5em; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,240,210,.7); background: rgba(0,0,0,.35); border-radius: 1em; padding: .15em .6em; }
-#panel-vignettes .ty-g.vt .strip { background: linear-gradient(180deg, #3a2614, #140d07); border-top-color: #c9a46a; }
-#panel-vignettes .ty-g.vt .nm i { background: #c9a46a; }
+/* ── Rareté « Mythique » (cartes du Club, validée le 21/11) : cadre rouge métallisé assombri de reflets noirs,
+   intérieur noir à fines lignes rouges, pastilles noir-rouge dont le reflet se déplace */
+#panel-vignettes .card.ty-g { --rc: #ff3b2f; --frame: linear-gradient(120deg, #120000, #8a0000 14%, #ff4a3a 28%, #2a0000 42%, #e30b0b 55%, #ffb3a8 63%, #6a0000 76%, #0b0b0d); --glow: 0 0 1.3em rgba(255,43,28,.55), 0 0 .25em rgba(255,180,170,.7); }
+#panel-vignettes .card.ty-g .gem { background: linear-gradient(110deg, #0b0b0d 0%, #5a0000 30%, #ff3b2f 44%, #ffd3cc 50%, #ff3b2f 56%, #5a0000 70%, #0b0b0d 100%); background-size: 260% 100%; color: #fff; border-color: #ff6a5a; animation: mythShine 3.2s ease-in-out infinite; }
+@keyframes mythShine { 0% { background-position: 100% 0; } 50% { background-position: 0% 0; } 100% { background-position: 100% 0; } }
+#panel-vignettes .card.ty-g .strip { background: repeating-radial-gradient(ellipse 140% 90% at 85% 130%, transparent 0 .55em, rgba(255,59,47,.26) .55em .6em), linear-gradient(180deg, #1a0505, #0b0b0d); border-top-color: #ff3b2f; }
+#panel-vignettes .card.ty-g .ovr { background: linear-gradient(135deg, #0b0b0d, #8a0000); border-color: #ff6a5a; }
+#panel-vignettes .card.ty-g .nm i { background: #ff3b2f; }
+#panel-vignettes .card.ty-g.locked .gem { animation: none; }
+@media (prefers-reduced-motion: reduce) { #panel-vignettes .card.ty-g .gem { animation: none; background-position: 50% 0; } }
 #panel-vignettes .card.locked { filter: grayscale(1) brightness(.55); }
 #panel-vignettes .card.locked .holo, #panel-vignettes .card.locked .twinkle { display: none; }
 #panel-vignettes .card.locked * { animation: none !important; }
@@ -3739,7 +3747,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 15:58</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 16:23</footer>
 
 <script>
 
@@ -13931,7 +13939,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
 
   /* ═════════ rendu d'une carte ═════════ */
   const twinkles = r => r === "L" ? `<div class="twinkle">${[[12, 18, 0], [78, 10, .7], [86, 58, 1.3], [16, 70, 1.8], [52, 40, 1]].map(([x, y, d]) => `<i style="left:${x}%;top:${y}%;animation-delay:${d}s"></i>`).join("")}</div>` : "";
-  const gem = c => `<div class="gem">${c.r === "L" ? "★ " : c.r === "E" ? "◆ " : ""}${RL[c.r]}</div>`;
+  const gem = c => `<div class="gem">${c.ty === "g" ? "★ Mythique" : `${c.r === "L" ? "★ " : c.r === "E" ? "◆ " : ""}${RL[c.r]}`}</div>`; // cartes du Club : rareté « Mythique »
   const teamName = t => TEAM_LABEL[t] || "";
   function frontHTML(c, lazy) {
     if (c.ty === "g") {
