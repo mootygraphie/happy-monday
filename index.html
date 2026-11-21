@@ -3287,6 +3287,28 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .cr-md .gk { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border); font-size: 11.5px; line-height: 1.5; } .cr-md .gk small { color: var(--text3); }
   .cr-md .nts { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; font-size: 11.5px; } .cr-md .nts span { background: var(--gold-bg); color: var(--gold); border-radius: 20px; padding: 2px 9px; } .cr-md .nts b { color: var(--text); }
   @media (prefers-reduced-motion: reduce) { .cr-tick .run, .cr-confetti i, .cr-tf .stick { animation: none !important; } }
+  /* mise en page validée : titre seul, puis 2 colonnes, puis En bref (2 × 2) et Le saviez-vous ? (4 × 1) */
+  .cr-right { display: flex; flex-direction: column; }
+  .cr-r-stand { order: 1; } .cr-r-tick { order: 2; } .cr-r-iso { order: 3; }
+  @media (min-width: 900px) {
+    .cr-title .head { max-width: 22ch; }
+    .cr-r-iso { order: 1; } .cr-r-tick { order: 2; } .cr-r-stand { order: 3; }
+    .cr-heroes { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; grid-auto-rows: 300px; }
+    .cr-chocs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 30px; }
+    .cr-chiffres { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .cr-chiffres .cc { position: relative; flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px; }
+    .cr-chiffres .cc .n { min-width: 0; text-align: left; }
+    .cr-chiffres .cc > .cr-av { position: absolute; top: 12px; right: 12px; }
+  }
+  /* égalité en tête des héros : 2 ou 3 portraits ; ★ sur celui qui l'emporte au départage */
+  .cr-hero.is-multi .face.front { border-color: var(--border2); }
+  .cr-hero .multi { position: absolute; inset: 0; display: flex; gap: 2px; background: var(--bg2); }
+  .cr-hero .multi .col { position: relative; flex: 1; min-width: 0; overflow: hidden; border-bottom: 3px solid var(--tc, var(--border2)); }
+  .cr-hero .multi .col.first { flex: 1.35; }
+  .cr-hero .multi .cn { position: absolute; z-index: 2; left: 0; right: 0; bottom: 58px; text-align: center; font-size: 11.5px; font-weight: 700; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 3px; }
+  .cr-hero .multi .cm { position: absolute; z-index: 2; left: 0; right: 0; bottom: 44px; text-align: center; font-size: 9.5px; color: rgba(255,255,255,.85); text-shadow: 0 1px 3px rgba(0,0,0,.8); }
+  .cr-hero .multi .star { position: absolute; z-index: 3; right: 6px; top: 38px; width: 20px; height: 20px; border-radius: 50%; background: var(--gold); color: #241c04; font-size: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,.5); }
+  .cr-hero .multi-bot b { font-size: 12px; } .cr-hero .multi-bot b small { color: var(--gold); }
   /* ═══ Le Vestiaire : chat (bouton 💬 dans l'en-tête, écran plein) ═══ */
   #chat-btn { position: relative; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; flex: none; }
   #chat-btn[hidden] { display: none; }
@@ -3717,7 +3739,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 15:20</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 15:52</footer>
 
 <script>
 
@@ -8547,14 +8569,15 @@ const _crF1 = x => x.toFixed(1).replace(".", ",");
 const _crTL = t => TEAM_LABEL[t] || t;
 function _crModel(s) {
   const pres = {}; Object.entries(s.presences || {}).forEach(([p, v]) => { if (v && v.statut === "Présent") pres[p] = v.equipe || ""; });
-  const team = p => pres[p] || "", st = {}, B = {}, P = {}, K = {}, notes = [], ND = Object.fromEntries(CUSTOM_ACH_DEFS.map(d => [d.id, d]));
+  const team = p => pres[p] || "", st = {}, B = {}, P = {}, K = {}, notes = [], ND = Object.fromEntries(CUSTOM_ACH_DEFS.map(d => [d.id, d])), MB = {}, MP = {};
+  const addM = (o, p, i) => { (o[p] = o[p] || new Set()).add(i); };
   (s.matchs || []).forEach((m, i) => {
     [m.eqA, m.eqB].forEach(t => { st[t] = st[t] || { t, j: 0, v: 0, n: 0, d: 0, gf: 0, ga: 0, pts: 0 }; });
     const a = st[m.eqA], b = st[m.eqB], sa = m.scoreA || 0, sb = m.scoreB || 0;
     a.j++; b.j++; a.gf += sa; a.ga += sb; b.gf += sb; b.ga += sa;
     if (sa > sb) { a.v++; b.d++; a.pts += 3; } else if (sb > sa) { b.v++; a.d++; b.pts += 3; } else { a.n++; b.n++; a.pts++; b.pts++; }
     ["A", "B"].forEach(sd => {
-      (m["buteurs" + sd] || []).forEach((x, j) => { if (x && x !== "CSC") { B[x] = (B[x] || 0) + 1; const pa = (m["passeurs" + sd] || [])[j]; if (pa && pa !== "CSC") P[pa] = (P[pa] || 0) + 1; } });
+      (m["buteurs" + sd] || []).forEach((x, j) => { if (x && x !== "CSC") { B[x] = (B[x] || 0) + 1; addM(MB, x, i); const pa = (m["passeurs" + sd] || [])[j]; if (pa && pa !== "CSC") { P[pa] = (P[pa] || 0) + 1; addM(MP, pa, i); } } });
       const o = sd === "A" ? "B" : "A", tot = m["score" + o] || 0, mt = m["mt1" + o] || 0;
       (m["gardiens" + sd] || []).slice(0, 2).forEach((g, h) => { if (!g) return; K[g] = K[g] || { h: 0, enc: 0 }; K[g].h++; K[g].enc += h ? Math.max(0, tot - mt) : mt; });
     });
@@ -8570,7 +8593,21 @@ function _crModel(s) {
   const goals = (s.matchs || []).reduce((a, m) => a + (m.scoreA || 0) + (m.scoreB || 0), 0);
   const teams = {}; people.forEach(p => { const t = team(p); if (t) (teams[t] = teams[t] || []).push(p); });
   Object.values(teams).forEach(L => L.sort((a, b) => a.localeCompare(b, "fr")));
-  return { s, pres, stand, B, P, K, notes, ND, mvp: ranked[0], tb: top(B), tp: top(P), gk, kRank, out, goals, teams, team, ranked, nPres: people.length, nM: (s.matchs || []).length };
+  // Départage des héros : à égalité, celui qui a marqué / fait la passe dans le plus de matchs différents passe devant
+  // (gardiens : le plus de mi-temps). Égalité en tête : jusqu'à 3 portraits sur la carte.
+  const nb = p => (MB[p] || new Set()).size, np = p => (MP[p] || new Set()).size, nga = p => new Set([...(MB[p] || []), ...(MP[p] || [])]).size;
+  const R = {
+    mvp: people.filter(p => ga(p)).sort((x, y) => ga(y) - ga(x) || nga(y) - nga(x) || (B[y] || 0) - (B[x] || 0) || x.localeCompare(y, "fr")),
+    but: people.filter(p => B[p]).sort((x, y) => B[y] - B[x] || nb(y) - nb(x) || x.localeCompare(y, "fr")),
+    pas: people.filter(p => P[p]).sort((x, y) => P[y] - P[x] || np(y) - np(x) || x.localeCompare(y, "fr")),
+    gk: Object.keys(K).filter(g => K[g].h >= 2).sort((x, y) => K[x].enc / K[x].h - K[y].enc / K[y].h || K[y].h - K[x].h || x.localeCompare(y, "fr")),
+  };
+  const val = { mvp: p => ga(p), but: p => B[p], pas: p => P[p], gk: p => +(K[p].enc / K[p].h).toFixed(3) };
+  const sub = { mvp: nga, but: nb, pas: np, gk: p => K[p].h };
+  const lead = id => { const L = R[id]; if (!L.length) return null; const v = val[id](L[0]), g = L.filter(p => val[id](p) === v);
+    return { all: g, show: g.slice(0, 3), more: Math.max(0, g.length - 3), decided: g.length > 1 && sub[id](g[0]) > sub[id](g[1]), sub: sub[id] }; };
+  const LEAD = { mvp: lead("mvp"), but: lead("but"), pas: lead("pas"), gk: lead("gk") };
+  return { s, pres, stand, B, P, K, notes, ND, mvp: R.mvp[0], tb: R.but[0] ? [R.but[0], B[R.but[0]]] : null, tp: R.pas[0] ? [R.pas[0], P[R.pas[0]]] : null, gk: R.gk[0] ? [R.gk[0], K[R.gk[0]]] : null, kRank, out, goals, teams, team, ranked: R.mvp, R, LEAD, nPres: people.length, nM: (s.matchs || []).length };
 }
 const _crAv = (n, t, size) => `<span class="cr-av roster-avatar pf ${_crTC[t] || ""}"${size ? ` style="--s:${size}px"` : ""}>${_saisieInitials(n)}${portraitImg(n, true)}</span>`;
 const _crPh = (n, t, cls) => `<span class="cr-ph pf ${cls || ""} ${_crTC[t] || ""}"><span class="ini">${_saisieInitials(n)}</span>${portraitImg(n, true)}</span>`;
@@ -8672,16 +8709,23 @@ function renderSessionDetailV3(session) {
     <div class="prog">${TF.map((_, i) => `<button type="button" data-crtf="${i}" aria-label="Temps fort ${i + 1}" class="${i < k ? "done" : i === k ? "run" : ""}"><i></i></button>`).join("")}</div></div>`;
   const ppl = Object.keys(M.pres);
   const tops = {
-    mvp: M.ranked.slice(0, 5).map(p => [p, `${M.B[p] || 0}-${M.P[p] || 0}`]),
-    but: ppl.filter(p => M.B[p]).sort((a, b) => M.B[b] - M.B[a]).slice(0, 5).map(p => [p, M.B[p]]),
-    pas: ppl.filter(p => M.P[p]).sort((a, b) => M.P[b] - M.P[a]).slice(0, 5).map(p => [p, M.P[p]]),
-    gk: M.kRank.slice(0, 5).map(g => [g[0], enc(g)]),
+    mvp: M.R.mvp.slice(0, 5).map(p => [p, `${M.B[p] || 0}-${M.P[p] || 0}`]),
+    but: M.R.but.slice(0, 5).map(p => [p, M.B[p]]),
+    pas: M.R.pas.slice(0, 5).map(p => [p, M.P[p]]),
+    gk: M.R.gk.slice(0, 5).map(g => [g, enc([g, M.K[g]])]),
   };
   const TT = { mvp: "Top 5 MVP <em>(B-P)</em>", but: "Top 5 buteurs", pas: "Top 5 passeurs", gk: "Top 5 murailles <em>(buts/mt)</em>" };
   const heroes = [M.mvp && ["mvp", "mvp", "MVP de la soirée", M.mvp, `${M.B[M.mvp] || 0}-${M.P[M.mvp] || 0}`, "B-P"], M.tb && ["but", "", "Buteur", M.tb[0], M.tb[1], "buts"], M.tp && ["pas", "", "Passeur", M.tp[0], M.tp[1], "passes"], M.gk && ["gk", "", "Muraille", M.gk[0], enc(M.gk), "buts/mt"]].filter(Boolean);
-  const heroesH = `<div class="cr-heroes">${heroes.map(([id, c, t, p, big, unit]) => { const T = tops[id], pod = [T[1], T[0], T[2]];
-    return `<button type="button" class="cr-hero ${c} ${_crTC[M.team(p)] || ""}${_CR.flip[id] ? " flipped" : ""}" data-crflip="${id}" aria-label="${t} : voir le top 5"><span class="hin">
-      <span class="face front">${_crPh(p, M.team(p), "big")}<span class="chip">${c ? "👑 " : ""}${t}</span><span class="bot"><b>${_crEsc(p)}</b><span class="num">${big}<small>${unit}</small></span></span></span>
+  const UNIT = { mvp: "match", but: "match", pas: "match", gk: "mi-temps" };
+  const plu = (n, u) => `${n} ${u === "mi-temps" || n < 2 ? u : u + "s"}`;
+  const heroesH = `<div class="cr-heroes">${heroes.map(([id, c, t, p0, big, unit]) => { const T = tops[id], pod = [T[1], T[0], T[2]], Ld = M.LEAD[id] || { show: [p0], more: 0, sub: () => 0 };
+    const S1 = Ld.show, p = S1[0], multi = S1.length > 1;
+    const front = multi
+      ? `<span class="multi">${S1.map((q, j) => `<span class="col ${_crTC[M.team(q)] || ""}${j === 0 && Ld.decided ? " first" : ""}">${_crPh(q, M.team(q), "big")}${j === 0 && Ld.decided ? `<span class="star" title="Départagé : plus de matchs">★</span>` : ""}<span class="cn">${_crEsc(q)}</span><span class="cm">${plu(Ld.sub(q), UNIT[id])}</span></span>`).join("")}</span>
+         <span class="chip">${c ? "👑 " : ""}${t}${Ld.decided ? "" : " · ex æquo"}</span><span class="bot multi-bot"><b>${Ld.decided ? `${_crEsc(p)} devant` : S1.every(q => Ld.sub(q) === Ld.sub(p)) ? "Égalité parfaite" : "Ex æquo"}${Ld.more ? ` <small>+${Ld.more}</small>` : ""}</b><span class="num">${big}<small>${unit}</small></span></span>`
+      : `${_crPh(p, M.team(p), "big")}<span class="chip">${c ? "👑 " : ""}${t}</span><span class="bot"><b>${_crEsc(p)}</b><span class="num">${big}<small>${unit}</small></span></span>`;
+    return `<button type="button" class="cr-hero ${c} ${_crTC[M.team(p)] || ""}${multi ? " is-multi" : ""}${_CR.flip[id] ? " flipped" : ""}" data-crflip="${id}" aria-label="${t} : voir le top 5"><span class="hin">
+      <span class="face front">${front}</span>
       <span class="face back"><span class="tag">${TT[id]}</span><span class="pod">${pod.map((x, j) => x ? `<span class="pp p${[2, 1, 3][j]}">${_crPh(x[0], M.team(x[0]))}<span class="v">${x[1]}</span><span class="n">${_crEsc(x[0])}</span><span class="step">${[2, 1, 3][j]}</span></span>` : "<span></span>").join("")}</span>
         <span class="rest">${T.slice(3).map(([q, v], j) => `<span class="rr"><em>${j + 4}</em>${_crAv(q, M.team(q), 22)}<span class="n">${_crEsc(q)}</span><b>${v}</b></span>`).join("")}</span></span></span></button>`; }).join("")}</div>`;
   const max = Math.max(1, ...M.stand.map(s => s.pts));
@@ -8698,11 +8742,11 @@ function renderSessionDetailV3(session) {
   const bref = `<div class="cr-chocs">${SPk.bref.map(c => `<div class="lc"><span class="ic">${c.ic}</span><span><b>${_crBox(_crEsc(c.t), Object.keys(_crTC))}</b><small>${_crEsc(c.s)}</small></span></div>`).join("")}</div>`;
   const savez = `<div class="cr-chiffres">${SPk.savez.map(c => `<div class="cc${c.team ? " " + _crTC[c.team] : ""}"><span class="n">${c.n}</span><span class="t"><b>${_crEsc(c.nt.replace(/^: /, ""))}</b><small>${_crEsc(c.ns)}</small></span>${c.who ? _crAv(c.who, M.team(c.who), 34) : ""}</div>`).join("")}</div>`;
   const h2 = (t, hint) => `<div class="cr-h2">${t}${hint ? ` <span>· ${hint}</span>` : ""}</div>`;
-  const left = `${title}${h2("Les temps forts")}${tf}${h2("Les héros", "touche une carte pour le top 5")}${heroesH}`;
-  const right = `${h2("Classement", "touche une équipe pour sa composition")}${stand}${h2("Les matchs")}${ticker}${h2("Équipe-type")}${iso}`;
-  // « En bref » et « Le saviez-vous ? » sous les deux colonnes, côte à côte sur grand écran
-  const duo = `<div class="cr-duo"><div>${h2("En bref")}${bref}</div>${SPk.savez.length ? `<div>${h2("Le saviez-vous ?")}${savez}</div>` : ""}</div>`;
-  return `<div class="cr">${dates}<div class="cr-grid"><div>${left}</div><div>${right}</div></div>${duo}${_crMatches(M)}</div>`;
+  // 1. titre seul ; 2. temps forts + héros | équipe-type, matchs, classement (sur téléphone : classement d'abord) ;
+  // 3. « En bref » (2 × 2 sur grand écran) ; 4. « Le saviez-vous ? » (4 × 1 sur grand écran)
+  const left = `${h2("Les temps forts")}${tf}${h2("Les héros", "touche une carte pour le top 5")}${heroesH}`;
+  const right = `<div class="cr-r cr-r-iso">${h2("Équipe-type")}${iso}</div><div class="cr-r cr-r-tick">${h2("Les matchs")}${ticker}</div><div class="cr-r cr-r-stand">${h2("Classement", "touche une équipe pour sa composition")}${stand}</div>`;
+  return `<div class="cr">${dates}${title}<div class="cr-grid"><div>${left}</div><div class="cr-right">${right}</div></div>${h2("En bref")}${bref}${SPk.savez.length ? h2("Le saviez-vous ?") + savez : ""}${_crMatches(M)}</div>`;
 }
 function _crShowTf(k) {
   const box = document.querySelector("#session-results [data-crtf-box]"); if (!box) return;
