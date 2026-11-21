@@ -3480,7 +3480,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 10:11</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 10:12</footer>
 
 <script>
 
@@ -14459,7 +14459,7 @@ function _svApply() {
     h += `${ui.err ? `<p class="sv-err">${ui.err}</p>` : ""}</div>`;
     if (mine || closed() || isSA()) h += recapHTML();
     if (isSA()) h += `<div class="sv-sa"><span class="sv-sa-t">★</span><button class="sv-sa-b" data-sv="presOpen">👥 Présences</button>
-      <button class="sv-sa-b danger" data-sv="cancel">${ui.confirmCancel ? "Confirmer ?" : "✕ Annuler la session"}</button></div>`;
+      <button class="sv-sa-b danger" data-sv="cancel">✕ Annuler la session</button></div>`;
     return h;
   }
   function body() {
@@ -14493,8 +14493,11 @@ function _svApply() {
     else if (a === "reannounce" && sa) return write(async () => { await ref0().update({ status: "open", reason: null, msg: null, backDate: null, closesAt: _svClosesAt(_svDate), by: who }); window._chatSys?.("open", `Le sondage est ouvert pour ${fdate(_svDate)}. Réponds avant dimanche 21h30.`); }, "Session ouverte : le vote est lancé");
     else if (a === "reopen" && sa) return write(() => ref0().update({ status: "open" }), "Session rétablie");
     else if (a === "cancel" && sa) {
-      if (!ui.confirmCancel) { ui.confirmCancel = true; render(true); setTimeout(() => { ui.confirmCancel = false; render(true); }, 4000); return; }
-      ui.confirmCancel = false; return write(() => ref0().update({ status: "cancelled", cancelledBy: who, cancelledAt: Date.now() }), "Session annulée");
+      // vraie fenêtre de confirmation (évite une annulation par erreur)
+      ui.confirmCancel = false;
+      const nP = Object.values((_svData && _svData.votes) || {}).filter(x => x === "P").length + Object.keys((_svData && _svData.plus) || {}).length;
+      if (!confirm(`Annuler la session du ${fdate(_svDate)} ?\n\n${nP} joueur${nP > 1 ? "s ont" : " a"} répondu présent. La session sera marquée « annulée » pour tout le monde.`)) return;
+      return write(() => ref0().update({ status: "cancelled", cancelledBy: who, cancelledAt: Date.now() }), "Session annulée");
     }
     else if (a === "goSaisie") { document.getElementById("saisie-nav-btn")?.click(); return; }
     else if (a === "goLive") { document.querySelector('.main-tab[data-tab="live"]')?.click(); return; }
