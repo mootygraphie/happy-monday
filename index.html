@@ -2733,6 +2733,9 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .acm-act.gold { color: var(--gold); border-color: var(--gold-border); background: var(--gold-bg); }
   @media (max-width: 480px) { .acm-accl .acm-pl small { display: none; } .acm-act { padding: 4px 6px; font-size: 10.5px; } .acm-sapill .t { display: none; } .acm-accl .acm-pl b { overflow: visible; } }
   .acm-dev { font-size: 14px; flex: none; }
+  .acm-sastar { color: var(--gold); font-size: 14px; flex: none; }
+  .acm-sep { border: none; border-top: 1px solid var(--border2); margin: 5px 4px; flex: none; }
+  .acm-act.arr { font-size: 14px; font-weight: 800; min-width: 30px; padding: 2px 8px; }
   .acm-sapill { font-size: 9.5px; font-weight: 700; letter-spacing: .03em; padding: 1px 7px; border-radius: 20px; color: var(--gold); background: var(--gold-bg); border: 1px solid var(--gold-border); white-space: nowrap; }
   .acm-pl small { font-size: 11.5px; color: var(--text3); }
   .acm-tick { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 12px; }
@@ -3243,7 +3246,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 08:44</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 08:48</footer>
 
 <script>
 
@@ -12781,8 +12784,8 @@ function _accRender(keepFocus) {
     h = `<div class="acm-top"><button class="acm-back" data-a="tome" aria-label="Retour">‹</button><span class="acm-kicker">Super admin</span></div>
       <h4 class="acm-h">Comptes activés</h4>
       <p class="acm-sub">${rows ? `<b>${rows.length}</b> joueur${rows.length > 1 ? "s" : ""} sur ${total} ${rows.length > 1 ? "ont créé leur" : "a créé son"} compte.` : "Chargement…"}</p>${err}
-      <div class="acm-list acm-accl" style="max-height:56vh">${(rows || []).map(r => `<div class="acm-pl${r.uid === (_accUser && _accUser.uid) ? " me" : ""}" style="cursor:default">${_accAvHTML(r.player, "")}<b><span class="acm-dev" title="${r.app ? `Appli (${_accEsc(r.app.platform || "")}) · ouverte le ${new Date(r.app.lastSeen || 0).toLocaleDateString("fr", { day: "numeric", month: "short" })}` : "Site web (appli pas installée)"}">${r.app ? "📲" : "🌐"}</span>${r.player}${r.super ? `<span class="acm-sapill">★<span class="t"> Super admin</span></span>` : ""}</b><small title="Date de création du compte">${r.createdAt ? new Date(r.createdAt).toLocaleDateString("fr", { day: "numeric", month: "short" }) : "—"}</small>
-        ${r.uid === (_accUser && _accUser.uid) ? `<span class="acm-you">Toi</span>` : `<span class="acm-acts"><button class="acm-act${r.super ? "" : " gold"}" title="${r.super ? "Retirer les droits Super Admin" : "Passer Super Admin"}" data-a="super" data-n="${_accEsc(r.player)}">${a.confirmSuper === r.player ? "Confirmer ?" : r.super ? "↓ Admin" : "↑ Sup. Admin."}</button><button class="acm-act" data-a="detach" data-n="${_accEsc(r.player)}">${a.confirmDetach === r.player ? "Confirmer ?" : "Détacher"}</button></span>`}</div>`).join("")}</div>
+      <div class="acm-list acm-accl" style="max-height:56vh">${(rows || []).map((r, i, arr) => `${i > 0 && arr[i - 1].super && !r.super ? `<hr class="acm-sep">` : ""}<div class="acm-pl${r.uid === (_accUser && _accUser.uid) ? " me" : ""}" style="cursor:default">${_accAvHTML(r.player, "")}<b><span class="acm-dev" title="${r.app ? `Appli (${_accEsc(r.app.platform || "")}) · ouverte le ${new Date(r.app.lastSeen || 0).toLocaleDateString("fr", { day: "numeric", month: "short" })}` : "Site web (appli pas installée)"}">${r.app ? "📲" : "🌐"}</span>${r.player}${r.super ? `<span class="acm-sastar" title="Super admin">★</span>` : ""}</b><small title="Date de création du compte">${r.createdAt ? new Date(r.createdAt).toLocaleDateString("fr", { day: "numeric", month: "short" }) : "—"}</small>
+        ${r.uid === (_accUser && _accUser.uid) ? `<span class="acm-you">Toi</span>` : `<span class="acm-acts"><button class="acm-act${a.confirmSuper === r.player ? "" : " arr"}${r.super ? "" : " gold"}" title="${r.super ? "Retirer les droits Super Admin" : "Passer Super Admin"}" data-a="super" data-n="${_accEsc(r.player)}">${a.confirmSuper === r.player ? "Confirmer ?" : r.super ? "↓" : "↑"}</button><button class="acm-act" data-a="detach" data-n="${_accEsc(r.player)}">${a.confirmDetach === r.player ? "Confirmer ?" : "Détacher"}</button></span>`}</div>`).join("")}</div>
       <p class="acm-help">Passer Super Admin donne tous les droits (supprimer un match validé, Effacer, coefficients, comptes) dès sa prochaine connexion. Détacher libère la fiche : la personne devra se rattacher à nouveau à sa fiche à sa prochaine connexion. Ses pronos et ses données restent sous la fiche.</p>`;
   } else if (a.view === "login" || a.view === "create0") {
     const seg = `<div class="acm-seg"><button aria-pressed="${a.view === "login"}" data-a="tab" data-t="login">Se connecter</button><button aria-pressed="${a.view !== "login"}" data-a="tab" data-t="create0">Créer un compte</button></div>`;
