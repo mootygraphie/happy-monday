@@ -3739,7 +3739,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 15:52</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 15:54</footer>
 
 <script>
 
@@ -8605,7 +8605,8 @@ function _crModel(s) {
   const val = { mvp: p => ga(p), but: p => B[p], pas: p => P[p], gk: p => +(K[p].enc / K[p].h).toFixed(3) };
   const sub = { mvp: nga, but: nb, pas: np, gk: p => K[p].h };
   const lead = id => { const L = R[id]; if (!L.length) return null; const v = val[id](L[0]), g = L.filter(p => val[id](p) === v);
-    return { all: g, show: g.slice(0, 3), more: Math.max(0, g.length - 3), decided: g.length > 1 && sub[id](g[0]) > sub[id](g[1]), sub: sub[id] }; };
+    // départage : plus de matchs, puis (égalité parfaite) ordre alphabétique → il y a toujours un joueur « devant »
+    return { all: g, show: g.slice(0, 3), more: Math.max(0, g.length - 3), decided: g.length > 1, sub: sub[id] }; };
   const LEAD = { mvp: lead("mvp"), but: lead("but"), pas: lead("pas"), gk: lead("gk") };
   return { s, pres, stand, B, P, K, notes, ND, mvp: R.mvp[0], tb: R.but[0] ? [R.but[0], B[R.but[0]]] : null, tp: R.pas[0] ? [R.pas[0], P[R.pas[0]]] : null, gk: R.gk[0] ? [R.gk[0], K[R.gk[0]]] : null, kRank, out, goals, teams, team, ranked: R.mvp, R, LEAD, nPres: people.length, nM: (s.matchs || []).length };
 }
