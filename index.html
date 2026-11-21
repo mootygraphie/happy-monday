@@ -3397,7 +3397,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 09:16</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 09:24</footer>
 
 <script>
 
@@ -13085,7 +13085,13 @@ document.getElementById("acc-modal").addEventListener("click", e => {
   const a = _acc, act = t.dataset.a;
   if (act === "tab") { a.view = t.dataset.t; a.err = ""; }
   else if (act === "start") { a.view = "create"; a.step = 1; a.err = ""; }
-  else if (act === "eye") a.show = !a.show;
+  else if (act === "eye") {
+    // en place, sans reconstruire le formulaire (iPhone : sinon proposition d'enregistrer le mot de passe)
+    a.show = !a.show;
+    document.querySelectorAll("#acm-w, #acm-w2, #acm-lw").forEach(el => { el.type = a.show ? "text" : "password"; });
+    document.querySelectorAll('#acc-modal [data-a="eye"]').forEach(b => { b.textContent = a.show ? "🙈" : "👁"; });
+    return;
+  }
   else if (act === "next1") { a.step = 2; a.err = ""; _accLoadTaken(); }
   else if (act === "pick") { a.pick = t.dataset.n; a.err = ""; }
   else if (act === "next2") { a.step = 3; a.ok = false; a.err = ""; }
@@ -13127,8 +13133,21 @@ document.getElementById("acc-modal").addEventListener("input", e => {
   else if (id === "acm-lp") { a.pseudo = e.target.value; return; }
   else if (id === "acm-lw") { a.pwd = e.target.value; return; }
   else return;
+  // Identifiants : on met à jour les messages SANS reconstruire le formulaire. Sinon, à chaque lettre,
+  // l'iPhone voit disparaître un champ mot de passe rempli et propose de l'enregistrer.
+  if ((id === "acm-p" || id === "acm-w" || id === "acm-w2") && _accStep1Refresh()) return;
   _accRender(true);
 });
+function _accStep1Refresh() {
+  const m = document.getElementById("acc-modal"), btn = m.querySelector('[data-a="next1"]');
+  if (!btn) return false;
+  const set = (id, st) => { const el = document.getElementById(id); if (!el) return; el.classList.remove("ok", "bad"); if (st[0]) el.classList.add(st[0]);
+    const h = el.closest(".acm-field").querySelector(".acm-help"); if (h) { h.className = "acm-help" + (st[0] ? " " + st[0] : ""); h.innerHTML = st[1]; } };
+  const ps = _accPseudoState(), ws = _accPwdState(), w2 = _accPwd2State();
+  set("acm-p", ps); set("acm-w", ws); set("acm-w2", w2);
+  btn.disabled = !(ps[0] === "ok" && ws[0] === "ok" && w2[0] === "ok");
+  return true;
+}
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.getElementById("acc-modal").hidden) _accClose(); });
 
 
