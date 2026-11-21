@@ -2215,6 +2215,8 @@
 #panel-vignettes .r-E .holo { opacity: .5; animation: vg-shine 4.2s ease-in-out infinite; }
 #panel-vignettes .r-R .holo { opacity: .2; animation: vg-shine 6s ease-in-out infinite; }
 #panel-vignettes .card.tilting .holo { animation: none; opacity: .9; }
+#vg-modal-card .card { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+html:has(#vg-modal:not([hidden])), html:has(#vg-modal:not([hidden])) body { overflow: hidden !important; overscroll-behavior: none; }
 @keyframes vg-shine { 0%,100% { background-position: 100% 100%; } 50% { background-position: 0% 0%; } }
 #panel-vignettes .twinkle { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
 #panel-vignettes .twinkle i { position: absolute; width: .7em; height: .7em; background: radial-gradient(circle, #fff 0 12%, rgba(255,240,170,.9) 18%, transparent 60%); clip-path: polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%); animation: vg-tw 2.2s ease-in-out infinite; opacity: 0; }
@@ -3397,7 +3399,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 09:25</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 09:26</footer>
 
 <script>
 
@@ -13806,6 +13808,15 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
 
   /* ═════════ carte en grand ═════════ */
   function tilt(card) {
+    // Tactile (téléphone, iPad) : la carte capte le doigt (touch-action: none) au lieu de faire défiler le fond.
+    // Un glissé ne retourne pas la carte : seul un vrai toucher la retourne.
+    let x0 = 0, y0 = 0, moved = false;
+    card.addEventListener("pointerdown", e => { x0 = e.clientX; y0 = e.clientY; moved = false; if (e.pointerType !== "mouse") { try { card.setPointerCapture(e.pointerId); } catch (er) {} } });
+    card.addEventListener("pointermove", e => { if (Math.abs(e.clientX - x0) + Math.abs(e.clientY - y0) > 10) moved = true; }, true);
+    card.addEventListener("click", e => { if (moved) { e.stopImmediatePropagation(); moved = false; } }, true);
+    const rest = () => { card.classList.remove("tilting"); card.querySelector(".card-in").style.transform = ""; };
+    card.addEventListener("pointerup", e => { if (e.pointerType !== "mouse") rest(); });
+    card.addEventListener("pointercancel", rest);
     card.addEventListener("pointermove", e => {
       const r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
       if (x < 0 || x > 1 || y < 0 || y > 1) return;
