@@ -3364,7 +3364,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
       <button class="main-tab" data-tab="live" id="live-tab-btn" style="display:none"><span class="live-dot"></span>Session en cours</button>
       <button class="main-tab" data-tab="vote" id="sv-tab-btn" style="display:none">Prochaine session</button>
       <button class="main-tab active" data-tab="session">Sessions</button>
-      <button class="main-tab" data-tab="dashboard">Dashboard</button>
+      <button class="main-tab" data-tab="dashboard">Statistiques</button>
       <button class="main-tab" data-tab="joueurs">Effectif</button>
       <button class="main-tab" data-tab="stats">Récompenses</button>
       <button class="main-tab" data-tab="vignettes" id="vg-tab-btn" style="display:none">Vignettes</button>
@@ -3386,7 +3386,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
     <button class="hnav-tab" data-tab="live" id="live-drawer-btn" style="display:none"><span class="live-dot"></span>Session en cours</button>
     <button class="hnav-tab" data-tab="vote" id="sv-drawer-btn" style="display:none">Prochaine session</button>
     <button class="hnav-tab" data-tab="session">Sessions</button>
-    <button class="hnav-tab" data-tab="dashboard">Dashboard</button>
+    <button class="hnav-tab" data-tab="dashboard">Statistiques</button>
     <button class="hnav-tab" data-tab="joueurs">Effectif</button>
     <button class="hnav-tab" data-tab="stats">Récompenses</button>
     <button class="hnav-tab" data-tab="vignettes" id="vg-drawer-btn" style="display:none">Vignettes</button>
@@ -3490,7 +3490,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 10:22</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 10:25</footer>
 
 <script>
 
@@ -14812,7 +14812,7 @@ function _svApply() {
       const pages = [];
       if (soiree()) pages.push(row("session", "sessions", "Sessions"));
       if (soiree() && acc()) pages.push(row("vote", "next", "Prochaine session"));
-      pages.push(row("dashboard", "dash", "Dashboard"));
+      pages.push(row("dashboard", "dash", "Statistiques"));
       if (acc()) pages.push(row("joueurs", "team", "Effectif"));
       if (!soiree() && sessionStorage.getItem("hmft_role") === "admin" && canSaisie()) pages.push(row("saisie", "saisie", "Saisie", "admin"));
       const prof = acc()
