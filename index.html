@@ -2851,6 +2851,11 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
 #panel-vote .sv-cyc.P { background: rgba(46,204,113,.14); border-color: rgba(46,204,113,.45); color: var(--ok); }
 #panel-vote .sv-cyc.A { background: rgba(231,76,60,.14); border-color: rgba(231,76,60,.45); color: var(--no); }
 #panel-vote .sv-cyc.B { background: rgba(243,156,18,.16); border-color: rgba(243,156,18,.5); color: var(--gold); }
+#panel-vote .sv-flt.low { border-color: color-mix(in srgb, var(--gold) 60%, transparent); color: var(--gold); }
+#panel-vote .sv-sa { display: flex; align-items: center; gap: 8px; margin-top: 4px; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--gold-border); background: var(--gold-bg); }
+#panel-vote .sv-sa-t { color: var(--gold); font-size: 16px; flex: none; }
+#panel-vote .sv-sa-b { flex: 1; min-width: 0; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); border-radius: 10px; padding: 9px 8px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#panel-vote .sv-sa-b.danger { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, transparent); background: color-mix(in srgb, var(--bad) 8%, var(--bg3)); }
 .saisie-sv-import { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--gold-border); background: var(--gold-bg); font-size: 12.5px; color: var(--text2); }
 .saisie-sv-import b { color: var(--text); }
 
@@ -3468,7 +3473,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 09:49</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 09:59</footer>
 
 <script>
 
@@ -14390,10 +14395,9 @@ function _svApply() {
     else if (ui.open) { const f = F.find(x => x[0] === ui.open), L = R.filter(r => inF(r, ui.open)).sort(byN);
       volet = `<div class="sv-volet"><div class="sv-volet-h"><span>${f[1]} ${f[2]} · ${L.length}</span><button class="sv-x" data-sv="closeVolet" aria-label="Fermer">✕</button></div>${L.map(r => rowHTML(r)).join("") || `<p class="sv-lock">Personne.</p>`}</div>`; }
     return `<div class="sv-sec"><span class="sv-st">👥 La situation</span>
-      ${sa && nP < 10 ? `<div class="sv-warn">⚠️ ${nP} présent${nP > 1 ? "s" : ""}</div>` : ""}
       ${canSearch ? `<input class="sv-search" id="sv-q" placeholder="🔎 Chercher un prénom" value="${esc(ui.q)}" autocomplete="off">` : ""}
-      <div class="sv-filters">${F.map(([k, e, l]) => `<button class="sv-flt ${k}" data-sv="flt" data-k="${k}" aria-expanded="${!q && ui.open === k}">${e} ${l} <span>${R.filter(r => inF(r, k)).length}</span></button>`).join("")}</div>
-      ${volet}${sa ? depBlock("admin") : ""}</div>`;
+      <div class="sv-filters">${F.map(([k, e, l]) => `<button class="sv-flt ${k}${k === "P" && sa && nP < 10 ? " low" : ""}" data-sv="flt" data-k="${k}" aria-expanded="${!q && ui.open === k}"${k === "P" && sa && nP < 10 ? ` title="Moins de 10 présents"` : ""}>${k === "P" && sa && nP < 10 ? "⚠️" : e} ${l} <span>${R.filter(r => inF(r, k)).length}</span></button>`).join("")}</div>
+      ${volet}</div>`;
   }
   // Super admin : l'écran Présences « comme dans la Saisie » (bouton qu'on touche plusieurs fois)
   function vPres() {
@@ -14433,8 +14437,8 @@ function _svApply() {
     }
     h += `${ui.err ? `<p class="sv-err">${ui.err}</p>` : ""}</div>`;
     if (mine || closed() || isSA()) h += recapHTML();
-    if (isSA()) h += `<div class="sv-sec"><span class="sv-st">★ Super admin</span><button class="sv-btn sec" data-sv="presOpen">👥 Remplir les présences</button>
-      <button class="sv-btn danger${ui.confirmCancel ? " full" : ""}" data-sv="cancel">${ui.confirmCancel ? "Confirmer l'annulation de la session" : "Annuler la session"}</button></div>`;
+    if (isSA()) h += `<div class="sv-sa"><span class="sv-sa-t">★</span><button class="sv-sa-b" data-sv="presOpen">👥 Présences</button>
+      <button class="sv-sa-b danger" data-sv="cancel">${ui.confirmCancel ? "Confirmer ?" : "✕ Annuler la session"}</button></div>`;
     return h;
   }
   function body() {

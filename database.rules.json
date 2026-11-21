@@ -1,0 +1,135 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "sessions": {
+      ".read": true,
+      ".write": "auth != null && root.child('users/' + auth.uid + '/player').exists()"
+    },
+    "liveMatchs": {
+      ".read": true,
+      ".write": "auth != null && root.child('users/' + auth.uid + '/player').exists()"
+    },
+    "pronos": {
+      ".read": true,
+      ".write": "auth != null && root.child('users/' + auth.uid + '/player').exists()"
+    },
+    "sessionVotes": {
+      ".read": true,
+      ".write": "auth != null && root.child('users/' + auth.uid + '/player').exists()"
+    },
+    "saisieLog": {
+      ".read": true,
+      ".write": "auth != null && root.child('users/' + auth.uid + '/player').exists()"
+    },
+    "vignettes": {
+      ".read": true,
+      ".write": "auth != null && root.child('users/' + auth.uid + '/player').exists()"
+    },
+    "vignettesBest": {
+      ".read": true,
+      ".write": "auth != null && root.child('users/' + auth.uid + '/player').exists()"
+    },
+    "reglement_2026_2027": {
+      ".read": true,
+      ".write": "auth != null && root.child('users/' + auth.uid + '/player').exists()"
+    },
+    "vignettesLog": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('users/' + auth.uid + '/player').exists()"
+    },
+    "config": {
+      ".read": true,
+      "$k": {
+        ".write": "auth != null && root.child('users/' + auth.uid + '/player').exists()"
+      },
+      "superAdmins": {
+        ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
+      },
+      "chatOpen": {
+        ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
+      },
+      "pronosEnabled": {
+        ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
+      }
+    },
+    "users": {
+      ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && (auth.uid === $uid || (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true))"
+      }
+    },
+    "playerAccounts": {
+      ".read": "auth != null",
+      "$p": {
+        ".write": "auth != null && ((!data.exists() && newData.val() === auth.uid) || data.val() === auth.uid || (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true))"
+      }
+    },
+    "pushSubs": {
+      ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
+      "$p": {
+        ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p",
+        ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
+      }
+    },
+    "pushPrefs": {
+      "$p": {
+        ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p",
+        ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
+      }
+    },
+    "appInstalls": {
+      ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
+      "$p": {
+        ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
+      }
+    },
+    "notifRead": {
+      "$p": {
+        ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p",
+        ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
+      }
+    },
+    "pushQueue": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
+    },
+    "chat": {
+      "rooms": {
+        ".read": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true)",
+        "$r": {
+          ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
+        }
+      },
+      "msgs": {
+        "$r": {
+          ".read": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($r === 'g' || root.child('chat/rooms/' + $r + '/members/' + root.child('users/' + auth.uid + '/player').val()).val() === true)",
+          ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
+          "$m": {
+            ".write": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($r === 'g' || root.child('chat/rooms/' + $r + '/members/' + root.child('users/' + auth.uid + '/player').val()).val() === true) && ((!data.exists() && newData.child('by').val() === root.child('users/' + auth.uid + '/player').val()) || (data.exists() && data.child('by').val() === root.child('users/' + auth.uid + '/player').val()))",
+            "reacts": {
+              "$e": {
+                "$p": {
+                  ".write": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($r === 'g' || root.child('chat/rooms/' + $r + '/members/' + root.child('users/' + auth.uid + '/player').val()).val() === true) && root.child('users/' + auth.uid + '/player').val() === $p"
+                }
+              }
+            }
+          }
+        }
+      },
+      "read": {
+        "$p": {
+          ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p",
+          ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
+        }
+      },
+      "mute": {
+        "$p": {
+          ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p",
+          ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
+        }
+      }
+    }
+  }
+}
