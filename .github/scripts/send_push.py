@@ -24,9 +24,35 @@ DRY = os.environ.get("DRY_RUN", "").strip() in ("1", "true", "oui")
 MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
 
 
+_TOKEN = {"v": None, "exp": 0}
+
+
+def auth_headers():
+    """Jeton d'accès administrateur à la base (compte de service : secret FIREBASE_SA, ou fichier
+    FIREBASE_SA_FILE en local). Indispensable depuis que les règles de la base sont verrouillées."""
+    sa = os.environ.get("FIREBASE_SA", "").strip()
+    path = os.environ.get("FIREBASE_SA_FILE", "").strip()
+    if not sa and not path:
+        return {}
+    if not _TOKEN["v"] or time.time() > _TOKEN["exp"] - 300:
+        from google.oauth2 import service_account
+        from google.auth.transport.requests import Request
+        scopes = ["https://www.googleapis.com/auth/firebase.database", "https://www.googleapis.com/auth/userinfo.email"]
+        cred = (service_account.Credentials.from_service_account_info(json.loads(sa), scopes=scopes) if sa
+                else service_account.Credentials.from_service_account_file(path, scopes=scopes))
+        cred.refresh(Request())
+        _TOKEN["v"], _TOKEN["exp"] = cred.token, time.time() + 3000
+    return {"Authorization": "Bearer " + _TOKEN["v"]}
+
+
+def fetch(url):
+    with urllib.request.urlopen(urllib.request.Request(url, headers=auth_headers()), timeout=30) as resp:
+        return json.load(resp)
+
+
 def req(path, method="GET", value=None):
     data = None if value is None else json.dumps(value).encode()
-    r = urllib.request.Request(f"{DB}/{path}.json", data=data, method=method, headers={"Content-Type": "application/json"})
+    r = urllib.request.Request(f"{DB}/{path}.json", data=data, method=method, headers={"Content-Type": "application/json", **auth_headers()})
     with urllib.request.urlopen(r, timeout=30) as resp:
         return json.load(resp)
 
@@ -166,8 +192,7 @@ def main():
         print("Vestiaire : erreur", type(e).__name__, str(e)[:200])
 
     # ── vignettes : boosters et échanges (saison la plus récente)
-    with urllib.request.urlopen(f"{DB}/vignettes.json?shallow=true", timeout=30) as resp:
-        seasons = sorted(k for k in (json.load(resp) or {}) if "-" in k)
+    seasons = sorted(k for k in (fetch(f"{DB}/vignettes.json?shallow=true") or {}) if "-" in k)
     if seasons:
         season = seasons[-1]
         V = req(f"vignettes/{season}") or {}
@@ -223,8 +248,7 @@ def chat_push(subs, supers, sent, now_ms, send):
         members = allowed_people if gen else {p for p in (room.get("members") or {}) if p in allowed_people}
         if not members:
             continue
-        with urllib.request.urlopen(f"{DB}/chat/msgs/{rid}.json?orderBy=%22$key%22&limitToLast=30", timeout=30) as resp:
-            msgs = json.load(resp) or {}
+        msgs = fetch(f"{DB}/chat/msgs/{rid}.json?orderBy=%22$key%22&limitToLast=30") or {}
         L = sorted(((k, m) for k, m in msgs.items() if isinstance(m, dict)), key=lambda x: x[0])
         for p in members:
             since = max(window, (done.get(p) or {}).get(rid) or 0, (reads.get(p) or {}).get(rid) or 0, (reads.get(p) or {}).get("_init") or 0)
