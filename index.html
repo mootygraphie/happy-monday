@@ -3716,7 +3716,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 15:11</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 15:16</footer>
 
 <script>
 
@@ -15952,6 +15952,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
 
   $("chat-btn").addEventListener("click", () => openChat());
   box.addEventListener("click", async e => {
+    if (e.target === box) return closeChat(); // clic dans le voile noir, à côté de la fenêtre
     const t = e.target.closest("[data-ch]"); if (!t) return;
     const a = t.dataset.ch;
     if ((a === "closeSheet" || a === "closeForm") && t.classList.contains("ch-sheet") && e.target.closest("[data-stop]")) return;
