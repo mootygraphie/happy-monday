@@ -14707,7 +14707,7 @@ function _svApply() {
       if (voteOpen()) {
         // « all » = info pour tous : consultable en fenêtre, et affichée à l'ouverture si on n'a pas l'appli
         L.push({ id: `open-${_svDate}`, ic: "next", c: "var(--gold)", t: "Le sondage est ouvert", d: `Lundi ${dLabel()} · réponds avant dimanche 21h30`, go: "vote", all: true, at: d.at || 0,
-          k: "Sondage", e: "🗓️", body: `Tu viens lundi ${dLabel()} ? Réponds avant dimanche à 21h30.`, act: myVote() ? "" : "Répondre au sondage ›" });
+          k: "Sondage", e: "🗓️", body: myVote() ? `Ta réponse est déjà enregistrée : ${({ P: "✅ Présent", A: "❌ Absent", B: "🤕 Blessé" })[myVote()] || myVote()}. Rien à faire, sauf si tu changes d'avis (jusqu'à dimanche 21h30).` : `Tu viens lundi ${dLabel()} ? Réponds avant dimanche à 21h30.`, act: myVote() ? "Voir ou modifier ›" : "Répondre au sondage ›" });
         const left = (d.closesAt || 0) - _liveNow();
         if (!myVote() && left <= 3 * 3600000) L.push({ id: `3h-${_svDate}`, ic: "clock", c: "var(--bad)", t: "Plus que 3 h pour répondre", d: "Clôture du sondage dimanche à 21h30", go: "vote", all: true, at: (d.closesAt || 0) - 3 * 3600000,
           k: "Sondage", e: "⏳", body: `Le sondage pour lundi ${dLabel()} se ferme ce soir à 21h30.`, act: "Répondre maintenant ›" });
