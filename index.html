@@ -3244,6 +3244,8 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .cr-iso .pl small { font-size: 9px; color: var(--gold); background: rgba(0,0,0,.72); border-radius: 6px; padding: 0 5px; white-space: nowrap; }
   @media (min-width: 900px) { .cr-iso { height: 340px; } .cr-iso .pitch { width: 340px; height: 214px; margin: -142px 0 0 -170px; top: 62%; } .cr-iso .pl .cr-av { --s: 40px !important; } .cr-iso .pl b { font-size: 11px; } }
   /* en bref + le saviez-vous */
+  .cr-duo { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 30px; align-items: start; }
+  @media (min-width: 900px) { .cr-duo { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
   .cr-chocs .lc { display: flex; align-items: center; gap: 12px; padding: 11px 2px; border-bottom: 1px solid var(--border); }
   .cr-chocs .ic { font-size: 22px; width: 30px; text-align: center; flex: none; }
   .cr-chocs b { display: block; font-size: 16.5px; font-weight: 700; font-style: italic; text-transform: uppercase; line-height: 1.15; } .cr-chocs .cr-tbox { transform: none; box-shadow: none; }
@@ -3702,7 +3704,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 14:42</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 14:43</footer>
 
 <script>
 
@@ -8684,8 +8686,10 @@ function renderSessionDetailV3(session) {
   const savez = `<div class="cr-chiffres">${SPk.savez.map(c => `<div class="cc${c.team ? " " + _crTC[c.team] : ""}"><span class="n">${c.n}</span><span class="t"><b>${_crEsc(c.nt.replace(/^: /, ""))}</b><small>${_crEsc(c.ns)}</small></span>${c.who ? _crAv(c.who, M.team(c.who), 34) : ""}</div>`).join("")}</div>`;
   const h2 = (t, hint) => `<div class="cr-h2">${t}${hint ? ` <span>· ${hint}</span>` : ""}</div>`;
   const left = `${title}${h2("Les temps forts")}${tf}${h2("Les héros", "touche une carte pour le top 5")}${heroesH}`;
-  const right = `${h2("Classement", "touche une équipe pour sa composition")}${stand}${h2("Les matchs")}${ticker}${h2("Équipe-type")}${iso}${h2("En bref")}${bref}${SPk.savez.length ? h2("Le saviez-vous ?") + savez : ""}`;
-  return `<div class="cr">${dates}<div class="cr-grid"><div>${left}</div><div>${right}</div></div>${_crMatches(M)}</div>`;
+  const right = `${h2("Classement", "touche une équipe pour sa composition")}${stand}${h2("Les matchs")}${ticker}${h2("Équipe-type")}${iso}`;
+  // « En bref » et « Le saviez-vous ? » sous les deux colonnes, côte à côte sur grand écran
+  const duo = `<div class="cr-duo"><div>${h2("En bref")}${bref}</div>${SPk.savez.length ? `<div>${h2("Le saviez-vous ?")}${savez}</div>` : ""}</div>`;
+  return `<div class="cr">${dates}<div class="cr-grid"><div>${left}</div><div>${right}</div></div>${duo}${_crMatches(M)}</div>`;
 }
 function _crShowTf(k) {
   const box = document.querySelector("#session-results [data-crtf-box]"); if (!box) return;
