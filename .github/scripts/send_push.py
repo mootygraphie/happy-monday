@@ -187,17 +187,9 @@ def main():
             ms = ses.get("matchs") or []
             if not ms:
                 continue
-            pts, goals = {}, 0
-            for m in ms:
-                a, b, sa, sb = m.get("eqA"), m.get("eqB"), m.get("scoreA") or 0, m.get("scoreB") or 0
-                goals += sa + sb
-                pts[a] = pts.get(a, 0) + (3 if sa > sb else 1 if sa == sb else 0)
-                pts[b] = pts.get(b, 0) + (3 if sb > sa else 1 if sa == sb else 0)
-            TL = {"Rouge": "Roses", "Vert": "Jaunes", "Bleue": "Bleus"}
-            best = sorted(pts.items(), key=lambda x: -x[1])
-            win = f"Les {TL.get(best[0][0], best[0][0])} remportent la soirée" if best and (len(best) < 2 or best[0][1] > best[1][1]) else "Soirée à égalité en tête"
-            print("Récap prêt :", d)
-            results = [send(p, "📰 Le récap de la soirée est prêt", f"{win} · {goals} buts. Temps forts et héros à découvrir.", "./?n=recap#sessions", f"recap-{d}") for p in subs]
+            title = recap_headline(d, ms)
+            print("Récap prêt :", d, "·", title)
+            results = [send(p, "📰 Le récap de la soirée est en ligne !", title, "./?n=recap#sessions", f"recap-{d}") for p in subs]
             if any(results) or not subs:
                 mark(f"pushSent/recap/{d}")
     except Exception as e:
@@ -297,6 +289,40 @@ def chat_push(subs, supers, sent, now_ms, send):
             print("Vestiaire :", p, rid, len(new), "mention" if ment else "")
             if send(p, title[:60], line[:180], f"./?n=chat&r={rid}", f"chat-{rid}"):
                 mark_val(f"pushSent/chat/{p}/{rid}", top)
+
+
+def recap_headline(date, ms):
+    """Même titre que la page Sessions (_crHeadline) : même classement, même tirage (empreinte FNV-1a de « date|h »)."""
+    TL = {"Rouge": "Roses", "Vert": "Jaunes", "Bleue": "Bleus"}
+    st = {}
+    for m in ms:
+        a, b, sa, sb = m.get("eqA"), m.get("eqB"), m.get("scoreA") or 0, m.get("scoreB") or 0
+        for t in (a, b):
+            st.setdefault(t, {"t": t, "pts": 0, "gf": 0, "ga": 0})
+        st[a]["gf"] += sa; st[a]["ga"] += sb; st[b]["gf"] += sb; st[b]["ga"] += sa
+        if sa > sb: st[a]["pts"] += 3
+        elif sb > sa: st[b]["pts"] += 3
+        else: st[a]["pts"] += 1; st[b]["pts"] += 1
+    stand = sorted(st.values(), key=lambda x: (-x["pts"], -(x["gf"] - x["ga"]), -x["gf"]))
+    if not stand:
+        return "Soirée sans match"
+    h = 2166136261
+    for ch in date + "|h":
+        h ^= ord(ch); h = (h * 16777619) & 0xFFFFFFFF
+    pick = lambda L: L[h % len(L)]
+    w, s2 = stand[0], (stand[1] if len(stand) > 1 else None)
+    W, X = TL.get(w["t"], w["t"]), (TL.get(s2["t"], s2["t"]) if s2 else "")
+    if s2 and s2["pts"] == w["pts"]:
+        return pick([f"Coude à coude entre les {W} et les {X}", f"{W} et {X} se neutralisent", f"Impossible de départager les {W} et les {X}"])
+    gap = w["pts"] - s2["pts"] if s2 else 99
+    adj = {"Rouge": "rose", "Vert": "jaune", "Bleue": "bleue"}.get(w["t"], W.lower())
+    if gap >= 6:
+        L = [f"Les {W} écrasent la soirée", f"Récital des {W}", f"Personne n'arrête les {W}", f"Les {W} au-dessus du lot"]
+    elif gap >= 3:
+        L = [f"Les {W} raflent la mise", f"Soirée {adj} !", f"Les {W} prennent le pouvoir", f"Les {W} s'imposent"]
+    else:
+        L = [f"Les {W} l'emportent sur le fil", f"Les {W} gagnent d'un souffle", f"Victoire au finish pour les {W}"]
+    return pick(L)
 
 
 def mark_val(path, value):
