@@ -3025,6 +3025,14 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
     -webkit-mask: radial-gradient(circle 31px at 50% 0, transparent 30px, #000 31px); mask: radial-gradient(circle 31px at 50% 0, transparent 30px, #000 31px); }
   #bnav.notch::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; pointer-events: none;
     background: linear-gradient(90deg, #e30b0b calc(50% - 32px), transparent calc(50% - 32px), transparent calc(50% + 32px), #e30b0b calc(50% + 32px)); }
+  /* ── Grand écran en mode « téléphone » : barre, bandeau et menus centrés sur une largeur de téléphone */
+  @media (min-width: 761px) {
+    body.bn-on #bnav { padding-left: max(4px, calc((100% - 640px) / 2)); padding-right: max(4px, calc((100% - 640px) / 2)); }
+    body.bn-on #bticker { left: 50%; right: auto; width: min(620px, calc(100% - 20px)); transform: translateX(-50%); }
+    body.bn-on #bmenu .bm-in { max-width: 560px; margin: 0 auto; border-left: 1px solid var(--border2); border-right: 1px solid var(--border2); }
+    body.bn-on #bnotif { left: auto; right: 16px; width: 400px; }
+    body.bn-on header { padding-left: max(16px, calc((100% - 1200px) / 2)); padding-right: max(16px, calc((100% - 1200px) / 2)); }
+  }
   /* ═══ Ordinateur : mêmes repères que sur téléphone ═══
      en-tête rouge de l'écusson (dragon + HAPPY MONDAY), 💬 🔔 ☰ à droite, onglets dans un bandeau blanc
      comme la barre du bas, menu ☰ identique (panneau à droite), cloche en liste déroulante. */
@@ -3522,7 +3530,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 13:14</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 13:29</footer>
 
 <script>
 
@@ -6305,7 +6313,7 @@ const MHF_CAT_BY_ID = {
   buteur:'Attaque', passeur:'Attaque', ga:'Attaque', dbl:'Attaque', serie:'Attaque', hattrick:'Attaque',
   defenseFer:'Défense', mur:'Défense', passoire:'Défense',
   invic:'Collectif', duo:'Collectif',
-  fidele:'Présence', sac:'Présence', maillots:'Présence', greffier:'Présence', assidu:'Présence', comete:'Présence',
+  fidele:'Présence', sac:'Présence', maillots:'Présence', greffier:'Présence', recruteur:'Présence', assidu:'Présence', comete:'Présence',
   mvp:'Distinctions', soiree:'Distinctions', remontada:'Distinctions', chelem:'Distinctions',
   gardienAssist:'Distinctions', chilavert:'Distinctions', willgrigg:'Distinctions', mesutozil:'Distinctions', patron:'Distinctions', mercenaire:'Distinctions', butargent:'Distinctions', revenant:'Distinctions', demenageur:'Distinctions', equipetype:'Distinctions', totsaison:'Distinctions', bdor:'Distinctions', legende:'Distinctions',
   bonnet:'Secrets', infirm:'Secrets', pois:'Secrets', fantome:'Secrets', zerovic:'Secrets', toutnul:'Secrets', psg:'Secrets', cuillere:'Secrets',
@@ -8958,6 +8966,7 @@ const ACH_DEFS = [
   { id:'sac',      name:'Porteur de sac',  icon:'🎒', tiers:[1,3,7,15,25,40],      hidden:false, key:'sac',            desc:v=>`Sac amené ${v} fois` },
   { id:'maillots', name:'Intendant',       icon:'👕', tiers:[1,3,7,15,25,40],      hidden:false, key:'maillots',       desc:v=>`Maillots amenés ${v} fois` },
   { id:'greffier', name:'Greffier',        icon:'✍️', tiers:[1], fixedTier:6,      hidden:false, key:'greffier',       desc:v=>`${v} soirée${v>1?'s':''} saisie${v>1?'s':''}` },
+  { id:'recruteur', name:'Recruteur',      icon:'🪖', tiers:[1], fixedTier:6,      hidden:false, key:'recruteur',      desc:v=>`${v} venue${v>1?'s':''} de joueur${v>1?'s':''} amené${v>1?'s':''}` },
   { id:'assidu',   name:'Assidu',          icon:'🗓️', tiers:[1,2,3,4],  tierOffset:2,  hidden:false, key:'assiduAnnes',  desc:v=>v===4?'1 an à ≥90% de présence':v===3?'1 an à ≥80% de présence':v===2?'1 an à ≥70% de présence':'1 an à ≥60% de présence' },
   { id:'comete',   name:'La Comète',       icon:'🌠', tiers:[1,2,3,4],  tierOffset:2,  tierNames:['Pierre','Bois','Plomb','Charbon'], hidden:true,  key:'cometeAnnes',  desc:v=>v===4?'1 an à ≤10% de présence':v===3?'1 an à ≤20% de présence':v===2?'1 an à ≤30% de présence':'1 an à ≤40% de présence' },
   // ── Distinctions ──
@@ -8998,6 +9007,7 @@ const ACH_ABOUT = {
   sac:        'Sac amené à la session',
   maillots:   'Maillots amenés à la session',
   greffier:   'Avoir saisi et validé au moins un match d\'une soirée avec son compte',
+  recruteur:  'Avoir amené un joueur en +1 (chaque venue d\'un joueur amené compte)',
   bonnet:     'Absences',
   infirm:     'Sessions passé blessé',
   serie:      'Matchs consécutifs avec au moins 1 G/A',
@@ -9046,6 +9056,25 @@ var _SAISIE_LOG = {};
 function _greffierCount(p) {
   const dates = new Set((SESSIONS || []).map(s => s.date));
   return Object.entries(_SAISIE_LOG || {}).filter(([d, v]) => v && v[p] && dates.has(d)).length;
+}
+// Haut fait « Recruteur » 🪖 : +1 à chaque venue (présent) d'un joueur qu'on a amené.
+// Parrain d'un joueur = celui qui l'a amené en +1 dans le vote de cette soirée (sessionVotes/{date}/plus),
+// sinon son parrain habituel : liste rétroactive ci-dessous, puis le premier qui l'a amené en +1.
+const RECRUTEURS_RETRO = { "Chagot": "Godefroy", "Matt B": "Godefroy", "Edouard": "Pierre-Olivier", "Enzo": "Pierre-Olivier", "Florian": "Antoine", "Marius": "JB", "Robin": "Ben" };
+var _SV_ALL = {};
+function _recruteurCount(p) {
+  const def = Object.assign({}, RECRUTEURS_RETRO), byDate = {};
+  Object.keys(_SV_ALL || {}).sort().forEach(d => Object.values(((_SV_ALL[d] || {}).plus) || {}).forEach(x => {
+    if (!x || !x.n || !x.by) return;
+    (byDate[d] = byDate[d] || {})[x.n] = x.by;
+    if (!def[x.n]) def[x.n] = x.by;
+  }));
+  let n = 0;
+  (SESSIONS || []).forEach(s => Object.entries(s.presences || {}).forEach(([q, v]) => {
+    if (!v || v.statut !== "Présent" || q === p) return;
+    if (((byDate[s.date] || {})[q] || def[q]) === p) n++;
+  }));
+  return n;
 }
 function _saisieLogMark() {
   try {
@@ -9457,7 +9486,7 @@ function computeAchievementStats(playerName) {
            gardiensCleanSheets, gardiensButsEncaisses, gardiensMatchs, gardienRate, remontadas, gardienAssist, gardienButs, mercenaireCount,
            equipeTypeCount, equipeTypeSaisonCount, ballonDorCount,
            syndromePsg, cuillereBois, butArgent, revenantCount, demenageur,
-           greffier: _greffierCount(playerName),
+           greffier: _greffierCount(playerName), recruteur: _recruteurCount(playerName),
            ...Object.fromEntries(SEASON_DEFS.map(sd => ["coll" + sd.sy, ((_VG_BEST[_vgSeasonKey(sd.sy)] || {})[playerName]) || 0])) };
 }
 
@@ -12907,6 +12936,7 @@ function _accInit() {
   const toSet = v => new Set(Array.isArray(v) ? v : Object.values(v || {}));
   _db.ref('vignettesBest').on('value', snap => { _VG_BEST = snap.val() || {}; });
   _db.ref('saisieLog').on('value', snap => { _SAISIE_LOG = snap.val() || {}; });
+  _db.ref('sessionVotes').on('value', snap => { _SV_ALL = snap.val() || {}; }); // +1 amenés (haut fait Recruteur)
   _db.ref('config/depanneurs').on('value', snap => { const v = snap.val(); if (v) _VG_DEP = new Set(Array.isArray(v) ? v : Object.values(v)); });
   _db.ref('config/absents').on('value', snap => { _accStatusAbs = toSet(snap.val()); _accRefreshSaisieAccess(); });
   _db.ref('config/inactifs').on('value', snap => { _accStatusInact = toSet(snap.val()); _accRefreshSaisieAccess(); });
@@ -14658,7 +14688,8 @@ function _svApply() {
     document.querySelector("header .hnav-toprow")?.insertAdjacentHTML("beforeend", `<button id="bell-btn" type="button" aria-label="Notifications" aria-expanded="false"></button><button id="dmenu-btn" type="button" data-bn="__menu" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>`);
     // Mode « téléphone » (barre du bas, en-tête compact) : écran étroit OU tablette tactile (iPad, Android)
     const isTablet = () => { try { return matchMedia("(pointer: coarse)").matches && Math.min(screen.width, screen.height) >= 600 && Math.max(screen.width, screen.height) <= 1400; } catch (e) { return false; } };
-    const applyMode = () => document.body.classList.toggle("bn-on", innerWidth <= 760 || isTablet());
+    // Depuis le 21/11/2026, l'ordinateur utilise aussi la barre du bas et le menu du téléphone (demande de l'utilisateur).
+    const applyMode = () => document.body.classList.add("bn-on");
     applyMode(); addEventListener("resize", applyMode);
 
     const acc = () => !!(typeof _accUser !== "undefined" && _accUser && typeof _accProfile !== "undefined" && _accProfile);
