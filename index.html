@@ -1146,9 +1146,16 @@
   .saisie-cumul-sep { font-size: 18px; color: var(--text3); font-weight: 700; }
   .saisie-cumul-label { font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; text-align: center; margin: -2px 0 12px; }
 
-  .hmft-toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 12px); width: 90%; max-width: 460px; display: flex; align-items: center; justify-content: center; gap: 12px; background: var(--bg2); border: 1px solid var(--border2); border-left: 4px solid #2ecc71; color: var(--text); font-weight: 600; font-size: 14.5px; line-height: 1.4; padding: 16px 18px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.28); opacity: 0; transition: opacity .2s, transform .2s; z-index: 4000; pointer-events: none; }
-  .hmft-toast .hmft-toast-ico { flex-shrink: 0; font-size: 17px; }
+  /* Petit message (version « carte allégée » validée le 21/11) : une ligne centrée, une coche de couleur,
+     une jauge très fine qui se vide ; glisse depuis le bas au-dessus de la barre. */
+  .hmft-toast { --c: var(--good); position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 140%); width: max-content; max-width: calc(100% - 32px); display: flex; align-items: center; gap: 8px; background: color-mix(in srgb, var(--bg2) 94%, transparent); border: 1px solid var(--border); color: var(--text); font-weight: 600; font-size: 13.5px; line-height: 1.35; padding: 10px 15px 11px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,.4); opacity: 0; transition: opacity .3s, transform .45s cubic-bezier(.2,.9,.3,1.1); z-index: 4000; pointer-events: none; overflow: hidden; }
+  .hmft-toast.bad { --c: var(--bad); } .hmft-toast.info { --c: var(--bleu); }
+  .hmft-toast .hmft-toast-ico { flex: none; width: 16px; height: 16px; color: var(--c); }
+  .hmft-toast .hmft-toast-ico svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+  .hmft-toast::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: 0; height: 1.5px; border-radius: 2px; background: var(--c); opacity: .8; transform-origin: left; }
   .hmft-toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .hmft-toast.show::after { animation: hmftBar 3.6s linear .3s forwards; }
+  @keyframes hmftBar { to { transform: scaleX(0); } }
 
   .saisie-gk-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 12px; margin-bottom: 16px; }
   .saisie-gk-col { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
@@ -3557,7 +3564,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 13:51</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 14:21</footer>
 
 <script>
 
@@ -4168,12 +4175,17 @@ function dot(color) {
   return `<span class="cdot ${color.toLowerCase()}"></span>`;
 }
 function _showToast(msg) {
+  // un seul message à la fois ; rouge si c'est un échec, sinon vert
+  document.querySelectorAll('.hmft-toast').forEach(x => x.remove());
+  const txt = String(msg).replace(/<[^>]+>/g, "");
+  const bad = /impossible|non (enregistr|envoy|autoris)|vérifie ta connexion|erreur|refus/i.test(txt);
   const t = document.createElement('div');
-  t.className = 'hmft-toast';
-  t.innerHTML = `<span class="hmft-toast-ico">✅</span><span>${msg}</span>`;
+  t.className = 'hmft-toast' + (bad ? ' bad' : '');
+  t.setAttribute('role', 'status');
+  t.innerHTML = `<span class="hmft-toast-ico"><svg viewBox="0 0 24 24" aria-hidden="true">${bad ? '<path d="M7 7l10 10M17 7L7 17"/>' : '<path d="M5 12.5l4.5 4.5L19 7.5"/>'}</svg></span><span>${msg}</span>`;
   document.body.appendChild(t);
-  requestAnimationFrame(() => t.classList.add('show'));
-  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 250); }, 4500);
+  requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 450); }, 4000);
 }
 function teamCls(t) { return t === "Bleue" ? "bleu" : t ? t.toLowerCase() : ""; }
 function scoreColors(m) {
