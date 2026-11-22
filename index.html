@@ -15157,7 +15157,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const CLUB = [
       { k: "g:logo", ty: "g", nm: "Happy Monday Football Team", ic: "🐉", img: "portraits/Logo.jpeg", sub: "L'écusson du club", r: "M", nSess: sessions.length },
       { k: "g:gymnase", ty: "g", nm: "Gymnase Alain Fournier", ic: "🏟️", img: "portraits/gymnase_fournier.png", sub: "Là où tout se joue, chaque lundi soir", r: "M", nSess: sessions.length }];
-    const VINT = { k: VINT_KEY, ty: "g", nm: "Équipement Vintage", ic: "🎽", img: "portraits/Maillots.jpeg", sub: "Les maillots des débuts", r: "M", nSess: sessions.length };
+    const VINT = { k: VINT_KEY, ty: "g", nm: "Kit Vintage", ic: "🎽", img: "portraits/Maillots.jpeg", sub: "Les maillots des débuts", r: "M", nSess: sessions.length };
     const vOwn = VINT_OWN.has(ME);
     ALL = [...CLUB, ...(vOwn ? [VINT] : []), ...PLAYERS, ...HF, ...NT];
     BYK = Object.fromEntries(ALL.map(c => [c.k, c]));
