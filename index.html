@@ -2869,6 +2869,10 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
 .hm .hm-dres .newb .plus { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: #b892ff; color: #160c2a; font-weight: 900; }
 .hm .hm-dres .newb b { color: var(--text); }
 .hm .hm-dres .hint { flex-basis: 100%; margin: 2px 0 0; font-size: 11.5px; color: var(--text3); }
+.hm .hm-dres .newb2 { background: #fff; color: #111; border-color: #fff; padding: 6px 14px; font-weight: 800; }
+.hm .hm-dnew { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
+.hm .hm-dnew input { min-width: 0; background: var(--bg3); border: 1.5px solid rgba(184,146,255,.5); border-radius: 10px; padding: 9px 10px; color: var(--text); font: inherit; font-size: 16px; }
+.hm .hm-dnew button { border: 0; border-radius: 10px; padding: 9px 14px; background: #b892ff; color: #160c2a; font: inherit; font-weight: 800; cursor: pointer; } .hm .hm-dnew button:disabled { opacity: .45; cursor: default; }
 /* feuille de match */
 .hm .hm-feuille { border-radius: 18px; padding: 16px; background: var(--bg2); border: 1px solid var(--border2); }
 .hm .hm-feuille .t { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 10.5px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--text2); }
@@ -2876,7 +2880,9 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
 .hm .hm-feuille b.n { display: block; font-size: 28px; font-weight: 800; font-style: italic; margin-top: 4px; } .hm .hm-feuille b.n small { font-size: 13px; color: var(--text2); font-style: normal; font-weight: 600; }
 .hm .rows5 { display: flex; flex-direction: column; margin: 14px 0 12px; }
 .hm .r5 { display: flex; } .hm .r5 + .r5 { margin-top: -10px; } .hm .r5.off { padding-left: 21px; }
-.hm .r5 span { margin-right: -8px; } .hm .r5 .cr-av { border-color: var(--bg2) !important; box-shadow: 0 3px 8px rgba(0,0,0,.45); }
+.hm .r5 span { margin-right: -8px; }
+.hm .hm-line { display: flex; margin: 14px 0 12px; padding-right: 10px; } .hm .hm-line span { margin-right: var(--st, -10px); } .hm .hm-line span:last-child { margin-right: 0; }
+.hm .hm-line .cr-av { border-color: var(--bg2) !important; box-shadow: 0 3px 8px rgba(0,0,0,.45); } .hm .r5 .cr-av { border-color: var(--bg2) !important; box-shadow: 0 3px 8px rgba(0,0,0,.45); }
 .hm .hm-gauge { height: 6px; border-radius: 3px; background: var(--bg3); overflow: hidden; } .hm .hm-gauge i { display: block; height: 100%; background: var(--hm-red); }
 .hm .hm-feuille .you { font-size: 12.5px; color: var(--text2); } .hm .hm-feuille .you b { color: var(--text); }
 .hm .hm-oth { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
@@ -4287,7 +4293,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 12:06</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 12:13</footer>
 
 <script>
 
@@ -16073,7 +16079,7 @@ function _svApply() {
   const fdate = iso => { const d = new Date(iso + "T12:00:00Z"); return `${JOURS[d.getUTCDay()]} ${d.getUTCDate() === 1 ? "1er" : d.getUTCDate()} ${MOIS[d.getUTCMonth()]}`; };
   const esc = x => String(x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
   const ui = { draft: null, editing: false, plus: false, depSel: "", depNew: "", open: "P", q: "", pres: false, pq: "", pf: "all",
-    mode: "open", reason: "Noël", other: "", msg: "next", back: "", confirmCancel: false, busy: false, err: "", k: Math.floor(Math.random() * 7), og: "", dq: "" };
+    mode: "open", reason: "Noël", other: "", msg: "next", back: "", confirmCancel: false, busy: false, err: "", k: Math.floor(Math.random() * 7), og: "", dq: "", dnew: false };
   let ref = null;
 
   const me = () => (typeof _accPlayer === "function" ? _accPlayer() : null);
@@ -16288,15 +16294,15 @@ function _svApply() {
     return big ? `${p(h)}:${p(m)}:${p(x)}` : `${d ? p(d) + "j " : ""}${p(h)}h ${p(m)}min ${p(x)}s`; };
   function hmFeuille(live) {
     const R = rows(), who = me(), P = R.filter(r => r.v === "P").map(r => r.n).sort((a, b) => a.localeCompare(b, "fr"));
-    const L = []; for (let i = 0; i < P.length; i += 5) L.push(P.slice(i, i + 5));
+    const step = P.length ? Math.min(30, Math.floor(290 / P.length)) : 30; // tous sur une ligne : plus il y a de monde, plus les visages se chevauchent
     const mine = ((_svData && _svData.votes) || {})[who];
     return `<div class="hm-feuille"><div class="t"><span>Feuille de match${live ? " · en cours" : ""}</span><span class="${live ? "" : "lk"}">${live ? `${P.length} / 10${P.length >= 10 ? " ✓" : ""}` : "🔒 clos dimanche 21h30"}</span></div>
       <b class="n">${P.length} <small>${live ? "présents pour l'instant" : "convoqués"}</small></b>
-      ${P.length ? `<div class="rows5">${L.map((r, i) => `<div class="r5${i % 2 ? " off" : ""}">${r.map(n => `<span title="${esc(n)}">${hmAv(n, 42)}</span>`).join("")}</div>`).join("")}</div>` : ""}
+      ${P.length ? `<div class="hm-line" style="--st:${step - 40}px">${P.map(n => `<span title="${esc(n)}">${hmAv(n, 40)}</span>`).join("")}</div>` : ""}
       ${live ? `<div class="hm-gauge"><i style="width:${Math.min(100, P.length * 10)}%"></i></div>` : mine ? `<div class="you">Tu es <b>${ST[mine][1]}</b>${mine === "P" ? " · rendez-vous lundi" : ""}</div>` : ""}</div>`;
   }
   function hmOthers() {
-    const R = rows(), G = [["A", "✕", "absents", "var(--bad)"], ["B", "✚", "blessés", "var(--text2)"], ["N", "?", "sans réponse", "var(--text3)"]];
+    const R = rows(), G = [["A", "✕", "absents", "var(--bad)"], ["B", "✚", "blessés", "#f5c842"], ["N", "?", "sans réponse", "var(--text3)"]];
     const open = ui.og ? R.filter(r => r.v === ui.og).map(r => r.n).sort((a, b) => a.localeCompare(b, "fr")) : null;
     return `<div class="hm-oth">${G.map(([k, i, l, c]) => `<button type="button" class="og" style="--oc:${c}" data-sv="og" data-k="${k}" aria-expanded="${ui.og === k}"><span class="oi">${i}</span><b>${R.filter(r => r.v === k).length}</b><span class="ol">${l}</span></button>`).join("")}</div>
       ${open ? `<div class="hm-olist">${open.map(n => `<span>${hmAv(n, 22)}${esc(n)}</span>`).join("") || `<span>Personne</span>`}</div>` : ""}`;
@@ -16305,12 +16311,11 @@ function _svApply() {
     const R = rows(), who = me(), mineD = R.filter(r => r.dep && r.by === who);
     const chips = mineD.map(r => `<span class="hm-depc">🧰 <b>${esc(r.n)}</b> appelé par toi${canAdd ? `<button type="button" data-sv="rmplus" data-id="${r.id}" aria-label="Retirer ${esc(r.n)}">✕</button>` : ""}</span>`).join("");
     if (!canAdd || !ui.plus) return chips;
-    const taken = new Set(R.filter(r => r.v === "P").map(r => r.n)), q = ui.dq.trim(), ql = q.toLowerCase();
-    const L = ALL_PLAYERS.filter(p => _isDepanneur(p) && !taken.has(p) && (!ql || p.toLowerCase().includes(ql))).sort((a, b) => a.localeCompare(b, "fr"));
-    const exact = ALL_PLAYERS.some(p => p.toLowerCase() === ql) || R.some(r => r.n.toLowerCase() === ql);
-    return chips + `<div class="hm-dpick"><input type="search" id="sv-dq" class="hm-dsearch" placeholder="🔍 Chercher un dépanneur…" value="${esc(ui.dq)}" aria-label="Chercher un dépanneur" autocomplete="off">
-      <div class="hm-dres">${L.map(n => `<button type="button" data-sv="depPick" data-n="${esc(n)}">${hmAv(n, 26)}<span>${esc(n)}</span></button>`).join("")}
-      ${q && !exact ? `<button type="button" class="newb" data-sv="depPick" data-n="${esc(q)}"><span class="plus">＋</span><span>Nouveau dépanneur : <b>${esc(q)}</b></span></button>` : (!q ? `<p class="hint">Pas dans la liste ? Tape son prénom pour l'ajouter.</p>` : "")}</div></div>`;
+    const taken = new Set(R.filter(r => r.v === "P").map(r => r.n));
+    const L = ALL_PLAYERS.filter(p => _isDepanneur(p) && !taken.has(p)).sort((a, b) => a.localeCompare(b, "fr"));
+    return chips + `<div class="hm-dpick"><div class="hm-dres">${L.map(n => `<button type="button" data-sv="depPick" data-n="${esc(n)}">${hmAv(n, 26)}<span>${esc(n)}</span></button>`).join("")}
+      <button type="button" class="newb2" data-sv="depNew" aria-expanded="${ui.dnew}">＋ Nouveau</button></div>
+      ${ui.dnew ? `<div class="hm-dnew"><input type="text" id="sv-dq" placeholder="Son prénom" value="${esc(ui.dq)}" aria-label="Prénom du nouveau dépanneur" autocomplete="off"><button type="button" data-sv="depPick" data-n="${esc(ui.dq.trim())}"${ui.dq.trim() ? "" : " disabled"}>Appeler</button></div>` : ""}</div>`;
   }
   function hmVote() {
     const d = _svData, who = me(), mine = (d.votes || {})[who] || null, l = left();
@@ -16407,13 +16412,14 @@ function _svApply() {
     else if (a === "goVg") { document.querySelector('.main-tab[data-tab="vignettes"]')?.click(); return; }
     else if (a === "goStats") { document.querySelector('.main-tab[data-tab="stats"]')?.click(); return; }
     else if (a === "know") ui.k++;
+    else if (a === "depNew") { ui.dnew = !ui.dnew; ui.dq = ""; if (ui.dnew) setTimeout(() => document.getElementById("sv-dq")?.focus(), 0); }
     else if (a === "og") ui.og = ui.og === t.dataset.k ? "" : t.dataset.k;
     else if (a === "depPick") {
       const n = (t.dataset.n || "").trim(); if (!n) return;
       if (/[.#$\/\[\]]/.test(n)) { ui.err = `Le nom « ${n} » contient un caractère interdit ( . # $ / [ ] ).`; return render(true); }
       if (rows().some(r => r.n === n && r.v === "P")) { ui.err = `${n} est déjà présent.`; return render(true); }
       if (closed() && !sa) return;
-      ui.plus = false; ui.dq = ""; ui.err = "";
+      ui.plus = false; ui.dq = ""; ui.dnew = false; ui.err = "";
       return write(() => ref0().child("plus").push({ n, by: who }), `${n} appelé par ${who}`);
     }
     else if (a === "goLive") { document.querySelector('.main-tab[data-tab="live"]')?.click(); return; }
@@ -16466,7 +16472,8 @@ function _svApply() {
   panel.addEventListener("input", e => {
     const id = e.target.id;
     if (id === "sv-q") ui.q = e.target.value; else if (id === "sv-pq") ui.pq = e.target.value;
-    else if (id === "sv-dnew") ui.depNew = e.target.value; else if (id === "sv-dq") ui.dq = e.target.value; else if (id === "sv-other") ui.other = e.target.value; else return;
+    else if (id === "sv-dnew") ui.depNew = e.target.value;
+    else if (id === "sv-dq") { ui.dq = e.target.value; const btn = e.target.parentElement.querySelector("button"); if (btn) { btn.dataset.n = ui.dq.trim(); btn.disabled = !ui.dq.trim(); } return; } else if (id === "sv-other") ui.other = e.target.value; else return;
     render(true);
   });
   // compte à rebours en direct + passage automatique à « fermé » + changement de lundi à minuit
