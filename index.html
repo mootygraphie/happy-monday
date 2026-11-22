@@ -3564,6 +3564,9 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .st2 .pz-cur b { display: block; font-size: 15px; font-weight: 800; font-style: italic; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .st2 .pz-cur small { font-size: 11px; color: var(--text2); }
   .st2 .pz-cur select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+  .st2 .pz-vs { grid-column: 1 / -1; font-size: 11.5px; color: var(--bleu); text-align: center; }
+  @media (min-width: 900px) { .st2 .pz-vs { text-align: left; } }
+  .st2 .st .pc .dl { display: block; width: max-content; margin: 3px 0 0 auto; }
   .st2 .pz-cmp { display: inline-flex; align-items: center; gap: 4px; height: 34px; border: 1px solid var(--border2); background: var(--bg3); border-radius: 10px; padding: 0 9px; font-size: 14px; font-weight: 800; color: var(--text2); cursor: pointer; white-space: nowrap; }
   .st2 .pz-cmp span { font-size: 11px; font-weight: 700; }
   .st2 .pz-cmp[aria-pressed="true"] { border-color: var(--bleu); color: var(--bleu); background: color-mix(in srgb, var(--bleu) 14%, var(--bg3)); }
@@ -4300,7 +4303,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 12:21</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 12:25</footer>
 
 <script>
 
@@ -8152,9 +8155,9 @@ const AGG_CACHE = {};
 const aggOf = (per, key) => { const k = per + "|" + key; return AGG_CACHE[k] || (AGG_CACHE[k] = agg(perSessions(per, key))); };
 function delta(cur, prev, { unit = "", pct = false, inv = false, dec = 0 } = {}) {
   if (!st.cmp || prev == null || cur == null || isNaN(prev)) return "";
-  const d = cur - prev; if (Math.abs(d) < (dec ? .05 : .5)) return `<span class="dl eq">= ${prevLbl()}</span>`;
+  const d = cur - prev; if (Math.abs(d) < (dec ? .05 : .5)) return `<span class="dl eq">=</span>`;
   const good = inv ? d < 0 : d > 0;
-  return `<span class="dl ${good ? "up" : "dn"}">${d > 0 ? "▲" : "▼"} ${d > 0 ? "+" : ""}${dec ? fr(d.toFixed(dec)) : Math.round(d)}${pct ? " pts" : unit} <i>${prevLbl()}</i></span>`;
+  return `<span class="dl ${good ? "up" : "dn"}">${d > 0 ? "▲" : "▼"} ${d > 0 ? "+" : ""}${dec ? fr(d.toFixed(dec)) : Math.round(d)}${pct ? " pts" : unit}</span>`;
 }
 function prevLbl() { const pk = prevOf(st.per, perKey()); return pk ? (st.per === "soir" ? `vs ${dd(pk)}` : `vs ${MOISL[+pk.slice(5) - 1]}`) : ""; }
 function topList(A, key, n = 5, minM = 0) {
@@ -8178,7 +8181,7 @@ function periodBar(noCmp) {
     <div class="pz-nav"><button type="button" class="pz-arr" data-stepp="-1" aria-label="Période précédente"${L && i > 0 ? "" : " disabled"}>‹</button>
       <div class="pz-cur"><b>${label}</b><small>${sub}</small>${L ? `<select id="psel" aria-label="Choisir la période">${opts}</select>` : ""}</div>
       <button type="button" class="pz-arr" data-stepp="1" aria-label="Période suivante"${L && i < L.length - 1 ? "" : " disabled"}>›</button>
-      ${noCmp || !L ? "" : `<button type="button" class="pz-cmp" data-cmp aria-pressed="${st.cmp}"${pk ? "" : " disabled"} title="Comparer avec la période précédente">⇄<span>${pk ? (per === "soir" ? dd(pk) : MOISL[+pk.slice(5) - 1].slice(0, 4) + ".") : "—"}</span></button>`}</div></div>`;
+      ${noCmp || !L ? "" : `<button type="button" class="pz-cmp" data-cmp aria-pressed="${st.cmp}"${pk ? "" : " disabled"} title="Comparer avec la période précédente">⇄<span>${pk ? (per === "soir" ? dd(pk) : MOISL[+pk.slice(5) - 1].slice(0, 4) + ".") : "—"}</span></button>`}</div>${st.cmp && pk && !noCmp && L ? `<div class="pz-vs">Comparé ${st.per === "soir" ? `à la soirée du ${dl(pk)}` : `à ${ml(pk)}`} · ▲ mieux · ▼ moins bien · = pareil</div>` : ""}</div>`;
 }
 
 /* ═════ Aperçu ═════ */
