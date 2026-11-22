@@ -3946,7 +3946,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 10:43</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 11:10</footer>
 
 <script>
 
@@ -11974,6 +11974,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     if (!_draft.presences[p]) _draft.presences[p] = { statut: next, equipe: "" };
     _draft.presences[p].statut = next;
     if (next !== "Présent") _draft.presences[p].equipe = "";
+    if (typeof _svData !== "undefined" && _svData && _svData.status === "open" && _svDate === _draft.date) (_draft.svMan = _draft.svMan || {})[p] = true; // changé à la main : le sondage ne l'écrase plus
     _saveDraft();
     renderSaisie(); return;
   }
@@ -15233,22 +15234,34 @@ function _svTarget() {
 // Clôture : la veille (dimanche) à 21h30, heure de Paris
 function _svClosesAt(iso) { const t = Date.parse(iso + "T12:00:00Z") - 86400000, d = new Date(t); return _svParisMs(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate(), 21, 30); }
 function _svImportHTML() {
+  return ""; // plus de bouton « Importer » : l'import se fait tout seul (_svAutoImport)
   const d = _svData;
   if (!d || d.status !== "open" || !_draft || _draft.date !== _svDate) return "";
   const n = Object.keys(d.votes || {}).length + Object.keys(d.plus || {}).length;
   if (!n) return "";
   return `<div class="saisie-sv-import"><span>🗓️ Vote de présence : <b>${n} réponse${n > 1 ? "s" : ""}</b></span><button class="saisie-btn secondary" data-act="sv-import">📥 Importer les réponses du vote</button></div>`;
 }
+/* Import AUTOMATIQUE du sondage dans la Saisie (22/11/2026) : à chaque affichage, les réponses du
+   sondage de cette soirée sont recopiées dans les présences, sans bouton. Seules exceptions : les
+   présences qu'un super admin a changées à la main dans la Saisie (_draft.svMan), qui sont gardées. */
 function _svAutoImport() {
   const d = _svData;
-  if (!d || d.status !== "open" || !_draft || _draft.svAuto || (typeof _editMode !== "undefined" && _editMode) || _draft.date !== _svDate) return;
-  if (!Object.keys(d.votes || {}).length && !Object.keys(d.plus || {}).length) return;
-  const blank = Object.values(_draft.presences || {}).every(v => !v || !v.statut || v.statut === "Pas répondu") && !(_draft.tempJokers || []).length;
-  if (!blank) return;
-  _draft.svAuto = true;
-  _svApply();
-  _saveDraft();
-  setTimeout(() => _showToast("Présences remplies avec les réponses du vote"), 50);
+  if (!d || d.status !== "open" || !_draft || (typeof _editMode !== "undefined" && _editMode) || _draft.date !== _svDate) return;
+  const votes = d.votes || {}, plus = Object.values(d.plus || {}), man = _draft.svMan || {};
+  if (!Object.keys(votes).length && !plus.length) return;
+  let changed = 0;
+  Object.entries(votes).forEach(([p, v]) => {
+    const st = _SV_MAP[v]; if (!st || man[p]) return;
+    const cur = _draft.presences[p] || (_draft.presences[p] = { statut: "Pas répondu", equipe: "" });
+    if (cur.statut !== st) { cur.statut = st; if (v !== "P") cur.equipe = ""; changed++; }
+  });
+  plus.forEach(({ n }) => {
+    if (!n || /[.#$\/\[\]]/.test(n) || man[n]) return;
+    if (ALL_PLAYERS.includes(n) && !_isDepanneur(n)) { const c = _draft.presences[n] || (_draft.presences[n] = { statut: "Pas répondu", equipe: "" }); if (c.statut !== "Présent") { c.statut = "Présent"; changed++; } return; }
+    if (!_draft.tempJokers) _draft.tempJokers = [];
+    if (!_draft.tempJokers.includes(n)) { _draft.tempJokers.push(n); _draft.presences[n] = { statut: "Présent", equipe: "" }; changed++; }
+  });
+  if (changed) { _saveDraft(); if (!_draft.svAuto) { _draft.svAuto = true; setTimeout(() => _showToast("Présences reprises du sondage"), 50); } }
 }
 function _svImport() {
   const d = _svData; if (!d || _draft.date !== _svDate) return;
