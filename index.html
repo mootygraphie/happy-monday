@@ -3567,6 +3567,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .st2 .pz-vs { grid-column: 1 / -1; font-size: 11.5px; color: var(--bleu); text-align: center; }
   @media (min-width: 900px) { .st2 .pz-vs { text-align: left; } }
   .st2 .st .pc .dl { display: block; width: max-content; margin: 3px 0 0 auto; }
+  .st2 .kpi b .dl, .st2 .ptiles b .dl { display: inline-block; width: auto; vertical-align: middle; margin: 0 0 0 8px; font-size: 11px; font-style: normal; font-weight: 700; line-height: 1.4; }
   .st2 .pz-cmp { display: inline-flex; align-items: center; gap: 4px; height: 34px; border: 1px solid var(--border2); background: var(--bg3); border-radius: 10px; padding: 0 9px; font-size: 14px; font-weight: 800; color: var(--text2); cursor: pointer; white-space: nowrap; }
   .st2 .pz-cmp span { font-size: 11px; font-weight: 700; }
   .st2 .pz-cmp[aria-pressed="true"] { border-color: var(--bleu); color: var(--bleu); background: color-mix(in srgb, var(--bleu) 14%, var(--bg3)); }
@@ -4303,7 +4304,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 12:25</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 12:26</footer>
 
 <script>
 
@@ -8187,7 +8188,7 @@ function periodBar(noCmp) {
 /* ═════ Aperçu ═════ */
 function apercu(wide) {
   const A = aggOf(st.per, perKey()), pk = prevOf(st.per, perKey()), B = pk && st.cmp ? aggOf(st.per, pk) : null;
-  const kpi = (lab, val, sub, dlt) => `<div class="card kpi"><small>${lab}</small><b>${val}</b><span>${sub}</span>${dlt}</div>`;
+  const kpi = (lab, val, sub, dlt) => `<div class="card kpi"><small>${lab}</small><b>${val}${dlt}</b><span>${sub}</span></div>`;
   const csr = A.sides ? A.cs / A.sides : 0, gpm = A.nM ? A.goals / A.nM : 0;
   const ranked = ["Bleue", "Rouge", "Vert"].map(t => ({ t, ...A.T[t] })).filter(x => x.m).sort((a, b) => (b.w * 3 + b.d) - (a.w * 3 + a.d) || (b.gf - b.ga) - (a.gf - a.ga));
   const tops = { but: topList(A, "but"), pass: topList(A, "pass"), cs: topList(A, "cs") };
@@ -8287,7 +8288,7 @@ function joueurs(wide) {
     const fav = Object.entries(x.cols).map(([t, v]) => [TLB[t], v[0], v[1]]).sort((a, b) => b[2] / b[1] - a[2] / a[1])[0];
     const duo = Object.entries(x.mates).filter(([q, v]) => v[0] >= Math.max(2, x.m * .2)).sort((a, b) => b[1][1] / b[1][0] - a[1][1] / a[1][0])[0];
     const sess = Object.entries(x.sess).sort();
-    const tile = (l, v, s, dlt) => `<div class="card"><small>${l}</small><b>${v}</b><span>${s}</span>${dlt}</div>`;
+    const tile = (l, v, s, dlt) => `<div class="card"><small>${l}</small><b>${v}${dlt}</b><span>${s}</span></div>`;
     return `<div class="phero"><div class="pic">${_crPh(p, "")}</div><div><b class="nm">${esc(p)}</b><div class="sub">${x.m} matchs ${perLabel(st.per, perKey())} · ${Object.keys(x.sess).length} soirée${Object.keys(x.sess).length > 1 ? "s" : ""}</div></div></div>
     <div class="ptiles">
       ${tile("Victoires", Math.round(x.w / x.m * 100) + "%", `${x.w}V ${x.d}N ${x.m - x.w - x.d}D`, delta(x.w / x.m * 100, b && b.m ? b.w / b.m * 100 : null, { pct: true }))}
