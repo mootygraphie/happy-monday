@@ -3943,7 +3943,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 09:53</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 10:05</footer>
 
 <script>
 
@@ -11192,7 +11192,7 @@ function _buildPresencesScreenHTML() {
 
   return `<div class="saisie-section">
     <div class="saisie-section-title">👥 Présences</div>
-    ${_saisiePresLocked() ? `<div class="saisie-sv-import saisie-pres-lock"><span>🔒 Présences issues du sondage · modifiables par un super admin</span></div>` : (typeof _svImportHTML === "function" ? _svImportHTML() : "")}
+    ${_saisiePresLocked() ? "" : (typeof _svImportHTML === "function" ? _svImportHTML() : "")}
     <input type="text" class="saisie-pres-search" id="saisie-pres-search" placeholder="Rechercher un joueur…" value="${_saisiePresSearch.replace(/"/g,"&quot;")}">
     <div class="saisie-pres-filters">
       ${filterTabs.map(([key,icon,n]) => `<button class="saisie-pres-filter${_saisiePresFilter===key?" active":""}" data-act="saisie-pres-filter" data-filter="${key}">${icon} <span class="n">${n}</span></button>`).join("")}
