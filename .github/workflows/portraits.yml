@@ -14,11 +14,18 @@ permissions:
   contents: write
   pages: write
 
+# Plusieurs envois rapproches : les passages s enchainent au lieu de se doubler.
+concurrency:
+  group: portraits
+  cancel-in-progress: false
+
 jobs:
   resize:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main # derniere version, pas celle du push qui a declenche
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -33,5 +40,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -am "Portraits reduits a 900 px (automatique)"
-          git push
+          # si quelqu un a pousse entre-temps : on se recale et on reessaie
+          for i in 1 2 3; do git pull --rebase -q origin main && git push && break; sleep 5; done
           gh api -X POST "repos/${{ github.repository }}/pages/builds" || true
