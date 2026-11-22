@@ -379,6 +379,12 @@
   .roster-avatar.pf > .pf-img[data-pf="Robin"] { transform: scale(3); transform-origin: 51% 26%; }
   .roster-avatar.pf > .pf-img[data-pf="Yassir"] { transform: scale(2.7); transform-origin: 49% 30%; }
   .roster-avatar.pf > .pf-img[data-pf="Zoltan"] { transform: scale(3); transform-origin: 48% 24%; }
+  .roster-avatar.pf > .pf-img[data-pf="Cédric"] { transform: scale(4.7); transform-origin: 50% 14%; }
+  .roster-avatar.pf > .pf-img[data-pf="Tabley"] { transform: scale(3.2); transform-origin: 50% 24%; }
+  .roster-avatar.pf > .pf-img[data-pf="Sylvain"] { transform: scale(3); transform-origin: 47% 27%; }
+  .roster-avatar.pf > .pf-img[data-pf="Florian"] { transform: scale(3.3); transform-origin: 46% 20%; }
+  .roster-avatar.pf > .pf-img[data-pf="Virgile"] { transform: scale(2.7); transform-origin: 48% 21%; }
+  .pf > .pf-img.pf-locked, .roster-avatar.pf > .pf-img.pf-locked { object-position: 50% 50%; transform: scale(2); transform-origin: 50% 30%; }
   .roster-avatar.pf > .pf-img[data-pf="Houari"] { transform: scale(2.7); transform-origin: 47% 27%; }
   .roster-main { flex: 1; min-width: 0; }
   .roster-name { display: block; width: 100%; font-size: 14px; font-weight: 700; margin-bottom: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -2883,7 +2889,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
 .hm .r5 span { margin-right: -8px; }
 .hm .hm-line { display: flex; margin: 14px 0 12px; padding-right: 10px; } .hm .hm-line span { margin-right: var(--st, -10px); } .hm .hm-line span:last-child { margin-right: 0; }
 .hm .hm-line .cr-av { border-color: var(--bg2) !important; box-shadow: 0 3px 8px rgba(0,0,0,.45); } .hm .r5 .cr-av { border-color: var(--bg2) !important; box-shadow: 0 3px 8px rgba(0,0,0,.45); }
-.hm .hm-gauge { height: 6px; border-radius: 3px; background: var(--bg3); overflow: hidden; } .hm .hm-gauge i { display: block; height: 100%; background: var(--hm-red); }
+.hm .hm-gauge { height: 6px; border-radius: 3px; background: var(--bg3); overflow: hidden; } .hm .hm-gauge i { display: block; height: 100%; background: var(--hm-red); } .hm .hm-gauge i.lo { background: #ff9f0a; } .hm .hm-gauge i.ok { background: var(--good); } .hm .hm-gauge i.hi { background: var(--bad); }
 .hm .hm-feuille .you { font-size: 12.5px; color: var(--text2); } .hm .hm-feuille .you b { color: var(--text); }
 .hm .hm-oth { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .hm .hm-oth .og { display: grid; grid-template-columns: auto auto; justify-content: start; align-items: center; gap: 4px 8px; padding: 12px; border-radius: 12px; background: var(--bg2); border: 1px solid var(--border); cursor: pointer; text-align: left; font: inherit; color: var(--text); }
@@ -4304,7 +4310,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 12:26</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 22:04</footer>
 
 <script>
 
@@ -4952,21 +4958,23 @@ function pLink(name, extra) {
    redemander les fichiers a chaque rendu. */
 const _PORTRAIT_EXTS = ["jpeg", "jpg", "png", "webp"]; // jpeg d'abord : c'est le format de presque tous les portraits (moins de requêtes en échec)
 const _PORTRAIT_MISSING = new Set();
+const _PORTRAIT_LOCKED = "portraits/locked.jpeg"; // carte par défaut pour qui n a pas (encore) son portrait
 const _PORTRAIT_FOUND = {}; // nom -> index d extension qui a charge
 function portraitUrl(name, extIdx) {
   const i = extIdx ?? _PORTRAIT_FOUND[name] ?? 0;
   return `portraits/${encodeURIComponent(name)}.${_PORTRAIT_EXTS[i]}`;
 }
 function _portraitAttrs(name) {
+  if (_PORTRAIT_MISSING.has(name)) return `src="${_PORTRAIT_LOCKED}" data-pf="${name}" data-locked="1" onload="_portraitOk(this)" onerror="_portraitFail(this)"`;
   const i = _PORTRAIT_FOUND[name] ?? 0;
   return `src="${portraitUrl(name, i)}" data-pf="${name}" data-ext="${i}" onload="_portraitOk(this)" onerror="_portraitFail(this)"`;
 }
 function portraitImg(name, lazy) {
-  if (_PORTRAIT_MISSING.has(name)) return "";
+  if (_PORTRAIT_MISSING.has(name)) return `<img class="pf-img pf-locked" alt=""${lazy ? ' loading="lazy"' : ""} decoding="async" ${_portraitAttrs(name)}>`;
   return `<img class="pf-img" alt=""${lazy ? ' loading="lazy"' : ""} decoding="async" ${_portraitAttrs(name)}>`;
 }
 function _portraitOk(img) {
-  _PORTRAIT_FOUND[img.dataset.pf] = +img.dataset.ext;
+  if (!img.dataset.locked) _PORTRAIT_FOUND[img.dataset.pf] = +img.dataset.ext;
   // Fiche joueur : la carte entiere n apparait qu une fois chargee (sinon avatar a initiales).
   const btn = img.closest(".pph-portrait");
   if (btn) { btn.hidden = false; btn.closest(".pph-hero")?.classList.add("has-portrait"); }
@@ -4989,8 +4997,8 @@ function _portraitFail(img) {
     return;
   }
   _PORTRAIT_MISSING.add(name);
-  const btn = img.closest(".pph-portrait");
-  if (btn) btn.remove(); else img.remove();
+  if (img.dataset.locked) { const btn = img.closest(".pph-portrait"); if (btn) btn.remove(); else img.remove(); return; }
+  img.dataset.locked = "1"; img.classList.add("pf-locked"); img.src = _PORTRAIT_LOCKED; // pas de portrait : carte « locked »
 }
 function openPortraitLightbox(name) {
   let lb = document.getElementById("pf-lightbox");
@@ -5003,7 +5011,7 @@ function openPortraitLightbox(name) {
     document.body.appendChild(lb);
   }
   const img = lb.querySelector("img");
-  img.src = portraitUrl(name);
+  img.src = _PORTRAIT_MISSING.has(name) ? _PORTRAIT_LOCKED : portraitUrl(name);
   img.alt = `Carte de ${name}`;
   lb.hidden = false;
 }
@@ -8158,7 +8166,8 @@ function delta(cur, prev, { unit = "", pct = false, inv = false, dec = 0 } = {})
   if (!st.cmp || prev == null || cur == null || isNaN(prev)) return "";
   const d = cur - prev; if (Math.abs(d) < (dec ? .05 : .5)) return `<span class="dl eq">=</span>`;
   const good = inv ? d < 0 : d > 0;
-  return `<span class="dl ${good ? "up" : "dn"}">${d > 0 ? "▲" : "▼"} ${d > 0 ? "+" : ""}${dec ? fr(d.toFixed(dec)) : Math.round(d)}${pct ? " pts" : unit}</span>`;
+  if (pct) return `<span class="dl ${good ? "up" : "dn"}">${d > 0 ? "▲" : "▼"} <i>avant</i> ${Math.round(prev)}%</span>`; // pourcentage : on montre la valeur précédente
+  return `<span class="dl ${good ? "up" : "dn"}">${d > 0 ? "▲" : "▼"} ${d > 0 ? "+" : ""}${dec ? fr(d.toFixed(dec)) : Math.round(d)}${unit}</span>`;
 }
 function prevLbl() { const pk = prevOf(st.per, perKey()); return pk ? (st.per === "soir" ? `vs ${dd(pk)}` : `vs ${MOISL[+pk.slice(5) - 1]}`) : ""; }
 function topList(A, key, n = 5, minM = 0) {
@@ -8485,9 +8494,11 @@ function render() {
   if (!st.pl) st.pl = me && aggOf("saison").P[me] ? me : (Object.entries(aggOf("saison").P).sort((a, b) => b[1].m - a[1].m)[0] || [""])[0];
   if (!st.a || !st.b) { const top = Object.entries(aggOf("saison").P).filter(([n]) => !DEPS.has(n)).sort((x, y) => y[1].m - x[1].m).map(([n]) => n); st.a = st.a || (me && top.includes(me) ? me : top[0]); st.b = st.b || top.find(n => n !== st.a); }
   const y = window.scrollY, f = document.activeElement && document.activeElement.id, c = f && document.activeElement.selectionStart;
+  const sa = sessionStorage.getItem("hmft_role") === "admin"; // onglet Datas : super admins seulement
+  if (st.sub === "datas" && !sa) st.sub = "apercu";
   let body = ""; try { body = { apercu, equipes, joueurs, duels, datas }[st.sub](); } catch (e) { console.error("stats:", e); body = `<div class="card" style="color:var(--text2)">Oups, un calcul a échoué. Recharge la page.</div>`; }
   root.innerHTML = `<div class="st2 cr"><div class="head">Statistiques</div>
-    <div class="subnav">${SUBS.map(([k, e, l]) => `<button type="button" class="${k === "datas" ? "dt" : ""}" data-sub="${k}" aria-pressed="${st.sub === k}"><em>${e}</em>${l}</button>`).join("")}</div>${body}</div>`;
+    <div class="subnav">${SUBS.filter(([k]) => k !== "datas" || sa).map(([k, e, l]) => `<button type="button" class="${k === "datas" ? "dt" : ""}" data-sub="${k}" aria-pressed="${st.sub === k}"><em>${e}</em>${l}</button>`).join("")}</div>${body}</div>`;
   window.scrollTo(0, y);
   if (f === "pq") { const el = document.getElementById("pq"); if (el) { el.focus(); try { el.setSelectionRange(c, c); } catch (e) {} } }
 }
@@ -11214,7 +11225,7 @@ function openPlayerPanel(playerName) {
     const _ppStatutHtml = _ppS && _ppS.label !== _freqLabel ? `<span class="regl-badge ${_ppS.badge}" style="margin-left:6px;vertical-align:middle">${_ppS.label}</span>` : "";
     // Portrait : carte entiere, cachee jusqu a son chargement (_pphPortraitLoaded) ; sans
     // fichier, l avatar a initiales reste affiche comme avant.
-    const _portraitHtml = _PORTRAIT_MISSING.has(playerName) ? "" :
+    const _portraitHtml =
       `<button type="button" class="pph-portrait" hidden style="border-color:${_avatarBg}" data-pf="${playerName}" onclick="openPortraitLightbox(this.dataset.pf)" aria-label="Voir la carte de ${playerName} en grand">
         <img alt="" ${_portraitAttrs(playerName)}>
         <span class="pph-portrait-zoom">⤢</span>
@@ -16314,10 +16325,10 @@ function _svApply() {
     const R = rows(), who = me(), P = R.filter(r => r.v === "P").map(r => r.n).sort((a, b) => a.localeCompare(b, "fr"));
     const step = P.length ? Math.min(30, Math.floor(290 / P.length)) : 30; // tous sur une ligne : plus il y a de monde, plus les visages se chevauchent
     const mine = ((_svData && _svData.votes) || {})[who];
-    return `<div class="hm-feuille"><div class="t"><span>Feuille de match${live ? " · en cours" : ""}</span><span class="${live ? "" : "lk"}">${live ? `${P.length} / 10${P.length >= 10 ? " ✓" : ""}` : "🔒 clos dimanche 21h30"}</span></div>
+    return `<div class="hm-feuille"><div class="t"><span>Feuille de match${live ? " · en cours" : ""}</span><span class="${live ? (P.length === 11 ? "lk cursed" : "") : "lk"}">${live ? (P.length === 11 ? "💀 Nombre maudit" : "") : "🔒 clos dimanche 21h30"}</span></div>
       <b class="n">${P.length} <small>${live ? "présents pour l'instant" : "convoqués"}</small></b>
       ${P.length ? `<div class="hm-line" style="--st:${step - 40}px">${P.map(n => `<span title="${esc(n)}">${hmAv(n, 40)}</span>`).join("")}</div>` : ""}
-      ${live ? `<div class="hm-gauge"><i style="width:${Math.min(100, P.length * 10)}%"></i></div>` : mine ? `<div class="you">Tu es <b>${ST[mine][1]}</b>${mine === "P" ? " · rendez-vous lundi" : ""}</div>` : ""}</div>`;
+      ${live ? `<div class="hm-gauge"><i class="${P.length < 10 ? "lo" : P.length <= 15 ? "ok" : "hi"}" style="width:${Math.min(100, P.length / 15 * 100)}%"></i></div>` : mine ? `<div class="you">Tu es <b>${ST[mine][1]}</b>${mine === "P" ? " · rendez-vous lundi" : ""}</div>` : ""}</div>`;
   }
   function hmOthers() {
     const R = rows(), G = [["A", "✕", "absents", "var(--bad)"], ["B", "✚", "blessés", "#f5c842"], ["N", "?", "sans réponse", "var(--text3)"]];
