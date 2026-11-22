@@ -4293,7 +4293,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 12:13</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 12:15</footer>
 
 <script>
 
@@ -16511,6 +16511,7 @@ function _svApply() {
       sessions: '<path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="1.4"/>',
       live: '<circle cx="12" cy="12" r="2.6"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14"/>',
       trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"/><path d="M12 13v4M8.5 20.5h7M10 17h4l.5 3.5h-5z"/>',
+      home: '<path d="M4 11.2L12 4.5l8 6.7"/><path d="M6.2 9.6v10.1h4.3v-5.2h3v5.2h4.3V9.6"/>',
       next: '<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/><path d="M9 15l2 2 4-4"/>',
       saisie: '<rect x="5" y="4" width="14" height="17" rx="2.5"/><path d="M9 4V3h6v1"/><path d="M8.5 12.5l2.2 2.2 4.8-4.8"/><path d="M9 18h6"/>',
       cards: '<rect x="7.5" y="4" width="11" height="15" rx="2" transform="rotate(8 13 11.5)"/><rect x="4.5" y="5" width="11" height="15" rx="2"/><path d="M8 9.5l2 1.5-2 1.5M12.5 15h-1"/>',
@@ -16575,7 +16576,10 @@ function _svApply() {
       // Bouton central en écusson : grisé si rien d'urgent, rouge pendant le sondage (pastille = ta réponse),
       // et posé dans une encoche de la barre le lundi soir pour la Saisie.
       if (soiree() && canSaisie()) L.push({ k: "saisie", ic: "saisie", l: "Saisie", center: true, red: true, sh: "n" });
-      else if (acc()) { const op = voteOpen(), v = myVote(); L.push({ k: "vote", ic: "next", l: "Prochaine", center: true, sh: op ? "r" : "g", eb: op ? (v ? { P: ["P", "✓"], A: ["A", "✕"], B: ["B", "✚"] }[v] : ["N", "!"]) : null }); }
+      else if (acc()) { const op = voteOpen(), v = myVote(), sv = vote();
+        // « Sondage » de l'ouverture du sondage jusqu'à la soirée ; « Accueil » le reste du temps (Saisie pendant la soirée, ci-dessus)
+        const poll = !!(sv && sv.status === "open" && !(typeof SESSIONS !== "undefined" && SESSIONS.some(x => x.date === _svDate)));
+        L.push({ k: "vote", ic: poll ? "next" : "home", l: poll ? "Sondage" : "Accueil", center: true, sh: op ? "r" : "g", eb: op ? (v ? { P: ["P", "✓"], A: ["A", "✕"], B: ["B", "✚"] }[v] : ["N", "!"]) : null }); }
       if (acc()) { const v = vg(); L.push({ k: "vignettes", ic: "cards", l: "Vignettes", bd: v && v.boosters ? v.boosters : 0 }); }
       else L.push({ k: "joueurs", ic: "team", l: "Effectif" });
       L.push({ k: "__menu", ic: "menu", l: "Menu" });
@@ -17616,6 +17620,15 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   renderJoueurs();
   if (_hash === "stats") renderStats();
   if (_hash === "reglement") renderReglement();
+  if (_hash === "vote" && typeof window._svOnShow === "function") window._svOnShow();
+  // Filet de sécurité : jamais d'écran vide au démarrage (rechargement, tirer pour actualiser) → accueil
+  setTimeout(() => {
+    const act = document.querySelector(".tab-panel.active");
+    if (act && act.textContent.trim().length > 20) return;
+    const home = _accUser && _accProfile ? "vote" : "session";
+    document.querySelector(`.main-tab[data-tab="${home}"]`)?.click();
+    if (home === "vote" && typeof window._svOnShow === "function") window._svOnShow();
+  }, 1500);
   if (_loadSaisie) {
     // "Annuler" ici revient a reprendre l edition telle quelle (le brouillon n a pas ete
     // touche) — dans les deux cas (discard ou annuler), il suffit de rendre _draft tel qu il
