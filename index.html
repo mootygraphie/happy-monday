@@ -3265,6 +3265,11 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .cr-iso .pl b { font-size: 10.5px; color: #fff; background: rgba(0,0,0,.72); border-radius: 6px; padding: 1px 6px; white-space: nowrap; }
   .cr-iso .pl small { font-size: 9px; color: var(--gold); background: rgba(0,0,0,.72); border-radius: 6px; padding: 0 5px; white-space: nowrap; }
   @media (min-width: 900px) { .cr-iso { height: 340px; } .cr-iso .pitch { width: 340px; height: 214px; margin: -142px 0 0 -170px; top: 62%; } .cr-iso .pl .cr-av { --s: 40px !important; } .cr-iso .pl b { font-size: 11px; } }
+  /* Saisie : verrous (présences du sondage, équipes avant 19h45) */
+  .saisie-pres-list.locked .saisie-status-btn, .saisie-pres-list.locked [data-act] { opacity: .55; cursor: not-allowed; }
+  .saisie-pres-lock span { color: var(--text2); }
+  .saisie-step-pill.locked { opacity: .5; }
+  .saisie-btn.locked { background: var(--bg3) !important; color: var(--text2) !important; border-color: var(--border2) !important; }
   /* ═══ Onglet Récompenses (refonte 22/11/2026, préfixe rw-) ═══ */
   .rw { --rwv: #b892ff; }
   .rw-eb { display: block; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); padding-top: 6px; }
@@ -3938,7 +3943,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 02:33</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 09:51</footer>
 
 <script>
 
@@ -11187,13 +11192,13 @@ function _buildPresencesScreenHTML() {
 
   return `<div class="saisie-section">
     <div class="saisie-section-title">👥 Présences</div>
-    ${typeof _svImportHTML === "function" ? _svImportHTML() : ""}
+    ${_saisiePresLocked() ? `<div class="saisie-sv-import saisie-pres-lock"><span>🔒 Présences issues du sondage · modifiables par un super admin</span></div>` : (typeof _svImportHTML === "function" ? _svImportHTML() : "")}
     <input type="text" class="saisie-pres-search" id="saisie-pres-search" placeholder="Rechercher un joueur…" value="${_saisiePresSearch.replace(/"/g,"&quot;")}">
     <div class="saisie-pres-filters">
       ${filterTabs.map(([key,icon,n]) => `<button class="saisie-pres-filter${_saisiePresFilter===key?" active":""}" data-act="saisie-pres-filter" data-filter="${key}">${icon} <span class="n">${n}</span></button>`).join("")}
     </div>
-    <div class="saisie-pres-list">${rowsHtml}</div>
-    ${_saisieDepAddHTML()}
+    <div class="saisie-pres-list${_saisiePresLocked() ? " locked" : ""}">${rowsHtml}</div>
+    ${_saisiePresLocked() ? "" : _saisieDepAddHTML()}
   </div>`;
 }
 
@@ -11637,9 +11642,25 @@ function _buildMatchsScreenHTML() {
   </div>`;
 }
 
+/* Verrous de la Saisie pour les comptes qui ne sont pas super admin (22/11/2026) :
+   - Présences : si un sondage a eu lieu pour cette soirée, elles viennent du sondage et
+     seul un super admin peut les modifier ;
+   - Équipes (et étapes suivantes) : pas avant le lundi 19h45, heure de Paris. */
+function _saisieIsSA() { return sessionStorage.getItem("hmft_role") === "admin"; }
+function _saisiePresLocked() {
+  if (_saisieIsSA() || !_draft) return false;
+  return !!(typeof _svData !== "undefined" && _svData && _svData.status === "open" && _svDate === _draft.date);
+}
+function _saisieTeamsLocked() {
+  if (_saisieIsSA() || !_draft || !_draft.date) return false;
+  const p = _svParis(_liveNow()), today = _svIso(Date.UTC(p.y, p.m - 1, p.d));
+  if (_draft.date < today) return false;
+  return _draft.date > today || p.h * 60 + p.mi < 19 * 60 + 45;
+}
 function renderSaisie() {
   if (typeof _svAutoImport === "function") _svAutoImport();
   if (!_draft) _loadDraft();
+  if (_draft && _saisieStep !== "presences" && _saisieTeamsLocked()) { _saisieStep = "presences"; _draft.step = "presences"; }
   // Chaque appel remplace tout le contenu du panneau (innerHTML) : ceci recree entierement
   // .saisie-pres-list, qui a son propre defilement interne (overflow-y:auto) — recreer
   // l'element reinitialise ce defilement a 0, d'ou le "remonte en haut de la liste" a
@@ -11659,8 +11680,9 @@ function renderSaisie() {
   const stepperHTML = _SAISIE_STEPS.map((s, i) => {
     const cls = ["saisie-step-pill", s.key === _saisieStep ? "active" : "", i < doneIdx ? "done" : ""].filter(Boolean).join(" ");
     const sep = i < _SAISIE_STEPS.length - 1 ? `<div class="saisie-step-line ${i < doneIdx ? "done" : ""}"></div>` : "";
-    return `<button class="${cls}" data-act="saisie-go-step" data-step="${s.key}">
-      <span class="num">${i < doneIdx ? "" : (i+1)}</span><span class="lbl">${s.icon} ${s.label}</span>
+    const lockS = i > 0 && _saisieTeamsLocked();
+    return `<button class="${cls}${lockS ? " locked" : ""}" data-act="saisie-go-step" data-step="${s.key}">
+      <span class="num">${i < doneIdx ? "" : (i+1)}</span><span class="lbl">${s.icon} ${s.label}${lockS && i === 1 ? " · dès 19h45" : ""}</span>
     </button>${sep}`;
   }).join("");
 
@@ -11693,7 +11715,7 @@ function renderSaisie() {
 
     <div class="saisie-screen${_saisieStep==="presences"?" active":""}" data-screen="presences">
       ${_buildPresencesScreenHTML()}
-      <div class="saisie-screen-nav" style="justify-content:flex-end"><button class="saisie-btn primary" data-act="saisie-go-step" data-step="repartition">Équipes →</button></div>
+      <div class="saisie-screen-nav" style="justify-content:flex-end"><button class="saisie-btn primary${_saisieTeamsLocked() ? " locked" : ""}" data-act="saisie-go-step" data-step="repartition">${_saisieTeamsLocked() ? "🔒 Équipes · dès 19h45" : "Équipes →"}</button></div>
     </div>
 
     <div class="saisie-screen${_saisieStep==="repartition"?" active":""}" data-screen="repartition">
@@ -11917,6 +11939,10 @@ document.getElementById("saisie-content").addEventListener("click", e => {
   if (e.target.closest('[data-act="saisie-stand-close"]')) { _saisieStandOpen = false; renderSaisie(); return; }
 
   const stepBtn = e.target.closest('[data-act="saisie-go-step"]');
+  if (stepBtn && stepBtn.dataset.step !== "presences" && _saisieTeamsLocked()) { _showToast("L'étape Équipes ouvre à 19h45"); return; }
+  if (_saisiePresLocked() && e.target.closest('[data-act="saisie-status-cycle"], [data-act="saisie-add-temp-joker"], [data-act="saisie-remove-temp-joker"], [data-act="sv-import"]')) {
+    _showToast("Présences issues du sondage : seul un super admin peut les modifier"); return;
+  }
   if (stepBtn) {
     // On quitte l ecran Equipes : les couleurs choisies mais pas encore validees sont
     // appliquees silencieusement, sinon elles disparaitraient sans prevenir (et le controle
@@ -15695,6 +15721,8 @@ function _svApply() {
       b.setAttribute("aria-expanded", String(notifOpen));
       $("dmenu-btn")?.setAttribute("aria-expanded", String(menuOpen));
       b.innerHTML = ic("bell") + (n ? `<span class="bn-bd">${n}</span>` : "");
+      // Pastille sur l'icône de l'appli installée (même nombre que la cloche)
+      try { if (acc() && navigator.setAppBadge) { (n ? navigator.setAppBadge(n) : navigator.clearAppBadge()).catch(() => {}); } } catch (e) {}
     }
     function renderNotif() {
       const p = $("bnotif"), sc = $("bnotif-scrim");
@@ -15756,7 +15784,7 @@ function _svApply() {
       if (soiree() && acc()) pages.push(row("vote", "next", "Prochaine session"));
       pages.push(row("dashboard", "dash", "Statistiques"));
       if (acc()) pages.push(row("joueurs", "team", "Effectif"));
-      if (!soiree() && sessionStorage.getItem("hmft_role") === "admin" && canSaisie()) pages.push(row("saisie", "saisie", "Saisie", "admin"));
+      if (!soiree() && !voteOpen() && sessionStorage.getItem("hmft_role") === "admin" && canSaisie()) pages.push(row("saisie", "saisie", "Saisie", "admin")); // pas de Saisie tant que le sondage est ouvert
       const prof = acc()
         ? `<button type="button" class="bm-prof" data-bm="fiche"><span class="av pf">${esc((p || "").slice(0, 2).toUpperCase())}${typeof portraitImg === "function" ? portraitImg(p, true) : ""}</span><span><b>${esc(p)}</b><small>${typeof _accIsSuper !== "undefined" && _accIsSuper ? "★ Super admin · " : ""}voir ma fiche</small></span>${ic("chev", "chev")}</button>`
         : `<button type="button" class="bm-prof" data-bm="login"><span class="av">${ic("user")}</span><span><b>Se connecter</b><small>ou créer mon compte joueur</small></span>${ic("chev", "chev")}</button>`;

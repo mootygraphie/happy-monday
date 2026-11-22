@@ -5,17 +5,20 @@ Déjà envoyé  : pushSent/... (pour ne jamais envoyer deux fois la même chose)
 Notifications :
   - sondage ouvert                  → tous les abonnés, une fois par lundi
   - « plus que 3 h » (dès 18h30)    → abonnés qui n'ont pas répondu, une fois
-  - booster disponible (dès 10h)    → abonnés qui ont au moins 1 booster et n'en ont ouvert aucun aujourd'hui, une fois par jour
-  - proposition d'échange reçue     → le destinataire, une fois par proposition
+  - booster disponible (10h-10h59) → abonnés qui ont au moins 1 booster et n'en ont ouvert aucun aujourd'hui, une fois par jour
+                                       (passage de 10h raté : rien ce jour-là, jamais de booster le soir)
   - message d'un super admin        → pushQueue/{id} = {by, title, body, to: joueur | [joueurs] | "__all"}
   - Le Vestiaire (chat)              → membres du salon abonnés, sauf salon coupé (chat/mute) ; une @mention passe toujours
                                        (bêta : super admins seulement tant que config/chatOpen n'est pas à true)
   + message « sondage fermé » posté dans le Vestiaire général à la clôture
   - récap de la soirée prêt          → tous les abonnés, une fois, dès que la soirée est enregistrée (sessions/{date})
-Préférences : pushPrefs/{joueur} = {trades: false, boosters: false} pour les couper
-(le sondage ne peut pas être coupé).
+Préférences : pushPrefs/{joueur} = {boosters: false} pour les couper (le sondage ne peut pas être coupé).
+Échanges de vignettes : plus de notification (retirée le 22/11/2026).
+Plafond : 4 notifications automatiques par joueur et par jour (pushSent/cap/{jour}/{joueur}).
+Robustesse : noms avec accents encodés dans les adresses ; une erreur dans un bloc n'arrête pas les autres
+et ne fait jamais échouer l'Action (pas de mail d'erreur), elle est seulement écrite dans le journal.
 """
-import datetime, json, os, sys, tempfile, time, urllib.request, zoneinfo
+import datetime, json, os, sys, tempfile, time, traceback, urllib.parse, urllib.request, zoneinfo
 
 DB = "https://happy-monday-a2404-default-rtdb.europe-west1.firebasedatabase.app"
 SITE = "https://mootygraphie.github.io/happy-monday/"
@@ -53,7 +56,7 @@ def fetch(url):
 
 def req(path, method="GET", value=None):
     data = None if value is None else json.dumps(value).encode()
-    r = urllib.request.Request(f"{DB}/{path}.json", data=data, method=method, headers={"Content-Type": "application/json", **auth_headers()})
+    r = urllib.request.Request(f"{DB}/{urllib.parse.quote(path, safe='/')}.json", data=data, method=method, headers={"Content-Type": "application/json", **auth_headers()})
     with urllib.request.urlopen(r, timeout=30) as resp:
         return json.load(resp)
 
@@ -100,8 +103,13 @@ def main():
             except WebPushException as e:
                 code = getattr(e.response, "status_code", None)
                 if code in (404, 410):  # abonnement expiré ou révoqué : on le supprime
-                    req(f"pushSubs/{player}/{sid}", "DELETE")
+                    try:
+                        if not DRY:
+                            req(f"pushSubs/{player}/{sid}", "DELETE")
+                    except Exception as er:
+                        print("suppression abonnement impossible", player, type(er).__name__, str(er)[:120])
                     stats["abonnements expirés"] += 1
+                    (subs.get(player) or {}).pop(sid, None)  # plus retenté pendant ce passage
                     expired += 1
                 else:
                     stats["échecs"] += 1
@@ -125,61 +133,98 @@ def main():
     allowed = lambda p, k: (prefs.get(p) or {}).get(k) is not False
 
     # ── messages des super admins (file d'attente)
-    queue = req("pushQueue") or {}
-    supers = req("config/superAdmins") or {}
-    for qid, q in queue.items():
-        if not isinstance(q, dict) or q.get("sentAt"):
-            continue
-        if supers.get(q.get("by")) is not True:
-            print("Demande ignorée (pas super admin) :", qid, q.get("by"))
-            if not DRY:
-                req(f"pushQueue/{qid}", "PATCH", {"sentAt": int(time.time() * 1000), "count": 0, "refused": True})
-            continue
-        to = q.get("to")
-        if to == "__all":
-            targets = list(subs)
-        elif isinstance(to, (list, dict)):  # plusieurs joueurs choisis
-            targets = [t for t in (to.values() if isinstance(to, dict) else to) if t in subs]
-        else:
-            targets = [to] if to in subs else []
-        before = stats["envoyées"]
-        print("Message de", q.get("by"), "→", q.get("to"), ":", q.get("title"))
-        results = [send(p, (q.get("title") or "Happy Monday")[:60], (q.get("body") or "")[:200], "./", f"msg-{qid}") for p in targets]
-        tries = (q.get("tries") or 0) + 1
-        if not DRY and (any(results) or not targets or tries >= 6):  # réessaie aux passages suivants (6 fois max)
-            req(f"pushQueue/{qid}", "PATCH", {"sentAt": int(time.time() * 1000), "count": stats["envoyées"] - before})
-        elif not DRY:
-            req(f"pushQueue/{qid}", "PATCH", {"tries": tries})
+    supers = {}
+    try:
+        queue = req("pushQueue") or {}
+        supers = req("config/superAdmins") or {}
+        for qid, q in queue.items():
+            if not isinstance(q, dict) or q.get("sentAt"):
+                continue
+            if supers.get(q.get("by")) is not True:
+                print("Demande ignorée (pas super admin) :", qid, q.get("by"))
+                if not DRY:
+                    req(f"pushQueue/{qid}", "PATCH", {"sentAt": int(time.time() * 1000), "count": 0, "refused": True})
+                continue
+            to = q.get("to")
+            if to == "__all":
+                targets = list(subs)
+            elif isinstance(to, (list, dict)):  # plusieurs joueurs choisis
+                targets = [t for t in (to.values() if isinstance(to, dict) else to) if t in subs]
+            else:
+                targets = [to] if to in subs else []
+            before = stats["envoyées"]
+            print("Message de", q.get("by"), "→", q.get("to"), ":", q.get("title"))
+            results = [send(p, (q.get("title") or "Happy Monday")[:60], (q.get("body") or "")[:200], "./", f"msg-{qid}") for p in targets]
+            tries = (q.get("tries") or 0) + 1
+            if not DRY and (any(results) or not targets or tries >= 6):  # réessaie aux passages suivants (6 fois max)
+                req(f"pushQueue/{qid}", "PATCH", {"sentAt": int(time.time() * 1000), "count": stats["envoyées"] - before})
+            elif not DRY:
+                req(f"pushQueue/{qid}", "PATCH", {"tries": tries})
+    except Exception as e:
+        print("Messages : erreur", type(e).__name__, str(e)[:200])
 
     sent = req("pushSent") or {}
     now = datetime.datetime.now(PARIS)
     now_ms = time.time() * 1000
     today = now.date()
+    day_iso = today.isoformat()
     monday = today if today.weekday() == 0 else today + datetime.timedelta(days=(7 - today.weekday()))
     mon_iso = monday.isoformat()
     mon_lbl = f"lundi {monday.day if monday.day > 1 else '1er'} {MOIS[monday.month - 1]}"
 
-    # ── vote de présence
-    vote = req(f"sessionVotes/{mon_iso}")
-    if vote and vote.get("status") == "open" and now_ms < (vote.get("closesAt") or 0):
+    # Plafond : 4 notifications automatiques par joueur et par jour, quoi qu'il arrive
+    CAP = 4
+    cap = dict((sent.get("cap") or {}).get(day_iso) or {})
+
+    def auto_send(p, title, body, url, tag):
+        """Envoi automatique compté dans le plafond du jour. Renvoie True si c'est réglé (envoyé, ou plafond atteint)."""
+        n = cap.get(p) or 0
+        if n >= CAP:
+            print("  plafond du jour atteint :", p)
+            return True
+        ok = send(p, title, body, url, tag)
+        if ok:
+            cap[p] = n + 1
+            try:
+                mark_val(f"pushSent/cap/{day_iso}/{p}", cap[p])
+            except Exception as e:
+                print("plafond : écriture impossible", p, type(e).__name__)
+        return ok
+
+    def block(name, fn):
+        """Un bloc qui plante ne bloque pas les autres et ne fait pas échouer l'Action."""
+        try:
+            fn()
+        except Exception as e:
+            print(f"{name} : erreur", type(e).__name__, str(e)[:200])
+            traceback.print_exc()
+
+    vote = {}
+
+    def do_vote():
+        nonlocal vote
+        vote = req(f"sessionVotes/{mon_iso}") or {}
+        if vote.get("status") != "open" or now_ms >= (vote.get("closesAt") or 0):
+            return
         votes = vote.get("votes") or {}
         if not (sent.get("open") or {}).get(mon_iso):
             print("Sondage ouvert :", mon_iso)
-            results = [send(p, "🗓️ Le sondage est ouvert", f"Tu viens {mon_lbl} ? Réponds avant dimanche 21h30.", "./?n=vote#vote", f"open-{mon_iso}") for p in subs]
-            if any(results):
-                mark(f"pushSent/open/{mon_iso}")
+            mark(f"pushSent/open/{mon_iso}")  # noté AVANT d'envoyer : jamais deux fois, même en cas de souci
+            for p in subs:
+                auto_send(p, "🗓️ Le sondage est ouvert", f"Tu viens {mon_lbl} ? Réponds avant dimanche 21h30.", "./?n=vote#vote", f"open-{mon_iso}")
         if vote["closesAt"] - now_ms <= 3 * 3600 * 1000:
             done = (sent.get("rem3h") or {}).get(mon_iso) or {}
             for p in subs:
                 if p not in votes and not done.get(p):
                     print("Rappel 3 h :", p)
-                    if send(p, "⏳ Plus que 3 h pour répondre", f"Le sondage pour {mon_lbl} se ferme ce soir à 21h30.", "./?n=vote#vote", f"rem-{mon_iso}"):
-                        mark(f"pushSent/rem3h/{mon_iso}/{p}")
+                    mark(f"pushSent/rem3h/{mon_iso}/{p}")
+                    auto_send(p, "⏳ Plus que 3 h pour répondre", f"Le sondage pour {mon_lbl} se ferme ce soir à 21h30.", "./?n=vote#vote", f"rem-{mon_iso}")
+    block("Sondage", do_vote)
 
     # ── récap de la soirée prêt : dès qu'une soirée récente (aujourd'hui ou hier) est enregistrée
-    try:
+    def do_recap():
         dates = sorted(fetch(f"{DB}/sessions.json?shallow=true") or {})
-        recent = [d for d in dates if d >= (today - datetime.timedelta(days=1)).isoformat() and d <= today.isoformat()]
+        recent = [d for d in dates if (today - datetime.timedelta(days=1)).isoformat() <= d <= day_iso]
         for d in recent:
             if (sent.get("recap") or {}).get(d):
                 continue
@@ -189,61 +234,52 @@ def main():
                 continue
             title = recap_headline(d, ms)
             print("Récap prêt :", d, "·", title)
-            results = [send(p, "📰 Le récap de la soirée est en ligne !", title, "./?n=recap#sessions", f"recap-{d}") for p in subs]
-            if any(results) or not subs:
-                mark(f"pushSent/recap/{d}")
-    except Exception as e:
-        print("Récap : erreur", type(e).__name__, str(e)[:200])
+            mark(f"pushSent/recap/{d}")
+            for p in subs:
+                auto_send(p, "📰 Le récap de la soirée est en ligne !", title, "./?n=recap#sessions", f"recap-{d}")
+    block("Récap", do_recap)
 
     # ── clôture du sondage : message automatique dans le Vestiaire général
-    if vote and vote.get("status") == "open" and (vote.get("closesAt") or 0) <= now_ms < (vote.get("closesAt") or 0) + 86400 * 1000 \
-            and not (sent.get("chatClose") or {}).get(mon_iso):
-        votes = vote.get("votes") or {}
-        n = sum(1 for v in votes.values() if v == "P") + len(vote.get("plus") or {})
-        print("Vestiaire : sondage fermé", mon_iso, n)
-        if not DRY:
-            req("chat/msgs/g", "POST", {"sys": "close", "text": f"Le sondage est fermé : {n} présent{'s' if n > 1 else ''} {mon_lbl}.", "at": {".sv": "timestamp"}})
-        mark(f"pushSent/chatClose/{mon_iso}")
+    def do_close():
+        if vote.get("status") == "open" and (vote.get("closesAt") or 0) <= now_ms < (vote.get("closesAt") or 0) + 86400 * 1000 \
+                and not (sent.get("chatClose") or {}).get(mon_iso):
+            votes = vote.get("votes") or {}
+            n = sum(1 for v in votes.values() if v == "P") + len(vote.get("plus") or {})
+            print("Vestiaire : sondage fermé", mon_iso, n)
+            mark(f"pushSent/chatClose/{mon_iso}")
+            if not DRY:
+                req("chat/msgs/g", "POST", {"sys": "close", "text": f"Le sondage est fermé : {n} présent{'s' if n > 1 else ''} {mon_lbl}.", "at": {".sv": "timestamp"}})
+    block("Clôture", do_close)
 
     # ── Le Vestiaire : nouveaux messages
-    try:
-        chat_push(subs, supers, sent, now_ms, send)
-    except Exception as e:
-        print("Vestiaire : erreur", type(e).__name__, str(e)[:200])
+    block("Vestiaire", lambda: chat_push(subs, supers, sent, now_ms, send))
 
-    # ── vignettes : boosters et échanges (saison la plus récente)
-    seasons = sorted(k for k in (fetch(f"{DB}/vignettes.json?shallow=true") or {}) if "-" in k)
-    if seasons:
+    # ── boosters de vignettes : seulement entre 10h00 et 10h59 (passage raté = rien ce jour-là)
+    def do_boost():
+        if now.hour != 10:
+            return
+        seasons = sorted(k for k in (fetch(f"{DB}/vignettes.json?shallow=true") or {}) if "-" in k)
+        if not seasons:
+            return
         season = seasons[-1]
         V = req(f"vignettes/{season}") or {}
         day = (today - datetime.date(1970, 1, 1)).days
-        if now.hour >= 10:
-            done = (sent.get("boost") or {}).get(today.isoformat()) or {}
-            midnight = datetime.datetime.combine(today, datetime.time(0, 0), PARIS).timestamp() * 1000
-            logs = req(f"vignettesLog/{season}") or {}
-            for p in subs:
-                b = (V.get(p) or {}).get("boosters")
-                if not b or done.get(p) or not allowed(p, "boosters"):
-                    continue
-                # déjà ouvert un booster aujourd'hui (journal des ouvertures, hors échanges) : pas de rappel
-                if any(isinstance(e, dict) and e.get("cards") and (e.get("at") or 0) >= midnight for e in (logs.get(p) or {}).values()):
-                    continue
-                stock = min(5, (b.get("stock") or 0) + max(0, day - (b.get("day") or day)))
-                if stock > 0:
-                    print("Boosters :", p, stock)
-                    if send(p, "🎁 " + ("Un booster t'attend" if stock == 1 else f"{stock} boosters t'attendent"), "Ouvre-les dans Vignettes.", "./?n=vg#vignettes", f"boost-{today.isoformat()}"):
-                        mark(f"pushSent/boost/{today.isoformat()}/{p}")
-        done = sent.get("trade") or {}
-        for tid, t in (V.get("_trades") or {}).items():
-            if t.get("status") != "wait" or done.get(tid) or t.get("to") not in subs or not allowed(t.get("to"), "trades"):
+        done = (sent.get("boost") or {}).get(day_iso) or {}
+        midnight = datetime.datetime.combine(today, datetime.time(0, 0), PARIS).timestamp() * 1000
+        logs = req(f"vignettesLog/{season}") or {}
+        for p in subs:
+            b = (V.get(p) or {}).get("boosters")
+            if not b or done.get(p) or not allowed(p, "boosters"):
                 continue
-            if now_ms > (t.get("at") or 0) + 3 * 86400 * 1000:
+            # déjà ouvert un booster aujourd'hui (journal des ouvertures, hors échanges) : pas de rappel
+            if any(isinstance(e, dict) and e.get("cards") and (e.get("at") or 0) >= midnight for e in (logs.get(p) or {}).values()):
                 continue
-            gift = not t.get("get")
-            print("Échange :", tid, t.get("from"), "→", t.get("to"))
-            if send(t["to"], ("🎁 " if gift else "🔄 ") + (f"{t.get('from')} t'offre un cadeau" if gift else f"{t.get('from')} te propose un échange"),
-                    "À voir dans Vignettes · Échanges.", "./?n=vg#vignettes", f"trade-{tid}"):
-                mark(f"pushSent/trade/{tid}")
+            stock = min(5, (b.get("stock") or 0) + max(0, day - (b.get("day") or day)))
+            if stock > 0:
+                print("Boosters :", p, stock)
+                mark(f"pushSent/boost/{day_iso}/{p}")
+                auto_send(p, "🎁 " + ("Un booster t'attend" if stock == 1 else f"{stock} boosters t'attendent"), "Ouvre-les dans Vignettes.", "./?n=vg#vignettes", f"boost-{day_iso}")
+    block("Boosters", do_boost)
     print(stats)
 
 
@@ -333,4 +369,9 @@ def mark_val(path, value):
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        raise
+    except Exception:  # panne générale (réseau, base) : écrite dans le journal, sans faire échouer l'Action
+        traceback.print_exc()

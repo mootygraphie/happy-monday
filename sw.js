@@ -6,13 +6,15 @@ self.addEventListener("activate", e => e.waitUntil(self.clients.claim()));
 self.addEventListener("push", e => {
   let d = {};
   try { d = e.data ? e.data.json() : {}; } catch (err) { d = { body: e.data ? e.data.text() : "" }; }
-  e.waitUntil(self.registration.showNotification(d.title || "Happy Monday", {
+  // Pastille sur l'icône de l'appli (écran d'accueil) : le nombre exact est recalé à l'ouverture du site
+  const badge = self.navigator && self.navigator.setAppBadge ? self.navigator.setAppBadge().catch(() => {}) : Promise.resolve();
+  e.waitUntil(badge.then(() => self.registration.showNotification(d.title || "Happy Monday", {
     body: d.body || "",
     icon: "icons/icon-192.png",
     badge: "icons/favicon-64.png",
     tag: d.tag || undefined,
     data: { url: d.url || "./" },
-  }));
+  })));
 });
 
 // Toucher la notification : ouvre (ou ramène) le site sur le bon écran
