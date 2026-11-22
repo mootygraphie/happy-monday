@@ -2273,9 +2273,6 @@ html:has(#vg-modal:not([hidden])), html:has(#vg-modal:not([hidden])) body { over
 #panel-vignettes .tier.t6 { color: var(--t6); background: linear-gradient(135deg,rgba(167,243,255,.15),rgba(196,181,255,.15)); }
 #panel-vignettes .secret { color: var(--hf-secret); }
 #panel-vignettes .ty-g { --tc: #e30b0b; }
-#panel-vignettes .ty-g .art.vint { background: radial-gradient(circle at 50% 40%, #6b4a2a, #2a1b0f 75%); }
-#panel-vignettes .ty-g .art.vint svg { position: absolute; inset: 8% 10%; width: 80%; height: 84%; filter: sepia(.35) drop-shadow(0 .4em .6em rgba(0,0,0,.55)); }
-#panel-vignettes .ty-g .art.vint .prov { position: absolute; z-index: 3; right: 6%; bottom: 5%; font-size: .5em; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,240,210,.7); background: rgba(0,0,0,.35); border-radius: 1em; padding: .15em .6em; }
 /* ── Rareté « Mythique » (cartes du Club, validée le 21/11) : cadre rouge métallisé assombri de reflets noirs,
    intérieur noir à fines lignes rouges, pastilles noir-rouge dont le reflet se déplace */
 #panel-vignettes .card.ty-g { --rc: #ff3b2f; --frame: linear-gradient(120deg, #120000, #8a0000 14%, #ff4a3a 28%, #2a0000 42%, #e30b0b 55%, #ffb3a8 63%, #6a0000 76%, #0b0b0d); --glow: 0 0 1.3em rgba(255,43,28,.55), 0 0 .25em rgba(255,180,170,.7); }
@@ -3747,7 +3744,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 21/11/2026 - 16:24</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 01:38</footer>
 
 <script>
 
@@ -13805,7 +13802,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   const CLUB_KEYS = ["g:logo", "g:gymnase"];
   // « Équipement Vintage » : légendaire unique, offerte d'office à ces joueurs seulement (ni booster ni échange).
   // Pour les autres : visible en gris dans l'album, sans animation, et non comptée dans leur total.
-  const VINT_KEY = "g:vintage", VINT_OWN = new Set(["Boris", "Sylvain", "Guy", "Cédric", "Mahdi", "Raph P", "Ben", "JB", "Loïc", "Houari", "Tof", "Virgile", "Pierre-Olivier", "Yassir"]);
+  const VINT_KEY = "g:vintage", VINT_OWN = new Set(["Boris", "Sylvain", "Guy", "Cédric", "Mahdi", "Raph P", "Ben", "JB", "Houari", "Tof", "Pierre-Olivier", "Yassir"]);
   const withClub = (c, who) => { c = c || {}; CLUB_KEYS.forEach(k => { if (!c[k]) c[k] = 1; }); if (VINT_OWN.has(who) && !c[VINT_KEY]) c[VINT_KEY] = 1; return c; }; // cartes du club
   function build() {
     const sessions = SESSIONS.filter(s => _seasonStart(s.date) === SY);
@@ -13929,7 +13926,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const CLUB = [
       { k: "g:logo", ty: "g", nm: "Happy Monday Football Team", ic: "🐉", img: "portraits/Logo.jpeg", sub: "L'écusson du club", r: "M", nSess: sessions.length },
       { k: "g:gymnase", ty: "g", nm: "Gymnase Alain Fournier", ic: "🏟️", img: "portraits/gr_gymnase_fournier.webp", sub: "Là où tout se joue, chaque lundi soir", r: "M", nSess: sessions.length }];
-    const VINT = { k: VINT_KEY, ty: "g", nm: "Équipement Vintage", ic: "🎽", vint: true, sub: "Les maillots des débuts", r: "M", nSess: sessions.length };
+    const VINT = { k: VINT_KEY, ty: "g", nm: "Équipement Vintage", ic: "🎽", img: "portraits/Maillots.jpeg", sub: "Les maillots des débuts", r: "M", nSess: sessions.length };
     const vOwn = VINT_OWN.has(ME);
     ALL = [...CLUB, ...(vOwn ? [VINT] : []), ...PLAYERS, ...HF, ...NT];
     BYK = Object.fromEntries(ALL.map(c => [c.k, c]));
@@ -13943,7 +13940,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   const teamName = t => TEAM_LABEL[t] || "";
   function frontHTML(c, lazy) {
     if (c.ty === "g") {
-      const art = c.vint ? `<div class="art vint">${VINT_SVG}<span class="prov">Visuel provisoire</span></div>` : `<div class="art${c.logo ? " logo" : ""}"><img src="${c.img}" alt="" ${lazy ? 'loading="lazy" ' : ""}decoding="async"></div>`;
+      const art = `<div class="art${c.logo ? " logo" : ""}"><img src="${c.img}" alt="" ${lazy ? 'loading="lazy" ' : ""}decoding="async"></div>`;
       return `<div class="face-in">${art}<div class="ovr"><b>${c.ic}</b><span>Le Club</span></div>
         <div class="strip"><div class="nm"><i></i>${c.nm}</div><div class="gsub">${c.sub}</div></div>
         <div class="holo"></div>${twinkles(c.r)}</div>${gem(c)}`;
@@ -14012,8 +14009,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   // album (carte et emplacement). Il se révèle dès que ce joueur le débloque à son tour.
   function lockedSecret(c) { return c.ty === "h" && c.sec && !(ME && c.h.some(x => x[0] === ME)); }
   const hfStyle = c => c.ty === "h" ? ` style="--cc:var(${CATVAR[c.cat] || "--hf-secret"})"` : "";
-  const VINT_SVG = `<svg viewBox="0 0 200 200" aria-hidden="true"><defs><pattern id="vgst" width="28" height="200" patternUnits="userSpaceOnUse"><rect width="14" height="200" fill="#b3261e"/><rect x="14" width="14" height="200" fill="#efe4cf"/></pattern></defs><path d="M62 22 L84 14 Q100 30 116 14 L138 22 L178 52 L160 84 L142 72 L142 184 L58 184 L58 72 L40 84 L22 52 Z" fill="url(#vgst)" stroke="#2a1b0f" stroke-width="4" stroke-linejoin="round"/><path d="M84 14 Q100 34 116 14" fill="none" stroke="#2a1b0f" stroke-width="7"/><path d="M84 14 Q100 30 116 14" fill="none" stroke="#efe4cf" stroke-width="3"/><circle cx="122" cy="62" r="11" fill="#2a1b0f"/><text x="122" y="66" font-size="11" text-anchor="middle" fill="#efe4cf" font-family="Georgia,serif" font-weight="700">HM</text></svg>`;
-  const cardHTML = (c, lazy) => `<div class="card r-${c.r} ty-${c.ty}${c.vint ? " vt" : ""}${c.locked ? " locked" : ""} t-${c.team || ""}"${hfStyle(c)} data-k="${c.k}"><div class="card-in">
+  const cardHTML = (c, lazy) => `<div class="card r-${c.r} ty-${c.ty}${c.locked ? " locked" : ""} t-${c.team || ""}"${hfStyle(c)} data-k="${c.k}"><div class="card-in">
       <div class="face front">${frontHTML(c, lazy)}</div><div class="face back">${backHTML(c)}</div></div></div>`;
   const coverHTML = () => `<div class="face-in"><span class="ball">⚽</span><b>Happy <span>Monday</span></b><small>${SEASON_LABEL.replace("Saison ", "Saison ")}</small></div>`;
 
