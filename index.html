@@ -3482,6 +3482,12 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .st2 .vsrow small { font-size: 11.5px; color: var(--text2); }
   .st2 .vsbar { display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin: 10px 0 4px; }
   .st2 .vsbar i { display: block; height: 100%; }
+  .st2 .dhero { margin-top: 16px; position: relative; display: grid; grid-template-columns: 32px minmax(0, 1fr) 32px; align-items: center; gap: 6px; touch-action: pan-y; user-select: none; }
+  .st2 .dh-in { min-width: 0; } .st2 .dh-src { display: block; margin-top: 8px; font-size: 12px; color: var(--text3); }
+  .st2 .dh-arr { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); font: inherit; font-size: 20px; line-height: 1; cursor: pointer; display: grid; place-items: center; padding: 0 0 2px; }
+  .st2 .dh-dots { display: flex; justify-content: center; gap: 6px; margin: 10px 0 4px; }
+  .st2 .dh-dots button { width: 7px; height: 7px; border-radius: 4px; border: 0; padding: 0; background: var(--border2); cursor: pointer; transition: width .2s, background .2s; }
+  .st2 .dh-dots button[aria-selected="true"] { width: 20px; background: var(--good); }
   .st2 .dhero { border-radius: 20px; padding: 16px; background: radial-gradient(120% 100% at 0% 0%, rgba(102,187,106,.18), transparent 60%), var(--bg2); border: 1.5px solid rgba(102,187,106,.4); }
   .st2 .dhero small { font-size: 10.5px; font-weight: 800; font-style: italic; letter-spacing: .07em; text-transform: uppercase; color: var(--good); }
   .st2 .dhero p { margin: 6px 0 0; font-size: 20px; font-weight: 700; line-height: 1.3; text-wrap: balance; }
@@ -4293,7 +4299,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 12:15</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 12:18</footer>
 
 <script>
 
@@ -8451,7 +8457,9 @@ function datas() {
     ["⚽", `Tu marques dans <b>${P.ps}%</b> des matchs${P.sw != null ? `, et ton équipe gagne <b>${P.sw}%</b> du temps quand tu marques` : ""}.`],
     P.giver[0] ? ["🎯", `Celui qui te sert le plus : <b>${esc(P.giver[0][0])}</b> (${P.giver[0][1]} passe${P.giver[0][1] > 1 ? "s" : ""}).`] : null,
   ].filter(Boolean) : [];
-  return `${H.length ? `<div class="dhero"><small>Le saviez-vous ? · ${st.hero % H.length + 1}/${H.length}</small><p>${H[st.hero % H.length]}</p><div class="nav"><span>Calculé sur ${X.N} matchs de la saison</span><button type="button" data-hero>Suivant ›</button></div></div>` : ""}
+  const hi = H.length ? ((st.hero % H.length) + H.length) % H.length : 0;
+  return `${H.length ? `<div class="dhero" data-swipe><button type="button" class="dh-arr l" data-hero="-1" aria-label="Précédent">‹</button><div class="dh-in"><small>Le saviez-vous ?</small><p>${H[hi]}</p><span class="dh-src">Calculé sur ${X.N} matchs de la saison</span></div><button type="button" class="dh-arr r" data-hero="1" aria-label="Suivant">›</button></div>
+    <div class="dh-dots" role="tablist">${H.map((_, i) => `<button type="button" data-heroi="${i}" aria-label="Fait ${i + 1}" aria-selected="${i === hi}"></button>`).join("")}</div>` : ""}
     ${P ? `<div class="h2">Pour toi</div><div class="calc"><div class="h2" style="margin-top:0">Les datas de · <select id="st2-cp" aria-label="Joueur">${players.map(n => `<option${n === cp ? " selected" : ""}>${esc(n)}</option>`).join("")}</select></div>${lines.map(([e, t]) => `<div class="ln"><em>${e}</em><span>${t}</span></div>`).join("")}</div>` : ""}
     <div class="chips">${DCATS.map(([k, l]) => `<button type="button" data-dcat="${k}" aria-pressed="${st.dcat === k}">${l} <span style="opacity:.6">${k === "tous" ? D.length : D.filter(c => c.cat === k).length}</span></button>`).join("")}</div>
     <div class="dgrid">${L.map(c => `<div class="card dc" style="--kc:${c.kc}"><div class="k">${c.k}<span>${c.base}</span></div><div class="top">${c.who ? `<span class="pile">${c.who.map(n => av(n, 34)).join("")}</span>` : ""}<span class="big">${c.big}</span></div><p>${c.html}</p>${c.cmp ? `<div class="cmp">${c.cmp.map(([l, v]) => `<div><span>${l}</span><u><i style="width:${Math.min(100, v)}%"></i></u><b>${v}%</b></div>`).join("")}</div>` : ""}</div>`).join("") || `<div class="card" style="color:var(--text2)">Pas encore assez de matchs cette saison.</div>`}</div>`;
@@ -8480,7 +8488,7 @@ function render() {
 function bind() {
   const root = document.getElementById("dash"); if (!root || root._st2) return; root._st2 = true;
   root.addEventListener("click", e => {
-    const t = e.target.closest("[data-stepp],[data-sub],[data-per],[data-top],[data-col],[data-pl],[data-dcat],[data-hero],[data-cmp],[data-pick],[data-dt]"); if (!t) return;
+    const t = e.target.closest("[data-stepp],[data-sub],[data-per],[data-top],[data-col],[data-pl],[data-dcat],[data-hero],[data-heroi],[data-cmp],[data-pick],[data-dt]"); if (!t) return;
     const d = t.dataset;
     if (d.stepp) { const L = st.per === "soir" ? DATES : MONTHS, k = st.per === "soir" ? "sk" : "mk", i = L.indexOf(st[k]) + +d.stepp; if (i >= 0 && i < L.length) st[k] = L[i]; }
     else if ("cmp" in d) st.cmp = !st.cmp;
@@ -8488,7 +8496,7 @@ function bind() {
     else if (d.dt) st.dt = d.dt;
     else if (d.pl) { st.pl = d.pl; st.plTouched = true; st.pick = false; st.pq = ""; st.recent = [d.pl, ...st.recent.filter(n => n !== d.pl)].slice(0, 3); }
     else if (d.sub) { st.sub = d.sub; st.pick = false; }
-    else if (d.per) st.per = d.per; else if (d.top) st.top = d.top; else if (d.col) st.col = d.col; else if (d.dcat) st.dcat = d.dcat; else if ("hero" in d) st.hero++;
+    else if (d.per) st.per = d.per; else if (d.top) st.top = d.top; else if (d.col) st.col = d.col; else if (d.dcat) st.dcat = d.dcat; else if ("hero" in d) st.hero += +d.hero || 1; else if (d.heroi) st.hero = +d.heroi;
     render();
   });
   root.addEventListener("change", e => { const id = e.target.id;
@@ -8496,6 +8504,10 @@ function bind() {
     else if (id === "da") { st.a = e.target.value; st.abTouched = true; } else if (id === "db") { st.b = e.target.value; st.abTouched = true; } else if (id === "st2-cp") st.dp = e.target.value; else return;
     render(); });
   root.addEventListener("input", e => { if (e.target.id !== "pq") return; st.pq = e.target.value; render(); });
+  let sx = null, sy = null;
+  root.addEventListener("pointerdown", e => { if (e.target.closest("[data-swipe]")) { sx = e.clientX; sy = e.clientY; } });
+  root.addEventListener("pointerup", e => { if (sx === null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null; if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { st.hero += dx < 0 ? 1 : -1; render(); } });
+  root.addEventListener("pointercancel", () => { sx = null; });
 }
 window._st2Render = () => { bind(); render(); };
 })();
