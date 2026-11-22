@@ -2891,7 +2891,12 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
 .hm .hm-line .cr-av { border-color: var(--bg2) !important; box-shadow: 0 3px 8px rgba(0,0,0,.45); } .hm .r5 .cr-av { border-color: var(--bg2) !important; box-shadow: 0 3px 8px rgba(0,0,0,.45); }
 .hm .hm-gauge { height: 6px; border-radius: 3px; background: var(--bg3); overflow: hidden; } .hm .hm-gauge i { display: block; height: 100%; background: var(--hm-red); } .hm .hm-gauge i.lo { background: #ff9f0a; } .hm .hm-gauge i.ok { background: var(--good); } .hm .hm-gauge i.hi { background: var(--bad); }
 .hm .hm-feuille .you { font-size: 12.5px; color: var(--text2); } .hm .hm-feuille .you b { color: var(--text); }
-.hm .hm-feuille.closed { position: relative; }
+.hm .hm-feuille.closed, .hm .hm-feuille.cursed { position: relative; }
+.hm .hm-skull { position: absolute; top: -30px; right: -4px; display: flex; flex-direction: column; align-items: center; transform: rotate(10deg); z-index: 3; pointer-events: none; }
+.hm .hm-skull .sk { font-size: 58px; line-height: 1; filter: drop-shadow(0 6px 10px rgba(0,0,0,.45)); }
+.hm .hm-skull .st { margin-top: -10px; background: var(--bg2); border: 2px solid var(--hm-red); color: var(--hm-red); border-radius: 7px; padding: 3px 8px; font-size: 10px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; text-align: center; line-height: 1.15; transform: rotate(-19deg); }
+@media (prefers-reduced-motion: no-preference) { .hm .hm-skull .sk { animation: hmHop 3s ease-in-out infinite; } }
+@keyframes hmHop { 0%, 80%, 100% { transform: translateY(0) rotate(0); } 86% { transform: translateY(-6px) rotate(-8deg); } 92% { transform: translateY(0) rotate(6deg); } }
 .hm .hm-stamp { position: absolute; top: 14px; right: 14px; transform: rotate(-9deg); border: 2px solid var(--hm-red); color: var(--hm-red); border-radius: 7px; padding: 3px 8px; font-size: 10px; font-weight: 900; letter-spacing: .1em; text-align: center; line-height: 1.15; }
 .hm .hm-me { position: relative; display: inline-block; flex-shrink: 0; z-index: 2; }
 .hm .hm-me .cr-av { border: 3px solid var(--vc) !important; margin: 0 !important; }
@@ -4319,7 +4324,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 22:27</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 23:00</footer>
 
 <script>
 
@@ -16338,7 +16343,8 @@ function _svApply() {
     const R = rows(), who = me(), P = R.filter(r => r.v === "P").map(r => r.n).sort((a, b) => a.localeCompare(b, "fr"));
     const step = P.length ? Math.min(30, Math.floor(290 / P.length)) : 30; // tous sur une ligne : plus il y a de monde, plus les visages se chevauchent
     const meIn = !live && hmMine() === "P", L = meIn ? P.filter(n => n !== who) : P;
-    return `<div class="hm-feuille${live ? "" : " closed"}"><div class="t"><span>Feuille de match${live ? " · en cours" : ""}</span>${live ? `<span class="${P.length === 11 ? "lk cursed" : ""}">${P.length === 11 ? "💀 Nombre maudit" : ""}</span>` : `<span class="hm-stamp">Sondage<br>clos</span>`}</div>
+    const cursed = live && P.length === 11; // 11 = 6 contre 5 ou 4-4-3 : le nombre maudit du lundi
+    return `<div class="hm-feuille${live ? "" : " closed"}${cursed ? " cursed" : ""}">${cursed ? `<div class="hm-skull" role="img" aria-label="Nombre maudit"><span class="sk">💀</span><span class="st">Nombre<br>maudit</span></div>` : ""}<div class="t"><span>Feuille de match${live ? " · en cours" : ""}</span>${live ? "" : `<span class="hm-stamp">Sondage<br>clos</span>`}</div>
       <b class="n">${P.length} <small>${live ? "présents pour l'instant" : "présents"}</small></b>
       ${P.length ? `<div class="hm-line${meIn ? " has-me" : ""}" style="--st:${step - 40}px">${meIn ? hmMe(who, "P", 44, true) : ""}${L.map(n => `<span title="${esc(n)}">${hmAv(n, 40)}</span>`).join("")}</div>` : ""}
       ${live ? `<div class="hm-gauge"><i class="${P.length < 10 ? "lo" : P.length <= 15 ? "ok" : "hi"}" style="width:${Math.min(100, P.length / 15 * 100)}%"></i></div>` : ""}</div>`;
