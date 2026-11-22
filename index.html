@@ -3265,6 +3265,196 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .cr-iso .pl b { font-size: 10.5px; color: #fff; background: rgba(0,0,0,.72); border-radius: 6px; padding: 1px 6px; white-space: nowrap; }
   .cr-iso .pl small { font-size: 9px; color: var(--gold); background: rgba(0,0,0,.72); border-radius: 6px; padding: 0 5px; white-space: nowrap; }
   @media (min-width: 900px) { .cr-iso { height: 340px; } .cr-iso .pitch { width: 340px; height: 214px; margin: -142px 0 0 -170px; top: 62%; } .cr-iso .pl .cr-av { --s: 40px !important; } .cr-iso .pl b { font-size: 11px; } }
+  /* ═══ Onglet Récompenses (refonte 22/11/2026, préfixe rw-) ═══ */
+  .rw { --rwv: #b892ff; }
+  .rw-eb { display: block; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); padding-top: 6px; }
+  .rw-head { margin: 6px 0 4px; font-size: clamp(32px, 8vw, 52px); line-height: 1.04; font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: -.015em; }
+  .rw-g { display: grid; gap: 0 28px; grid-template-columns: minmax(0, 1fr); grid-template-areas: "team" "cls" "me" "ined"; }
+  .rw-g.nome { grid-template-areas: "team" "cls" "ined"; }
+  .rw-g > div { min-width: 0; }
+  .rw .a-team { grid-area: team; } .rw .a-cls { grid-area: cls; } .rw .a-me { grid-area: me; } .rw .a-ined { grid-area: ined; }
+  @media (min-width: 900px) {
+    .rw-g { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "team me" "cls cls" "ined ined"; }
+    .rw-g.nome { grid-template-areas: "team ." "cls cls" "ined ined"; }
+  }
+  .rw-empty { padding: 18px; text-align: center; color: var(--text2); font-size: 13px; background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; }
+  .rw-note { font-size: 11.5px; color: var(--text3); margin: 10px 0 0; line-height: 1.45; }
+  .rw .player-link { text-decoration: none; }
+  /* équipe */
+  .rw-tseg { display: inline-flex; background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 3px; gap: 2px; margin-bottom: 10px; max-width: 100%; }
+  .rw-tseg button { border: 0; background: none; padding: 7px 12px; border-radius: 9px; font: inherit; font-size: 13px; font-weight: 700; color: var(--text2); cursor: pointer; }
+  .rw-tseg button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+  .rw-iso { height: 232px; }
+  .rw-iso-t { position: absolute; left: 14px; top: 12px; z-index: 3; }
+  .rw-iso-t b { display: block; font-size: 22px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1; color: var(--tc, var(--gold)); }
+  .rw-iso-t span { font-size: 11.5px; color: var(--text2); }
+  .rw-iso-s { position: absolute; right: 14px; top: 12px; z-index: 3; text-align: right; }
+  .rw-iso-s b { display: block; font-size: 30px; font-weight: 800; font-style: italic; line-height: 1; }
+  .rw-iso-s span { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text2); }
+  .rw-gold .cr-av.roster-avatar { border-color: var(--gold) !important; }
+  .rw-tnote { font-size: 11.5px; color: var(--text3); margin: 8px 0 0; line-height: 1.45; }
+  @media (min-width: 900px) { .rw-iso { height: 340px; } }
+  /* menu déroulant */
+  .rw-dd { position: relative; z-index: 6; }
+  .rw-dd-btn { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; display: grid; grid-template-columns: 44px minmax(0, 1fr) 28px; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 16px; background: linear-gradient(135deg, rgba(245,200,66,.16), rgba(245,200,66,.03) 70%), var(--bg2); border: 1.5px solid rgba(245,200,66,.5); }
+  .rw-dd-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .rw-dd-btn .ic { width: 44px; height: 44px; border-radius: 12px; background: rgba(0,0,0,.35); display: grid; place-items: center; font-size: 22px; }
+  .rw-dd-btn b { display: block; font-size: 19px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1.08; }
+  .rw-dd-btn small { display: block; font-size: 11.5px; color: var(--text2); margin-top: 2px; }
+  .rw-dd-btn .car { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--gold); color: #1d1604; font-size: 13px; font-weight: 900; transition: transform .25s; }
+  .rw-dd.open .rw-dd-btn .car { transform: rotate(180deg); }
+  .rw-star { font-style: normal; color: var(--gold); }
+  .rw-dd-list { display: none; position: absolute; left: 0; right: 0; top: calc(100% + 6px); background: var(--bg2); border: 1px solid var(--border2); border-radius: 16px; padding: 6px; box-shadow: 0 24px 50px rgba(0,0,0,.6); max-height: min(440px, 60vh); overflow-y: auto; }
+  .rw-dd.open .rw-dd-list { display: block; animation: rwdd .18s ease-out; }
+  @keyframes rwdd { from { opacity: 0; transform: translateY(-6px); } }
+  .rw-dd-list button { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; font-size: 14.5px; font-weight: 600; color: var(--text); }
+  .rw-dd-list button .ic { width: 26px; text-align: center; font-size: 17px; }
+  .rw-dd-list button:hover, .rw-dd-list button:focus-visible { background: var(--bg3); }
+  .rw-dd-list button[aria-selected="true"] { background: var(--gold-bg); color: var(--gold); }
+  .rw-dd-list button .rw-star { margin-left: auto; }
+  .rw-dd-sep { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); padding: 10px 10px 4px; border-top: 1px solid var(--border); margin-top: 4px; }
+  @media (min-width: 900px) { .rw-dd { max-width: 460px; } .rw-dd-list { columns: 2; column-gap: 6px; right: -100%; } .rw-dd-list button, .rw-dd-sep { break-inside: avoid; } }
+  .rw-cls { margin-top: 14px; }
+  /* podium ordinateur */
+  .rw-pod-d { display: none; }
+  .rw-pod3 { display: grid; grid-template-columns: 1fr 1.12fr 1fr; align-items: end; gap: 6px; padding-top: 10px; }
+  .rw-pc { display: flex; flex-direction: column; min-width: 0; }
+  .rw-pc.p1 { --mc: var(--gold); } .rw-pc.p2 { --mc: var(--silver); } .rw-pc.p3 { --mc: var(--bronze); }
+  .rw-pc .pim { all: unset; box-sizing: border-box; display: block; cursor: pointer; position: relative; aspect-ratio: 3 / 3.6; border-radius: 14px 14px 0 0; overflow: hidden; border: 2px solid var(--mc); border-bottom: 0; animation: rwrise .7s cubic-bezier(.2,1.2,.4,1) both; }
+  .rw-pc.p1 .pim { animation-delay: .25s; } .rw-pc.p3 .pim { animation-delay: .35s; }
+  .rw-pc .pim .cr-ph, .rw-lead .pic .cr-ph, .rw-split .cr-ph { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .rw-pc .nm { font-size: 12.5px; font-weight: 700; text-align: center; padding: 5px 2px; background: color-mix(in srgb, var(--mc) 18%, var(--bg2)); border-left: 2px solid var(--mc); border-right: 2px solid var(--mc); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rw-pc.ex .nm::after { content: " ex æquo"; font-weight: 500; color: var(--text2); font-size: 10px; }
+  .rw-pc .stp { display: flex; flex-direction: column; align-items: center; padding-top: 8px; border-radius: 0 0 10px 10px; background: linear-gradient(180deg, color-mix(in srgb, var(--mc) 45%, var(--bg3)), var(--bg3)); border: 2px solid var(--mc); border-top: 0; transform-origin: bottom; animation: rwgrow .6s cubic-bezier(.2,.9,.3,1) both; }
+  .rw-pc .stp b { font-size: 26px; font-weight: 800; font-style: italic; line-height: 1; }
+  .rw-pc .stp small { font-size: 10.5px; color: var(--text2); text-align: center; padding: 2px 4px 0; line-height: 1.25; }
+  .rw-pc .stp em { font-size: 28px; font-weight: 800; font-style: italic; color: rgba(255,255,255,.14); margin-top: auto; padding-bottom: 4px; }
+  .rw-pc.p1 .stp { height: 128px; } .rw-pc.p2 .stp { height: 96px; } .rw-pc.p3 .stp { height: 74px; }
+  @keyframes rwgrow { from { transform: scaleY(.05); } }
+  @keyframes rwrise { from { transform: translateY(40px); opacity: 0; } }
+  .rw-split { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; }
+  .rw-split > .cr-ph { position: relative !important; }
+  .rw-split > .cr-ph + .cr-ph { border-left: 2px solid var(--mc, var(--gold)); }
+  /* podium téléphone : le leader */
+  .rw-lead { all: unset; box-sizing: border-box; cursor: pointer; position: relative; display: grid; grid-template-columns: 42% 1fr; width: 100%; min-height: 168px; border-radius: 18px; overflow: hidden; border: 2px solid var(--gold); background: linear-gradient(120deg, rgba(245,200,66,.2), transparent 70%), var(--bg2); box-shadow: 0 0 22px rgba(245,200,66,.18); --mc: var(--gold); }
+  .rw-lead .pic { position: relative; }
+  .rw-lead .pic::after { content: ""; position: absolute; inset: 0; z-index: 2; background: linear-gradient(90deg, transparent 60%, var(--bg2)); }
+  .rw-lead .tx { padding: 12px 12px 12px 6px; display: flex; flex-direction: column; min-width: 0; }
+  .rw-lead .rk { align-self: flex-start; font-size: 10px; font-weight: 800; font-style: italic; letter-spacing: .06em; text-transform: uppercase; background: var(--gold); color: #241c04; border-radius: 7px; padding: 2px 8px; }
+  .rw-lead .nm { font-size: 20px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1.05; margin-top: 8px; overflow-wrap: anywhere; }
+  .rw-lead .v { margin-top: auto; font-size: 46px; font-weight: 800; font-style: italic; line-height: .95; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .rw-lead .v small { font-size: 12px; font-style: normal; color: var(--text2); margin-left: 4px; }
+  .rw-lead .dt { font-size: 11.5px; color: var(--text2); }
+  .rw-two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .rw-two > div { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; align-items: center; padding: 10px; border-radius: 14px; background: var(--bg2); border: 1.5px solid color-mix(in srgb, var(--mc) 60%, transparent); cursor: pointer; }
+  .rw-two > div:nth-child(1) { --mc: var(--silver); } .rw-two > div:nth-child(2) { --mc: var(--bronze); }
+  .rw-two .cr-av { grid-row: span 2; --s: 44px; border-color: var(--mc) !important; }
+  .rw-two b { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rw-two .v { font-size: 22px; font-weight: 800; font-style: italic; line-height: 1; color: var(--mc); font-variant-numeric: tabular-nums; }
+  .rw-two .v em { font-size: 11px; font-style: normal; font-weight: 700; color: var(--text2); margin-right: 4px; }
+  .rw-list { margin-top: 12px; }
+  @media (min-width: 900px) {
+    .rw-pod-d { display: block; } .rw-pod-m { display: none; }
+    .rw-cat { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 24px; align-items: end; }
+    .rw-list { margin-top: 0; }
+  }
+  /* liste à barres */
+  .rw-board { display: flex; flex-direction: column; gap: 4px; }
+  .rw-row { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 20px 36px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 6px 10px 6px 8px; border-radius: 12px; position: relative; overflow: hidden; }
+  .rw-row::before { content: ""; position: absolute; inset: 0; width: var(--w); background: linear-gradient(90deg, color-mix(in srgb, var(--bc, var(--gold)) 22%, transparent), color-mix(in srgb, var(--bc, var(--gold)) 6%, transparent)); border-radius: 12px; }
+  .rw-board.adm .rw-row { --bc: var(--silver); }
+  .rw-row > * { position: relative; }
+  .rw-row em { font-style: italic; font-weight: 800; color: var(--text3); text-align: center; font-size: 14px; }
+  .rw-row .n { min-width: 0; } .rw-row .n b { display: block; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .rw-row .n small { font-size: 11px; color: var(--text2); }
+  .rw-row .p { font-size: 20px; font-weight: 800; font-style: italic; font-variant-numeric: tabular-nums; }
+  .rw-row.me { outline: 1.5px solid var(--gold); outline-offset: -1.5px; }
+  .rw-row.rw-more { display: none; } .rw-board.all .rw-row.rw-more { display: grid; }
+  .rw-pile { display: flex; } .rw-pile .cr-av + .cr-av { margin-left: -12px; }
+  .rw-all { all: unset; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 12.5px; font-weight: 600; color: var(--text2); padding: 8px 12px; border-radius: 10px; border: 1px dashed var(--border2); margin-top: 8px; }
+  /* ta saison */
+  .rw-ts-hd { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .rw-ts-hd b { display: block; font-size: 20px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1.05; }
+  .rw-ts-hd small { font-size: 12px; color: var(--text2); }
+  .rw-ts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .rw-ts > div { position: relative; aspect-ratio: 1; max-width: 100%; border-radius: 18px; padding: 14px; display: flex; flex-direction: column; overflow: hidden; background: radial-gradient(110% 80% at 100% 0%, color-mix(in srgb, var(--kc) 24%, transparent), transparent 65%), var(--bg2); border: 1.5px solid color-mix(in srgb, var(--kc) 45%, transparent); }
+  .rw-ts > div::after { content: attr(data-ico); position: absolute; right: 10px; top: 8px; font-size: 26px; }
+  .rw-ts small.l { font-size: 10.5px; font-weight: 800; font-style: italic; letter-spacing: .07em; text-transform: uppercase; color: var(--kc); }
+  .rw-ts .big { margin-top: auto; font-size: 58px; font-weight: 800; font-style: italic; line-height: .9; color: var(--kc); font-variant-numeric: tabular-nums; }
+  .rw-ts .big sup { font-size: .38em; vertical-align: .9em; margin-left: 2px; }
+  .rw-ts .d { font-size: 12px; color: var(--text2); line-height: 1.35; margin-top: 6px; }
+  .rw-ts .d b { color: var(--text); }
+  @media (min-width: 900px) { .rw-ts > div { aspect-ratio: 1.22; } .rw-ts .big { font-size: 52px; } }
+  /* inédit */
+  .rw-inedit { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  @media (min-width: 900px) { .rw-inedit { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .rw-ined { position: relative; border-radius: 16px; padding: 12px; background: var(--bg2); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; min-width: 0; overflow: hidden; }
+  .rw-ined::after { content: attr(data-ico); position: absolute; right: -6px; bottom: -14px; font-size: 64px; opacity: .08; pointer-events: none; }
+  .rw-ined small { font-size: 10.5px; font-weight: 800; font-style: italic; letter-spacing: .06em; text-transform: uppercase; color: var(--ic, var(--good)); }
+  .rw-ined .who { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .rw-ined .who b { font-size: 14px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rw-ined .who b.two { white-space: normal; line-height: 1.2; font-size: 13px; }
+  .rw-who1 { display: inline-flex; align-items: center; gap: 8px; min-width: 0; cursor: pointer; }
+  .rw-ined .big { font-size: 28px; font-weight: 800; font-style: italic; line-height: 1; font-variant-numeric: tabular-nums; }
+  .rw-ined p { margin: 0; font-size: 11.5px; color: var(--text2); line-height: 1.35; }
+  .rw-sw { width: 22px; height: 22px; border-radius: 6px; flex: none; }
+  /* volet hauts faits */
+  .rw-hfd { margin-top: 26px; border-radius: 18px; background: var(--bg2); border: 1px solid var(--border); }
+  .rw-hfd summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 46px minmax(0, 1fr) 28px; gap: 12px; align-items: center; padding: 12px 14px; }
+  .rw-hfd summary::-webkit-details-marker { display: none; }
+  .rw-hfd summary b { display: block; font-size: 16px; font-weight: 800; font-style: italic; text-transform: uppercase; }
+  .rw-hfd summary small { font-size: 12px; color: var(--text2); }
+  .rw-hfd summary .car { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--bg3); font-size: 12px; transition: transform .25s; }
+  .rw-hfd[open] summary .car { transform: rotate(180deg); }
+  .rw-hfd .in { padding: 0 14px 14px; }
+  .rw-ring { --p: 0; width: 46px; height: 46px; border-radius: 50%; background: conic-gradient(var(--gold) calc(var(--p) * 1%), var(--bg3) 0); display: grid; place-items: center; }
+  .rw-ring::after { content: ""; width: 34px; height: 34px; border-radius: 50%; background: var(--bg2); }
+  .rw-hf4 { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  @media (min-width: 900px) { .rw-hf4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .rw-hf4 .hfx { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 16px; background: radial-gradient(100% 120% at 0% 0%, color-mix(in srgb, var(--kc) 16%, transparent), transparent 60%), var(--bg); border: 1px solid color-mix(in srgb, var(--kc) 35%, transparent); min-width: 0; text-align: left; }
+  .rw-hf4 .hfx > span:last-child { min-width: 0; }
+  .rw-hf4 .hfx small { display: block; font-size: 10px; font-weight: 800; font-style: italic; letter-spacing: .07em; text-transform: uppercase; color: var(--kc); }
+  .rw-hf4 .hfx b { display: block; font-size: 17px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1.15; }
+  .rw-hf4 .hfx span span { font-size: 11.5px; color: var(--text2); }
+  .rw-hf4 .emo { width: 56px; height: 56px; flex: none; border-radius: 16px; display: grid; place-items: center; font-size: 28px; background: color-mix(in srgb, var(--kc) 18%, var(--bg3)); }
+  .rw-bigring { --p: 0; width: 64px; height: 64px; flex: none; border-radius: 50%; background: conic-gradient(var(--gold) calc(var(--p) * 1%), var(--bg3) 0); display: grid; place-items: center; position: relative; }
+  .rw-bigring::before { content: ""; position: absolute; inset: 7px; border-radius: 50%; background: var(--bg); }
+  .rw-bigring b { position: relative; font-size: 15px !important; color: var(--gold); }
+  .rw-hcats { display: grid; gap: 6px; }
+  @media (min-width: 900px) { .rw-hcats { grid-template-columns: 1fr 1fr; gap: 6px 24px; } }
+  .rw-hcats .hc { display: grid; grid-template-columns: 74px minmax(0, 1fr) minmax(60px, 1.2fr) 38px; gap: 10px; align-items: center; padding: 6px 0; }
+  .rw-hcats .ics { font-size: 15px; letter-spacing: -2px; white-space: nowrap; overflow: hidden; }
+  .rw-hcats b { display: block; font-size: 13.5px; } .rw-hcats small { font-size: 11px; color: var(--text3); }
+  .rw-hcats u { display: block; height: 8px; border-radius: 4px; background: var(--bg3); overflow: hidden; } .rw-hcats u i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--gold), #ffe08a); }
+  .rw-hcats em { font-style: italic; font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+  .rw-hfall { margin-top: 12px; }
+  /* hauts faits admin */
+  .rw-hfa { display: grid; gap: 12px; min-width: 0; }
+  .rw-tierbar { display: flex; flex-wrap: wrap; gap: 6px; }
+  .rw-tierbar span { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 4px 10px 4px 5px; border-radius: 20px; background: var(--bg2); border: 1px solid var(--border); }
+  .rw-tierbar i { width: 16px; height: 16px; border-radius: 50%; }
+  .rw-tierbar small { color: var(--text3); font-weight: 500; }
+  .rw-mx { overflow-x: auto; border-radius: 16px; background: var(--bg2); border: 1px solid var(--border); }
+  .rw-mx table { border-collapse: collapse; font-size: 12px; }
+  .rw-mx th { font-weight: 500; font-size: 14px; padding: 10px 2px 6px; }
+  .rw-mx td { padding: 3px 2px; text-align: center; }
+  .rw-mx td.nm, .rw-mx th.nm { position: sticky; left: 0; z-index: 1; background: var(--bg2); text-align: left; padding: 4px 10px; white-space: nowrap; }
+  .rw-mx td.nm { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+  .rw-mx td i { display: block; width: 18px; height: 18px; margin: auto; border-radius: 6px; }
+  .rw-mx i.t0 { background: rgba(255,255,255,.05); } .rw-mx i.t1 { background: #6b7280; }
+  .rw-mx i.t2 { background: #8a4b22; box-shadow: 0 0 6px rgba(138,75,34,.6); } .rw-mx i.t3 { background: #c3cbd6; box-shadow: 0 0 6px rgba(195,203,214,.45); }
+  .rw-mx i.t4 { background: #ffd23f; box-shadow: 0 0 8px rgba(255,210,63,.6); } .rw-mx i.t5 { background: #10b981; box-shadow: 0 0 8px rgba(16,185,129,.6); }
+  .rw-mx i.t6 { background: linear-gradient(135deg,#a7f3ff,#c4b5ff,#fca5a5); box-shadow: 0 0 10px rgba(196,181,255,.7); }
+  .rw-mx td.tot, .rw-mx th.tot { font-weight: 800; font-style: italic; color: var(--gold); padding: 0 12px; }
+  .rw-rar2 { display: grid; gap: 0 24px; }
+  @media (min-width: 900px) { .rw-rar2 { grid-template-columns: 1fr 1fr; } }
+  .rw .rk2 { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+  .rw .rk2 .e { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 20px; background: var(--bg2); }
+  .rw .rk2 b { font-size: 13.5px; } .rw .rk2 em { font-style: normal; font-size: 9px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--rwv); margin-left: 6px; }
+  .rw .rk2 u { display: block; height: 5px; border-radius: 3px; background: var(--bg3); overflow: hidden; margin-top: 4px; } .rw .rk2 u i { display: block; height: 100%; }
+  .rw .rk2 .p { font-size: 20px; font-weight: 800; font-style: italic; } .rw .rk2 .p small { font-size: 11px; color: var(--text3); font-weight: 600; }
+  .rw-adm-btn { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; padding: 9px 14px; border-radius: 11px; border: 1px solid rgba(245,200,66,.45); color: var(--gold); font-size: 13px; font-weight: 600; background: var(--gold-bg); justify-self: start; }
+  #rw-mx-full:empty { display: none; }
+  @media (prefers-reduced-motion: reduce) { .rw * { animation: none !important; } }
   /* en bref + le saviez-vous */
   .cr-duo { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 30px; align-items: start; }
   @media (min-width: 900px) { .cr-duo { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
@@ -3748,7 +3938,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 01:47</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 02:33</footer>
 
 <script>
 
@@ -7127,203 +7317,407 @@ function renderRivBody(pA, pB, period) {
   return h;
 }
 
+/* ══════════════════════════════════════════════════════════
+   ONGLET RÉCOMPENSES (refonte du 22/11/2026, préfixe rw-)
+   Équipe (meilleure équipe / équipe-type de la saison), classements dans un menu
+   déroulant (podium portraits sur ordinateur, « le leader » sur téléphone), « Ta saison »,
+   « Inédit », volet Hauts faits. Les dépanneurs sont exclus des classements, sauf le leur.
+══════════════════════════════════════════════════════════ */
+const _RW = { cat: "bdo", team: "best", data: null };
+const _RW_SUB = {
+  bdo: "1 pt par but · 2 pts par passe · réguliers et occasionnels", yach: "Buts encaissés par mi-temps au but", but: "Buts marqués", pass: "Passes décisives",
+  def: "Buts encaissés par match sur le terrain", gk: "% de clean sheets · min. 3 matchs gardés", link: "Buteur + passeur, toujours le même duo",
+  dep: "Les renforts · G/A par match", bonnet: "Absences de la saison", infirm: "Soirées manquées sur blessure",
+  plomb: "Le moins de G/A par match · min. 10 matchs", calam: "Le plus de buts encaissés au but", hf: "Matrice et rareté"
+};
+const _rwEsc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+const _rwF2 = x => x.toFixed(2).replace(".", ",");
+const _rwNum = v => { const n = parseFloat(String(v).replace(",", ".").replace(/[^\d.-]/g, "")); return isNaN(n) ? 0 : n; };
+const _rwDep = p => ABSENTS.has(p);
+const _rwDD = d => { const [, m, j] = String(d).split("-"); return `${+j}/${m}`; };
+const _rwRank = r => r === 1 ? `1<sup>er</sup>` : `${r}<sup>e</sup>`;
+const _rwRankTxt = r => r === 1 ? "1er" : `${r}e`;
+
+function _rwCompute() {
+  const year = _currentSeason(), S = SESSIONS.filter(s => _seasonStart(s.date) === year).sort((a, b) => a.date.localeCompare(b.date));
+  const nM = S.reduce((n, s) => n + (s.matchs || []).length, 0);
+  const T = {}; // classements : [nom, valeur affichée, détail]
+  // Buts / passes de la saison
+  const G = {}, A = {}, MS = {};
+  S.forEach(s => (s.matchs || []).forEach(m => { const sc = new Set();
+    ["A", "B"].forEach(sd => { const B = m["buteurs" + sd] || [], P = m["passeurs" + sd] || [];
+      B.forEach((b, i) => { if (!b || b === "CSC") return; G[b] = (G[b] || 0) + 1; sc.add(b); const p = P[i]; if (p && p !== "CSC") A[p] = (A[p] || 0) + 1; }); });
+    sc.forEach(n => { MS[n] = (MS[n] || 0) + 1; }); }));
+  const ga = [...new Set([...Object.keys(G), ...Object.keys(A)])].filter(p => !_rwDep(p)).map(p => ({ p, g: G[p] || 0, a: A[p] || 0, ms: MS[p] || 0 }));
+  const gaTxt = x => [x.g ? `${x.g}G` : null, x.a ? `${x.a}A` : null].filter(Boolean).join(" · ") || "0 G/A";
+  T.bdo = ga.map(x => ({ ...x, pts: x.g + 2 * x.a })).filter(x => x.pts > 0)
+    .sort((a, b) => b.pts - a.pts || b.a - a.a || b.ms - a.ms || a.p.localeCompare(b.p, "fr")).map(x => [x.p, x.pts, gaTxt(x)]);
+  T.but = ga.filter(x => x.g).sort((a, b) => b.g - a.g || b.a - a.a || a.p.localeCompare(b.p, "fr")).map(x => [x.p, x.g, `${x.g} but${x.g > 1 ? "s" : ""}`]);
+  T.pass = ga.filter(x => x.a).sort((a, b) => b.a - a.a || b.g - a.g || a.p.localeCompare(b.p, "fr")).map(x => [x.p, x.a, `${x.a} passe${x.a > 1 ? "s" : ""}`]);
+  const yr = _gkAwardRanking(SESSIONS);
+  T.yach = yr.ranked.filter(x => !_rwDep(x.name)).map(x => [x.name, _rwF2(x.rate), `${x.buts} but${x.buts !== 1 ? "s" : ""} / ${x.matchs} mi-t.`]);
+  T.def = computeTopDefendersStats(S, 10).filter(x => !_rwDep(x.name)).map(x => [x.name, _rwF2(x.avg), `${x.goalsAgainst} enc. en ${x.matchCount} passages`]);
+  T.gk = ALL_PLAYERS.filter(p => !_rwDep(p)).map(p => { const s = computeAchievementStats(p); return { p, m: s.gardiensMatchs, r: s.gardienRate }; })
+    .filter(x => x.m >= 3).sort((a, b) => b.r - a.r || b.m - a.m || a.p.localeCompare(b.p, "fr")).map(x => [x.p, x.r + "%", `${x.m} matchs gardés`]);
+  T.link = computeLinkUpStats(S).filter(d => !_rwDep(d.p1) && !_rwDep(d.p2)).map(d => [`${d.p1} & ${d.p2}`, d.connexions, `${d.p1} ${d.p1Goals}G · ${d.p2} ${d.p2Goals}G`]);
+  // Présences terrain (matchs joués, victoires, +/-), duos, face-à-face
+  const PM = {}, PAIR = {}, H2H = {};
+  const field = (s, t) => Object.entries(s.presences || {}).filter(([, i]) => i && i.statut === "Présent" && i.equipe === t).map(([p]) => p);
+  S.forEach(s => (s.matchs || []).forEach((m, mi) => {
+    const FA = field(s, m.eqA).filter(p => !_isPlayerOutForSessionMatch(s, p, mi)), FB = field(s, m.eqB).filter(p => !_isPlayerOutForSessionMatch(s, p, mi));
+    [[FA, m.scoreA || 0, m.scoreB || 0], [FB, m.scoreB || 0, m.scoreA || 0]].forEach(([F, gf, gc]) => {
+      F.forEach(p => { const x = PM[p] = PM[p] || { m: 0, w: 0, d: 0 }; x.m++; if (gf > gc) x.w++; x.d += gf - gc; });
+      const Fs = F.filter(p => !_rwDep(p)).sort();
+      for (let i = 0; i < Fs.length; i++) for (let j = i + 1; j < Fs.length; j++) { const k = Fs[i] + "|" + Fs[j]; const x = PAIR[k] = PAIR[k] || { n: 0, w: 0 }; x.n++; if (gf > gc) x.w++; }
+    });
+    FA.filter(p => !_rwDep(p)).forEach(a => FB.filter(p => !_rwDep(p)).forEach(b => {
+      const [x, y] = [a, b].sort(), k = x + "|" + y, r = H2H[k] = H2H[k] || { n: 0, wx: 0, wy: 0 }; r.n++;
+      if ((m.scoreA || 0) !== (m.scoreB || 0)) { const win = (m.scoreA || 0) > (m.scoreB || 0) ? a : b; if (win === x) r.wx++; else r.wy++; }
+    }));
+  }));
+  // Dépanneurs : G/A par match (uniquement eux)
+  T.dep = Object.keys(PM).filter(p => _isDepanneur(p) && PM[p].m >= 3).map(p => ({ p, m: PM[p].m, g: G[p] || 0, a: A[p] || 0 }))
+    .map(x => ({ ...x, r: (x.g + x.a) / x.m })).sort((a, b) => b.r - a.r || b.m - a.m || a.p.localeCompare(b.p, "fr"))
+    .map(x => [x.p, _rwF2(x.r), `${gaTxt(x)} en ${x.m} m.`]);
+  // Bonnet d'âne, Infirmerie
+  const abs = {}; S.forEach(s => Object.entries(s.presences || {}).forEach(([p, i]) => { if (i && i.statut === "Absent" && !_rwDep(p)) abs[p] = (abs[p] || 0) + 1; }));
+  T.bonnet = Object.entries(abs).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "fr")).map(([p, n]) => [p, n, `absence${n > 1 ? "s" : ""}`]);
+  const injM = {}, injE = {}, inj = {};
+  S.forEach(s => Object.entries(s.presences || {}).forEach(([p, i]) => { if (i && i.statut === "Blessé") { if (!inj[p]) injE[p] = (injE[p] || 0) + 1; inj[p] = true; injM[p] = (injM[p] || 0) + 1; } else inj[p] = false; }));
+  T.infirm = Object.entries(injM).filter(([p]) => !_rwDep(p)).sort((a, b) => b[1] - a[1] || (injE[b[0]] || 0) - (injE[a[0]] || 0) || a[0].localeCompare(b[0], "fr"))
+    .map(([p, n]) => [p, n, `${injE[p] || 0} blessure${(injE[p] || 0) > 1 ? "s" : ""}`]);
+  // Ballon de Plomb (mêmes règles que l'ancien prix), Calamity James
+  const pl = {};
+  S.forEach(s => { Object.entries(s.presences || {}).forEach(([p, i]) => { if (!i || i.statut !== "Présent" || !i.equipe || _isOccOrDep(p)) return;
+    (s.matchs || []).forEach((m, mi) => { if (m.eqA !== i.equipe && m.eqB !== i.equipe) return; if (_isPlayerOutForSessionMatch(s, p, mi)) return; (pl[p] = pl[p] || { m: 0 }).m++; }); }); });
+  T.plomb = Object.entries(pl).filter(([, x]) => x.m >= BALLON_PLOMB_MIN_MATCHS).map(([p, x]) => ({ p, m: x.m, g: G[p] || 0, a: A[p] || 0 }))
+    .map(x => ({ ...x, r: (x.g + x.a) / x.m })).sort((a, b) => a.r - b.r || b.m - a.m || a.p.localeCompare(b.p, "fr")).map(x => [x.p, _rwF2(x.r), `${gaTxt(x)} en ${x.m} m.`]);
+  T.calam = computeGardiensRanking(S).filter(x => x.buts > 0 && !_rwDep(x.name)).sort((a, b) => b.buts - a.buts || a.matchs - b.matchs || a.name.localeCompare(b.name, "fr"))
+    .map(x => [x.name, x.buts, `${x.matchs} mi-temps · ${_rwF2(x.rate)} / mi-t.`]);
+
+  // Meilleure équipe d'une soirée (saison en cours)
+  let best = null;
+  S.forEach(s => { const ms = s.matchs || []; if (!ms.length) return;
+    ["Rouge", "Vert", "Bleue"].forEach(t => { const tm = ms.filter(m => m.eqA === t || m.eqB === t); if (!tm.length) return;
+      let w = 0, n = 0, gf = 0, gc = 0; tm.forEach(m => { const a = m.eqA === t, f = a ? m.scoreA : m.scoreB, c = a ? m.scoreB : m.scoreA; gf += f; gc += c; if (f > c) w++; else if (f === c) n++; });
+      if (!best || w > best.w || (w === best.w && gf - gc > best.gf - best.gc)) best = { s, t, w, n, gf, gc, nm: tm.length }; }); });
+  if (best) {
+    const s = best.s, t = best.t, bg = {}, ba = {}, K = {};
+    (s.matchs || []).forEach(m => ["A", "B"].forEach(sd => { if (m["eq" + sd] !== t) return; const o = sd === "A" ? "B" : "A";
+      (m["buteurs" + sd] || []).forEach((b, i) => { if (b && b !== "CSC") bg[b] = (bg[b] || 0) + 1; const p = (m["passeurs" + sd] || [])[i]; if (b && b !== "CSC" && p && p !== "CSC") ba[p] = (ba[p] || 0) + 1; });
+      const tot = m["score" + o] || 0, mt = m["mt1" + o] || 0;
+      (m["gardiens" + sd] || []).slice(0, 2).forEach((g, h) => { if (!g) return; const k = K[g] = K[g] || { h: 0, c: 0 }; k.h++; k.c += h ? Math.max(0, tot - mt) : mt; }); }));
+    best.pl = field(s, t).map(p => [p, bg[p] || 0, ba[p] || 0]).sort((a, b) => (b[1] + b[2]) - (a[1] + a[2]) || a[0].localeCompare(b[0], "fr"));
+    best.gk = Object.entries(K).sort((a, b) => a[1].c - b[1].c || b[1].h - a[1].h)[0] || null;
+  }
+  // Équipe-type de la saison, remplie dans l'ordre (un joueur n'est jamais pris deux fois) :
+  // meilleur gardien (Prix Yachine), meilleur défenseur, meilleur passeur, puis les 2 meilleurs buteurs.
+  const minDef = Math.max(5, Math.round(nM * 0.35)), used = new Set();
+  const pick = (rows, k) => { const out = []; for (const r of rows) { if (out.length >= k) break; if (!used.has(r[0])) { used.add(r[0]); out.push(r); } } return out; };
+  const gkP = pick(T.yach, 1)[0] || null;
+  const defP = pick(computeTopDefendersStats(S, minDef).filter(x => !_rwDep(x.name)).map(x => [x.name, `${_rwF2(x.avg)} b.c./m.`]), 1)[0] || null;
+  const pasP = pick(T.pass, 1)[0] || null;
+  const butP = pick(T.but, 2);
+  const seasonTeam = { gk: gkP ? [gkP[0], `${gkP[1]} b./mi-t.`] : null, def: defP, pas: pasP ? [pasP[0], `${pasP[1]} passe${pasP[1] > 1 ? "s" : ""}`] : null, att: butP.map(r => [r[0], `${r[1]} but${r[1] > 1 ? "s" : ""}`]), minDef };
+
+  // Inédit
+  const X = {}, minM = Math.max(5, Math.round(nM * 0.17)), minP = Math.max(4, Math.round(nM * 0.09));
+  const pmL = Object.entries(PM).filter(([p, x]) => !_rwDep(p) && x.m >= minM);
+  X.plus = pmL.map(([p, x]) => [p, x.d / x.m, x]).sort((a, b) => b[1] - a[1]).slice(0, 2);
+  X.tal = pmL.map(([p, x]) => [p, x.w / x.m, x]).sort((a, b) => b[1] - a[1] || b[2].w - a[2].w).slice(0, 2);
+  const last3 = S.slice(-3), fm = {};
+  last3.forEach(s => (s.matchs || []).forEach(m => ["A", "B"].forEach(sd => (m["buteurs" + sd] || []).forEach((b, i) => {
+    if (!b || b === "CSC") return; fm[b] = (fm[b] || 0) + 1; const p = (m["passeurs" + sd] || [])[i]; if (p && p !== "CSC") fm[p] = (fm[p] || 0) + 2; }))));
+  X.form = Object.entries(fm).filter(([p]) => !_rwDep(p)).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "fr")).slice(0, 2);
+  X.duo = Object.entries(PAIR).filter(([, x]) => x.n >= minP).map(([k, x]) => [k.split("|"), x.w / x.n, x]).sort((a, b) => b[1] - a[1] || b[2].n - a[2].n)[0] || null;
+  const bn = Object.entries(H2H).filter(([, x]) => x.n >= minP).map(([k, x]) => { const [a, b] = k.split("|"); return x.wx >= x.wy ? [a, b, x.wx, x.wy, x.n] : [b, a, x.wy, x.wx, x.n]; })
+    .sort((a, b) => (b[2] - b[3]) - (a[2] - a[3]) || b[2] - a[2])[0];
+  X.bete = bn || null;
+  let inc = null; ALL_PLAYERS.filter(p => !_rwDep(p)).forEach(p => { let n = 0; for (let i = S.length - 1; i >= 0; i--) { const v = (S[i].presences || {})[p]; if (v && v.statut === "Présent") n++; else break; } if (n >= 2 && (!inc || n > inc[1])) inc = [p, n]; });
+  X.inc = inc;
+  let rec = null; S.forEach(s => { const g = {}, a = {}; (s.matchs || []).forEach(m => ["A", "B"].forEach(sd => (m["buteurs" + sd] || []).forEach((b, i) => {
+    if (!b || b === "CSC") return; g[b] = (g[b] || 0) + 1; const p = (m["passeurs" + sd] || [])[i]; if (p && p !== "CSC") a[p] = (a[p] || 0) + 1; })));
+    new Set([...Object.keys(g), ...Object.keys(a)]).forEach(p => { if (_rwDep(p)) return; const t = (g[p] || 0) + (a[p] || 0); if (!rec || t > rec[1] || (t === rec[1] && (g[p] || 0) > rec[2])) rec = [p, t, g[p] || 0, a[p] || 0, s.date]; }); });
+  X.rec = rec;
+  const itd = {}; S.forEach(s => ["sac", "maillots"].forEach(k => { const v = s[k]; (Array.isArray(v) ? v : [v]).forEach(n => { if (n && typeof n === "string") itd[n] = (itd[n] || 0) + 1; }); }));
+  X.itd = Object.entries(itd).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "fr"))[0] || null;
+  const col = {}; S.forEach(s => (s.matchs || []).forEach(m => [[m.eqA, m.scoreA, m.scoreB], [m.eqB, m.scoreB, m.scoreA]].forEach(([t, f, c]) => { const x = col[t] = col[t] || { m: 0, w: 0 }; x.m++; if (f > c) x.w++; })));
+  X.col = Object.entries(col).map(([t, x]) => [t, x.w / x.m]).sort((a, b) => b[1] - a[1]);
+  // Rang Ballon d'Or soirée après soirée (pour « Ta saison »)
+  const hist = {}; const cum = {};
+  S.forEach(s => { (s.matchs || []).forEach(m => ["A", "B"].forEach(sd => (m["buteurs" + sd] || []).forEach((b, i) => {
+      if (!b || b === "CSC") return; const c = cum[b] = cum[b] || { p: 0, a: 0 }; c.p++; const q = (m["passeurs" + sd] || [])[i]; if (q && q !== "CSC") { const d = cum[q] = cum[q] || { p: 0, a: 0 }; d.p += 2; d.a++; } })));
+    const order = Object.entries(cum).filter(([p]) => !_rwDep(p)).sort((a, b) => b[1].p - a[1].p || b[1].a - a[1].a || a[0].localeCompare(b[0], "fr")).map(([p]) => p);
+    order.forEach((p, i) => { const h = hist[p]; if (!h || i + 1 < h.r) hist[p] = { r: i + 1, d: s.date }; }); });
+  return { year, S, nM, T, best, seasonTeam, X, hist, G, A };
+}
+
+/* ── briques d'affichage ── */
+const _rwAv = (n, s) => _crAv(n, "", s || 28);
+const _rwFace = n => { const two = String(n).includes(" & ") ? String(n).split(" & ") : null;
+  return two ? `<span class="rw-split">${two.map(q => _crPh(q, "")).join("")}</span>` : _crPh(n, ""); };
+const _rwShort = n => String(n).split(" & ").join(" + ");
+const _rwPL = n => String(n).includes(" & ") ? "" : ` player-link" data-player="${_rwEsc(n)}`;
+
+function _rwIso(cfg) {
+  return `<div class="cr-iso rw-iso${cfg.gold ? " rw-gold" : ""}"><div class="rw-iso-t"><b class="${cfg.tc || ""}">${_rwEsc(cfg.t)}</b><span>${_rwEsc(cfg.s)}</span></div>${cfg.b ? `<div class="rw-iso-s"><b>${cfg.b}</b><span>${cfg.bs}</span></div>` : ""}
+    <div class="pitch"><span class="goal l"></span><span class="goal r"></span>${cfg.P.map(([n, x, y, l]) => `<div class="pl" style="--x:${x}%;--y:${y}%">${_crAv(n, cfg.team || "", 34)}<b>${_rwEsc(n)}</b><small>${l}</small></div>`).join("")}</div></div>`;
+}
+function _rwTeamHTML() {
+  const D = _RW.data, seg = `<div class="rw-tseg" role="tablist"><button type="button" data-rwteam="best" aria-pressed="${_RW.team === "best"}">Meilleure équipe</button><button type="button" data-rwteam="season" aria-pressed="${_RW.team === "season"}">Équipe-type de la saison</button></div>`;
+  if (_RW.team === "season") {
+    const st = D.seasonTeam, P = [];
+    if (st.gk) P.push([st.gk[0], 7, 50, st.gk[1]]);
+    if (st.def) P.push([st.def[0], 34, 14, st.def[1]]);
+    if (st.pas) P.push([st.pas[0], 34, 86, st.pas[1]]);
+    [[70, 28], [70, 72]].forEach((xy, i) => { const a = st.att[i]; if (a) P.push([a[0], xy[0], xy[1], a[1]]); });
+    if (!P.length) return seg + `<div class="rw-empty">Pas encore assez de matchs cette saison.</div>`;
+    return `${seg}${_rwIso({ t: "Équipe-type", s: `Saison ${_seasonLabel(D.year)}`, gold: true, P })}
+      <p class="rw-tnote">Au but, le meilleur gardien (Prix Yachine). Derrière, le meilleur défenseur (min. ${st.minDef} passages) et le meilleur passeur. Devant, les 2 meilleurs buteurs. Un joueur n'est jamais pris deux fois : chaque poste est rempli dans cet ordre.</p>`;
+  }
+  const B = D.best; if (!B) return seg + `<div class="rw-empty">Aucun match joué cette saison.</div>`;
+  const P = []; if (B.gk) P.push([B.gk[0], 7, 50, `${B.gk[1].c} enc. · ${B.gk[1].h} mi-t.`]);
+  [[34, 14], [70, 28], [34, 86], [70, 72], [52, 50]].forEach((xy, i) => { const p = B.pl[i]; if (p) P.push([p[0], xy[0], xy[1], `${p[1]} B · ${p[2]} P`]); });
+  const d = new Date(B.s.date + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+  return `${seg}${_rwIso({ t: `Les ${_crTL(B.t)}`, tc: _crTC[B.t], s: d, b: `${B.w}V${B.n ? `&nbsp;${B.n}N` : ""}`, bs: `${B.gf} buts · ${B.gc} enc.`, team: B.t, P })}`;
+}
+
+const _RW_CATS = [
+  { id: "bdo", ico: "🏆", lbl: "Ballon d'Or", unit: "pts", note: "1 pt par but, 2 pts par passe décisive. Égalité : le plus de passes, puis le plus de matchs avec un but." },
+  { id: "yach", ico: "🧤", lbl: "Yachine", unit: "b./mi-t.", note: "Buts encaissés par mi-temps au but, avec un minimum de mi-temps gardées (1 pour 10 matchs de la saison)." },
+  { id: "but", ico: "⚽", lbl: "Buteurs", unit: "buts" },
+  { id: "pass", ico: "🎯", lbl: "Passeurs", unit: "passes" },
+  { id: "def", ico: "🔒", lbl: "Défenseurs", unit: "b.c./m.", note: "Buts encaissés par match passé sur le terrain (min. 10 passages)." },
+  { id: "gk", ico: "🥅", lbl: "Clean sheets", unit: "", note: "Minimum 3 matchs gardés." },
+  { id: "link", ico: "⚡", lbl: "Link-up", unit: "buts" },
+  { id: "dep", ico: "🧰", lbl: "Dépanneurs", unit: "G/A par m.", note: "Uniquement les dépanneurs (min. 3 matchs). Ils ne figurent pas dans les autres classements." },
+  { id: "bonnet", ico: "🫏", lbl: "Bonnet d'âne", unit: "abs." },
+  { id: "infirm", ico: "🩼", lbl: "Infirmerie", unit: "soirées" },
+  { id: "plomb", ico: "🪨", lbl: "Ballon de Plomb", unit: "G/A par m.", adm: true, note: "Le moins de G/A par match joué, minimum 10 matchs. Occasionnels et dépanneurs exclus." },
+  { id: "calam", ico: "🌪️", lbl: "Calamity James", unit: "buts pris", adm: true, note: "Le plus de buts encaissés au but ; à égalité, en moins de mi-temps." },
+  { id: "hf", ico: "🎖️", lbl: "Hauts faits", adm: true },
+];
+function _rwDDHTML(adm) {
+  const cats = _RW_CATS.filter(c => adm || !c.adm), cur = cats.find(c => c.id === _RW.cat) || cats[0];
+  return `<div class="rw-dd"><button type="button" class="rw-dd-btn" data-rwdd aria-haspopup="listbox" aria-expanded="false"><span class="ic">${cur.ico}</span><span class="t"><b>${cur.adm ? '<i class="rw-star">★</i> ' : ""}${cur.lbl}</b><small>${_RW_SUB[cur.id]}</small></span><span class="car">▾</span></button>
+    <div class="rw-dd-list" role="listbox">${cats.map((c, i) => `${c.adm && !(cats[i - 1] || {}).adm ? '<div class="rw-dd-sep">★ Admins</div>' : ""}<button type="button" role="option" data-rwcat="${c.id}" aria-selected="${c.id === cur.id}"><span class="ic">${c.ico}</span>${c.lbl}${c.adm ? ' <i class="rw-star">★</i>' : ""}</button>`).join("")}</div></div>`;
+}
+function _rwBoard(rows, start, id, adm) {
+  if (!rows.length) return "";
+  const max = Math.max(...rows.map(r => Math.abs(_rwNum(r[1]))), 0.0001);
+  const row = (r, i) => { const k = i + start, nm = String(r[0]), two = nm.includes(" & ") ? nm.split(" & ") : null;
+    return `<button type="button" class="rw-row${i >= 5 ? " rw-more" : ""}${r[0] === _accPlayer() ? " me" : ""}${_rwPL(nm)}" style="--w:${Math.abs(_rwNum(r[1])) / max * 100}%">
+      <em>${k + 1}</em>${two ? `<span class="rw-pile">${two.map(q => _rwAv(q, 24)).join("")}</span>` : _rwAv(nm, 28)}<span class="n"><b>${_rwEsc(_rwShort(nm))}</b>${r[2] ? `<small>${_rwEsc(r[2])}</small>` : ""}</span><span class="p">${r[1]}</span></button>`; };
+  return `<div class="rw-board${adm ? " adm" : ""}" data-rwlist="${id}">${rows.map(row).join("")}</div>${rows.length > 5 ? `<button type="button" class="rw-all" data-rwmore="${id}" data-n="${rows.length + start}">Voir le classement complet (${rows.length + start}) ›</button>` : ""}`;
+}
+function _rwPodiumDesk(rows) {
+  const ex = rows[1] && String(rows[0][1]) === String(rows[1][1]);
+  const cell = (r, p) => r ? `<div class="rw-pc p${p}${p <= 2 && ex ? " ex" : ""}"><div class="pim${_rwPL(r[0])}">${_rwFace(r[0])}</div><div class="nm">${_rwEsc(_rwShort(r[0]))}</div><div class="stp"><b>${r[1]}</b><small>${_rwEsc(r[2] || "")}</small><em>${p}</em></div></div>` : "<div></div>";
+  return `<div class="rw-pod3">${cell(rows[1], 2)}${cell(rows[0], 1)}${cell(rows[2], 3)}</div>`;
+}
+function _rwPodiumPh(rows, unit) {
+  const [a, b, c] = rows, ex = b && String(a[1]) === String(b[1]);
+  return `<div class="rw-lead${_rwPL(a[0])}"><div class="pic">${_rwFace(a[0])}</div><div class="tx"><span class="rk">${ex ? "1er ex æquo" : "1er"}</span><span class="nm">${_rwEsc(_rwShort(a[0]))}</span><span class="v">${a[1]}<small>${_rwEsc(unit || "")}</small></span>${a[2] ? `<span class="dt">${_rwEsc(a[2])}</span>` : ""}</div></div>
+    <div class="rw-two">${[[b, 2], [c, 3]].map(([r, p]) => r ? `<div class="p${p}${_rwPL(r[0])}">${_rwAv(String(r[0]).split(" & ")[0], 44)}<b>${_rwEsc(_rwShort(r[0]))}</b><span class="v"><em>${p}e</em>${r[1]}</span></div>` : "").join("")}</div>`;
+}
+function _rwClsHTML(adm) {
+  const c = _RW_CATS.find(x => x.id === _RW.cat && (adm || !x.adm)) || _RW_CATS[0];
+  if (c.id === "hf") return _rwHfAdminHTML();
+  const rows = _RW.data.T[c.id] || [];
+  if (!rows.length) return `<div class="rw-empty">Pas encore de classement pour cette saison.</div>`;
+  return `<div class="rw-cat">
+      <div class="rw-pod-d">${_rwPodiumDesk(rows)}</div>
+      <div class="rw-pod-m">${_rwPodiumPh(rows, c.unit)}</div>
+      <div class="rw-list">${_rwBoard(rows.slice(3), 3, c.id, c.adm)}</div>
+    </div>${c.note ? `<p class="rw-note">${c.note}</p>` : ""}`;
+}
+
+function _rwMeHTML() {
+  const ME = _accPlayer(), D = _RW.data; if (!ME) return "";
+  const T = D.T, find = (rows, n) => rows.findIndex(r => r[0] === n);
+  const exq = (rows, i) => { const v = String(rows[i][1]), o = rows.filter((r, j) => j !== i && String(r[1]) === v).map(r => r[0]); return o.length ? `, ex æquo avec ${o.slice(0, 2).join(" et ")}` : ""; };
+  const cards = [];
+  const bi = find(T.bdo, ME);
+  if (bi >= 0) { const r = T.bdo[bi], h = D.hist[ME], gap = bi > 0 ? T.bdo[bi - 1][1] - r[1] : 0;
+    cards.push({ ico: "🏆", c: "var(--gold)", l: "Ballon d'Or", r: bi + 1, d: `<b>${r[1]} pts</b>${h && h.r < bi + 1 ? ` · ${_rwRankTxt(h.r)} le ${_rwDD(h.d)}` : ""}${bi > 0 ? (gap ? ` · à ${gap} pt${gap > 1 ? "s" : ""} de la ${bi}e place` : exq(T.bdo, bi)) : ""}` }); }
+  const yi = find(T.yach, ME); if (yi >= 0) cards.push({ ico: "🧤", c: "var(--bleu)", l: "Prix Yachine", r: yi + 1, d: `<b>${T.yach[yi][1]}</b> but par mi-temps au but${exq(T.yach, yi)}` });
+  const pi = find(T.pass, ME); if (pi >= 0) cards.push({ ico: "🎯", c: "var(--vert)", l: "Passeurs", r: pi + 1, d: `<b>${T.pass[pi][1]} passe${T.pass[pi][1] > 1 ? "s" : ""}</b>${exq(T.pass, pi)}` });
+  const li = T.link.findIndex(r => String(r[0]).split(" & ").includes(ME)); if (li >= 0) { const pr = String(T.link[li][0]).split(" & ").find(q => q !== ME); cards.push({ ico: "⚡", c: "var(--violet, #b892ff)", l: "Link-up", r: li + 1, d: `<b>${T.link[li][1]} buts</b> avec ${_rwEsc(pr)}` }); }
+  const ui = find(T.but, ME); if (ui >= 0) cards.push({ ico: "⚽", c: "var(--rouge)", l: "Buteurs", r: ui + 1, d: `<b>${T.but[ui][1]} but${T.but[ui][1] > 1 ? "s" : ""}</b>${exq(T.but, ui)}` });
+  const di = find(T.def, ME); if (di >= 0) cards.push({ ico: "🔒", c: "var(--rouge)", l: "Défenseurs", r: di + 1, d: `<b>${T.def[di][1]}</b> but encaissé par match` });
+  const hf = _mhf && _mhf.summary && _mhf.summary[ME];
+  const g = D.G[ME] || 0, a = D.A[ME] || 0;
+  return `<div class="rw-ts-hd">${_crAv(ME, "", 48)}<div><b>Ta saison, ${_rwEsc(ME)}</b><small>${g} but${g > 1 ? "s" : ""} · ${a} passe${a > 1 ? "s" : ""}${hf ? ` · ${hf.hautsFaits} hauts faits` : ""}</small></div></div>
+    ${cards.length ? `<div class="rw-ts">${cards.slice(0, 4).map(c => `<div data-ico="${c.ico}" style="--kc:${c.c}"><small class="l">${c.l}</small><span class="big">${_rwRank(c.r)}</span><span class="d">${c.d}</span></div>`).join("")}</div>`
+      : `<div class="rw-empty">Pas encore classé cette saison. Ça viendra !</div>`}`;
+}
+
+function _rwIneditHTML() {
+  const X = _RW.data.X, C = [];
+  const card = (ico, lab, ic, who, big, p) => C.push(`<div class="rw-ined" data-ico="${ico}" style="--ic:${ic}"><small>${lab}</small><div class="who">${who}</div><span class="big">${big}</span><p>${p}</p></div>`);
+  const one = n => `<span class="player-link rw-who1" data-player="${_rwEsc(n)}">${_rwAv(n, 32)}<b>${_rwEsc(n)}</b></span>`;
+  const two = (a, b) => `<span class="rw-pile">${_rwAv(a, 32)}${_rwAv(b, 32)}</span><b class="two">${_rwEsc(a)}<br>${_rwEsc(b)}</b>`;
+  const sg = v => (v > 0 ? "+" : "") + _rwF2(v), pc = v => Math.round(v * 100) + "%";
+  if (X.plus[0]) card("➕", "Le +/-", "var(--good)", one(X.plus[0][0]), sg(X.plus[0][1]), `Écart de buts moyen par match quand il est sur le terrain.${X.plus[1] ? ` 2e : ${_rwEsc(X.plus[1][0])} (${sg(X.plus[1][1])}).` : ""}`);
+  if (X.tal[0]) card("🍀", "Porte-bonheur", "var(--good)", one(X.tal[0][0]), pc(X.tal[0][1]), `de matchs gagnés (${X.tal[0][2].w} sur ${X.tal[0][2].m}).${X.tal[1] ? ` 2e : ${_rwEsc(X.tal[1][0])} (${pc(X.tal[1][1])}).` : ""}`);
+  if (X.form[0]) card("🔥", "En forme", "#ff8a3d", one(X.form[0][0]), X.form[0][1], `pts Ballon d'Or sur les 3 dernières soirées.${X.form[1] ? ` 2e : ${_rwEsc(X.form[1][0])} (${X.form[1][1]}).` : ""}`);
+  if (X.duo) card("🤝", "Duo qui gagne", "var(--bleu)", two(X.duo[0][0], X.duo[0][1]), pc(X.duo[1]), `de victoires quand ils jouent ensemble (${X.duo[2].w} sur ${X.duo[2].n}).`);
+  if (X.bete) card("😈", "Bête noire", "var(--rouge)", two(X.bete[0], X.bete[1]), `${X.bete[2]}–${X.bete[3]}`, `${_rwEsc(X.bete[0])} contre ${_rwEsc(X.bete[1])}, en ${X.bete[4]} confrontations.`);
+  if (X.inc) card("📅", "Increvable", "var(--gold)", one(X.inc[0]), X.inc[1], "soirées d'affilée sans en manquer une, série en cours.");
+  if (X.rec) card("🏹", "Record d'un soir", "var(--gold)", one(X.rec[0]), `${X.rec[1]} G/A`, `le ${_rwDD(X.rec[4])} : ${X.rec[2]} but${X.rec[2] > 1 ? "s" : ""} et ${X.rec[3]} passe${X.rec[3] > 1 ? "s" : ""}.`);
+  if (X.itd) card("🎒", "Intendance", "var(--violet, #b892ff)", one(X.itd[0]), X.itd[1], "fois le sac ou les maillots cette saison, record du club.");
+  if (X.col[0]) card("🎨", "Couleur qui gagne", _crTV[X.col[0][0]] || "var(--gold)", `<span class="rw-sw" style="background:${_crTV[X.col[0][0]] || "var(--gold)"}"></span><b>Les ${_rwEsc(_crTL(X.col[0][0]))}</b>`, pc(X.col[0][1]), `de victoires${X.col.length > 1 ? `, contre ${X.col.slice(1).map(([t, v]) => `${pc(v)} aux ${_crTL(t)}`).join(" et ")}` : ""}.`);
+  return C.length ? `<div class="rw-inedit">${C.join("")}</div>` : `<div class="rw-empty">Revenez après quelques soirées.</div>`;
+}
+
+function _rwHfStats() {
+  const M = _mhf; if (!M || !M.players.length) return null;
+  let done = 0; const tot = M.players.length * M.achs.length;
+  M.achs.forEach(a => { done += M.completion[a.id].unlocked; });
+  const pub = M.achs.filter(a => !a.hidden), SE = new Set(['totsaison', 'bdor', 'assidu', 'comete']);
+  const by = [...pub].sort((a, b) => M.completion[a.id].rate - M.completion[b.id].rate);
+  const rare = by.find(a => !SE.has(a.id)) || by[0], common = by[by.length - 1];
+  const coll = [...M.players].sort((a, b) => M.summary[b].hautsFaits - M.summary[a].hautsFaits || M.summary[b].niveaux - M.summary[a].niveaux || a.localeCompare(b, "fr"));
+  const cats = MHF_CATS.map(c => { const L = M.achs.filter(a => (MHF_CAT_BY_ID[a.id] || "Distinctions") === c); return [c, L.reduce((n, a) => n + M.completion[a.id].unlocked, 0), L.length * M.players.length, L.map(a => a.icon)]; }).filter(x => x[2]);
+  return { M, done, tot, rare, common, coll, cats };
+}
+function _rwHfVoletHTML(adm) {
+  const H = _rwHfStats(); if (!H) return "";
+  const { M, done, tot, rare, common, coll, cats } = H, pc = Math.round(done / tot * 100), ME = _accPlayer(), n = M.players.length;
+  const myRank = ME && M.summary[ME] ? coll.indexOf(ME) + 1 : 0, c0 = coll[0];
+  const rc = M.completion[rare.id], cc = M.completion[common.id];
+  return `<details class="rw-hfd"><summary><span class="rw-ring" style="--p:${pc}"></span><span><b>Hauts faits du club</b><small>${pc} % débloqués${myRank ? ` · ta collection : ${M.summary[ME].hautsFaits} hauts faits, ${_rwRankTxt(myRank)} du club` : ""}</small></span><span class="car">▾</span></summary>
+    <div class="in"><div class="rw-hf4">
+      <div class="hfx" style="--kc:var(--gold)"><span class="rw-bigring" style="--p:${pc}"><b>${pc}%</b></span><span><small>Le club</small><b>${done} / ${tot.toLocaleString("fr-FR")}</b><span>cases débloquées par les ${n} joueurs</span></span></div>
+      <div class="hfx" style="--kc:var(--violet, #b892ff)"><span class="emo">${rare.icon}</span><span><small>Le plus rare</small><b>${_rwEsc(rare.name)}</b><span>${rc.unlocked ? `${rc.unlocked} joueur${rc.unlocked > 1 ? "s" : ""} sur ${n}` : "personne ne l'a encore"}</span></span></div>
+      <div class="hfx" style="--kc:var(--good)"><span class="emo">${common.icon}</span><span><small>Le plus commun</small><b>${_rwEsc(common.name)}</b><span>${cc.unlocked} joueurs sur ${n}</span></span></div>
+      <div class="hfx player-link" data-player="${_rwEsc(c0)}" style="--kc:var(--gold)">${_crAv(c0, "", 56)}<span><small>Collectionneur</small><b>${_rwEsc(c0)}</b><span>${M.summary[c0].hautsFaits} hauts faits · ${M.summary[c0].niveaux} niveaux</span></span></div>
+    </div>
+    <div class="cr-h2">Par catégorie</div><div class="rw-hcats">${cats.map(([c, u, t, ic]) => `<div class="hc"><span class="ics">${ic.slice(0, 4).join("")}</span><span class="cn"><b>${c}</b><small>${u} / ${t}</small></span><u><i style="width:${Math.max(2, u / t * 100)}%"></i></u><em>${Math.round(u / t * 100)}%</em></div>`).join("")}</div>
+    <button type="button" class="rw-all" data-rwhfall>Voir les ${M.achs.length} hauts faits ›</button><div class="rw-hfall" hidden></div></div></details>`;
+}
+const _RW_TIERS = [["Plomb", "#6b7280"], ["Bronze", "#8a4b22"], ["Argent", "#c3cbd6"], ["Or", "#ffd23f"], ["Émeraude", "#10b981"], ["Diamant", "linear-gradient(135deg,#a7f3ff,#c4b5ff,#fca5a5)"]];
+function _rwHfAdminHTML() {
+  const H = _rwHfStats(); if (!H) return `<div class="rw-empty">Aucun haut fait pour l'instant.</div>`;
+  const M = H.M, P = [...M.players].sort((a, b) => M.summary[b].niveaux - M.summary[a].niveaux || M.summary[b].hautsFaits - M.summary[a].hautsFaits).slice(0, 14);
+  const R = [...M.achs].sort((a, b) => M.completion[b.id].unlocked - M.completion[a.id].unlocked);
+  const rl = (L, c) => L.map(a => `<div class="rk2" data-rwach="${a.id}"><span class="e">${a.icon}</span><span class="n"><b>${_rwEsc(a.name)}</b>${a.hidden ? "<em>secret</em>" : ""}<u><i style="width:${Math.max(3, M.completion[a.id].rate * 100)}%;background:${c}"></i></u></span><span class="p">${M.completion[a.id].unlocked}<small>/${M.players.length}</small></span></div>`).join("");
+  return `<div class="rw-hfa">
+    <div class="rw-tierbar">${_RW_TIERS.map(([n, c], i) => `<span><i style="background:${c}"></i>${n}<small>niv. ${i + 1}</small></span>`).join("")}</div>
+    <div class="rw-mx"><table><thead><tr><th class="nm"></th>${M.achs.map(a => `<th title="${_rwEsc(a.name)}">${a.icon}</th>`).join("")}<th class="tot">Niv.</th></tr></thead><tbody>
+      ${P.map(p => `<tr><td class="nm">${_rwAv(p, 22)}<span>${_rwEsc(p)}</span></td>${M.achs.map(a => { const raw = M.levels[p][a.id].raw; return `<td><i class="t${raw > 0 ? _mhfDisplayLevel(a, raw) : 0}"></i></td>`; }).join("")}<td class="tot">${M.summary[p].niveaux}</td></tr>`).join("")}</tbody></table></div>
+    <p class="rw-note">Aperçu : les 14 plus gros collectionneurs. Le tableau défile sur le côté.</p>
+    <div class="rw-rar2"><div><div class="cr-h2">Les plus répandus</div>${rl(R.slice(0, 5), "var(--good)")}</div><div><div class="cr-h2">Les plus rares</div>${rl(R.slice(-5).reverse(), "var(--bad)")}</div></div>
+    <button type="button" class="rw-adm-btn" data-rwmx>Ouvrir la matrice complète (${M.players.length} × ${M.achs.length}) ›</button><div id="rw-mx-full"></div></div>`;
+}
+
 function renderStats() {
   const container = document.getElementById("panel-stats");
-  const allSt = computeStats(SESSIONS);
-
-  /* ── Meilleure équipe all-time (en premier) ── */
-  let h = "";
-  const bt = computeBestTeamAllTime();
-  if (bt) {
-    const cls = teamCls(bt.team);
-    const varColor = `var(--${cls})`, varBg = `var(--${cls}-bg)`, varBorder = `var(--${cls}-border)`;
-    const diffSign = bt.goalDiff >= 0 ? "+" : "";
-    const diffColor = bt.goalDiff > 0 ? "var(--good)" : bt.goalDiff < 0 ? "var(--bad)" : "var(--text3)";
-    const pillsHtml = bt.players.map(p =>
-      `<button class="team-hero-pill player-link" data-player="${p}" style="background:${varBg};color:${varColor};border-color:${varBorder}">${p}</button>`
-    ).join("");
-    h += `<div class="section-label" style="margin-top:0">Meilleure équipe all-time</div>`;
-    h += `<div class="team-hero" style="background:linear-gradient(150deg, ${varBg}, transparent 70%)">
-      <div class="team-hero-top">
-        <span class="team-hero-badge" style="background:${varBg};color:${varColor};border-color:${varBorder}">${dot(bt.team)}${TEAM_LABEL[bt.team] || bt.team}</span>
-        <span class="team-hero-date">${fmtDate(bt.session.date)}</span>
-      </div>
-      <div class="team-hero-stats">
-        <span class="team-hero-wins">${bt.wins}</span><span class="team-hero-sub">victoire${bt.wins>1?"s":""}</span>
-        <span style="color:var(--text3)">·</span>
-        <span class="team-hero-sub" style="color:var(--text)">${bt.goalsFor} buts</span>
-        <span style="color:var(--text3)">·</span>
-        <span class="team-hero-sub">${bt.goalsAgainst} enc.</span>
-        <span class="team-hero-diff" style="color:${diffColor}">(${diffSign}${bt.goalDiff})</span>
-      </div>
-      <div class="team-hero-players">
-        ${pillsHtml || `<span style="color:var(--text3);font-size:12px">—</span>`}
-      </div>
-      ${bt.topScorer || bt.topAssister ? `<div class="team-hero-foot">
-        ${bt.topScorer   ? `<span>⚽ ${pLink(bt.topScorer.name)} — ${bt.topScorer.count} but${bt.topScorer.count>1?"s":""}</span>` : ""}
-        ${bt.topAssister ? `<span>🎯 ${pLink(bt.topAssister.name)} — ${bt.topAssister.count} assist${bt.topAssister.count>1?"s":""}</span>` : ""}
-      </div>` : ""}
-    </div>`;
-  }
-
-  /* ── Ballon d'Or + Prix Yachine / Ballon de Plomb gardien ── */
-  h += `<div class="section-label">Récompenses individuelles</div>`;
-  // Ballon de Plomb et Calamity James : visibles uniquement en mode admin.
-  const _awardsAdmin = sessionStorage.getItem("hmft_role") === "admin";
-  h += `<div class="stats-award-grid">
-    ${buildBallonDorHtml()}
-    ${buildYachineHtml(SESSIONS)}
-    ${_awardsAdmin ? buildBallonDePlombHtml() : ""}
-    ${_awardsAdmin ? buildCalamityJamesHtml(SESSIONS) : ""}
-  </div>`;
-  h += `<div class="bonnet-infirm-row">${buildBonnetDAneHtml()}${buildInfirmeHtml()}</div>`;
-
-  /* ── Ligne 1 : Buteurs | Passeurs (Top 10) ── */
-  h += `<div class="section-label">Top 10 meilleurs joueurs</div>`;
-  const top10Buteurs  = buildTop10HTMLv2(allSt.buteursRank.map(([n,p])=>({name:n, value:p.buts})),   v => `${v} but${v>1?"s":""}`);
-  const top10Passeurs = buildTop10HTMLv2(allSt.passeursRank.map(([n,p])=>({name:n, value:p.passes})), v => `${v} assist${v>1?"s":""}`);
-
-  h += `<div class="podium-section">
-    <div class="kpi-card">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 10 Buteurs ⚽ (all-time)</div>
-      ${top10Buteurs}
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Top 10 Passeurs 🎯 (all-time)</div>
-      ${top10Passeurs}
-    </div>
-  </div>`;
-
-  /* ── Ligne 2 : Défenseurs (Top 10) | Gardien (Top 3) ── */
-  const defCard     = buildTopDefCardHTMLv2(SESSIONS);
-  const gardienCard = buildGardienTop10HTML();
-
-  h += `<div class="podium-section">
-    ${defCard}
-    ${gardienCard}
-  </div>`;
-
-  /* ── Ligne 3 : Meilleur Link-Up | Meilleure série ── */
-  h += `<div class="section-label">Autres récompenses</div>`;
-  const linkUpCard = buildLinkUpCardHTMLv2(SESSIONS);
-  const streak = computeBestAllTimeStreak();
-  let streakBody;
-  if (!streak) {
-    streakBody = `<span style="color:var(--text3)">—</span>`;
-  } else {
-    const stBadge = streak.isActive
-      ? `<span class="status-pill" style="background:color-mix(in srgb, var(--good) 14%, transparent);color:var(--good);border-color:color-mix(in srgb, var(--good) 35%, transparent)">🟢 En cours</span>`
-      : `<span class="status-pill" style="background:var(--bg3);color:var(--text3);border-color:var(--border)">Terminée</span>`;
-    const ga = streak.g + streak.a;
-    streakBody = `
-      <div style="font-size:20px;font-weight:800;line-height:1.2">${pLink(streak.player)}</div>
-      <div class="moment-big">${streak.count} <span style="font-size:13px;color:var(--text2);font-weight:600">match${streak.count>1?"s":""} consécutif${streak.count>1?"s":""}</span></div>
-      <div class="moment-sub">${ga} G/A · ${fmtDate(streak.start)} → ${fmtDate(streak.end)}</div>
-      ${stBadge}`;
-  }
-
-  h += `<div class="podium-section">
-    ${linkUpCard}
-    <div class="kpi-card">
-      <div class="kpi-lbl" style="margin-top:0;margin-bottom:10px">Meilleure série 🔥 (all-time)</div>
-      ${streakBody}
-    </div>
-  </div>`;
-
   const isAdmin = sessionStorage.getItem("hmft_role") === "admin";
-  h += isAdmin ? renderAchievementsMatrix() : _mhfKpiSectionHtml();
-
-  h += _hfShowcaseHtml(isAdmin);
-  h += `<div id="pronos-season-wrap"></div>`;
-
-  container.innerHTML = h;
+  _mhf = computeMhfData();
+  _RW.data = _rwCompute();
+  if (!isAdmin && (_RW_CATS.find(c => c.id === _RW.cat) || {}).adm) _RW.cat = "bdo";
+  const D = _RW.data, me = _rwMeHTML();
+  container.innerHTML = `<div class="cr rw">
+    <span class="eyebrow rw-eb">Saison ${_seasonLabel(D.year)} · ${D.S.length} soirée${D.S.length > 1 ? "s" : ""}</span><div class="rw-head">Récompenses</div>
+    <div class="rw-g${me ? "" : " nome"}">
+      <div class="a-team"><div class="cr-h2">L'équipe</div><div id="rw-team">${_rwTeamHTML()}</div></div>
+      <div class="a-cls"><div class="cr-h2">Les classements</div><div id="rw-dd-wrap">${_rwDDHTML(isAdmin)}</div><div id="rw-cls" class="rw-cls">${_rwClsHTML(isAdmin)}</div></div>
+      ${me ? `<div class="a-me"><div class="cr-h2">Ta saison</div>${me}</div>` : ""}
+      <div class="a-ined"><div class="cr-h2">Inédit <span>· les stats qu'on ne regardait pas</span></div>${_rwIneditHTML()}</div>
+    </div>
+    ${_rwHfVoletHTML(isAdmin)}
+    <div id="pronos-season-wrap"></div></div>`;
   _renderPronosSeason();
-  animateView(container);
+  if (!container._rwBound) { container._rwBound = true; container.addEventListener("click", _rwClick); }
+}
+function _rwClick(e) {
+  const c = document.getElementById("panel-stats"), isAdmin = sessionStorage.getItem("hmft_role") === "admin";
+  const t = e.target.closest("[data-rwdd],[data-rwcat],[data-rwteam],[data-rwmore],[data-rwhfall],[data-rwmx],[data-rwach]");
+  if (!t) return;
+  if (t.hasAttribute("data-rwdd")) { const dd = t.closest(".rw-dd"), o = !dd.classList.contains("open"); dd.classList.toggle("open", o); t.setAttribute("aria-expanded", String(o)); return; }
+  if (t.dataset.rwcat) { _RW.cat = t.dataset.rwcat; c.querySelector("#rw-dd-wrap").innerHTML = _rwDDHTML(isAdmin); c.querySelector("#rw-cls").innerHTML = _rwClsHTML(isAdmin); return; }
+  if (t.dataset.rwteam) { _RW.team = t.dataset.rwteam; c.querySelector("#rw-team").innerHTML = _rwTeamHTML(); return; }
+  if (t.dataset.rwmore) { const L = c.querySelector(`[data-rwlist="${t.dataset.rwmore}"]`), o = !L.classList.contains("all"); L.classList.toggle("all", o); t.textContent = o ? "Réduire ‹" : `Voir le classement complet (${t.dataset.n}) ›`; return; }
+  if (t.hasAttribute("data-rwhfall")) { const box = t.nextElementSibling; if (box.hidden && !box.innerHTML) box.innerHTML = _hfShowcaseHtml(isAdmin); box.hidden = !box.hidden; t.textContent = box.hidden ? `Voir les ${_mhf.achs.length} hauts faits ›` : "Masquer ‹"; return; }
+  if (t.dataset.rwach) { openMhfAchievementDrawer(t.dataset.rwach); return; }
+  if (t.hasAttribute("data-rwmx")) { const box = c.querySelector("#rw-mx-full"); if (box.innerHTML) { box.innerHTML = ""; t.textContent = t.textContent.replace("Fermer", "Ouvrir"); return; } box.innerHTML = renderAchievementsMatrix(); _rwBindMatrix(box); t.textContent = t.textContent.replace("Ouvrir", "Fermer"); }
+}
+document.addEventListener("click", e => { if (!e.target.closest(".rw-dd")) document.querySelectorAll(".rw-dd.open").forEach(d => { d.classList.remove("open"); const b = d.querySelector("[data-rwdd]"); if (b) b.setAttribute("aria-expanded", "false"); }); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") document.querySelectorAll(".rw-dd.open").forEach(d => d.classList.remove("open")); });
 
-  /* ── Récompenses : dépliage du classement complet ── */
-  container.querySelectorAll('[data-award-toggle]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.dataset.awardToggle;
-      const rows = container.querySelectorAll(`[data-award-id="${id}"]`);
-      const willShow = rows.length > 0 && !rows[0].classList.contains('show');
-      rows.forEach(r => r.classList.toggle('show', willShow));
-      const total = btn.dataset.total || (container.querySelectorAll(`.award-row[data-award-id="${id}"]`).length + 5);
-      btn.textContent = willShow ? 'Réduire ‹' : `Voir le classement complet (${total}) ›`;
+/* Matrice complète des hauts faits (admin) : mêmes interactions qu'avant la refonte. */
+function _rwBindMatrix(container) {
+  const _mhfWrap = container.querySelector('#mhf-matrix-scroll');
+  if (_mhfWrap) {
+    _mhfWrap.addEventListener('click', e => {
+      const achEl  = e.target.closest('.mhf-mh[data-ach]');
+      const sortEl = e.target.closest('[data-sort]');
+      if (achEl) { openMhfAchievementDrawer(achEl.dataset.ach); return; }
+      if (sortEl) {
+        const key = sortEl.dataset.sort;
+        if (_mhfState.sortKey === key) _mhfState.sortDir *= -1; else { _mhfState.sortKey = key; _mhfState.sortDir = -1; }
+        _mhfRerenderMatrix();
+      }
     });
-  });
+    const _mhfTip = document.getElementById('ach-tip');
+    _mhfWrap.addEventListener('pointermove', e => {
+      const cell = e.target.closest('[data-tip]');
+      if (!cell) { _mhfTip.classList.remove('show'); return; }
+      const [l0, ...lines] = (cell.dataset.tip || '').split('\n');
+      _mhfTip.innerHTML = `<div class="atn">${l0}</div>${lines.map((l,i) => `<div class="${i===0?'atv':'atn2'}">${l}</div>`).join('')}`;
+      const tw = _mhfTip.offsetWidth||180, th = _mhfTip.offsetHeight||55;
+      _mhfTip.style.left = Math.min(e.clientX+14, window.innerWidth-tw-8)+'px';
+      _mhfTip.style.top  = Math.max(e.clientY-th-10, 8)+'px';
+      _mhfTip.classList.add('show');
+    });
+    _mhfWrap.addEventListener('pointerleave', () => { _mhfTip.classList.remove('show'); });
+  }
 
-  if (isAdmin) {
-    const _mhfWrap = container.querySelector('#mhf-matrix-scroll');
-    if (_mhfWrap) {
-      _mhfWrap.addEventListener('click', e => {
-        const achEl  = e.target.closest('.mhf-mh[data-ach]');
-        const sortEl = e.target.closest('[data-sort]');
-        if (achEl) { openMhfAchievementDrawer(achEl.dataset.ach); return; }
-        if (sortEl) {
-          const key = sortEl.dataset.sort;
-          if (_mhfState.sortKey === key) _mhfState.sortDir *= -1; else { _mhfState.sortKey = key; _mhfState.sortDir = -1; }
-          _mhfRerenderMatrix();
-        }
-      });
-      const _mhfTip = document.getElementById('ach-tip');
-      _mhfWrap.addEventListener('pointermove', e => {
-        const cell = e.target.closest('[data-tip]');
-        if (!cell) { _mhfTip.classList.remove('show'); return; }
-        const [l0, ...lines] = (cell.dataset.tip || '').split('\n');
-        _mhfTip.innerHTML = `<div class="atn">${l0}</div>${lines.map((l,i) => `<div class="${i===0?'atv':'atn2'}">${l}</div>`).join('')}`;
-        const tw = _mhfTip.offsetWidth||180, th = _mhfTip.offsetHeight||55;
-        _mhfTip.style.left = Math.min(e.clientX+14, window.innerWidth-tw-8)+'px';
-        _mhfTip.style.top  = Math.max(e.clientY-th-10, 8)+'px';
-        _mhfTip.classList.add('show');
-      });
-      _mhfWrap.addEventListener('pointerleave', () => { _mhfTip.classList.remove('show'); });
-    }
+  const _mhfRarity = container.querySelector('#mhf-rarity-list');
+  if (_mhfRarity) {
+    _mhfRarity.addEventListener('click', e => {
+      const toggleBtn = e.target.closest('#mhf-rarity-toggle');
+      if (toggleBtn) {
+        const more = _mhfRarity.querySelector('#mhf-rarity-more');
+        if (!more) return;
+        const willShow = !more.classList.contains('show');
+        more.classList.toggle('show', willShow);
+        toggleBtn.textContent = willShow ? 'Réduire ‹' : toggleBtn.dataset.label;
+        return;
+      }
+      const row = e.target.closest('.mhf-rarity-row');
+      if (row) openMhfAchievementDrawer(row.dataset.acid);
+    });
+  }
 
-    const _mhfRarity = container.querySelector('#mhf-rarity-list');
-    if (_mhfRarity) {
-      _mhfRarity.addEventListener('click', e => {
-        const toggleBtn = e.target.closest('#mhf-rarity-toggle');
-        if (toggleBtn) {
-          const more = _mhfRarity.querySelector('#mhf-rarity-more');
-          if (!more) return;
-          const willShow = !more.classList.contains('show');
-          more.classList.toggle('show', willShow);
-          toggleBtn.textContent = willShow ? 'Réduire ‹' : toggleBtn.dataset.label;
-          return;
-        }
-        const row = e.target.closest('.mhf-rarity-row');
-        if (row) openMhfAchievementDrawer(row.dataset.acid);
-      });
-    }
+  const _mhfSearch = container.querySelector('#mhf-search-input');
+  if (_mhfSearch) {
+    _mhfSearch.addEventListener('input', e => { _mhfState.search = e.target.value; _mhfRerenderMatrix(); });
+  }
 
-    const _mhfSearch = container.querySelector('#mhf-search-input');
-    if (_mhfSearch) {
-      _mhfSearch.addEventListener('input', e => { _mhfState.search = e.target.value; _mhfRerenderMatrix(); });
-    }
+  const _mhfChips = container.querySelector('#mhf-cat-chips');
+  if (_mhfChips) {
+    _mhfChips.addEventListener('click', e => {
+      const chip = e.target.closest('.pill');
+      if (!chip) return;
+      const cat = chip.dataset.cat;
+      if (cat === '__all') { _mhfState.activeCats = new Set(MHF_CATS); }
+      else if (_mhfState.activeCats.size === MHF_CATS.length) { _mhfState.activeCats = new Set([cat]); }
+      else if (_mhfState.activeCats.has(cat)) { _mhfState.activeCats.delete(cat); if (!_mhfState.activeCats.size) _mhfState.activeCats = new Set(MHF_CATS); }
+      else { _mhfState.activeCats.add(cat); }
+      _mhfChips.innerHTML = _mhfRenderChipsHtml();
+      _mhfRerenderMatrix();
+    });
+  }
 
-    const _mhfChips = container.querySelector('#mhf-cat-chips');
-    if (_mhfChips) {
-      _mhfChips.addEventListener('click', e => {
-        const chip = e.target.closest('.pill');
-        if (!chip) return;
-        const cat = chip.dataset.cat;
-        if (cat === '__all') { _mhfState.activeCats = new Set(MHF_CATS); }
-        else if (_mhfState.activeCats.size === MHF_CATS.length) { _mhfState.activeCats = new Set([cat]); }
-        else if (_mhfState.activeCats.has(cat)) { _mhfState.activeCats.delete(cat); if (!_mhfState.activeCats.size) _mhfState.activeCats = new Set(MHF_CATS); }
-        else { _mhfState.activeCats.add(cat); }
-        _mhfChips.innerHTML = _mhfRenderChipsHtml();
-        _mhfRerenderMatrix();
-      });
-    }
-
-    const _mhfHiddenToggle = container.querySelector('#mhf-hidden-toggle');
-    if (_mhfHiddenToggle) {
-      _mhfHiddenToggle.addEventListener('click', () => {
-        _mhfState.showHidden = !_mhfState.showHidden;
-        _mhfHiddenToggle.classList.toggle('on', _mhfState.showHidden);
-        _mhfRerenderMatrix();
-      });
-    }
+  const _mhfHiddenToggle = container.querySelector('#mhf-hidden-toggle');
+  if (_mhfHiddenToggle) {
+    _mhfHiddenToggle.addEventListener('click', () => {
+      _mhfState.showHidden = !_mhfState.showHidden;
+      _mhfHiddenToggle.classList.toggle('on', _mhfState.showHidden);
+      _mhfRerenderMatrix();
+    });
   }
 }
 
@@ -13449,6 +13843,7 @@ function _accApplyRole() {
   const role = sessionStorage.getItem("hmft_role") || "user";
   applyRole(role);
   updateAdminBtn();
+  if (document.getElementById("panel-stats")?.classList.contains("active") && typeof renderStats === "function" && SESSIONS.length) renderStats();
   // Onglet Vignettes et Règlement : visibles uniquement avec un compte rattaché à une fiche
   const vgOn = !!(_accUser && _accProfile);
   const rb = document.getElementById("footer-reglement-btn"); if (rb) rb.style.display = vgOn ? "" : "none";
