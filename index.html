@@ -4310,7 +4310,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 22:08</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 22:12</footer>
 
 <script>
 
@@ -16768,7 +16768,7 @@ function _svApply() {
       if (soiree() && acc()) pages.push(row("vote", "next", "Prochaine session"));
       pages.push(row("dashboard", "dash", "Statistiques"));
       if (acc()) pages.push(row("joueurs", "team", "Effectif"));
-      if (!soiree() && !voteOpen() && sessionStorage.getItem("hmft_role") === "admin" && canSaisie()) pages.push(row("saisie", "saisie", "Saisie", "admin")); // pas de Saisie tant que le sondage est ouvert
+      if (!soiree() && !voteOpen() && sessionStorage.getItem("hmft_role") === "admin" && canSaisie()) pages.push(row("saisie", "saisie", "Saisie", "★ super admin")); // pas de Saisie tant que le sondage est ouvert
       const prof = acc()
         ? `<button type="button" class="bm-prof" data-bm="fiche"><span class="av pf">${esc((p || "").slice(0, 2).toUpperCase())}${typeof portraitImg === "function" ? portraitImg(p, true) : ""}</span><span><b>${esc(p)}</b><small>${typeof _accIsSuper !== "undefined" && _accIsSuper ? "★ Super admin · " : ""}voir ma fiche</small></span>${ic("chev", "chev")}</button>`
         : `<button type="button" class="bm-prof" data-bm="login"><span class="av">${ic("user")}</span><span><b>Se connecter</b><small>ou créer mon compte joueur</small></span>${ic("chev", "chev")}</button>`;
