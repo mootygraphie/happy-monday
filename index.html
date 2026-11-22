@@ -2891,6 +2891,15 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
 .hm .hm-line .cr-av { border-color: var(--bg2) !important; box-shadow: 0 3px 8px rgba(0,0,0,.45); } .hm .r5 .cr-av { border-color: var(--bg2) !important; box-shadow: 0 3px 8px rgba(0,0,0,.45); }
 .hm .hm-gauge { height: 6px; border-radius: 3px; background: var(--bg3); overflow: hidden; } .hm .hm-gauge i { display: block; height: 100%; background: var(--hm-red); } .hm .hm-gauge i.lo { background: #ff9f0a; } .hm .hm-gauge i.ok { background: var(--good); } .hm .hm-gauge i.hi { background: var(--bad); }
 .hm .hm-feuille .you { font-size: 12.5px; color: var(--text2); } .hm .hm-feuille .you b { color: var(--text); }
+.hm .hm-feuille.closed { position: relative; }
+.hm .hm-stamp { position: absolute; top: 14px; right: 14px; transform: rotate(-9deg); border: 2px solid var(--hm-red); color: var(--hm-red); border-radius: 7px; padding: 3px 8px; font-size: 10px; font-weight: 900; letter-spacing: .1em; text-align: center; line-height: 1.15; }
+.hm .hm-me { position: relative; display: inline-block; flex-shrink: 0; z-index: 2; }
+.hm .hm-me .cr-av { border: 3px solid var(--vc) !important; margin: 0 !important; }
+.hm .hm-me > i { position: absolute; right: -4px; bottom: -3px; width: 18px; height: 18px; border-radius: 50%; background: var(--vc); color: var(--bg2); border: 2px solid var(--bg2); display: grid; place-items: center; font-size: 10px; font-weight: 900; font-style: normal; line-height: 1; }
+.hm .hm-me > em { position: absolute; top: calc(100% + 3px); left: 50%; transform: translateX(-50%); font-size: 10px; font-weight: 800; font-style: normal; letter-spacing: .06em; text-transform: uppercase; color: var(--vc); }
+.hm .hm-line.has-me { align-items: center; padding-bottom: 16px; } .hm .hm-line.has-me > .hm-me { margin-right: calc(var(--st, -10px) + 4px); }
+.hm .hm-oth .og { position: relative; } .hm .hm-oth .og.mine { border-color: color-mix(in srgb, var(--oc) 60%, transparent); background: color-mix(in srgb, var(--oc) 10%, var(--bg2)); }
+.hm .hm-oth .og .hm-me { position: absolute; top: 8px; right: 8px; } .hm .hm-oth .og .hm-me > i { width: 16px; height: 16px; font-size: 9px; }
 .hm .hm-oth { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .hm .hm-oth .og { display: grid; grid-template-columns: auto auto; justify-content: start; align-items: center; gap: 4px 8px; padding: 12px; border-radius: 12px; background: var(--bg2); border: 1px solid var(--border); cursor: pointer; text-align: left; font: inherit; color: var(--text); }
 .hm .hm-oth .og[aria-expanded="true"] { border-color: var(--oc); }
@@ -4310,7 +4319,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 22:21</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 22:27</footer>
 
 <script>
 
@@ -16321,19 +16330,24 @@ function _svApply() {
   const hmSA = (p, acts) => `<div class="hm-sa"><span class="h">★ Super admin</span>${p ? `<p>${p}</p>` : ""}<div class="acts">${acts}</div></div>`;
   const hmFmt = (ms, big) => { const s = Math.max(0, Math.ceil(ms / 1000)), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), x = s % 60, p = v => String(v).padStart(2, "0");
     return big ? `${p(h)}:${p(m)}:${p(x)}` : `${d ? p(d) + "j " : ""}${p(h)}h ${p(m)}min ${p(x)}s`; };
+  // Sondage clos : ta réponse se lit sur ton rond (contour + pastille), rangé dans la feuille (présent) ou dans la case de ta réponse.
+  const HM_VC = { P: "var(--good)", A: "var(--bad)", B: "#f5c842", N: "var(--text3)" };
+  const hmMe = (n, v, s, lbl) => `<span class="hm-me" style="--vc:${HM_VC[v]}" title="Toi · ${ST[v][1]}">${hmAv(n, s)}<i>${{ P: "✓", A: "✕", B: "✚", N: "?" }[v]}</i>${lbl ? `<em>Toi</em>` : ""}</span>`;
+  const hmMine = () => { const who = me(), r = who && rows().find(x => x.n === who && !x.dep); return r ? r.v : null; };
   function hmFeuille(live) {
     const R = rows(), who = me(), P = R.filter(r => r.v === "P").map(r => r.n).sort((a, b) => a.localeCompare(b, "fr"));
     const step = P.length ? Math.min(30, Math.floor(290 / P.length)) : 30; // tous sur une ligne : plus il y a de monde, plus les visages se chevauchent
-    const mine = ((_svData && _svData.votes) || {})[who];
-    return `<div class="hm-feuille"><div class="t"><span>Feuille de match${live ? " · en cours" : ""}</span><span class="${live ? (P.length === 11 ? "lk cursed" : "") : "lk"}">${live ? (P.length === 11 ? "💀 Nombre maudit" : "") : "🔒 clos dimanche 21h30"}</span></div>
-      <b class="n">${P.length} <small>${live ? "présents pour l'instant" : "convoqués"}</small></b>
-      ${P.length ? `<div class="hm-line" style="--st:${step - 40}px">${P.map(n => `<span title="${esc(n)}">${hmAv(n, 40)}</span>`).join("")}</div>` : ""}
-      ${live ? `<div class="hm-gauge"><i class="${P.length < 10 ? "lo" : P.length <= 15 ? "ok" : "hi"}" style="width:${Math.min(100, P.length / 15 * 100)}%"></i></div>` : mine ? `<div class="you">Tu es <b>${ST[mine][1]}</b>${mine === "P" ? " · rendez-vous lundi" : ""}</div>` : ""}</div>`;
+    const meIn = !live && hmMine() === "P", L = meIn ? P.filter(n => n !== who) : P;
+    return `<div class="hm-feuille${live ? "" : " closed"}"><div class="t"><span>Feuille de match${live ? " · en cours" : ""}</span>${live ? `<span class="${P.length === 11 ? "lk cursed" : ""}">${P.length === 11 ? "💀 Nombre maudit" : ""}</span>` : `<span class="hm-stamp">Sondage<br>clos</span>`}</div>
+      <b class="n">${P.length} <small>${live ? "présents pour l'instant" : "présents"}</small></b>
+      ${P.length ? `<div class="hm-line${meIn ? " has-me" : ""}" style="--st:${step - 40}px">${meIn ? hmMe(who, "P", 44, true) : ""}${L.map(n => `<span title="${esc(n)}">${hmAv(n, 40)}</span>`).join("")}</div>` : ""}
+      ${live ? `<div class="hm-gauge"><i class="${P.length < 10 ? "lo" : P.length <= 15 ? "ok" : "hi"}" style="width:${Math.min(100, P.length / 15 * 100)}%"></i></div>` : ""}</div>`;
   }
-  function hmOthers() {
+  function hmOthers(closed) {
     const R = rows(), G = [["A", "✕", "absents", "var(--bad)"], ["B", "✚", "blessés", "#f5c842"], ["N", "?", "sans réponse", "var(--text3)"]];
     const open = ui.og ? R.filter(r => r.v === ui.og).map(r => r.n).sort((a, b) => a.localeCompare(b, "fr")) : null;
-    return `<div class="hm-oth">${G.map(([k, i, l, c]) => `<button type="button" class="og" style="--oc:${c}" data-sv="og" data-k="${k}" aria-expanded="${ui.og === k}"><span class="oi">${i}</span><b>${R.filter(r => r.v === k).length}</b><span class="ol">${l}</span></button>`).join("")}</div>
+    const mv = closed ? hmMine() : null;
+    return `<div class="hm-oth">${G.map(([k, i, l, c]) => `<button type="button" class="og${mv === k ? " mine" : ""}" style="--oc:${c}" data-sv="og" data-k="${k}" aria-expanded="${ui.og === k}"><span class="oi">${i}</span><b>${R.filter(r => r.v === k).length}</b><span class="ol">${l}</span>${mv === k ? hmMe(me(), k, 34) : ""}</button>`).join("")}</div>
       ${open ? `<div class="hm-olist">${open.map(n => `<span>${hmAv(n, 22)}${esc(n)}</span>`).join("") || `<span>Personne</span>`}</div>` : ""}`;
   }
   function hmDeps(canAdd) {
@@ -16380,7 +16394,7 @@ function _svApply() {
       : tonight && canSaisie ? `<button type="button" class="hm-tile on" data-sv="goSaisie"><span>›</span><b>Ce soir</b><small>Aller à la Saisie</small></button>` : null;
     return hmHead("Prochaine session", _svDate)
       + (isSA() ? hmSA(`Sondage clos : <b>${nP} convoqué${nP > 1 ? "s" : ""}</b>. Tu peux encore corriger une présence.`, `${canSaisie && tonight ? `<button type="button" class="pri" data-sv="goSaisie">Aller à la Saisie</button>` : ""}<button type="button" data-sv="presOpen">Modifier les présences</button>`) : "")
-      + hmFeuille(false) + hmOthers() + (liveOn || tonight ? hmTiles(first) : hmSep + hmRest()); // avant la soirée : « Et aussi » (récap, Ballon d'Or, Vignettes)
+      + hmFeuille(false) + hmOthers(true) + (liveOn || tonight ? hmTiles(first) : hmSep + hmRest()); // avant la soirée : « Et aussi » (récap, Ballon d'Or, Vignettes)
   }
   function hmBefore() {
     const sa = isSA();
