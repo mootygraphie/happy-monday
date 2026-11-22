@@ -3166,6 +3166,9 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .cr-dt { flex: none; border: 1px solid var(--border2); background: var(--bg2); border-radius: 10px; padding: 6px 10px; cursor: pointer; text-align: center; min-width: 54px; font: inherit; color: var(--text); }
   .cr-dt b { display: block; font-size: 17px; line-height: 1.1; } .cr-dt small { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; }
   .cr-dt[aria-pressed="true"] { background: var(--gold-bg); color: var(--gold); border-color: var(--gold); } .cr-dt[aria-pressed="true"] small { color: var(--gold); }
+  .cr-dt { position: relative; } .cr-dates { padding-top: 10px; padding-left: 8px; }
+  .cr-dt-x { position: absolute; top: -8px; left: -8px; width: 22px; height: 22px; border-radius: 50%; background: #3a3a46; border: 2px solid var(--bg); color: #fff; font-size: 12px; font-weight: 900; line-height: 1; display: grid; place-items: center; box-shadow: 0 2px 6px rgba(0,0,0,.5); }
+  .cr-dt-x:hover { background: var(--bad); }
   .cr-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 30px; align-items: start; }
   .cr-grid > div { min-width: 0; }
   @media (min-width: 900px) { .cr-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); } }
@@ -3943,7 +3946,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 10:21</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 10:43</footer>
 
 <script>
 
@@ -3959,7 +3962,7 @@ function applyRole(role) {
   const pronosWrap = document.getElementById("footer-pronos-wrap");
   if (pronosWrap) pronosWrap.style.display = isAdmin ? "inline" : "none";
   document.getElementById("saisie-nav-btn").style.display     = canSaisie ? "flex" : "none";
-  document.getElementById("delete-session-btn").style.display = isAdmin ? "inline-flex" : "none";
+  document.getElementById("delete-session-btn").style.display = "none"; // remplacé par la croix ronde sur la date sélectionnée (super admin)
   document.querySelector(".main-tabs").style.display = isSaisie ? "none" : "";
   const hnavSaisieRow = document.getElementById("hnav-saisie-row");
   if (hnavSaisieRow) hnavSaisieRow.style.display = canSaisie ? "flex" : "none";
@@ -9121,7 +9124,7 @@ function renderSessionDetailV3(session) {
   if (_CR.date !== session.date) { _CR.date = session.date; _CR.tf = 0; _CR.flip = {}; _CR.flipT = {}; }
   const M = _crModel(session), H = _crHeadline(M), TL = _crTL, enc = g => _crF1(g[1].enc / g[1].h);
   const sorted = [...SESSIONS].sort((a, b) => a.date.localeCompare(b.date));
-  const dates = `<div class="cr-dates">${sorted.map(s => { const d = new Date(s.date + "T12:00:00"); return `<button type="button" class="cr-dt" data-crdate="${s.date}" aria-pressed="${s.date === session.date}"><b>${d.getDate()}</b><small>${["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."][d.getMonth()]}</small></button>`; }).join("")}</div>`;
+  const dates = `<div class="cr-dates">${sorted.map(s => { const d = new Date(s.date + "T12:00:00"); return `<button type="button" class="cr-dt" data-crdate="${s.date}" aria-pressed="${s.date === session.date}">${s.date === session.date && sessionStorage.getItem("hmft_role") === "admin" ? `<span class="cr-dt-x" role="button" tabindex="0" data-crdel="${s.date}" aria-label="Supprimer cette soirée">✕</span>` : ""}<b>${d.getDate()}</b><small>${["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."][d.getMonth()]}</small></button>`; }).join("")}</div>`;
   const dLong = (() => { const d = new Date(session.date + "T12:00:00"); return d.toLocaleDateString("fr", { weekday: "long", day: "numeric", month: "long", year: "numeric" }); })();
   const title = `<div class="cr-title"><span class="date">${dLong}</span><h2 class="head">${_crBox(_crEsc(H.t), H.teams)}</h2>
     <p class="kick">${M.nPres} présents · ${M.nM} matchs · ${M.goals} buts · ${M.nM ? _crF1(M.goals / M.nM) : "0"} par match</p></div>`;
@@ -9189,6 +9192,8 @@ function _crStartTf() {
 (function () {
   const root = document.getElementById("session-results"); if (!root) return;
   root.addEventListener("click", e => {
+    const del = e.target.closest("[data-crdel]");
+    if (del) { e.stopPropagation(); const sel = document.getElementById("session-date"); if (sel.value !== del.dataset.crdel) { sel.value = del.dataset.crdel; } document.getElementById("delete-session-btn").click(); return; }
     const d = e.target.closest("[data-crdate]");
     if (d) { const sel = document.getElementById("session-date"); sel.value = d.dataset.crdate; sel.dispatchEvent(new Event("change")); return; }
     const ft = e.target.closest("[data-crflipt]"); if (ft) { const t = ft.dataset.crflipt; _CR.flipT[t] = !_CR.flipT[t]; ft.classList.toggle("flipped", _CR.flipT[t]); return; }
@@ -9326,6 +9331,7 @@ document.getElementById("session-date").addEventListener("change", e => {
   renderSessionResults(e.target.value);
 });
 
+document.addEventListener("keydown", e => { const x = e.target.closest && e.target.closest("[data-crdel]"); if (x && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); x.click(); } });
 document.getElementById("delete-session-btn").addEventListener("click", () => {
   const sel = document.getElementById("session-date");
   const date = sel.value;
