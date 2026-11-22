@@ -3943,7 +3943,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 09:51</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 09:53</footer>
 
 <script>
 
@@ -15819,9 +15819,9 @@ function _svApply() {
         }
         if (st === "on" && optsOpen) {
           const pr = pw.prefs();
-          h += `<button type="button" class="bm-sub" data-bm="__pref" data-k="trades" aria-pressed="${pr.trades}"><span class="bm-ck${pr.trades ? " on" : ""}">${pr.trades ? "✓" : ""}</span><span class="grow">Échanges reçus</span></button>
-            <button type="button" class="bm-sub" data-bm="__pref" data-k="boosters" aria-pressed="${pr.boosters}"><span class="bm-ck${pr.boosters ? " on" : ""}">${pr.boosters ? "✓" : ""}</span><span class="grow">Boosters à ouvrir</span></button>
+          h += `<button type="button" class="bm-sub" data-bm="__pref" data-k="boosters" aria-pressed="${pr.boosters}"><span class="bm-ck${pr.boosters ? " on" : ""}">${pr.boosters ? "✓" : ""}</span><span class="grow">Boosters à ouvrir <small>· à 10h</small></span></button>
             <div class="bm-sub"><span class="bm-ck on locked">✓</span><span class="grow">Sondage : ouverture et rappel 3 h</span><small>toujours</small></div>
+            <div class="bm-sub"><span class="bm-ck on locked">✓</span><span class="grow">Récap de la soirée</span><small>toujours</small></div>
             <div class="bm-sub"><span class="bm-ck on locked">✓</span><span class="grow">Infos Club</span><small>toujours</small></div>`;
         }
       }
