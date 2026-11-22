@@ -210,6 +210,10 @@ def main():
         if not (sent.get("open") or {}).get(mon_iso):
             print("Sondage ouvert :", mon_iso)
             mark(f"pushSent/open/{mon_iso}")  # noté AVANT d'envoyer : jamais deux fois, même en cas de souci
+            opened = vote.get("at") or now_ms
+            if now_ms - opened > 12 * 3600 * 1000:  # ouvert il y a plus de 12 h (panne, rattrapage) : trop tard, on n'envoie pas
+                print("  ouvert depuis plus de 12 h : notification non envoyée")
+                return
             for p in subs:
                 auto_send(p, "🗓️ Le sondage est ouvert", f"Tu viens {mon_lbl} ? Réponds avant dimanche 21h30.", "./?n=vote#vote", f"open-{mon_iso}")
         if vote["closesAt"] - now_ms <= 3 * 3600 * 1000:
