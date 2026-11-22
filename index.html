@@ -2892,9 +2892,10 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
 .hm .hm-gauge { height: 6px; border-radius: 3px; background: var(--bg3); overflow: hidden; } .hm .hm-gauge i { display: block; height: 100%; background: var(--hm-red); } .hm .hm-gauge i.lo { background: #ff9f0a; } .hm .hm-gauge i.ok { background: var(--good); } .hm .hm-gauge i.hi { background: var(--bad); }
 .hm .hm-feuille .you { font-size: 12.5px; color: var(--text2); } .hm .hm-feuille .you b { color: var(--text); }
 .hm .hm-feuille.closed, .hm .hm-feuille.cursed { position: relative; }
-/* sondage clos à 11 : le crâne prend le coin haut, « Sondage clos » passe en bas à droite, en gris, sous les visages */
-.hm .hm-feuille.closed.cursed { padding-bottom: 58px; }
-.hm .hm-feuille.closed.cursed .hm-stamp { top: auto; bottom: 18px; right: 22px; color: var(--text2); border-color: var(--text2); }
+/* sondage clos à 11 : « Sondage clos » garde le coin haut, le crâne descend en bas à droite (texte gris), sous les visages */
+.hm .hm-feuille.closed.cursed { padding-bottom: 66px; }
+.hm .hm-feuille.closed.cursed .hm-skull { top: auto; bottom: 8px; right: 18px; }
+.hm .hm-feuille.closed.cursed .hm-skull .st { color: var(--text2); border-color: var(--text2); }
 .hm .hm-skull { position: absolute; top: -30px; right: -4px; display: flex; flex-direction: column; align-items: center; transform: rotate(10deg); z-index: 3; pointer-events: none; }
 .hm .hm-skull .sk { font-size: 58px; line-height: 1; filter: drop-shadow(0 6px 10px rgba(0,0,0,.45)); }
 .hm .hm-skull .st { margin-top: -10px; background: var(--bg2); border: 2px solid var(--hm-red); color: var(--hm-red); border-radius: 7px; padding: 3px 8px; font-size: 10px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; text-align: center; line-height: 1.15; transform: rotate(-19deg); }
@@ -4327,7 +4328,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 23:09</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 23:13</footer>
 
 <script>
 
