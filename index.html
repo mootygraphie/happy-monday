@@ -384,7 +384,7 @@
   .roster-avatar.pf > .pf-img[data-pf="Sylvain"] { transform: scale(3); transform-origin: 47% 27%; }
   .roster-avatar.pf > .pf-img[data-pf="Florian"] { transform: scale(3.3); transform-origin: 46% 20%; }
   .roster-avatar.pf > .pf-img[data-pf="Virgile"] { transform: scale(2.7); transform-origin: 48% 21%; }
-  .pf > .pf-img.pf-locked, .roster-avatar.pf > .pf-img.pf-locked { object-position: 50% 50%; transform: scale(2); transform-origin: 50% 30%; }
+  .pf > .pf-img.pf-locked, .roster-avatar.pf > .pf-img.pf-locked { object-position: 50% 50%; transform: scale(2); transform-origin: 50% 24%; }
   .roster-avatar.pf > .pf-img[data-pf="Houari"] { transform: scale(2.7); transform-origin: 47% 27%; }
   .roster-main { flex: 1; min-width: 0; }
   .roster-name { display: block; width: 100%; font-size: 14px; font-weight: 700; margin-bottom: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -4310,7 +4310,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 22:07</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 22:08</footer>
 
 <script>
 
@@ -16239,7 +16239,7 @@ function _svApply() {
     if (ui.pres && isSA()) return vPres();
     const d = _svData, who = me(), mine = (d.votes || {})[who] || null, locked = closed() && !isSA();
     const choosing = !locked && !closed() && (!mine || ui.editing) || (isSA() && closed() && ui.editing);
-    const p = _svParis(_liveNow()), tonight = p.wd === 1 && _svIso(Date.UTC(p.y, p.m - 1, p.d)) === _svDate && p.h >= 18;
+    const p = _svParis(_liveNow()), tonight = p.wd === 1 && _svIso(Date.UTC(p.y, p.m - 1, p.d)) === _svDate && p.h * 60 + p.mi >= 19 * 60 + 45; // lien Saisie : pas avant lundi 19h45
     const canSaisie = document.getElementById("saisie-nav-btn") && document.getElementById("saisie-nav-btn").style.display !== "none";
     const liveOn = document.getElementById("live-tab-btn") && document.getElementById("live-tab-btn").style.display !== "none";
     const tonightHTML = tonight ? `<div class="sv-sec"><span class="sv-st">⚽ C'est ce soir !</span>
@@ -16379,7 +16379,7 @@ function _svApply() {
     const first = liveOn ? `<button type="button" class="hm-tile on" data-sv="goLive"><span>›</span><b>En direct</b><small>la soirée en cours</small></button>`
       : tonight && canSaisie ? `<button type="button" class="hm-tile on" data-sv="goSaisie"><span>›</span><b>Ce soir</b><small>Aller à la Saisie</small></button>` : null;
     return hmHead("Prochaine session", _svDate)
-      + (isSA() ? hmSA(`Sondage clos : <b>${nP} convoqué${nP > 1 ? "s" : ""}</b>. Tu peux encore corriger une présence.`, `${canSaisie ? `<button type="button" class="pri" data-sv="goSaisie">Aller à la Saisie</button>` : ""}<button type="button" data-sv="presOpen">Modifier les présences</button>`) : "")
+      + (isSA() ? hmSA(`Sondage clos : <b>${nP} convoqué${nP > 1 ? "s" : ""}</b>. Tu peux encore corriger une présence.`, `${canSaisie && tonight ? `<button type="button" class="pri" data-sv="goSaisie">Aller à la Saisie</button>` : ""}<button type="button" data-sv="presOpen">Modifier les présences</button>`) : "")
       + hmFeuille(false) + hmOthers() + (liveOn || tonight ? hmTiles(first) : hmSep + hmRest()); // avant la soirée : « Et aussi » (récap, Ballon d'Or, Vignettes)
   }
   function hmBefore() {
