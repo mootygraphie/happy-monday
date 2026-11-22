@@ -3364,6 +3364,256 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .saisie-pres-lock span { color: var(--text2); }
   .saisie-step-pill.locked { opacity: .5; }
   .saisie-btn.locked { background: var(--bg3) !important; color: var(--text2) !important; border-color: var(--border2) !important; }
+  /* ═══ Onglet Statistiques (refonte 22/11/2026, préfixe st2) ═══ */
+  #panel-dashboard > .dbx2-scope-row, #panel-dashboard > .dbx2-context-row, #panel-dashboard > .dbx2-period-row { display: none !important; }
+  .st2 { --violet: #b892ff; max-width: 1100px; margin: 0 auto; padding-bottom: 24px; }
+  .st2 .pic { position: relative; } .st2 .pic .cr-ph { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .st2 .h2 { font-size: 11px; font-weight: 700; font-style: italic; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); margin: 22px 0 10px; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  .st2 .h2 span { text-transform: none; letter-spacing: 0; font-weight: 500; }
+  .st2 .head { margin: 4px 0 8px; font-size: clamp(32px, 8vw, 52px); line-height: 1.04; font-weight: 800; font-style: italic; text-transform: uppercase; letter-spacing: -.015em; }
+  .st2 .new { font-size: 9px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #0d1d10; background: var(--good); border-radius: 5px; padding: 1px 5px; vertical-align: 2px; font-style: normal; }
+  .st2 .av { --s: 32px; --c: var(--border2); width: var(--s); height: var(--s); flex: none; border-radius: 50%; border: 2px solid var(--c); overflow: hidden; display: inline-flex; align-items: center; justify-content: center; background: var(--bg3); }
+  .st2 .av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .st2 .av i { font-style: normal; font-weight: 700; font-size: calc(var(--s) * .32); color: var(--text2); }
+  .st2 .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 18px; padding: 14px; min-width: 0; }
+  .st2 .tR { --tc: var(--rouge); } .st2 .tV { --tc: var(--vert); } .st2 .tB { --tc: var(--bleu); }
+  .st2 .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--tc); display: inline-block; flex: none; }
+  .st2 .period { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+  .st2 .period::-webkit-scrollbar { display: none; }
+  .st2 .period button { flex: none; border: 1px solid var(--border2); background: var(--bg2); border-radius: 20px; padding: 6px 12px; font-size: 12.5px; font-weight: 600; color: var(--text2); cursor: pointer; }
+  .st2 .period button[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .st2 .subnav { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 14px; padding: 3px; margin: 12px 0 4px; }
+  .st2 .subnav button { border: 0; background: none; border-radius: 11px; padding: 8px 2px; font-size: 12.5px; font-weight: 700; color: var(--text2); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .st2 .subnav button em { font-style: normal; font-size: 16px; line-height: 1; }
+  .st2 .subnav button[aria-pressed="true"] { background: var(--gold); color: #1d1604; }
+  .st2 .subnav button.dt[aria-pressed="false"] { color: var(--good); }
+  @media (min-width: 900px) { .st2 .subnav { display: inline-grid; grid-template-columns: repeat(5, auto); } .st2 .subnav button { flex-direction: row; gap: 6px; padding: 8px 16px; font-size: 13.5px; } }
+  .st2 .toprow { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+  .st2 .kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  @media (min-width: 900px) { .st2 .kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .st2 .kpi { position: relative; overflow: hidden; padding: 12px 12px 10px; }
+  .st2 .kpi small { font-size: 10.5px; font-weight: 800; font-style: italic; letter-spacing: .07em; text-transform: uppercase; color: var(--text3); }
+  .st2 .kpi b { display: block; font-size: 32px; font-weight: 800; font-style: italic; line-height: 1.05; font-variant-numeric: tabular-nums; }
+  .st2 .kpi span { font-size: 11.5px; color: var(--text2); }
+  .st2 .kpi svg { display: block; width: 100%; height: 30px; margin-top: 6px; }
+  .st2 .g2 { display: grid; gap: 0 24px; }
+  @media (min-width: 900px) { .st2 .g2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+  .st2 .stand { display: flex; flex-direction: column; gap: 6px; }
+  .st2 .st { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 14px; background: linear-gradient(90deg, color-mix(in srgb, var(--tc) 16%, var(--bg2)), var(--bg2) 70%); border: 1px solid color-mix(in srgb, var(--tc) 30%, transparent); }
+  .st2 .st em { font-style: italic; font-weight: 800; font-size: 18px; color: var(--text3); }
+  .st2 .st b { font-size: 15px; font-weight: 800; font-style: italic; text-transform: uppercase; color: var(--tc); }
+  .st2 .st .wdl { display: flex; height: 7px; border-radius: 4px; overflow: hidden; margin-top: 5px; background: var(--bg3); }
+  .st2 .st .wdl i { display: block; height: 100%; } .st2 .wdl .w { background: var(--good); } .st2 .wdl .d { background: #5a5a6a; } .st2 .wdl .l { background: var(--bad); }
+  .st2 .st small { font-size: 11px; color: var(--text2); display: block; margin-top: 4px; }
+  .st2 .st .pc { text-align: right; } .st2 .st .pc b { color: var(--text); font-size: 24px; } .st2 .st .pc small { margin: 0; }
+  .st2 .trend svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .st2 .trend text { fill: var(--text3); font-size: 10px; font-family: var(--f); }
+  .st2 .lg { display: flex; gap: 14px; font-size: 11.5px; color: var(--text2); margin-top: 6px; flex-wrap: wrap; }
+  .st2 .lg i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .st2 .tabs3 { display: flex; gap: 4px; margin-bottom: 10px; }
+  .st2 .tabs3 button { border: 1px solid var(--border2); background: none; border-radius: 9px; padding: 5px 10px; font-size: 12px; font-weight: 600; color: var(--text2); cursor: pointer; }
+  .st2 .tabs3 button[aria-pressed="true"] { background: var(--gold-bg); border-color: var(--gold); color: var(--gold); }
+  .st2 .lst { display: flex; flex-direction: column; gap: 3px; }
+  .st2 .lst > div { display: grid; grid-template-columns: 18px 26px minmax(0, 1fr) 90px 30px; gap: 8px; align-items: center; font-size: 13.5px; padding: 4px 0; }
+  .st2 .lst em { font-style: italic; font-weight: 800; color: var(--text3); text-align: center; }
+  .st2 .lst > div:first-child em { color: var(--gold); }
+  .st2 .lst u { display: block; height: 6px; border-radius: 3px; background: var(--bg3); overflow: hidden; } .st2 .lst u i { display: block; height: 100%; background: var(--gold); border-radius: 3px; }
+  .st2 .lst b { text-align: right; font-style: italic; font-variant-numeric: tabular-nums; }
+  .st2 .lst span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .st2 .marq { display: grid; gap: 8px; }
+  .st2 .mq { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px 12px; } .st2 .mq small, .st2 .mq > span { grid-column: 1; } .st2 .mq .sc { grid-column: 2; grid-row: 1 / span 2; margin: 0; white-space: nowrap; }
+  .st2 .mq small { font-size: 10.5px; font-weight: 800; font-style: italic; letter-spacing: .07em; text-transform: uppercase; color: var(--text3); }
+  .st2 .mq .sc { display: flex; align-items: center; gap: 8px; margin: 6px 0 2px; font-size: 13px; font-weight: 700; }
+  .st2 .mq .sc b { font-size: 28px; font-style: italic; font-weight: 800; }
+  .st2 .mq span { font-size: 11.5px; color: var(--text2); }
+  .st2 .colsel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .st2 .colsel button { border: 1.5px solid color-mix(in srgb, var(--tc) 40%, transparent); background: var(--bg2); border-radius: 12px; padding: 9px 4px; font-weight: 800; font-style: italic; text-transform: uppercase; color: var(--tc); cursor: pointer; }
+  .st2 .colsel button[aria-pressed="true"] { background: color-mix(in srgb, var(--tc) 22%, var(--bg2)); border-color: var(--tc); }
+  .st2 .thero { margin-top: 10px; border-radius: 20px; padding: 16px; background: radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--tc) 28%, transparent), transparent 60%), var(--bg2); border: 1.5px solid color-mix(in srgb, var(--tc) 50%, transparent); display: grid; gap: 12px; }
+  @media (min-width: 900px) { .st2 .thero { grid-template-columns: 1.1fr 1fr 1fr; align-items: center; } }
+  .st2 .thero .big { font-size: 64px; font-weight: 800; font-style: italic; line-height: .9; color: var(--tc); }
+  .st2 .thero .big small { font-size: 14px; color: var(--text2); font-style: normal; font-weight: 600; margin-left: 6px; }
+  .st2 .thero .odds { font-size: 14px; color: var(--text); margin-top: 4px; } .st2 .thero .odds b { color: var(--tc); }
+  .st2 .mini { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .st2 .mini > div { background: rgba(0,0,0,.25); border-radius: 12px; padding: 8px 10px; }
+  .st2 .mini b { display: block; font-size: 20px; font-style: italic; font-weight: 800; }
+  .st2 .mini small { font-size: 11px; color: var(--text2); }
+  .st2 .h2h { width: 100%; border-collapse: separate; border-spacing: 4px; font-size: 13px; }
+  .st2 .h2h th { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; }
+  .st2 .h2h td { background: var(--bg2); border-radius: 10px; padding: 8px; text-align: center; font-variant-numeric: tabular-nums; }
+  .st2 .h2h td.x { background: transparent; color: var(--text3); }
+  .st2 .h2h td b { font-size: 16px; font-style: italic; }
+  .st2 .h2h td small { display: block; font-size: 10px; color: var(--text2); }
+  .st2 .strip { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 4px 2px 8px; }
+  .st2 .strip::-webkit-scrollbar { display: none; }
+  .st2 .strip button { flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: 0; cursor: pointer; font-size: 11px; color: var(--text2); width: 54px; }
+  .st2 .strip button .av { --s: 46px; }
+  .st2 .strip button[aria-pressed="true"] { color: var(--gold); font-weight: 700; } .st2 .strip button[aria-pressed="true"] .av { --c: var(--gold); box-shadow: 0 0 0 3px rgba(245,200,66,.25); }
+  .st2 .search { width: 100%; background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 10px 12px; color: var(--text); font: inherit; font-size: 15px; }
+  .st2 .phero { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 14px; align-items: center; margin-top: 8px; }
+  .st2 .phero .pic { width: 96px; height: 120px; border-radius: 16px; overflow: hidden; border: 2px solid var(--gold); background: var(--bg3); display: grid; place-items: center; font-size: 30px; font-weight: 800; color: var(--text3); }
+  .st2 .phero .pic img { width: 100%; height: 100%; object-fit: cover; }
+  .st2 .phero b.nm { font-size: 26px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1; display: block; }
+  .st2 .phero .sub { font-size: 12.5px; color: var(--text2); margin-top: 4px; }
+  .st2 .ptiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+  @media (min-width: 900px) { .st2 .ptiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .st2 .ptiles > div small { font-size: 10.5px; font-weight: 800; font-style: italic; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); }
+  .st2 .ptiles > div b { display: block; font-size: 28px; font-style: italic; font-weight: 800; line-height: 1.1; }
+  .st2 .ptiles > div span { font-size: 11.5px; color: var(--text2); }
+  .st2 .mate { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .st2 .mate:last-child { border-bottom: 0; }
+  .st2 .mate b { font-size: 14px; } .st2 .mate small { display: block; font-size: 11.5px; color: var(--text2); }
+  .st2 .mate .v { font-size: 20px; font-weight: 800; font-style: italic; }
+  .st2 .bars3 > div { display: grid; grid-template-columns: 64px minmax(0, 1fr) 44px; gap: 8px; align-items: center; padding: 5px 0; font-size: 13px; }
+  .st2 .bars3 u { height: 10px; border-radius: 5px; background: var(--bg3); overflow: hidden; display: block; } .st2 .bars3 u i { display: block; height: 100%; background: var(--tc); border-radius: 5px; }
+  .st2 .bars3 b { text-align: right; font-style: italic; }
+  .st2 .duel-pick { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; }
+  .st2 .duel-pick select { width: 100%; background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 10px; color: var(--text); font: inherit; font-weight: 700; }
+  .st2 .duel-pick em { font-style: italic; font-weight: 800; color: var(--text3); }
+  .st2 .vsrow { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; text-align: center; margin-top: 12px; }
+  .st2 .vsrow .av { --s: 72px; }
+  .st2 .vsrow b { display: block; font-size: 44px; font-style: italic; font-weight: 800; line-height: 1; }
+  .st2 .vsrow small { font-size: 11.5px; color: var(--text2); }
+  .st2 .vsbar { display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin: 10px 0 4px; }
+  .st2 .vsbar i { display: block; height: 100%; }
+  .st2 .dhero { border-radius: 20px; padding: 16px; background: radial-gradient(120% 100% at 0% 0%, rgba(102,187,106,.18), transparent 60%), var(--bg2); border: 1.5px solid rgba(102,187,106,.4); }
+  .st2 .dhero small { font-size: 10.5px; font-weight: 800; font-style: italic; letter-spacing: .07em; text-transform: uppercase; color: var(--good); }
+  .st2 .dhero p { margin: 6px 0 0; font-size: 20px; font-weight: 700; line-height: 1.3; text-wrap: balance; }
+  .st2 .dhero p b { color: var(--good); font-style: italic; }
+  .st2 .dhero .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px; color: var(--text3); }
+  .st2 .dhero .nav button { border: 1px solid var(--border2); background: var(--bg3); border-radius: 20px; padding: 5px 12px; font-size: 12.5px; font-weight: 600; color: var(--text); cursor: pointer; }
+  .st2 .chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 2px 0 6px; margin-top: 12px; }
+  .st2 .chips::-webkit-scrollbar { display: none; }
+  .st2 .chips button { flex: none; border: 1px solid var(--border2); background: var(--bg2); border-radius: 20px; padding: 6px 12px; font-size: 12.5px; font-weight: 600; color: var(--text2); cursor: pointer; }
+  .st2 .chips button[aria-pressed="true"] { background: rgba(102,187,106,.16); color: var(--good); border-color: var(--good); }
+  .st2 .dgrid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; margin-top: 6px; }
+  @media (min-width: 700px) { .st2 .dgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1000px) { .st2 .dgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .st2 .dc { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 8px; }
+  .st2 .dc .k { font-size: 10px; font-weight: 800; font-style: italic; letter-spacing: .07em; text-transform: uppercase; color: var(--kc, var(--good)); display: flex; justify-content: space-between; gap: 6px; }
+  .st2 .dc .k span { color: var(--text3); font-style: normal; letter-spacing: .02em; text-transform: none; font-weight: 600; }
+  .st2 .dc .top { display: flex; align-items: center; gap: 10px; }
+  .st2 .dc .big { font-size: 34px; font-weight: 800; font-style: italic; line-height: 1; color: var(--kc, var(--good)); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .st2 .dc p { margin: 0; font-size: 13.5px; line-height: 1.4; } .st2 .dc p b { color: var(--text); }
+  .st2 .dc .cmp { display: grid; gap: 4px; }
+  .st2 .dc .cmp > div { display: grid; grid-template-columns: 72px minmax(0, 1fr) 40px; gap: 8px; align-items: center; font-size: 11.5px; color: var(--text2); }
+  .st2 .dc .cmp u { height: 8px; border-radius: 4px; background: var(--bg3); overflow: hidden; display: block; } .st2 .dc .cmp u i { display: block; height: 100%; border-radius: 4px; background: var(--kc, var(--good)); }
+  .st2 .dc .cmp > div:nth-child(2) u i { background: #5a5a6a; }
+  .st2 .dc .cmp b { text-align: right; color: var(--text); font-style: italic; }
+  .st2 .dc .pile { display: flex; } .st2 .dc .pile .av + .av { margin-left: -10px; }
+  .st2 .calc { border-radius: 20px; padding: 14px; background: linear-gradient(140deg, rgba(245,200,66,.14), transparent 60%), var(--bg2); border: 1.5px solid rgba(245,200,66,.4); }
+  .st2 .calc select { background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 7px 10px; color: var(--text); font: inherit; font-weight: 700; }
+  .st2 .calc .ln { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; line-height: 1.4; }
+  .st2 .calc .ln:last-child { border-bottom: 0; }
+  .st2 .calc .ln b { color: var(--gold); font-style: italic; }
+  .st2 .calc .ln em { font-style: normal; font-size: 18px; text-align: center; }
+  .st2 .iso { position: relative; height: 232px; perspective: 900px; overflow: hidden; border-radius: 18px; background: radial-gradient(120% 80% at 50% 100%, color-mix(in srgb, var(--bleu) 14%, var(--bg2)), var(--bg2)); border: 1px solid var(--border); }
+  .st2 .iso .pitch { position: absolute; left: 50%; top: 70%; width: 270px; height: 172px; margin: -112px 0 0 -135px; transform: rotateX(58deg) rotateZ(-30deg); transform-style: preserve-3d; border-radius: 8px; background: repeating-linear-gradient(90deg, #5a8770 0 27px, color-mix(in srgb, #5a8770 88%, #fff) 27px 54px); box-shadow: 0 30px 50px rgba(0,0,0,.45), inset 0 0 0 3px rgba(255,255,255,.6); }
+  .st2 .iso .pitch::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 3px; background: rgba(255,255,255,.6); margin-left: -1.5px; }
+  .st2 .iso .pitch::after { content: ""; position: absolute; left: 50%; top: 50%; width: 50px; height: 50px; margin: -25px; border-radius: 50%; border: 3px solid rgba(255,255,255,.6); }
+  .st2 .iso .goal { position: absolute; top: 50%; width: 30px; height: 66px; margin-top: -33px; border: 3px solid rgba(255,255,255,.6); } .st2 .iso .goal.l { left: -3px; border-left: none; } .st2 .iso .goal.r { right: -3px; border-right: none; }
+  .st2 .iso .pl { position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -100%) rotateZ(30deg) rotateX(-58deg); transform-origin: 50% 100%; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .st2 .iso .pl .av { box-shadow: 0 6px 10px rgba(0,0,0,.5); }
+  .st2 .iso .pl b { font-size: 10.5px; color: #fff; background: rgba(0,0,0,.75); border-radius: 6px; padding: 1px 6px; white-space: nowrap; }
+  .st2 .iso .pl small { font-size: 9px; color: var(--gold); background: rgba(0,0,0,.75); border-radius: 6px; padding: 0 5px; white-space: nowrap; }
+  .st2 .iso .ttl { position: absolute; left: 14px; top: 12px; z-index: 3; }
+  .st2 .iso .ttl b { display: block; font-size: 22px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1; color: var(--bleu); }
+  .st2 .iso .ttl span { font-size: 11.5px; color: var(--text2); }
+  .st2 .iso .sc { position: absolute; right: 14px; top: 12px; z-index: 3; text-align: right; }
+  .st2 .iso .sc b { display: block; font-size: 30px; font-weight: 800; font-style: italic; line-height: 1; }
+  .st2 .iso .sc span { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text2); }
+  @media (min-width: 900px) { .st2 .iso { height: 320px; } .st2 .iso .pitch { width: 340px; height: 214px; margin: -140px 0 0 -170px; top: 64%; } .st2 .iso .pl .av { --s: 42px !important; } .st2 .iso .pl b { font-size: 11px; } }
+  .st2 .g2.sw > div:first-child { order: 2; }
+  .st2 .dsw { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+  .st2 .dsw button { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; gap: 0 10px; align-items: center; text-align: left; padding: 10px 12px; border-radius: 16px; border: 1.5px solid var(--border2); background: var(--bg2); cursor: pointer; color: var(--text2); }
+  .st2 .dsw button em { grid-row: span 2; font-style: normal; font-size: 26px; filter: grayscale(.8); opacity: .7; }
+  .st2 .dsw button b { font-size: 14px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1.1; }
+  .st2 .dsw button small { font-size: 11.5px; }
+  .st2 .dsw button.vs[aria-pressed="true"] { border-color: var(--gold); color: var(--text); background: linear-gradient(135deg, rgba(245,200,66,.22), rgba(0,187,255,.12)), var(--bg2); }
+  .st2 .dsw button.tog[aria-pressed="true"] { border-color: var(--good); color: var(--text); background: linear-gradient(135deg, rgba(102,187,106,.22), transparent), var(--bg2); }
+  .st2 .dsw button[aria-pressed="true"] em { filter: none; opacity: 1; }
+  .st2 .dcard.vs { background: linear-gradient(90deg, rgba(245,200,66,.08), transparent 40%, transparent 60%, rgba(0,187,255,.08)), var(--bg2); }
+  .st2 .dcard.tog { background: radial-gradient(80% 100% at 50% 0%, rgba(102,187,106,.12), transparent 70%), var(--bg2); }
+  .st2 .vsrow .mid b { font-size: 26px; color: var(--text2); } .st2 .vsrow .mid small { display: block; }
+  .st2 .vsrow .mid.pair { display: flex; flex-direction: column; align-items: center; } .st2 .vsrow .mid.pair .av + .av { margin-top: -26px; margin-left: 34px; }
+  .st2 .vsrow.tog .mid.pair { flex-direction: row; justify-content: center; flex-wrap: wrap; } .st2 .vsrow.tog .mid.pair .av + .av { margin: 0 0 0 -18px; } .st2 .vsrow.tog .mid.pair small { flex-basis: 100%; text-align: center; margin-top: 4px; }
+  .st2 .cmp2 .hd { border-top: 0 !important; } .st2 .cmp2 .hd b { font-size: 12px !important; font-style: normal !important; color: var(--text2) !important; }
+  .st2 .pz { display: grid; gap: 8px; margin-bottom: 14px; }
+  @media (min-width: 900px) { .st2 .pz { grid-template-columns: auto minmax(0, 420px); align-items: center; justify-content: start; gap: 14px; } }
+  .st2 .pz-seg { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--bg2); border-radius: 12px; padding: 3px; gap: 2px; }
+  .st2 .pz-seg button { border: 0; background: none; border-radius: 9px; padding: 7px 12px; font-size: 13px; font-weight: 700; color: var(--text2); cursor: pointer; }
+  .st2 .pz-seg button[aria-selected="true"] { background: var(--bg3); color: var(--text); box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 4px 10px rgba(0,0,0,.3); }
+  .st2 .pz-nav { display: grid; grid-template-columns: 36px minmax(0, 1fr) 36px auto; align-items: center; gap: 4px; background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 4px; }
+  .st2 .pz-arr { width: 36px; height: 40px; border: 0; background: none; border-radius: 10px; font-size: 22px; line-height: 1; color: var(--text); cursor: pointer; }
+  .st2 .pz-arr:disabled { color: var(--text3); opacity: .4; cursor: default; }
+  .st2 .pz-arr:not(:disabled):hover { background: var(--bg3); }
+  .st2 .pz-cur { position: relative; text-align: center; min-width: 0; }
+  .st2 .pz-cur b { display: block; font-size: 15px; font-weight: 800; font-style: italic; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .st2 .pz-cur small { font-size: 11px; color: var(--text2); }
+  .st2 .pz-cur select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+  .st2 .pz-cmp { display: inline-flex; align-items: center; gap: 4px; height: 34px; border: 1px solid var(--border2); background: var(--bg3); border-radius: 10px; padding: 0 9px; font-size: 14px; font-weight: 800; color: var(--text2); cursor: pointer; white-space: nowrap; }
+  .st2 .pz-cmp span { font-size: 11px; font-weight: 700; }
+  .st2 .pz-cmp[aria-pressed="true"] { border-color: var(--bleu); color: var(--bleu); background: color-mix(in srgb, var(--bleu) 14%, var(--bg3)); }
+  .st2 .pz-cmp:disabled { opacity: .4; }
+  .st2 .pbar { display: grid; gap: 8px; margin-bottom: 12px; }
+  .st2 .prow { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .st2 .psel select { background: var(--bg2); border: 1px solid var(--border2); border-radius: 10px; padding: 8px 10px; color: var(--text); font: inherit; font-weight: 700; font-size: 14px; }
+  .st2 .pinfo { font-size: 12.5px; color: var(--text2); }
+  .st2 .cmpb { border: 1px solid var(--border2); background: var(--bg2); border-radius: 10px; padding: 8px 12px; font-size: 12.5px; font-weight: 700; color: var(--text2); cursor: pointer; }
+  .st2 .cmpb[aria-pressed="true"] { border-color: var(--bleu); color: var(--bleu); background: color-mix(in srgb, var(--bleu) 12%, var(--bg2)); }
+  .st2 .cmpb:disabled { opacity: .45; cursor: default; }
+  .st2 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .st2 .dl { display: inline-block; margin-top: 4px; font-size: 11px; font-weight: 700; font-style: normal; border-radius: 6px; padding: 1px 6px; white-space: nowrap; }
+  .st2 .dl i { font-style: normal; font-weight: 500; opacity: .75; }
+  .st2 .dl.up { color: var(--good); background: rgba(102,187,106,.12); } .st2 .dl.dn { color: var(--bad); background: rgba(239,83,80,.12); } .st2 .dl.eq { color: var(--text2); background: var(--bg3); }
+  .st2 .kpi .dl { display: block; width: max-content; }
+  .st2 .fm { display: inline-grid; place-items: center; width: 15px; height: 15px; border-radius: 4px; font-size: 8.5px; font-weight: 800; font-style: normal; color: #111; margin-left: 2px; vertical-align: 1px; }
+  .st2 .fm.V { background: var(--good); } .st2 .fm.N { background: #6b6b78; color: #fff; } .st2 .fm.D { background: var(--bad); color: #fff; }
+  .st2 .form { display: flex; gap: 3px; margin-top: 6px; flex-wrap: wrap; } .st2 .form .fm { width: 22px; height: 22px; font-size: 11px; margin: 0; }
+  .st2 .tyl .mate .v { font-size: 13px; color: var(--gold); font-style: italic; }
+  .st2 .mom { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .st2 .mom .card { position: relative; padding: 12px; }
+  .st2 .mom span { position: absolute; right: 10px; top: 8px; font-size: 20px; }
+  .st2 .mom small { font-size: 10px; font-weight: 800; font-style: italic; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); display: block; padding-right: 24px; }
+  .st2 .mom b { display: block; font-size: 22px; font-weight: 800; font-style: italic; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .st2 .mom em { font-style: normal; font-size: 11.5px; color: var(--text2); }
+  .st2 .ff { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .st2 .ff th { font-size: 10.5px; color: var(--text3); text-transform: uppercase; font-weight: 700; text-align: center; padding: 4px; }
+  .st2 .ff th:first-child, .st2 .ff td:first-child { text-align: left; }
+  .st2 .ff td { padding: 8px 4px; text-align: center; border-top: 1px solid var(--border); }
+  .st2 .thero .dl { margin-bottom: 4px; }
+  .st2 .pk { position: relative; margin: 4px 0 6px; z-index: 4; }
+  .st2 .pk-btn { width: 100%; display: grid; grid-template-columns: auto minmax(0, 1fr) 28px; gap: 10px; align-items: center; text-align: left; background: var(--bg2); border: 1.5px solid rgba(245,200,66,.5); border-radius: 16px; padding: 8px 10px; cursor: pointer; }
+  .st2 .pk-btn b { display: block; font-size: 17px; font-weight: 800; font-style: italic; text-transform: uppercase; } .st2 .pk-btn small { font-size: 11.5px; color: var(--text2); }
+  .st2 .pk-btn .car { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--gold); color: #1d1604; font-size: 12px; font-weight: 900; }
+  .st2 .pk-list { position: absolute; left: 0; right: 0; top: calc(100% + 6px); background: #15151d; border: 1px solid var(--border2); border-radius: 16px; padding: 8px; box-shadow: 0 24px 50px rgba(0,0,0,.6); max-height: 420px; overflow-y: auto; }
+  @media (min-width: 900px) { .st2 .pk { max-width: 420px; } }
+  .st2 .pk-g { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); padding: 10px 6px 4px; }
+  .st2 .pk-r { width: 100%; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; background: none; border: 0; border-radius: 10px; padding: 6px; cursor: pointer; text-align: left; font-size: 14.5px; font-weight: 600; }
+  .st2 .pk-r small { color: var(--text3); font-size: 11px; }
+  .st2 .pk-r:hover, .st2 .pk-r[aria-pressed="true"] { background: var(--bg3); }
+  .st2 .ptab { padding: 6px; }
+  .st2 .ptab-h, .st2 .ptab-r { display: grid; grid-template-columns: minmax(0, 1fr) 36px 44px 32px 32px; gap: 4px; align-items: center; }
+  .st2 .ptab-h { padding: 6px 8px; font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; }
+  .st2 .ptab-h button { background: none; border: 0; color: var(--text3); font-size: 11px; font-weight: 800; cursor: pointer; padding: 0; text-align: right; }
+  .st2 .ptab-h button[aria-pressed="true"] { color: var(--gold); }
+  .st2 .ptab-b { max-height: 360px; overflow-y: auto; }
+  .st2 .ptab-r { width: 100%; background: none; border: 0; border-radius: 10px; padding: 6px 8px; cursor: pointer; text-align: left; font-size: 13.5px; grid-template-columns: 26px minmax(0, 1fr) 36px 44px 32px 32px; }
+  .st2 .ptab-h { grid-template-columns: minmax(0, 1fr) 36px 44px 32px 32px; padding-left: 38px; }
+  .st2 .ptab-r span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+  .st2 .ptab-r b { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 12.5px; color: var(--text2); }
+  .st2 .ptab-r[aria-pressed="true"] { background: var(--gold-bg); outline: 1px solid var(--gold); } .st2 .ptab-r[aria-pressed="true"] span { color: var(--gold); }
+  .st2 .g2.pb { grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 900px) { .st2 .g2.pb { grid-template-columns: 360px minmax(0, 1fr); } }
+  .st2 .cmp2 { display: grid; gap: 2px; margin-top: 12px; }
+  .st2 .cmp2 > div { display: grid; grid-template-columns: 60px minmax(0, 1fr) 60px; gap: 8px; align-items: center; padding: 6px 0; border-top: 1px solid var(--border); }
+  .st2 .cmp2 span { text-align: center; font-size: 12px; color: var(--text2); }
+  .st2 .cmp2 b { font-size: 18px; font-weight: 800; font-style: italic; } .st2 .cmp2 > div b:first-child { color: var(--gold); } .st2 .cmp2 > div b:last-child { text-align: right; }
+  .st2 .cf > div { display: grid; grid-template-columns: 40px minmax(0, 1fr) 54px minmax(0, 1fr); gap: 6px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .st2 .cf > div:last-child { border-bottom: 0; }
+  .st2 .cf .d { font-size: 11px; color: var(--text3); }
+  .st2 .cf span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .st2 .cf small { color: var(--gold); }
+  .st2 .cf b { text-align: center; font-style: italic; font-size: 15px; } .st2 .cf b.w { color: var(--gold); } .st2 .cf b.l { color: var(--text2); }
   /* ═══ Onglet Récompenses (refonte 22/11/2026, préfixe rw-) ═══ */
   .rw { --rwv: #b892ff; }
   .rw-eb { display: block; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); padding-top: 6px; }
@@ -4037,7 +4287,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 11:54</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 22/11/2026 - 12:06</footer>
 
 <script>
 
@@ -7821,6 +8071,430 @@ function _rwBindMatrix(container) {
 }
 
 /* ══════════════════════════════════════════════════════════
+   ONGLET STATISTIQUES (refonte du 22/11/2026, préfixe st2)
+   Aperçu · Équipes · Joueurs · Duels · Datas. Tout est recalculé depuis les feuilles de match
+   pour la période choisie (soirée, mois, saison, depuis le début), avec la comparaison à la
+   période précédente. Les Datas sont calculées sur la saison en cours. Dépanneurs exclus des
+   classements. Remplace l'ancien tableau de bord (dbx-), dont le code reste mais n'est plus affiché.
+══════════════════════════════════════════════════════════ */
+(function () {
+const fr = v => String(v).replace(".", ",");
+const dd = s => { const [, m, d] = String(s).split("-"); return `${+d}/${m}`; };
+const esc = x => String(x == null ? "" : x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+const av = (n, s = 32, c) => `<span class="st2-av"${c ? ` style="--tc:${c}"` : ""}>${_crAv(n, "", s)}</span>`;
+const ME = () => (typeof _accPlayer === "function" && _accPlayer()) || null;
+const TCLS = { [TEAM_LABEL.Rouge]: "tR", [TEAM_LABEL.Vert]: "tV", [TEAM_LABEL.Bleue]: "tB" };
+const COLS = [TEAM_LABEL.Bleue, TEAM_LABEL.Rouge, TEAM_LABEL.Vert];
+const st = { sub: "apercu", per: "mois", sk: "", mk: "", cmp: true, pick: false, pq: "", recent: [], psort: "m", psel: "A", dt: "vs", col: TEAM_LABEL.Bleue, pl: "", top: "but", dcat: "tous", hero: 0, a: "", b: "", dp: "" };
+let RAW = [], DATES = [], MONTHS = [], RKEY = "";
+function refreshRaw() {
+  const k = (SESSIONS || []).length + "|" + (SESSIONS || []).map(s => s.date + ":" + (s.matchs || []).length).join(",");
+  if (k === RKEY) return; RKEY = k; Object.keys(AGG_CACHE).forEach(x => delete AGG_CACHE[x]);
+  RAW = [...(SESSIONS || [])].sort((a, b) => a.date.localeCompare(b.date)).map(s => [s.date, (s.matchs || []).map(m => [m.eqA, m.eqB, m.scoreA || 0, m.scoreB || 0, m.buteursA || [], m.buteursB || [], m.passeursA || [], m.passeursB || [], m.gardiensA || ["", ""], m.gardiensB || ["", ""], m.mt1A == null ? null : m.mt1A, m.mt1B == null ? null : m.mt1B]),
+    Object.fromEntries(Object.entries(s.presences || {}).map(([p, i]) => [p, [i && i.statut, i && i.equipe]]))]);
+  DATES = RAW.map(s => s[0]); MONTHS = [...new Set(DATES.map(d => d.slice(0, 7)))];
+}
+/* ═════ Moteur : tout est recalculé depuis les feuilles de match, pour la période choisie ═════ */
+const TLB = { Rouge: TEAM_LABEL.Rouge, Vert: TEAM_LABEL.Vert, Bleue: TEAM_LABEL.Bleue }, TCV = { [TEAM_LABEL.Rouge]: "var(--rouge)", [TEAM_LABEL.Vert]: "var(--vert)", [TEAM_LABEL.Bleue]: "var(--bleu)" };
+const MOISL = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+const dl = d => new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+const ml = k => { const [y, m] = k.split("-"); return MOISL[+m - 1] + " " + y; };
+const f1 = v => fr((Math.round(v * 10) / 10).toFixed(1)), f2 = v => fr(v.toFixed(2));
+function perSessions(per, key) { return per === "soir" ? RAW.filter(s => s[0] === key) : per === "mois" ? RAW.filter(s => s[0].startsWith(key)) : per === "saison" ? RAW.filter(s => _seasonStart(s[0]) === _currentSeason()) : RAW.slice(); }
+function perKey() { return st.per === "soir" ? st.sk : st.per === "mois" ? st.mk : null; }
+function prevOf(per, key) {
+  if (per === "soir") { const i = DATES.indexOf(key); return i > 0 ? DATES[i - 1] : null; }
+  if (per === "mois") { const i = MONTHS.indexOf(key); return i > 0 ? MONTHS[i - 1] : null; }
+  return null;
+}
+function perLabel(per, key) { return per === "soir" ? `le ${dl(key)}` : per === "mois" ? `en ${ml(key)}` : per === "saison" ? `la saison ${_seasonLabel(_currentSeason())}` : "depuis le début"; }
+function agg(list) {
+  const A = { nS: list.length, nM: 0, goals: 0, draws: 0, zero: 0, cs: 0, sides: 0, pres: 0, abs: 0, inj: 0, T: {}, P: {}, matches: [] };
+  const P = n => A.P[n] || (A.P[n] = { m: 0, w: 0, d: 0, g: 0, a: 0, ms: 0, gc: 0, gkH: 0, gkC: 0, gkCS: 0, cols: {}, sess: {}, best: null, mates: {} });
+  ["Rouge", "Vert", "Bleue"].forEach(t => A.T[t] = { m: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, form: [], sc: {}, as: {}, res: [] });
+  list.forEach(([date, M, PR]) => {
+    Object.values(PR).forEach(v => { if (v[0] === "Présent") A.pres++; else if (v[0] === "Absent") A.abs++; else if (v[0] === "Blessé") A.inj++; });
+    const field = t => Object.keys(PR).filter(p => PR[p][0] === "Présent" && PR[p][1] === t);
+    M.forEach(m => {
+      const [ea, eb, sa, sb, bA, bB, pA, pB, gA, gB, h1a, h1b] = m;
+      A.nM++; A.goals += sa + sb; if (sa === sb) A.draws++; if (!sa && !sb) A.zero++;
+      A.matches.push({ date, ea, eb, sa, sb, bA, bB });
+      [[ea, sa, sb, bA, pA, gA, h1b, eb], [eb, sb, sa, bB, pB, gB, h1a, ea]].forEach(([t, f, c, B, Pa, G, h1c, o]) => {
+        const T = A.T[t], r = f > c ? "V" : f === c ? "N" : "D";
+        T.m++; T.gf += f; T.ga += c; if (r === "V") T.w++; else if (r === "N") T.d++; else T.l++; T.form.push(r); T.res.push({ date, f, c, o });
+        A.sides++; if (!c) A.cs++;
+        const F = field(t), gl = {};
+        B.forEach((b, i) => { if (!b || b === "CSC") return; gl[b] = (gl[b] || 0) + 1; T.sc[b] = (T.sc[b] || 0) + 1; P(b).g++; const pa = Pa[i]; if (pa && pa !== "CSC") { P(pa).a++; T.as[pa] = (T.as[pa] || 0) + 1; } });
+        F.forEach(p => { const x = P(p); x.m++; if (r === "V") x.w++; if (r === "N") x.d++; x.gc += c; x.cols[t] = x.cols[t] || [0, 0]; x.cols[t][0]++; if (r === "V") x.cols[t][1]++; x.sess[date] = x.sess[date] || [0, 0]; x.sess[date][0] += gl[p] || 0; if (gl[p]) x.ms++;
+          F.forEach(q => { if (q !== p) { const k = x.mates[q] = x.mates[q] || [0, 0]; k[0]++; if (r === "V") k[1]++; } });
+          const sc = (gl[p] || 0) * 1 + 0; if (!x.best || sc > x.best.g || (sc === x.best.g && f - c > x.best.f - x.best.c)) x.best = { g: sc, date, f, c, o }; });
+        Pa.forEach((pa, i) => { if (pa && pa !== "CSC" && B[i] && B[i] !== "CSC") { const x = P(pa); x.sess[date] = x.sess[date] || [0, 0]; x.sess[date][1]++; } });
+        if (h1c != null) [[G[0], h1c], [G[1], c - h1c]].forEach(([g, cc]) => { if (!g) return; const x = P(g); x.gkH++; x.gkC += cc; if (!cc) x.gkCS++; });
+      });
+    });
+  });
+  return A;
+}
+const AGG_CACHE = {};
+const aggOf = (per, key) => { const k = per + "|" + key; return AGG_CACHE[k] || (AGG_CACHE[k] = agg(perSessions(per, key))); };
+function delta(cur, prev, { unit = "", pct = false, inv = false, dec = 0 } = {}) {
+  if (!st.cmp || prev == null || cur == null || isNaN(prev)) return "";
+  const d = cur - prev; if (Math.abs(d) < (dec ? .05 : .5)) return `<span class="dl eq">= ${prevLbl()}</span>`;
+  const good = inv ? d < 0 : d > 0;
+  return `<span class="dl ${good ? "up" : "dn"}">${d > 0 ? "▲" : "▼"} ${d > 0 ? "+" : ""}${dec ? fr(d.toFixed(dec)) : Math.round(d)}${pct ? " pts" : unit} <i>${prevLbl()}</i></span>`;
+}
+function prevLbl() { const pk = prevOf(st.per, perKey()); return pk ? (st.per === "soir" ? `vs ${dd(pk)}` : `vs ${MOISL[+pk.slice(5) - 1]}`) : ""; }
+function topList(A, key, n = 5, minM = 0) {
+  const L = Object.entries(A.P).filter(([p, x]) => !(DEPS.has(p)) && x.m >= minM);
+  if (key === "cs") { const mh = gkMin(A); return L.filter(([p, x]) => x.gkH >= mh).map(([p, x]) => [p, Math.round(x.gkCS / x.gkH * 100), `${x.gkCS} sur ${x.gkH} mi-t.`]).sort((a, b) => b[1] - a[1] || b[2].localeCompare(a[2]) || a[0].localeCompare(b[0], "fr")).slice(0, n); }
+  const v = { but: x => x.g, pass: x => x.a, ga: x => x.g + x.a }[key];
+  return L.map(([p, x]) => [p, v(x)]).filter(r => r[1] > 0).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "fr")).slice(0, n);
+}
+const DEPS = ABSENTS;
+const gkMin = A => Math.max(2, Math.ceil(A.nM / 10)); // même règle que le Prix Yachine : 1 mi-temps au but pour 10 matchs
+
+/* ── barre de période ── */
+function periodBar(noCmp) {
+  const per = st.per, key = perKey(), pk = prevOf(per, key);
+  const L = per === "soir" ? DATES : per === "mois" ? MONTHS : null, i = L ? L.indexOf(key) : -1;
+  const A = aggOf(per, key);
+  const label = per === "soir" ? `Soirée du ${dl(key)}` : per === "mois" ? ml(key).replace(/^./, c => c.toUpperCase()) : per === "saison" ? `Saison ${_seasonLabel(_currentSeason())}` : "Depuis le début";
+  const sub = `${A.nS} soirée${A.nS > 1 ? "s" : ""} · ${A.nM} matchs`;
+  const opts = L ? L.slice().reverse().map(k => `<option value="${k}"${k === key ? " selected" : ""}>${per === "soir" ? dl(k) : ml(k)}</option>`).join("") : "";
+  return `<div class="pz"><div class="pz-seg" role="tablist" aria-label="Période">${[["soir", "Soirée"], ["mois", "Mois"], ["saison", "Saison"], ["tout", "Tout"]].map(([k, l]) => `<button type="button" role="tab" data-per="${k}" aria-selected="${per === k}">${l}</button>`).join("")}</div>
+    <div class="pz-nav"><button type="button" class="pz-arr" data-stepp="-1" aria-label="Période précédente"${L && i > 0 ? "" : " disabled"}>‹</button>
+      <div class="pz-cur"><b>${label}</b><small>${sub}</small>${L ? `<select id="psel" aria-label="Choisir la période">${opts}</select>` : ""}</div>
+      <button type="button" class="pz-arr" data-stepp="1" aria-label="Période suivante"${L && i < L.length - 1 ? "" : " disabled"}>›</button>
+      ${noCmp || !L ? "" : `<button type="button" class="pz-cmp" data-cmp aria-pressed="${st.cmp}"${pk ? "" : " disabled"} title="Comparer avec la période précédente">⇄<span>${pk ? (per === "soir" ? dd(pk) : MOISL[+pk.slice(5) - 1].slice(0, 4) + ".") : "—"}</span></button>`}</div></div>`;
+}
+
+/* ═════ Aperçu ═════ */
+function apercu(wide) {
+  const A = aggOf(st.per, perKey()), pk = prevOf(st.per, perKey()), B = pk && st.cmp ? aggOf(st.per, pk) : null;
+  const kpi = (lab, val, sub, dlt) => `<div class="card kpi"><small>${lab}</small><b>${val}</b><span>${sub}</span>${dlt}</div>`;
+  const csr = A.sides ? A.cs / A.sides : 0, gpm = A.nM ? A.goals / A.nM : 0;
+  const ranked = ["Bleue", "Rouge", "Vert"].map(t => ({ t, ...A.T[t] })).filter(x => x.m).sort((a, b) => (b.w * 3 + b.d) - (a.w * 3 + a.d) || (b.gf - b.ga) - (a.gf - a.ga));
+  const tops = { but: topList(A, "but"), pass: topList(A, "pass"), cs: topList(A, "cs") };
+  const prevRank = (k, p, cur) => { if (!B) return ""; const L = topList(B, k, 99), i = L.findIndex(r => r[0] === p); if (i < 0) return `<span class="dl up" style="margin:0 0 0 4px">nouveau</span>`; const d = i - cur; return d ? `<span class="dl ${d > 0 ? "up" : "dn"}" style="margin:0 0 0 4px">${d > 0 ? "▲" : "▼"}${Math.abs(d)}</span>` : ""; };
+  const T = tops[st.top], max = Math.max(1, ...T.map(r => r[1]));
+  const mt = A.matches.slice().sort((a, b) => Math.abs(b.sa - b.sb) - Math.abs(a.sa - a.sb) || (b.sa + b.sb) - (a.sa + a.sb))[0];
+  const mg = A.matches.slice().sort((a, b) => (b.sa + b.sb) - (a.sa + a.sb))[0];
+  const ty = typeOf(A);
+  const ser = st.per === "soir" ? A.matches.map((m, i) => [`#${i + 1}`, m.sa + m.sb]) : perSessions(st.per, perKey()).map(s => [dd(s[0]), s[1].reduce((a, m) => a + m[2] + m[3], 0)]);
+  return `${periodBar()}
+    <div class="kpis">
+      ${kpi("Matchs", A.nM, `${A.nS} soirée${A.nS > 1 ? "s" : ""}`, delta(A.nM, B && B.nM))}
+      ${kpi("Buts", A.goals, `${f2(gpm)} par match`, delta(gpm, B && (B.goals / B.nM), { dec: 2 }))}
+      ${kpi("Clean sheets", Math.round(csr * 100) + "%", `${A.cs} sur ${A.sides} matchs d'équipe`, delta(csr * 100, B && (B.cs / B.sides * 100), { pct: true }))}
+      ${kpi("Présents", f1(A.pres / Math.max(1, A.nS)), `par soirée · ${A.abs} absences, ${A.inj} blessures`, delta(A.pres / A.nS, B && B.pres / B.nS, { dec: 1 }))}
+    </div>
+    <div class="g2${st.per === "soir" ? " sw" : ""}"><div><div class="h2">Les couleurs <span>· ${perLabel(st.per, perKey())}</span></div><div class="stand">${ranked.map((x, i) => { const c = TLB[x.t], pv = B && B.T[x.t].m ? B.T[x.t].w / B.T[x.t].m * 100 : null;
+        return `<div class="st ${TCLS[c]}"><em>${i + 1}</em><span><b>${c}</b><span class="wdl"><i class="w" style="width:${x.w / x.m * 100}%"></i><i class="d" style="width:${x.d / x.m * 100}%"></i><i class="l" style="width:${x.l / x.m * 100}%"></i></span><small>${x.w}V ${x.d}N ${x.l}D · ${x.gf} pour, ${x.ga} contre · forme ${x.form.slice(-5).map(r => `<i class="fm ${r}">${r}</i>`).join("")}</small></span><span class="pc"><b>${Math.round(x.w / x.m * 100)}%</b>${delta(x.w / x.m * 100, pv, { pct: true }) || `<small>de victoires</small>`}</span></div>`; }).join("")}</div></div>
+    <div><div class="h2">Équipe-type <span>· ${perLabel(st.per, perKey())}</span></div>${isoTy(ty)}</div></div>
+    <div class="g2"><div><div class="h2">${st.per === "soir" ? "Buts match par match" : "Buts soirée par soirée"}</div>${bars(ser)}</div>
+    <div><div class="h2">Classements</div><div class="card"><div class="tabs3">${[["but", "⚽ Buteurs"], ["pass", "🎯 Passeurs"], ["cs", "🧤 Clean sheets %"]].map(([k, l]) => `<button type="button" data-top="${k}" aria-pressed="${st.top === k}">${l}</button>`).join("")}</div>
+      <div class="lst">${T.map((r, i) => `<div><em>${i + 1}</em>${av(r[0], 26)}<span>${esc(r[0])} ${prevRank(st.top, r[0], i)}${r[2] ? `<small style="display:block;font-size:11px;color:var(--text3)">${r[2]}</small>` : ""}</span><u><i style="width:${r[1] / max * 100}%"></i></u><b>${r[1]}${st.top === "cs" ? "%" : ""}</b></div>`).join("") || `<p style="color:var(--text2);font-size:13px">Rien sur cette période.</p>`}</div></div></div></div>
+    <div class="h2">Matchs marquants</div><div class="marq">
+      ${mt ? `<div class="card mq"><small>Plus grand écart</small><span>${dl(mt.date)}</span><div class="sc"><span class="dot ${TCLS[TLB[mt.ea]]}"></span>${TLB[mt.ea]} <b>${mt.sa}–${mt.sb}</b> ${TLB[mt.eb]}<span class="dot ${TCLS[TLB[mt.eb]]}"></span></div></div>` : ""}
+      ${mg ? `<div class="card mq"><small>Match le plus prolifique</small><span>${dl(mg.date)}</span><div class="sc"><span class="dot ${TCLS[TLB[mg.ea]]}"></span>${TLB[mg.ea]} <b>${mg.sa}–${mg.sb}</b> ${TLB[mg.eb]}<span class="dot ${TCLS[TLB[mg.eb]]}"></span></div></div>` : ""}
+      <div class="card mq"><small>Matchs nuls</small><span>dont ${A.zero} 0-0</span><div class="sc"><b>${Math.round(A.draws / Math.max(1, A.nM) * 100)}%</b></div></div></div>`;
+}
+function isoTy(ty) {
+  const pos = [[7, 50], [34, 14], [34, 86], [70, 28], [70, 72]];
+  const P = ty.map(([r, p, v], i) => p ? `<div class="pl" style="--x:${pos[i][0]}%;--y:${pos[i][1]}%">${av(p, 34, i ? "var(--gold)" : "var(--text2)")}<b>${esc(p)}</b><small>${v.replace(" clean sheets", " CS").replace(" enc./match", " enc./m")}</small></div>` : "").join("");
+  return `<div class="iso" style="background:radial-gradient(120% 80% at 50% 100%, rgba(245,200,66,.12), var(--bg2))"><div class="ttl"><b style="color:var(--gold)">Équipe-type</b><span>${perLabel(st.per, perKey())}</span></div><div class="pitch"><span class="goal l"></span><span class="goal r"></span>${P}</div></div>
+    <p style="font-size:11px;color:var(--text3);margin:6px 0 0">Gardien : meilleur % de mi-temps sans encaisser · défenseur : le moins encaissé par match · puis le meilleur passeur et les 2 meilleurs buteurs, sans doublon.</p>`;
+}
+function typeOf(A) {
+  const L = Object.entries(A.P).filter(([p]) => !DEPS.has(p)), minM = Math.max(2, Math.round(A.nM * .15)), used = new Set();
+  const pick = (f, s, fmt) => { const r = L.filter(([p, x]) => !used.has(p) && f(x)).sort((a, b) => s(b[1]) - s(a[1]))[0]; if (!r) return [null]; used.add(r[0]); return [r[0], fmt(r[1])]; };
+  const gk = pick(x => x.gkH >= gkMin(A), x => x.gkCS / x.gkH - x.gkC / x.gkH / 100, x => `${Math.round(x.gkCS / x.gkH * 100)}% clean sheets`);
+  const de = pick(x => x.m >= minM, x => -x.gc / x.m, x => `${f1(x.gc / x.m)} enc./match`);
+  const pa = pick(x => x.a > 0, x => x.a * 10 + x.g, x => `${x.a} passe${x.a > 1 ? "s" : ""}`);
+  const b1 = pick(x => x.g > 0, x => x.g * 10 + x.a, x => `${x.g} but${x.g > 1 ? "s" : ""}`);
+  const b2 = pick(x => x.g > 0, x => x.g * 10 + x.a, x => `${x.g} but${x.g > 1 ? "s" : ""}`);
+  return [["Gardien · meilleur % de clean sheets", ...gk], ["Défenseur · le moins encaissé", ...de], ["Passeur", ...pa], ["Buteur", ...b1], ["Buteur", ...b2]];
+}
+function bars(ser) {
+  const W = 600, H = 180, L = 24, R = 8, T = 14, B = 22, n = Math.max(1, ser.length), max = Math.max(4, ...ser.map(s => s[1])), bw = (W - L - R) / n;
+  const y = v => T + (H - T - B) * (1 - v / max), avg = ser.reduce((a, s) => a + s[1], 0) / n;
+  return `<div class="card trend"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Buts par période">${ser.map((s, i) => `<rect x="${(L + i * bw + bw * .18).toFixed(1)}" y="${y(s[1]).toFixed(1)}" width="${(bw * .64).toFixed(1)}" height="${(H - B - y(s[1])).toFixed(1)}" rx="4" fill="${s[1] === Math.max(...ser.map(z => z[1])) ? "var(--gold)" : "color-mix(in srgb, var(--gold) 55%, var(--bg3))"}"/><text x="${(L + i * bw + bw / 2).toFixed(1)}" y="${(y(s[1]) - 4).toFixed(1)}" text-anchor="middle" style="fill:var(--text2)">${s[1]}</text>${n <= 14 || i % 2 === 0 ? `<text x="${(L + i * bw + bw / 2).toFixed(1)}" y="${H - 7}" text-anchor="middle">${s[0]}</text>` : ""}`).join("")}<line x1="${L}" x2="${W - R}" y1="${y(avg)}" y2="${y(avg)}" stroke="var(--text2)" stroke-dasharray="4 4"/></svg><div class="lg"><span><i style="background:var(--gold)"></i>Buts</span><span><i style="background:var(--text2)"></i>Moyenne ${f1(avg)}</span></div></div>`;
+}
+
+/* ═════ Équipes ═════ */
+function equipes(wide) {
+  const A = aggOf(st.per, perKey()), pk = prevOf(st.per, perKey()), B = pk && st.cmp ? aggOf(st.per, pk) : null;
+  const t = { Bleus: "Bleue", Roses: "Rouge", Jaunes: "Vert" }[st.col], x = A.T[t], bx = B && B.T[t].m ? B.T[t] : null;
+  if (!x.m) return periodBar() + colSel() + `<div class="card" style="margin-top:10px;color:var(--text2)">Les ${st.col} n'ont pas joué sur cette période.</div>`;
+  const wr = x.w / x.m, others = ["Bleue", "Rouge", "Vert"].filter(o => o !== t);
+  const sc = Object.entries(x.sc).sort((a, b) => b[1] - a[1]).slice(0, 5), as = Object.entries(x.as).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const best = x.res.slice().sort((a, b) => (b.f - b.c) - (a.f - a.c) || b.f - a.f)[0], worst = x.res.slice().sort((a, b) => (a.f - a.c) - (b.f - b.c))[0];
+  let run = 0, br = 0; x.form.forEach(r => { run = r === "V" ? run + 1 : 0; br = Math.max(br, run); });
+  const vs = others.map(o => { const R = x.res.filter(r => r.o === o); return [o, R.length, R.filter(r => r.f > r.c).length, R.filter(r => r.f === r.c).length, R.filter(r => r.f < r.c).length, R.reduce((a, r) => a + r.f, 0), R.reduce((a, r) => a + r.c, 0)]; });
+  const bete = vs.filter(v => v[1]).sort((a, b) => a[2] / a[1] - b[2] / b[1])[0];
+  return `${periodBar()}${colSel()}
+    <div class="thero ${TCLS[st.col]}"><div><div class="big">${Math.round(wr * 100)}%<small>de victoires</small></div>${delta(wr * 100, bx && bx.w / bx.m * 100, { pct: true })}<div class="odds">Soit <b>1 chance sur ${fr((1 / Math.max(wr, .01)).toFixed(1))}</b> de gagner un match.</div></div>
+      <div class="mini"><div><b>${x.w}–${x.d}–${x.l}</b><small>V · N · D en ${x.m} matchs</small></div><div><b>${x.gf - x.ga > 0 ? "+" : ""}${x.gf - x.ga}</b><small>différentiel (${x.gf} pour, ${x.ga} contre)</small></div><div><b>${f2(x.gf / x.m)}</b><small>marqués / match ${delta(x.gf / x.m, bx && bx.gf / bx.m, { dec: 2 })}</small></div><div><b>${f2(x.ga / x.m)}</b><small>encaissés / match ${delta(x.ga / x.m, bx && bx.ga / bx.m, { dec: 2, inv: true })}</small></div></div>
+      <div><small style="font-size:10.5px;font-weight:800;font-style:italic;letter-spacing:.07em;text-transform:uppercase;color:var(--text3)">Forme</small><div class="form">${x.form.slice(-10).map(r => `<i class="fm ${r}">${r}</i>`).join("")}</div></div></div>
+    <div class="g2"><div><div class="h2">Moments forts</div><div class="mom">
+      <div class="card"><span>🔥</span><small>Plus belle victoire</small><b>${best.f}–${best.c}</b><em>contre les ${TLB[best.o]} · ${dl(best.date)}</em></div>
+      <div class="card"><span>💀</span><small>Pire défaite</small><b>${worst.f}–${worst.c}</b><em>contre les ${TLB[worst.o]} · ${dl(worst.date)}</em></div>
+      <div class="card"><span>⚡</span><small>Meilleure série</small><b>${br}</b><em>victoire${br > 1 ? "s" : ""} d'affilée</em></div>
+      <div class="card"><span>😈</span><small>Bête noire</small><b>${bete ? TLB[bete[0]] : "—"}</b><em>${bete ? `${Math.round(bete[2] / bete[1] * 100)}% de victoires contre eux` : ""}</em></div></div></div>
+    <div><div class="h2">Face à face</div><div class="card" style="overflow-x:auto"><table class="ff"><tr><th>Adversaire</th><th>M</th><th>V</th><th>N</th><th>D</th><th>Buts</th><th>%V</th></tr>${vs.map(v => `<tr><td><span class="dot ${TCLS[TLB[v[0]]]}"></span> ${TLB[v[0]]}</td><td>${v[1]}</td><td>${v[2]}</td><td>${v[3]}</td><td>${v[4]}</td><td>${v[5]}–${v[6]}</td><td><b>${v[1] ? Math.round(v[2] / v[1] * 100) : 0}%</b></td></tr>`).join("")}</table></div></div></div>
+    <div class="g2"><div><div class="h2">Buteurs des ${st.col}</div><div class="card lst">${sc.map((r, i) => `<div><em>${i + 1}</em>${av(r[0], 26)}<span>${esc(r[0])}</span><u><i style="width:${r[1] / sc[0][1] * 100}%"></i></u><b>${r[1]}</b></div>`).join("")}</div></div>
+    <div><div class="h2">Passeurs des ${st.col}</div><div class="card lst">${as.map((r, i) => `<div><em>${i + 1}</em>${av(r[0], 26)}<span>${esc(r[0])}</span><u><i style="width:${r[1] / as[0][1] * 100}%"></i></u><b>${r[1]}</b></div>`).join("")}</div></div></div>`;
+}
+const colSel = () => `<div class="colsel" style="margin-top:10px">${COLS.map(k => `<button type="button" class="${TCLS[k]}" data-col="${k}" aria-pressed="${k === st.col}">${k}</button>`).join("")}</div>`;
+
+/* ═════ Joueurs ═════ */
+function pickerA() {
+  const p = st.pl, open = st.pick;
+  const grp = (t, L) => L.length ? `<div class="pk-g">${t}</div>${L.map(n => `<button type="button" class="pk-r" data-pl="${esc(n)}" aria-pressed="${n === p}">${av(n, 30)}<span>${esc(n)}</span><small>${(aggOf("saison").P[n] || { m: 0 }).m} m.</small></button>`).join("")}` : "";
+  const all = Object.keys(aggOf("saison").P).filter(n => !DEPS.has(n)).sort((a, b) => a.localeCompare(b, "fr")), q = (st.pq || "").toLowerCase();
+  const L = all.filter(n => !q || n.toLowerCase().includes(q));
+  return `<div class="pk"><button type="button" class="pk-btn" data-pick aria-expanded="${open}">${av(p, 40, "var(--gold)")}<span><b>${esc(p)}</b><small>Changer de joueur</small></span><span class="car">▾</span></button>
+    ${open ? `<div class="pk-list"><input class="search" id="pq" type="search" placeholder="Tape un prénom…" value="${esc(st.pq || "")}" aria-label="Chercher un joueur">${grp("Toi", q || !ME() ? [] : [ME()])}${grp("Récemment vus", q ? [] : st.recent.filter(n => n !== ME()))}${grp(q ? "Résultats" : "Tout le monde", L)}</div>` : ""}</div>`;
+}
+function pickerB() {
+  const S = aggOf(st.per, perKey()), L = Object.entries(S.P).filter(([n]) => !DEPS.has(n)).map(([n, x]) => [n, x.m, x.m ? Math.round(x.w / x.m * 100) : 0, x.g, x.a]);
+  const k = st.psort, idx = { m: 1, w: 2, g: 3, a: 4 }[k];
+  L.sort((a, b) => b[idx] - a[idx] || a[0].localeCompare(b[0], "fr"));
+  return `<div class="card ptab"><div class="ptab-h"><span>Joueur</span>${[["m", "M"], ["w", "V%"], ["g", "B"], ["a", "P"]].map(([c, l]) => `<button type="button" data-psort="${c}" aria-pressed="${k === c}">${l}${k === c ? " ▾" : ""}</button>`).join("")}</div>
+    <div class="ptab-b">${L.map(r => `<button type="button" class="ptab-r" data-pl="${esc(r[0])}" aria-pressed="${r[0] === st.pl}">${av(r[0], 26)}<span>${esc(r[0])}</span><b>${r[1]}</b><b>${r[2]}%</b><b>${r[3]}</b><b>${r[4]}</b></button>`).join("")}</div></div>`;
+}
+function joueurs(wide) {
+  const A = aggOf(st.per, perKey()), pk = prevOf(st.per, perKey()), B = pk && st.cmp ? aggOf(st.per, pk) : null;
+  const p = st.pl, x = A.P[p], b = B && B.P[p], ss = (() => { const P = personal(p); return P && P.best[0] && P.worst[0] ? P : null; })();
+  const sel = st.psel === "A" ? pickerA() : "";
+  const body = !x || !x.m ? `<div class="card" style="color:var(--text2);margin-top:10px">${esc(p)} n'a pas joué sur cette période.</div>` : (() => {
+    const fav = Object.entries(x.cols).map(([t, v]) => [TLB[t], v[0], v[1]]).sort((a, b) => b[2] / b[1] - a[2] / a[1])[0];
+    const duo = Object.entries(x.mates).filter(([q, v]) => v[0] >= Math.max(2, x.m * .2)).sort((a, b) => b[1][1] / b[1][0] - a[1][1] / a[1][0])[0];
+    const sess = Object.entries(x.sess).sort();
+    const tile = (l, v, s, dlt) => `<div class="card"><small>${l}</small><b>${v}</b><span>${s}</span>${dlt}</div>`;
+    return `<div class="phero"><div class="pic">${_crPh(p, "")}</div><div><b class="nm">${esc(p)}</b><div class="sub">${x.m} matchs ${perLabel(st.per, perKey())} · ${Object.keys(x.sess).length} soirée${Object.keys(x.sess).length > 1 ? "s" : ""}</div></div></div>
+    <div class="ptiles">
+      ${tile("Victoires", Math.round(x.w / x.m * 100) + "%", `${x.w}V ${x.d}N ${x.m - x.w - x.d}D`, delta(x.w / x.m * 100, b && b.m ? b.w / b.m * 100 : null, { pct: true }))}
+      ${tile("Buts", x.g, `${f2(x.g / x.m)} par match`, delta(x.g, b ? b.g : null))}
+      ${tile("Passes", x.a, `${f2(x.a / x.m)} par match`, delta(x.a, b ? b.a : null))}
+      ${tile("Il marque", Math.round(x.ms / x.m * 100) + "%", "des matchs joués", delta(x.ms / x.m * 100, b && b.m ? b.ms / b.m * 100 : null, { pct: true }))}
+      ${tile("Défense", f1(x.gc / x.m), "but encaissé / match", delta(x.gc / x.m, b && b.m ? b.gc / b.m : null, { dec: 1, inv: true }))}
+      ${tile("Gardien", x.gkH ? f2(x.gkC / x.gkH) : "—", x.gkH ? `but / mi-temps · ${x.gkCS} clean sheets` : "pas gardé", "")}
+      ${tile("Équipe fétiche", `<span class="${TCLS[fav[0]]}" style="color:var(--tc)">${fav[0]}</span>`, `${Math.round(fav[2] / fav[1] * 100)}% de victoires (${fav[2]}/${fav[1]})`, "")}
+      ${tile("Meilleur duo", duo ? esc(duo[0]) : "—", duo ? `${Math.round(duo[1][1] / duo[1][0] * 100)}% de victoires ensemble (${duo[1][0]} m.)` : "", "")}
+    </div>
+    <div class="g2"><div><div class="h2">Buts et passes ${st.per === "soir" ? "de la soirée" : "soirée par soirée"}</div>${gaBars(sess)}</div>
+    <div><div class="h2">Moments forts</div><div class="mom">
+      <div class="card"><span>🌟</span><small>Meilleur match</small><b>${x.best.f}–${x.best.c}</b><em>${x.best.g} but${x.best.g > 1 ? "s" : ""} contre les ${TLB[x.best.o]} · ${dl(x.best.date)}</em></div>
+      ${ss ? `<div class="card"><span>🤝</span><small>Avec qui il gagne</small><b>${esc(ss.best[0][0])}</b><em>${ss.best[0][3]}% ensemble (saison)</em></div><div class="card"><span>😬</span><small>Avec qui il perd</small><b>${esc(ss.worst[0][0])}</b><em>${ss.worst[0][3]}% ensemble (saison)</em></div>` : ""}
+      ${ss && ss.giver[0] ? `<div class="card"><span>🎯</span><small>Son meilleur passeur</small><b>${esc(ss.giver[0][0])}</b><em>${ss.giver[0][1]} passes (saison)</em></div>` : ""}</div></div></div>`;
+  })();
+  return `${periodBar()}${sel}${st.psel === "B" ? `<div class="g2 pb"><div>${pickerB()}</div><div>${body}</div></div>` : body}`;
+}
+function gaBars(sess) {
+  const W = 600, H = 150, L = 20, R = 8, T = 12, B = 22, n = Math.max(1, sess.length), max = Math.max(3, ...sess.map(s => s[1][0] + s[1][1])), bw = (W - L - R) / n;
+  const y = v => T + (H - T - B) * (1 - v / max);
+  return `<div class="card trend"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Buts et passes">${sess.map(([d, [g, a]], i) => { const x0 = L + i * bw + bw * .2, w = bw * .6; return `<rect x="${x0.toFixed(1)}" y="${y(g).toFixed(1)}" width="${w.toFixed(1)}" height="${(H - B - y(g)).toFixed(1)}" rx="3" fill="var(--gold)"/><rect x="${x0.toFixed(1)}" y="${y(g + a).toFixed(1)}" width="${w.toFixed(1)}" height="${(y(g) - y(g + a)).toFixed(1)}" rx="3" fill="var(--bleu)"/><text x="${(x0 + w / 2).toFixed(1)}" y="${H - 7}" text-anchor="middle">${dd(d)}</text>`; }).join("")}</svg><div class="lg"><span><i style="background:var(--gold)"></i>Buts</span><span><i style="background:var(--bleu)"></i>Passes</span></div></div>`;
+}
+
+/* ═════ Duels ═════ */
+function duelData(a, b) {
+  const R = { vs: [], tog: [] };
+  perSessions(st.per, perKey()).forEach(([date, M, PR]) => {
+    const tA = PR[a] && PR[a][0] === "Présent" ? PR[a][1] : null, tB = PR[b] && PR[b][0] === "Présent" ? PR[b][1] : null;
+    if (!tA || !tB) return;
+    M.forEach(m => { const [ea, eb, sa, sb, bA, bB, pA, pB] = m;
+      const side = t => t === ea ? [sa, sb, bA, pA, eb] : t === eb ? [sb, sa, bB, pB, ea] : null;
+      const xa = side(tA), xb = side(tB); if (!xa || !xb) return;
+      const g = (S, n) => S[2].filter(z => z === n).length, as = (S, n) => S[3].filter((z, i) => z === n && S[2][i] && S[2][i] !== "CSC").length;
+      if (tA === tB) { let ab = 0, ba = 0; xa[2].forEach((z, i) => { if (z === b && xa[3][i] === a) ab++; if (z === a && xa[3][i] === b) ba++; });
+        R.tog.push({ date, t: tA, o: xa[4], fa: xa[0], fb: xa[1], ga: g(xa, a), gb: g(xa, b), aa: as(xa, a), ab: as(xa, b), c1: ab, c2: ba }); }
+      else R.vs.push({ date, ta: tA, tb: tB, fa: xa[0], fb: xb[0], ga: g(xa, a), gb: g(xb, b), aa: as(xa, a), ab: as(xb, b) }); });
+  });
+  return R;
+}
+function duels() {
+  const a = st.a, b = st.b, R = duelData(a, b), mode = st.dt, L = mode === "vs" ? R.vs : R.tog, n = L.length;
+  const opt = sel => Object.keys(aggOf("saison").P).filter(x => !DEPS.has(x)).sort((x, y) => x.localeCompare(y, "fr")).map(x => `<option${x === sel ? " selected" : ""}>${esc(x)}</option>`).join("");
+  const sum = k => L.reduce((s, m) => s + m[k], 0);
+  const w = L.filter(m => m.fa > m.fb).length, l = L.filter(m => m.fa < m.fb).length, dr = n - w - l;
+  const big = (f) => { const x = L.filter(f).sort((p, q) => Math.abs(q.fa - q.fb) - Math.abs(p.fa - p.fb))[0]; return x ? `${Math.max(x.fa, x.fb)}–${Math.min(x.fa, x.fb)}` : "—"; };
+  const switcher = `<div class="dsw">${[["vs", "⚔️", "L'un contre l'autre", R.vs.length], ["tog", "🤝", "Ensemble", R.tog.length]].map(([k, e, t, c]) => `<button type="button" class="${k}" data-dt="${k}" aria-pressed="${mode === k}"><em>${e}</em><b>${t}</b><small>${c} match${c > 1 ? "s" : ""}</small></button>`).join("")}</div>`;
+  const head = `<div class="duel-pick"><select id="da" aria-label="Joueur 1">${opt(a)}</select><em>${mode === "vs" ? "VS" : "&"}</em><select id="db" aria-label="Joueur 2">${opt(b)}</select></div>`;
+  if (!n) return `${periodBar(true)}${head}${switcher}<div class="card" style="color:var(--text2)">${mode === "vs" ? "Jamais l'un contre l'autre" : "Jamais dans la même équipe"} sur cette période.</div>`;
+  const top = mode === "vs"
+    ? `<div class="vsrow"><div>${av(a, 72, "var(--gold)")}<b style="color:var(--gold)">${w}</b><small>victoires de ${esc(a)}</small></div><div class="mid"><b>${dr}</b><small>nul${dr > 1 ? "s" : ""}</small></div><div>${av(b, 72, "var(--bleu)")}<b style="color:var(--bleu)">${l}</b><small>victoires de ${esc(b)}</small></div></div>
+       <div class="vsbar"><i style="width:${w / n * 100}%;background:var(--gold)"></i><i style="width:${dr / n * 100}%;background:#5a5a6a"></i><i style="width:${l / n * 100}%;background:var(--bleu)"></i></div>`
+    : `<div class="vsrow tog"><div><b style="color:var(--good)">${w}</b><small>victoires</small></div><div class="mid pair">${av(a, 64, "var(--gold)")}${av(b, 64, "var(--bleu)")}<small>${dr} nul${dr > 1 ? "s" : ""}</small></div><div><b style="color:var(--bad)">${l}</b><small>défaites</small></div></div>
+       <div class="vsbar"><i style="width:${w / n * 100}%;background:var(--good)"></i><i style="width:${dr / n * 100}%;background:#5a5a6a"></i><i style="width:${l / n * 100}%;background:var(--bad)"></i></div>`;
+  const rows = mode === "vs"
+    ? [["Buts marqués", sum("ga"), sum("gb")], ["Passes décisives", sum("aa"), sum("ab")], ["Buts de son équipe par match", f1(sum("fa") / n), f1(sum("fb") / n)], ["Victoire la plus large", big(m => m.fa > m.fb), big(m => m.fb > m.fa)]]
+    : [["Buts marqués", sum("ga"), sum("gb")], ["Passes décisives", sum("aa"), sum("ab")], ["Passes à l'autre", sum("c1"), sum("c2")], ["Buts de l'équipe par match", f1(sum("fa") / n), f1(sum("fb") / n)]];
+  const list = L.slice(-6).reverse().map(m => mode === "vs"
+    ? `<div><span class="d">${dd(m.date)}</span><span class="${TCLS[TLB[m.ta]]}"><span class="dot"></span> ${esc(a)}${m.ga ? ` <small>⚽${m.ga > 1 ? "×" + m.ga : ""}</small>` : ""}</span><b class="${m.fa > m.fb ? "w" : m.fa < m.fb ? "l" : ""}">${m.fa}–${m.fb}</b><span class="${TCLS[TLB[m.tb]]}" style="text-align:right">${m.gb ? `<small>⚽${m.gb > 1 ? "×" + m.gb : ""}</small> ` : ""}${esc(b)} <span class="dot"></span></span></div>`
+    : `<div><span class="d">${dd(m.date)}</span><span class="${TCLS[TLB[m.t]]}"><span class="dot"></span> Ensemble${m.ga + m.gb ? ` <small>⚽${m.ga + m.gb > 1 ? "×" + (m.ga + m.gb) : ""}</small>` : ""}</span><b class="${m.fa > m.fb ? "w" : m.fa < m.fb ? "l" : ""}">${m.fa}–${m.fb}</b><span class="${TCLS[TLB[m.o]]}" style="text-align:right">${TLB[m.o]} <span class="dot"></span></span></div>`).join("");
+  return `${periodBar(true)}${head}${switcher}<div class="card dcard ${mode}">${top}
+    <div class="cmp2"><div class="hd"><b>${esc(a)}</b><span></span><b>${esc(b)}</b></div>${rows.map(([lab, u, v]) => `<div><b>${u}</b><span>${lab}</span><b>${v}</b></div>`).join("")}</div></div>
+    <div class="h2">${mode === "vs" ? "Leurs dernières confrontations" : "Leurs derniers matchs ensemble"}</div><div class="card cf">${list}</div>`;
+}
+
+/* ═════ Datas : statistiques pointues, calculées sur la saison en cours ═════ */
+function seasonSides() {
+  const S = (SESSIONS || []).filter(s => _seasonStart(s.date) === _currentSeason()).sort((a, b) => a.date.localeCompare(b.date)), R = [], M = [];
+  S.forEach(s => { let prev = null; const pr = s.presences || {};
+    const field = t => Object.keys(pr).filter(p => pr[p] && pr[p].statut === "Présent" && pr[p].equipe === t);
+    (s.matchs || []).forEach((m, k) => { const n = (s.matchs || []).length;
+      M.push({ d: s.date, k, n, sa: m.scoreA || 0, sb: m.scoreB || 0, h1: m.mt1A != null && m.mt1B != null ? [m.mt1A || 0, m.mt1B || 0] : null });
+      [["A", "B"], ["B", "A"]].forEach(([sd, o]) => { const t = m["eq" + sd], f = m["score" + sd] || 0, c = m["score" + o] || 0;
+        const B = (m["buteurs" + sd] || []).filter(b => b && b !== "CSC"), P = (m["buteurs" + sd] || []).map((b, i) => [b, (m["passeurs" + sd] || [])[i]]).filter(([b, a]) => b && a && b !== "CSC" && a !== "CSC");
+        const hf = m["mt1" + sd], hc = m["mt1" + o];
+        R.push({ d: s.date, t, F: field(t), f, c, w: f > c, dr: f === c, B, P, mf: hf == null ? null : hf, mc: hc == null ? null : hc, back: !!prev && (prev.eqA === t || prev.eqB === t), k, n }); });
+      prev = m; }); });
+  return { S, R, M };
+}
+let DCACHE = null, DKEY = "";
+function datasData() {
+  const key = (SESSIONS || []).length + "|" + ((SESSIONS || []).map(s => s.date).sort().pop() || "");
+  if (DKEY === key && DCACHE) return DCACHE;
+  const { S, R, M } = seasonSides(), N = M.length, DEP = p => ABSENTS.has(p);
+  const minM = Math.max(5, Math.round(N * .17)), minP = Math.max(4, Math.round(N * .09)), minC = Math.max(4, Math.round(N * .07));
+  const base = R.length ? R.filter(r => r.w).length / R.length : 0, draws = N ? M.filter(m => m.sa === m.sb).length / N : 0;
+  const pl = {}, pair = {}, pc = {}, sc = {}, asg = {};
+  const P = n => pl[n] || (pl[n] = { m: 0, w: 0, g: 0, ms: 0, sw: 0, mates: {}, cols: {}, giver: {}, recv: {} });
+  R.forEach(r => { const cnt = {}; r.B.forEach(b => cnt[b] = (cnt[b] || 0) + 1);
+    r.F.forEach(p => { const x = P(p); x.m++; if (r.w) x.w++; const g = cnt[p] || 0; x.g += g; if (g) { x.ms++; if (r.w) x.sw++; }
+      const k = x.cols[r.t] = x.cols[r.t] || [0, 0]; k[0]++; if (r.w) k[1]++;
+      r.F.forEach(q => { if (q !== p) { const z = x.mates[q] = x.mates[q] || [0, 0, 0]; z[0]++; if (r.w) z[1]++; z[2] += g; } }); });
+    r.P.forEach(([b, a]) => { P(a).recv[b] = (P(a).recv[b] || 0) + 1; P(b).giver[a] = (P(b).giver[a] || 0) + 1; });
+    const F = r.F.filter(p => !DEP(p)).sort();
+    for (let i = 0; i < F.length; i++) for (let j = i + 1; j < F.length; j++) { const k = F[i] + "|" + F[j], z = pair[k] = pair[k] || [0, 0]; z[0]++; if (r.w) z[1]++; } });
+  const wr = p => pl[p].w / pl[p].m;
+  const L = Object.keys(pl).filter(p => !DEP(p) && pl[p].m >= minM);
+  const lift = L.map(p => [p, pl[p].m, wr(p)]).sort((a, b) => b[2] - a[2]);
+  const syn = Object.entries(pair).filter(([k, z]) => z[0] >= minP && k.split("|").every(p => pl[p].m >= minM))
+    .map(([k, z]) => { const [a, b] = k.split("|"); return [a, b, z[0], z[1], z[1] / z[0], z[1] / z[0] - (wr(a) + wr(b)) / 2]; }).sort((a, b) => b[5] - a[5]);
+  const col = {}; R.forEach(r => { const z = col[r.t] = col[r.t] || { m: 0, w: 0, d: 0, gf: 0, ga: 0 }; z.m++; if (r.w) z.w++; if (r.dr) z.d++; z.gf += r.f; z.ga += r.c; });
+  const pcol = []; Object.keys(pl).filter(p => !DEP(p)).forEach(p => Object.entries(pl[p].cols).forEach(([t, z]) => { if (z[0] >= Math.max(6, minC)) pcol.push([p, t, z[0], z[1], z[1] / z[0]]); })); pcol.sort((a, b) => b[4] - a[4] || b[2] - a[2]);
+  const hh = {}; M.forEach((m, i) => { const ra = R[i * 2], rb = R[i * 2 + 1]; const k = [ra.t, rb.t].sort().join("|"), z = hh[k] = hh[k] || {}; z[ra.t] = (z[ra.t] || 0) + (ra.w ? 1 : 0); z[rb.t] = (z[rb.t] || 0) + (rb.w ? 1 : 0); z.n = (z.n || 0) + 1; });
+  const pscore = L.map(p => [p, pl[p].m, pl[p].ms, pl[p].ms / pl[p].m]).sort((a, b) => b[3] - a[3]);
+  const whenS = Object.keys(pl).filter(p => !DEP(p) && pl[p].ms >= Math.max(4, minC)).map(p => [p, pl[p].ms, pl[p].sw, pl[p].sw / pl[p].ms]).sort((a, b) => b[3] - a[3] || b[1] - a[1]);
+  const sw = []; Object.keys(pl).filter(p => !DEP(p)).forEach(X => { const x = pl[X]; if (x.g < 6) return;
+    Object.entries(x.mates).forEach(([Y, z]) => { if (DEP(Y) || z[0] < minP || x.m - z[0] < minC) return; const rw = z[2] / z[0], ro = (x.g - z[2]) / (x.m - z[0]); if (ro > 0 && rw > ro) sw.push([X, Y, z[0], rw, ro, rw / ro]); }); });
+  sw.sort((a, b) => (b[3] - b[4]) - (a[3] - a[4]));
+  const ash = Object.keys(pl).filter(p => !DEP(p)).map(p => { const g = pl[p].recv, t = Object.values(g).reduce((s, v) => s + v, 0); if (t < 8) return null; const [b, n] = Object.entries(g).sort((x, y) => y[1] - x[1])[0]; return [p, b, n, t, n / t]; }).filter(Boolean).sort((a, b) => b[4] - a[4]);
+  const ht = R.filter(r => r.mf != null && r.mc != null), lead = ht.filter(r => r.mf > r.mc), trail = ht.filter(r => r.mf < r.mc);
+  const hm = M.filter(m => m.h1), g1 = hm.reduce((s, m) => s + m.h1[0] + m.h1[1], 0), gt = hm.reduce((s, m) => s + m.sa + m.sb, 0);
+  const scs = {}; M.forEach(m => { const k = `${Math.max(m.sa, m.sb)}–${Math.min(m.sa, m.sb)}`; scs[k] = (scs[k] || 0) + 1; }); const scores = Object.entries(scs).sort((a, b) => b[1] - a[1]);
+  const ord = { debut: [0, 0], fin: [0, 0] }; M.forEach(m => { const b = m.k < 4 ? "debut" : m.k >= m.n - 4 ? "fin" : null; if (b) { ord[b][0]++; ord[b][1] += m.sa + m.sb; } });
+  const bb = R.filter(r => r.k > 0), b1 = bb.filter(r => r.back), b0 = bb.filter(r => !r.back);
+  const gk = (_gkAwardRanking(SESSIONS).ranked || []).filter(x => !DEP(x.name));
+  DCACHE = { S, R, M, N, base, draws, pl, minM, minP, lift, syn, col, pcol, hh, pscore, whenS, sw, ash, lead, trail, g1, gt, scores, ord, b1, b0, gk, cs: R.length ? R.filter(r => !r.c).length / R.length : 0 };
+  DKEY = key; return DCACHE;
+}
+const pct = v => Math.round(v * 100) + "%";
+function datasCards() {
+  const X = datasData(), C = [], add = (cat, kc, k, big, html, who, cmp, base) => C.push({ cat, kc, k, big, html, who, cmp, base }), B = Math.round(X.base * 100);
+  X.lift.slice(0, 3).forEach(r => add("coeq", "var(--good)", "Effet joueur", `${r[2] - X.base >= 0 ? "+" : ""}${Math.round((r[2] - X.base) * 100)} pts`, `On gagne <b>${pct(r[2])}</b> des matchs avec <b>${esc(r[0])}</b> sur le terrain, contre ${B}% en moyenne.`, [r[0]], [["Avec lui", Math.round(r[2] * 100)], ["Moyenne", B]], `${r[1]} matchs`));
+  X.syn.slice(0, 3).filter(r => r[5] > 0).forEach(r => add("coeq", "var(--bleu)", "Duo magique", pct(r[4]), `<b>${esc(r[0])} + ${esc(r[1])}</b> : ${r[3]} victoires en ${r[2]} matchs ensemble, <b>${Math.round(r[5] * 100)} points</b> de mieux que leurs moyennes séparées.`, [r[0], r[1]], null, `${r[2]} matchs`));
+  X.syn.slice(-2).filter(r => r[5] < 0).forEach(r => add("coeq", "var(--bad)", "Duo maudit", `${r[3]}/${r[2]}`, `<b>${esc(r[0])} + ${esc(r[1])}</b> : ${r[3] ? `seulement ${r[3]} victoire${r[3] > 1 ? "s" : ""}` : "aucune victoire"} en ${r[2]} matchs dans la même équipe.`, [r[0], r[1]], null, `${r[2]} matchs`));
+  Object.entries(X.col).sort((a, b) => b[1].w / b[1].m - a[1].w / a[1].m).forEach(([t, z]) => { const w = z.w / z.m; add("coul", TCV[TLB[t]], "Couleur", `1 sur ${fr((1 / Math.max(w, .01)).toFixed(1))}`, `En <b>${TLB[t].toLowerCase()}</b>, on a 1 chance sur ${fr((1 / Math.max(w, .01)).toFixed(1))} de gagner un match (${pct(w)}).`, null, null, `${z.m} matchs`); });
+  X.pcol.slice(0, 2).forEach(r => add("coul", "var(--gold)", "Joueur × couleur", pct(r[4]), `<b>${esc(r[0])}</b> en ${TLB[r[1]].toLowerCase()} : ${r[3]} victoires sur ${r[2]} matchs.`, [r[0]], null, `${r[2]} matchs`));
+  const hb = Object.entries(X.hh).map(([k, z]) => { const [a, b] = k.split("|"); return (z[a] || 0) >= (z[b] || 0) ? [a, b, z[a] || 0, z[b] || 0, z.n] : [b, a, z[b] || 0, z[a] || 0, z.n]; }).sort((x, y) => (y[2] - y[3]) - (x[2] - x[3]))[0];
+  if (hb) add("coul", TCV[TLB[hb[0]]], "Bête noire des couleurs", `${hb[2]}–${hb[3]}`, `Les <b>${TLB[hb[0]]}</b> ont battu les ${TLB[hb[1]]} ${hb[2]} fois, perdu ${hb[3]} fois (${hb[4] - hb[2] - hb[3]} nuls).`, null, null, `${hb[4]} matchs`);
+  X.pscore.slice(0, 2).forEach(r => add("buts", "var(--rouge)", "Il marque", pct(r[3]), `<b>${esc(r[0])}</b> marque dans ${pct(r[3])} des matchs qu'il joue (${r[2]} sur ${r[1]}).`, [r[0]], null, `${r[1]} matchs`));
+  X.whenS.slice(0, 2).forEach(r => add("buts", "var(--gold)", "Quand il marque…", pct(r[3]), `Quand <b>${esc(r[0])}</b> marque, son équipe gagne ${pct(r[3])} du temps (${r[2]} sur ${r[1]}).`, [r[0]], null, `${r[1]} matchs`));
+  X.sw.slice(0, 3).forEach(r => add("buts", "var(--violet)", "Il marque plus avec…", `×${fr(r[5].toFixed(1))}`, `<b>${esc(r[0])}</b> marque ${f2(r[3])} but par match avec <b>${esc(r[1])}</b>, contre ${f2(r[4])} sans lui.`, [r[0], r[1]], [["Avec", Math.round(r[3] * 100)], ["Sans", Math.round(r[4] * 100)]], `${r[2]} matchs ensemble`));
+  X.ash.slice(0, 2).forEach(r => add("buts", "var(--violet)", "Connexion", pct(r[4]), `${pct(r[4])} des passes décisives de <b>${esc(r[0])}</b> sont pour <b>${esc(r[1])}</b> (${r[2]} sur ${r[3]}).`, [r[0], r[1]], null, `${r[3]} passes`));
+  if (X.gt) add("scen", "var(--gold)", "Deuxième mi-temps", pct((X.gt - X.g1) / X.gt), `des buts tombent en <b>2e mi-temps</b> (${X.gt - X.g1} sur ${X.gt}).`, null, null, `${X.N} matchs`);
+  if (X.lead.length) { const w = X.lead.filter(r => r.w).length, l = X.lead.filter(r => !r.w && !r.dr).length; add("scen", "var(--good)", "Mener à la pause", pct(w / X.lead.length), `Une équipe qui <b>mène à la mi-temps</b> gagne ${w} fois sur ${X.lead.length}, et ne perd que ${l} fois.`, null, [["Mène", Math.round(w / X.lead.length * 100)], ["Moyenne", B]], `${X.lead.length} matchs`); }
+  if (X.trail.length) { const w = X.trail.filter(r => r.w).length; if (w) add("scen", "var(--bad)", "Remontada", `1 sur ${Math.round(X.trail.length / w)}`, `Mené à la pause, on <b>gagne quand même</b> ${w} fois sur ${X.trail.length}.`, null, null, `${X.trail.length} matchs`); }
+  if (X.ord.fin[0] && X.ord.debut[0]) { const f = X.ord.fin[1] / X.ord.fin[0], d = X.ord.debut[1] / X.ord.debut[0]; add("scen", "var(--rouge)", f >= d ? "Fin de soirée" : "Début de soirée", f2(Math.max(f, d)), `buts par match dans les <b>${f >= d ? "derniers" : "premiers"} matchs</b> de la soirée, contre ${f2(Math.min(f, d))} ${f >= d ? "en début" : "en fin"} de soirée.`, null, null, `${X.ord.fin[0] + X.ord.debut[0]} matchs`); }
+  if (X.b1.length && X.b0.length) add("scen", "var(--text2)", "Enchaîner deux matchs", pct(X.b1.filter(r => r.w).length / X.b1.length), `Une équipe qui <b>enchaîne</b> gagne ${pct(X.b1.filter(r => r.w).length / X.b1.length)} de ses matchs, contre ${pct(X.b0.filter(r => r.w).length / X.b0.length)} après une pause.`, null, null, `${X.b1.length} matchs`);
+  if (X.scores.length > 2) add("scen", "var(--gold)", "Score roi", X.scores[0][0], `Le score le plus fréquent : <b>${X.scores[0][1]} fois ${X.scores[0][0]}</b>, puis ${X.scores[1][1]} fois ${X.scores[1][0]} et ${X.scores[2][1]} fois ${X.scores[2][0]}.`, null, null, `${X.N} matchs`);
+  add("gard", "var(--bleu)", "Clean sheet", pct(X.cs), `On garde sa cage inviolée dans <b>${pct(X.cs)}</b> des matchs.`, null, null, `${X.N} matchs`);
+  X.gk.slice(0, 2).forEach(r => add("gard", "var(--bleu)", "Avec lui au but", f2(r.rate), `Avec <b>${esc(r.name)}</b> dans les cages, on encaisse ${f2(r.rate)} but par mi-temps (${r.buts} en ${r.matchs} mi-temps).`, [r.name], null, `${r.matchs} mi-temps`));
+  return C;
+}
+function heroFacts() {
+  const X = datasData(), H = [];
+  if (X.lift[0]) H.push(`On gagne <b>${pct(X.lift[0][2])}</b> des matchs avec ${esc(X.lift[0][0])}, contre ${pct(X.base)} en moyenne.`);
+  if (X.lead.length) H.push(`Mener à la pause, c'est <b>${pct(X.lead.filter(r => r.w).length / X.lead.length)}</b> de chances de gagner.`);
+  if (X.sw[0]) H.push(`${esc(X.sw[0][0])} marque <b>${fr(X.sw[0][5].toFixed(1))} fois plus</b> quand ${esc(X.sw[0][1])} est dans son équipe.`);
+  const cs = Object.entries(X.col).map(([t, z]) => [t, z.w / z.m]).sort((a, b) => b[1] - a[1]);
+  if (cs.length > 1) H.push(`En ${TLB[cs[0][0]].toLowerCase().replace(/s$/, "")}, on a <b>1 chance sur ${fr((1 / Math.max(cs[0][1], .01)).toFixed(1))}</b> de gagner ; en ${TLB[cs[cs.length - 1][0]].toLowerCase().replace(/s$/, "")}, 1 sur ${fr((1 / Math.max(cs[cs.length - 1][1], .01)).toFixed(1))}.`);
+  return H;
+}
+function personal(p) {
+  const X = datasData(), x = X.pl[p]; if (!x || !x.m) return null;
+  const mates = Object.entries(x.mates).filter(([q, z]) => !ABSENTS.has(q) && z[0] >= Math.max(4, Math.round(X.minP * .8))).map(([q, z]) => [q, z[0], z[1], Math.round(z[1] / z[0] * 100)]);
+  const best = mates.slice().sort((a, b) => b[3] - a[3] || b[1] - a[1]), worst = mates.slice().sort((a, b) => a[3] - b[3] || b[1] - a[1]);
+  const cols = Object.entries(x.cols).filter(([, z]) => z[0] >= 3).map(([t, z]) => [TLB[t], z[0], z[1], Math.round(z[1] / z[0] * 100)]).sort((a, b) => b[3] - a[3]);
+  const giver = Object.entries(x.giver).sort((a, b) => b[1] - a[1]);
+  return { m: x.m, best, worst, cols, ps: Math.round(x.ms / x.m * 100), sw: x.ms ? Math.round(x.sw / x.ms * 100) : null, giver };
+}
+const DCATS = [["tous", "Tout"], ["coeq", "🤝 Coéquipiers"], ["coul", "🎨 Couleurs"], ["buts", "⚽ Buts"], ["scen", "⏱️ Scénarios"], ["gard", "🧤 Gardiens"]];
+function datas() {
+  const D = datasCards(), L = D.filter(c => st.dcat === "tous" || c.cat === st.dcat), H = heroFacts(), X = datasData();
+  const players = Object.keys(X.pl).filter(p => !ABSENTS.has(p) && X.pl[p].m >= 3).sort((a, b) => a.localeCompare(b, "fr"));
+  const cp = players.includes(st.dp) ? st.dp : players.includes(ME()) ? ME() : players[0];
+  const P = cp ? personal(cp) : null;
+  const lines = P ? [
+    P.best[0] ? ["🤝", `Tu gagnes le plus avec <b>${esc(P.best[0][0])}</b> : ${P.best[0][3]}% de victoires ensemble (${P.best[0][1]} matchs).`] : null,
+    P.worst[0] && P.worst[0][0] !== (P.best[0] || [])[0] ? ["😬", `Avec <b>${esc(P.worst[0][0])}</b>, seulement ${P.worst[0][3]}% (${P.worst[0][2]} sur ${P.worst[0][1]}).`] : null,
+    P.cols[0] ? ["🎨", `Ta couleur fétiche : <b>${P.cols[0][0]}</b> (${P.cols[0][3]}% de victoires)${P.cols.length > 1 ? `, la pire : ${P.cols[P.cols.length - 1][0]} (${P.cols[P.cols.length - 1][3]}%)` : ""}.`] : null,
+    ["⚽", `Tu marques dans <b>${P.ps}%</b> des matchs${P.sw != null ? `, et ton équipe gagne <b>${P.sw}%</b> du temps quand tu marques` : ""}.`],
+    P.giver[0] ? ["🎯", `Celui qui te sert le plus : <b>${esc(P.giver[0][0])}</b> (${P.giver[0][1]} passe${P.giver[0][1] > 1 ? "s" : ""}).`] : null,
+  ].filter(Boolean) : [];
+  return `${H.length ? `<div class="dhero"><small>Le saviez-vous ? · ${st.hero % H.length + 1}/${H.length}</small><p>${H[st.hero % H.length]}</p><div class="nav"><span>Calculé sur ${X.N} matchs de la saison</span><button type="button" data-hero>Suivant ›</button></div></div>` : ""}
+    ${P ? `<div class="h2">Pour toi</div><div class="calc"><div class="h2" style="margin-top:0">Les datas de · <select id="st2-cp" aria-label="Joueur">${players.map(n => `<option${n === cp ? " selected" : ""}>${esc(n)}</option>`).join("")}</select></div>${lines.map(([e, t]) => `<div class="ln"><em>${e}</em><span>${t}</span></div>`).join("")}</div>` : ""}
+    <div class="chips">${DCATS.map(([k, l]) => `<button type="button" data-dcat="${k}" aria-pressed="${st.dcat === k}">${l} <span style="opacity:.6">${k === "tous" ? D.length : D.filter(c => c.cat === k).length}</span></button>`).join("")}</div>
+    <div class="dgrid">${L.map(c => `<div class="card dc" style="--kc:${c.kc}"><div class="k">${c.k}<span>${c.base}</span></div><div class="top">${c.who ? `<span class="pile">${c.who.map(n => av(n, 34)).join("")}</span>` : ""}<span class="big">${c.big}</span></div><p>${c.html}</p>${c.cmp ? `<div class="cmp">${c.cmp.map(([l, v]) => `<div><span>${l}</span><u><i style="width:${Math.min(100, v)}%"></i></u><b>${v}%</b></div>`).join("")}</div>` : ""}</div>`).join("") || `<div class="card" style="color:var(--text2)">Pas encore assez de matchs cette saison.</div>`}</div>`;
+}
+
+/* ═════ écran ═════ */
+const SUBS = [["apercu", "📋", "Aperçu"], ["equipes", "🎽", "Équipes"], ["joueurs", "👤", "Joueurs"], ["duels", "⚔️", "Duels"], ["datas", "🧪", "Datas"]];
+function render() {
+  const root = document.getElementById("dash"); if (!root) return;
+  refreshRaw();
+  if (!RAW.length) { root.innerHTML = `<div class="st2 cr"><div class="head">Statistiques</div><p class="no-data">Aucune session pour l'instant.</p></div>`; return; }
+  if (!st.sk || !DATES.includes(st.sk)) st.sk = DATES[DATES.length - 1];
+  if (!st.mk || !MONTHS.includes(st.mk)) st.mk = MONTHS[MONTHS.length - 1];
+  const me = ME(), seasonP = aggOf("saison").P;
+  if (me && seasonP[me] && !st.plTouched) st.pl = me; // par défaut : le joueur connecté
+  if (me && seasonP[me] && !DEPS.has(me) && !st.abTouched) { st.a = me; if (st.b === me) st.b = ""; }
+  if (!st.pl) st.pl = me && aggOf("saison").P[me] ? me : (Object.entries(aggOf("saison").P).sort((a, b) => b[1].m - a[1].m)[0] || [""])[0];
+  if (!st.a || !st.b) { const top = Object.entries(aggOf("saison").P).filter(([n]) => !DEPS.has(n)).sort((x, y) => y[1].m - x[1].m).map(([n]) => n); st.a = st.a || (me && top.includes(me) ? me : top[0]); st.b = st.b || top.find(n => n !== st.a); }
+  const y = window.scrollY, f = document.activeElement && document.activeElement.id, c = f && document.activeElement.selectionStart;
+  let body = ""; try { body = { apercu, equipes, joueurs, duels, datas }[st.sub](); } catch (e) { console.error("stats:", e); body = `<div class="card" style="color:var(--text2)">Oups, un calcul a échoué. Recharge la page.</div>`; }
+  root.innerHTML = `<div class="st2 cr"><div class="head">Statistiques</div>
+    <div class="subnav">${SUBS.map(([k, e, l]) => `<button type="button" class="${k === "datas" ? "dt" : ""}" data-sub="${k}" aria-pressed="${st.sub === k}"><em>${e}</em>${l}</button>`).join("")}</div>${body}</div>`;
+  window.scrollTo(0, y);
+  if (f === "pq") { const el = document.getElementById("pq"); if (el) { el.focus(); try { el.setSelectionRange(c, c); } catch (e) {} } }
+}
+function bind() {
+  const root = document.getElementById("dash"); if (!root || root._st2) return; root._st2 = true;
+  root.addEventListener("click", e => {
+    const t = e.target.closest("[data-stepp],[data-sub],[data-per],[data-top],[data-col],[data-pl],[data-dcat],[data-hero],[data-cmp],[data-pick],[data-dt]"); if (!t) return;
+    const d = t.dataset;
+    if (d.stepp) { const L = st.per === "soir" ? DATES : MONTHS, k = st.per === "soir" ? "sk" : "mk", i = L.indexOf(st[k]) + +d.stepp; if (i >= 0 && i < L.length) st[k] = L[i]; }
+    else if ("cmp" in d) st.cmp = !st.cmp;
+    else if ("pick" in d) { st.pick = !st.pick; if (st.pick) setTimeout(() => document.getElementById("pq")?.focus(), 0); }
+    else if (d.dt) st.dt = d.dt;
+    else if (d.pl) { st.pl = d.pl; st.plTouched = true; st.pick = false; st.pq = ""; st.recent = [d.pl, ...st.recent.filter(n => n !== d.pl)].slice(0, 3); }
+    else if (d.sub) { st.sub = d.sub; st.pick = false; }
+    else if (d.per) st.per = d.per; else if (d.top) st.top = d.top; else if (d.col) st.col = d.col; else if (d.dcat) st.dcat = d.dcat; else if ("hero" in d) st.hero++;
+    render();
+  });
+  root.addEventListener("change", e => { const id = e.target.id;
+    if (id === "psel") { if (st.per === "soir") st.sk = e.target.value; else st.mk = e.target.value; }
+    else if (id === "da") { st.a = e.target.value; st.abTouched = true; } else if (id === "db") { st.b = e.target.value; st.abTouched = true; } else if (id === "st2-cp") st.dp = e.target.value; else return;
+    render(); });
+  root.addEventListener("input", e => { if (e.target.id !== "pq") return; st.pq = e.target.value; render(); });
+}
+window._st2Render = () => { bind(); render(); };
+})();
+
+/* ══════════════════════════════════════════════════════════
    DASHBOARD v2 (préfixe dbx-) — recopié du prototype approuvé.
    Agrégation étendue + rendu des sections (hero, comparatif,
    tendance, matchs marquants, classements, assiduité).
@@ -8917,6 +9591,9 @@ function _dbxPlaceHi(hi, btn) {
    DASHBOARD XXL — dispatcher principal (Globales / Équipes / Joueurs)
 ══════════════════════════════════════════════════════════ */
 function renderDashboard() {
+  const latest = SESSIONS.length ? fmtDate([...SESSIONS].sort((a, b) => new Date(b.date) - new Date(a.date))[0].date) : "—";
+  const hs = document.getElementById("header-sub"); if (hs) hs.textContent = `Dernière session : ${latest}`;
+  if (typeof window._st2Render === "function") { window._st2Render(); return; } // nouvel onglet Statistiques (st2)
   const dash = document.getElementById("dash");
 
   const latestDate = SESSIONS.length
