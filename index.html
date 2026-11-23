@@ -2819,10 +2819,17 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .acm-kv { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; padding: 12px 14px; border-radius: 14px; background: var(--bg3); font-size: 13.5px; margin-bottom: 12px; }
   .acm-kv span { color: var(--text3); } .acm-kv b { font-weight: 600; text-align: right; word-break: break-word; }
   .acm-btn.danger { background: transparent; border: 1px solid rgba(255,59,48,.45); color: #ff6b5e; }
-  .acm-mem .acm-pl { display: flex; align-items: center; gap: 4px; padding: 3px 8px 3px 4px; min-height: 0; }
-  .acm-mem .acm-memrow b { flex-direction: column; align-items: flex-start; gap: 0; }
-  .acm-mem .acm-pl small { display: block !important; }
-  .acm-mem .acm-pl .acm-av { width: 30px; height: 30px; }
+  .acm-mem { gap: 2px; }
+  .acm-mem .acm-pl { display: flex; align-items: center; gap: 2px; flex-shrink: 0; min-height: 0; padding: 2px 10px 2px 2px; border-radius: 12px; border: 1px solid transparent; background: transparent; }
+  .acm-mem .acm-pl:nth-child(odd) { background: var(--bg3); }
+  .acm-mem .acm-pl.me { border-color: var(--gold-border); }
+  .acm-mem .acm-memrow { display: flex; align-items: center; gap: 10px; padding: 5px 0; }
+  .acm-mem .acm-memrow .acm-av { width: 32px; height: 32px; border-radius: 9px; flex: none; }
+  .acm-mem .acm-memrow b { flex: 0 1 auto; display: block; min-width: 0; font-size: 14.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .acm-mem .acm-memrow .dv { flex: 1; display: block !important; font-size: 13px; opacity: .75; }
+  .acm-cdot { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 900; line-height: 1; }
+  .acm-cdot.ok { background: rgba(31,164,99,.18); color: #4cd38a; border: 1.5px solid rgba(31,164,99,.7); }
+  .acm-cdot.due { background: rgba(255,159,10,.14); color: #ff9f0a; border: 1.5px solid rgba(255,159,10,.7); }
   /* Mon compte : compact */
   .acm-acct { display: flex; flex-direction: column; gap: 10px; }
   .acm-acct .acm-sec { margin: 6px 0 -2px; }
@@ -4483,7 +4490,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 14:51</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 14:57</footer>
 
 <script>
 
@@ -15118,8 +15125,8 @@ function _accRender(keepFocus) {
       <p class="acm-sub">${rows ? `<b>${rows.length}</b> compte${rows.length > 1 ? "s" : ""} sur ${total} joueurs · <span style="color:var(--good)">${nPaid} payée${nPaid > 1 ? "s" : ""}</span> · <span style="color:#ff9f0a">${rows.length - nPaid} à payer</span>` : "Chargement…"}</p>${err}
       <div class="acm-list acm-accl acm-mem" style="max-height:58vh">${(rows || []).map(r => `<div class="acm-pl${r.uid === myUid ? " me" : ""}">
         <button class="acm-star${r.super ? " on" : ""}" data-a="star" data-n="${_accEsc(r.player)}"${r.uid === myUid ? " disabled" : ""} aria-label="${r.super ? `Retirer les droits super admin de ${_accEsc(r.player)}` : `Passer ${_accEsc(r.player)} super admin`}">${r.super ? "★" : "☆"}</button>
-        <button class="acm-memrow" data-a="member" data-n="${_accEsc(r.player)}">${_accAvHTML(r.player, "")}<b>${r.player}<small>${r.app ? "📲 appli" : "🌐 site"}</small></b><span class="acm-cchip ${cot[r.player] ? "ok" : "due"}">${cot[r.player] ? "Payée" : "À payer"}</span></button></div>`).join("")}</div>
-      <p class="acm-help">Touche l'étoile : ☆ joueur, ★ super admin (tous les droits dès sa prochaine connexion). Touche un membre pour voir ses infos, valider sa cotisation ou détacher sa carte.</p>`;
+        <button class="acm-memrow" data-a="member" data-n="${_accEsc(r.player)}">${_accAvHTML(r.player, "")}<b>${r.player}</b><small class="dv" title="${r.app ? "Utilise l'appli" : "Utilise le site"}">${r.app ? "📲" : "🌐"}</small><span class="acm-cdot ${cot[r.player] ? "ok" : "due"}" title="Cotisation ${cot[r.player] ? "payée" : "à payer"}">${cot[r.player] ? "✓" : "!"}</span></button></div>`).join("")}</div>
+      <p class="acm-help">☆/★ : super admin (un toucher). <span style="color:var(--good)">✓</span> cotisation payée, <span style="color:#ff9f0a">!</span> à payer. 📲 appli, 🌐 site. Touche un membre pour ses infos, sa cotisation ou détacher sa carte.</p>`;
   } else if (a.view === "member") {
     const n = a.member, r = (a.accounts || []).find(x => x.player === n) || {}, pf = a.mprof, paid = !!(a.cot || {})[n], cy = _currentSeason(), cl = `${String(cy).slice(2)}/${String(cy + 1).slice(2)}`;
     const kv = (l, v) => `<span>${l}</span><b>${v ? _accEsc(v) : "—"}</b>`;
