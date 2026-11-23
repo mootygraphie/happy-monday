@@ -112,7 +112,8 @@
     "pushDebug": {
       ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
       "$p": {
-        ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
+        ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p",
+        ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
       }
     },
     "pwReset": {

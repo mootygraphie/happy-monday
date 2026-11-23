@@ -2862,6 +2862,12 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .acm-grid .acm-btn { margin-top: 2px; padding: 10px; font-size: 14px; }
   .acm-acct .acm-btn.ghost { margin-top: 0; padding: 10px; font-size: 14px; }
   .acm-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .acm-kvc { position: relative; padding-right: 56px; }
+  .acm-kvc .no { font-style: normal; font-weight: 400; color: var(--text3); }
+  .acm-pensq { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text); display: grid; place-items: center; cursor: pointer; }
+  .acm-pensq svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .acm-pensq:hover, .acm-pensq:focus-visible { border-color: var(--gold); color: var(--gold); }
+  .acm-mini { display: inline-block; margin-top: 6px; font: inherit; font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 9px; border: 1px solid var(--gold-border); background: var(--gold-bg); color: var(--text); cursor: pointer; }
   .acm-sech { display: flex; justify-content: space-between; align-items: center; }
   .acm-pen { font: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0; text-transform: none; padding: 5px 10px; border-radius: 9px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); cursor: pointer; }
   .acm-grid.ro .acm-input input { background: transparent; border-color: var(--border); color: var(--text); cursor: default; }
@@ -4517,7 +4523,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 22:33</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 22:44</footer>
 
 <script>
 
@@ -15138,12 +15144,18 @@ function _accRender(keepFocus) {
       <button class="acm-link2" data-a="fiche">👤 Voir ma fiche joueur<span>›</span></button>
       <div class="acm-sec">Cotisation</div>
       ${a.paid === undefined ? `<p class="acm-sub">Chargement…</p>` : `<div class="acm-cot ${a.paid ? "ok" : "due"}"><span><b>Cotisation ${cl}</b></span><span class="st">${a.paid ? "✓ Payée" : "À payer"}</span></div>`}
-      <div class="acm-sec acm-sech"><span>Coordonnées</span>${a.prof !== undefined && !ed ? `<button type="button" class="acm-pen" data-a="pedit" aria-label="Modifier mes coordonnées">✏️ Modifier</button>` : ""}</div>${err}
-      ${a.prof === undefined ? `<p class="acm-sub">Chargement…</p>` : `<form id="acm-prof" class="acm-grid${ed ? " ed" : " ro"}" autocomplete="on">
+      <div class="acm-sec">Compte</div>
+      ${(() => { const pw = window._pwa, st = pw && pw.pushState ? pw.pushState() : "unsupported", d = a.myPush;
+        const lab = { on: `<span style="color:var(--good)">✓ actives sur ce téléphone</span>`, off: `<span style="color:#ff9f0a">désactivées sur ce téléphone</span>`, denied: `<span style="color:var(--bad)">bloquées dans les réglages</span>`, install: `<span style="color:#ff9f0a">installe d'abord l'appli</span>`, unsupported: `<span style="color:var(--text3)">pas gérées par ce navigateur</span>` }[st] || "—";
+        return `<div class="acm-kv"><span>Pseudo</span><b>@${_accEsc((_accProfile && _accProfile.pseudo) || ((_accUser && _accUser.email) || "").split("@")[0])}</b><span>Notifications</span><b>${lab}${d && !d.ok && st !== "on" ? `<small class="acm-kvs">dernier essai : ${_accEsc(d.err || d.step || "")}</small>` : ""}${st === "off" || st === "install" ? `<button type="button" class="acm-mini" data-a="pushon">${st === "install" ? "Comment faire ›" : "Activer"}</button>` : ""}</b></div>`; })()}
+      <div class="acm-sec">Coordonnées</div>${err}
+      ${a.prof === undefined ? `<p class="acm-sub">Chargement…</p>` : !ed ? `<div class="acm-kv acm-kvc">${(() => { const kv = (l, v) => `<span>${l}</span><b>${v ? _accEsc(v) : `<i class="no">à renseigner</i>`}</b>`, fd = d => { if (!d) return ""; const [y, m, j] = d.split("-"); return `${+j} ${MONTH_NAMES[+m - 1]} ${y}`; };
+          return kv("Prénom", pf.prenom) + kv("Nom", pf.nom) + kv("Naissance", fd(pf.naissance)) + kv("Téléphone", pf.tel) + kv("E-mail", pf.email); })()}<button type="button" class="acm-pensq" data-a="pedit" aria-label="Modifier mes coordonnées" title="Modifier"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button></div>
+        <p class="acm-help" style="margin:6px 0 0">🔒 Visibles seulement par toi et les responsables du club.</p>`
+      : `<form id="acm-prof" class="acm-grid ed" autocomplete="on">
         ${fld("prenom", "Prénom", "text", pf.prenom, "given-name")}${fld("nom", "Nom", "text", pf.nom, "family-name")}${fld("naissance", "Naissance", "date", pf.naissance, "bday")}
         ${fld("tel", "Téléphone", "tel", pf.tel, "tel")}<div class="wide">${fld("email", "E-mail", "email", pf.email, "email")}</div>
-        ${ed ? `<div class="wide acm-row2"><button class="acm-btn ghost" type="button" data-a="pcancel">Annuler</button><button class="acm-btn" type="submit"${a.busy ? " disabled" : ""}>${a.busy ? "Enregistrement…" : "Enregistrer"}</button></div>` : ""}</form>
-        <p class="acm-help" style="margin:6px 0 0">🔒 Visibles seulement par toi et les responsables du club.</p>`}
+        <div class="wide acm-row2"><button class="acm-btn ghost" type="button" data-a="pcancel">Annuler</button><button class="acm-btn" type="submit"${a.busy ? " disabled" : ""}>${a.busy ? "Enregistrement…" : "Enregistrer"}</button></div></form>`}
       ${_accIsSuper ? `<div class="acm-sec sa">★ Super admin</div><div class="acm-row2"><button class="acm-btn ghost" data-a="accounts">👥 Membres</button><button class="acm-btn ghost" data-a="csv">⬇️ Export CSV</button></div>` : ""}
       <button class="acm-btn ghost" data-a="logout">Se déconnecter</button></div>`;
   } else if (a.view === "accounts") {
@@ -15297,6 +15309,7 @@ async function _accDoBind() {
 }
 async function _accLoadMe() {
   const p = _accPlayer(); if (!p || !_db) return;
+  _db.ref("pushDebug/" + p).once("value").then(x => { _acc.myPush = x.val(); if (_acc.view === "me") _accRender(); }).catch(() => {});
   try { const [pf, ct] = await Promise.all([_db.ref("profiles/" + p).once("value"), _db.ref(`cotisations/${_currentSeason()}/${p}`).once("value")]); _acc.prof = pf.val() || {}; _acc.paid = !!ct.val(); }
   catch (e) { _acc.prof = {}; _acc.paid = undefined; }
   if (_acc.view === "me") _accRender();
@@ -15387,6 +15400,7 @@ document.getElementById("acc-modal").addEventListener("click", e => {
   else if (act === "fiche") { _accClose(); _accShowMyFiche(); return; }
   else if (act === "csv") { _accExportCsv(); return; }
   else if (act === "pedit") { a.editProf = true; _accRender(); setTimeout(() => document.getElementById("acm-pf-prenom")?.focus(), 30); return; }
+  else if (act === "pushon") { const pw = window._pwa; if (pw) { const st = pw.pushState(); if (st === "install") pw.install(); else pw.toggle().finally(() => { _accLoadMe(); }); } return; }
   else if (act === "pcancel") { a.editProf = false; a.err = ""; _accRender(); return; }
   else if (act === "pwreset") {
     const n = t.dataset.n, r = (a.accounts || []).find(x => x.player === n); if (!r || !r.uid) return;
