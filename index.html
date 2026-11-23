@@ -4529,7 +4529,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 23:00</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 23:06</footer>
 
 <script>
 
@@ -17634,6 +17634,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
           console.warn("push:", e);
           const why = (e && (e.message || e.name)) || "erreur inconnue";
           dbg(false, "erreur", why);
+          // étape 1 sans réponse : le navigateur n'a pas affiché la demande (réglage « messages plus discrets » de Chrome / Samsung Internet)
+          if (/étape 1/.test(why)) { toast(`Ton navigateur n'a pas affiché la demande d'autorisation. Ouvre le site dans ${nav === "Samsung Internet" ? "Samsung Internet" : "Chrome"} (pas l'appli), touche le cadenas à côté de l'adresse › Autorisations › Notifications › Autoriser, puis réessaie.`); return; }
           toast(`Activation impossible (${why}). Essaie dans Chrome, ou réinstalle l'appli.`);
         }
       },
