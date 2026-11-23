@@ -2483,14 +2483,21 @@ html:has(#vg-modal:not([hidden])), html:has(#vg-modal:not([hidden])) body { over
 #panel-vignettes .stk-empty .nm2 { font-size: 13px; font-weight: 700; color: var(--text2); line-height: 1.2; }
 #panel-vignettes .stk-empty .rt { font-size: 9.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: color-mix(in srgb, var(--rc) 80%, var(--text3)); }
 #panel-vignettes .stk-blank { visibility: hidden; aspect-ratio: 5 / 7; }
-#panel-vignettes .cover-pg { align-items: center; justify-content: center; text-align: center; gap: 14px; background: radial-gradient(circle at 50% 35%, rgba(255,59,48,.18), transparent 55%), repeating-linear-gradient(-45deg, #1d1d28 0 18px, #191922 18px 36px); }
-#panel-vignettes .cover-pg .big { font-size: 84px; line-height: 1; filter: drop-shadow(0 0 30px rgba(255,59,48,.45)); }
-#panel-vignettes .cover-pg small { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); font-weight: 700; }
-#panel-vignettes .cover-pg h2 { margin: 0; font-size: clamp(30px, 5cqw, 46px); font-weight: 700; font-style: italic; text-transform: uppercase; line-height: 1; letter-spacing: .03em; }
-#panel-vignettes .cover-pg h2 span { color: var(--gold); display: block; }
-#panel-vignettes .cover-pg .season { font-size: 13px; color: var(--text2); }
-#panel-vignettes .cover-pg .cnt { margin-top: 10px; padding: 8px 16px; border: 1px solid var(--gold-border); border-radius: 30px; font-size: 13px; color: var(--text); }
-#panel-vignettes .cover-pg .cnt b { color: var(--gold); }
+/* Couverture : cartes de la saison en fond, la carte du joueur au centre (en mythique), les légendaires joueurs en éventail. Tirage au hasard à chaque ouverture de l'album. */
+#panel-vignettes .cover-pg { padding: 0 !important; container-type: inline-size; aspect-ratio: 3 / 4; background: #0b0b0d; pointer-events: none; }
+#panel-vignettes .cv-bg { position: absolute; inset: -8%; display: grid; grid-template-columns: repeat(5, 1fr); gap: 3cqw 2cqw; padding: 2cqw; transform: rotate(-8deg) scale(1.05); align-content: start; filter: brightness(.42) saturate(.8); }
+#panel-vignettes .cv-glow { position: absolute; left: 50%; top: 40%; width: 110cqw; height: 60cqw; transform: translate(-50%, -50%); background: radial-gradient(closest-side, rgba(245,200,66,.35), transparent); }
+#panel-vignettes .cv-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,11,13,.6), transparent 16%, transparent 58%, rgba(11,11,13,.92) 72%); }
+#panel-vignettes .cv-fan { position: absolute; left: 50%; top: 40%; width: 0; height: 0; z-index: 5; }
+#panel-vignettes .cv-fan > div { position: absolute; width: 25cqw; top: -17.5cqw; transform-origin: 50% 60%; }
+#panel-vignettes .cv-fan > div.me { width: 34cqw; top: -26cqw; left: -17cqw; z-index: 9; }
+#panel-vignettes .cv-fan > div.me .face { box-shadow: 0 0 0 .5cqw #fff, 0 0 2.5em rgba(255,59,48,.7), 0 1em 2em rgba(0,0,0,.7); }
+#panel-vignettes .cv-kick { position: absolute; top: 6cqw; left: 0; right: 0; text-align: center; z-index: 6; font-size: 3cqw; font-weight: 700; letter-spacing: .28em; text-transform: uppercase; color: rgba(255,255,255,.8); }
+#panel-vignettes .cv-tt { position: absolute; top: 69%; left: 0; right: 0; text-align: center; z-index: 6; }
+#panel-vignettes .cv-tt small { display: block; font-size: 6cqw; font-weight: 700; font-style: italic; letter-spacing: .02em; text-transform: uppercase; line-height: 1; color: #fff; }
+#panel-vignettes .cv-tt b { display: block; font-size: 11cqw; font-weight: 700; font-style: italic; line-height: 1; color: #ff3b30; margin-top: .8cqw; }
+#panel-vignettes .cv-cnt { position: absolute; z-index: 15; left: 50%; transform: translateX(-50%); bottom: 5cqw; white-space: nowrap; padding: 1.2cqw 3.2cqw; border-radius: 99px; font-size: 3cqw; font-weight: 600; color: #fff; background: rgba(0,0,0,.55); border: 1px solid rgba(255,255,255,.25); }
+#panel-vignettes .cv-cnt b { color: #ff3b30; }
 #panel-vignettes .toc h3 { margin: 0 0 4px; font-size: 22px; font-weight: 700; font-style: italic; text-transform: uppercase; }
 #panel-vignettes .toc > p { margin: 0 0 14px; color: var(--text2); font-size: 13px; }
 #panel-vignettes .toc-row { display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 12px; padding: 10px 6px; border: none; border-bottom: 1px dashed var(--border2); cursor: pointer; background: none; width: 100%; text-align: left; color: var(--text); }
@@ -4344,7 +4351,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 10:26</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 10:53</footer>
 
 <script>
 
@@ -15445,6 +15452,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
       </section>
       <section id="vg-trades"${tab === "trades" ? "" : " hidden"}></section>
       <details class="vg-legend"><summary>Comment ça marche ?</summary><p><b>Raretés.</b> Joueurs : selon la note générale. Hauts faits : selon le nombre de détenteurs (un seul = légendaire). Faits notables : selon le nombre de fois où ils ont été réalisés (jamais réalisé = légendaire). <b>Notes.</b> ATT = buts par match, PAS = passes par match, DEF = buts encaissés par l'équipe quand il joue, VIC = points par match, FID = soirées jouées, GAR = buts encaissés par mi-temps au but, classées de 42 à 98 parmi les joueurs de la saison. <b>Sections.</b> Réguliers et Occasionnels se répartissent à parts égales entre Buteurs, Passeurs, Défenseurs, Murailles et Guerriers (ceux qui n'ont pas encore joué et les stats les plus moyennes) ; buts et passes comptent à moitié par match, à moitié au total, la fidélité départage. Les Dépanneurs ont leur section. Les cartes évoluent avec les stats jusqu'en fin de saison. Ton album est enregistré sous ta fiche joueur. <b>Échanges.</b> Seulement des doubles, 3 cartes maximum de chaque côté, rareté libre, dons permis. Une proposition expire au bout de 3 jours.</p></details>`;
+    COVER = null; // nouvelle ouverture : nouveau tirage de la couverture
     if (tab === "booster") renderPack(); else if (tab === "trades") renderTrades(); else renderAlbum();
     trBadge();
   }
@@ -15628,13 +15636,31 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     if (P.length % 2) P.push({ kind: "blank" }); // plus de page « Fin de l'album » (retirée le 23/11)
     return P;
   }
+  // Couverture tirée une fois par ouverture de l'album (COVER remis à zéro par render()), puis gardée pendant qu'on tourne les pages.
+  // Légendaires = cartes joueurs légendaires du moment : en fin de saison, ce sont donc les définitives.
+  let COVER = null;
+  const shufArr = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+  function coverInner() {
+    if (COVER) return COVER;
+    const meC = PLAYERS.find(c => c.n === ME), leg = shufArr(PLAYERS.filter(c => c.r === "L" && c.n !== ME)).slice(0, 4);
+    let pool = shufArr(ALL.filter(c => COL[c.k] && !c.locked && !lockedSecret(c)));
+    if (pool.length < 30) pool = pool.concat(shufArr(PLAYERS.filter(c => !pool.includes(c))));
+    const bg = []; while (pool.length && bg.length < 30) bg.push(...pool.slice(0, 30 - bg.length));
+    const A = [-16, -8, 8, 16], X = [-31, -18, 18, 31], n = leg.length, idx = n === 4 ? [0, 1, 2, 3] : n === 3 ? [0, 1, 3] : n === 2 ? [1, 2] : [1];
+    const fan = leg.map((c, i) => { const k = idx[i]; return `<div style="left:${X[k] - 12.5}cqw;transform:rotate(${A[k]}deg) translateY(${k === 0 || k === 3 ? 4 : 1}cqw);z-index:${k < 2 ? k + 1 : 4 - k}">${cardHTML(c, true)}</div>`; }).join("");
+    COVER = `<div class="cv-bg">${bg.map(c => cardHTML(c, true)).join("")}</div><div class="cv-glow"></div><div class="cv-shade"></div>
+      <div class="cv-kick">Happy Monday Football Team</div>
+      <div class="cv-fan">${fan}${meC ? `<div class="me">${cardHTML({ ...meC, r: "M" }, true)}</div>` : ""}</div>
+      <div class="cv-tt"><small>L'album de la saison</small><b>${SY}-${SY + 1}</b></div>
+      <div class="cv-cnt"><b>${ownedN()}</b> / ${ALL.length} collées</div>`;
+    return COVER;
+  }
   const spreadStart = i => single() ? i : i - (i % 2);
   const ownedN = () => ALL.filter(c => COL[c.k]).length;
   function pageHTML(p, i, side) {
     const cls = `page ${side}`, foot = label => `<div class="pg-num"><span>${label}</span><b>${i + 1}</b></div>`;
     if (!p) return `<div class="${cls} blank-pg"></div>`;
-    if (p.kind === "cover") return `<div class="${cls} cover-pg"><small>Album officiel</small><div class="big">⚽</div><h2>Happy<span>Monday</span></h2>
-      <div class="season">${SEASON_LABEL} · ${ALL.length} vignettes</div><div class="live-ed">● Édition vivante · figée en fin de saison</div><div class="cnt"><b>${ownedN()}</b> / ${ALL.length} collées</div></div>`;
+    if (p.kind === "cover") return `<div class="${cls} cover-pg">${coverInner()}</div>`;
     if (p.kind === "toc") return `<div class="${cls} toc"><h3>Sommaire</h3><p>Touche une section pour y aller.</p>
       ${SECS.map(s => { const got = s.items.filter(c => COL[c.k]).length; return `<button class="toc-row" data-go="${s.page}" style="--sc:${s.col}"><span class="i">${s.ic}</span><span><b>${s.t}</b><small>${s.sub} · p. ${s.page + 1}</small></span><span class="pr">${got} / ${s.items.length}<i><u style="width:${s.items.length ? got / s.items.length * 100 : 0}%"></u></i></span></button>`; }).join("")}${foot("Sommaire")}</div>`;
     if (p.kind === "end") { const left = ALL.length - ownedN(); return `<div class="${cls} end-pg"><div class="big">🏁</div><h3>Fin de l'album</h3><p>${left ? `Encore ${left} vignette${left > 1 ? "s" : ""} à trouver.` : "Album complet. Bravo !"}</p>${foot("")}</div>`; }
@@ -15846,12 +15872,12 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     }
     const n = TR.partner, g = trGive(n), r = trGet(n);
     TR.gSel = TR.gSel.filter(k => g.includes(k)); TR.rSel = TR.rSel.filter(k => r.includes(k));
-    const opt = (k, sel, side) => `<button class="vt-opt" data-vt="tog" data-side="${side}" data-k="${k}" aria-pressed="${sel.includes(k)}"><span class="chk">✓</span>${trCard(k)}<span class="cnt">${side === "g" ? `Tu en as ${nOf(ME, k)}` : `Il en a ${nOf(n, k)}`}</span></button>`;
+    const opt = (k, sel, side) => `<button class="vt-opt" data-vt="tog" data-side="${side}" data-k="${k}" aria-pressed="${sel.includes(k)}"><span class="chk">✓</span>${trCard(k)}<span class="cnt">${(d => `${d} en double`)(nOf(side === "g" ? ME : n, k) - 1)}</span></button>`;
     const gift = TR.gSel.length && !TR.rSel.length;
     const btn = !TR.gSel.length ? `<button class="vt-btn" disabled>Choisis au moins un de tes doubles</button>`
       : gift ? `<button class="vt-btn" data-vt="send">🎁 Offrir ${TR.gSel.length > 1 ? `ces ${TR.gSel.length} cartes` : "cette carte"} à ${n}</button>`
       : `<button class="vt-btn" data-vt="send">Envoyer la proposition</button>`;
-    return `<div class="vt-partner">${trAv(n)}<span><b>${n}</b><small>Album ${ownedOf(n)} / ${ALL.length} · ${dupsOf(n).length} doubles</small></span><button class="x" data-vt="clear" aria-label="Changer de joueur">✕</button></div>
+    return `<div class="vt-partner">${trAv(n)}<span><b>${n}</b><small>Album ${ownedOf(n)} / ${ALL.length} · ${dupsOf(n).reduce((a, k) => a + nOf(n, k) - 1, 0)} doubles</small></span><button class="x" data-vt="clear" aria-label="Changer de joueur">✕</button></div>
       <div class="vt-pick-h"><b>Mes doubles</b><small class="${TR.gSel.length === TR_MAX ? "full" : ""}">qui lui manquent · ${TR.gSel.length} / ${TR_MAX}</small></div>
       ${g.length ? `<div class="vt-scroll">${g.map(k => opt(k, TR.gSel, "g")).join("")}</div>` : `<div class="vt-none">Aucun de tes doubles ne lui manque.</div>`}
       <div class="vt-pick-h"><b>Mes manques</b><small class="${TR.rSel.length === TR_MAX ? "full" : ""}">qu'il a en double · ${TR.rSel.length} / ${TR_MAX}</small></div>
