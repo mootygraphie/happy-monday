@@ -3272,6 +3272,26 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .hmft-toast.upd::after { display: none; }
   .hmft-toast.upd b { color: #ff7b70; margin-left: 4px; }
   html:has(#upd-bar) .hmft-toast:not(.upd) { translate: 0 -52px; } /* un autre message s'affiche juste au-dessus */
+  /* Plein écran « nouvelle version » : écusson brodé sur halo rouge, un seul bouton */
+  #upd-full { position: fixed; inset: 0; z-index: 10050; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: calc(28px + env(safe-area-inset-top, 0px)) max(26px, env(safe-area-inset-right, 0px)) calc(28px + env(safe-area-inset-bottom, 0px)) max(26px, env(safe-area-inset-left, 0px)); background: radial-gradient(110% 60% at 50% 32%, #5a0000, #0b0b0d 72%); color: #fff; overflow-y: auto; opacity: 0; transition: opacity .3s; color-scheme: dark; }
+  #upd-full.on { opacity: 1; }
+  #upd-full > * { width: 100%; max-width: 340px; }
+  #upd-full .uf-patch { width: 140px; height: 158px; background: url(icons/ecusson.png) center/contain no-repeat; filter: drop-shadow(0 18px 30px rgba(0,0,0,.6)); margin-bottom: 20px; transform: translateY(18px) scale(.85); opacity: 0; transition: transform .55s cubic-bezier(.2,1.4,.4,1), opacity .3s; }
+  #upd-full .uf-up { transform: translateY(24px); opacity: 0; transition: transform .45s .15s cubic-bezier(.2,.9,.3,1), opacity .35s .15s; }
+  #upd-full.on .uf-patch, #upd-full.on .uf-up { transform: none; opacity: 1; }
+  #upd-full .uf-k { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #ff7b70; }
+  #upd-full .uf-t { margin: 6px 0 4px; font-size: 26px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1.05; }
+  #upd-full .uf-d { font-size: 13px; color: #9898aa; }
+  #upd-full .uf-go { display: block; margin-top: 22px; border: none; border-radius: 13px; padding: 14px; font: inherit; font-weight: 800; font-size: 15px; background: #e30b0b; color: #fff; cursor: pointer; }
+  #upd-full .uf-go:disabled { opacity: .7; }
+  #upd-full details { margin-top: 12px; }
+  #upd-full summary { list-style: none; cursor: pointer; font-size: 12.5px; color: #9898aa; display: inline-flex; align-items: center; gap: 5px; padding: 6px; }
+  #upd-full summary::-webkit-details-marker { display: none; }
+  #upd-full summary::after { content: "›"; font-size: 14px; transition: transform .2s; display: inline-block; }
+  #upd-full details[open] summary::after { transform: rotate(90deg); }
+  #upd-full ul { list-style: none; margin: 8px 0 0; padding: 10px 12px; border-radius: 12px; background: rgba(0,0,0,.3); display: flex; flex-direction: column; gap: 7px; font-size: 12.5px; color: #9898aa; text-align: left; }
+  #upd-full li b { color: #e6e6ea; font-weight: 600; }
+  @media (prefers-reduced-motion: reduce) { #upd-full, #upd-full .uf-patch, #upd-full .uf-up { transition: none; } }
 
   /* ── bouton central en écusson (forme du blason) ; encoche dans la barre pour la Saisie */
   #bnav .bn-c.sh::before { display: none; }
@@ -4529,7 +4549,8 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 23:06</footer>
+<template id="hm-news" data-date="23/11/2026"><li>🔄 <b>Mises à jour</b> : nouvel écran d'annonce</li><li>👥 <b>Membres</b> : pseudo, mot de passe provisoire</li><li>📌 <b>Sessions</b> : tous les faits notables de la soirée</li><li>🔔 <b>Notifications</b> plus fiables sur Android</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 23:26</footer>
 
 <script>
 
@@ -18250,18 +18271,27 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     last = Date.now();
     try {
       const r = await fetch(location.pathname + "?chk=" + Date.now(), { cache: "no-store" }); if (!r.ok) return;
-      const m = (await r.text()).match(RE), mine = cur();
-      if (m && mine && m[1] !== mine) show(m[1]);
+      const txt = await r.text(), m = txt.match(RE), mine = cur();
+      if (m && mine && m[1] !== mine) showFull(m[1], txt);
     } catch (e) {}
   }
-  function show(v) {
+  // Plein écran : date de la nouvelle version + « Quoi de neuf ? » lu dans la nouvelle page
+  // (<template id="hm-news" data-date="jj/mm/aaaa">, affiché seulement s'il est du même jour).
+  function showFull(v, txt) {
     shown = true;
-    const b = document.createElement("button");
-    b.type = "button"; b.id = "upd-bar"; b.className = "hmft-toast upd";
-    b.innerHTML = `<span class="hmft-toast-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg></span><span>Nouvelle version disponible</span><b>Mettre à jour</b>`;
-    b.addEventListener("click", () => { b.disabled = true; b.querySelector("b").textContent = "…"; window._hmUpdate(); });
-    document.body.appendChild(b);
-    requestAnimationFrame(() => requestAnimationFrame(() => b.classList.add("show")));
+    const MO = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+    const [d, mo] = v.split("/"), day = v.slice(0, 10);
+    let news = "";
+    try {
+      const t = txt.match(/<template id="hm-news" data-date="([^"]*)">([\s\S]*?)<\/template>/);
+      if (t && t[1] === day && /<li/.test(t[2])) news = `<details class="uf-up"><summary>Quoi de neuf ?</summary><ul>${t[2]}</ul></details>`;
+    } catch (e) {}
+    const o = document.createElement("div");
+    o.id = "upd-full"; o.setAttribute("role", "dialog"); o.setAttribute("aria-modal", "true"); o.setAttribute("aria-label", "Nouvelle version");
+    o.innerHTML = `<div class="uf-patch" aria-hidden="true"></div><span class="uf-k uf-up">Nouvelle version</span><div class="uf-t uf-up">Le vestiaire<br>a été repeint</div><div class="uf-d uf-up">Version du ${+d} ${MO[+mo - 1] || ""}</div><button type="button" class="uf-go uf-up">Mettre à jour</button>${news}`;
+    o.querySelector(".uf-go").addEventListener("click", e => { e.currentTarget.disabled = true; e.currentTarget.textContent = "Mise à jour…"; window._hmUpdate(); });
+    document.body.appendChild(o);
+    requestAnimationFrame(() => requestAnimationFrame(() => o.classList.add("on")));
   }
   document.addEventListener("visibilitychange", check);
   addEventListener("focus", check);
