@@ -3523,6 +3523,12 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .cr-hero .face, .cr-stand .f { transition: visibility 0s linear .1s; }
   .cr-hero .face.back, .cr-hero.flipped .face.front, .cr-stand .f.back, .cr-stand .bar.flipped .f.front { visibility: hidden; }
   .cr-hero.flipped .face.back, .cr-stand .bar.flipped .f.back { visibility: visible; }
+  .cr-nts { display: flex; flex-direction: column; gap: 6px; }
+  .cr-nts .nt { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 12px; background: var(--bg2); border: 1px solid var(--border); cursor: pointer; }
+  .cr-nts .nt:hover { border-color: var(--gold-border); }
+  .cr-nts .nt .ic { flex: none; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-size: 18px; background: var(--bg3); }
+  .cr-nts .nt .tx { flex: 1; min-width: 0; } .cr-nts .nt b { display: block; font-size: 14px; } .cr-nts .nt small { display: block; font-size: 11.5px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cr-nts .nt .cr-av { flex: none; }
   /* bandeau des résultats */
   .cr-tick { display: flex; align-items: center; height: 38px; border-radius: 12px; overflow: hidden; background: var(--bg2); border: 1px solid var(--border); }
   .cr-tick .tag { flex: none; position: relative; z-index: 2; height: 100%; display: flex; align-items: center; padding: 0 12px; background: color-mix(in srgb, var(--gold) 14%, var(--bg2)); box-shadow: 6px 0 10px var(--bg2); color: var(--gold); font-weight: 700; font-style: italic; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
@@ -4523,7 +4529,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 22:44</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 22:45</footer>
 
 <script>
 
@@ -10257,6 +10263,8 @@ function renderSessionDetailV3(session) {
     return `<div class="st ${_crTC[s.t] || ""}"><span class="rk">${i + 1}</span><button type="button" class="bar${_CR.flipT[s.t] ? " flipped" : ""}" data-crflipt="${s.t}" aria-label="${TL(s.t)} : voir la composition"><span class="in">
       <span class="f front"><i style="--w:${s.pts / max * 100}%"></i><b>${TL(s.t)}</b><span class="pile">${L.slice(0, 6).map(p => _crAv(p, s.t, 24)).join("")}</span><small>${s.v}V ${s.n}N ${s.d}D · ${s.gf - s.ga > 0 ? "+" : ""}${s.gf - s.ga}</small></span>
       <span class="f back"><span class="faces">${L.map(p => `<span title="${_crEsc(p)}">${_crAv(p, s.t, 34)}</span>`).join("")}</span></span></span></button><span class="pts">${s.pts}<small>pts</small></span></div>`; }).join("")}</div>`;
+  // Faits notables de la soirée : tous, sous le classement (fiche du joueur au toucher)
+  const nts = M.notes.length ? `<div class="cr-nts">${M.notes.map(n => `<button type="button" class="nt player-link" data-player="${_crEsc(n.player)}"><span class="ic">${n.d.icon || "📌"}</span><span class="tx"><b>${_crEsc(n.d.name)}</b><small>${_crEsc(n.player)} · match ${n.i + 1} · ${TL(n.m.eqA)} ${n.m.scoreA}–${n.m.scoreB} ${TL(n.m.eqB)}</small></span>${_crAv(n.player, M.team(n.player), 30)}</button>`).join("")}</div>` : "";
   const run = (M.s.matchs || []).map((m, i) => `<span>#${i + 1} <i class="${_crTC[m.eqA] || ""}"></i>${TL(m.eqA)} <b>${m.scoreA}–${m.scoreB}</b> ${TL(m.eqB)}<i class="${_crTC[m.eqB] || ""}"></i>${(m.notables || []).map(n => M.ND[n.defiId] ? ` ${M.ND[n.defiId].icon}` : "").join("")}</span>`).join("");
   const ticker = `<div class="cr-tick"><span class="tag">Résultats</span><div class="run" style="animation-duration:${Math.max(30, M.nM * 6)}s">${run}${run}</div></div>`;
   const P = []; if (M.gk) P.push([M.gk[0], 7, 50, `${enc(M.gk)} enc.`]);
@@ -10269,7 +10277,7 @@ function renderSessionDetailV3(session) {
   // 1. titre seul ; 2. temps forts + héros | équipe-type, matchs, classement (sur téléphone : classement d'abord) ;
   // 3. « En bref » (2 × 2 sur grand écran) ; 4. « Le saviez-vous ? » (4 × 1 sur grand écran)
   const left = `${h2("Les temps forts")}${tf}${h2("Les héros", "touche une carte pour le top 5")}${heroesH}`;
-  const right = `<div class="cr-r cr-r-iso">${h2("Équipe-type")}${iso}</div><div class="cr-r cr-r-tick">${h2("Les matchs")}${ticker}</div><div class="cr-r cr-r-stand">${h2("Classement", "touche une équipe pour sa composition")}${stand}</div>`;
+  const right = `<div class="cr-r cr-r-iso">${h2("Équipe-type")}${iso}</div><div class="cr-r cr-r-tick">${h2("Les matchs")}${ticker}</div><div class="cr-r cr-r-stand">${h2("Classement", "touche une équipe pour sa composition")}${stand}${nts ? h2("Faits notables", `${M.notes.length} ce soir`) + nts : ""}</div>`;
   return `<div class="cr">${dates}${title}<div class="cr-grid"><div>${left}</div><div class="cr-right">${right}</div></div>${h2("En bref")}${bref}${SPk.savez.length ? h2("Le saviez-vous ?") + savez : ""}${_crMatches(M)}</div>`;
 }
 function _crShowTf(k) {
