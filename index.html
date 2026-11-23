@@ -28,7 +28,7 @@
     --rouge: #FF2D95; --rouge-bg: rgba(255,45,149,.15); --rouge-border: rgba(255,45,149,.3);
     --vert:  #edff00; --vert-bg:  rgba(237,255,0,.15);  --vert-border:  rgba(237,255,0,.3);
     --bleu:  #00BBFF; --bleu-bg:  rgba(0,187,255,.15);  --bleu-border:  rgba(0,187,255,.3);
-    --gold: #ff3b30; --sa: #f5c842; /* --gold = accent rouge du club ; --sa = doré réservé (super admins, médailles, blessés, hauts faits) */ --silver: #aab0bc; --bronze: #c47c3a;
+    --gold: #ff3b30; --sa: #f5c842; --toast-bg: #2a1215; --toast-border: rgba(255,59,48,.38); /* --gold = accent rouge du club ; --sa = doré réservé (super admins, médailles, blessés, hauts faits) */ --silver: #aab0bc; --bronze: #c47c3a;
     --gold-bg: rgba(255,59,48,.14); --gold-border: rgba(255,59,48,.34); --sa-bg: rgba(245,200,66,.14); --sa-border: rgba(245,200,66,.3);
     --good: #66bb6a; --bad: #ef5350; --bad-bg: rgba(239,83,80,.12); --bad-border: rgba(239,83,80,.32);
     --neutral: #9898aa; --neutral-bg: rgba(154,154,170,.1); --neutral-border: rgba(154,154,170,.3);
@@ -65,7 +65,7 @@
     --rouge: #ff0090; --rouge-bg: rgba(255,0,144,.1);  --rouge-border: rgba(255,0,144,.22);
     --vert:  #eecd00; --vert-bg:  rgba(238,205,0,.1);  --vert-border:  rgba(238,205,0,.22);
     --bleu:  #0088CC; --bleu-bg:  rgba(0,136,204,.1);  --bleu-border:  rgba(0,136,204,.22);
-    --gold: #e30b0b; --gold-bg: rgba(227,11,11,.08); --gold-border: rgba(227,11,11,.26); --sa-bg: rgba(181,134,10,.1); --sa-border: rgba(181,134,10,.28);
+    --gold: #e30b0b; --toast-bg: #1f0d0f; --toast-border: rgba(227,11,11,.5); --gold-bg: rgba(227,11,11,.08); --gold-border: rgba(227,11,11,.26); --sa-bg: rgba(181,134,10,.1); --sa-border: rgba(181,134,10,.28);
     --good: #1a8a4a; --bad: #d1364a; --bad-bg: rgba(209,54,74,.1); --bad-border: rgba(209,54,74,.24);
     --neutral: #6b6b78; --neutral-bg: rgba(107,107,120,.08); --neutral-border: rgba(107,107,120,.22);
     --hf-attaque: #d81b52; --hf-attaque-bg: rgba(216,27,82,.09);
@@ -1159,7 +1159,7 @@
 
   /* Petit message (version « carte allégée » validée le 21/11) : une ligne centrée, une coche de couleur,
      une jauge très fine qui se vide ; glisse depuis le bas au-dessus de la barre. */
-  .hmft-toast { --c: var(--good); position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 140%); width: max-content; max-width: calc(100% - 32px); display: flex; align-items: center; gap: 8px; background: color-mix(in srgb, var(--bg2) 94%, transparent); border: 1px solid var(--border); color: var(--text); font-weight: 600; font-size: 13.5px; line-height: 1.35; padding: 10px 15px 11px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,.4); opacity: 0; transition: opacity .3s, transform .45s cubic-bezier(.2,.9,.3,1.1); z-index: 4000; pointer-events: none; overflow: hidden; }
+  .hmft-toast { --c: var(--good); position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 140%); width: max-content; max-width: calc(100% - 32px); display: flex; align-items: center; gap: 8px; background: var(--toast-bg); border: 1px solid var(--toast-border); color: #f4eded; /* bordeaux très sombre : se détache du fond noir */ font-weight: 600; font-size: 13.5px; line-height: 1.35; padding: 10px 15px 11px; border-radius: 12px; box-shadow: 0 10px 28px rgba(0,0,0,.55), 0 0 0 1px rgba(0,0,0,.4); opacity: 0; transition: opacity .3s, transform .45s cubic-bezier(.2,.9,.3,1.1); z-index: 4000; pointer-events: none; overflow: hidden; }
   .hmft-toast.bad { --c: var(--bad); } .hmft-toast.info { --c: var(--bleu); }
   .hmft-toast .hmft-toast-ico { flex: none; width: 16px; height: 16px; color: var(--c); }
   .hmft-toast .hmft-toast-ico svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
@@ -3171,9 +3171,9 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #acc-modal .acm-card, #acc-modal .acm-list { overscroll-behavior: contain; }
 
   /* « Nouvelle version » : même place et même style que les petits messages, sans jauge, reste affiché jusqu'au clic */
-  .hmft-toast.upd { --c: var(--gold); pointer-events: auto; cursor: pointer; font: inherit; font-weight: 600; font-size: 13.5px; color: var(--text); }
+  .hmft-toast.upd { --c: #ff6b5e; pointer-events: auto; cursor: pointer; font: inherit; font-weight: 600; font-size: 13.5px; color: #f4eded; }
   .hmft-toast.upd::after { display: none; }
-  .hmft-toast.upd b { color: var(--gold); margin-left: 4px; }
+  .hmft-toast.upd b { color: #ff7b70; margin-left: 4px; }
   html:has(#upd-bar) .hmft-toast:not(.upd) { translate: 0 -52px; } /* un autre message s'affiche juste au-dessus */
 
   /* ── bouton central en écusson (forme du blason) ; encoche dans la barre pour la Saisie */
@@ -4393,7 +4393,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 11:29</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 11:35</footer>
 
 <script>
 
