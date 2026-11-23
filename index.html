@@ -1163,7 +1163,8 @@
   .hmft-toast.bad { --c: var(--bad); } .hmft-toast.info { --c: var(--bleu); }
   .hmft-toast .hmft-toast-ico { flex: none; width: 16px; height: 16px; color: var(--c); }
   .hmft-toast .hmft-toast-ico svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
-  .hmft-toast::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: 0; height: 1.5px; border-radius: 2px; background: var(--c); opacity: .8; transform-origin: left; }
+  .hmft-toast::after { content: ""; position: absolute; left: 15px; right: 15px; bottom: 6px; height: 2px; border-radius: 2px; background: var(--c); opacity: .7; transform-origin: left; } /* trait de durée détaché du bord */
+  .hmft-toast:not(.upd) { padding-bottom: 15px; }
   .hmft-toast.show { opacity: 1; transform: translate(-50%, 0); }
   .hmft-toast.show::after { animation: hmftBar 3.6s linear .3s forwards; }
   @keyframes hmftBar { to { transform: scaleX(0); } }
@@ -4407,7 +4408,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 11:37</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 11:38</footer>
 
 <script>
 
