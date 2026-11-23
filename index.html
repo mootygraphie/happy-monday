@@ -4344,7 +4344,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 10:16</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 10:26</footer>
 
 <script>
 
@@ -15625,7 +15625,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   function buildPages() {
     const P = [{ kind: "cover" }, { kind: "toc" }], PER = per();
     SECS.forEach(s => { s.page = P.length; for (let i = 0; i < s.items.length; i += PER) P.push({ kind: "sec", s, items: s.items.slice(i, i + PER), first: i === 0 }); });
-    P.push({ kind: "end" }); if (P.length % 2) P.push({ kind: "blank" });
+    if (P.length % 2) P.push({ kind: "blank" }); // plus de page « Fin de l'album » (retirée le 23/11)
     return P;
   }
   const spreadStart = i => single() ? i : i - (i % 2);
