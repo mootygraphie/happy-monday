@@ -1092,6 +1092,12 @@
   .saisie-repart-avatar.pending { border-width: 3.5px; box-shadow: 0 0 5px 1px var(--gold-bg); }
   .validate-row { display: flex; justify-content: center; margin-top: 14px; }
   .saisie-repart-validate { font-size: 13.5px; font-weight: 700; background: var(--gold); color: #fff; border: none; border-radius: 10px; padding: 10px 22px; cursor: pointer; font-family: inherit; transition: opacity .15s; }
+  .saisie-livebar { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; padding: 10px 12px; border-radius: 14px; border: 1px solid; }
+  .saisie-livebar.on { border-color: rgba(255,59,48,.45); background: rgba(255,59,48,.1); } .saisie-livebar.off { border-color: var(--border2); background: var(--bg2); }
+  .saisie-livebar .dot { width: 10px; height: 10px; border-radius: 50%; background: #ff3b30; box-shadow: 0 0 0 4px rgba(255,59,48,.2); flex: none; }
+  .saisie-livebar.off .dot { background: var(--text3); box-shadow: none; }
+  .saisie-livebar .tx { flex: 1; min-width: 0; } .saisie-livebar .tx b { display: block; font-size: 14px; } .saisie-livebar .tx small { font-size: 12px; color: var(--text2); }
+  .saisie-livebar button { font: inherit; font-weight: 700; font-size: 13px; padding: 8px 12px; border-radius: 11px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); cursor: pointer; white-space: nowrap; }
   .saisie-repart-validate:disabled { background: var(--border2); color: var(--text3); cursor: not-allowed; }
   .saisie-repart-name { font-size: 10.5px; font-weight: 600; text-align: center; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
   @media (min-width: 900px) and (min-height: 600px) and (orientation: landscape) {
@@ -2101,9 +2107,12 @@
   .lv-live-score b { color: var(--text); font-size: 15px; font-variant-numeric: tabular-nums; }
   .lv-allvoted { font-size: 13px; color: var(--good); font-weight: 600; }
   .lv-muted { font-size: 13px; color: var(--text2); }
-  .lv-compo { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
-  .lv-compo > div { background: var(--bg3); border-radius: 10px; padding: 10px; font-size: 13px; color: var(--text2); display: flex; flex-direction: column; gap: 2px; }
-  .lv-compo b { color: var(--text); margin-bottom: 2px; }
+  .lv-compo { display: flex; flex-direction: column; gap: 8px; }
+  .lv-compo > div { background: var(--bg3); border-radius: 12px; padding: 10px 12px; border-left: 3px solid var(--tc); display: flex; flex-direction: column; gap: 8px; }
+  .lv-compo b { display: flex; justify-content: space-between; align-items: center; color: var(--text); font-size: 14px; }
+  .lv-compo b small { font-size: 11.5px; font-weight: 600; color: var(--text3); }
+  .lv-compo .pl { display: flex; flex-wrap: wrap; gap: 6px; }
+  .lv-compo .pl .player-link { font-size: 13px; font-weight: 600; padding: 5px 11px; border-radius: 99px; background: color-mix(in srgb, var(--tc) 12%, var(--bg2)); border: 1px solid color-mix(in srgb, var(--tc) 40%, transparent); color: var(--text); }
   .lv-tbl-wrap { overflow-x: auto; }
   .lv-tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   .lv-tbl th { text-align: right; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--text3); padding: 6px 6px; border-bottom: 1px solid var(--border2); }
@@ -4432,7 +4441,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 12:02</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 14:24</footer>
 
 <script>
 
@@ -12724,6 +12733,7 @@ function renderSaisie() {
       </div>
     </div>
 
+    ${_draft && _draft.liveStartedAt && !_editMode ? `<div class="saisie-livebar ${_draft.livePaused ? "off" : "on"}"><span class="dot"></span><span class="tx"><b>${_draft.livePaused ? "Direct suspendu" : "Direct en cours"}</b><small>${_draft.livePaused ? "Personne ne voit la soirée en direct" : "Tout le monde voit la soirée en direct"}</small></span><button type="button" data-act="live-toggle">${_draft.livePaused ? "▶ Reprendre" : "⏸ Suspendre"}</button></div>` : ""}
     <div class="saisie-stepper">${stepperHTML}</div>
     <div class="saisie-stepsel"><select id="saisie-stepsel" aria-label="Étape de la saisie">${_SAISIE_STEPS.map((st, i) => `<option value="${st.key}"${st.key === _saisieStep ? " selected" : ""}>${i + 1}. ${st.icon} ${st.label}${i < doneIdx ? " ✓" : ""}</option>`).join("")}</select></div>
 
@@ -12947,6 +12957,10 @@ async function _commitSession() {
 
 /* ── Événements saisie (attachés une seule fois) ── */
 document.getElementById("saisie-content").addEventListener("click", e => {
+  if (e.target.closest('[data-act="live-toggle"]') && _draft) {
+    _draft.livePaused = !_draft.livePaused; _saveDraft(); renderSaisie();
+    _showToast(_draft.livePaused ? "Direct suspendu" : "Direct réactivé"); return;
+  }
   if (!_draft) return;
 
   if (e.target.closest('[data-act="saisie-stand-open"]')) { _saisieStandOpen = true; renderSaisie(); return; }
@@ -12968,7 +12982,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     }
     _saisieStep = stepBtn.dataset.step; _saisieStandOpen = false; _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
     _draft.step = _saisieStep;
-    if (_saisieStep === "matchs") _liveMarkStarted();
+    if (_saisieStep === "matchs") { _liveMarkStarted(); if (_draft.livePaused) { _draft.livePaused = false; _showToast("Direct réactivé"); } } // retour aux matchs : le direct reprend
     _saveDraft();
     renderSaisie(); window.scrollTo({top:0, behavior:"smooth"}); return;
   }
@@ -13000,7 +13014,11 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     renderSaisie(); return;
   }
   if (e.target.closest('[data-act="saisie-repart-validate"]')) {
-    _saisieRepartCommitPending(); renderSaisie();
+    // Avec des changements en attente, le bouton dit « Valider la répartition » : on enregistre, sans lancer la soirée.
+    // Sans changement et équipes complètes, il dit « Valider les équipes » : là seulement on passe aux Matchs (direct lancé).
+    const hadPending = /Valider la répartition/.test(e.target.closest('[data-act="saisie-repart-validate"]').textContent);
+    _saisieRepartCommitPending(); _saveDraft(); renderSaisie();
+    if (hadPending) { _showToast("Répartition enregistrée"); return; }
     const pres = _presentList(), teams = new Set(pres.map(p => _draft.presences[p]?.equipe).filter(Boolean));
     if (_saisieStep === "repartition" && pres.length && pres.every(p => _draft.presences[p]?.equipe) && teams.size >= 2) {
       document.querySelector('.saisie-step-pill[data-step="matchs"]')?.click();
@@ -14110,7 +14128,7 @@ let _lvVote = { matchId: null, me: null, out: null, exact: false, a: 0, b: 0, er
 function _liveNow() { return Date.now() + _liveServerOffset; }
 function _liveRoleName() { return sessionStorage.getItem("hmft_role") || "user"; }
 function _liveIsOn() {
-  return !!(_liveDraft && _liveDraft.liveStartedAt && _liveNow() - _liveDraft.liveStartedAt < LIVE_MAX_MS);
+  return !!(_liveDraft && _liveDraft.liveStartedAt && !_liveDraft.livePaused && _liveNow() - _liveDraft.liveStartedAt < LIVE_MAX_MS);
 }
 function _liveTodayKey() {
   const d = new Date();
@@ -14170,7 +14188,7 @@ function _liveInit() {
     const d = s.val();
     _liveDraft = d ? {
       date: d.date || "", presences: d.presences || {},
-      liveStartedAt: d.liveStartedAt || 0, liveKey: d.liveKey || ""
+      liveStartedAt: d.liveStartedAt || 0, liveKey: d.liveKey || "", livePaused: !!d.livePaused
     } : null;
     _liveWatchPronos(_liveDraft && _liveDraft.liveKey);
     _liveRefresh();
@@ -14629,7 +14647,7 @@ function renderLive() {
 
   if (!matchs.length && !live.length && teams.length) {
     h += `<div class="lv-card"><div class="lv-card-t"><span>Équipes du soir</span></div><div class="lv-compo">
-      ${teams.map(t => `<div><b>${_liveTeamHTML(t)}</b>${_livePresentOf(t).map(p => pLink(p)).join("")}</div>`).join("")}
+      ${teams.map(t => `<div style="--tc:var(--${{ Rouge: "rouge", Vert: "vert", Bleue: "bleu" }[t] || "text3"})"><b>${_liveTeamHTML(t)}<small>${_livePresentOf(t).length} joueurs</small></b><span class="pl">${_livePresentOf(t).map(p => pLink(p)).join("")}</span></div>`).join("")}
     </div></div>`;
   }
 
