@@ -4497,7 +4497,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 15:37</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 15:38</footer>
 
 <script>
 
@@ -16252,7 +16252,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     }
     const n = TR.partner, g = trGive(n), r = trGet(n);
     TR.gSel = TR.gSel.filter(k => g.includes(k)); TR.rSel = TR.rSel.filter(k => r.includes(k));
-    const opt = (k, sel, side) => `<button class="vt-opt" data-vt="tog" data-side="${side}" data-k="${k}" aria-pressed="${sel.includes(k)}"><span class="chk">✓</span>${trCard(k)}<span class="cnt">${(d => `${d} en double`)(avail(side === "g" ? ME : n, k))}</span></button>`;
+    const opt = (k, sel, side) => `<button class="vt-opt" data-vt="tog" data-side="${side}" data-k="${k}" aria-pressed="${sel.includes(k)}"><span class="chk">✓</span>${trCard(k)}<span class="cnt">${(w => `${avail(w, k)} en double${resv(w, k) ? ` · ${resv(w, k)} en cours d'échange` : ""}`)(side === "g" ? ME : n)}</span></button>`;
     const gift = TR.gSel.length && !TR.rSel.length;
     const btn = !TR.gSel.length ? `<button class="vt-btn" disabled>Choisis au moins un de tes doubles</button>`
       : gift ? `<button class="vt-btn" data-vt="send">🎁 Offrir ${TR.gSel.length > 1 ? `ces ${TR.gSel.length} cartes` : "cette carte"} à ${n}</button>`
