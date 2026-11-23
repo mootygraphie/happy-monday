@@ -3189,19 +3189,34 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #bnav .bn-c.sh-ko .bn-tile { filter: drop-shadow(0 6px 10px rgba(227,11,11,.4)); }
   #bnav .bn-c.sh-ok .bn-tile svg, #bnav .bn-c.sh-ko .bn-tile svg { width: 25px; height: 25px; margin-top: -4px; stroke-width: 1.7; }
   #bnav .bn-l2 { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .02em; color: #3a3a44; }
-  .sz-ov { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.6); }
-  .sz-box { width: 100%; max-width: 420px; max-height: calc(100vh - 32px); overflow-y: auto; border-radius: 18px; padding: 18px; background: var(--bg2); border: 1px solid var(--border2); color: var(--text); display: flex; flex-direction: column; gap: 10px; }
-  .sz-h { display: flex; justify-content: space-between; align-items: center; } .sz-h b { font-size: 17px; } .sz-h b span { color: var(--sa); }
+  .sz-ov { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.65); }
+  .sz-box, .sz-box * { box-sizing: border-box; }
+  .sz-box { width: 100%; min-width: 0; max-width: 440px; max-height: calc(100vh - 32px); overflow-y: auto; border-radius: 20px; padding: 18px; background: var(--bg2); border: 1px solid var(--border2); color: var(--text); display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+  .sz-h { display: flex; justify-content: space-between; align-items: center; }
+  .sz-k { font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--sa); }
   .sz-x { border: none; background: none; color: var(--text2); font-size: 18px; cursor: pointer; }
-  .sz-p { margin: 0; font-size: 12.5px; color: var(--text2); }
-  .sz-sec { margin-top: 6px; font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--sa); }
-  .sz-f { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600; }
-  .sz-f input { font: inherit; font-weight: 500; padding: 9px 11px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); color-scheme: dark; }
-  .sz-f small { font-size: 11.5px; font-weight: 400; color: var(--text3); }
+  .sz-hero small { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); }
+  .sz-hero b { display: block; font-size: 30px; font-weight: 800; font-style: italic; line-height: 1.1; }
+  .sz-chip { display: inline-block; margin-top: 6px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 99px; }
+  .sz-chip.on { color: var(--good); background: rgba(102,187,106,.12); } .sz-chip.done { color: var(--text2); background: var(--bg3); }
+  .sz-tl:empty { display: none; }
+  .sz-bar { position: relative; height: 8px; border-radius: 4px; background: var(--bg3); overflow: hidden; }
+  .sz-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: var(--gold); }
+  .sz-marks { display: flex; justify-content: space-between; gap: 8px; margin-top: 6px; font-size: 11px; color: var(--text3); }
+  .sz-marks b { font-weight: 600; color: var(--text2); text-align: center; }
+  .sz-grp { border-radius: 14px; background: var(--bg3); border: 1px solid var(--border); overflow: hidden; }
+  .sz-gh { padding: 10px 12px; font-size: 13px; font-weight: 700; border-bottom: 1px solid var(--border); } .sz-gh small { display: block; font-size: 11.5px; font-weight: 400; color: var(--text3); }
+  .sz-row { display: grid; grid-template-columns: 26px minmax(0, 1fr) minmax(0, 150px); gap: 10px; align-items: center; padding: 10px 12px; cursor: pointer; }
+  .sz-row + .sz-row { border-top: 1px solid var(--border); }
+  .sz-ic { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-size: 12px; background: var(--bg2); color: var(--gold); }
+  .sz-l { min-width: 0; }
+  .sz-l b { display: block; font-size: 13.5px; } .sz-l small { font-size: 11.5px; color: var(--text3); }
+  .sz-row input { font: inherit; font-size: 13px; font-weight: 600; padding: 7px 9px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text); color-scheme: dark; width: 100%; min-width: 0; }
+  .sz-note { margin: 0; font-size: 12px; color: var(--sa); }
   .sz-err { margin: 0; color: var(--bad); font-size: 12.5px; }
-  .sz-act { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
-  .sz-act button { font: inherit; font-weight: 700; font-size: 13.5px; padding: 9px 16px; border-radius: 11px; cursor: pointer; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); }
-  .sz-act .sz-save { background: var(--sa); border-color: var(--sa); color: #241c04; }
+  .sz-act { display: flex; gap: 8px; justify-content: flex-end; }
+  .sz-act button { font: inherit; font-weight: 700; font-size: 13.5px; padding: 10px 16px; border-radius: 12px; cursor: pointer; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); }
+  .sz-act .sz-save { background: var(--gold); border-color: var(--gold); color: #fff; }
   #bnav .bn-l2 b { font-size: 10px; font-weight: 900; letter-spacing: .05em; } #bnav .bn-l2 b.ok { color: #1fa463; } #bnav .bn-l2 b.ko { color: #e30b0b; }
   #bnav .bn-c.sh-g .bn-tile::after { background: linear-gradient(180deg, #b4b4be, #8a8a97); }
   #bnav .bn-c.sh-g:not([aria-current="true"]) { color: #8a8a97; }
@@ -4367,7 +4382,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 11:02</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 11:14</footer>
 
 <script>
 
@@ -5103,8 +5118,8 @@ let ttGkCriteria = "cs"; // "avg" | "cs" — critere de choix du gardien pour l 
    - tradesEnd : fin des échanges et des boosters de l'album de cette saison ;
    - albumStart : ouverture de l'album de cette saison (boosters en pause entre tradesEnd et l'album suivant). */
 const SEASON_DEFAULTS = {
-  2026: { start: '2026-08-24', end: '2027-07-19', tradesEnd: '2027-07-31T23:59', albumStart: '2026-09-01T00:00' },
-  2027: { start: '2027-08-23', end: '2028-07-17', tradesEnd: '2028-07-31T23:59', albumStart: '2027-09-01T00:00' }
+  2026: { start: '2026-08-24', end: '2027-07-19', tradesEnd: '2027-07-31T23:59', albumStart: '2026-09-01T00:00' }
+  // La saison suivante se crée dans ★ Saisons une fois celle-ci terminée.
 };
 function _seasonCfgMerge(cfg) {
   const o = {}; [...new Set([...Object.keys(SEASON_DEFAULTS), ...Object.keys(cfg || {})])].forEach(k => { o[k] = { ...(SEASON_DEFAULTS[k] || {}), ...((cfg || {})[k] || {}) }; });
@@ -5129,33 +5144,50 @@ function _vgSeason() { const now = _parisNowIso(), L = SEASON_DEFS.filter(x => (
 // Boosters et échanges ouverts pour l'album de cette saison ?
 function _vgOpen(sy) { const x = SEASON_DEFS.find(z => z.sy === sy); return !x || !x.tradesEnd || _parisNowIso() <= x.tradesEnd; }
 function _vgNextAlbum(sy) { const x = SEASON_DEFS.find(z => z.sy === sy + 1); return x && x.albumStart ? x.albumStart : ''; }
-/* ★ Saisons (menu ☰ des super admins) : dates de la saison en cours et de la suivante, enregistrées dans config/seasons. */
+/* ★ Saisons (menu ☰ des super admins) : uniquement la saison en cours. Une fois sa fin officielle passée,
+   l'écran propose de préparer la suivante (dates pré-remplies à +1 an, à vérifier). Enregistré dans config/seasons. */
 window._seasonsAdmin = function () {
   if (!_db || typeof _accIsSuper === 'undefined' || !_accIsSuper) return;
-  const cur = _currentSeason(), get = sy => _SEASON_CFG[sy] || SEASON_DEFAULTS[sy] || {};
-  const lab = sy => `${sy}-${sy + 1}`, a = get(cur), b = get(cur + 1);
-  const F = (id, l, type, v, help) => `<label class="sz-f"><span>${l}</span><input id="${id}" type="${type}" value="${v || ''}">${help ? `<small>${help}</small>` : ''}</label>`;
+  const last = SEASON_DEFS[SEASON_DEFS.length - 1], today = _parisNowIso().slice(0, 10);
+  const ended = !!last && today > last.end, sy = !last ? _currentSeason() : ended ? last.sy + 1 : last.sy;
+  const plusYear = (d, days) => d ? new Date(Date.parse(d.slice(0, 10) + 'T12:00:00Z') + days * 86400000).toISOString().slice(0, 10) + d.slice(10) : '';
+  const cur = !ended && last ? last : { start: plusYear(last && last.start, 364), end: plusYear(last && last.end, 364), albumStart: `${sy}-09-01T00:00`, tradesEnd: `${sy + 1}-07-31T23:59` };
+  const M = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+  const fd = d => { if (!d) return '—'; const [y, m, j] = d.slice(0, 10).split('-'); return `${+j} ${M[+m - 1]} ${y}${d.length > 10 && d.slice(11) !== '00:00' ? ' · ' + d.slice(11).replace(':', 'h') : ''}`; };
+  const row = (id, ic, l, help, type, v) => `<label class="sz-row" for="${id}"><span class="sz-ic">${ic}</span><span class="sz-l"><b>${l}</b><small>${help}</small></span><input id="${id}" type="${type}" value="${v || ''}"></label>`;
   const ov = document.createElement('div'); ov.className = 'sz-ov';
-  ov.innerHTML = `<div class="sz-box" role="dialog" aria-modal="true" aria-labelledby="sz-t"><div class="sz-h"><b id="sz-t"><span>★</span> Saisons</b><button type="button" class="sz-x" aria-label="Fermer">✕</button></div>
-    <p class="sz-p">Ces dates servent aux stats globales, au Ballon d'Or et aux notes des cartes. Heures de Paris.</p>
-    <div class="sz-sec">Saison ${lab(cur)}</div>
-    ${F('sz-a-start', 'Début officiel', 'date', a.start)}${F('sz-a-end', 'Fin officielle', 'date', a.end)}
-    ${F('sz-a-trades', 'Fin des échanges et des boosters', 'datetime-local', a.tradesEnd, "Après cette date, on ne peut plus échanger les cartes de cet album ; les boosters s'arrêtent.")}
-    <div class="sz-sec">Saison ${lab(cur + 1)}</div>
-    ${F('sz-b-start', 'Début officiel', 'date', b.start)}${F('sz-b-album', 'Ouverture du nouvel album', 'datetime-local', b.albumStart, 'Les boosters reprennent avec le nouvel album.')}
+  ov.innerHTML = `<div class="sz-box" role="dialog" aria-modal="true" aria-labelledby="sz-t">
+    <div class="sz-h"><span class="sz-k"><span>★</span> Super admin</span><button type="button" class="sz-x" aria-label="Fermer">✕</button></div>
+    <div class="sz-hero"><small>${ended ? 'Nouvelle saison à préparer' : 'Saison en cours'}</small><b id="sz-t">${sy}-${sy + 1}</b>
+      ${ended ? `<span class="sz-chip done">La saison ${last.sy}-${last.sy + 1} est terminée depuis le ${fd(last.end)}</span>` : `<span class="sz-chip on">● En cours depuis le ${fd(cur.start)}</span>`}</div>
+    <div class="sz-tl" id="sz-tl"></div>
+    <div class="sz-grp"><div class="sz-gh">⚽ Saison officielle<small>Stats globales, Ballon d'Or, notes des cartes</small></div>
+      ${row('sz-start', '▶', 'Début', 'Premier lundi compté', 'date', cur.start)}
+      ${row('sz-end', '■', 'Fin officielle', 'Dernier lundi compté', 'date', cur.end)}</div>
+    <div class="sz-grp"><div class="sz-gh">🃏 Album de vignettes<small>Boosters et échanges de cette saison</small></div>
+      ${row('sz-album', '📖', "Ouverture de l'album", 'Les boosters démarrent', 'datetime-local', cur.albumStart)}
+      ${row('sz-trades', '🔒', 'Fin des échanges', 'Plus d\'échanges ni de boosters', 'datetime-local', cur.tradesEnd)}</div>
+    ${ended ? `<p class="sz-note">Dates pré-remplies d'après la saison précédente : vérifie-les avant d'enregistrer.</p>` : ''}
     <p class="sz-err" id="sz-err" hidden></p>
-    <div class="sz-act"><button type="button" class="sz-cancel">Annuler</button><button type="button" class="sz-save">Enregistrer</button></div></div>`;
+    <div class="sz-act"><button type="button" class="sz-cancel">Annuler</button><button type="button" class="sz-save">${ended ? 'Créer la saison' : 'Enregistrer'}</button></div></div>`;
   document.body.appendChild(ov);
   const v = id => ov.querySelector('#' + id).value, close = () => ov.remove();
+  // frise de la saison officielle (début → fin) avec la position d'aujourd'hui
+  const tl = () => { const a = Date.parse(v('sz-start')), b = Date.parse(v('sz-end')), now = Date.parse(today), el = ov.querySelector('#sz-tl');
+    if (!(a < b)) { el.innerHTML = ''; return; }
+    const p = Math.max(0, Math.min(100, (now - a) / (b - a) * 100)), left = Math.round((b - now) / 86400000);
+    const txt = now < a ? `Commence dans ${Math.round((a - now) / 86400000)} jours` : now > b ? 'Saison officielle terminée' : `${Math.round(p)} % de la saison · fin dans ${left} jour${left > 1 ? 's' : ''}`;
+    el.innerHTML = `<div class="sz-bar"><i style="width:${p}%"></i></div><div class="sz-marks"><span>${fd(v('sz-start')).replace(/ \d{4}/, '')}</span><b>${txt}</b><span>${fd(v('sz-end')).replace(/ \d{4}/, '')}</span></div>`; };
+  tl(); ov.addEventListener('input', tl);
   ov.addEventListener('click', e => { if (e.target === ov || e.target.closest('.sz-x, .sz-cancel')) close(); });
   ov.querySelector('.sz-save').addEventListener('click', async () => {
-    const err = ov.querySelector('#sz-err'), A = { start: v('sz-a-start'), end: v('sz-a-end'), tradesEnd: v('sz-a-trades') }, B = { start: v('sz-b-start'), albumStart: v('sz-b-album') };
-    const bad = !A.start || !A.end || !A.tradesEnd || !B.start || !B.albumStart ? 'Remplis toutes les dates.'
-      : A.end < A.start ? 'La fin officielle doit venir après le début.' : B.start <= A.end ? 'La saison suivante doit commencer après la fin officielle.'
-      : B.albumStart <= A.tradesEnd ? "Le nouvel album doit ouvrir après la fin des échanges." : '';
+    const err = ov.querySelector('#sz-err'), X = { start: v('sz-start'), end: v('sz-end'), albumStart: v('sz-album'), tradesEnd: v('sz-trades') };
+    const bad = Object.values(X).some(x => !x) ? 'Remplis toutes les dates.' : X.end < X.start ? 'La fin officielle doit venir après le début.'
+      : X.tradesEnd.slice(0, 10) < X.end ? 'La fin des échanges doit venir après la fin officielle.' : X.albumStart >= X.tradesEnd ? "L'album doit ouvrir avant la fin des échanges."
+      : last && ended && X.start <= last.end ? `La saison doit commencer après le ${fd(last.end)}.` : '';
     if (bad) { err.textContent = bad; err.hidden = false; return; }
-    try { await _db.ref('config/seasons').update({ [cur]: { ...get(cur), ...A }, [cur + 1]: { ...get(cur + 1), ...B } }); if (typeof _showToast === 'function') _showToast('Saisons enregistrées'); close(); }
-    catch (e) { err.textContent = "Enregistrement refusé : il faut être connecté en super admin."; err.hidden = false; }
+    try { await _db.ref('config/seasons/' + sy).set(X); if (typeof _showToast === 'function') _showToast(ended ? `Saison ${sy}-${sy + 1} créée` : 'Saison enregistrée'); close(); }
+    catch (e) { err.textContent = 'Enregistrement refusé : il faut être connecté en super admin.'; err.hidden = false; }
   });
 };
 
