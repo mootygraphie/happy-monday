@@ -49,6 +49,64 @@ def auth_headers():
     return {"Authorization": "Bearer " + _TOKEN["v"]}
 
 
+def admin_auth():
+    """SDK Admin Firebase (même compte de service) : gestion des identifiants de connexion."""
+    import firebase_admin
+    from firebase_admin import auth, credentials
+    if not firebase_admin._apps:
+        sa = os.environ.get("FIREBASE_SA", "").strip()
+        path = os.environ.get("FIREBASE_SA_FILE", "").strip()
+        firebase_admin.initialize_app(credentials.Certificate(json.loads(sa) if sa else path))
+    return auth
+
+
+def accounts_sync(now_ms):
+    """Comptes : pseudos (users/{uid}/pseudo), identifiants sans fiche (authOrphans),
+    réinitialisations de mot de passe (pwReset) et suppressions d'identifiants (authDelete)."""
+    auth = admin_auth()
+    users = req("users") or {}
+    # 1. suppressions demandées (carte détachée, identifiant orphelin) : libère le pseudo
+    for uid, r in (req("authDelete") or {}).items():
+        print("Identifiant supprimé :", (r or {}).get("pseudo") or uid)
+        if DRY:
+            continue
+        try:
+            auth.delete_user(uid)
+        except auth.UserNotFoundError:
+            pass
+        req(f"authDelete/{uid}", "DELETE")
+        req(f"authOrphans/{uid}", "DELETE")
+    # 2. mots de passe provisoires
+    for rid, r in (req("pwReset") or {}).items():
+        if not isinstance(r, dict):
+            continue
+        if r.get("status") != "wait":
+            if (r.get("at") or 0) < now_ms - 7 * 86400000 and not DRY:
+                req(f"pwReset/{rid}", "DELETE")
+            continue
+        print("Mot de passe réinitialisé :", r.get("player"))
+        if DRY:
+            continue
+        try:
+            auth.update_user(r["uid"], password=r["pwd"])
+            req(f"pwReset/{rid}", "PUT", {"player": r.get("player"), "uid": r.get("uid"), "by": r.get("by"), "at": r.get("at"), "status": "done", "doneAt": now_ms})
+        except Exception as e:  # identifiant introuvable, mot de passe refusé…
+            req(f"pwReset/{rid}", "PUT", {"player": r.get("player"), "uid": r.get("uid"), "by": r.get("by"), "at": r.get("at"), "status": "error", "err": str(e)[:160]})
+    # 3. pseudos manquants + identifiants sans fiche
+    orphans = {}
+    for u in auth.list_users().iterate_all():
+        pseudo = (u.email or "").split("@")[0]
+        if u.uid in users:
+            if pseudo and not (users[u.uid] or {}).get("pseudo") and not DRY:
+                req(f"users/{u.uid}/pseudo", "PUT", pseudo)
+        else:
+            meta = u.user_metadata
+            orphans[u.uid] = {"pseudo": pseudo, "created": meta.creation_timestamp or 0, "last": meta.last_sign_in_timestamp or 0}
+    print("Identifiants sans fiche :", ", ".join(o["pseudo"] for o in orphans.values()) or "aucun")
+    if not DRY:
+        req("authOrphans", "PUT", orphans or None) if orphans else req("authOrphans", "DELETE")
+
+
 def fetch(url):
     with urllib.request.urlopen(urllib.request.Request(url, headers=auth_headers()), timeout=30) as resp:
         return json.load(resp)
@@ -256,6 +314,9 @@ def main():
     block("Clôture", do_close)
 
     # ── Le Vestiaire : nouveaux messages
+    # ── comptes : pseudos, mots de passe provisoires, identifiants à supprimer
+    block("Comptes", lambda: accounts_sync(now_ms))
+
     # ── anniversaires : message dans le Vestiaire à 10h (date de naissance de « Mon compte »), une fois par an
     def do_bday():
         if now.hour != 10:

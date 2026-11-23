@@ -84,7 +84,10 @@
       ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
       "$uid": {
         ".read": "auth != null && auth.uid === $uid",
-        ".write": "auth != null && (auth.uid === $uid || (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true))"
+        ".write": "auth != null && (auth.uid === $uid || (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true))",
+        "pseudo": {
+          ".validate": "newData.isString() && (!data.exists() || newData.val() === data.val())"
+        }
       }
     },
     "playerAccounts": {
@@ -105,6 +108,23 @@
         ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p",
         ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
       }
+    },
+    "pushDebug": {
+      ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
+      "$p": {
+        ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
+      }
+    },
+    "pwReset": {
+      ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
+      ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
+    },
+    "authOrphans": {
+      ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
+    },
+    "authDelete": {
+      ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
+      ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
     },
     "lastSeen": {
       ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
