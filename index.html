@@ -2848,11 +2848,14 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .acm-link2 { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; }
   .acm-link2 span { color: var(--text3); font-size: 18px; }
   .acm-acct .acm-cot { margin: 0; padding: 10px 14px; }
-  .acm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
+  .acm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px 10px; } /* passe sur une colonne dès que la place manque : jamais de chevauchement */
   .acm-grid .wide { grid-column: 1 / -1; }
   .acm-grid .acm-field { margin: 0; min-width: 0; }
   .acm-grid .acm-field label { font-size: 11.5px; margin-bottom: 4px; }
-  .acm-grid .acm-input input { padding: 9px 11px; border-radius: 10px; }
+  .acm-grid .acm-input { min-width: 0; }
+  .acm-grid .acm-input input { box-sizing: border-box; display: block; width: 100%; min-width: 0; max-width: 100%; padding: 9px 11px; border-radius: 10px; text-align: left; }
+  .acm-grid .acm-input input[type="date"] { -webkit-appearance: none; appearance: none; min-height: 42px; line-height: 1.2; }
+  .acm-grid .acm-input input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   .acm-grid .acm-btn { margin-top: 2px; padding: 10px; font-size: 14px; }
   .acm-acct .acm-btn.ghost { margin-top: 0; padding: 10px; font-size: 14px; }
   .acm-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -4497,7 +4500,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 15:38</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 16:10</footer>
 
 <script>
 
