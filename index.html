@@ -2494,6 +2494,7 @@ html:has(#vg-modal:not([hidden])), html:has(#vg-modal:not([hidden])) body { over
 #panel-vignettes .cv-fan { position: absolute; left: 50%; top: 52cqw; width: 0; height: 0; z-index: 5; }
 #panel-vignettes .cv-fan > div { position: absolute; width: 21cqw; }
 #panel-vignettes .cv-fan > div .card { filter: drop-shadow(0 1.2cqw 2cqw rgba(0,0,0,.6)); }
+#panel-vignettes .cv-fan > div.fade { -webkit-mask-image: linear-gradient(180deg, #000 30%, transparent 82%); mask-image: linear-gradient(180deg, #000 30%, transparent 82%); }
 #panel-vignettes .cv-fan > div.me { width: 31cqw; top: -21.7cqw; left: -15.5cqw; z-index: 9; }
 #panel-vignettes .cv-fan > div.me .card { filter: drop-shadow(0 0 3cqw rgba(255,59,48,.65)) drop-shadow(0 1.5cqw 3cqw rgba(0,0,0,.7)); }
 #panel-vignettes .cv-kick { position: absolute; top: 5cqw; left: 0; right: 0; text-align: center; z-index: 6; font-size: 2.8cqw; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: rgba(255,255,255,.75); }
@@ -4428,7 +4429,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 11:53</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 12:00</footer>
 
 <script>
 
@@ -15860,9 +15861,11 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     if (pool.length < 30) pool = pool.concat(shufArr(PLAYERS.filter(c => !pool.includes(c))));
     const bg = []; while (pool.length && bg.length < 30) bg.push(...pool.slice(0, 30 - bg.length));
     // « ( ta carte ) » : 3 légendaires à gauche, 3 à droite, en arc de parenthèse (le milieu plus écarté)
-    const SLOT = [[-1, 0], [1, 0], [-1, -1], [1, -1], [-1, 1], [1, 1]]; // milieu d'abord : avec moins de 6 légendaires, la forme reste équilibrée
-    const fan = leg.map((c, i) => { const [sd, row] = SLOT[i], x = sd * (row ? 29 : 35) - 10.5, y = row * 22 - 14.7, r = sd * row * 10;
-      return `<div style="left:${x}cqw;top:${y}cqw;transform:rotate(${r}deg);z-index:${row ? 2 : 3}">${cardHTML(c, true)}</div>`; }).join("");
+    // Les légendaires en cercle, légèrement derrière ta carte (6 si tu n'es pas légendaire, 5 si tu l'es).
+    // Avec 6, celle du bas descend derrière le titre et s'estompe pour le laisser lisible.
+    const k = leg.length, W = 20, RX = 30, RY = 25;
+    const fan = leg.map((c, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / k, cx = RX * Math.cos(a), bottom = k % 2 === 0 && i === k / 2, cy = RY * Math.sin(a) + (bottom ? 12 : 0);
+      return `<div class="${bottom ? "fade" : ""}" style="width:${W}cqw;left:${(cx - W / 2).toFixed(1)}cqw;top:${(cy - W * .7).toFixed(1)}cqw;transform:rotate(${(cx / RX * 12).toFixed(1)}deg);z-index:${cy < 0 ? 2 : 3}">${cardHTML(c, true)}</div>`; }).join("");
     COVER = `<div class="cv-bg">${bg.map(c => cardHTML(c, true)).join("")}</div><div class="cv-shade"></div><div class="cv-in"><div class="cv-glow"></div>
       <div class="cv-kick">Happy Monday Football Team</div>
       <div class="cv-fan">${fan}${meC ? `<div class="me">${cardHTML({ ...meC, r: "M" }, true)}</div>` : ""}</div>
