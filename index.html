@@ -2520,6 +2520,11 @@ html:has(#vg-modal:not([hidden])), html:has(#vg-modal:not([hidden])) body { over
 @keyframes vg-turnNext { to { transform: rotateY(-180deg); } }
 @keyframes vg-turnPrev { to { transform: rotateY(180deg); } }
 @keyframes vg-turnBack1 { from { transform: rotateY(-180deg); } to { transform: none; } }
+/* Page qui tourne : même parade Safari, la face qui part de profil est masquée à mi-course */
+#panel-vignettes .leaf.go-next > .page:not(.bk-side), #panel-vignettes .leaf.go-prev > .page:not(.bk-side), #panel-vignettes .leaf.go-back1 > .page.bk-side { animation: vg-faceOut .8s linear forwards; }
+#panel-vignettes .leaf.go-next > .page.bk-side, #panel-vignettes .leaf.go-prev > .page.bk-side, #panel-vignettes .leaf.go-back1 > .page:not(.bk-side) { animation: vg-faceIn .8s linear forwards; }
+@keyframes vg-faceOut { 0%, 44% { visibility: visible; } 46%, 100% { visibility: hidden; } }
+@keyframes vg-faceIn { 0%, 44% { visibility: hidden; } 46%, 100% { visibility: visible; } }
 #panel-vignettes .book-foot { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 22px; font-size: 12.5px; color: var(--text2); }
 #panel-vignettes .book-foot .swipe { color: var(--text3); }
 #panel-vignettes .book-foot .reset { margin-left: auto; }
@@ -3377,6 +3382,12 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .cr-stand .pile { display: flex; } .cr-stand .pile .cr-av { margin-left: -8px; box-shadow: 0 0 0 2px var(--bg2); } .cr-stand .pile .cr-av:first-child { margin-left: 0; }
   .cr-stand .f.back { transform: rotateX(180deg); justify-content: center; background: color-mix(in srgb, var(--tc) 12%, var(--bg2)); border-color: color-mix(in srgb, var(--tc) 40%, transparent); }
   .cr-stand .faces { display: flex; gap: 6px; }
+  /* Safari (iPhone, iPad) applique mal backface-visibility dans un <button> : les deux faces se superposent.
+     Même parade que les vignettes : la face cachée est masquée explicitement quand la case passe de profil. */
+  .cr-hero .hin, .cr-stand .bar .in { -webkit-transform-style: preserve-3d; }
+  .cr-hero .face, .cr-stand .f { transition: visibility 0s linear .1s; }
+  .cr-hero .face.back, .cr-hero.flipped .face.front, .cr-stand .f.back, .cr-stand .bar.flipped .f.front { visibility: hidden; }
+  .cr-hero.flipped .face.back, .cr-stand .bar.flipped .f.back { visibility: visible; }
   /* bandeau des résultats */
   .cr-tick { display: flex; align-items: center; height: 38px; border-radius: 12px; overflow: hidden; background: var(--bg2); border: 1px solid var(--border); }
   .cr-tick .tag { flex: none; position: relative; z-index: 2; height: 100%; display: flex; align-items: center; padding: 0 12px; background: color-mix(in srgb, var(--gold) 14%, var(--bg2)); box-shadow: 6px 0 10px var(--bg2); color: var(--gold); font-weight: 700; font-style: italic; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
@@ -4333,7 +4344,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 09:49</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 10:16</footer>
 
 <script>
 
