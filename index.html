@@ -4497,7 +4497,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 15:06</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 15:37</footer>
 
 <script>
 
@@ -16169,8 +16169,12 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   const cardsOf = n => (n === ME && loadedFor === ME) ? COL : withClub(Object.assign({}, (ALBUMS[n] && ALBUMS[n].cards) || {}), n);
   const nOf = (n, k) => cardsOf(n)[k] || 0;
   const dupsOf = n => Object.keys(cardsOf(n)).filter(k => BYK[k] && nOf(n, k) >= 2);
-  const trGive = x => dupsOf(ME).filter(k => !nOf(x, k)).sort(byRar);   // mes doubles qui lui manquent
-  const trGet = x => dupsOf(x).filter(k => !nOf(ME, k)).sort(byRar);    // mes manques qu'il a en double
+  // Cartes « en cours d'échange » : un exemplaire engagé dans une proposition en attente (donné, ou demandé à ce joueur)
+  // n'est plus disponible pour une autre proposition, pour éviter de proposer deux fois le même double.
+  const resv = (n, k) => trList().filter(t => t.status === "wait" && !trExpired(t)).reduce((a, t) => a + (t.from === n && t.give.includes(k) ? 1 : 0) + (t.to === n && t.get.includes(k) ? 1 : 0), 0);
+  const avail = (n, k) => Math.max(0, nOf(n, k) - 1 - resv(n, k));
+  const trGive = x => dupsOf(ME).filter(k => !nOf(x, k) && avail(ME, k) > 0).sort(byRar);   // mes doubles libres qui lui manquent
+  const trGet = x => dupsOf(x).filter(k => !nOf(ME, k) && avail(x, k) > 0).sort(byRar);    // mes manques qu'il a en double, libres
   const ownedOf = n => Object.keys(cardsOf(n)).filter(k => BYK[k]).length;
   const trNorm = x => x.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
   const trPartners = () => Object.keys(ALBUMS).filter(n => n !== TRK && n !== ME && ALBUMS[n] && ALBUMS[n].cards && Object.keys(ALBUMS[n].cards).length).sort((a, b) => a.localeCompare(b, "fr"));
@@ -16248,12 +16252,12 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     }
     const n = TR.partner, g = trGive(n), r = trGet(n);
     TR.gSel = TR.gSel.filter(k => g.includes(k)); TR.rSel = TR.rSel.filter(k => r.includes(k));
-    const opt = (k, sel, side) => `<button class="vt-opt" data-vt="tog" data-side="${side}" data-k="${k}" aria-pressed="${sel.includes(k)}"><span class="chk">✓</span>${trCard(k)}<span class="cnt">${(d => `${d} en double`)(nOf(side === "g" ? ME : n, k) - 1)}</span></button>`;
+    const opt = (k, sel, side) => `<button class="vt-opt" data-vt="tog" data-side="${side}" data-k="${k}" aria-pressed="${sel.includes(k)}"><span class="chk">✓</span>${trCard(k)}<span class="cnt">${(d => `${d} en double`)(avail(side === "g" ? ME : n, k))}</span></button>`;
     const gift = TR.gSel.length && !TR.rSel.length;
     const btn = !TR.gSel.length ? `<button class="vt-btn" disabled>Choisis au moins un de tes doubles</button>`
       : gift ? `<button class="vt-btn" data-vt="send">🎁 Offrir ${TR.gSel.length > 1 ? `ces ${TR.gSel.length} cartes` : "cette carte"} à ${n}</button>`
       : `<button class="vt-btn" data-vt="send">Envoyer la proposition</button>`;
-    return `<div class="vt-partner">${trAv(n)}<span><b>${n}</b><small>Album ${ownedOf(n)} / ${ALL.length} · ${dupsOf(n).reduce((a, k) => a + nOf(n, k) - 1, 0)} doubles</small></span><button class="x" data-vt="clear" aria-label="Changer de joueur">✕</button></div>
+    return `<div class="vt-partner">${trAv(n)}<span><b>${n}</b><small>Album ${ownedOf(n)} / ${ALL.length} · ${dupsOf(n).reduce((a, k) => a + avail(n, k), 0)} doubles</small></span><button class="x" data-vt="clear" aria-label="Changer de joueur">✕</button></div>
       <div class="vt-pick-h"><b>Mes doubles</b><small class="${TR.gSel.length === TR_MAX ? "full" : ""}">qui lui manquent · ${TR.gSel.length} / ${TR_MAX}</small></div>
       ${g.length ? `<div class="vt-scroll">${g.map(k => opt(k, TR.gSel, "g")).join("")}</div>` : `<div class="vt-none">Aucun de tes doubles ne lui manque.</div>`}
       <div class="vt-pick-h"><b>Mes manques</b><small class="${TR.rSel.length === TR_MAX ? "full" : ""}">qu'il a en double · ${TR.rSel.length} / ${TR_MAX}</small></div>
@@ -16301,7 +16305,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const n = trPending().length;
     sec.innerHTML = `<div class="vt-wrap"><div class="vt-seg" role="tablist">${[["swap", "Échanger"], ["recu", "Reçues"], ["env", "Envoyées"], ["done", "Terminés"]].map(([id, l]) =>
       `<button role="tab" aria-selected="${TR.sub === id}" data-vt="sub" data-t="${id}">${l}${id === "recu" ? `<span class="vt-bd" id="vt-recvbd"${n ? "" : " hidden"}>${n}</span>` : ""}</button>`).join("")}</div>
-      <p class="vt-intro">Ton album : <b style="color:var(--text)">${ownedOf(ME)} / ${ALL.length}</b> · ${(d => `${d} double${d > 1 ? "s" : ""} échangeable${d > 1 ? "s" : ""}`)(dupsOf(ME).reduce((a, k) => a + nOf(ME, k) - 1, 0))}</p>
+      <p class="vt-intro">Ton album : <b style="color:var(--text)">${ownedOf(ME)} / ${ALL.length}</b> · ${(d => `${d} double${d > 1 ? "s" : ""} échangeable${d > 1 ? "s" : ""}`)(dupsOf(ME).reduce((a, k) => a + avail(ME, k), 0))}</p>
       ${TR.sub === "swap" ? trSwapHTML() : TR.sub === "recu" ? trRecvHTML() : TR.sub === "env" ? trSentHTML() : trDoneHTML()}</div>`;
   }
   function trGot(title, sub, got) {
