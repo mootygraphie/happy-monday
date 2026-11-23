@@ -4052,6 +4052,20 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #chat .ch-replybar button { border: none; background: none; color: var(--text3); font-size: 14px; cursor: pointer; }
   #chat .ch-rowc { display: flex; gap: 8px; align-items: flex-end; }
   #chat .ch-add { width: 42px; height: 42px; border-radius: 50%; border: 1.5px solid var(--border2); background: var(--bg3); font-size: 18px; cursor: pointer; flex: none; }
+  #chat .ch-photos { margin-bottom: 8px; padding: 8px; border-radius: 14px; background: var(--bg3); border: 1px solid var(--border2); }
+  #chat .ch-thumbs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 6px; }
+  #chat .ch-thumbs > span { position: relative; flex: none; width: 58px; height: 58px; border-radius: 10px; overflow: hidden; background: var(--bg2); }
+  #chat .ch-thumbs img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #chat .ch-thumbs button { position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; border-radius: 50%; border: none; background: rgba(0,0,0,.7); color: #fff; font-size: 10px; cursor: pointer; padding: 0; }
+  #chat .ch-thumbs .busy { display: grid; place-items: center; color: var(--text3); font-weight: 700; }
+  #chat .ch-pinfo { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; font-size: 12.5px; color: var(--text2); }
+  #chat .ch-pinfo b { color: var(--text); }
+  #chat .ch-pinfo button { border: none; background: none; color: var(--gold); font: inherit; font-weight: 700; cursor: pointer; padding: 0 2px; }
+  #chat .ch-pinfo .x { margin-left: auto; color: var(--text3); font-weight: 600; }
+  #chat .ch-gal { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; width: min(250px, 64vw); margin: 3px 0 4px; border-radius: 12px; overflow: hidden; }
+  #chat .ch-gal.n3 > .ch-img:first-child { grid-column: 1 / -1; }
+  #chat .ch-gal.n4 { grid-template-columns: repeat(3, 1fr); }
+  #chat .ch-gal .ch-img { width: auto; margin: 0; border-radius: 0; aspect-ratio: 1; max-height: none; }
   #chat .ch-photo { display: flex; align-items: center; gap: 10px; padding: 8px; margin-bottom: 8px; border-radius: 14px; background: var(--bg3); border: 1px solid var(--border2); }
   #chat .ch-photo img { width: 54px; height: 54px; border-radius: 10px; object-fit: cover; flex: none; }
   #chat .ch-photo span { flex: 1; min-width: 0; font-size: 13px; } #chat .ch-photo small { display: block; color: var(--text3); font-size: 11.5px; }
@@ -4393,7 +4407,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 11:35</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 11:37</footer>
 
 <script>
 
@@ -17520,8 +17534,10 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const r = R(V.room); let h = "";
     if (V.sugg && V.sugg.length) h += `<div class="ch-sugg">${V.sugg.map(p => `<button type="button" data-ch="pickMention" data-p="${esc(p)}">${av(p)}${esc(p)}</button>`).join("")}</div>`;
     if (V.reply) h += `<div class="ch-replybar"><span class="tx">↩️ Réponse à <b>${esc(V.reply.by || "Infos Club")}</b> · ${esc(plain(V.reply.text))}</span><button type="button" data-ch="cancelReply" aria-label="Annuler la réponse">✕</button></div>`;
-    if (V.photo) h += `<div class="ch-photo"><img src="${V.photo.data}" alt=""><span><b>📷 Photo prête</b><small>${Math.round(V.photo.size / 1024)} Ko · ${V.photo.w} × ${V.photo.h}</small></span><button type="button" data-ch="photoCancel" aria-label="Retirer la photo">✕</button></div>`;
-    h += `<div class="ch-rowc"><button type="button" class="ch-add" data-ch="photo" aria-label="Ajouter une photo">📷</button><input type="file" id="ch-file" accept="image/*" hidden><textarea id="ch-tx" rows="1" maxlength="1000" placeholder="Message dans ${esc(r.gen ? "le Vestiaire" : r.name)}…">${esc(V.draft[V.room] || "")}</textarea><button type="button" class="ch-send" data-ch="send" aria-label="Envoyer">➤</button></div>`;
+    const PH = V.photos || [];
+    if (PH.length || V.photoBusy) h += `<div class="ch-photos"><div class="ch-thumbs">${PH.map((x, i) => `<span><img src="${x.data}" alt=""><button type="button" data-ch="photoDel" data-i="${i}" aria-label="Retirer la photo ${i + 1}">✕</button></span>`).join("")}${V.photoBusy ? `<span class="busy">…</span>` : ""}</div>
+      <div class="ch-pinfo"><b>📷 ${PH.length} photo${PH.length > 1 ? "s" : ""}</b> · ${Math.round(PH.reduce((a, x) => a + x.size, 0) / 1024)} Ko${PH.length < 10 ? ` · <button type="button" data-ch="photo">+ Ajouter</button>` : " · 10 maximum"}<button type="button" class="x" data-ch="photoCancel" aria-label="Retirer toutes les photos">Tout retirer</button></div></div>`;
+    h += `<div class="ch-rowc"><button type="button" class="ch-add" data-ch="photo" aria-label="Ajouter une photo">📷</button><input type="file" id="ch-file" accept="image/*" multiple hidden><textarea id="ch-tx" rows="1" maxlength="1000" placeholder="Message dans ${esc(r.gen ? "le Vestiaire" : r.name)}…">${esc(V.draft[V.room] || "")}</textarea><button type="button" class="ch-send" data-ch="send" aria-label="Envoyer">➤</button></div>`;
     return h;
   }
   function msgHTML(m, p) {
@@ -17533,7 +17549,9 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const mine = m.by === p, r = R(V.room), q = m.reply;
     const reacts = Object.entries(m.reacts || {}).map(([e, o]) => [e, Object.keys(o || {})]).filter(([, l]) => l.length);
     return `<div class="ch-msg${mine ? " me" : ""}" data-id="${m.id}"><span class="ch-swipe">↩️</span>${av(m.by)}
-      <div><div class="ch-bub" data-ch="sheet" data-id="${m.id}">${mine ? "" : `<span class="who">${esc(m.by)}</span>`}${q ? `<div class="ch-quote" data-ch="goto" data-to="${esc(q.id)}"><b>${esc(q.by || "Infos Club")}</b>${esc(plain(q.text))}</div>` : ""}${m.img ? `<span class="ch-img" data-ch="img" data-id="${m.id}" style="aspect-ratio:${+m.img.w || 4} / ${+m.img.h || 3}"><img alt="Photo"${IMGS[m.id] ? ` src="${IMGS[m.id]}"` : ""}></span>` : ""}${m.photoOnly ? "" : fmt(m.text || "", mine)}<span class="tm">${r && r.pinned && r.pinned.id === m.id ? "📌 " : ""}${hm(m.at || Date.now())}</span></div>
+      <div><div class="ch-bub" data-ch="sheet" data-id="${m.id}">${mine ? "" : `<span class="who">${esc(m.by)}</span>`}${q ? `<div class="ch-quote" data-ch="goto" data-to="${esc(q.id)}"><b>${esc(q.by || "Infos Club")}</b>${esc(plain(q.text))}</div>` : ""}${m.img ? `<span class="ch-img" data-ch="img" data-id="${m.id}" style="aspect-ratio:${+m.img.w || 4} / ${+m.img.h || 3}"><img alt="Photo"${IMGS[m.id] ? ` src="${IMGS[m.id]}"` : ""}></span>` : ""}${Array.isArray(m.imgs) ? (m.imgs.length === 1
+        ? `<span class="ch-img" data-ch="img" data-id="${m.id}_0" style="aspect-ratio:${+m.imgs[0].w || 4} / ${+m.imgs[0].h || 3}"><img alt="Photo"${IMGS[m.id + "_0"] ? ` src="${IMGS[m.id + "_0"]}"` : ""}></span>`
+        : `<span class="ch-gal n${Math.min(m.imgs.length, 4)}">${m.imgs.map((x, i) => `<span class="ch-img" data-ch="img" data-id="${m.id}_${i}"><img alt="Photo ${i + 1}"${IMGS[m.id + "_" + i] ? ` src="${IMGS[m.id + "_" + i]}"` : ""}></span>`).join("")}</span>`) : ""}${m.photoOnly ? "" : fmt(m.text || "", mine)}<span class="tm">${r && r.pinned && r.pinned.id === m.id ? "📌 " : ""}${hm(m.at || Date.now())}</span></div>
       ${reacts.length ? `<div class="ch-reacts">${reacts.map(([e, l]) => `<button type="button" data-ch="react" data-id="${m.id}" data-e="${e}" aria-pressed="${l.includes(p)}" title="${esc(l.join(", "))}">${e} ${l.length}</button>`).join("")}</div>` : ""}</div></div>`;
   }
   function renderFeed(force) {
@@ -17674,18 +17692,19 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     o.addEventListener("click", () => o.remove()); document.body.appendChild(o);
   }
   async function send() {
-    const t = $("ch-tx"), text = (t ? t.value : "").trim(), r = R(V.room), ph = V.photo; if ((!text && !ph) || !r) return;
-    const m = { by: me(), text: (text || (ph ? "📷 Photo" : "")).slice(0, 1000), at: TS() };
-    if (ph) { m.img = { w: ph.w, h: ph.h }; if (!text) m.photoOnly = true; V.photo = null; }
+    const t = $("ch-tx"), text = (t ? t.value : "").trim(), r = R(V.room), ph = (V.photos || []).length ? V.photos : null;
+    if ((!text && !ph) || !r || V.photoBusy) return;
+    const m = { by: me(), text: (text || (ph ? (ph.length > 1 ? `📷 ${ph.length} photos` : "📷 Photo") : "")).slice(0, 1000), at: TS() };
+    if (ph) { m.imgs = ph.map(x => ({ w: x.w, h: x.h })); if (!text) m.photoOnly = true; V.photos = []; }
     if (V.reply) m.reply = { id: V.reply.id, by: V.reply.by || "", text: plain(V.reply.text).slice(0, 120) };
     V.draft[V.room] = ""; V.reply = null; V.sugg = null; t.value = ""; autoGrow(t); renderComp(); $("ch-tx")?.focus();
     const f0 = $("ch-feed"); if (f0) f0.scrollTop = f0.scrollHeight;
     try {
       const ref = _db.ref(`chat/msgs/${r.id}`).push();
-      if (ph) { IMGS[ref.key] = ph.data; await _db.ref(`chat/img/${r.id}/${ref.key}`).set({ by: m.by, data: ph.data }); }
+      if (ph) { ph.forEach((x, i) => { IMGS[`${ref.key}_${i}`] = x.data; }); await Promise.all(ph.map((x, i) => _db.ref(`chat/img/${r.id}/${ref.key}_${i}`).set({ by: m.by, data: x.data }))); }
       await ref.set(m); renderFeed(true); fitVV();
     }
-    catch (e) { V.draft[V.room] = text; if (ph) V.photo = ph; renderComp(); toast(ph ? "Photo non envoyée : vérifie ta connexion." : "Message non envoyé : vérifie ta connexion."); }
+    catch (e) { V.draft[V.room] = text; if (ph) V.photos = ph; renderComp(); toast(ph ? "Photo non envoyée : vérifie ta connexion." : "Message non envoyé : vérifie ta connexion."); }
   }
   function flash(idv) { const el = box.querySelector(`.ch-msg[data-id="${CSS.escape(idv)}"], .ch-sys[data-id="${CSS.escape(idv)}"]`); if (!el) { toast("Message trop ancien pour être affiché."); return; } el.scrollIntoView({ block: "center", behavior: "smooth" }); el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1400); }
   function openForm(mode) {
@@ -17778,7 +17797,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (a === "goPin") { if (r.pinned) flash(r.pinned.id); return; }
     if (a === "send") return send();
     if (a === "photo") { $("ch-file")?.click(); return; }
-    if (a === "photoCancel") { V.photo = null; return renderComp(); }
+    if (a === "photoCancel") { V.photos = []; return renderComp(); }
+    if (a === "photoDel") { (V.photos || []).splice(+t.dataset.i, 1); return renderComp(); }
     if (a === "img") { e.stopPropagation(); return openImg(t.dataset.id); }
     if (a === "pickMention") {
       const tx = $("ch-tx"); const v = tx.value, c = tx.selectionStart ?? v.length;
@@ -17805,9 +17825,13 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   });
   box.addEventListener("change", async e => {
     if (e.target.id === "ch-file") {
-      const f = e.target.files && e.target.files[0]; e.target.value = ""; if (!f) return;
-      if (!/^image\//.test(f.type)) { toast("Choisis une image."); return; }
-      try { V.photo = await shrinkPhoto(f); renderComp(); } catch (er) { toast("Impossible de lire cette photo."); }
+      // jusqu'à 10 photos par message, réduites une par une
+      const room = V.room, all = [...(e.target.files || [])].filter(f => /^image\//.test(f.type)); e.target.value = ""; if (!all.length) return;
+      V.photos = V.photos || []; const free = 10 - V.photos.length;
+      if (all.length > free) toast(free > 0 ? `10 photos maximum : seules les ${free} premières sont gardées.` : "10 photos maximum par message.");
+      V.photoBusy = true; renderComp();
+      for (const f of all.slice(0, Math.max(0, free))) { try { const x = await shrinkPhoto(f); if (V.room === room) V.photos.push(x); } catch (er) { toast("Une photo n'a pas pu être lue."); } renderComp(); }
+      V.photoBusy = false; renderComp();
       return;
     }
     const cb = e.target.closest("input[data-m]"); if (!cb || !V.form) return;
