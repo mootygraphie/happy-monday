@@ -34,6 +34,22 @@
       ".read": true,
       ".write": "auth != null && root.child('users/' + auth.uid + '/player').exists()"
     },
+    "profiles": {
+      ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
+      "$p": {
+        ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p",
+        ".write": "auth != null && (root.child('users/' + auth.uid + '/player').val() === $p || root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true)"
+      }
+    },
+    "cotisations": {
+      ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
+      "$sy": {
+        "$p": {
+          ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p",
+          ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
+        }
+      }
+    },
     "reglement": {
       ".read": true,
       "$sy": {

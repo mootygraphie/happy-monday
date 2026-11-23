@@ -2807,6 +2807,24 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .acm-accl .acm-pl.me { border-color: var(--gold-border); background: color-mix(in srgb, var(--gold) 8%, var(--bg)); }
   .acm-you { flex: none; white-space: nowrap; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; background: var(--gold); color: #fff; }
   .acm-acts { display: flex; gap: 5px; }
+  .acm-cot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 4px 0 12px; padding: 12px 14px; border-radius: 14px; background: var(--bg3); }
+  .acm-cot.due { border: 1.5px dashed #e30b0b; } .acm-cot.ok { border: 1.5px solid rgba(31,164,99,.55); }
+  .acm-cot b { font-size: 14.5px; } .acm-cot small { display: block; font-size: 11.5px; color: var(--text3); }
+  .acm-cot .st { font-size: 12px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
+  .acm-cot.due .st { color: #ff9f0a; } .acm-cot.ok .st { color: var(--good); }
+  .acm-cbtn { font: inherit; font-size: 12.5px; font-weight: 700; padding: 7px 11px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text); cursor: pointer; white-space: nowrap; }
+  .acm-cot.due .acm-cbtn { border-color: rgba(31,164,99,.6); color: var(--good); }
+  .acm-sec { margin: 16px 0 8px; font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
+  .acm-sec.sa { color: var(--sa); }
+  .acm-kv { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; padding: 12px 14px; border-radius: 14px; background: var(--bg3); font-size: 13.5px; margin-bottom: 12px; }
+  .acm-kv span { color: var(--text3); } .acm-kv b { font-weight: 600; text-align: right; word-break: break-word; }
+  .acm-btn.danger { background: transparent; border: 1px solid rgba(255,59,48,.45); color: #ff6b5e; }
+  .acm-mem .acm-pl { gap: 4px; padding: 4px 6px; }
+  .acm-star { flex: none; width: 34px; height: 34px; border: none; background: none; font-size: 20px; line-height: 1; color: var(--sa); cursor: pointer; } .acm-star:not(.on) { color: var(--text3); } .acm-star:disabled { cursor: default; opacity: .7; }
+  .acm-memrow { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; border: none; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; padding: 4px 0; }
+  .acm-memrow b { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; text-align: left; } .acm-memrow b small { font-weight: 400; font-size: 11.5px; color: var(--text3); }
+  .acm-cchip { flex: none; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; padding: 3px 8px; border-radius: 99px; }
+  .acm-cchip.due { color: #ff9f0a; background: rgba(255,159,10,.12); } .acm-cchip.ok { color: var(--good); background: rgba(102,187,106,.14); }
   .acm-act { font: inherit; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 7px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); cursor: pointer; white-space: nowrap; }
   .acm-act.gold { color: var(--sa); border-color: var(--sa-border); background: var(--sa-bg); }
   @media (max-width: 480px) { .acm-accl .acm-pl small { display: none; } .acm-act { padding: 4px 6px; font-size: 10.5px; } .acm-sapill .t { display: none; } .acm-accl .acm-pl b { overflow: visible; } }
@@ -4069,6 +4087,8 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #chat .ch-replybar button { border: none; background: none; color: var(--text3); font-size: 14px; cursor: pointer; }
   #chat .ch-rowc { display: flex; gap: 8px; align-items: flex-end; }
   #chat .ch-add { width: 42px; height: 42px; border-radius: 50%; border: 1.5px solid var(--border2); background: var(--bg3); font-size: 18px; cursor: pointer; flex: none; }
+  #chat .mention.all { background: rgba(255,59,48,.18); color: #ff7b70; border-radius: 4px; padding: 0 3px; }
+  #chat .ch-sugg .all { color: #ff7b70; border-color: rgba(255,59,48,.45); font-weight: 800; }
   #chat .ch-tools { display: flex; flex-direction: column; gap: 6px; }
   #chat .ch-tools button, #chat .ch-selbar button { font: inherit; font-size: 13.5px; font-weight: 700; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); cursor: pointer; text-align: left; }
   #chat .ch-tools .dang, #chat .ch-selbar .dang { color: #ff6b5e; border-color: rgba(255,59,48,.4); background: rgba(255,59,48,.08); }
@@ -4441,7 +4461,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 14:24</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 14:47</footer>
 
 <script>
 
@@ -15002,6 +15022,7 @@ function _accOpen(view) {
   _acc = { ..._acc, view: _accUser && !_accProfile ? "bind" : view, step: 1, err: "", busy: false, ok: false, show: false, fromMenu: false };
   if (view === "login") { _acc.pwd = ""; _acc.pwd2 = ""; }
   document.getElementById("acc-modal").hidden = false;
+  if (_acc.view === "me") { _acc.prof = undefined; _acc.paid = undefined; _accLoadMe(); }
   _accRender();
   if (_acc.view === "bind") _accLoadTaken();
   setTimeout(() => document.querySelector("#acm-body input")?.focus(), 60);
@@ -15049,23 +15070,45 @@ function _accRender(keepFocus) {
   const a = _acc, err = a.err ? `<div class="acm-err">${a.err}</div>` : "";
   let h = "";
   if (a.view === "me") {
-    const p = _accPlayer();
-    h = `<div class="acm-me">${_accAvHTML(p, "", true)}<h5>${p}</h5>${_accIsSuper ? `<span class="acm-badge">Super admin</span>` : `<span class="acm-badge" style="color:var(--good);border-color:color-mix(in srgb,var(--good) 40%,transparent);background:color-mix(in srgb,var(--good) 12%,transparent)">Compte joueur</span>`}
-      <p class="acm-sub" style="margin:4px 0 10px">Tu es connecté sur ce téléphone.</p>
-      ${_accSaisieBlocked() ? `<p class="acm-sub" style="margin:0 0 12px">⏸️ Saisie indisponible : ta fiche est Dépanneur ou Inactif cette saison. Elle s'ouvre les soirs où tu es coché présent.</p>` : ""}</div>
-      <button class="acm-btn" data-a="fiche">Voir ma fiche</button>
-      ${_accIsSuper ? `<button class="acm-btn ghost" data-a="accounts">👥 Comptes activés</button>` : ""}
+    // Mon compte : cotisation (statut seul), fiche, infos personnelles (profiles/{joueur}, lisibles par le joueur et les super admins)
+    const p = _accPlayer(), pf = a.prof || {}, cy = _currentSeason(), cl = `${String(cy).slice(2)}/${String(cy + 1).slice(2)}`;
+    const fld = (id, l, type, v, ac) => `<div class="acm-field"><label for="acm-pf-${id}">${l}</label><div class="acm-input"><input id="acm-pf-${id}" type="${type}" autocomplete="${ac}" value="${_accEsc(v || "")}"></div></div>`;
+    h = `<div class="acm-top"><span class="acm-kicker">Mon compte</span></div>
+      <div class="acm-me">${_accAvHTML(p, "", true)}<h5>${p}</h5>${_accIsSuper ? `<span class="acm-badge" style="color:var(--sa);border-color:var(--sa-border);background:var(--sa-bg)">★ Super admin</span>` : ""}
+      ${_accSaisieBlocked() ? `<p class="acm-sub" style="margin:8px 0 0">⏸️ Saisie indisponible : ta fiche est Dépanneur ou Inactif cette saison.</p>` : ""}</div>
+      ${a.paid === undefined ? "" : `<div class="acm-cot ${a.paid ? "ok" : "due"}"><span><b>Cotisation ${cl}</b></span><span class="st">${a.paid ? "✓ Payée" : "À payer"}</span></div>`}
+      <button class="acm-btn" data-a="fiche">👤 Voir ma fiche joueur</button>
+      <div class="acm-sec">Mes infos</div>${err}
+      ${a.prof === undefined ? `<p class="acm-sub">Chargement…</p>` : `<form id="acm-prof" autocomplete="on">
+        ${fld("prenom", "Prénom", "text", pf.prenom, "given-name")}${fld("nom", "Nom", "text", pf.nom, "family-name")}${fld("naissance", "Date de naissance", "date", pf.naissance, "bday")}
+        ${fld("tel", "Téléphone", "tel", pf.tel, "tel")}${fld("email", "E-mail", "email", pf.email, "email")}
+        <button class="acm-btn ghost" type="submit"${a.busy ? " disabled" : ""}>${a.busy ? "Enregistrement…" : "Enregistrer mes infos"}</button></form>
+        <p class="acm-help" style="margin-top:6px">🔒 Seuls toi et les responsables du club voient ces informations. Ta date de naissance sert au message d'anniversaire du Vestiaire.</p>`}
+      ${_accIsSuper ? `<div class="acm-sec sa">★ Super admin</div><button class="acm-btn ghost" data-a="accounts">👥 Membres</button><button class="acm-btn ghost" data-a="csv">⬇️ Exporter les membres (CSV)</button>` : ""}
       <button class="acm-btn ghost" data-a="logout">Se déconnecter</button>`;
   } else if (a.view === "accounts") {
-    // Super admin : liste des comptes créés (fiche rattachée + date), avec « Détacher ».
-    const rows = a.accounts;
-    const total = new Set(ALL_PLAYERS).size;
-    h = `<div class="acm-top"><button class="acm-back" data-a="tome" aria-label="Retour">‹</button><span class="acm-kicker">Super admin</span></div>
-      <h4 class="acm-h">Comptes activés</h4>
-      <p class="acm-sub">${rows ? `<b>${rows.length}</b> joueur${rows.length > 1 ? "s" : ""} sur ${total} ${rows.length > 1 ? "ont créé leur" : "a créé son"} compte.` : "Chargement…"}</p>${err}
-      <div class="acm-list acm-accl" style="max-height:56vh">${(rows || []).map((r, i, arr) => `${i > 0 && arr[i - 1].super && !r.super ? `<hr class="acm-sep">` : ""}<div class="acm-pl${r.uid === (_accUser && _accUser.uid) ? " me" : ""}" style="cursor:default">${_accAvHTML(r.player, "")}<b><span class="acm-dev" title="${r.app ? `Appli (${_accEsc(r.app.platform || "")}) · ouverte le ${new Date(r.app.lastSeen || 0).toLocaleDateString("fr", { day: "numeric", month: "short" })}` : "Site web (appli pas installée)"}">${r.app ? "📲" : "🌐"}</span>${r.player}${r.super ? `<span class="acm-sastar" title="Super admin">★</span>` : ""}</b><small title="Date de création du compte">${r.createdAt ? new Date(r.createdAt).toLocaleDateString("fr", { day: "numeric", month: "short" }) : "—"}</small>
-        ${r.uid === (_accUser && _accUser.uid) ? `<span class="acm-you">Toi</span>` : `<span class="acm-acts"><button class="acm-act${a.confirmSuper === r.player ? "" : " arr"}${r.super ? "" : " gold"}" title="${r.super ? "Retirer les droits Super Admin" : "Passer Super Admin"}" data-a="super" data-n="${_accEsc(r.player)}">${a.confirmSuper === r.player ? "Confirmer ?" : r.super ? "↓" : "↑"}</button><button class="acm-act" data-a="detach" data-n="${_accEsc(r.player)}">${a.confirmDetach === r.player ? "Confirmer ?" : "Détacher"}</button></span>`}</div>`).join("")}</div>
-      <p class="acm-help">Passer Super Admin donne tous les droits (supprimer un match validé, Effacer, coefficients, comptes) dès sa prochaine connexion. Détacher libère la fiche : la personne devra se rattacher à nouveau à sa fiche à sa prochaine connexion. Ses pronos et ses données restent sous la fiche.</p>`;
+    // Super admin : Membres (comptes créés). ☆/★ = super admin (un toucher bascule), statut de cotisation, toucher la ligne = fiche du membre.
+    const rows = a.accounts, total = new Set(ALL_PLAYERS).size, cot = a.cot || {}, myUid = _accUser && _accUser.uid;
+    const nPaid = (rows || []).filter(r => cot[r.player]).length;
+    h = `<div class="acm-top"><button class="acm-back" data-a="tome" aria-label="Retour">‹</button><span class="acm-kicker" style="color:var(--sa)">★ Super admin</span></div>
+      <h4 class="acm-h">Membres</h4>
+      <p class="acm-sub">${rows ? `<b>${rows.length}</b> compte${rows.length > 1 ? "s" : ""} sur ${total} joueurs · <span style="color:var(--good)">${nPaid} payée${nPaid > 1 ? "s" : ""}</span> · <span style="color:#ff9f0a">${rows.length - nPaid} à payer</span>` : "Chargement…"}</p>${err}
+      <div class="acm-list acm-accl acm-mem" style="max-height:58vh">${(rows || []).map(r => `<div class="acm-pl${r.uid === myUid ? " me" : ""}">
+        <button class="acm-star${r.super ? " on" : ""}" data-a="star" data-n="${_accEsc(r.player)}"${r.uid === myUid ? " disabled" : ""} aria-label="${r.super ? `Retirer les droits super admin de ${_accEsc(r.player)}` : `Passer ${_accEsc(r.player)} super admin`}">${r.super ? "★" : "☆"}</button>
+        <button class="acm-memrow" data-a="member" data-n="${_accEsc(r.player)}">${_accAvHTML(r.player, "")}<b>${r.player}<small>${r.app ? "📲 appli" : "🌐 site"}</small></b><span class="acm-cchip ${cot[r.player] ? "ok" : "due"}">${cot[r.player] ? "Payée" : "À payer"}</span></button></div>`).join("")}</div>
+      <p class="acm-help">Touche l'étoile : ☆ joueur, ★ super admin (tous les droits dès sa prochaine connexion). Touche un membre pour voir ses infos, valider sa cotisation ou détacher sa carte.</p>`;
+  } else if (a.view === "member") {
+    const n = a.member, r = (a.accounts || []).find(x => x.player === n) || {}, pf = a.mprof, paid = !!(a.cot || {})[n], cy = _currentSeason(), cl = `${String(cy).slice(2)}/${String(cy + 1).slice(2)}`;
+    const kv = (l, v) => `<span>${l}</span><b>${v ? _accEsc(v) : "—"}</b>`;
+    const fd = d => { if (!d) return ""; const [y, m, j] = d.split("-"); return `${+j} ${MONTH_NAMES[+m - 1]} ${y}`; };
+    h = `<div class="acm-top"><button class="acm-back" data-a="accounts" aria-label="Retour aux membres">‹</button><span class="acm-kicker" style="color:var(--sa)">★ Membres</span></div>
+      <div class="acm-me">${_accAvHTML(n, "", true)}<h5>${n}</h5><p class="acm-sub" style="margin:2px 0 0">${r.app ? `📲 Utilise l'appli · ouverte le ${new Date(r.app.lastSeen || 0).toLocaleDateString("fr", { day: "numeric", month: "short" })}` : "🌐 Utilise le site"}${r.createdAt ? ` · compte créé le ${new Date(r.createdAt).toLocaleDateString("fr", { day: "numeric", month: "short" })}` : ""}</p></div>${err}
+      <div class="acm-cot ${paid ? "ok" : "due"}"><span><b>Cotisation ${cl}</b>${paid && a.cot[n].by ? `<small>validée par ${_accEsc(a.cot[n].by)}</small>` : ""}</span>
+        <button class="acm-cbtn" data-a="paid" data-n="${_accEsc(n)}">${paid ? "Annuler" : "✓ Valider le paiement"}</button></div>
+      <div class="acm-sec">Infos</div>
+      ${pf === undefined ? `<p class="acm-sub">Chargement…</p>` : `<div class="acm-kv">${kv("Prénom", pf.prenom)}${kv("Nom", pf.nom)}${kv("Naissance", fd(pf.naissance))}${kv("Téléphone", pf.tel)}${kv("E-mail", pf.email)}</div>`}
+      <button class="acm-btn ghost" data-a="mfiche" data-n="${_accEsc(n)}">👤 Voir sa fiche joueur</button>
+      ${r.uid && r.uid !== (_accUser && _accUser.uid) ? `<button class="acm-btn danger" data-a="detach" data-n="${_accEsc(n)}">${a.confirmDetach === n ? "Confirmer : détacher la carte ?" : "🔗 Détacher la carte de ce compte"}</button>` : ""}`;
   } else if (a.view === "login" || a.view === "create0") {
     const seg = `<div class="acm-seg"><button aria-pressed="${a.view === "login"}" data-a="tab" data-t="login">Se connecter</button><button aria-pressed="${a.view !== "login"}" data-a="tab" data-t="create0">Créer un compte</button></div>`;
     h = seg + (a.view === "login"
@@ -15177,15 +15220,51 @@ async function _accDoBind() {
   if (!ok) { a.pick = null; a.err = "Cette fiche est déjà prise. Choisis-en une autre."; _accLoadTaken(); _accRender(); return; }
   _accAfterClaim(_accUser.uid, a.pick);
 }
+async function _accLoadMe() {
+  const p = _accPlayer(); if (!p || !_db) return;
+  try { const [pf, ct] = await Promise.all([_db.ref("profiles/" + p).once("value"), _db.ref(`cotisations/${_currentSeason()}/${p}`).once("value")]); _acc.prof = pf.val() || {}; _acc.paid = !!ct.val(); }
+  catch (e) { _acc.prof = {}; _acc.paid = undefined; }
+  if (_acc.view === "me") _accRender();
+}
+async function _accSaveProfile() {
+  const p = _accPlayer(), v = id => (document.getElementById("acm-pf-" + id)?.value || "").trim(); if (!p) return;
+  const pf = { prenom: v("prenom").slice(0, 40), nom: v("nom").slice(0, 60), naissance: v("naissance"), tel: v("tel").slice(0, 25), email: v("email").slice(0, 80), at: Date.now() };
+  if (pf.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pf.email)) { _acc.err = "Cette adresse e-mail n'a pas l'air valide."; _accRender(); return; }
+  _acc.busy = true; _acc.err = ""; _accRender();
+  try { await _db.ref("profiles/" + p).set(pf); _acc.prof = pf; _showToast("Infos enregistrées"); }
+  catch (e) { _acc.err = "Enregistrement impossible. Vérifie ta connexion."; }
+  _acc.busy = false; _accRender();
+}
+async function _accLoadMember(n) {
+  _acc.mprof = undefined; _accRender();
+  try { _acc.mprof = (await _db.ref("profiles/" + n).once("value")).val() || {}; } catch (e) { _acc.mprof = {}; }
+  if (_acc.view === "member") _accRender();
+}
+// Export CSV des membres (super admins) : ouvrable dans Excel / Numbers (séparateur « ; », UTF-8 avec BOM)
+async function _accExportCsv() {
+  if (!_accIsSuper) return;
+  try {
+    const [pa, sa, ai, pf, ct] = await Promise.all(["playerAccounts", "config/superAdmins", "appInstalls", "profiles", `cotisations/${_currentSeason()}`].map(x => _db.ref(x).once("value")));
+    const P = pf.val() || {}, S = sa.val() || {}, A = ai.val() || {}, C = ct.val() || {};
+    const names = [...new Set([...Object.keys(pa.val() || {}), ...Object.keys(P)])].sort((x, y) => x.localeCompare(y, "fr"));
+    const q = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
+    const L = [["Joueur", "Prénom", "Nom", "Date de naissance", "Téléphone", "E-mail", "Super admin", `Cotisation ${_currentSeason()}-${_currentSeason() + 1}`, "Appareil"].map(q).join(";")];
+    names.forEach(n => { const x = P[n] || {}; L.push([n, x.prenom, x.nom, x.naissance, x.tel, x.email, S[n] === true ? "oui" : "", C[n] ? "payée" : "à payer", A[n] ? "appli" : "site"].map(q).join(";")); });
+    const blob = new Blob(["\ufeff" + L.join("\r\n")], { type: "text/csv;charset=utf-8" }), url = URL.createObjectURL(blob);
+    const el = document.createElement("a"); el.href = url; el.download = `membres-hmft-${new Date().toISOString().slice(0, 10)}.csv`; document.body.appendChild(el); el.click(); el.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000); _showToast(`${names.length} membres exportés`);
+  } catch (e) { _acc.err = "Export impossible. Vérifie ta connexion."; _accRender(); }
+}
 async function _accLoadAccounts() {
   try {
+    _db.ref(`cotisations/${_currentSeason()}`).once("value").then(c => { _acc.cot = c.val() || {}; if (_acc.view === "accounts" || _acc.view === "member") _accRender(); }).catch(() => {});
     const [pa, us, sa, ai] = await Promise.all(["playerAccounts", "users", "config/superAdmins", "appInstalls"].map(p => _db.ref(p).once("value")));
     const apps = ai.val() || {};
     const users = us.val() || {}, supers = sa.val() || {};
     _acc.accounts = Object.entries(pa.val() || {}).map(([player, uid]) => ({ player, uid, createdAt: users[uid] && users[uid].createdAt, super: supers[player] === true, app: apps[player] || null }))
       .sort((x, y) => (y.super - x.super) || x.player.localeCompare(y.player, "fr")); // super admins en tête, puis ordre alphabétique
   } catch (e) { _acc.accounts = []; _acc.err = "Impossible de charger la liste. Réessaie dans un instant."; }
-  if (_acc.view === "accounts") _accRender();
+  if (_acc.view === "accounts" || _acc.view === "member") _accRender();
 }
 // Détacher : libère la fiche et efface le profil. Le compte de connexion reste, sans fiche :
 // à sa prochaine connexion, la personne choisit à nouveau sa fiche.
@@ -15196,7 +15275,7 @@ async function _accDetach(player) {
     await _db.ref().update({ ["playerAccounts/" + player]: null, ["users/" + r.uid]: null });
     _showToast(`Compte détaché de la fiche <b>${player}</b>`);
   } catch (e) { _acc.err = "Le détachement a échoué. Réessaie dans un instant."; }
-  _acc.confirmDetach = null; _accLoadAccounts();
+  _acc.confirmDetach = null; if (_acc.view === "member") _acc.view = "accounts"; _accLoadAccounts();
 }
 function _accLogout() {
   _guardStaleEditDraft(() => {
@@ -15206,6 +15285,9 @@ function _accLogout() {
   });
 }
 
+document.getElementById("acc-modal").addEventListener("submit", e => {
+  if (e.target.id === "acm-prof") { e.preventDefault(); _accSaveProfile(); }
+}, true);
 document.getElementById("acc-modal").addEventListener("click", e => {
   if (e.target.id === "acc-modal" || e.target.closest("#acm-close")) { _accClose(); return; }
   const t = e.target.closest("[data-a]"); if (!t) return;
@@ -15226,8 +15308,25 @@ document.getElementById("acc-modal").addEventListener("click", e => {
   else if (act === "create") { _accDoCreate(); return; }
   else if (act === "bindok") { _accDoBind(); return; }
   else if (act === "fiche") { _accClose(); _accShowMyFiche(); return; }
+  else if (act === "csv") { _accExportCsv(); return; }
+  else if (act === "member") { a.view = "member"; a.member = t.dataset.n; a.err = ""; a.confirmDetach = null; _accLoadMember(a.member); return; }
+  else if (act === "mfiche") { _accClose(); if (typeof openPlayerPanel === "function") openPlayerPanel(t.dataset.n); return; }
+  else if (act === "star") {
+    const n = t.dataset.n, row = (a.accounts || []).find(r => r.player === n); if (!row || row.uid === (_accUser && _accUser.uid)) return;
+    const ref = _db.ref("config/superAdmins/" + n);
+    (row.super ? ref.remove() : ref.set(true)).then(() => { _showToast(row.super ? `${n} n'est plus super admin` : `★ ${n} est maintenant super admin`); _accLoadAccounts(); })
+      .catch(() => { a.err = "Modification impossible. Réessaie dans un instant."; _accRender(); });
+    return;
+  }
+  else if (act === "paid") {
+    const n = t.dataset.n, cy = _currentSeason(), was = !!(a.cot || {})[n];
+    _db.ref(`cotisations/${cy}/${n}`).set(was ? null : { by: _accPlayer(), at: Date.now() })
+      .then(() => { a.cot = { ...(a.cot || {}) }; if (was) delete a.cot[n]; else a.cot[n] = { by: _accPlayer(), at: Date.now() }; _showToast(was ? `Cotisation de ${n} repassée « à payer »` : `Cotisation de ${n} validée`); _accRender(); })
+      .catch(() => { a.err = "Validation impossible. Réessaie dans un instant."; _accRender(); });
+    return;
+  }
   else if (act === "accounts") { a.view = "accounts"; a.accounts = null; a.err = ""; a.confirmDetach = null; _accRender(); _accLoadAccounts(); return; }
-  else if (act === "tome") { if (a.fromMenu) { _accClose(); window._bnOpenMenu && window._bnOpenMenu(); return; } a.view = "me"; }
+  else if (act === "tome") { a.view = "me"; _accLoadMe(); }
   else if (act === "super") {
     const n = t.dataset.n, row = (a.accounts || []).find(r => r.player === n);
     if (!row) return;
@@ -17097,7 +17196,7 @@ function _svApply() {
       if (acc()) pages.push(row("joueurs", "team", "Effectif"));
       if (!soiree() && !voteOpen() && sessionStorage.getItem("hmft_role") === "admin" && canSaisie()) pages.push(row("saisie", "saisie", "Saisie", "★ super admin")); // pas de Saisie tant que le sondage est ouvert
       const prof = acc()
-        ? `<button type="button" class="bm-prof" data-bm="fiche"><span class="av pf">${esc((p || "").slice(0, 2).toUpperCase())}${typeof portraitImg === "function" ? portraitImg(p, true) : ""}</span><span><b>${esc(p)}</b><small>${typeof _accIsSuper !== "undefined" && _accIsSuper ? "★ Super admin · " : ""}voir ma fiche</small></span>${ic("chev", "chev")}</button>`
+        ? `<button type="button" class="bm-prof" data-bm="fiche"><span class="av pf">${esc((p || "").slice(0, 2).toUpperCase())}${typeof portraitImg === "function" ? portraitImg(p, true) : ""}</span><span><b>${esc(p)}</b><small>${typeof _accIsSuper !== "undefined" && _accIsSuper ? "★ Super admin · " : ""}mon compte</small></span>${ic("chev", "chev")}</button>`
         : `<button type="button" class="bm-prof" data-bm="login"><span class="av">${ic("user")}</span><span><b>Se connecter</b><small>ou créer mon compte joueur</small></span>${ic("chev", "chev")}</button>`;
       m.innerHTML = `<div class="bm-in"><div class="bm-grab"></div>${prof}
         <span class="bm-lbl bm-pg">Autres pages</span><div class="bm-rows bm-pg">${pages.join("")}</div>
@@ -17108,7 +17207,7 @@ function _svApply() {
         </div>
         ${acc() && typeof _accIsSuper !== "undefined" && _accIsSuper ? `<span class="bm-lbl sa">★ Super admin</span><div class="bm-rows sa">
           <button type="button" class="bm-row" data-bm="__compose"><span class="bm-star">★</span><span class="grow">Envoyer une notification</span>${ic("chev", "chev")}</button>
-          <button type="button" class="bm-row" data-bm="__accounts"><span class="bm-star">★</span><span class="grow">Comptes activés</span>${ic("chev", "chev")}</button>
+          <button type="button" class="bm-row" data-bm="__accounts"><span class="bm-star">★</span><span class="grow">Membres</span>${ic("chev", "chev")}</button>
           <button type="button" class="bm-row" data-bm="__seasons"><span class="bm-star">★</span><span class="grow">Saisons</span>${ic("chev", "chev")}</button>
           ${shown("footer-pronos-wrap") ? `<button type="button" class="bm-row" data-bm="__pronos"><span class="bm-star">★</span><span class="grow">${esc(($("footer-pronos-btn") || {}).textContent || "Pronos")}</span></button>` : ""}
         </div>` : ""}
@@ -17131,10 +17230,12 @@ function _svApply() {
         }
         if (st === "on" && optsOpen) {
           const pr = pw.prefs();
-          h += `<button type="button" class="bm-sub" data-bm="__pref" data-k="boosters" aria-pressed="${pr.boosters}"><span class="bm-ck${pr.boosters ? " on" : ""}">${pr.boosters ? "✓" : ""}</span><span class="grow">Boosters à ouvrir <small>· à 10h</small></span></button>
+          h += `<button type="button" class="bm-sub" data-bm="__pref" data-k="chat" aria-pressed="${pr.chat}"><span class="bm-ck${pr.chat ? " on" : ""}">${pr.chat ? "✓" : ""}</span><span class="grow">Vestiaire <small>· salons dont la cloche est active</small></span></button>
+            <button type="button" class="bm-sub" data-bm="__pref" data-k="trades" aria-pressed="${pr.trades}"><span class="bm-ck${pr.trades ? " on" : ""}">${pr.trades ? "✓" : ""}</span><span class="grow">Échanges reçus</span></button>
+            <button type="button" class="bm-sub" data-bm="__pref" data-k="boosters" aria-pressed="${pr.boosters}"><span class="bm-ck${pr.boosters ? " on" : ""}">${pr.boosters ? "✓" : ""}</span><span class="grow">Boosters à ouvrir <small>· à 10h</small></span></button>
             <div class="bm-sub"><span class="bm-ck on locked">✓</span><span class="grow">Sondage : ouverture et rappel 3 h</span><small>toujours</small></div>
             <div class="bm-sub"><span class="bm-ck on locked">✓</span><span class="grow">Récap de la soirée</span><small>toujours</small></div>
-            <div class="bm-sub"><span class="bm-ck on locked">✓</span><span class="grow">Infos Club</span><small>toujours</small></div>`;
+            <div class="bm-sub"><span class="bm-ck on locked">✓</span><span class="grow">Infos Club, @tous et anniversaires</span><small>toujours</small></div>`;
         }
       }
       return h;
@@ -17181,7 +17282,7 @@ function _svApply() {
           if (k === "__compose") { const pw = window._pwa; close(); render(); if (pw) pw.compose(); return; }
           if (k === "__install") { const pw = window._pwa; close(); render(); if (pw) pw.install(); return; }
           close(); render();
-          if (k === "fiche") goTab("fiche");
+          if (k === "fiche") { close(); if (typeof _accOpen === "function") _accOpen("me"); return; }
           else if (k === "login") { typeof _accOpen === "function" && _accOpen("login"); }
           else if (k === "__accounts") { if (typeof _accOpen === "function") { _accOpen("accounts"); _acc.fromMenu = true; typeof _accLoadAccounts === "function" && _accLoadAccounts(); } }
           else if (k === "__logout") { typeof _accLogout === "function" && _accLogout(); }
@@ -17359,7 +17460,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     }
     const esc = x => String(x == null ? "" : x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
     window._pwa = {
-      prefs: () => ({ trades: prefs.trades !== false, boosters: prefs.boosters !== false }),
+      prefs: () => ({ chat: prefs.chat !== false, trades: prefs.trades !== false, boosters: prefs.boosters !== false }),
       setPref: (k, v) => { const p = me(); if (p && _db) _db.ref(`pushPrefs/${p}/${k}`).set(v).catch(() => toast("Réglage non enregistré : vérifie ta connexion.")); },
       compose,
       canInstall: () => !standalone() && (!!deferred || isIOS),
@@ -17516,7 +17617,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     return (m.by === me() ? "Toi" : m.by) + " : " + (m.text || "");
   }
   function fmt(t, mine) {
-    let h = esc(t);
+    let h = esc(t).replace(/@tous(?![\wÀ-ÿ])/gi, `<span class="mention all">@tous</span>`);
     [...accounts].sort((a, b) => b.length - a.length).forEach(p => {
       h = h.replace(new RegExp("@" + rx(esc(p)) + "(?![\\wÀ-ÿ])", "g"), `<span class="mention${p === me() && !mine ? " you" : ""}">@${esc(p)}</span>`);
     });
@@ -17579,7 +17680,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const r = R(V.room); let h = "";
     if (V.selMode) { const n = V.sel.size;
       return `<div class="ch-selbar"><button type="button" data-ch="selCancel">Annuler</button><span><b>${n}</b> sélectionné${n > 1 ? "s" : ""}</span><button type="button" data-ch="selAll">Tout</button><button type="button" class="dang" data-ch="selDel"${n ? "" : " disabled"}>🗑️ Supprimer</button></div>`; }
-    if (V.sugg && V.sugg.length) h += `<div class="ch-sugg">${V.sugg.map(p => `<button type="button" data-ch="pickMention" data-p="${esc(p)}">${av(p)}${esc(p)}</button>`).join("")}</div>`;
+    if (V.sugg && V.sugg.length) h += `<div class="ch-sugg">${V.sugg.map(p => p === "tous" ? `<button type="button" class="all" data-ch="pickMention" data-p="tous">📣 tous</button>` : `<button type="button" data-ch="pickMention" data-p="${esc(p)}">${av(p)}${esc(p)}</button>`).join("")}</div>`;
     if (V.reply) h += `<div class="ch-replybar"><span class="tx">↩️ Réponse à <b>${esc(V.reply.by || "Infos Club")}</b> · ${esc(plain(V.reply.text))}</span><button type="button" data-ch="cancelReply" aria-label="Annuler la réponse">✕</button></div>`;
     const PH = V.photos || [];
     if (PH.length || V.photoBusy) h += `<div class="ch-photos"><div class="ch-thumbs">${PH.map((x, i) => `<span><img src="${x.data}" alt=""><button type="button" data-ch="photoDel" data-i="${i}" aria-label="Retirer la photo ${i + 1}">✕</button></span>`).join("")}${V.photoBusy ? `<span class="busy">…</span>` : ""}</div>
@@ -17928,7 +18029,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (e.target.id !== "ch-tx") return;
     V.draft[V.room] = e.target.value; autoGrow(e.target);
     const c = e.target.selectionStart, m = e.target.value.slice(0, c).match(/(?:^|\s)@([\wÀ-ÿ'-]{0,20})$/), r = R(V.room);
-    const next = m && r ? membersOf(r).filter(x => x !== me() && x.toLowerCase().startsWith(m[1].toLowerCase())).slice(0, 5) : null;
+    const next = m && r ? [..."tous".startsWith(m[1].toLowerCase()) ? ["tous"] : [], ...membersOf(r).filter(x => x !== me() && x.toLowerCase().startsWith(m[1].toLowerCase()))].slice(0, 6) : null; // « @tous » : notifie tout le monde
     const changed = JSON.stringify(next) !== JSON.stringify(V.sugg); V.sugg = next && next.length ? next : null;
     if (changed) renderComp();
   });

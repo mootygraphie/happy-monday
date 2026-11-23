@@ -256,7 +256,52 @@ def main():
     block("Clôture", do_close)
 
     # ── Le Vestiaire : nouveaux messages
-    block("Vestiaire", lambda: chat_push(subs, supers, sent, now_ms, send))
+    # ── anniversaires : message dans le Vestiaire à 10h (date de naissance de « Mon compte »), une fois par an
+    def do_bday():
+        if now.hour != 10:
+            return
+        md = now.strftime("-%m-%d")
+        done = ((sent.get("bday") or {}).get(str(now.year))) or {}
+        for p, pr in (req("profiles") or {}).items():
+            nais = (pr or {}).get("naissance") or ""
+            if not nais.endswith(md) or done.get(p):
+                continue
+            try:
+                age = now.year - int(nais[:4])
+            except ValueError:
+                age = 0
+            print("Anniversaire :", p, age)
+            if not DRY:
+                req("chat/msgs/g", "POST", {"sys": "bday", "who": p, "text": f"🎂 Joyeux anniversaire @{p} !" + (f" {age} ans aujourd'hui, toute l'équipe te souhaite une belle journée ⚽" if 0 < age < 100 else " Toute l'équipe te souhaite une belle journée ⚽"), "at": {".sv": "timestamp"}})
+            mark(f"pushSent/bday/{now.year}/{p}")
+    block("Anniversaires", do_bday)
+
+    # ── Le Vestiaire : nouveaux messages
+    block("Vestiaire", lambda: chat_push(subs, supers, sent, now_ms, send, allowed))
+
+    # ── propositions d'échange de vignettes reçues (une notification par proposition)
+    def do_trades():
+        seasons = sorted(k for k in (fetch(f"{DB}/vignettes.json?shallow=true") or {}) if "-" in k)
+        if not seasons:
+            return
+        T = req(f"vignettes/{seasons[-1]}/_trades") or {}
+        done = sent.get("trade") or {}
+        for tid, t in T.items():
+            if not isinstance(t, dict) or t.get("status") != "wait" or done.get(tid):
+                continue
+            if (t.get("at") or 0) < now_ms - 24 * 3600 * 1000:
+                mark(f"pushSent/trade/{tid}")  # trop ancienne (premier passage) : on ne la notifie pas
+                continue
+            to, frm = t.get("to"), t.get("from")
+            if not to or not allowed(to, "trades"):
+                mark(f"pushSent/trade/{tid}")
+                continue
+            n = len(t.get("give") or [])
+            gift = not (t.get("get") or [])
+            print("Échange :", frm, "→", to)
+            if send(to, f"🎁 {frm} t'offre {'une carte' if n == 1 else f'{n} cartes'}" if gift else f"🔄 {frm} te propose un échange", "À voir dans Vignettes · Échanges.", "./?n=trades#vignettes", f"trade-{tid}"):
+                mark(f"pushSent/trade/{tid}")
+    block("Échanges", do_trades)
 
     # ── boosters de vignettes : seulement entre 10h00 et 10h59 (passage raté = rien ce jour-là)
     def do_boost():
@@ -292,7 +337,7 @@ def main():
     print(stats)
 
 
-def chat_push(subs, supers, sent, now_ms, send):
+def chat_push(subs, supers, sent, now_ms, send, allowed=lambda p, k: True):
     """Un push par salon et par personne, regroupant les messages arrivés depuis le dernier passage."""
     import re
     open_all = req("config/chatOpen") is True
@@ -321,14 +366,20 @@ def chat_push(subs, supers, sent, now_ms, send):
             if not new:
                 continue
             top = max(m.get("at") or 0 for m in new)
-            ment = [m for m in new if not m.get("sys") and re.search("@" + re.escape(p) + r"(?![\wÀ-ÿ])", m.get("text") or "")]
-            if (mutes.get(p) or {}).get(rid) and not ment:
+            ment = [m for m in new if (not m.get("sys") and re.search("@" + re.escape(p) + r"(?![\wÀ-ÿ])", m.get("text") or "")) or (m.get("sys") == "bday" and m.get("who") == p)]
+            tous = [m for m in new if not m.get("sys") and re.search(r"@tous(?![\wÀ-ÿ])", m.get("text") or "", re.I)]
+            # cloche coupée sur ce salon, ou notifications du Vestiaire désactivées : seulement les mentions et @tous
+            if ((mutes.get(p) or {}).get(rid) or not allowed(p, "chat")) and not ment and not tous:
                 mark_val(f"pushSent/chat/{p}/{rid}", top)
                 continue
-            last = ment[-1] if ment else new[-1]
+            last = ment[-1] if ment else tous[-1] if tous else new[-1]
             line = (last.get("text") or "") if last.get("sys") else f"{last.get('by')} : {last.get('text') or ''}"
-            if ment:
+            if ment and ment[-1].get("sys") == "bday":
+                title = "🎂 Joyeux anniversaire !"
+            elif ment:
                 title = f"@ {ment[-1].get('by')} t'a mentionné · {name}"
+            elif tous:
+                title = f"📣 {tous[-1].get('by')} → tous · {name}"
             else:
                 title = f"💬 {name}" + (f" · {len(new)} nouveaux messages" if len(new) > 1 else "")
             print("Vestiaire :", p, rid, len(new), "mention" if ment else "")
