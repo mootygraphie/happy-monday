@@ -2819,7 +2819,29 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .acm-kv { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; padding: 12px 14px; border-radius: 14px; background: var(--bg3); font-size: 13.5px; margin-bottom: 12px; }
   .acm-kv span { color: var(--text3); } .acm-kv b { font-weight: 600; text-align: right; word-break: break-word; }
   .acm-btn.danger { background: transparent; border: 1px solid rgba(255,59,48,.45); color: #ff6b5e; }
-  .acm-mem .acm-pl { gap: 4px; padding: 4px 6px; }
+  .acm-mem .acm-pl { display: flex; align-items: center; gap: 4px; padding: 3px 8px 3px 4px; min-height: 0; }
+  .acm-mem .acm-memrow b { flex-direction: column; align-items: flex-start; gap: 0; }
+  .acm-mem .acm-pl small { display: block !important; }
+  .acm-mem .acm-pl .acm-av { width: 30px; height: 30px; }
+  /* Mon compte : compact */
+  .acm-acct { display: flex; flex-direction: column; gap: 10px; }
+  .acm-acct .acm-sec { margin: 6px 0 -2px; }
+  .acm-who { display: flex; align-items: center; gap: 12px; padding-right: 44px; }
+  .acm-who .acm-av { width: 52px; height: 52px; flex: none; }
+  .acm-who small { display: block; font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
+  .acm-who b { display: block; font-size: 21px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1.1; }
+  .acm-who em { font-style: normal; font-size: 11.5px; font-weight: 700; color: var(--sa); }
+  .acm-link2 { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; }
+  .acm-link2 span { color: var(--text3); font-size: 18px; }
+  .acm-acct .acm-cot { margin: 0; padding: 10px 14px; }
+  .acm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
+  .acm-grid .wide { grid-column: 1 / -1; }
+  .acm-grid .acm-field { margin: 0; min-width: 0; }
+  .acm-grid .acm-field label { font-size: 11.5px; margin-bottom: 4px; }
+  .acm-grid .acm-input input { padding: 9px 11px; border-radius: 10px; }
+  .acm-grid .acm-btn { margin-top: 2px; padding: 10px; font-size: 14px; }
+  .acm-acct .acm-btn.ghost { margin-top: 0; padding: 10px; font-size: 14px; }
+  .acm-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .acm-star { flex: none; width: 34px; height: 34px; border: none; background: none; font-size: 20px; line-height: 1; color: var(--sa); cursor: pointer; } .acm-star:not(.on) { color: var(--text3); } .acm-star:disabled { cursor: default; opacity: .7; }
   .acm-memrow { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; border: none; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; padding: 4px 0; }
   .acm-memrow b { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; text-align: left; } .acm-memrow b small { font-weight: 400; font-size: 11.5px; color: var(--text3); }
@@ -4461,7 +4483,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 14:47</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 14:51</footer>
 
 <script>
 
@@ -15073,19 +15095,20 @@ function _accRender(keepFocus) {
     // Mon compte : cotisation (statut seul), fiche, infos personnelles (profiles/{joueur}, lisibles par le joueur et les super admins)
     const p = _accPlayer(), pf = a.prof || {}, cy = _currentSeason(), cl = `${String(cy).slice(2)}/${String(cy + 1).slice(2)}`;
     const fld = (id, l, type, v, ac) => `<div class="acm-field"><label for="acm-pf-${id}">${l}</label><div class="acm-input"><input id="acm-pf-${id}" type="${type}" autocomplete="${ac}" value="${_accEsc(v || "")}"></div></div>`;
-    h = `<div class="acm-top"><span class="acm-kicker">Mon compte</span></div>
-      <div class="acm-me">${_accAvHTML(p, "", true)}<h5>${p}</h5>${_accIsSuper ? `<span class="acm-badge" style="color:var(--sa);border-color:var(--sa-border);background:var(--sa-bg)">★ Super admin</span>` : ""}
-      ${_accSaisieBlocked() ? `<p class="acm-sub" style="margin:8px 0 0">⏸️ Saisie indisponible : ta fiche est Dépanneur ou Inactif cette saison.</p>` : ""}</div>
-      ${a.paid === undefined ? "" : `<div class="acm-cot ${a.paid ? "ok" : "due"}"><span><b>Cotisation ${cl}</b></span><span class="st">${a.paid ? "✓ Payée" : "À payer"}</span></div>`}
-      <button class="acm-btn" data-a="fiche">👤 Voir ma fiche joueur</button>
-      <div class="acm-sec">Mes infos</div>${err}
-      ${a.prof === undefined ? `<p class="acm-sub">Chargement…</p>` : `<form id="acm-prof" autocomplete="on">
-        ${fld("prenom", "Prénom", "text", pf.prenom, "given-name")}${fld("nom", "Nom", "text", pf.nom, "family-name")}${fld("naissance", "Date de naissance", "date", pf.naissance, "bday")}
-        ${fld("tel", "Téléphone", "tel", pf.tel, "tel")}${fld("email", "E-mail", "email", pf.email, "email")}
-        <button class="acm-btn ghost" type="submit"${a.busy ? " disabled" : ""}>${a.busy ? "Enregistrement…" : "Enregistrer mes infos"}</button></form>
-        <p class="acm-help" style="margin-top:6px">🔒 Seuls toi et les responsables du club voient ces informations. Ta date de naissance sert au message d'anniversaire du Vestiaire.</p>`}
-      ${_accIsSuper ? `<div class="acm-sec sa">★ Super admin</div><button class="acm-btn ghost" data-a="accounts">👥 Membres</button><button class="acm-btn ghost" data-a="csv">⬇️ Exporter les membres (CSV)</button>` : ""}
-      <button class="acm-btn ghost" data-a="logout">Se déconnecter</button>`;
+    h = `<div class="acm-acct">
+      <div class="acm-who">${_accAvHTML(p, "", true)}<span><small>Mon compte</small><b>${p}</b>${_accIsSuper ? `<em>★ Super admin</em>` : ""}</span></div>
+      ${_accSaisieBlocked() ? `<p class="acm-sub" style="margin:0">⏸️ Saisie indisponible : ta fiche est Dépanneur ou Inactif cette saison.</p>` : ""}
+      <button class="acm-link2" data-a="fiche">👤 Voir ma fiche joueur<span>›</span></button>
+      <div class="acm-sec">Cotisation</div>
+      ${a.paid === undefined ? `<p class="acm-sub">Chargement…</p>` : `<div class="acm-cot ${a.paid ? "ok" : "due"}"><span><b>Cotisation ${cl}</b></span><span class="st">${a.paid ? "✓ Payée" : "À payer"}</span></div>`}
+      <div class="acm-sec">Coordonnées</div>${err}
+      ${a.prof === undefined ? `<p class="acm-sub">Chargement…</p>` : `<form id="acm-prof" class="acm-grid" autocomplete="on">
+        ${fld("prenom", "Prénom", "text", pf.prenom, "given-name")}${fld("nom", "Nom", "text", pf.nom, "family-name")}${fld("naissance", "Naissance", "date", pf.naissance, "bday")}
+        ${fld("tel", "Téléphone", "tel", pf.tel, "tel")}<div class="wide">${fld("email", "E-mail", "email", pf.email, "email")}</div>
+        <button class="acm-btn ghost wide" type="submit"${a.busy ? " disabled" : ""}>${a.busy ? "Enregistrement…" : "Enregistrer"}</button></form>
+        <p class="acm-help" style="margin:6px 0 0">🔒 Visibles seulement par toi et les responsables du club.</p>`}
+      ${_accIsSuper ? `<div class="acm-sec sa">★ Super admin</div><div class="acm-row2"><button class="acm-btn ghost" data-a="accounts">👥 Membres</button><button class="acm-btn ghost" data-a="csv">⬇️ Export CSV</button></div>` : ""}
+      <button class="acm-btn ghost" data-a="logout">Se déconnecter</button></div>`;
   } else if (a.view === "accounts") {
     // Super admin : Membres (comptes créés). ☆/★ = super admin (un toucher bascule), statut de cotisation, toucher la ligne = fiche du membre.
     const rows = a.accounts, total = new Set(ALL_PLAYERS).size, cot = a.cot || {}, myUid = _accUser && _accUser.uid;
