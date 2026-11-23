@@ -106,6 +106,12 @@
         ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
       }
     },
+    "lastSeen": {
+      ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
+      "$p": {
+        ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
+      }
+    },
     "appInstalls": {
       ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
       "$p": {

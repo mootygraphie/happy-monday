@@ -2833,7 +2833,9 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .acm-mem .acm-memrow { display: flex; align-items: center; gap: 10px; padding: 5px 0; }
   .acm-mem .acm-memrow .acm-av { width: 32px; height: 32px; border-radius: 9px; flex: none; }
   .acm-mem .acm-memrow b { flex: 0 1 auto; display: block; min-width: 0; font-size: 14.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .acm-mem .acm-memrow .dv { flex: 1; display: block !important; font-size: 13px; opacity: .75; }
+  .acm-mem .acm-memrow .dv { flex: none; display: block !important; font-size: 13px; opacity: .75; }
+  .acm-mem .acm-memrow .ls { flex: 1; display: block !important; min-width: 0; text-align: right; font-size: 11.5px; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 2px; }
+  .acm-mem .acm-memrow .ls.rec { color: var(--text2); }
   .acm-cdot { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 900; line-height: 1; }
   .acm-cdot.ok { background: rgba(31,164,99,.18); color: #4cd38a; border: 1.5px solid rgba(31,164,99,.7); }
   .acm-cdot.due { background: rgba(255,159,10,.14); color: #ff9f0a; border: 1.5px solid rgba(255,159,10,.7); }
@@ -4500,7 +4502,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 16:10</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 16:49</footer>
 
 <script>
 
@@ -15129,14 +15131,17 @@ function _accRender(keepFocus) {
   } else if (a.view === "accounts") {
     // Super admin : Membres (comptes créés). ☆/★ = super admin (un toucher bascule), statut de cotisation, toucher la ligne = fiche du membre.
     const rows = a.accounts, total = new Set(ALL_PLAYERS).size, cot = a.cot || {}, myUid = _accUser && _accUser.uid;
+    // dernière ouverture : lastSeen (site ou appli), sinon la dernière ouverture de l'appli connue
+    const seenOf = r => { const x = (a.seen || {})[r.player], t = Math.max((x && x.at) || 0, (r.app && r.app.lastSeen) || 0); return t ? { t, app: x && x.at >= ((r.app && r.app.lastSeen) || 0) ? x.via === "app" : !!r.app } : null; };
+    const ago = t => { const m = Math.round((Date.now() - t) / 60000); if (m < 2) return "à l'instant"; if (m < 60) return `il y a ${m} min`; const h = Math.round(m / 60); if (h < 24) return `il y a ${h} h`; const d = Math.round(h / 24); if (d === 1) return "hier"; if (d < 7) return `il y a ${d} j`; return new Date(t).toLocaleDateString("fr", { day: "numeric", month: "short" }); };
     const nPaid = (rows || []).filter(r => cot[r.player]).length;
     h = `<div class="acm-top"><button class="acm-back" data-a="tome" aria-label="Retour">‹</button><span class="acm-kicker" style="color:var(--sa)">★ Super admin</span></div>
       <h4 class="acm-h">Membres</h4>
       <p class="acm-sub">${rows ? `<b>${rows.length}</b> compte${rows.length > 1 ? "s" : ""} sur ${total} joueurs · <span style="color:var(--good)">${nPaid} payée${nPaid > 1 ? "s" : ""}</span> · <span style="color:#ff9f0a">${rows.length - nPaid} à payer</span>` : "Chargement…"}</p>${err}
       <div class="acm-list acm-accl acm-mem" style="max-height:58vh">${(rows || []).map(r => `<div class="acm-pl${r.uid === myUid ? " me" : ""}">
         <button class="acm-star${r.super ? " on" : ""}" data-a="star" data-n="${_accEsc(r.player)}"${r.uid === myUid ? " disabled" : ""} aria-label="${r.super ? `Retirer les droits super admin de ${_accEsc(r.player)}` : `Passer ${_accEsc(r.player)} super admin`}">${r.super ? "★" : "☆"}</button>
-        <button class="acm-memrow" data-a="member" data-n="${_accEsc(r.player)}">${_accAvHTML(r.player, "")}<b>${r.player}</b><small class="dv" title="${r.app ? "Utilise l'appli" : "Utilise le site"}">${r.app ? "📲" : "🌐"}</small><span class="acm-cdot ${cot[r.player] ? "ok" : "due"}" title="Cotisation ${cot[r.player] ? "payée" : "à payer"}">${cot[r.player] ? "✓" : "!"}</span></button></div>`).join("")}</div>
-      <p class="acm-help">☆/★ : super admin (un toucher). <span style="color:var(--good)">✓</span> cotisation payée, <span style="color:#ff9f0a">!</span> à payer. 📲 appli, 🌐 site. Touche un membre pour ses infos, sa cotisation ou détacher sa carte.</p>`;
+        <button class="acm-memrow" data-a="member" data-n="${_accEsc(r.player)}">${_accAvHTML(r.player, "")}<b>${r.player}</b><small class="dv" title="${r.app ? "Utilise l'appli" : "Utilise le site"}">${r.app ? "📲" : "🌐"}</small><small class="ls${(s0 => s0 && Date.now() - s0.t < 7 * 86400000 ? " rec" : "")(seenOf(r))}" title="Dernière ouverture">${(s0 => s0 ? ago(s0.t) : "—")(seenOf(r))}</small><span class="acm-cdot ${cot[r.player] ? "ok" : "due"}" title="Cotisation ${cot[r.player] ? "payée" : "à payer"}">${cot[r.player] ? "✓" : "!"}</span></button></div>`).join("")}</div>
+      <p class="acm-help">Dernière ouverture du site ou de l'appli à droite. ☆/★ : super admin (un toucher). <span style="color:var(--good)">✓</span> cotisation payée, <span style="color:#ff9f0a">!</span> à payer. 📲 appli, 🌐 site. Touche un membre pour ses infos, sa cotisation ou détacher sa carte.</p>`;
   } else if (a.view === "member") {
     const n = a.member, r = (a.accounts || []).find(x => x.player === n) || {}, pf = a.mprof, paid = !!(a.cot || {})[n], cy = _currentSeason(), cl = `${String(cy).slice(2)}/${String(cy + 1).slice(2)}`;
     const kv = (l, v) => `<span>${l}</span><b>${v ? _accEsc(v) : "—"}</b>`;
@@ -15298,6 +15303,7 @@ async function _accExportCsv() {
 async function _accLoadAccounts() {
   try {
     _db.ref(`cotisations/${_currentSeason()}`).once("value").then(c => { _acc.cot = c.val() || {}; if (_acc.view === "accounts" || _acc.view === "member") _accRender(); }).catch(() => {});
+    _db.ref("lastSeen").once("value").then(c => { _acc.seen = c.val() || {}; if (_acc.view === "accounts" || _acc.view === "member") _accRender(); }).catch(() => {});
     const [pa, us, sa, ai] = await Promise.all(["playerAccounts", "users", "config/superAdmins", "appInstalls"].map(p => _db.ref(p).once("value")));
     const apps = ai.val() || {};
     const users = us.val() || {}, supers = sa.val() || {};
@@ -17555,8 +17561,20 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         _db.ref(`appInstalls/${p}`).update({ platform, lastSeen: firebase.database.ServerValue.TIMESTAMP }).then(() => { appMarked = p; }).catch(() => {});
       } catch (e) {}
     }
+    // Membres (super admin) : dernière ouverture du site ou de l'appli — lastSeen/{joueur} = { at, via }
+    let seenFor = null, seenAt = 0;
+    function markSeen() {
+      try {
+        const p = me(); if (!p || !_db || document.visibilityState === "hidden") return;
+        if (p === seenFor && Date.now() - seenAt < 5 * 60000) return;
+        seenFor = p; seenAt = Date.now();
+        _db.ref(`lastSeen/${p}`).set({ at: firebase.database.ServerValue.TIMESTAMP, via: standalone() ? "app" : "site" }).catch(() => { seenAt = 0; });
+      } catch (e) {}
+    }
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") markSeen(); });
+    setTimeout(markSeen, 4000);
     setTimeout(markApp, 4000);
-    setInterval(() => { sync(); watchPrefs(); markApp(); }, 15000);
+    setInterval(() => { sync(); watchPrefs(); markApp(); markSeen(); }, 15000);
     setTimeout(watchPrefs, 3000);
   } catch (e) { console.warn("webapp désactivée:", e); }
 })();
