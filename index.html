@@ -4529,7 +4529,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 22:45</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 23:00</footer>
 
 <script>
 
@@ -17615,12 +17615,19 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
             sub = null; lsSet(OWNER, null); toast("Notifications désactivées sur ce téléphone"); return;
           }
           if (!p) { toast("Connecte-toi pour recevoir les notifications."); return; }
-          toast("Activation des notifications…");
-          const perm = await within(Notification.requestPermission(), 60000, "pas de réponse à la demande d'autorisation"); // appelé directement au toucher (exigé par iOS)
+          // Étapes affichées et notées une par une : on voit où ça bloque (cas d'un Samsung qui restait sans réponse)
+          const step = (n, msg) => { toast(msg); dbg(false, n); };
+          step("1/3 autorisation", "Notifications 1/3 · autorisation…");
+          const ask = () => new Promise(res => { try { const r = Notification.requestPermission(res); if (r && r.then) r.then(res); } catch (e) { res(Notification.permission); } }); // ancienne et nouvelle forme
+          const perm = Notification.permission === "granted" ? "granted" : await within(ask(), 20000, "pas de réponse à la demande d'autorisation (étape 1)"); // appelé directement au toucher (exigé par iOS)
           if (perm !== "granted") { dbg(false, perm === "denied" ? "autorisation refusée" : "autorisation non donnée"); toast(perm === "denied" ? "Notifications refusées. Pour changer d'avis : réglages du téléphone › Applications › " + (nav === "autre" ? "ton navigateur" : nav) + " › Notifications." : "Notifications non autorisées."); return; }
-          reg = reg || await within(navigator.serviceWorker.ready, 10000, "service de notifications pas prêt");
-          sub = await within(reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(_PWA_VAPID) }), 15000, "abonnement sans réponse");
-          await save(p);
+          step("2/3 service", "Notifications 2/3 · préparation…");
+          if (!reg) { try { reg = await within(navigator.serviceWorker.register("sw.js"), 8000, "x"); } catch (e) {} }
+          reg = reg || await within(navigator.serviceWorker.ready, 8000, "service de notifications pas prêt (étape 2)");
+          step("3/3 abonnement", "Notifications 3/3 · abonnement…");
+          try { const old = await reg.pushManager.getSubscription(); if (old) sub = old; } catch (e) {}
+          if (!sub) sub = await within(reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(_PWA_VAPID) }), 12000, "abonnement sans réponse (étape 3)");
+          await within(save(p), 10000, "enregistrement sans réponse (étape 3)");
           dbg(true, "actives");
           toast("Notifications activées sur ce téléphone");
         } catch (e) {
