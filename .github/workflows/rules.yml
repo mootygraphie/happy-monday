@@ -1,0 +1,42 @@
+# Déploie database.rules.json sur la base Firebase (compte de service : secret FIREBASE_SA).
+# Lancé quand le fichier change sur main, ou à la main. Affiche les règles en ligne avant de les remplacer.
+name: Regles Firebase
+
+on:
+  push:
+    branches: [main]
+    paths: ["database.rules.json"]
+  workflow_dispatch:
+
+concurrency:
+  group: rules
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "google-auth>=2.29,<3" requests
+      - name: Publier les regles
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+        run: |
+          python - <<'PY'
+          import json, os, requests
+          from google.oauth2 import service_account
+          from google.auth.transport.requests import Request
+          DB = "https://happy-monday-a2404-default-rtdb.europe-west1.firebasedatabase.app"
+          cred = service_account.Credentials.from_service_account_info(json.loads(os.environ["FIREBASE_SA"]),
+              scopes=["https://www.googleapis.com/auth/firebase.database", "https://www.googleapis.com/auth/userinfo.email"])
+          cred.refresh(Request()); h = {"Authorization": f"Bearer {cred.token}"}
+          live = requests.get(f"{DB}/.settings/rules.json", headers=h, timeout=20); live.raise_for_status()
+          print("Regles en ligne avant :"); print(live.text)
+          new = open("database.rules.json", encoding="utf-8").read(); json.loads(new)
+          r = requests.put(f"{DB}/.settings/rules.json", headers=h, data=new.encode(), timeout=20)
+          print(r.status_code, r.text); r.raise_for_status()
+          PY

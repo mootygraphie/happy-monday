@@ -51,6 +51,9 @@
       },
       "pronosEnabled": {
         ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
+      },
+      "seasons": {
+        ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
       }
     },
     "users": {

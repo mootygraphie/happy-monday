@@ -2486,18 +2486,21 @@ html:has(#vg-modal:not([hidden])), html:has(#vg-modal:not([hidden])) body { over
 /* Couverture : cartes de la saison en fond, la carte du joueur au centre (en mythique), les légendaires joueurs en éventail. Tirage au hasard à chaque ouverture de l'album. */
 #panel-vignettes .cover-pg { padding: 0 !important; container-type: inline-size; aspect-ratio: 3 / 4; background: #0b0b0d; pointer-events: none; }
 #panel-vignettes .cv-bg { position: absolute; inset: -8%; display: grid; grid-template-columns: repeat(5, 1fr); gap: 3cqw 2cqw; padding: 2cqw; transform: rotate(-8deg) scale(1.05); align-content: start; filter: brightness(.42) saturate(.8); }
-#panel-vignettes .cv-glow { position: absolute; left: 50%; top: 40%; width: 110cqw; height: 60cqw; transform: translate(-50%, -50%); background: radial-gradient(closest-side, rgba(245,200,66,.35), transparent); }
+#panel-vignettes .cv-glow { position: absolute; left: 50%; top: 37%; width: 110cqw; height: 60cqw; transform: translate(-50%, -50%); background: radial-gradient(closest-side, rgba(245,200,66,.35), transparent); }
 #panel-vignettes .cv-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,11,13,.6), transparent 16%, transparent 58%, rgba(11,11,13,.92) 72%); }
-#panel-vignettes .cv-fan { position: absolute; left: 50%; top: 40%; width: 0; height: 0; z-index: 5; }
-#panel-vignettes .cv-fan > div { position: absolute; width: 25cqw; top: -17.5cqw; transform-origin: 50% 60%; }
+#panel-vignettes .cv-fan { position: absolute; left: 50%; top: 37%; width: 0; height: 0; z-index: 5; }
+#panel-vignettes .cv-fan > div { position: absolute; width: 22cqw; }
 #panel-vignettes .cv-fan > div.me { width: 34cqw; top: -26cqw; left: -17cqw; z-index: 9; }
 #panel-vignettes .cv-fan > div.me .face { box-shadow: 0 0 0 .5cqw #fff, 0 0 2.5em rgba(255,59,48,.7), 0 1em 2em rgba(0,0,0,.7); }
 #panel-vignettes .cv-kick { position: absolute; top: 6cqw; left: 0; right: 0; text-align: center; z-index: 6; font-size: 3cqw; font-weight: 700; letter-spacing: .28em; text-transform: uppercase; color: rgba(255,255,255,.8); }
-#panel-vignettes .cv-tt { position: absolute; top: 69%; left: 0; right: 0; text-align: center; z-index: 6; }
+#panel-vignettes .cv-tt { position: absolute; top: 71%; left: 0; right: 0; text-align: center; z-index: 6; }
 #panel-vignettes .cv-tt small { display: block; font-size: 6cqw; font-weight: 700; font-style: italic; letter-spacing: .02em; text-transform: uppercase; line-height: 1; color: #fff; }
 #panel-vignettes .cv-tt b { display: block; font-size: 11cqw; font-weight: 700; font-style: italic; line-height: 1; color: #ff3b30; margin-top: .8cqw; }
 #panel-vignettes .cv-cnt { position: absolute; z-index: 15; left: 50%; transform: translateX(-50%); bottom: 5cqw; white-space: nowrap; padding: 1.2cqw 3.2cqw; border-radius: 99px; font-size: 3cqw; font-weight: 600; color: #fff; background: rgba(0,0,0,.55); border: 1px solid rgba(255,255,255,.25); }
 #panel-vignettes .cv-cnt b { color: #ff3b30; }
+#panel-vignettes .vg-pause { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 34px 18px; border-radius: 18px; background: var(--bg2); border: 1px dashed var(--border2); }
+#panel-vignettes .vg-pause > span { font-size: 38px; } #panel-vignettes .vg-pause > b { font-size: 18px; font-style: italic; text-transform: uppercase; }
+#panel-vignettes .vg-pause p { margin: 0; color: var(--text2); font-size: 13.5px; max-width: 36ch; } #panel-vignettes .vg-pause p b { color: var(--text); }
 #panel-vignettes .toc h3 { margin: 0 0 4px; font-size: 22px; font-weight: 700; font-style: italic; text-transform: uppercase; }
 #panel-vignettes .toc > p { margin: 0 0 14px; color: var(--text2); font-size: 13px; }
 #panel-vignettes .toc-row { display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 12px; padding: 10px 6px; border: none; border-bottom: 1px dashed var(--border2); cursor: pointer; background: none; width: 100%; text-align: left; color: var(--text); }
@@ -3186,6 +3189,19 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #bnav .bn-c.sh-ko .bn-tile { filter: drop-shadow(0 6px 10px rgba(227,11,11,.4)); }
   #bnav .bn-c.sh-ok .bn-tile svg, #bnav .bn-c.sh-ko .bn-tile svg { width: 25px; height: 25px; margin-top: -4px; stroke-width: 1.7; }
   #bnav .bn-l2 { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .02em; color: #3a3a44; }
+  .sz-ov { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.6); }
+  .sz-box { width: 100%; max-width: 420px; max-height: calc(100vh - 32px); overflow-y: auto; border-radius: 18px; padding: 18px; background: var(--bg2); border: 1px solid var(--border2); color: var(--text); display: flex; flex-direction: column; gap: 10px; }
+  .sz-h { display: flex; justify-content: space-between; align-items: center; } .sz-h b { font-size: 17px; } .sz-h b span { color: var(--sa); }
+  .sz-x { border: none; background: none; color: var(--text2); font-size: 18px; cursor: pointer; }
+  .sz-p { margin: 0; font-size: 12.5px; color: var(--text2); }
+  .sz-sec { margin-top: 6px; font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--sa); }
+  .sz-f { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600; }
+  .sz-f input { font: inherit; font-weight: 500; padding: 9px 11px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); color-scheme: dark; }
+  .sz-f small { font-size: 11.5px; font-weight: 400; color: var(--text3); }
+  .sz-err { margin: 0; color: var(--bad); font-size: 12.5px; }
+  .sz-act { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+  .sz-act button { font: inherit; font-weight: 700; font-size: 13.5px; padding: 9px 16px; border-radius: 11px; cursor: pointer; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); }
+  .sz-act .sz-save { background: var(--sa); border-color: var(--sa); color: #241c04; }
   #bnav .bn-l2 b { font-size: 10px; font-weight: 900; letter-spacing: .05em; } #bnav .bn-l2 b.ok { color: #1fa463; } #bnav .bn-l2 b.ko { color: #e30b0b; }
   #bnav .bn-c.sh-g .bn-tile::after { background: linear-gradient(180deg, #b4b4be, #8a8a97); }
   #bnav .bn-c.sh-g:not([aria-current="true"]) { color: #8a8a97; }
@@ -4351,7 +4367,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 10:53</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 11:02</footer>
 
 <script>
 
@@ -5081,11 +5097,67 @@ let dbxCompare = false; // affiche les variations vs la periode precedente equiv
 let dbxTrendMode = "session"; // "session" | "match" — granularite des cartes Tendance (Globales/Equipes/Joueurs)
 let ttGkCriteria = "cs"; // "avg" | "cs" — critere de choix du gardien pour l equipe-type (Session + Dashboard)
 
-/* Bornes de saisons avec dates précises (sy = année de début) */
-const SEASON_DEFS = [
-  { sy: 2026, start: '2026-08-24', end: '2027-07-19' },
-  // Ajouter ici les prochaines saisons au fil du temps
-];
+/* Bornes de saisons (sy = année de début). Valeurs par défaut ci-dessous, remplacées par config/seasons,
+   modifiable par les super admins (menu ☰ → ★ Saisons). Heures de Paris.
+   - start / end : saison officielle → stats globales, Ballon d'Or, notes des cartes ;
+   - tradesEnd : fin des échanges et des boosters de l'album de cette saison ;
+   - albumStart : ouverture de l'album de cette saison (boosters en pause entre tradesEnd et l'album suivant). */
+const SEASON_DEFAULTS = {
+  2026: { start: '2026-08-24', end: '2027-07-19', tradesEnd: '2027-07-31T23:59', albumStart: '2026-09-01T00:00' },
+  2027: { start: '2027-08-23', end: '2028-07-17', tradesEnd: '2028-07-31T23:59', albumStart: '2027-09-01T00:00' }
+};
+function _seasonCfgMerge(cfg) {
+  const o = {}; [...new Set([...Object.keys(SEASON_DEFAULTS), ...Object.keys(cfg || {})])].forEach(k => { o[k] = { ...(SEASON_DEFAULTS[k] || {}), ...((cfg || {})[k] || {}) }; });
+  return o;
+}
+let _SEASON_CFG = (() => { try { return _seasonCfgMerge(JSON.parse(localStorage.getItem('hm_seasons') || 'null')); } catch (e) { return _seasonCfgMerge(null); } })();
+const SEASON_DEFS = Object.entries(_SEASON_CFG).map(([sy, v]) => ({ sy: +sy, ...v })).filter(x => x.start && x.end).sort((a, b) => a.sy - b.sy);
+// Réglage modifié (par un super admin, ou sur un autre appareil) : on le garde et on recharge une seule fois.
+try { if (_db) _db.ref('config/seasons').on('value', snap => {
+  const raw = JSON.stringify(snap.val() || null); let old = null; try { old = localStorage.getItem('hm_seasons'); } catch (e) { return; }
+  if (raw === (old === null ? 'null' : old)) return;
+  try { localStorage.setItem('hm_seasons', raw); } catch (e) { return; }
+  location.reload();
+}); } catch (e) {}
+function _parisNowIso() {
+  const t = typeof _liveNow === 'function' ? _liveNow() : Date.now();
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date(t)).map(x => [x.type, x.value]));
+  return `${p.year}-${p.month}-${p.day}T${p.hour === '24' ? '00' : p.hour}:${p.minute}`;
+}
+// Album affiché : le dernier dont l'ouverture est passée (il ne bascule qu'à l'ouverture du suivant).
+function _vgSeason() { const now = _parisNowIso(), L = SEASON_DEFS.filter(x => (x.albumStart || x.start) <= now); return L.length ? L[L.length - 1].sy : _currentSeason(); }
+// Boosters et échanges ouverts pour l'album de cette saison ?
+function _vgOpen(sy) { const x = SEASON_DEFS.find(z => z.sy === sy); return !x || !x.tradesEnd || _parisNowIso() <= x.tradesEnd; }
+function _vgNextAlbum(sy) { const x = SEASON_DEFS.find(z => z.sy === sy + 1); return x && x.albumStart ? x.albumStart : ''; }
+/* ★ Saisons (menu ☰ des super admins) : dates de la saison en cours et de la suivante, enregistrées dans config/seasons. */
+window._seasonsAdmin = function () {
+  if (!_db || typeof _accIsSuper === 'undefined' || !_accIsSuper) return;
+  const cur = _currentSeason(), get = sy => _SEASON_CFG[sy] || SEASON_DEFAULTS[sy] || {};
+  const lab = sy => `${sy}-${sy + 1}`, a = get(cur), b = get(cur + 1);
+  const F = (id, l, type, v, help) => `<label class="sz-f"><span>${l}</span><input id="${id}" type="${type}" value="${v || ''}">${help ? `<small>${help}</small>` : ''}</label>`;
+  const ov = document.createElement('div'); ov.className = 'sz-ov';
+  ov.innerHTML = `<div class="sz-box" role="dialog" aria-modal="true" aria-labelledby="sz-t"><div class="sz-h"><b id="sz-t"><span>★</span> Saisons</b><button type="button" class="sz-x" aria-label="Fermer">✕</button></div>
+    <p class="sz-p">Ces dates servent aux stats globales, au Ballon d'Or et aux notes des cartes. Heures de Paris.</p>
+    <div class="sz-sec">Saison ${lab(cur)}</div>
+    ${F('sz-a-start', 'Début officiel', 'date', a.start)}${F('sz-a-end', 'Fin officielle', 'date', a.end)}
+    ${F('sz-a-trades', 'Fin des échanges et des boosters', 'datetime-local', a.tradesEnd, "Après cette date, on ne peut plus échanger les cartes de cet album ; les boosters s'arrêtent.")}
+    <div class="sz-sec">Saison ${lab(cur + 1)}</div>
+    ${F('sz-b-start', 'Début officiel', 'date', b.start)}${F('sz-b-album', 'Ouverture du nouvel album', 'datetime-local', b.albumStart, 'Les boosters reprennent avec le nouvel album.')}
+    <p class="sz-err" id="sz-err" hidden></p>
+    <div class="sz-act"><button type="button" class="sz-cancel">Annuler</button><button type="button" class="sz-save">Enregistrer</button></div></div>`;
+  document.body.appendChild(ov);
+  const v = id => ov.querySelector('#' + id).value, close = () => ov.remove();
+  ov.addEventListener('click', e => { if (e.target === ov || e.target.closest('.sz-x, .sz-cancel')) close(); });
+  ov.querySelector('.sz-save').addEventListener('click', async () => {
+    const err = ov.querySelector('#sz-err'), A = { start: v('sz-a-start'), end: v('sz-a-end'), tradesEnd: v('sz-a-trades') }, B = { start: v('sz-b-start'), albumStart: v('sz-b-album') };
+    const bad = !A.start || !A.end || !A.tradesEnd || !B.start || !B.albumStart ? 'Remplis toutes les dates.'
+      : A.end < A.start ? 'La fin officielle doit venir après le début.' : B.start <= A.end ? 'La saison suivante doit commencer après la fin officielle.'
+      : B.albumStart <= A.tradesEnd ? "Le nouvel album doit ouvrir après la fin des échanges." : '';
+    if (bad) { err.textContent = bad; err.hidden = false; return; }
+    try { await _db.ref('config/seasons').update({ [cur]: { ...get(cur), ...A }, [cur + 1]: { ...get(cur + 1), ...B } }); if (typeof _showToast === 'function') _showToast('Saisons enregistrées'); close(); }
+    catch (e) { err.textContent = "Enregistrement refusé : il faut être connecté en super admin."; err.hidden = false; }
+  });
+};
 
 function _seasonStart(date) {
   const d = new Date(date);
@@ -15076,7 +15148,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   const MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
   const fdate = s => { const [y, m, d] = (s || "").split("-"); return d ? `${+d} ${MOIS[+m - 1]}` : ""; };
   const ini = n => _saisieInitials(n);
-  const SY = _currentSeason();
+  const SY = _vgSeason(), VG_OPEN = () => _vgOpen(SY);
   const SEASON = `${SY}-${String((SY + 1) % 100).padStart(2, "0")}`;
   const SEASON_LABEL = `Saison ${SY}-${SY + 1}`;
 
@@ -15176,9 +15248,14 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
       .sort((a, b) => b[0] - a[0] || b[1] - a[1] || a[2].localeCompare(b[2], "fr"))
       .forEach(([, , n, k]) => { if (!role[n] && cnt[k] < cap[k]) { role[n] = k; cnt[k]++; } });
     corep.forEach(n => { if (!role[n]) role[n] = SECK.find(k => cnt[k] < cap[k]) || "GUE"; });
+    // Un légendaire par rôle (Buteur, Passeur, Défenseur, Muraille, Guerrier, Dépanneur) : la meilleure note de chacun.
+    // Les autres se répartissent ensuite en épiques, rares et communes selon leur note.
+    const LEGS = new Set(["ATT", "PAS", "DEF", "GAR", "GUE", "DEP"].map(k => (pcards.find(c => role[c.n] === k) || {}).n).filter(Boolean));
+    const rest = pcards.filter(c => !LEGS.has(c.n)).map(c => c.n);
+    const rarOf = n => LEGS.has(n) ? "L" : (j => j < nE ? "E" : j < nE + nR ? "R" : "C")(rest.indexOf(n));
     PLAYERS = pcards.map((c, i) => {
       const tm = Object.entries(c.v.teams).sort((a, b) => b[1] - a[1])[0];
-      return { k: "p:" + c.n, ty: "p", n: c.n, o: c.o, s: c.s, t: TITLES[role[c.n]], r: i < nL ? "L" : i < nL + nE ? "E" : i < nL + nE + nR ? "R" : "C", team: tm ? tm[0] : "",
+      return { k: "p:" + c.n, ty: "p", n: c.n, o: c.o, s: c.s, t: TITLES[role[c.n]], r: rarOf(c.n), team: tm ? tm[0] : "",
         st: { pres: c.v.pres, mj: c.v.mj, v: c.v.v, nu: c.v.n, d: c.v.d, b: c.v.b, p: c.v.p, gk: c.v.gk, enc: c.v.enc }, nt: Object.entries(c.v.nt), nSess: sessions.length };
     });
     PLAYERS.forEach(c => { NTEAM[c.n] = c.team; });
@@ -15309,6 +15386,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     return ((24 - parts[0]) * 3600 - parts[1] * 60 - parts[2]) * 1000;
   }
   async function syncBoosters(root) {
+    if (!VG_OPEN()) { BOOST = (await _db.ref(root + "/boosters").once("value")).val(); return; } // saison finie : plus de crédit
     const today = parisDay();
     const res = await _db.ref(root + "/boosters").transaction(b => {
       if (!b) return { stock: 5, day: today, welcome: true }; // 5 boosters offerts à l'ouverture de l'album
@@ -15339,6 +15417,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   // tel quel (Firebase relance avec la vraie valeur) et on ne compte le booster comme consommé
   // que si le DERNIER passage l'a effectivement retiré.
   async function consumeBooster() {
+    if (!VG_OPEN()) return false;
     const today = parisDay();
     let consumed = false;
     const res = await _db.ref(base() + "/boosters").transaction(b => {
@@ -15488,8 +15567,10 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const next = st >= 5 ? "Réserve pleine (5 maximum)" : `+1 booster dans ${h ? h + " h " : ""}${m} min`;
     return `<div class="vg-stock"><span class="vg-stock-n">${"🎁".repeat(st) || "—"}</span><span><b>${st} booster${st > 1 ? "s" : ""}</b> disponible${st > 1 ? "s" : ""} · ${next}</span></div>`;
   }
+  const fdt = iso => { if (!iso) return ""; const [d, t] = iso.split("T"), [y, m, j] = d.split("-"); return `${+j} ${MOIS[+m - 1]} ${y}${t && t !== "00:00" ? " à " + t.replace(":", "h") : ""}`; };
   function renderPack() {
     const st = document.getElementById("vg-stage"); if (!st) return;
+    if (!VG_OPEN()) { const nx = _vgNextAlbum(SY); st.innerHTML = `<div class="vg-pause"><span>⏸️</span><b>Boosters en pause</b><p>La saison des vignettes ${SEASON} est terminée.${nx ? ` Le nouvel album ouvre le <b>${fdt(nx)}</b>.` : ""}</p></div>`; return; }
     const n = BOOST ? BOOST.stock : 0;
     st.innerHTML = `${stockLine()}<div class="pack-msg" id="vg-packmsg"></div>
       <button class="pack" id="vg-pack" aria-label="Ouvrir le booster"${n < 1 ? " disabled style=\"opacity:.45;filter:grayscale(.6)\"" : ""}>
@@ -15642,12 +15723,14 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   const shufArr = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
   function coverInner() {
     if (COVER) return COVER;
-    const meC = PLAYERS.find(c => c.n === ME), leg = shufArr(PLAYERS.filter(c => c.r === "L" && c.n !== ME)).slice(0, 4);
+    const meC = PLAYERS.find(c => c.n === ME), leg = shufArr(PLAYERS.filter(c => c.r === "L" && c.n !== ME)).slice(0, 6);
     let pool = shufArr(ALL.filter(c => COL[c.k] && !c.locked && !lockedSecret(c)));
     if (pool.length < 30) pool = pool.concat(shufArr(PLAYERS.filter(c => !pool.includes(c))));
     const bg = []; while (pool.length && bg.length < 30) bg.push(...pool.slice(0, 30 - bg.length));
-    const A = [-16, -8, 8, 16], X = [-31, -18, 18, 31], n = leg.length, idx = n === 4 ? [0, 1, 2, 3] : n === 3 ? [0, 1, 3] : n === 2 ? [1, 2] : [1];
-    const fan = leg.map((c, i) => { const k = idx[i]; return `<div style="left:${X[k] - 12.5}cqw;transform:rotate(${A[k]}deg) translateY(${k === 0 || k === 3 ? 4 : 1}cqw);z-index:${k < 2 ? k + 1 : 4 - k}">${cardHTML(c, true)}</div>`; }).join("");
+    // « ( ta carte ) » : 3 légendaires à gauche, 3 à droite, en arc de parenthèse (le milieu plus écarté)
+    const SLOT = [[-1, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [1, 1]];
+    const fan = leg.map((c, i) => { const [sd, row] = SLOT[i], x = sd * (row ? 27 : 33) - 11, y = row * 22 - 15.4, r = sd * row * 11;
+      return `<div style="left:${x}cqw;top:${y}cqw;transform:rotate(${r}deg);z-index:${row ? 2 : 3}">${cardHTML(c, true)}</div>`; }).join("");
     COVER = `<div class="cv-bg">${bg.map(c => cardHTML(c, true)).join("")}</div><div class="cv-glow"></div><div class="cv-shade"></div>
       <div class="cv-kick">Happy Monday Football Team</div>
       <div class="cv-fan">${fan}${meC ? `<div class="me">${cardHTML({ ...meC, r: "M" }, true)}</div>` : ""}</div>
@@ -15861,6 +15944,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     return `<button class="vt-pl" data-vt="partner" data-n="${n}">${trAv(n)}<span><b>${n}</b><small><i>${r}</i> de tes manques en double · <i>${g}</i> de tes doubles lui manquent</small></span><span class="go">›</span></button>`;
   }
   function trSwapHTML() {
+    if (!VG_OPEN()) return `<div class="vg-pause"><span>🔒</span><b>Échanges terminés</b><p>On ne peut plus échanger les cartes de la saison ${SEASON} depuis le ${fdt((SEASON_DEFS.find(z => z.sy === SY) || {}).tradesEnd)}.</p></div>`;
     const search = `<input class="vt-search" id="vt-q" value="${TR.q.replace(/"/g, "&quot;")}" placeholder="🔎 Avec qui veux-tu échanger ?" autocomplete="off">`;
     const all = trPartners();
     if (!TR.partner) {
@@ -15925,7 +16009,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const n = trPending().length;
     sec.innerHTML = `<div class="vt-wrap"><div class="vt-seg" role="tablist">${[["swap", "Échanger"], ["recu", "Reçues"], ["env", "Envoyées"], ["done", "Terminés"]].map(([id, l]) =>
       `<button role="tab" aria-selected="${TR.sub === id}" data-vt="sub" data-t="${id}">${l}${id === "recu" ? `<span class="vt-bd" id="vt-recvbd"${n ? "" : " hidden"}>${n}</span>` : ""}</button>`).join("")}</div>
-      <p class="vt-intro">Ton album : <b style="color:var(--text)">${ownedOf(ME)} / ${ALL.length}</b> · ${dupsOf(ME).length} double${dupsOf(ME).length > 1 ? "s" : ""} échangeable${dupsOf(ME).length > 1 ? "s" : ""}</p>
+      <p class="vt-intro">Ton album : <b style="color:var(--text)">${ownedOf(ME)} / ${ALL.length}</b> · ${(d => `${d} double${d > 1 ? "s" : ""} échangeable${d > 1 ? "s" : ""}`)(dupsOf(ME).reduce((a, k) => a + nOf(ME, k) - 1, 0))}</p>
       ${TR.sub === "swap" ? trSwapHTML() : TR.sub === "recu" ? trRecvHTML() : TR.sub === "env" ? trSentHTML() : trDoneHTML()}</div>`;
   }
   function trGot(title, sub, got) {
@@ -15939,6 +16023,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   }
 
   async function trSend() {
+    if (!VG_OPEN()) { _showToast("Les échanges de la saison sont terminés."); return; }
     const n = TR.partner, give = [...TR.gSel], get = [...TR.rSel];
     if (!n || !give.length || give.length > TR_MAX || get.length > TR_MAX) return;
     if (!give.every(k => nOf(ME, k) >= 2)) { _showToast("Une de tes cartes n'est plus en double."); renderTrades(); return; }
@@ -15951,6 +16036,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     TR.busy = false; renderTrades();
   }
   async function trAccept(id) {
+    if (!VG_OPEN()) { _showToast("Les échanges de la saison sont terminés."); return; }
     const me = ME; let out = null;
     TR.busy = true;
     try {
@@ -16065,7 +16151,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   window._vgInfo = () => {
     if (!watchFor || !albumsLoaded) return null;
     const b = ALBUMS[watchFor] && ALBUMS[watchFor].boosters, today = parisDay();
-    const boosters = !b ? 5 : Math.min(5, (b.stock || 0) + Math.max(0, today - (b.day || today)));
+    const boosters = !VG_OPEN() ? 0 : !b ? 5 : Math.min(5, (b.stock || 0) + Math.max(0, today - (b.day || today)));
     const pend = trPending();
     return { boosters, trades: pend.length, tradeKey: pend.map(t => t.id).sort().join(","), day: today };
   };
@@ -16856,6 +16942,7 @@ function _svApply() {
         ${acc() && typeof _accIsSuper !== "undefined" && _accIsSuper ? `<span class="bm-lbl sa">★ Super admin</span><div class="bm-rows sa">
           <button type="button" class="bm-row" data-bm="__compose"><span class="bm-star">★</span><span class="grow">Envoyer une notification</span>${ic("chev", "chev")}</button>
           <button type="button" class="bm-row" data-bm="__accounts"><span class="bm-star">★</span><span class="grow">Comptes activés</span>${ic("chev", "chev")}</button>
+          <button type="button" class="bm-row" data-bm="__seasons"><span class="bm-star">★</span><span class="grow">Saisons</span>${ic("chev", "chev")}</button>
           ${shown("footer-pronos-wrap") ? `<button type="button" class="bm-row" data-bm="__pronos"><span class="bm-star">★</span><span class="grow">${esc(($("footer-pronos-btn") || {}).textContent || "Pronos")}</span></button>` : ""}
         </div>` : ""}
         ${acc() ? `<div class="bm-rows"><button type="button" class="bm-row danger" data-bm="__logout">${ic("out")}<span class="grow">Se déconnecter</span></button></div>` : ""}
@@ -16923,6 +17010,7 @@ function _svApply() {
           if (k === "__push") { const pw = window._pwa; if (pw) pw.toggle().finally(() => { renderMenu(); renderBell(); }); return; }
           if (k === "__opts") { optsOpen = !optsOpen; renderMenu(); return; }
           if (k === "__pref") { const pw = window._pwa; if (pw) { pw.setPref(m.dataset.k, !pw.prefs()[m.dataset.k]); } setTimeout(renderMenu, 300); return; }
+          if (k === "__seasons") { close(); render(); if (window._seasonsAdmin) window._seasonsAdmin(); return; }
           if (k === "__compose") { const pw = window._pwa; close(); render(); if (pw) pw.compose(); return; }
           if (k === "__install") { const pw = window._pwa; close(); render(); if (pw) pw.install(); return; }
           close(); render();

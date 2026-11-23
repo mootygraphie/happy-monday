@@ -266,6 +266,11 @@ def main():
         if not seasons:
             return
         season = seasons[-1]
+        # saison des vignettes terminée (config/seasons, ★ Saisons) : boosters en pause, aucun rappel
+        sy = int(season[:4])
+        trades_end = ((req("config/seasons") or {}).get(str(sy)) or {}).get("tradesEnd") or f"{sy + 1}-07-31T23:59"
+        if now.strftime("%Y-%m-%dT%H:%M") > trades_end:
+            return
         V = req(f"vignettes/{season}") or {}
         day = (today - datetime.date(1970, 1, 1)).days
         done = (sent.get("boost") or {}).get(day_iso) or {}
