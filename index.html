@@ -4056,6 +4056,23 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #chat .ch-replybar button { border: none; background: none; color: var(--text3); font-size: 14px; cursor: pointer; }
   #chat .ch-rowc { display: flex; gap: 8px; align-items: flex-end; }
   #chat .ch-add { width: 42px; height: 42px; border-radius: 50%; border: 1.5px solid var(--border2); background: var(--bg3); font-size: 18px; cursor: pointer; flex: none; }
+  #chat .ch-tools { display: flex; flex-direction: column; gap: 6px; }
+  #chat .ch-tools button, #chat .ch-selbar button { font: inherit; font-size: 13.5px; font-weight: 700; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); cursor: pointer; text-align: left; }
+  #chat .ch-tools .dang, #chat .ch-selbar .dang { color: #ff6b5e; border-color: rgba(255,59,48,.4); background: rgba(255,59,48,.08); }
+  #chat .ch-selbar { display: flex; align-items: center; gap: 8px; }
+  #chat .ch-selbar span { flex: 1; font-size: 13px; color: var(--text2); } #chat .ch-selbar b { color: var(--text); }
+  #chat .ch-selbar button { padding: 9px 12px; text-align: center; } #chat .ch-selbar button:disabled { opacity: .4; }
+  #chat .ch-selrow { display: flex; align-items: center; gap: 8px; cursor: pointer; border-radius: 14px; padding: 2px 4px; }
+  #chat .ch-selrow > :last-child { flex: 1; min-width: 0; pointer-events: none; }
+  #chat .ch-selrow.on { background: rgba(255,59,48,.1); }
+  #chat .ch-ck { flex: none; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border2); display: grid; place-items: center; font-size: 12px; font-weight: 900; color: #fff; }
+  #chat .ch-selrow.on .ch-ck { background: #e30b0b; border-color: #e30b0b; }
+  .ch-cf { position: fixed; inset: 0; z-index: 4100; background: rgba(0,0,0,.65); display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .ch-cf-in { width: 100%; max-width: 360px; border-radius: 18px; padding: 18px; background: var(--bg2); border: 1px solid var(--border2); color: var(--text); }
+  .ch-cf-in b { font-size: 16.5px; } .ch-cf-in p { margin: 8px 0 16px; font-size: 13.5px; color: var(--text2); line-height: 1.45; }
+  .ch-cf-act { display: flex; gap: 8px; justify-content: flex-end; }
+  .ch-cf-act button { font: inherit; font-weight: 700; font-size: 14px; padding: 10px 16px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); cursor: pointer; }
+  .ch-cf-act .dang { background: #e30b0b; border-color: #e30b0b; color: #fff; }
   #chat .ch-photos { margin-bottom: 8px; padding: 8px; border-radius: 14px; background: var(--bg3); border: 1px solid var(--border2); }
   #chat .ch-thumbs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 6px; }
   #chat .ch-thumbs > span { position: relative; flex: none; width: 58px; height: 58px; border-radius: 10px; overflow: hidden; background: var(--bg2); }
@@ -4411,7 +4428,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 11:51</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 11:53</footer>
 
 <script>
 
@@ -17405,7 +17422,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
 
   let openAll = false, cfgOn = false, who = null, subs = [], msgSubs = {}, roomsLoaded = false;
   let rooms = {}, msgs = {}, reads = null, mutes = {}, accounts = [];
-  const V = { open: false, room: null, sheet: null, form: null, drop: false, reply: null, sugg: null, draft: {}, seen: {}, pushed: false };
+  const V = { open: false, room: null, sheet: null, form: null, drop: false, reply: null, sugg: null, draft: {}, seen: {}, pushed: false, selMode: false, sel: new Set() };
   let pending = null;
   try { const q = new URLSearchParams(location.search); if (q.get("n") === "chat") pending = q.get("r") || ""; } catch (e) {}
   const enabled = () => !!me() && (isSA() || openAll);
@@ -17536,6 +17553,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   }
   function compHTML() {
     const r = R(V.room); let h = "";
+    if (V.selMode) { const n = V.sel.size;
+      return `<div class="ch-selbar"><button type="button" data-ch="selCancel">Annuler</button><span><b>${n}</b> sélectionné${n > 1 ? "s" : ""}</span><button type="button" data-ch="selAll">Tout</button><button type="button" class="dang" data-ch="selDel"${n ? "" : " disabled"}>🗑️ Supprimer</button></div>`; }
     if (V.sugg && V.sugg.length) h += `<div class="ch-sugg">${V.sugg.map(p => `<button type="button" data-ch="pickMention" data-p="${esc(p)}">${av(p)}${esc(p)}</button>`).join("")}</div>`;
     if (V.reply) h += `<div class="ch-replybar"><span class="tx">↩️ Réponse à <b>${esc(V.reply.by || "Infos Club")}</b> · ${esc(plain(V.reply.text))}</span><button type="button" data-ch="cancelReply" aria-label="Annuler la réponse">✕</button></div>`;
     const PH = V.photos || [];
@@ -17545,6 +17564,11 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     return h;
   }
   function msgHTML(m, p) {
+    if (V.selMode) { const h = msgHTML0(m, p), on = V.sel.has(m.id);
+      return `<div class="ch-selrow${on ? " on" : ""}" data-ch="selMsg" data-id="${m.id}"><span class="ch-ck" aria-hidden="true">${on ? "✓" : ""}</span>${h}</div>`; }
+    return msgHTML0(m, p);
+  }
+  function msgHTML0(m, p) {
     if (m.sys) {
       const ic = m.sys === "open" ? "🗓️ " : m.sys === "close" ? "🔒 " : "";
       if (m.sys === "club") return `<div class="ch-sys club" data-id="${m.id}"><b>📣 Infos Club${m.title && m.title !== "Happy Monday" ? " · " + esc(m.title) : ""}</b><br>${fmt(m.text)}</div>`;
@@ -17601,11 +17625,11 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const f = V.form;
     if (f.mode === "gen") return `<div class="ch-sheet" data-ch="closeForm"><div class="ch-sheet-in" data-stop="1"><div class="ch-grab"></div>
       <div class="ch-fh"><b>👕 Le Vestiaire</b><button type="button" data-ch="closeForm" aria-label="Fermer">✕</button></div>
-      ${muteRow(GEN)}<p class="ch-note">Le Vestiaire général réunit tout le club et reçoit les messages automatiques (sondage, Infos Club). On ne peut ni le renommer ni le supprimer.</p></div></div>`;
+      ${muteRow(GEN)}${isSA() ? `<div class="ch-flab">Messages</div><div class="ch-tools"><button type="button" data-ch="selStart">☑️ Sélectionner des messages</button><button type="button" class="dang" data-ch="flush">🧹 Vider le salon</button></div>` : ""}<p class="ch-note">Le Vestiaire général réunit tout le club et reçoit les messages automatiques (sondage, Infos Club). On ne peut ni le renommer ni le supprimer.</p></div></div>`;
     const n = f.members.size, ok = f.name.trim().length > 0 && n >= 2;
     return `<div class="ch-sheet" data-ch="closeForm"><div class="ch-sheet-in" data-stop="1"><div class="ch-grab"></div>
       <div class="ch-fh"><b>${f.mode === "new" ? "Nouveau salon" : "Paramètres du salon"}</b><button type="button" data-ch="closeForm" aria-label="Fermer">✕</button></div>
-      ${f.mode === "edit" ? muteRow(f.id) : ""}
+      ${f.mode === "edit" ? muteRow(f.id) + `<div class="ch-flab">Messages</div><div class="ch-tools"><button type="button" data-ch="selStart">☑️ Sélectionner des messages</button><button type="button" class="dang" data-ch="flush">🧹 Vider le salon</button></div>` : ""}
       <div class="ch-flab">Icône</div>
       <div class="ch-emopick">${REMO.map(e => `<button type="button" data-ch="fEmo" data-e="${e}" aria-pressed="${f.emo === e}">${e}</button>`).join("")}</div>
       <div class="ch-flab">Nom</div>
@@ -17710,6 +17734,32 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     }
     catch (e) { V.draft[V.room] = text; if (ph) V.photos = ph; renderComp(); toast(ph ? "Photo non envoyée : vérifie ta connexion." : "Message non envoyé : vérifie ta connexion."); }
   }
+  // Confirmation dans la page (pas de boîte système), renvoie true si on confirme
+  function askConfirm(title, text, ok) {
+    return new Promise(res => {
+      const o = document.createElement("div"); o.className = "ch-cf";
+      o.innerHTML = `<div class="ch-cf-in" role="alertdialog" aria-modal="true"><b>${title}</b><p>${text}</p><div class="ch-cf-act"><button type="button" data-k="0">Annuler</button><button type="button" class="dang" data-k="1">${ok}</button></div></div>`;
+      o.addEventListener("click", e => { const b = e.target.closest("[data-k]"); if (b || e.target === o) { o.remove(); res(!!(b && b.dataset.k === "1")); } });
+      document.body.appendChild(o); o.querySelector('[data-k="0"]').focus();
+    });
+  }
+  const imgPaths = (rid, id) => [`chat/img/${rid}/${id}`, ...Array.from({ length: 10 }, (_, i) => `chat/img/${rid}/${id}_${i}`)];
+  async function delSelected() {
+    const r = R(V.room), ids = [...V.sel]; if (!r || !ids.length || !isSA()) return;
+    const ph = ids.filter(id => { const m = (msgs[r.id] || []).find(x => x.id === id); return m && (m.img || m.imgs); }).length;
+    if (!await askConfirm(`Supprimer ${ids.length} message${ids.length > 1 ? "s" : ""} ?`, `Ils disparaîtront pour tout le monde${ph ? `, avec leurs photos` : ""}. Impossible de revenir en arrière.`, "Supprimer")) return;
+    const up = {}; ids.forEach(id => { up[`chat/msgs/${r.id}/${id}`] = null; imgPaths(r.id, id).forEach(x => { up[x] = null; }); });
+    if (r.pinned && ids.includes(r.pinned.id)) up[`chat/rooms/${r.id}/pinned`] = null;
+    try { await _db.ref().update(up); V.selMode = false; V.sel.clear(); toast(`${ids.length} message${ids.length > 1 ? "s" : ""} supprimé${ids.length > 1 ? "s" : ""}`); render(); renderFeed(); }
+    catch (e) { toast("Suppression impossible : vérifie ta connexion."); }
+  }
+  async function flushRoom() {
+    const r = R(V.form && V.form.id ? V.form.id : V.room); if (!r || !isSA()) return;
+    const n = (msgs[r.id] || []).length;
+    if (!await askConfirm(`Vider « ${esc(r.name)} » ?`, `Les ${n} message${n > 1 ? "s" : ""} et toutes les photos du salon seront supprimés de la base, pour tout le monde. Le salon et ses membres restent. Impossible de revenir en arrière.`, "Tout supprimer")) return;
+    try { await _db.ref().update({ [`chat/msgs/${r.id}`]: null, [`chat/img/${r.id}`]: null, [`chat/rooms/${r.id}/pinned`]: null }); V.form = null; toast("Salon vidé"); render(); renderFeed(true); }
+    catch (e) { toast("Impossible de vider le salon : vérifie ta connexion."); }
+  }
   function flash(idv) { const el = box.querySelector(`.ch-msg[data-id="${CSS.escape(idv)}"], .ch-sys[data-id="${CSS.escape(idv)}"]`); if (!el) { toast("Message trop ancien pour être affiché."); return; } el.scrollIntoView({ block: "center", behavior: "smooth" }); el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1400); }
   function openForm(mode) {
     V.drop = false; V.sheet = null;
@@ -17755,18 +17805,25 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   $("chat-btn").addEventListener("click", () => openChat());
   box.addEventListener("click", async e => {
     if (e.target === box) return closeChat(); // clic dans le voile noir, à côté de la fenêtre
-    const t = e.target.closest("[data-ch]"); if (!t) return;
+    let t = e.target.closest("[data-ch]"); if (!t) return;
+    if (V.selMode && !/^sel/.test(t.dataset.ch) && e.target.closest(".ch-selrow")) t = e.target.closest(".ch-selrow");
     const a = t.dataset.ch;
     if ((a === "closeSheet" || a === "closeForm") && t.classList.contains("ch-sheet") && e.target.closest("[data-stop]")) return;
     const r = V.room && R(V.room), p = me();
     if (a === "close") return closeChat();
-    if (a === "list") { if (V.room) markRead(V.room); V.room = null; V.drop = false; return render(); }
+    if (a === "list") { V.selMode = false; if (V.room) markRead(V.room); V.room = null; V.drop = false; return render(); }
     if (a === "enter") return enterRoom(t.dataset.r);
     if (a === "drop") { V.drop = !V.drop; return render(); }
     if (a === "new") { if (isSA()) openForm("new"); return; }
     if (a === "settings") { if (isSA()) openForm("edit"); return; }
     if (a === "mute") return toggleMute(V.form && V.form.id ? V.form.id : V.room);
     if (a === "closeForm") { V.form = null; return render(); }
+    if (a === "selStart") { if (!isSA()) return; if (V.form && V.form.id) V.room = V.form.id; V.form = null; V.sheet = null; V.selMode = true; V.sel = new Set(); render(); return renderFeed(); }
+    if (a === "selCancel") { V.selMode = false; V.sel = new Set(); renderComp(); return renderFeed(); }
+    if (a === "selAll") { const L = msgs[V.room] || []; V.sel = V.sel.size === L.length ? new Set() : new Set(L.map(x => x.id)); renderComp(); return renderFeed(); }
+    if (a === "selMsg") { const id = t.dataset.id; V.sel.has(id) ? V.sel.delete(id) : V.sel.add(id); renderComp(); return renderFeed(); }
+    if (a === "selDel") return delSelected();
+    if (a === "flush") return flushRoom();
     if (a === "fEmo") { V.form.emo = t.dataset.e; return render(); }
     if (a === "fAll") { V.form.members = new Set(accounts); return render(); }
     if (a === "fNone") { V.form.members = new Set([p]); return render(); }
@@ -17774,7 +17831,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (a === "fDel") {
       if (!V.form.confirmDel) { V.form.confirmDel = true; return render(); }
       const id = V.form.id;
-      try { await _db.ref().update({ [`chat/rooms/${id}`]: null, [`chat/msgs/${id}`]: null }); V.form = null; V.room = null; toast("Salon supprimé"); render(); }
+      try { await _db.ref().update({ [`chat/rooms/${id}`]: null, [`chat/msgs/${id}`]: null, [`chat/img/${id}`]: null }); V.form = null; V.room = null; toast("Salon supprimé"); render(); }
       catch (er) { toast("Suppression impossible : vérifie ta connexion."); }
       return;
     }
