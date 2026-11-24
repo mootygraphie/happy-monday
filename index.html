@@ -4357,6 +4357,10 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #chat .ch-reacts button { border: 2px solid var(--bg); background: var(--bg3); border-radius: 10px; padding: 0 6px; font-size: 11.5px; }
   #chat .ch-reacts button[aria-pressed="true"] { background: #3a1517; border-color: var(--bg); }
   #chat .ch-day { background: rgba(24,24,31,.85); border: none; }
+  /* messages automatiques (Infos club, sondage, salon créé…) : fond noir presque opaque pour rester lisibles sur le fond d'écran */
+  #chat .ch-sys { background: rgba(14,14,18,.85); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+  #chat .ch-sys.club { background: linear-gradient(rgba(255,59,48,.1), rgba(255,59,48,.1)), rgba(14,14,18,.85); }
+  #chat .ch-sys.close { background: linear-gradient(rgba(255,59,48,.08), rgba(255,59,48,.08)), rgba(14,14,18,.85); }
   #chat .ch-sys.open.card { align-self: stretch; max-width: none; display: flex; align-items: center; gap: 10px; text-align: left; border-radius: 16px; background: rgba(24,24,31,.95); border: 1px solid var(--border); padding: 11px 12px; color: var(--text2); }
   #chat .ch-sys.open .si { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: rgba(95,174,134,.14); color: var(--ch-ok); flex: none; } #chat .ch-sys.open .si svg { width: 20px; height: 20px; }
   #chat .ch-sys.open .st { flex: 1; min-width: 0; font-size: 13px; color: var(--text); font-weight: 600; }
@@ -4700,8 +4704,8 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 10:52</footer>
+<template id="hm-news" data-date="24/11/2026"><li data-sa>💬 <b>Vestiaire</b> : Infos club lisibles sur tous les fonds d'écran</li><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 10:55</footer>
 
 <script>
 
