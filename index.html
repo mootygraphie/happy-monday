@@ -4394,7 +4394,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #bmenu .bm-ck.on { background: #e30b0b; border-color: #e30b0b; }
   #bmenu .bm-ck.locked { opacity: .55; }
   #push-compose { position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; justify-content: center; }
-  #push-compose .pc-in { width: 100%; max-width: 520px; max-height: 92vh; overflow-y: auto; background: var(--bg2); border-top: 1px solid var(--border2); border-radius: 22px 22px 0 0; padding: 16px 18px calc(22px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 12px; }
+  #push-compose .pc-in { width: 100%; max-width: 520px; height: 92vh; max-height: 92vh; overflow-y: auto; background: var(--bg2); border-top: 1px solid var(--border2); border-radius: 22px 22px 0 0; padding: 16px 18px calc(22px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 12px; }
   #push-compose .pc-h { display: flex; align-items: center; justify-content: space-between; font-size: 17px; }
   #push-compose .pc-x { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); cursor: pointer; }
   #push-compose label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--text2); }
@@ -4405,6 +4405,17 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #push-compose .pc-send { border: none; border-radius: 12px; padding: 13px; font: inherit; font-size: 15px; font-weight: 700; background: #e30b0b; color: #fff; cursor: pointer; }
   #push-compose .pc-note { margin: 0; font-size: 12px; color: var(--text3); }
   #push-compose .pc-lbl { font-size: 12px; font-weight: 600; color: var(--text2); }
+  /* panneau Notifications (24/11) */
+  #push-compose .pc-tt { flex: 1; min-width: 0; } #push-compose .pc-tt small { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--sa); } #push-compose .pc-tt b { display: block; font-size: 19px; }
+  #push-compose .pc-h { gap: 10px; } #push-compose .pc-back { width: 32px; height: 32px; border: none; background: none; color: var(--text2); font-size: 24px; line-height: 1; cursor: pointer; flex: none; }
+  #push-compose .pc-lbl { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); margin-bottom: -6px; }
+  #push-compose .pc-cnt { align-self: flex-end; font-size: 10.5px; color: var(--text3); margin-top: -8px; }
+  #push-compose .pc-prev { display: flex; gap: 9px; align-items: flex-start; border-radius: 16px; background: var(--bg3); padding: 9px 11px; }
+  #push-compose .pc-app { width: 30px; height: 30px; border-radius: 8px; background: radial-gradient(#ff3b2b, #b80000); color: #fff; font-size: 8.5px; font-weight: 900; display: grid; place-items: center; flex: none; }
+  #push-compose .pc-pv { flex: 1; min-width: 0; font-size: 12.5px; color: var(--text2); overflow-wrap: anywhere; } #push-compose .pc-pv b { display: block; color: var(--text); font-size: 13px; } #push-compose .pc-prev small { font-size: 10.5px; color: var(--text3); }
+  #push-compose .pc-send:disabled { opacity: .45; cursor: default; }
+  #push-compose .pc-fab { position: sticky; bottom: 0; align-self: flex-end; margin-top: auto; width: 54px; height: 54px; border-radius: 16px; border: none; background: #e30b0b; color: #fff; display: grid; place-items: center; cursor: pointer; flex: none; }
+  #push-compose .pc-fab svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
   /* historique : lue (rouge) / pas encore lue (gris) */
   #push-compose .pc-fl { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 4px; border-radius: 12px; background: var(--bg3); }
   #push-compose .pc-fl button { border: none; background: none; border-radius: 9px; padding: 7px 2px; font: inherit; font-size: 12.5px; font-weight: 700; color: var(--text3); cursor: pointer; }
@@ -4689,8 +4700,8 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 10:30</footer>
+<template id="hm-news" data-date="24/11/2026"><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 10:32</footer>
 
 <script>
 
@@ -17515,7 +17526,7 @@ function _svApply() {
           <button type="button" class="bm-row" data-bm="__update">${ic("swap")}<span class="grow">Mettre à jour l'appli${typeof window._hmVersion === "function" && window._hmVersion() ? ` <small>· version du ${esc(window._hmVersion().replace(/\/\d{4} - /, " à "))}</small>` : ""}</span>${ic("chev", "chev")}</button>
         </div>
         ${acc() && typeof _accIsSuper !== "undefined" && _accIsSuper ? `<span class="bm-lbl sa">★ Super admin</span><div class="bm-rows sa">
-          <button type="button" class="bm-row" data-bm="__compose"><span class="bm-star">★</span><span class="grow">Envoyer une notification</span>${ic("chev", "chev")}</button>
+          <button type="button" class="bm-row" data-bm="__compose"><span class="bm-star">★</span><span class="grow">Notifications</span>${ic("chev", "chev")}</button>
           <button type="button" class="bm-row" data-bm="__accounts"><span class="bm-star">★</span><span class="grow">Membres</span>${ic("chev", "chev")}</button>
           <button type="button" class="bm-row" data-bm="__seasons"><span class="bm-star">★</span><span class="grow">Saisons</span>${ic("chev", "chev")}</button>
           ${shown("footer-pronos-wrap") ? `<button type="button" class="bm-row" data-bm="__pronos"><span class="bm-star">★</span><span class="grow">${esc(($("footer-pronos-btn") || {}).textContent || "Pronos")}</span></button>` : ""}
@@ -17707,25 +17718,30 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     function compose() {
       document.getElementById("push-compose")?.remove();
       const p = me();
-      const st = { mode: "me", picked: new Set(), q: "", subs: [] };
-      document.body.insertAdjacentHTML("beforeend", `<div id="push-compose" role="dialog" aria-label="Envoyer une notification"><div class="pc-in" id="pc-in"></div></div>`);
+      const st = { mode: "all", picked: new Set(), q: "", subs: [], view: "hist" };
+      document.body.insertAdjacentHTML("beforeend", `<div id="push-compose" role="dialog" aria-label="Notifications"><div class="pc-in" id="pc-in"></div></div>`);
       const box = document.getElementById("push-compose"), inn = document.getElementById("pc-in");
       const toLabel = t => Array.isArray(t) ? t.join(", ") : t === "__all" ? "tous les abonnés" : t;
       const when = ms => { const d = new Date(ms || 0); return d.toLocaleDateString("fr", { day: "numeric", month: "short" }) + " · " + d.toLocaleTimeString("fr", { hour: "2-digit", minute: "2-digit" }); };
       const status = q => q.refused ? "refusée" : q.sentAt ? `envoyée à ${q.count || 0} appareil${(q.count || 0) > 1 ? "s" : ""}` : "en attente";
+      // Panneau « Notifications » (comme Membres) : historique d'abord, + pour une nouvelle
+      const hdr = (t, back) => `<div class="pc-h">${back ? `<button type="button" class="pc-back" data-pc="${back}" aria-label="Retour">‹</button>` : ""}<span class="pc-tt"><small>★ Super admin</small><b>${t}</b></span><button type="button" class="pc-x" aria-label="Fermer">✕</button></div>`;
+      const nTo = () => st.mode === "all" ? st.subs.filter(n => n !== p).length : st.mode === "pick" ? st.picked.size : 1;
+      const prevH = () => `<span class="pc-app">HMFT</span><span class="pc-pv"><b>${esc((st.title || "").trim() || "Happy Monday")}</b>${esc((st.body || "").trim() || "Ton message…")}</span><small>maint.</small>`;
       function formView() {
-        const list = st.subs.filter(n => n !== p && (!st.q || n.toLowerCase().includes(st.q.toLowerCase())));
-        inn.innerHTML = `<div class="pc-h"><b>📣 Envoyer une notification</b><button type="button" class="pc-x" aria-label="Fermer">✕</button></div>
-          <label>Titre<input id="pc-title" maxlength="60" value="${esc(st.title || "Happy Monday")}"></label>
-          <label>Message<textarea id="pc-body" maxlength="200" rows="3" placeholder="Ex. Terrain changé ce soir : rendez-vous à 19h45">${esc(st.body || "")}</textarea></label>
+        st.view = "form";
+        const list = st.subs.filter(n => n !== p && (!st.q || n.toLowerCase().includes(st.q.toLowerCase()))), n = nTo();
+        inn.innerHTML = `${hdr("Nouvelle notification", "histBack")}
+          <span class="pc-lbl">Titre</span><input id="pc-title" maxlength="60" value="${esc(st.title || "")}" placeholder="Happy Monday">
+          <span class="pc-lbl">Message</span><textarea id="pc-body" maxlength="200" rows="3" placeholder="Ex. Terrain changé ce soir : rendez-vous à 19h45">${esc(st.body || "")}</textarea><span class="pc-cnt" id="pc-cnt">${(st.body || "").length}/200</span>
           <span class="pc-lbl">Destinataires</span>
-          <div class="pc-seg">${[["me", "Moi (test)"], ["pick", "Choisir…"], ["all", `Tous (${st.subs.length})`]].map(([k, l]) => `<button type="button" data-pc="mode" data-m="${k}" aria-pressed="${st.mode === k}">${l}</button>`).join("")}</div>
+          <div class="pc-seg">${[["all", `Tous (${st.subs.filter(x => x !== p).length})`], ["pick", "Choisir…"], ["me", "Moi (test)"]].map(([k, l]) => `<button type="button" data-pc="mode" data-m="${k}" aria-pressed="${st.mode === k}">${l}</button>`).join("")}</div>
           ${st.mode === "pick" ? `<input id="pc-q" class="pc-q" placeholder="🔎 Rechercher un joueur" value="${esc(st.q)}" autocomplete="off">
-            <div class="pc-list">${list.map(n => `<button type="button" class="pc-pl" data-pc="pick" data-n="${esc(n)}" aria-pressed="${st.picked.has(n)}"><span class="pc-ck">${st.picked.has(n) ? "✓" : ""}</span>${esc(n)}</button>`).join("") || `<p class="pc-note">${st.subs.length ? "Aucun joueur trouvé." : "Personne n'a encore activé les notifications."}</p>`}</div>
-            <p class="pc-note">${st.picked.size ? `${st.picked.size} joueur${st.picked.size > 1 ? "s" : ""} sélectionné${st.picked.size > 1 ? "s" : ""} : ${esc([...st.picked].join(", "))}` : "Coche un ou plusieurs joueurs. Seuls ceux qui ont activé les notifications apparaissent."}</p>` : ""}
-          <button type="button" class="pc-send" data-pc="send">Envoyer</button>
-          <p class="pc-note">Envoi dans les 10 minutes environ.</p>
-          <button type="button" class="pc-histlink" data-pc="hist">Historique des envois ›</button>`;
+            <div class="pc-list">${list.map(x => `<button type="button" class="pc-pl" data-pc="pick" data-n="${esc(x)}" aria-pressed="${st.picked.has(x)}"><span class="pc-ck">${st.picked.has(x) ? "✓" : ""}</span>${esc(x)}</button>`).join("") || `<p class="pc-note">${st.subs.length ? "Aucun joueur trouvé." : "Personne n'a encore activé les notifications."}</p>`}</div>
+            <p class="pc-note">Seuls les joueurs qui ont activé les notifications apparaissent.</p>` : ""}
+          <span class="pc-lbl">Aperçu</span><div class="pc-prev" id="pc-prev">${prevH()}</div>
+          <button type="button" class="pc-send" data-pc="send"${st.mode === "pick" && !n ? " disabled" : ""}>${st.mode === "me" ? "Envoyer le test" : `Envoyer à ${n} joueur${n > 1 ? "s" : ""}`}</button>
+          <p class="pc-note">Arrive dans les 10 minutes environ.</p>`;
       }
       // Historique : catégorie, expéditeur, lecture (notifRead/{joueur}/club-{id}, lue sur la notif ou dans l'appli)
       const catOf = q => q.to === q.by ? "test" : q.to === "__all" ? "club" : "cib";
@@ -17735,25 +17751,38 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       const barH = (r, tot) => `<div class="pc-bw"><div class="pc-bar"><i style="width:${tot ? r / tot * 100 : 0}%"></i></div><span class="pc-pc">${r}/${tot} · ${tot ? Math.round(r / tot * 100) : 0} %</span></div>`;
       function histView() {
         const L = (st.hist || []).filter(q => st.cat === "all" || catOf(q) === st.cat);
-        inn.innerHTML = `<div class="pc-h"><button type="button" class="pc-back" data-pc="back" aria-label="Retour">‹</button><b>Historique des envois</b><button type="button" class="pc-x" aria-label="Fermer">✕</button></div>
+        st.view = "hist";
+        inn.innerHTML = `${hdr("Notifications")}
           <div class="pc-fl">${[["all", "Tout"], ["club", "Club"], ["cib", "Ciblées"], ["test", "Tests"]].map(([k, l]) => `<button type="button" data-pc="cat" data-c="${k}" aria-pressed="${st.cat === k}">${l}</button>`).join("")}</div>
           <div class="pc-cards">${L.map(q => { const R = recips(q), n = R.filter(x => readAt(x, q.id)).length, c = catOf(q);
-            return `<button type="button" class="pc-card" data-pc="detail" data-id="${esc(q.id)}"><span class="pc-t"><b>${esc(q.title || "Happy Monday")}</b><small>${when(q.at)}</small></span><span class="pc-m2"><span class="pc-cat ${c}">${CATL[c]}</span><span>par ${esc(q.by || "?")}</span></span>${q.refused ? `<span class="pc-m2">refusée</span>` : !q.sentAt ? `<span class="pc-m2">⏳ en attente d'envoi</span>` : barH(n, R.length)}</button>`; }).join("") || `<p class="pc-note">Aucune notification dans cette catégorie.</p>`}</div>`;
+            return `<button type="button" class="pc-card" data-pc="detail" data-id="${esc(q.id)}"><span class="pc-t"><b>${esc(q.title || "Happy Monday")}</b><small>${when(q.at)}</small></span><span class="pc-m2"><span class="pc-cat ${c}">${CATL[c]}</span><span>par ${esc(q.by || "?")}</span></span>${q.refused ? `<span class="pc-m2">refusée</span>` : !q.sentAt ? `<span class="pc-m2">⏳ en attente d'envoi</span>` : barH(n, R.length)}</button>`; }).join("") || `<p class="pc-note">Aucune notification dans cette catégorie.</p>`}</div>
+          <button type="button" class="pc-fab" data-pc="new" aria-label="Nouvelle notification"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>`;
       }
       function detailView(id) {
         const q = (st.hist || []).find(x => x.id === id); if (!q) return histView();
         const R = recips(q), rd = R.filter(x => readAt(x, q.id)).sort((a, b) => (+readAt(a, q.id) || 0) - (+readAt(b, q.id) || 0)), no = R.filter(x => !readAt(x, q.id)).sort((a, b) => a.localeCompare(b, "fr")), c = catOf(q);
         const tm = v => typeof v === "number" ? new Date(v).toLocaleTimeString("fr", { hour: "2-digit", minute: "2-digit" }) : "";
-        inn.innerHTML = `<div class="pc-h"><button type="button" class="pc-back" data-pc="histBack" aria-label="Retour">‹</button><b>Détail</b><button type="button" class="pc-x" aria-label="Fermer">✕</button></div>
+        st.view = "detail";
+        inn.innerHTML = `${hdr("Détail", "histBack")}
           <div class="pc-hero"><b>${esc(q.title || "Happy Monday")}</b><p>${esc(q.body || "")}</p><div class="pc-m2"><span class="pc-cat ${c}">${CATL[c]}</span><span>par ${esc(q.by || "?")} · ${when(q.at)}</span></div><div class="pc-m2">À : ${q.to === "__all" ? `tous les abonnés (${R.length})` : esc(R.join(", "))}${q.count != null ? ` · ${q.count} appareil${q.count > 1 ? "s" : ""}` : ""}</div></div>
           ${barH(rd.length, R.length)}
           <div class="pc-sh">Lue · ${rd.length}</div><div class="pc-lst">${rd.map(n => `<div class="pc-li"><i class="r"></i><b>${esc(n)}</b><small>${tm(readAt(n, q.id))}</small></div>`).join("") || `<div class="pc-li no">Personne pour l'instant</div>`}</div>
           <div class="pc-sh">Pas encore lue · ${no.length}</div><div class="pc-lst">${no.map(n => `<div class="pc-li no"><i></i><b>${esc(n)}</b></div>`).join("") || `<div class="pc-li no">Tout le monde l'a lue 🎉</div>`}</div>`;
       }
-      formView();
-      _db.ref("pushSubs").once("value").then(snap => { st.subs = Object.keys(snap.val() || {}).sort((a, b) => a.localeCompare(b, "fr")); if (inn.querySelector("#pc-title")) formView(); }).catch(() => {});
+      async function loadHist() {
+        inn.innerHTML = `${hdr("Notifications")}<p class="pc-note">Chargement…</p>`;
+        try {
+          const [snap, rs] = await Promise.all([_db.ref("pushQueue").once("value"), _db.ref("notifRead").once("value").catch(() => null)]);
+          st.reads = rs ? rs.val() || {} : {}; st.cat = st.cat || "all";
+          st.hist = Object.entries(snap.val() || {}).map(([id, q]) => Object.assign({ id }, q)).sort((x, y) => (y.at || 0) - (x.at || 0)); histView();
+        } catch (er) { inn.innerHTML = `${hdr("Notifications")}<p class="pc-note">Historique indisponible. Vérifie ta connexion.</p><button type="button" class="pc-fab" data-pc="new" aria-label="Nouvelle notification"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>`; }
+      }
+      st.mode = "all";
+      _db.ref("pushSubs").once("value").then(snap => { st.subs = Object.keys(snap.val() || {}).sort((a, b) => a.localeCompare(b, "fr")); if (st.view === "form") { keepForm(); formView(); } else if (st.view === "hist") histView(); }).catch(() => {});
+      loadHist();
       const keepForm = () => { const t = inn.querySelector("#pc-title"), b = inn.querySelector("#pc-body"); if (t) st.title = t.value; if (b) st.body = b.value; };
       box.addEventListener("input", e => {
+        if (e.target.id === "pc-title" || e.target.id === "pc-body") { keepForm(); const pv = inn.querySelector("#pc-prev"); if (pv) pv.innerHTML = prevH(); const c = inn.querySelector("#pc-cnt"); if (c) c.textContent = `${(st.body || "").length}/200`; return; }
         if (e.target.id !== "pc-q") return;
         keepForm(); st.q = e.target.value; const c = e.target.selectionStart; formView();
         const q = inn.querySelector("#pc-q"); if (q) { q.focus(); try { q.setSelectionRange(c, c); } catch (er) {} }
@@ -17765,9 +17794,10 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         if (a === "mode") { keepForm(); st.mode = t.dataset.m; formView(); return; }
         if (a === "pick") { keepForm(); const n = t.dataset.n; st.picked.has(n) ? st.picked.delete(n) : st.picked.add(n); formView(); return; }
         if (a === "back") { formView(); return; }
+        if (a === "new") { formView(); inn.scrollTop = 0; return; }
         if (a === "cat") { st.cat = t.dataset.c; histView(); return; }
         if (a === "detail") { detailView(t.dataset.id); return; }
-        if (a === "histBack") { histView(); return; }
+        if (a === "histBack") { keepForm(); histView(); return; }
         if (a === "hist") {
           keepForm(); inn.innerHTML = `<p class="pc-note">Chargement…</p>`;
           try {
@@ -17788,7 +17818,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
           try {
             await _db.ref("pushQueue").push({ by: p, title, body, to: Array.isArray(to) && to.length === 1 ? to[0] : to, at: firebase.database.ServerValue.TIMESTAMP });
             if (to === "__all") window._chatSys?.("club", body, title);
-            box.remove(); toast(to === p ? "Test envoyé : il arrive dans les 10 minutes" : "Notification programmée : envoi dans les 10 minutes");
+            st.title = st.body = ""; st.picked = new Set(); st.mode = "all";
+            toast(to === p ? "Test envoyé : il arrive dans les 10 minutes" : "Notification programmée : envoi dans les 10 minutes"); loadHist();
           } catch (er) { toast("Envoi impossible : vérifie ta connexion."); }
         }
       });
