@@ -2176,6 +2176,140 @@
   .lv-av { width: 24px; height: 24px; border-radius: 6px; flex: none; display: inline-flex; align-items: center; justify-content: center; font-size: 9.5px; font-weight: 800; color: var(--text2); background: var(--bg3); border: 1.5px solid var(--border2); }
   .lv-av.rouge { border-color: var(--rouge); } .lv-av.vert { border-color: var(--vert); } .lv-av.bleu { border-color: var(--bleu); }
   .lv-av.pf > .pf-img, .gb-ph.pf > .pf-img { object-position: 50% 50%; transform: scale(2.2); transform-origin: 50% 34%; }
+  /* ══ Saisie des matchs v2 : plein écran (sombre) ══ */
+  .sq-root { --text: #f2f2f4; --text2: #a3a3b0; --text3: #6e6e80; --sqk: #0e0e12; --sqk2: #18181f; --sqk3: #22222b; --sqln: rgba(255,255,255,.08);
+    position: fixed; inset: 0; z-index: 900; background: var(--sqk); color: var(--text); display: flex; flex-direction: column; font-size: 13px; color-scheme: dark; }
+  html:has(#panel-saisie.active .saisie-screen.active .sq-root) { overflow: hidden; }
+  .sq-root button { font: inherit; color: inherit; border: none; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .sq-root button:active { filter: brightness(1.25); }
+  .sq-top { flex: none; display: flex; align-items: center; gap: 8px; padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 9px; background: #0b0b0e; border-bottom: 1px solid var(--sqln); }
+  .sq-xq { width: 32px; height: 32px; border-radius: 50%; background: var(--sqk2) !important; color: var(--text2) !important; font-size: 13px; flex: none; }
+  .sq-stepsel { flex: 1; min-width: 0; appearance: none; -webkit-appearance: none; background: var(--sqk2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' fill='none' stroke='%23a3a3b0' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 10px center; border: 1px solid rgba(255,255,255,.12); border-radius: 11px; color: #fff; font: inherit; font-weight: 700; font-size: 13px; padding: 8px 28px 8px 10px; }
+  .sq-live { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; letter-spacing: .08em; color: #ff6b5e; padding: 5px 8px; border-radius: 8px; background: rgba(255,59,48,.12); white-space: nowrap; }
+  .sq-live i { width: 6px; height: 6px; border-radius: 50%; background: #ff3b30; animation: lvPulse 1.6s ease-in-out infinite; }
+  .sq-bd { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 12px 12px calc(14px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 9px; max-width: 560px; width: 100%; margin: 0 auto; }
+  .sq-bd > * { flex-shrink: 0; min-width: 0; }
+  .sq-fill { flex: 1 1 auto !important; }
+  .sq-k { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
+  .sq-hint { margin: 0; font-size: 11.5px; color: var(--text3); text-align: center; }
+  .sq-btn { display: flex; align-items: center; justify-content: center; gap: 7px; border-radius: 13px; padding: 12px; font-weight: 800 !important; background: #e30b0b !important; color: #fff !important; font-size: 13.5px; }
+  .sq-btn.g { background: var(--sqk2) !important; color: var(--text2) !important; border: 1px solid var(--sqln) !important; font-weight: 700 !important; }
+  .sq-btn.ok { background: #1f9a5a !important; } .sq-btn.big { padding: 14px; font-size: 14.5px; border-radius: 14px; } .sq-btn.dis { opacity: .38; }
+  .sq-card { border-radius: 14px; background: var(--sqk2); border: 1px solid var(--sqln); padding: 9px 11px; }
+  .sq-rk { display: flex; align-items: center; gap: 7px; padding: 4px 0; font-size: 12.5px; } .sq-rk em { width: 14px; font-weight: 800; color: var(--text3); }
+  .sq-rk b { flex: 1; display: flex; align-items: center; gap: 6px; } .sq-rk small { color: var(--text3); font-size: 10.5px; } .sq-rk span { font-weight: 800; font-style: italic; width: 46px; text-align: right; }
+  .sq-nx { display: flex !important; flex-direction: column; gap: 5px; align-items: stretch; text-align: left; border-radius: 14px; padding: 10px 12px !important; background: linear-gradient(120deg, rgba(227,11,11,.22), var(--sqk2) 70%) !important; border: 1px solid rgba(255,80,80,.35) !important; }
+  .sq-nx .r { display: flex; align-items: center; gap: 6px; font-size: 13px; } .sq-nx em { color: var(--text3); font-style: normal; font-size: 11px; margin: 0 4px; } .sq-nx i { margin-left: auto; font-style: normal; font-weight: 900; letter-spacing: .04em; color: #ff6b5e; }
+  .sq-mr { display: flex; align-items: center; gap: 7px; padding: 6px 7px 6px 10px; border-radius: 12px; background: var(--sqk2); font-size: 12.5px; }
+  .sq-mr .n { color: var(--text3); font-weight: 800; width: 14px; } .sq-mr .t { flex: 1; display: flex; align-items: center; gap: 5px; min-width: 0; white-space: nowrap; overflow: hidden; } .sq-mr .t b { font-style: italic; font-size: 15px; margin: 0 4px; }
+  .sq-rb { flex: none; width: 34px; height: 34px; border-radius: 10px; display: grid !important; place-items: center; background: linear-gradient(160deg, #2a2a34, #1d1d25) !important; border: 1px solid rgba(255,255,255,.1) !important; color: #d6d6de !important; position: relative; }
+  .sq-rb svg { width: 17px; height: 17px; } .sq-rb.pen { color: #ff8a80 !important; }
+  .sq-rb.lv::after { content: ""; position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; border-radius: 50%; background: #ff3b30; box-shadow: 0 0 0 2px var(--sqk2); }
+  .sq-av { width: 30px; height: 30px; border-radius: 50%; flex: none; display: inline-grid; place-items: center; background: #2a2a34; border: 2px solid #3a3a45; font-size: 10px; font-weight: 800; color: var(--text2); }
+  .sq-av.rouge { border-color: var(--rouge); } .sq-av.vert { border-color: var(--vert); } .sq-av.bleu { border-color: var(--bleu); }
+  .sq-av.pf > .pf-img { object-position: 50% 50%; transform: scale(2.2); transform-origin: 50% 34%; }
+  /* lancement / mi-temps */
+  .sq-lh { display: flex; align-items: center; gap: 10px; } .sq-lh > button { width: 32px; height: 32px; border-radius: 50%; background: var(--sqk2) !important; font-size: 20px; flex: none; }
+  .sq-lh div { font-size: 20px; font-weight: 800; font-style: italic; line-height: 1; } .sq-lh small { display: block; font-size: 11px; color: var(--text3); font-style: normal; font-weight: 600; margin-top: 4px; }
+  .sq-tsel { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 6px; }
+  .sq-tsel button { display: flex !important; align-items: center; justify-content: center; gap: 6px; padding: 9px 4px; border-radius: 999px; background: var(--sqk2) !important; border: 1.5px solid var(--sqln) !important; font-weight: 800; font-size: 12px; color: var(--text3) !important; }
+  .sq-tsel i { width: 9px; height: 9px; border-radius: 50%; background: var(--c); opacity: .4; } .sq-tsel button.on { color: #fff !important; border-color: var(--c) !important; background: color-mix(in srgb, var(--c) 18%, #18181f) !important; } .sq-tsel button.on i { opacity: 1; }
+  .sq-lrows { display: flex; flex-direction: column; }
+  .sq-lrow { border-radius: 14px; padding: 9px; display: flex; flex-direction: column; gap: 6px; background: linear-gradient(100deg, color-mix(in srgb, var(--c) 20%, #15151b), #141419 70%); border: 1px solid color-mix(in srgb, var(--c) 40%, transparent); }
+  .sq-lt { display: flex; align-items: center; gap: 6px; font-weight: 800; font-style: italic; text-transform: uppercase; font-size: 13.5px; color: var(--c); } .sq-lt i { width: 9px; height: 9px; border-radius: 50%; background: var(--c); }
+  .sq-lsl { display: flex !important; align-items: center; gap: 8px; padding: 5px 10px 5px 6px; border-radius: 11px; background: rgba(0,0,0,.3) !important; text-align: left; font-size: 13px; }
+  .sq-lsl .li { width: 20px; text-align: center; font-size: 15px; } .sq-lsl .car { margin-left: auto; color: var(--text3); }
+  .sq-lsl em { font-style: normal; font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 1px 6px; border-radius: 5px; } .sq-lsl em.same { background: rgba(52,199,123,.15); color: #8fe0b2; } .sq-lsl em.chg { background: rgba(255,149,0,.18); color: #ffb340; }
+  .sq-lsl.req { border: 1.5px dashed rgba(255,179,64,.7) !important; background: rgba(255,149,0,.08) !important; } .sq-lsl b.q { color: #ffb340; font-weight: 700; padding: 6px 0; }
+  .sq-vs { align-self: center; margin: -6px 0; z-index: 2; font-weight: 900; font-style: italic; font-size: 11px; padding: 2px 9px; border-radius: 7px; background: #e30b0b; color: #fff; position: relative; }
+  .sq-linj { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; color: #ff8a80; } .sq-linj b { color: #fff; } .sq-linj > span:first-child { flex: 1; } .sq-linj.ok { color: #8fe0b2; }
+  .sq-mini { padding: 5px 10px !important; border-radius: 999px; border: 1px solid rgba(255,255,255,.22) !important; font-size: 11px; font-weight: 700; background: rgba(0,0,0,.25) !important; color: #fff !important; }
+  .sq-hsc { display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 800; text-transform: uppercase; font-size: 12px; } .sq-hsc b { font-size: 34px; font-style: italic; color: #fff; }
+  /* match */
+  .sq-tv { border-radius: 16px; background: linear-gradient(160deg, #1d1d26, #111116); border: 1px solid var(--sqln); padding: 8px 10px 7px; display: flex; flex-direction: column; gap: 2px; }
+  .sq-tv .tn { display: grid; grid-template-columns: 1fr 1fr; text-align: center; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+  .sq-tv .sc { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; } .sq-tv .sc b { font-size: 36px; font-weight: 800; font-style: italic; text-align: center; line-height: 1.05; } .sq-tv .sc em { font-style: normal; }
+  .sq-tsec { border-radius: 14px; background: color-mix(in srgb, var(--c) 13%, #111115); overflow: hidden; }
+  .sq-tsh { display: flex; align-items: center; gap: 7px; padding: 7px 11px 3px; font-weight: 800; font-style: italic; text-transform: uppercase; font-size: 12px; letter-spacing: .04em; color: var(--c); } .sq-tsh i { width: 9px; height: 9px; border-radius: 50%; background: var(--c); }
+  .sq-pr { display: flex; align-items: center; gap: 6px; padding: 2px 8px 2px 9px; border-top: 1px solid rgba(255,255,255,.05); min-height: 42px; }
+  .sq-pr.ex { background: rgba(255,255,255,.05); }
+  .sq-prm { flex: 1; min-width: 0; display: flex !important; align-items: center; gap: 9px; padding: 3px 0 !important; text-align: left; }
+  .sq-prm .pn { font-weight: 700; font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; } .sq-prm .gki { font-size: 13px; }
+  .sq-prm .pb { margin-left: auto; display: flex; gap: 5px; flex: none; } .sq-prm .pb i { font-style: normal; font-size: 11px; font-weight: 800; color: var(--text2); }
+  .sq-gb { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid !important; place-items: center; font-size: 19px; background: rgba(0,0,0,.3) !important; box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--c) 60%, transparent); }
+  .sq-fb { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid !important; place-items: center; font-size: 16px; background: rgba(0,0,0,.22) !important; box-shadow: inset 0 0 0 1px rgba(245,197,66,.45); }
+  .sq-pact { display: flex; gap: 5px; padding: 2px 8px 8px 48px; background: rgba(255,255,255,.05); }
+  .sq-pact button { flex: 1; display: flex !important; align-items: center; justify-content: center; gap: 4px; height: 32px; border-radius: 9px; border: 1px solid rgba(255,255,255,.14) !important; font-size: 11px; font-weight: 700; }
+  .sq-pact button i { font-style: normal; font-size: 14px; } .sq-pact button.cl { flex: none; width: 30px; border: none !important; color: var(--text3) !important; }
+  .sq-off { display: flex; gap: 8px; flex-wrap: wrap; padding: 6px 11px 8px; border-top: 1px dashed rgba(255,255,255,.1); font-size: 11.5px; color: var(--text3); font-weight: 700; }
+  .sq-off span { display: inline-flex; align-items: center; gap: 5px; } .sq-off .inj { color: #ff8a80; } .sq-off small { font-size: 9.5px; opacity: .7; }
+  .sq-off button { padding: 2px 8px !important; border-radius: 999px; border: 1px solid rgba(255,255,255,.22) !important; color: #fff !important; font-size: 10.5px; }
+  .sq-trio { display: grid; grid-template-columns: 46px 1fr 1.3fr; gap: 7px; } .sq-trio .sq-btn { padding: 12px 6px; } .sq-trio .sq-btn:first-child { font-size: 22px; line-height: 1; }
+  /* pop-in du but */
+  .sq-pdim { position: fixed; inset: 0; z-index: 950; background: rgba(6,6,9,.5); backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); }
+  .sq-gp { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(440px, calc(100% - 24px)); max-height: calc(100% - 40px); overflow-y: auto; z-index: 951; border-radius: 22px; background: #17171d; border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); box-shadow: 0 24px 60px rgba(0,0,0,.6); padding: 12px; display: flex; flex-direction: column; gap: 9px; }
+  @keyframes sqPop { from { transform: translate(-50%, -50%) scale(.85); opacity: 0; } }
+  .sq-gph { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 14px; background: color-mix(in srgb, var(--c) 18%, #111115); } .sq-gph .sq-av { width: 42px; height: 42px; }
+  .sq-gph > div { display: flex; flex-direction: column; flex: 1; min-width: 0; } .sq-gph .k { font-size: 10px; font-weight: 900; letter-spacing: .08em; color: var(--c); } .sq-gph b { font-size: 16.5px; font-weight: 800; }
+  .sq-gph .sc { font-size: 10px; color: var(--text2); text-align: right; white-space: nowrap; } .sq-gph .sc b { display: block; font-size: 21px; font-style: italic; color: #fff; }
+  .sq-q { font-size: 12.5px; font-weight: 700; color: var(--text2); text-align: center; }
+  .sq-gpl { display: flex; flex-direction: column; gap: 4px; }
+  .sq-gpl button { display: flex !important; align-items: center; gap: 9px; padding: 5px 6px 5px 8px !important; border-radius: 12px; background: #22222b !important; text-align: left; }
+  .sq-gpl button b { flex: 1; font-size: 13.5px; } .sq-gpl .sh { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 17px; background: #fff; }
+  .sq-gpl button.on { background: color-mix(in srgb, var(--c) 26%, #22222b) !important; box-shadow: inset 0 0 0 1.5px var(--c); } .sq-gpl button.on .sh { background: var(--c); }
+  .sq-gpl .nop { width: 30px; height: 30px; border-radius: 50%; background: #fff; display: grid; place-items: center; }
+  .sq-fsel { display: flex; align-items: center; gap: 8px; padding: 4px 4px 4px 12px; border-radius: 12px; background: var(--sqk2); border: 1px solid rgba(255,255,255,.12); }
+  .sq-fsel span { font-size: 12px; font-weight: 700; color: var(--text2); white-space: nowrap; }
+  .sq-fsel select { flex: 1; min-width: 0; appearance: none; -webkit-appearance: none; background: #0e0e12 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' fill='none' stroke='%23a3a3b0' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 10px center; border: 1px solid rgba(255,255,255,.14); border-radius: 9px; color: #fff; font: inherit; font-size: 13px; font-weight: 700; padding: 9px 28px 9px 10px; }
+  .sq-lnk { align-self: center; padding: 2px 10px !important; font-size: 12px; font-weight: 600; color: var(--text3) !important; text-decoration: underline; text-underline-offset: 3px; }
+  /* volets */
+  .sq-dim { position: fixed; inset: 0; z-index: 940; background: rgba(0,0,0,.5); }
+  .sq-sheet { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); width: min(560px, 100%); max-height: 86%; overflow-y: auto; z-index: 941; border-radius: 20px 20px 0 0; background: #1c1c24; border-top: 1px solid rgba(255,255,255,.1); padding: 8px 12px calc(16px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -10px 30px rgba(0,0,0,.6); display: flex; flex-direction: column; gap: 8px; }
+  @keyframes sqUp { from { transform: translate(-50%, 30px); opacity: 0; } }
+  .sq-grab { width: 36px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.18); margin: 0 auto 2px; }
+  .sq-sht { display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 14px; } .sq-sht small { margin-left: auto; color: var(--text3); font-weight: 600; font-size: 11px; }
+  .sq-x { margin-left: 8px; width: 28px; height: 28px; border-radius: 50%; background: var(--sqk3) !important; color: var(--text2) !important; font-size: 12px; flex: none; }
+  .sq-sht small + .sq-x { margin-left: 8px; } .sq-sht > .sq-x:only-of-type { margin-left: auto; }
+  .sq-pg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .sq-pg button { display: flex !important; flex-direction: column; align-items: center; gap: 3px; padding: 7px 2px !important; border-radius: 12px; background: var(--sqk2) !important; border: 1px solid var(--sqln) !important; font-size: 11.5px; font-weight: 700; }
+  .sq-pg button .sq-av { width: 40px; height: 40px; } .sq-pg button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .sq-pg button small { font-size: 9.5px; color: var(--text3); }
+  .sq-pg button.on { border-color: var(--c, #fff) !important; background: color-mix(in srgb, var(--c, #888) 18%, #18181f) !important; } .sq-pg button.no { opacity: .3; }
+  .sq-two { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .sq-row { display: flex !important; align-items: center; gap: 8px; padding: 9px 11px !important; border-radius: 11px; background: var(--sqk2) !important; text-align: left; } .sq-row small { margin-left: auto; color: var(--text3); }
+  .sq-alist { display: flex; flex-direction: column; border-radius: 14px; overflow: hidden; background: #24242d; border: 1px solid rgba(255,255,255,.06); }
+  .sq-alist > button, .sq-alist > .gl { display: flex !important; align-items: center; gap: 11px; padding: 12px !important; border-top: 1px solid rgba(255,255,255,.06) !important; text-align: left; }
+  .sq-alist > :first-child { border-top: none !important; } .sq-alist .ai { font-size: 19px; width: 24px; text-align: center; } .sq-alist .at { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .sq-alist b { font-size: 13.5px; font-weight: 700; } .sq-alist small { font-size: 11px; color: var(--text3); } .sq-alist .ac { color: var(--text3); font-size: 18px; } .sq-alist > .off { opacity: .4; pointer-events: none; }
+  .sq-lite { display: flex; gap: 7px; } .sq-lite button { flex: 1; padding: 9px 8px !important; border-radius: 11px; font-size: 11.5px; font-weight: 800; border: 1px solid !important; }
+  .sq-lite .o { border-color: rgba(255,149,0,.4) !important; color: #ffa14a !important; } .sq-lite .r { border-color: rgba(255,59,48,.4) !important; color: #ff6b5e !important; }
+  /* logistique */
+  .sq-lhd { font-size: 20px; font-weight: 800; font-style: italic; text-transform: uppercase; }
+  .sq-lg { border-radius: 14px; background: var(--sqk2); border: 1px solid var(--sqln); padding: 11px; display: flex; flex-direction: column; gap: 8px; }
+  .sq-lg .h { display: flex; align-items: center; gap: 7px; font-weight: 800; font-size: 14px; } .sq-lg .h span { font-size: 19px; } .sq-lg .h small { margin-left: auto; color: var(--text3); font-weight: 600; font-size: 11px; text-align: right; }
+  .sq-who { display: flex !important; align-items: center; gap: 9px; padding: 7px 10px !important; border-radius: 11px; background: var(--sqk3) !important; text-align: left; font-size: 13.5px; }
+  .sq-who b { flex: 1; } .sq-who small { color: #8fe0b2; font-weight: 700; font-size: 11px; } .sq-who.empty { border: 1.5px dashed rgba(255,255,255,.22) !important; background: transparent !important; } .sq-who.empty small { color: var(--text3); }
+  .sq-sug { display: flex; gap: 6px; flex-wrap: wrap; } .sq-sug button { display: inline-flex !important; align-items: center; gap: 5px; font-size: 11.5px; padding: 3px 10px 3px 3px !important; border-radius: 999px; background: var(--sqk3) !important; color: var(--text2) !important; }
+  .sq-sug .sq-av { width: 22px; height: 22px; font-size: 8px; border-width: 1.5px; }
+  .sq-srch { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,.15); background: #0e0e12; color: #fff; font: inherit; font-size: 14px; outline: none; } .sq-srch:focus { border-color: #e30b0b; }
+  .sq-lrl { display: flex; flex-direction: column; gap: 4px; max-height: 50vh; overflow-y: auto; }
+  .sq-lrl button { display: flex !important; align-items: center; gap: 9px; padding: 6px 9px !important; border-radius: 11px; background: var(--sqk2) !important; text-align: left; } .sq-lrl b { font-size: 13.5px; } .sq-lrl small { margin-left: auto; color: var(--text3); font-size: 11px; } .sq-lrl em { font-style: normal; color: #8fe0b2; font-weight: 900; } .sq-lrl button.on { background: rgba(52,199,123,.14) !important; }
+  .sq-clr { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; } .sq-clr div { border-radius: 12px; background: var(--sqk2); padding: 8px; text-align: center; font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; } .sq-clr b { display: block; font-size: 21px; color: #fff; font-style: italic; }
+  /* fil du match (saisie, pop-in, Direct) */
+  .sqf { display: flex; flex-direction: column; gap: 18px; padding: 4px 2px 8px; }
+  .sqf-i { max-width: 86%; } .sqf-i.home { align-self: flex-start; text-align: left; } .sqf-i.away { align-self: flex-end; text-align: right; } .sqf-i.mid { align-self: stretch; text-align: center; max-width: none; margin: 4px 0; }
+  .sqf-h { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 900; letter-spacing: .06em; } .sqf-h small { color: var(--text3); font-weight: 700; letter-spacing: 0; font-size: 9.5px; margin-left: 3px; }
+  .sqf-i.away .sqf-h { flex-direction: row-reverse; } .sqf-i.away .sqf-h small { margin: 0 3px 0 0; } .sqf-i.gol .sqf-h { font-size: 12px; }
+  .sqf-x { font-size: 12.5px; line-height: 1.5; color: var(--text2); margin-top: 4px; } .sqf-x b { color: var(--text); font-weight: 700; }
+  .sqf-sep { display: flex; align-items: center; gap: 8px; font-size: 9.5px; font-weight: 900; letter-spacing: .1em; color: var(--text3); } .sqf-sep::before, .sqf-sep::after { content: ""; flex: 1; border-top: 1px solid var(--border, rgba(255,255,255,.12)); }
+  .sqf-i.mid .sqf-x { font-size: 12px; margin-top: 6px; } .sqf-i.fresh { animation: sqFresh 1.2s 2.6s both; } @keyframes sqFresh { from { opacity: 0; transform: translateY(-6px); } }
+  .sq-pop { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(480px, calc(100% - 20px)); height: min(640px, calc(100% - 70px)); z-index: 951; border-radius: 20px; background: #17171d; border: 1px solid rgba(255,255,255,.1); display: flex; flex-direction: column; overflow: hidden; color: #f2f2f4; --text: #f2f2f4; --text2: #b4b4c0; --text3: #77778a; }
+  .sq-poph { display: flex; align-items: flex-start; gap: 8px; padding: 13px 13px 11px; border-bottom: 1px solid rgba(255,255,255,.08); } .sq-poph > div { flex: 1; min-width: 0; }
+  .sq-psc { display: flex; align-items: center; gap: 6px; margin-top: 5px; font-size: 13px; flex-wrap: wrap; } .sq-psc em { font-style: italic; font-weight: 800; font-size: 19px; margin: 0 4px; }
+  .sq-pop .sq-x { margin-left: 0; width: 30px; height: 30px; border-radius: 50%; background: #22222b; color: #a3a3b0; border: none; font: inherit; cursor: pointer; flex: none; }
+  .sq-popb { flex: 1; overflow-y: auto; padding: 12px 14px 16px; }
+  .sq-lvpop .sq-pdim, .sq-lvpop .sq-pop { z-index: 1200; } .sq-lvpop .sq-k { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #77778a; }
+  .lv-fil { padding: 10px 2px 2px; } .lv-mrow .sq-eye { margin-left: auto; flex: none; width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: var(--bg3); border: 1px solid var(--border2); color: var(--text2); cursor: pointer; }
+  .lv-mrow .sq-eye svg { width: 17px; height: 17px; }
   .lv-tops { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 14px; }
   .lv-top-t { font-size: 11.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; }
   .lv-trow { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 5px 2px; border-top: 1px solid var(--border); min-width: 0; }
@@ -4887,8 +5021,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li>⚽ <b>Saisie</b> : ouverte à tous le lundi dès 19h45</li><li>👥 <b>Effectif</b> : nouveau trombinoscope</li><li data-sa>📡 <b>Saisie</b> : glisser pour lancer le direct</li><li>🃏 <b>Accueil</b> : file échanger tes doubles en un toucher</li><li data-sa>💳 <b>Membres</b> : cotisation modifiable aussi sans compte</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 16:56</footer>
+<template id="hm-news" data-date="24/11/2026"><li>⚽ <b>Saisie des matchs</b> : plein écran, un toucher par but ⚽ ou fait ⭐️</li><li>📺 <b>Direct</b> : le fil du match commenté</li><li>🃏 <b>Accueil</b> : file échanger tes doubles</li><li data-sa>💳 <b>Membres</b> : cotisation modifiable aussi sans compte</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 17:09</footer>
 
 <script>
 
@@ -13268,6 +13402,7 @@ function renderSaisie() {
   if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
   const _scrollY = window.scrollY;
   const _presListScrollTop = document.querySelector(".saisie-pres-list")?.scrollTop || 0;
+  const _sqY = document.querySelector(".sq-bd")?.scrollTop || 0, _sqKey = _saisieStep + "|" + (typeof SQ !== "undefined" ? SQ.view + "|" + _saisieFocusedMatch : "");
   const statusTxt = _draftSavedAt
     ? `<span style="color:#2ecc71;font-size:12px">✓ Sauvegardé à ${_draftSavedAt}</span>`
     : `<span style="color:#e74c3c;font-size:12px">Brouillon non sauvegardé</span>`;
@@ -13330,8 +13465,7 @@ function renderSaisie() {
     </div>
 
     <div class="saisie-screen${_saisieStep==="matchs"?" active":""}" data-screen="matchs">
-      ${_buildMatchsScreenHTML()}
-      ${_saisieStep === "matchs" && !_editMode ? _saisieStandingsHTML() : ""}
+      ${_editMode ? _buildMatchsScreenHTML() : _saisieStep === "matchs" ? sqMatchsHTML() : ""}
       <div class="saisie-screen-nav">
         <button class="saisie-btn secondary" data-act="saisie-go-step" data-step="repartition">← Équipes</button>
         <button class="saisie-btn primary" data-act="saisie-go-step" data-step="logistique">Logistique →</button>
@@ -13339,6 +13473,7 @@ function renderSaisie() {
     </div>
 
     <div class="saisie-screen${_saisieStep==="logistique"?" active":""}" data-screen="logistique">
+      ${!_editMode && _saisieStep === "logistique" ? sqLogiHTML() : ""}
       <div class="saisie-section">
         <div class="saisie-section-title">🎒 Logistique</div>
         <div class="saisie-logistique">
@@ -13356,9 +13491,462 @@ function renderSaisie() {
   window.scrollTo(0, _scrollY);
   const _newPresList = document.querySelector(".saisie-pres-list");
   if (_newPresList) _newPresList.scrollTop = _presListScrollTop;
+  const _sqB = document.querySelector(".sq-bd");
+  if (_sqB && typeof SQ !== "undefined") { if (SQ._key === _sqKey) _sqB.scrollTop = _sqY; SQ._key = _saisieStep + "|" + SQ.view + "|" + _saisieFocusedMatch; }
 }
 
-async function _commitSession() {
+/* ══ Saisie des matchs v2 — plein écran (24/11/2026) ══
+   Écrans : récap de la soirée (home), lancement (gardiens, banc, retours, jokers), match
+   (une ligne par joueur, ⚽ = but), mi-temps, logistique. Même modèle de données que
+   l'ancien éditeur (buteurs/passeurs par mi-temps, gardiens/banc [MT1, MT2], faits notables
+   CUSTOM_ACH_AWARDS, sorties outFrom/backFrom) + m.log : journal chronologique des
+   événements, partagé en direct (liveMatchs) pour le « fil du match » de l'onglet Direct.
+   Jokers d'un match : m.jkA / m.jkB (joueurs de l'équipe au repos ou sans équipe). */
+const SQ = { view: "home", dr: null, ex: null, md: null, sh: null, pop: null };
+const SQ_GF = ["sniper", "reprisecanon", "ciseau", "sangfroid", "vengeur", "varvalidee"];
+const SQ_EYE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg>`;
+const SQ_PEN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 4.5l4 4L9 19l-5 1 1-5z"/><path d="M13.5 6.5l4 4"/></svg>`;
+const SQ_NOP = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#15151b" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></svg>`;
+const sqTL = t => TEAM_LABEL[t] || t || "";
+const sqC = t => `var(--${teamCls(t)})`;
+const sqE = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function sqAv(n, t) { return `<span class="sq-av pf ${teamCls(t || "")}">${_saisieInitials(n || "?")}${n ? portraitImg(n, true) : ""}</span>`; }
+function sqM() { return _saisieFocusedMatch != null && _draft && _draft.matchs ? _draft.matchs[_saisieFocusedMatch] || null : null; }
+const sqEq = (m, s) => s === "A" ? m.eqA : m.eqB;
+const sqOpp = s => s === "A" ? "B" : "A";
+const sqPh = m => m._phase === "mt2" ? 2 : 1;
+const sqSc = (m, s, h) => h === 1 ? (m["mt1" + s] || 0) : h === 2 ? (m["_mt2" + s] || 0) : (m["mt1" + s] || 0) + (m["_mt2" + s] || 0);
+const sqLog = m => Array.isArray(m.log) ? m.log : (m.log ? Object.values(m.log) : []);
+function sqOutGlobal(p) { const o = _draft.outFrom && _draft.outFrom[p]; if (!o) return false; const b = _draft.backFrom && _draft.backFrom[p]; return !(b && b >= o); }
+function sqOutNow(p, m) {
+  const L = sqLog(m).filter(e => e.k === "inj" && e.p === p);
+  if (L.length) return !L[L.length - 1].back;
+  return _saisieIsPlayerOut(p, m);
+}
+const sqJk = (m, s) => m["jk" + s] || [];
+const sqRoster = (m, s) => [..._playersOfTeam(sqEq(m, s)), ...sqJk(m, s)];
+const sqBench = (m, s, h) => (m["banc" + s] || [])[(h || sqPh(m)) - 1] || "";
+function sqGk(m, s, h) { const g = m["gardiens" + s] || []; return g[(h || sqPh(m)) - 1] || g[0] || ""; }
+function sqOn(m, s) { const b = sqBench(m, s); return sqRoster(m, s).filter(p => p !== b && !sqOutNow(p, m)); }
+const sqFitM = (m, s) => _playersOfTeam(sqEq(m, s)).filter(p => !sqOutNow(p, m));
+function sqDone() { return [...(_liveValidatedMatchs || [])].filter(x => x && x._id).sort((a, b) => a._id.localeCompare(b._id)); }
+function sqLastOf(t) { const L = sqDone(); for (let i = L.length - 1; i >= 0; i--) if (L[i].eqA === t || L[i].eqB === t) return L[i]; return null; }
+function sqLastGk(t) { const pm = sqLastOf(t); if (!pm) return ""; const g = pm[pm.eqA === t ? "gardiensA" : "gardiensB"] || []; return g[1] || g[0] || ""; }
+function sqLastBench(t) { const pm = sqLastOf(t); if (!pm) return ""; const g = pm[pm.eqA === t ? "bancA" : "bancB"] || []; return g[1] || g[0] || ""; }
+function sqRand(key, n) { _draft.sqRnd = _draft.sqRnd || {}; if (_draft.sqRnd[key] === undefined) { _draft.sqRnd[key] = Math.floor(Math.random() * n); try { localStorage.setItem("hmft_draft", JSON.stringify(_draft)); if (_db) _db.ref("config/draft/sqRnd/" + key).set(_draft.sqRnd[key]).catch(() => {}); } catch (e) {} } return _draft.sqRnd[key] % n; }
+// Prochain match : 2 équipes → on alterne domicile/extérieur ; 3 équipes → 1er match tiré au
+// sort, au 2e le gagnant reste (nul : tirage), ensuite rotation (l'équipe restée sur le
+// terrain reçoit, celle qui a joué 2 matchs de suite sort).
+function sqNext() {
+  const T = _activeTeams(); if (T.length < 2) return null;
+  const L = sqDone(), last = L[L.length - 1];
+  if (T.length === 2) {
+    if (!last) { const o = sqRand("first2", 2) ? [T[1], T[0]] : [T[0], T[1]]; return { a: o[0], b: o[1], why: "🎲 Tiré au sort" }; }
+    return { a: last.eqB, b: last.eqA, why: "On alterne domicile et extérieur" };
+  }
+  if (!last) { const P = [[0, 1], [1, 0], [0, 2], [2, 0], [1, 2], [2, 1]][sqRand("first3", 6)]; return { a: T[P[0]], b: T[P[1]], why: "🎲 1er match tiré au sort" }; }
+  const rest = T.find(t => t !== last.eqA && t !== last.eqB);
+  if (L.length === 1) {
+    let w = last.scoreA > last.scoreB ? last.eqA : last.scoreB > last.scoreA ? last.eqB : null, why = "Le gagnant reste sur le terrain";
+    if (!w) { w = sqRand("tie-" + last._id, 2) ? last.eqB : last.eqA; why = "🎲 Match nul : tirage au sort de qui reste"; }
+    return { a: w, b: rest, why };
+  }
+  const prev = L[L.length - 2], both = [last.eqA, last.eqB].find(t => t === prev.eqA || t === prev.eqB);
+  const stay = both ? [last.eqA, last.eqB].find(t => t !== both) : (last.scoreA >= last.scoreB ? last.eqA : last.eqB);
+  return { a: stay, b: rest || both, why: "Rotation : l'équipe restée sur le terrain reçoit" };
+}
+// ── commentaires du fil (variés, stables pour un même événement)
+const sqPick = (a, n) => a[Math.abs(n) % a.length];
+const sqPl = (n, w) => `${n} ${w}${n > 1 ? "s" : ""}`;
+const SQ_FC = { sniper: "🎯 De loin, en pleine lucarne !", reprisecanon: "🚀 Une reprise de volée, le filet s'en souvient encore.", ciseau: "🤸 En ciseau, s'il vous plaît !", sangfroid: "🧊 Le sang-froid d'un tueur.", vengeur: "🦹 La vengeance est un plat qui se mange au gymnase.", varvalidee: "📺 La VAR confirme, circulez !" };
+const SQ_NC = { poteau: [p => `Poteau pour <b>${p}</b> ! Le montant dit merci, pas lui.`, p => `<b>${p}</b> trouve le poteau. Si près, si loin…`, p => `Encore le poteau ! <b>${p}</b> soupçonne un complot.`],
+  jinglebells: [p => `<b>${p}</b> prend le ballon là où ça fait très mal. Tout le gymnase compatit 🔔`, p => `Ding dong ! <b>${p}</b> sonne les cloches… les siennes.`],
+  immanquable: [p => `<b>${p}</b> réussit l'exploit de rater l'immanquable.`, p => `La cage était vide. <b>${p}</b> aussi, visiblement.`, p => `<b>${p}</b> rate un but tout fait. On en reparlera longtemps.`],
+  arretfolie: [p => `Arrêt monumental de <b>${p}</b> ! Le gymnase fait OUUUUHH !`, p => `<b>${p}</b> sort une parade de chat. Miaou.`],
+  varrefusee: [p => `La VAR refuse le but de <b>${p}</b>. Il râle encore.`, p => `But de <b>${p}</b>… annulé ! La VAR est sans pitié.`] };
+function sqComment(m, e, i) {
+  const k = (m._id || "x").split("").reduce((a, c) => a + c.charCodeAt(0), 0) + i * 13;
+  const L = s => sqTL(sqEq(m, s));
+  if (e.k === "start") { const ga = (e.gk || {}).A || "?", gb = (e.gk || {}).B || "?", P = e.prev || {};
+    let t = sqPick([`C'est au tour de <b>${gb}</b> de chausser les gants pour les ${L("B")} ; pour les ${L("A")}, c'est <b>${ga}</b> qui s'y colle !`, `<b>${ga}</b> (${L("A")}) et <b>${gb}</b> (${L("B")}) enfilent les gants. Les filets n'ont qu'à bien se tenir.`, `Dans les cages : <b>${ga}</b> face à <b>${gb}</b>. Que le meilleur gardien gagne !`, `Coup d'envoi ! <b>${gb}</b> garde la maison des ${L("B")}, <b>${ga}</b> celle des ${L("A")}.`], k);
+    ["A", "B"].forEach((s, j) => { const pv = P[s], g = (e.gk || {})[s]; if (!pv || !pv.g || !g) return;
+      if (pv.g !== g) t += " " + sqPick(pv.c === 0 ? [`Pression max : ${pv.g} n'avait rien encaissé !`, `${g} succède à ${pv.g}, qui avait fait clean sheet. Gloups.`] : [`${g} va devoir faire mieux que ${pv.g} (${sqPl(pv.c, "but")} encaissé${pv.c > 1 ? "s" : ""}).`, `Objectif pour ${g} : encaisser moins que les ${pv.c} de ${pv.g}.`], k + j);
+      else if (j === 0) t += " " + sqPick([`${g} rempile, il a pris goût aux gants.`, `${g} reste dans les cages. On ne change pas une équipe qui… bref.`], k); });
+    ["A", "B"].forEach((s, j) => { const n = (e.bench || {})[s]; if (n) t += " 🪑 " + sqPick([`${n} commence sur le banc, le temps de lacer ses chaussures.`, `${n} démarre en tribune VIP (le banc des ${L(s)}).`, `${n} chauffe le banc pour les ${L(s)}.`], k + j); });
+    return t; }
+  if (e.k === "goal") { const gk = sqGk(m, sqOpp(e.t), e.h) || "le gardien"; let t;
+    if (e.s === "CSC") t = sqPick([`Oups… <b>${e.p}</b> trompe son propre gardien. Cadeau pour les ${L(e.t)} !`, `<b>${e.p}</b> marque… mais du mauvais côté.`, `CSC de <b>${e.p}</b>. On dira que c'était un centre.`, `<b>${e.p}</b> confond les cages. Ça arrive aux meilleurs (pas souvent).`], k);
+    else if (e.p) t = sqPick([`<b>${e.s}</b> conclut un caviar de <b>${e.p}</b> !`, `Servi sur un plateau par <b>${e.p}</b>, <b>${e.s}</b> ne se fait pas prier.`, `Combo <b>${e.p}</b> → <b>${e.s}</b>, propre comme un lundi soir.`, `<b>${e.s}</b> fait trembler les filets. Merci qui ? Merci <b>${e.p}</b> !`, `Une passe de <b>${e.p}</b>, une frappe de <b>${e.s}</b>, et ${gk} va chercher le ballon au fond.`, `<b>${e.p}</b> régale, <b>${e.s}</b> termine le travail !`], k);
+    else t = sqPick([`<b>${e.s}</b> s'en va tout seul et ne laisse aucune chance à ${gk} !`, `Exploit perso de <b>${e.s}</b>, qui n'avait besoin de personne.`, `<b>${e.s}</b> dribble la moitié du gymnase et conclut.`, `Solo de <b>${e.s}</b>. ${gk} n'a rien vu venir.`], k);
+    if (e.f) { const d = CUSTOM_ACH_DEFS.find(x => x.id === e.f); if (d) t += " " + (SQ_FC[e.f] || `${d.icon} ${d.name} !`); }
+    return t; }
+  if (e.k === "note") { const d = CUSTOM_ACH_DEFS.find(x => x.id === e.f); const Lc = SQ_NC[e.f]; return Lc ? sqPick(Lc, k)(e.p) : sqPick([`<b>${e.p}</b> s'offre « ${d ? d.name : e.f} ». Respect.`, `${d ? d.icon + " " + d.name : e.f} pour <b>${e.p}</b> ! Ça mérite une vignette.`], k); }
+  if (e.k === "half") { let t = sqPick([`Mi-temps, ${e.sc}. On souffle, on boit, on repart.`, `Pause à ${e.sc}. Le coach (personne) fait son discours.`, `${e.sc} à la pause. Tout reste possible !`, `Mi-temps sur le score de ${e.sc}. Gourdes en main !`], k);
+    (e.ch || []).forEach((c, j) => t += " " + (c.k === "bench" ? `🔁 <b>${c.sit}</b> sort, <b>${c.enter}</b> le remplace. ${sqPick(["Jambes fraîches !", "Place aux jeunes (relativement).", "Le banc était encore chaud."], k + j)}` : `🧤 ${sqPick([`<b>${c.nw}</b> récupère les gants, ${c.old} retourne enfin jouer.`, `Changement dans les cages des ${L(c.t)} : <b>${c.nw}</b> remplace ${c.old}.`], k + j)}`));
+    return t; }
+  if (e.k === "gk") return sqPick([`<b>${e.nw}</b> récupère les gants, ${e.old || "son prédécesseur"} retourne jouer… enfin !`, `Changement dans les cages : <b>${e.nw}</b> remplace ${e.old || "le gardien"}.`, `${e.old || "Le gardien"} en avait marre : <b>${e.nw}</b> prend les gants.`], k);
+  if (e.k === "bench") return `<b>${e.sit}</b> sort, <b>${e.enter}</b> le remplace. ${sqPick(["Jambes fraîches !", "Le banc était encore chaud.", "Coaching gagnant ?"], k)}`;
+  if (e.k === "inj") return e.back ? sqPick([`<b>${e.p}</b> est de retour, plus fort que jamais (on espère).`, `Miracle : <b>${e.p}</b> revient sur le terrain !`], k) : sqPick([`<b>${e.p}</b> sort sur blessure. Prompt rétablissement, champion !`, `Aïe, <b>${e.p}</b> doit sortir. Quelqu'un a de la glace ?`, `<b>${e.p}</b> rejoint l'infirmerie (le banc).`], k);
+  if (e.k === "jk") return sqPick([`<b>${e.p}</b> débarque en renfort chez les ${L(e.t)}. Joker !`, `Les ${L(e.t)} sortent leur joker : <b>${e.p}</b> !`, `<b>${e.p}</b> file direct chez les ${L(e.t)} pour dépanner.`], k);
+  return "";
+}
+function sqHead(e) { const U = s => String(s || "").toUpperCase();
+  if (e.k === "goal") return e.s === "CSC" ? `🙃 CSC · ${U(e.p)}` : `⚽ BUT · ${U(e.s)}`;
+  if (e.k === "note") { const d = CUSTOM_ACH_DEFS.find(x => x.id === e.f); return `${d ? d.icon : "📌"} ${U(d ? d.name : e.f)} · ${U(e.p)}`; }
+  if (e.k === "gk") return `🧤 GARDIEN · ${U(e.nw)}`;
+  if (e.k === "bench") return `🔁 CHANGEMENT`;
+  if (e.k === "inj") return e.back ? `↩️ RETOUR · ${U(e.p)}` : `🩹 BLESSURE · ${U(e.p)}`;
+  if (e.k === "jk") return `🧰 JOKER · ${U(e.p)}`;
+  return ""; }
+// Matchs sans journal (saisis avant le 24/11/2026) : journal reconstitué grossièrement.
+function sqLogOf(m) {
+  const L = sqLog(m); if (L.length) return L;
+  const out = [{ k: "start", gk: { A: (m.gardiensA || [])[0] || "", B: (m.gardiensB || [])[0] || "" } }];
+  const g = (s, h) => { const b = m["buteurs" + s] || [], p = m["passeurs" + s] || [], mt1 = m["mt1" + s] || 0; b.forEach((x, j) => { if (x && (j < mt1 ? 1 : 2) === h) out.push({ k: "goal", t: s, s: x, p: p[j] || "", h }); }); };
+  g("A", 1); g("B", 1); out.push({ k: "half", sc: `${m.mt1A || 0}–${m.mt1B || 0}` }); g("A", 2); g("B", 2);
+  return out; }
+function sqFilHTML(m, chrono, fresh) {
+  let h = 1; const L = [];
+  sqLogOf(m).forEach((e, i) => { const tx = sqComment(m, e, i); if (!tx) return; if (e.k === "half") h = 2; const mt = e.k === "start" ? 1 : e.h || h;
+    if (e.k === "start" || e.k === "half") { L.push(`<div class="sqf-i mid${i === fresh ? " fresh" : ""}"><div class="sqf-sep"><span>${e.k === "start" ? "COUP D'ENVOI" : "MI-TEMPS · " + sqE(e.sc)}</span></div><div class="sqf-x">${tx}</div></div>`); return; }
+    const s = e.t || "A", col = sqC(sqEq(m, s));
+    L.push(`<div class="sqf-i ${s === "B" ? "away" : "home"}${e.k === "goal" ? " gol" : ""}${i === fresh ? " fresh" : ""}"><div class="sqf-h" style="color:${col}">${sqHead(e)}<small>MT${mt}</small></div><div class="sqf-x">${tx}</div></div>`); });
+  if (!chrono) L.reverse();
+  return `<div class="sqf">${L.join("")}</div>`; }
+function sqFilPopHTML(m, num, closeAttr) {
+  return `<div class="sq-pdim" ${closeAttr}></div><div class="sq-pop" role="dialog" aria-label="Fil du match"><div class="sq-poph"><div><span class="sq-k">Match ${num} · fil du match</span><div class="sq-psc">${dot(m.eqA)}<b>${sqTL(m.eqA)}</b><em>${m.scoreA != null ? m.scoreA : sqSc(m, "A")}–${m.scoreB != null ? m.scoreB : sqSc(m, "B")}</em><b>${sqTL(m.eqB)}</b>${dot(m.eqB)}</div></div><button class="sq-x" ${closeAttr} aria-label="Fermer">✕</button></div><div class="sq-popb">${sqFilHTML(m, true)}</div></div>`; }
+// ── matchs de la soirée (validés partagés + brouillons locaux), dans l'ordre
+function sqAll() {
+  const local = (_draft.matchs || []).map((m, i) => ({ m, i, id: m._id || "", kind: "local" }));
+  const lid = new Set(local.map(x => x.id));
+  const shared = (_editMode ? [] : sqDone()).filter(v => !lid.has(v._id)).map(v => ({ m: v, id: v._id, kind: "shared" }));
+  return [...shared, ...local].sort((a, b) => (a.id || "~").localeCompare(b.id || "~"));
+}
+function sqTop(live) {
+  return `<div class="sq-top"><button class="sq-xq" data-sq="exit" aria-label="Quitter le plein écran">✕</button><select class="sq-stepsel" aria-label="Étape de la saisie">${_SAISIE_STEPS.map((st, i) => `<option value="${st.key}"${st.key === _saisieStep ? " selected" : ""}>${i + 1}. ${st.icon} ${st.label}</option>`).join("")}</select>${live ? `<span class="sq-live"><i></i>DIRECT</span>` : ""}</div>`; }
+function sqStandHTML() {
+  const done = sqDone(); if (!done.length) return "";
+  const st = _sfmStandings(done);
+  return `<div class="sq-card"><div class="sq-k">Classement</div>${st.map((r, i) => `<div class="sq-rk"><em>${i + 1}</em><b>${dot(r.team)}${sqTL(r.team)}</b><small>${r.v}V ${r.n}N ${r.d}D</small><span>${r.pts} pts</span></div>`).join("")}</div>`; }
+function sqHomeHTML() {
+  const all = sqAll(), cur = all.find(x => x.kind === "local" && !(_liveValidatedMatchs || []).some(v => v._id === x.id));
+  const nx = sqNext();
+  const rows = all.map((x, n) => { const m = x.m, a = m.scoreA != null && x.kind === "shared" ? m.scoreA : sqSc(m, "A"), b = m.scoreB != null && x.kind === "shared" ? m.scoreB : sqSc(m, "B"), inprog = x.kind === "local";
+    return `<div class="sq-mr"><span class="n">${n + 1}</span><span class="t">${dot(m.eqA)}${sqTL(m.eqA)}<b>${a}–${b}</b>${sqTL(m.eqB)}${dot(m.eqB)}</span><button class="sq-rb" data-sq="pop" data-v="${sqE(x.id)}" aria-label="Voir le fil du match">${SQ_EYE}</button><button class="sq-rb pen${inprog ? " lv" : ""}" data-sq="${inprog ? "focus" : "openv"}" data-v="${inprog ? x.i : sqE(x.id)}" aria-label="${inprog ? "Reprendre" : "Modifier"}">${SQ_PEN}</button></div>`; }).join("");
+  return `${sqStandHTML()}${cur ? `<button class="sq-btn" data-sq="focus" data-v="${cur.i}">▶ Reprendre le match ${all.indexOf(cur) + 1}</button>` : nx ? `<button class="sq-nx" data-sq="new"><span class="sq-k">⏭ Prochain match · ${sqE(nx.why)}</span><span class="r">${dot(nx.a)}<b>${sqTL(nx.a)}</b><em>vs</em>${dot(nx.b)}<b>${sqTL(nx.b)}</b><i>LANCER ›</i></span></button>` : `<p class="sq-hint">Il faut au moins 2 équipes (étape Équipes).</p>`}
+    <div class="sq-k" style="margin-top:4px">Matchs de la soirée</div>${rows || `<p class="sq-hint">Aucun match pour l'instant.</p>`}`; }
+// ── lancement / mi-temps : une ligne gardien (et banc) par équipe
+function sqFitL(t, d) { return _playersOfTeam(t).filter(p => !sqOutGlobal(p) || d.back.includes(p)); }
+function sqNewDr(sel, edit) {
+  const d = { sel: sel.slice(), gk: {}, bn: {}, back: [], jk: {}, edit: !!edit };
+  sel.forEach(t => { const f = sqFitL(t, d), g = sqLastGk(t); d.gk[t] = f.includes(g) ? g : ""; d.bn[t] = ""; d.jk[t] = []; });
+  return d; }
+function sqDrRow(t, d, half, m) {
+  const fit = half ? sqFitM(m, t === m.eqA ? "A" : "B").concat(d.back.filter(p => _playersOfTeam(t).includes(p))) : sqFitL(t, d);
+  const needB = fit.length >= 6, inj = _playersOfTeam(t).filter(p => (half ? sqOutNow(p, m) : sqOutGlobal(p)) && !d.back.includes(p));
+  const g0 = half ? sqGk(m, t === m.eqA ? "A" : "B", 1) : "";
+  return `<div class="sq-lrow" style="--c:${sqC(t)}"><div class="sq-lt"><i></i>${sqTL(t)}</div>
+    <button class="sq-lsl${d.gk[t] ? "" : " req"}" data-sq="dpk" data-v="gk|${t}"><span class="li">🧤</span>${d.gk[t] ? sqAv(d.gk[t], t) + `<b>${sqE(d.gk[t])}</b>` : `<b class="q">Qui garde les cages ?</b>`}${half && d.gk[t] ? (d.gk[t] === g0 ? `<em class="same">= MT1</em>` : `<em class="chg">changé</em>`) : ""}<span class="car">▾</span></button>
+    ${needB ? `<button class="sq-lsl${d.bn[t] ? "" : " req"}" data-sq="dpk" data-v="bn|${t}"><span class="li">🪑</span>${d.bn[t] ? sqAv(d.bn[t], t) + `<b>${sqE(d.bn[t])}</b>` : `<b class="q">Qui ${half ? "va" : "commence"} sur le banc ?</b>`}<span class="car">▾</span></button>` : ""}
+    ${inj.map(p => `<div class="sq-linj"><span>🩹 <b>${sqE(p)}</b> blessé</span><button class="sq-mini" data-sq="dback" data-v="${sqE(p)}">↩️ Revient</button><button class="sq-mini" data-sq="djk" data-v="${t}">🧰 Joker</button></div>`).join("")}
+    ${(d.jk[t] || []).length ? `<div class="sq-linj ok">🧰 Joker${d.jk[t].length > 1 ? "s" : ""} : <b>${d.jk[t].map(sqE).join(", ")}</b></div>` : ""}</div>`; }
+function sqDrOk(d, half, m) { return d.sel.every(t => { const fit = half ? sqFitM(m, t === m.eqA ? "A" : "B").concat(d.back.filter(p => _playersOfTeam(t).includes(p))) : sqFitL(t, d); return d.gk[t] && (fit.length < 6 || d.bn[t]); }); }
+function sqLaunchHTML() { const d = SQ.dr, T = _activeTeams(), ok = d.sel.length === 2 && sqDrOk(d);
+  const nx = sqNext();
+  return `<div class="sq-lh"><button data-sq="lcancel" aria-label="Retour">‹</button><div>${d.edit ? "CHANGER LES ÉQUIPES" : "NOUVEAU MATCH"}<small>${!d.edit && nx && nx.a === d.sel[0] && nx.b === d.sel[1] ? sqE(nx.why) : "Domicile en premier"}</small></div></div>
+  <div class="sq-tsel">${T.map(t => `<button class="${d.sel.includes(t) ? "on" : ""}" data-sq="lt" data-v="${t}" style="--c:${sqC(t)}"><i></i>${sqTL(t)}</button>`).join("")}</div>
+  ${d.sel.length === 2 ? `<div class="sq-lrows">${d.sel.map(t => sqDrRow(t, d)).join(`<div class="sq-vs">VS</div>`)}</div><p class="sq-hint">Gardiens repris du dernier match · touche pour changer</p>` : `<p class="sq-hint">Choisis les 2 équipes qui jouent</p>`}
+  <div class="sq-fill"></div><button class="sq-btn big${ok ? "" : " dis"}" data-sq="${ok ? "kick" : "kickno"}">${d.edit ? "✓ Enregistrer" : "⚽ Coup d'envoi"}</button>`; }
+function sqHalfHTML(m) { const d = SQ.dr, ok = sqDrOk(d, true, m);
+  return `<div class="sq-lh"><button data-sq="hcancel" aria-label="Retour">‹</button><div>MI-TEMPS<small>Match ${sqAll().findIndex(x => x.m === m) + 1}</small></div></div>
+  <div class="sq-hsc"><span style="color:${sqC(m.eqA)}">${sqTL(m.eqA)}</span><b>${sqSc(m, "A")}–${sqSc(m, "B")}</b><span style="color:${sqC(m.eqB)}">${sqTL(m.eqB)}</span></div>
+  <div class="sq-lrows">${d.sel.map(t => sqDrRow(t, d, true, m)).join(`<div class="sq-vs">2ᵉ MT</div>`)}</div><p class="sq-hint">Mêmes gardiens qu'en MT1 par défaut · touche pour changer</p>
+  <div class="sq-fill"></div><button class="sq-btn big${ok ? "" : " dis"}" data-sq="${ok ? "h2" : "h2no"}">▶ Lancer la 2ᵉ mi-temps</button>`; }
+// ── écran du match : une ligne par joueur
+function sqMatchHTML(m) {
+  const num = sqAll().findIndex(x => x.m === m) + 1, ph = sqPh(m);
+  const sec = s => { const t = sqEq(m, s), on = sqOn(m, s), gk = sqGk(m, s), list = [gk, ...on.filter(p => p !== gk)].filter(p => on.includes(p)), bn = sqBench(m, s), inj = sqRoster(m, s).filter(p => sqOutNow(p, m));
+    const nb = p => { let g = 0, a = 0; ["A", "B"].forEach(x => { const b = m["buteurs" + x] || [], pa = m["passeurs" + x] || []; b.forEach((y, j) => { if (y === p && x === s) g++; if (pa[j] === p && y !== "CSC" && x === s) a++; }); }); return [g, a]; };
+    const rows = list.map(p => { const [g, a] = nb(p), ex = SQ.ex && SQ.ex.p === p;
+      return `<div class="sq-pr${ex ? " ex" : ""}"><button class="sq-prm" data-sq="ex" data-v="${sqE(p)}|${s}">${sqAv(p, t)}<span class="pn">${sqE(p)}</span>${p === gk ? `<span class="gki">🧤</span>` : ""}<span class="pb">${g ? `<i>⚽${g > 1 ? g : ""}</i>` : ""}${a ? `<i class="pa">👟${a > 1 ? a : ""}</i>` : ""}</span></button><button class="sq-fb" data-sq="fait" data-v="${sqE(p)}|${s}" aria-label="Fait notable pour ${sqE(p)}">⭐️</button><button class="sq-gb" data-sq="goal" data-v="${sqE(p)}|${s}" aria-label="But de ${sqE(p)}">⚽</button></div>
+      ${ex ? `<div class="sq-pact">${[["🙃", "CSC", "csc"], ["🧤", "Gants", "gants"], ["🩹", "Blessé", "inj"]].map(([i, l, a]) => `<button data-sq="${a}" data-v="${sqE(p)}|${s}"><i>${i}</i>${l}</button>`).join("")}<button class="cl" data-sq="exx" aria-label="Fermer">✕</button></div>` : ""}`; }).join("");
+    const off = (bn && !sqOutNow(bn, m) ? `<span>🪑 ${sqE(bn)} <small>MT${ph}</small></span>` : "") + inj.map(p => `<span class="inj">🩹 ${sqE(p)} <button data-sq="back" data-v="${sqE(p)}">↩️ Revient</button></span>`).join("");
+    return `<div class="sq-tsec" style="--c:${sqC(t)}"><div class="sq-tsh"><i></i>${sqTL(t)}</div>${rows}${off ? `<div class="sq-off">${off}</div>` : ""}</div>`; };
+  return `<div class="sq-tv"><div class="tn"><span style="color:${sqC(m.eqA)}">${sqTL(m.eqA)}</span><span style="color:${sqC(m.eqB)}">${sqTL(m.eqB)}</span></div><div class="sc"><b>${sqSc(m, "A")}</b><em><span class="sq-live"><i></i>MT${ph}</span></em><b>${sqSc(m, "B")}</b></div><div class="sq-hint">Match ${num} · ${ph === 1 ? "1ʳᵉ mi-temps" : `2ᵉ mi-temps (MT1 ${sqSc(m, "A", 1)}–${sqSc(m, "B", 1)})`}</div></div>
+  ${sec("A")}${sec("B")}<div class="sq-fill"></div>
+  <div class="sq-trio"><button class="sq-btn g" data-sq="home" aria-label="Récap">‹</button><button class="sq-btn g" data-sq="more">⋯ Actions</button>${ph === 1 ? `<button class="sq-btn" data-sq="half">⏸ Mi-temps</button>` : `<button class="sq-btn ok" data-sq="end">🏁 Fin du match</button>`}</div>`; }
+// ── pop-in du but (passeur + fait notable + valider)
+function sqGoalPopHTML(m) { const md = SQ.md, s = md.s, t = sqEq(m, s);
+  const csc = !!md.csc, mates = csc ? [] : sqOn(m, s).filter(p => p !== md.sc), gk = sqGk(m, s);
+  const opts = L => L.map(d => `<option value="${d.id}"${md.f === d.id ? " selected" : ""}>${d.icon} ${sqE(d.name)}</option>`).join("");
+  const ready = csc || md.pa !== undefined || !mates.length;
+  return `<div class="sq-pdim" data-sq="mdx"></div><div class="sq-gp" style="--c:${sqC(t)}"><div class="sq-gph">${sqAv(csc ? md.csc : md.sc, csc ? sqEq(m, sqOpp(s)) : t)}<div><span class="k">${csc ? "🙃 CSC · pour les " + sqTL(t) : "⚽ BUT · " + sqTL(t)}</span><b>${sqE(csc ? md.csc : md.sc)}${!csc && md.sc === gk ? " 🧤" : ""}</b></div><span class="sc">${sqTL(m.eqA)} <b>${sqSc(m, "A") + (s === "A" ? 1 : 0)}–${sqSc(m, "B") + (s === "B" ? 1 : 0)}</b> ${sqTL(m.eqB)}</span></div>
+  ${mates.length ? `<div class="sq-q">Qui a fait la passe ?</div><div class="sq-gpl">${mates.map(p => `<button class="${md.pa === p ? "on" : ""}" data-sq="pa" data-v="${sqE(p)}">${sqAv(p, t)}<b>${sqE(p)}${p === gk ? " 🧤" : ""}</b><span class="sh">👟</span></button>`).join("")}<button class="none${md.pa === "" ? " on" : ""}" data-sq="pa" data-v=""><span class="nop">${SQ_NOP}</span><b>Sans passe</b></button></div>` : ""}
+  <label class="sq-fsel"><span>⭐️ Fait notable</span><select data-sqchg="gf"><option value="">Aucun</option><optgroup label="Sur ce but">${opts(CUSTOM_ACH_DEFS.filter(d => SQ_GF.includes(d.id)))}</optgroup><optgroup label="Autres">${opts(_customAchDefsAlpha().filter(d => !SQ_GF.includes(d.id)))}</optgroup></select></label>
+  <button class="sq-btn ok big${ready ? "" : " dis"}" data-sq="${ready ? "gok" : "gno"}">✓ Valider le but</button><button class="sq-lnk" data-sq="mdx">Annuler le but</button></div>`; }
+// ── volets
+function sqSheetHTML(m) { const sh = SQ.sh; if (!sh) return ""; let h = "";
+  const T = (x, sub) => `<div class="sq-sht">${x}${sub ? `<small>${sub}</small>` : ""}<button class="sq-x" data-sq="shx" aria-label="Fermer">✕</button></div>`;
+  const grid = (names, act, t, sel, dis) => `<div class="sq-pg">${names.map(n => { const no = (dis || []).includes(n); return `<button class="${n === sel ? "on" : ""}${no ? " no" : ""}" data-sq="${no ? "" : act}" data-v="${sqE(n)}" style="--c:${sqC(t)}">${sqAv(n, t)}<span>${sqE(n)}</span></button>`; }).join("") || `<p class="sq-hint">Personne de disponible.</p>`}</div>`;
+  if (sh.k === "dpk") { const d = SQ.dr, t = sh.t, half = SQ.view === "half" && m; const fit = half ? sqFitM(m, t === m.eqA ? "A" : "B").concat(d.back.filter(p => _playersOfTeam(t).includes(p))) : sqFitL(t, d);
+    h = T(sh.w === "gk" ? `🧤 Gardien des ${sqTL(t)}` : `🪑 Sur le banc · ${sqTL(t)}`, half ? "2ᵉ mi-temps" : "") + grid(fit.concat(sh.w === "gk" ? (d.jk[t] || []) : []), "dset", t, (sh.w === "gk" ? d.gk : d.bn)[t], [sh.w === "gk" ? d.bn[t] : d.gk[t]].filter(Boolean)); }
+  if (sh.k === "gk") { const d = sh.d; const nch = ["A", "B"].filter(s => d[s] !== sqGk(m, s)).length;
+    h = T("🧤 Gardiens", `MT${sqPh(m)}`) + ["A", "B"].map(s => `<div class="sq-k" style="color:${sqC(sqEq(m, s))}">${sqTL(sqEq(m, s))}</div>` + grid(sqOn(m, s), "gkset", sqEq(m, s), d[s]).replace(/data-v="/g, `data-s="${s}" data-v="`)).join("")
+      + `<div class="sq-two"><button class="sq-btn g" data-sq="shx">Annuler</button><button class="sq-btn ${nch ? "ok" : "g"}" data-sq="gkok">${nch ? `✓ Valider (${nch})` : "Rien à changer"}</button></div>`; }
+  if (sh.k === "fait") h = T(`⭐️ Fait notable · ${sqE(sh.p)}`) + `<label class="sq-fsel"><span>⭐️ Fait</span><select data-sqchg="nf"><option value="">Choisir…</option>${_customAchDefsAlpha().map(d => `<option value="${d.id}"${sh.f === d.id ? " selected" : ""}>${d.icon} ${sqE(d.name)}</option>`).join("")}</select></label><div class="sq-two"><button class="sq-btn g" data-sq="shx">Annuler</button><button class="sq-btn ${sh.f ? "ok" : "g dis"}" data-sq="${sh.f ? "nfok" : ""}">✓ Valider</button></div>`;
+  if (sh.k === "injq") { const b = sqBench(m, sh.s), pool = sqJkPool(m); h = T(`🩹 ${sqE(sh.p)} sort sur blessure`) + (sh.wasGk ? `<button class="sq-row" data-sq="gants" data-v="${sqE(sqGk(m, sh.s))}|${sh.s}">🧤 <b>Nouveau gardien : ${sqE(sqGk(m, sh.s))}</b><small>changer ›</small></button>` : "")
+    + (b ? `<button class="sq-btn big" data-sq="benchin" data-v="${sh.s}">🪑 ${sqE(b)} entre à sa place</button>` : `<p class="sq-hint" style="text-align:left">Les ${sqTL(sqEq(m, sh.s))} peuvent faire entrer un joker à sa place.</p>`)
+    + `<div class="sq-two"><button class="sq-btn g" data-sq="shx">Jouer sans</button><button class="sq-btn ${b ? "g" : ""}${pool.length ? "" : " dis"}" data-sq="${pool.length ? "jkopen" : "jkno"}" data-v="${sh.s}">🧰 ${b ? "Un joker" : "Choisir un joker"}</button></div>`; }
+  if (sh.k === "jk") { const t = sh.t || sqEq(m, sh.s); h = T(`🧰 Joker pour les ${sqTL(t)}`, "équipe au repos ou sans équipe") + grid(SQ.view === "launch" || SQ.view === "half" ? sqJkPoolDr(SQ.dr) : sqJkPool(m), "jkset", "", ""); }
+  if (sh.k === "more") { const inj = m && ["A", "B"].some(s => sqRoster(m, s).some(p => sqOutNow(p, m)));
+    const it = [["🧤", "Gardiens", "gkopen", "changer en cours de match", true], ["🩹", "Blessure", "injlist", "un joueur sort ou revient", true], ["🧰", "Joker", "jkopen", inj ? "remplacer un blessé" : "seulement après une blessure", inj], ["⚽", "Buts du match", "goals", "corriger ou retirer un but", true]];
+    h = T(`Actions · match ${sqAll().findIndex(x => x.m === m) + 1}`) + `<div class="sq-alist">${it.map(([i, l, a, d, on]) => `<button class="${on ? "" : "off"}" data-sq="${on ? a : ""}"><span class="ai">${i}</span><span class="at"><b>${l}</b><small>${d}</small></span><span class="ac">›</span></button>`).join("")}</div>
+      <div class="sq-lite"><button class="o" data-sq="swap">🔄 Changer les équipes</button>${_saisieCanRemoveMatch(m) ? `<button class="r" data-sq="del">🗑️ Supprimer le match</button>` : ""}</div>`; }
+  if (sh.k === "fpick") h = T("📌 Fait notable", "quel joueur ?") + ["A", "B"].map(s => `<div class="sq-k" style="color:${sqC(sqEq(m, s))}">${sqTL(sqEq(m, s))}</div>` + grid(sqOn(m, s), "fpset", sqEq(m, s), "").replace(/data-v="/g, `data-s="${s}" data-v="`)).join("");
+  if (sh.k === "injlist") h = T("🩹 Blessure", "touche un joueur") + ["A", "B"].map(s => `<div class="sq-k" style="color:${sqC(sqEq(m, s))}">${sqTL(sqEq(m, s))}</div><div class="sq-pg">${sqRoster(m, s).map(p => `<button class="${sqOutNow(p, m) ? "on" : ""}" data-sq="${sqOutNow(p, m) ? "back" : "inj"}" data-v="${sqE(p)}|${s}" style="--c:${sqC(sqEq(m, s))}">${sqAv(p, sqEq(m, s))}<span>${sqE(p)}</span><small>${sqOutNow(p, m) ? "↩️ revient" : "sort"}</small></button>`).join("")}</div>`).join("");
+  if (sh.k === "goals") { const G = []; ["A", "B"].forEach(s => (m["buteurs" + s] || []).forEach((b, j) => { if (j < sqSc(m, s)) G.push({ s, j, b, p: (m["passeurs" + s] || [])[j] || "", h: j < (m["mt1" + s] || 0) ? 1 : 2 }); }));
+    h = T("⚽ Buts du match") + (G.length ? `<div class="sq-alist">${G.map(g => `<div class="gl"><span class="ai">${dot(sqEq(m, g.s))}</span><span class="at"><b>${g.b === "CSC" ? "CSC " + sqE(g.p) : sqE(g.b)}</b><small>MT${g.h} · ${g.b === "CSC" ? "contre son camp" : g.p ? "passe " + sqE(g.p) : "sans passe"}</small></span><button class="sq-mini" data-sq="gdel" data-v="${g.s}|${g.j}">Retirer</button></div>`).join("")}</div>` : `<p class="sq-hint">Aucun but pour l'instant.</p>`); }
+  if (sh.k === "del") h = T("🗑️ Supprimer ce match ?") + `<p class="sq-hint" style="text-align:left">Ses buts et ses faits notables seront effacés.</p><div class="sq-two"><button class="sq-btn g" data-sq="shx">Annuler</button><button class="sq-btn" data-sq="delok">Supprimer</button></div>`;
+  if (sh.k === "lp") { const it = sh.it, P = _presentList(), cnt = sqLogiCount(it);
+    h = T(it === "sac" ? "🎒 Qui ramène le sac ?" : "👕 Qui ramène les maillots ?", "lundi prochain") + `<input class="sq-srch" data-sqsrch placeholder="🔍 Rechercher un joueur…" autocomplete="off"><div class="sq-lrl">${P.map(p => `<button class="${_draft[it] === p ? "on" : ""}" data-sq="lset" data-v="${it}|${sqE(p)}" data-n="${sqE(p.toLowerCase())}">${sqAv(p, _draft.presences[p] && _draft.presences[p].equipe)}<b>${sqE(p)}</b><small>${cnt[p] || 0}× cette saison</small>${_draft[it] === p ? "<em>✓</em>" : ""}</button>`).join("")}</div>`; }
+  if (sh.k === "clos") { const D = sqDone(); h = T("Clôturer la soirée ?") + `<div class="sq-clr"><div><b>${D.length}</b>matchs</div><div><b>${D.reduce((a, x) => a + (x.scoreA || 0) + (x.scoreB || 0), 0)}</b>buts</div><div><b>${_presentList().length}</b>joueurs</div></div>
+    <div class="sq-who">🎒 ${sqAv(_draft.sac)}<b>${sqE(_draft.sac)}</b><small>ramène le sac</small></div><div class="sq-who">👕 ${sqAv(_draft.maillots)}<b>${sqE(_draft.maillots)}</b><small>ramène les maillots</small></div>
+    <p class="sq-hint" style="text-align:left">La soirée sera enregistrée et publiée pour tout le monde (stats, récompenses, vignettes). C'est définitif.</p><div class="sq-two"><button class="sq-btn g" data-sq="shx">Annuler</button><button class="sq-btn ok" data-sq="closok">Clôturer</button></div>`; }
+  return `<div class="sq-dim" data-sq="shx"></div><div class="sq-sheet"><div class="sq-grab"></div>${h}</div>`; }
+function sqJkPool(m) { const bt = _saisieBenchTeam(m.eqA, m.eqB, _activeTeams()); const used = new Set([...sqJk(m, "A"), ...sqJk(m, "B")]);
+  return [...(bt ? _playersOfTeam(bt) : []), ..._playersOfTeam("")].filter(p => !used.has(p) && !sqOutGlobal(p)); }
+function sqJkPoolDr(d) { const T = _activeTeams(), bt = T.find(t => !d.sel.includes(t)); const used = new Set(Object.values(d.jk || {}).flat());
+  return [...(bt ? _playersOfTeam(bt) : []), ..._playersOfTeam("")].filter(p => !used.has(p) && !sqOutGlobal(p)); }
+function sqLogiCount(it) { const c = {}; (SESSIONS || []).forEach(s => { const p = s[it]; if (p) c[p] = (c[p] || 0) + 1; }); return c; }
+function sqLogiHTML() {
+  const P = _presentList(), ico = { sac: "🎒", maillots: "👕" }, lab = { sac: "Le sac", maillots: "Les maillots" }, q = { sac: "Qui le ramène lundi prochain ?", maillots: "Qui les lave et les ramène ?" };
+  const sug = it => { const c = sqLogiCount(it); return P.filter(p => p !== _draft[it]).sort((a, b) => (c[a] || 0) - (c[b] || 0) || a.localeCompare(b, "fr")).slice(0, 3).map(p => `<button data-sq="lset" data-v="${it}|${sqE(p)}">${sqAv(p, _draft.presences[p] && _draft.presences[p].equipe)}${sqE(p)} · ${c[p] || 0}×</button>`).join(""); };
+  const live = (_draft.matchs || []).some(m => m.eqA && m.eqB);
+  return `<div class="sq-root">${sqTop(live)}<div class="sq-bd"><div class="sq-lhd">Avant de partir</div>
+    ${["sac", "maillots"].map(it => `<div class="sq-lg"><div class="h"><span>${ico[it]}</span>${lab[it]}<small>${q[it]}</small></div><button class="sq-who${_draft[it] ? "" : " empty"}" data-sq="lpick" data-v="${it}">${_draft[it] ? sqAv(_draft[it], _draft.presences[_draft[it]] && _draft.presences[_draft[it]].equipe) : `<span class="sq-av">🔍</span>`}<b>${sqE(_draft[it] || "Choisir un joueur…")}</b><small>${_draft[it] ? "changer ›" : "›"}</small></button><div class="sq-k">Ceux qui l'ont le moins fait</div><div class="sq-sug">${sug(it)}</div></div>`).join("")}
+    <div class="sq-fill"></div><button class="sq-btn ok big" data-sq="closq">Clôturer la soirée</button></div>${sqSheetHTML(null)}</div>`; }
+function sqMatchsHTML() {
+  if (_activeTeams().length < 2) return `<div class="sq-root">${sqTop(false)}<div class="sq-bd"><p class="sq-hint">Assigne au moins 2 équipes (étape Équipes) pour lancer un match.</p></div></div>`;
+  let m = sqM();
+  if (SQ.view === "launch" && !SQ.dr) SQ.view = "home";
+  if ((SQ.view === "match" || SQ.view === "half") && !m) SQ.view = "home";
+  const live = (_draft.matchs || []).some(x => x.eqA && x.eqB && !(_liveValidatedMatchs || []).some(v => v._id === x._id));
+  let body = SQ.view === "launch" ? sqLaunchHTML() : SQ.view === "half" ? sqHalfHTML(m) : SQ.view === "match" && m ? sqMatchHTML(m) : sqHomeHTML();
+  let pop = "";
+  if (SQ.pop) { const all = sqAll(), x = all.find(y => y.id === SQ.pop); if (x) pop = sqFilPopHTML(x.m, all.indexOf(x) + 1, 'data-sq="popx"'); else SQ.pop = null; }
+  return `<div class="sq-root">${sqTop(live)}<div class="sq-bd v-${SQ.view}">${body}</div>${m && SQ.md && SQ.view === "match" ? sqGoalPopHTML(m) : ""}${sqSheetHTML(m)}${pop}</div>`; }
+function sqRender() { renderSaisie(); }
+function sqToast(msg) { _showToast(msg); }
+// ── actions
+function sqAddGoal(m, s, scorer, passer, faitId) {
+  const h = sqPh(m), tot = sqSc(m, s);
+  ["buteurs", "passeurs"].forEach(f => { const a = (m[f + s] || []).slice(0, tot); while (a.length < tot) a.push(""); m[f + s] = a; });
+  const pos = h === 1 ? (m["mt1" + s] || 0) : tot;
+  m["buteurs" + s].splice(pos, 0, scorer); m["passeurs" + s].splice(pos, 0, passer || "");
+  if (h === 1) m["mt1" + s] = (m["mt1" + s] || 0) + 1; else m["_mt2" + s] = (m["_mt2" + s] || 0) + 1;
+  m.scoreA = sqSc(m, "A"); m.scoreB = sqSc(m, "B");
+  const d = faitId ? CUSTOM_ACH_DEFS.find(x => x.id === faitId) : null;
+  if (d && m._id) { CUSTOM_ACH_AWARDS.push({ id: `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`, player: scorer === "CSC" ? passer : scorer, defiId: d.id, date: _draft.date, matchId: m._id, addedAt: Date.now() }); _saveCustomAchAwards(); }
+  m.log = sqLog(m); m.log.push({ k: "goal", t: s, s: scorer, p: passer || "", h, f: d ? d.id : "", at: Date.now() });
+}
+function sqDelGoal(m, s, j) {
+  const b = (m["buteurs" + s] || [])[j], p = (m["passeurs" + s] || [])[j] || "";
+  ["buteurs", "passeurs"].forEach(f => { if (m[f + s]) m[f + s].splice(j, 1); });
+  if (j < (m["mt1" + s] || 0)) m["mt1" + s]--; else m["_mt2" + s] = Math.max(0, (m["_mt2" + s] || 0) - 1);
+  m.scoreA = sqSc(m, "A"); m.scoreB = sqSc(m, "B");
+  const L = sqLog(m); for (let i = L.length - 1; i >= 0; i--) if (L[i].k === "goal" && L[i].t === s && L[i].s === b && (L[i].p || "") === p) { L.splice(i, 1); break; }
+  m.log = L;
+}
+function sqKick() {
+  const d = SQ.dr, [a, b] = d.sel, at = Date.now();
+  const prev = {}; [["A", a], ["B", b]].forEach(([s, t]) => { const pm = sqLastOf(t); if (pm) { const x = pm.eqA === t ? "A" : "B"; prev[s] = { g: (pm["gardiens" + x] || [])[1] || (pm["gardiens" + x] || [])[0] || "", c: (x === "A" ? pm.scoreB : pm.scoreA) || 0 }; } });
+  let m;
+  if (d.edit) { m = sqM(); Object.assign(m, { eqA: a, eqB: b, gardiensA: [d.gk[a], ""], gardiensB: [d.gk[b], ""], bancA: [d.bn[a] || "", ""], bancB: [d.bn[b] || "", ""], jkA: d.jk[a] || [], jkB: d.jk[b] || [] }); }
+  else { m = { _id: _saisieGenMatchId(), eqA: a, eqB: b, scoreA: 0, scoreB: 0, buteursA: [], buteursB: [], passeursA: [], passeursB: [], mt1A: 0, mt1B: 0, _mt2A: 0, _mt2B: 0, _phase: "mt1", gardiensA: [d.gk[a], ""], gardiensB: [d.gk[b], ""], bancA: [d.bn[a] || "", ""], bancB: [d.bn[b] || "", ""], jkA: d.jk[a] || [], jkB: d.jk[b] || [] }; }
+  m.log = [{ k: "start", gk: { A: d.gk[a], B: d.gk[b] }, prev: { A: prev.A || null, B: prev.B || null }, bench: { A: d.bn[a] || "", B: d.bn[b] || "" }, at }];
+  if (!_draft.backFrom) _draft.backFrom = {};
+  d.back.forEach(p => { _draft.backFrom[p] = m._id; m.log.push({ k: "inj", p, back: true, t: _playersOfTeam(b).includes(p) ? "B" : "A", h: 1, at }); });
+  ["A", "B"].forEach(s => sqJk(m, s).forEach(p => m.log.push({ k: "jk", p, t: s, h: 1, at })));
+  if (!d.edit) { _draft.matchs.push(m); _saisieFocusedMatch = _draft.matchs.length - 1; }
+  SQ.dr = null; SQ.sh = null; SQ.view = "match"; SQ.ex = null;
+  _saveDraft(); sqRender(); sqToast(d.edit ? "Équipes modifiées" : "⚽ Coup d'envoi !");
+}
+function sqH2(m) {
+  const d = SQ.dr, ch = [], at = Date.now();
+  if (!_draft.backFrom) _draft.backFrom = {};
+  d.back.forEach(p => { _draft.backFrom[p] = m._id; m.log = sqLog(m); m.log.push({ k: "inj", p, back: true, t: _playersOfTeam(m.eqB).includes(p) ? "B" : "A", h: 2, at }); });
+  ["A", "B"].forEach(s => { const t = sqEq(m, s); (d.jk[t] || []).forEach(p => { m["jk" + s] = [...sqJk(m, s), p]; m.log.push({ k: "jk", p, t: s, h: 2, at }); });
+    m["gardiens" + s] = [(m["gardiens" + s] || [])[0] || "", d.gk[t]]; if (d.gk[t] !== (m["gardiens" + s] || [])[0]) ch.push({ k: "gk", t: s, nw: d.gk[t], old: (m["gardiens" + s] || [])[0] || "" });
+    const b1 = sqBench(m, s, 1); m["banc" + s] = [b1, d.bn[t] || ""]; if (d.bn[t] && d.bn[t] !== b1) ch.push({ k: "bench", t: s, sit: d.bn[t], enter: b1 || "" }); });
+  m.log = sqLog(m); m.log.push({ k: "half", sc: `${sqSc(m, "A")}–${sqSc(m, "B")}`, ch, at });
+  m._phase = "mt2"; m._mt2A = m._mt2A || 0; m._mt2B = m._mt2B || 0;
+  SQ.dr = null; SQ.sh = null; SQ.view = "match"; _saveDraft(); sqRender(); sqToast("▶ C'est reparti pour la 2ᵉ mi-temps");
+}
+function sqInjure(m, p, s) {
+  if (!_draft.outFrom) _draft.outFrom = {}; if (!_draft.backFrom) _draft.backFrom = {};
+  _draft.outFrom[p] = m._id; if (_draft.backFrom[p] && _draft.backFrom[p] <= m._id) delete _draft.backFrom[p];
+  m.log = sqLog(m); m.log.push({ k: "inj", p, back: false, t: s, h: sqPh(m), at: Date.now() });
+  const ph = sqPh(m), wasGk = sqGk(m, s) === p;
+  if (wasGk) { const nw = sqOn(m, s)[0] || ""; const g = m["gardiens" + s] || ["", ""]; g[ph - 1] = nw; m["gardiens" + s] = g; if (nw) m.log.push({ k: "gk", t: s, nw, old: p, h: ph, at: Date.now() }); }
+  SQ.ex = null; SQ.sh = { k: "injq", p, s, wasGk };
+  _saveDraft();
+}
+function sqBack(m, p) {
+  if (!_draft.backFrom) _draft.backFrom = {};
+  _draft.backFrom[p] = m._id; const s = sqRoster(m, "B").includes(p) ? "B" : "A";
+  m.log = sqLog(m); m.log.push({ k: "inj", p, back: true, t: s, h: sqPh(m), at: Date.now() });
+  _saveDraft(); sqToast(`↩️ ${p} revient en jeu`);
+}
+function sqOpenValidated(id) {
+  let i = _draft.matchs.findIndex(mm => mm._id === id);
+  if (i === -1) { const vm = (_liveValidatedMatchs || []).find(x => x._id === id); if (!vm) return;
+    const w = { ...vm, buteursA: [...(vm.buteursA || [])], buteursB: [...(vm.buteursB || [])], passeursA: [...(vm.passeursA || [])], passeursB: [...(vm.passeursB || [])], gardiensA: [...(vm.gardiensA || ["", ""])], gardiensB: [...(vm.gardiensB || ["", ""])], bancA: [...(vm.bancA || ["", ""])], bancB: [...(vm.bancB || ["", ""])], jkA: [...(vm.jkA || [])], jkB: [...(vm.jkB || [])], log: sqLog(vm).map(e => ({ ...e })), _phase: "mt2", _mt2A: Math.max(0, (vm.scoreA || 0) - (vm.mt1A || 0)), _mt2B: Math.max(0, (vm.scoreB || 0) - (vm.mt1B || 0)) };
+    delete w._validated; _draft.matchs.push(w); i = _draft.matchs.length - 1; }
+  _saisieFocusedMatch = i; SQ.view = "match"; SQ.ex = null; SQ.md = null; SQ.sh = null;
+}
+function sqDelete(m) {
+  const idx = _draft.matchs.indexOf(m); if (idx < 0) return;
+  if (!_saisieCanRemoveMatch(m)) { sqToast("Seul un super admin peut supprimer un match déjà validé"); return; }
+  if (m._id && !_editMode) { _pronoForgetMatch(m._id); _fbRemoveValidatedMatch(m._id).catch(() => {}); _liveValidatedMatchs = _liveValidatedMatchs.filter(vm => vm._id !== m._id); }
+  if (m._id && CUSTOM_ACH_AWARDS.some(a => a.matchId === m._id)) { CUSTOM_ACH_AWARDS = CUSTOM_ACH_AWARDS.filter(a => a.matchId !== m._id); _saveCustomAchAwards(); }
+  _draft.matchs.splice(idx, 1); _saisieFocusedMatch = null; SQ.view = "home"; SQ.sh = null; _saveDraft();
+}
+document.addEventListener("change", e => {
+  const ss = e.target.closest && e.target.closest(".sq-stepsel");
+  if (ss) { const v = ss.value; if (v === _saisieStep) return; document.querySelector(`.saisie-step-pill[data-step="${v}"]`)?.click(); return; }
+  const c = e.target.dataset && e.target.dataset.sqchg; if (!c) return;
+  if (c === "gf" && SQ.md) SQ.md.f = e.target.value; else if (c === "nf" && SQ.sh) SQ.sh.f = e.target.value; else return;
+  sqRender();
+});
+document.addEventListener("input", e => {
+  if (!e.target.matches || !e.target.matches("[data-sqsrch]")) return;
+  const n = x => x.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  const q = n(e.target.value.trim());
+  e.target.parentNode.querySelectorAll(".sq-lrl > button").forEach(r => { r.style.display = n(r.dataset.n || "").includes(q) ? "" : "none"; });
+});
+document.addEventListener("click", e => {
+  const lv = e.target.closest && e.target.closest("[data-sqfil]");
+  if (lv) { const id = lv.dataset.sqfil; document.getElementById("sq-lvpop")?.remove(); if (id === "x") return;
+    const L = [...(_liveValidatedMatchs || [])].sort((a, b) => a._id.localeCompare(b._id)), i = L.findIndex(x => x._id === id); if (i < 0) return;
+    const el = document.createElement("div"); el.id = "sq-lvpop"; el.className = "sq-lvpop"; el.innerHTML = sqFilPopHTML(L[i], i + 1, 'data-sqfil="x"'); document.body.appendChild(el); return; }
+  const b = e.target.closest && e.target.closest("[data-sq]"); if (!b || !b.closest(".sq-root")) return;
+  const a = b.dataset.sq, v = b.dataset.v || ""; if (!a) return;
+  const m = sqM();
+  const [pn, ps] = v.split("|");
+  switch (a) {
+    case "exit": document.querySelector('.saisie-step-pill[data-step="repartition"]')?.click(); return;
+    case "home": SQ.view = "home"; SQ.ex = null; break;
+    case "new": { const nx = sqNext(); if (!nx) return; SQ.dr = sqNewDr([nx.a, nx.b]); SQ.view = "launch"; break; }
+    case "lt": { const d = SQ.dr; if (d.sel.includes(v)) d.sel = d.sel.filter(t => t !== v); else { d.sel.push(v); if (d.sel.length > 2) d.sel.shift(); const f = sqFitL(v, d), g = sqLastGk(v); d.gk[v] = f.includes(g) ? g : ""; d.bn[v] = ""; d.jk[v] = d.jk[v] || []; } break; }
+    case "lcancel": { const ed = SQ.dr && SQ.dr.edit; SQ.dr = null; SQ.sh = null; SQ.view = ed && m ? "match" : "home"; break; }
+    case "dpk": SQ.sh = { k: "dpk", w: pn, t: ps }; break;
+    case "dset": { const sh = SQ.sh; (sh.w === "gk" ? SQ.dr.gk : SQ.dr.bn)[sh.t] = v; SQ.sh = null; break; }
+    case "dback": SQ.dr.back.push(v); break;
+    case "djk": SQ.sh = { k: "jk", t: v, dr: true }; break;
+    case "kickno": sqToast("Choisis le gardien et, à 6, qui commence sur le banc"); return;
+    case "kick": sqKick(); return;
+    case "focus": _saisieFocusedMatch = Number(v); SQ.view = "match"; SQ.ex = null; break;
+    case "openv": sqOpenValidated(v); break;
+    case "pop": SQ.pop = v; break;
+    case "popx": SQ.pop = null; break;
+    case "ex": SQ.ex = SQ.ex && SQ.ex.p === pn ? null : { p: pn, s: ps }; break;
+    case "exx": SQ.ex = null; break;
+    case "goal": SQ.ex = null; SQ.md = { s: ps, sc: pn, f: "" }; if (!sqOn(m, ps).filter(p => p !== pn).length) SQ.md.pa = ""; break;
+    case "csc": SQ.ex = null; SQ.md = { s: sqOpp(ps), csc: pn, f: "" }; break;
+    case "pa": SQ.md.pa = SQ.md.pa === v ? undefined : v; break;
+    case "gno": sqToast("Choisis le passeur ou « Sans passe »"); return;
+    case "gok": { const md = SQ.md; SQ.md = null; sqAddGoal(m, md.s, md.csc ? "CSC" : md.sc, md.csc ? md.csc : md.pa, md.f); _saveDraft(); sqRender(); sqToast(`⚽ ${md.csc ? "CSC de " + md.csc : md.sc} · ${sqTL(m.eqA)} ${sqSc(m, "A")}–${sqSc(m, "B")} ${sqTL(m.eqB)}`); return; }
+    case "mdx": SQ.md = null; break;
+    case "fait": SQ.ex = null; SQ.sh = { k: "fait", p: pn, s: ps, f: "" }; break;
+    case "nfok": { const sh = SQ.sh, d = CUSTOM_ACH_DEFS.find(x => x.id === sh.f); if (d && m._id) { CUSTOM_ACH_AWARDS.push({ id: `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`, player: sh.p, defiId: d.id, date: _draft.date, matchId: m._id, addedAt: Date.now() }); _saveCustomAchAwards(); m.log = sqLog(m); m.log.push({ k: "note", p: sh.p, t: sh.s, f: d.id, h: sqPh(m), at: Date.now() }); _saveDraft(); sqToast(`${d.icon} ${sh.p} · ${d.name}`); } SQ.sh = null; break; }
+    case "gants": SQ.ex = null; SQ.sh = { k: "gk", d: { A: sqGk(m, "A"), B: sqGk(m, "B") } }; if (pn && ps) SQ.sh.d[ps] = pn; break;
+    case "gkopen": SQ.sh = { k: "gk", d: { A: sqGk(m, "A"), B: sqGk(m, "B") } }; break;
+    case "gkset": SQ.sh.d[b.dataset.s] = v; break;
+    case "gkok": { const d = SQ.sh.d, ph = sqPh(m); let n = 0; ["A", "B"].forEach(s => { const old = sqGk(m, s); if (d[s] && d[s] !== old) { const g = m["gardiens" + s] || ["", ""]; g[ph - 1] = d[s]; if (ph === 1) g[1] = ""; m["gardiens" + s] = g; m.log = sqLog(m); m.log.push({ k: "gk", t: s, nw: d[s], old, h: ph, at: Date.now() }); n++; } }); SQ.sh = null; if (n) { _saveDraft(); sqToast(`🧤 ${n > 1 ? "Gardiens modifiés" : "Gardien modifié"}`); } break; }
+    case "inj": sqInjure(m, pn, ps); break;
+    case "back": if (m) sqBack(m, pn); else SQ.dr.back.push(pn); SQ.sh = null; break;
+    case "benchin": { const s = v, ph = sqPh(m), bn = sqBench(m, s), hurt = SQ.sh.p; const B = m["banc" + s] || ["", ""]; B[ph - 1] = ""; m["banc" + s] = B; m.log = sqLog(m); m.log.push({ k: "bench", t: s, sit: hurt, enter: bn, h: ph, at: Date.now() }); SQ.sh = null; _saveDraft(); sqToast(`🔁 ${bn} remplace ${hurt}`); break; }
+    case "jkopen": { if (!m) return; const inj = ["A", "B"].find(s => sqRoster(m, s).some(p => sqOutNow(p, m))); SQ.sh = { k: "jk", s: v || inj || "A" }; break; }
+    case "jkno": sqToast("Aucun joueur disponible : ajoute un dépanneur dans Présences"); return;
+    case "jkset": { const sh = SQ.sh; if (sh.dr) { const d = SQ.dr; d.jk[sh.t] = [...(d.jk[sh.t] || []), v]; SQ.sh = null; break; }
+      const s = sh.s, t = sqEq(m, s); m["jk" + s] = [...sqJk(m, s), v]; m.log = sqLog(m); m.log.push({ k: "jk", p: v, t: s, h: sqPh(m), at: Date.now() }); SQ.sh = null; _saveDraft(); sqToast(`🧰 ${v} rejoint les ${sqTL(t)}`); break; }
+    case "more": SQ.ex = null; SQ.sh = { k: "more" }; break;
+    case "fpick": SQ.sh = { k: "fpick" }; break;
+    case "fpset": SQ.sh = { k: "fait", p: v, s: b.dataset.s, f: "" }; break;
+    case "injlist": SQ.sh = { k: "injlist" }; break;
+    case "goals": SQ.sh = { k: "goals" }; break;
+    case "gdel": sqDelGoal(m, pn, Number(ps)); _saveDraft(); sqToast("But retiré"); break;
+    case "swap": { if (sqSc(m, "A") + sqSc(m, "B")) { sqToast("Retire d'abord les buts du match"); return; } const d = sqNewDr([m.eqA, m.eqB], true); d.gk[m.eqA] = sqGk(m, "A", 1); d.gk[m.eqB] = sqGk(m, "B", 1); d.bn[m.eqA] = sqBench(m, "A", 1); d.bn[m.eqB] = sqBench(m, "B", 1); SQ.dr = d; SQ.sh = null; SQ.view = "launch"; break; }
+    case "del": SQ.sh = { k: "del" }; break;
+    case "delok": sqDelete(m); break;
+    case "half": { const d = { sel: [m.eqA, m.eqB], gk: { [m.eqA]: sqGk(m, "A", 1), [m.eqB]: sqGk(m, "B", 1) }, bn: { [m.eqA]: "", [m.eqB]: "" }, back: [], jk: { [m.eqA]: [], [m.eqB]: [] } }; SQ.dr = d; SQ.view = "half"; SQ.ex = null; break; }
+    case "hcancel": SQ.dr = null; SQ.view = "match"; break;
+    case "h2no": sqToast("Choisis les gardiens et, à 6, qui va sur le banc"); return;
+    case "h2": sqH2(m); return;
+    case "end": { const i = _saisieFocusedMatch; SQ.view = "home"; SQ.ex = null; _saisieDoValidateMatch(i); return; }
+    case "shx": SQ.sh = null; break;
+    case "lpick": SQ.sh = { k: "lp", it: v }; break;
+    case "lset": _draft[pn] = ps; SQ.sh = null; _saveDraft(); break;
+    case "closq": if (!_draft.sac || !_draft.maillots) { sqToast("Choisis d'abord qui ramène le sac et les maillots"); return; } SQ.sh = { k: "clos" }; break;
+    case "closok": SQ.sh = null; _commitSession(true); return;
+    default: return;
+  }
+  sqRender();
+});
+
+function _saisieDoValidateMatch(idx) {
+    const match = _draft.matchs[idx];
+    if (!match.eqA || !match.eqB) { alert("Choisissez les 2 équipes de ce match avant de le valider."); return; }
+    const scoreA = (match.mt1A||0) + (match._mt2A||0);
+    const scoreB = (match.mt1B||0) + (match._mt2B||0);
+    const emptyButeurs = (match.buteursA||[]).slice(0, scoreA).some(b => !b) || (match.buteursB||[]).slice(0, scoreB).some(b => !b);
+    if (emptyButeurs) { alert("Certains buteurs ne sont pas renseignés.\nVeuillez sélectionner un joueur ou « CSC » pour chaque but."); return; }
+    if (!match.gardiensA[0] || !match.gardiensA[1] || !match.gardiensB[0] || !match.gardiensB[1]) {
+      alert("Le gardien de chaque équipe doit être renseigné pour les 2 mi-temps."); return;
+    }
+    match.scoreA = scoreA; match.scoreB = scoreB;
+    const payload = {
+      eqA: match.eqA, eqB: match.eqB, scoreA, scoreB,
+      buteursA: (match.buteursA||[]).slice(0, scoreA), buteursB: (match.buteursB||[]).slice(0, scoreB),
+      passeursA: (match.passeursA||[]).slice(0, scoreA), passeursB: (match.passeursB||[]).slice(0, scoreB),
+      mt1A: match.mt1A||0, mt1B: match.mt1B||0,
+      gardiensA: match.gardiensA, gardiensB: match.gardiensB,
+      bancA: match.bancA || ["",""], bancB: match.bancB || ["",""],
+      log: match.log || [], jkA: match.jkA || [], jkB: match.jkB || [],
+      validatedAt: Date.now()
+    };
+    if (_editMode) {
+      // Session deja existante : pas d ecriture Firebase individuelle, tout part
+      // ensemble au clic sur "Mettre a jour" en bas de la Saisie.
+      Object.assign(match, payload);
+      _saisieFocusedMatch = null;
+      renderSaisie();
+      return;
+    }
+    if (!match._id) match._id = _saisieGenMatchId();
+    const overlay = document.getElementById("fb-saving-overlay");
+    if (overlay) overlay.style.display = "flex";
+    _fbValidateMatch(match._id, payload).then(() => {
+      if (overlay) overlay.style.display = "none";
+      _saisieLogMark(); // haut fait « Greffier »
+      // Optimiste : ajoute tout de suite a la liste partagee locale — le listener Firebase
+      // la remplacera ensuite par la copie faisant foi (identique en pratique).
+      const already = _liveValidatedMatchs.some(vm => vm._id === match._id);
+      const entry = { ...payload, _id: match._id, _validated: true };
+      _liveValidatedMatchs = (already ? _liveValidatedMatchs.map(vm => vm._id === match._id ? entry : vm) : [..._liveValidatedMatchs, entry])
+        .sort((a,b) => a._id.localeCompare(b._id));
+      _draft.matchs = _draft.matchs.filter(mm => mm !== match);
+      _saisieFocusedMatch = null;
+      _saveDraft();
+      renderSaisie();
+      _showToast(`Match <b style="color:#2ecc71">envoyé</b>`);
+    }).catch(err => {
+      if (overlay) overlay.style.display = "none";
+      alert('⚠️ Erreur de synchronisation :\n' + (err?.message || err?.code || String(err)) + '\n\nLe match reste dans votre brouillon local — réessayez.');
+    });
+    return;
+}
+async function _commitSession(skipConfirm) {
   if (!_draft.date) { alert("Veuillez saisir une date pour la session."); return; }
   if (!_editMode && SESSIONS.find(s => s.date === _draft.date)) {
     alert(`Une session du ${fmtDate(_draft.date)} existe déjà.`); return;
@@ -13388,7 +13976,7 @@ async function _commitSession() {
   if (emptyButeurs) {
     alert("Certains buteurs ne sont pas renseignés.\nVeuillez sélectionner un joueur ou « CSC » pour chaque but."); return;
   }
-  if (!confirm(_editMode
+  if (!skipConfirm && !confirm(_editMode
     ? `Mettre à jour la session du ${fmtDate(_draft.date)} ?`
     : `Valider la session du ${fmtDate(_draft.date)} ?\n\nCette action est définitive.`)) return;
 
@@ -13421,7 +14009,8 @@ async function _commitSession() {
       // qu ils restent affichables dans les recaps une fois la session cloturee. En mode
       // edition, on reprend aussi ceux deja figes a la reouverture (m._frozenNotables) pour
       // ne pas les perdre a la re-sauvegarde.
-      notables: [...(m._frozenNotables || []), ...CUSTOM_ACH_AWARDS.filter(a => a.matchId === m._id).map(a => ({ player: a.player, defiId: a.defiId }))]
+      notables: [...(m._frozenNotables || []), ...CUSTOM_ACH_AWARDS.filter(a => a.matchId === m._id).map(a => ({ player: a.player, defiId: a.defiId }))],
+      ...(m.log ? { log: m.log } : {})
     }))
   };
   // outFrom/backFrom reperent un match par son _id pendant la saisie live (stable tant que
@@ -13750,58 +14339,7 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     return;
   }
   const validateMatchBtn = e.target.closest('[data-act="saisie-validate-match"]');
-  if (validateMatchBtn) {
-    const idx = Number(validateMatchBtn.dataset.match);
-    const match = _draft.matchs[idx];
-    if (!match.eqA || !match.eqB) { alert("Choisissez les 2 équipes de ce match avant de le valider."); return; }
-    const scoreA = (match.mt1A||0) + (match._mt2A||0);
-    const scoreB = (match.mt1B||0) + (match._mt2B||0);
-    const emptyButeurs = (match.buteursA||[]).slice(0, scoreA).some(b => !b) || (match.buteursB||[]).slice(0, scoreB).some(b => !b);
-    if (emptyButeurs) { alert("Certains buteurs ne sont pas renseignés.\nVeuillez sélectionner un joueur ou « CSC » pour chaque but."); return; }
-    if (!match.gardiensA[0] || !match.gardiensA[1] || !match.gardiensB[0] || !match.gardiensB[1]) {
-      alert("Le gardien de chaque équipe doit être renseigné pour les 2 mi-temps."); return;
-    }
-    match.scoreA = scoreA; match.scoreB = scoreB;
-    const payload = {
-      eqA: match.eqA, eqB: match.eqB, scoreA, scoreB,
-      buteursA: (match.buteursA||[]).slice(0, scoreA), buteursB: (match.buteursB||[]).slice(0, scoreB),
-      passeursA: (match.passeursA||[]).slice(0, scoreA), passeursB: (match.passeursB||[]).slice(0, scoreB),
-      mt1A: match.mt1A||0, mt1B: match.mt1B||0,
-      gardiensA: match.gardiensA, gardiensB: match.gardiensB,
-      bancA: match.bancA || ["",""], bancB: match.bancB || ["",""],
-      validatedAt: Date.now()
-    };
-    if (_editMode) {
-      // Session deja existante : pas d ecriture Firebase individuelle, tout part
-      // ensemble au clic sur "Mettre a jour" en bas de la Saisie.
-      Object.assign(match, payload);
-      _saisieFocusedMatch = null;
-      renderSaisie();
-      return;
-    }
-    if (!match._id) match._id = _saisieGenMatchId();
-    const overlay = document.getElementById("fb-saving-overlay");
-    if (overlay) overlay.style.display = "flex";
-    _fbValidateMatch(match._id, payload).then(() => {
-      if (overlay) overlay.style.display = "none";
-      _saisieLogMark(); // haut fait « Greffier »
-      // Optimiste : ajoute tout de suite a la liste partagee locale — le listener Firebase
-      // la remplacera ensuite par la copie faisant foi (identique en pratique).
-      const already = _liveValidatedMatchs.some(vm => vm._id === match._id);
-      const entry = { ...payload, _id: match._id, _validated: true };
-      _liveValidatedMatchs = (already ? _liveValidatedMatchs.map(vm => vm._id === match._id ? entry : vm) : [..._liveValidatedMatchs, entry])
-        .sort((a,b) => a._id.localeCompare(b._id));
-      _draft.matchs = _draft.matchs.filter(mm => mm !== match);
-      _saisieFocusedMatch = null;
-      _saveDraft();
-      renderSaisie();
-      _showToast(`Match <b style="color:#2ecc71">envoyé</b>`);
-    }).catch(err => {
-      if (overlay) overlay.style.display = "none";
-      alert('⚠️ Erreur de synchronisation :\n' + (err?.message || err?.code || String(err)) + '\n\nLe match reste dans votre brouillon local — réessayez.');
-    });
-    return;
-  }
+  if (validateMatchBtn) { _saisieDoValidateMatch(Number(validateMatchBtn.dataset.match)); return; }
 
   const teamSwapBtn = e.target.closest('[data-act="saisie-team-swap"]');
   if (teamSwapBtn) {
@@ -14831,7 +15369,8 @@ function _liveMatchSync() {
       scoreA, scoreB, mt1A: m.mt1A || 0, mt1B: m.mt1B || 0,
       buteursA: (m.buteursA || []).slice(0, scoreA), buteursB: (m.buteursB || []).slice(0, scoreB),
       passeursA: (m.passeursA || []).slice(0, scoreA), passeursB: (m.passeursB || []).slice(0, scoreB),
-      bancA: (m.bancA || []).filter(Boolean), bancB: (m.bancB || []).filter(Boolean)
+      bancA: (m.bancA || []).filter(Boolean), bancB: (m.bancB || []).filter(Boolean),
+      gardiensA: m.gardiensA || [], gardiensB: m.gardiensB || [], log: m.log || []
     };
     const sig = JSON.stringify(data);
     if (_liveMatchSent[m._id] === sig) return;
@@ -15019,7 +15558,7 @@ function _liveNowCardHTML(m, num) {
       <div class="lv-now-nums"><span class="lv-now-big${bumpA}">${m.scoreA}</span><span class="lv-now-dash">–</span><span class="lv-now-big${bumpB}">${m.scoreB}</span></div>
       <div class="lv-now-side ${teamCls(m.eqB)}">${dot(m.eqB)}${TEAM_LABEL[m.eqB] || m.eqB}</div>
     </div>
-    ${rows ? `<div class="lv-goals">${rows}</div>` : ""}
+    ${_lvArr(m.log).length ? `<div class="lv-fil">${sqFilHTML({ ...m, log: _lvArr(m.log), gardiensA: _lvArr(m.gardiensA), gardiensB: _lvArr(m.gardiensB) }, false, (() => { const L = _lvArr(m.log), e = L[L.length - 1]; return e && e.at && Date.now() - e.at < 8000 ? L.length - 1 : -1; })())}</div>` : rows ? `<div class="lv-goals">${rows}</div>` : ""}
   </div>`;
 }
 function _liveTopsHTML(all, live) {
@@ -15250,6 +15789,7 @@ function renderLive() {
         <span class="sc">${dot(m.eqA)}<span style="color:${sc.a}">${m.scoreA}</span>&nbsp;–&nbsp;<span style="color:${sc.b}">${m.scoreB}</span>${dot(m.eqB)}</span>
         <span class="sep"></span>
         <span class="info"><span class="gk">🧤 ${gA || "—"} - ${gB || "—"}</span><span>${goals || "Pas de but"}</span></span>
+        <button class="sq-eye" data-sqfil="${m._id}" aria-label="Voir le fil du match">${SQ_EYE}</button>
       </div>`;
     }).reverse().join("");
     h += `<div class="lv-card"><div class="lv-card-t"><span>Matchs enregistrés</span></div><div class="lv-mlist">${rows}</div></div>`;
