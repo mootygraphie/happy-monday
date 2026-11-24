@@ -4768,7 +4768,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
 </div>
 
 <template id="hm-news" data-date="24/11/2026"><li>🌙 <b>Sessions</b> : « Ta soirée », ton bilan du soir et 4 stats marrantes</li><li data-sa>💬 <b>Vestiaire</b> : bulles plus aérées, « Répondre » plus clair, appui sur un message avec fond flouté</li><li data-sa>💬 <b>Vestiaire</b> : Infos club lisibles sur tous les fonds d'écran</li><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 11:00</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 11:05</footer>
 
 <script>
 
@@ -10481,7 +10481,9 @@ function _crMine(M) {
   const dz = Object.entries(duo).sort((x, y) => y[1] - x[1])[0];
   if (dz) F.push({ ic: "🤝", t: "Ton complice", v: dz[0], s: `${pl(dz[1], "but")} ensemble` });
   let best = null; mine.forEach(({ m, i }) => { const [a, o] = side(m), g = (m["buteurs" + a] || []).filter(x => x === p).length, as = (m["passeurs" + a] || []).filter(x => x === p).length; if (g + as && (!best || g + as > best.g + best.a)) best = { g, a: as, i, opp: m["eq" + o] }; });
-  if (best) F.push({ ic: "🔥", t: "Ton plus gros match", v: `Match ${best.i + 1}`, s: `${[best.g && pl(best.g, "but"), best.a && pl(best.a, "passe")].filter(Boolean).join(" + ")} contre les ${TL(best.opp)}` });
+  const nDec = mine.filter(({ m }) => { const [s0] = side(m); return (m["buteurs" + s0] || []).includes(p) || (m["passeurs" + s0] || []).includes(p); }).length;
+  if (best && best.g + best.a <= 1 && nDec >= 2) F.push({ ic: "📈", t: "Toujours dans le coup", v: `${nDec} matchs sur ${mine.length}`, s: "avec un but ou une passe décisive" });
+  else if (best) F.push({ ic: "🔥", t: "Ton plus gros match", v: `Match ${best.i + 1}`, s: `${[best.g && pl(best.g, "but"), best.a && pl(best.a, "passe")].filter(Boolean).join(" + ")} contre les ${TL(best.opp)}` });
   const E = Object.entries(vs), vic = [...E].sort((x, y) => (y[1].v - y[1].d) - (x[1].v - x[1].d) || (y[1].gf - y[1].ga) - (x[1].gf - x[1].ga))[0], bn = [...E].sort((x, y) => (y[1].d - y[1].v) - (x[1].d - x[1].v) || (y[1].ga - y[1].gf) - (x[1].ga - x[1].gf))[0];
   if (vic && vic[1].v > vic[1].d) F.push({ ic: "🎯", t: "Ta victime préférée", v: `Les ${TL(vic[0])}`, s: `${vic[1].v}V en ${pl(vic[1].j, "match")} · ${vic[1].gf}–${vic[1].ga}` });
   if (bn && bn[1].d > bn[1].v) F.push({ ic: "😤", t: "Ta bête noire", v: `Les ${TL(bn[0])}`, s: `${pl(bn[1].d, "défaite")} en ${pl(bn[1].j, "match")}` });
