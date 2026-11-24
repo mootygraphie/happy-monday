@@ -4768,7 +4768,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
 </div>
 
 <template id="hm-news" data-date="24/11/2026"><li>🌙 <b>Sessions</b> : « Ta soirée », ton bilan du soir et 4 stats marrantes</li><li data-sa>💬 <b>Vestiaire</b> : bulles plus aérées, « Répondre » plus clair, appui sur un message avec fond flouté</li><li data-sa>💬 <b>Vestiaire</b> : Infos club lisibles sur tous les fonds d'écran</li><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 11:05</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 11:10</footer>
 
 <script>
 
@@ -8751,7 +8751,7 @@ function apercu(wide) {
   return `${periodBar()}
     <div class="kpis">
       ${kpi("Matchs", A.nM, `${A.nS} soirée${A.nS > 1 ? "s" : ""}`, delta(A.nM, B && B.nM))}
-      ${kpi("Buts", A.goals, `${f2(gpm)} par match`, delta(gpm, B && (B.goals / B.nM), { dec: 2 }))}
+      ${kpi("Buts", A.goals, `${f2(gpm)} par match`, delta(A.goals, B && B.goals))}
       ${kpi("Clean sheets", Math.round(csr * 100) + "%", `${A.cs} sur ${A.sides} matchs d'équipe`, delta(csr * 100, B && (B.cs / B.sides * 100), { pct: true }))}
       ${kpi("Présents", f1(A.pres / Math.max(1, A.nS)), `par soirée · ${A.abs} absences, ${A.inj} blessures`, delta(A.pres / A.nS, B && B.pres / B.nS, { dec: 1 }))}
     </div>
