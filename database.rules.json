@@ -143,7 +143,8 @@
       "$p": {
         ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p",
         ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
-      }
+      },
+      ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
     },
     "pushQueue": {
       ".read": "auth != null",
@@ -191,6 +192,69 @@
         "$p": {
           ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p",
           ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
+        }
+      },
+      "typing": {
+        "$r": {
+          ".read": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($r === 'g' || root.child('chat/rooms/' + $r + '/members/' + root.child('users/' + auth.uid + '/player').val()).val() === true)",
+          "$p": {
+            ".write": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($r === 'g' || root.child('chat/rooms/' + $r + '/members/' + root.child('users/' + auth.uid + '/player').val()).val() === true) && root.child('users/' + auth.uid + '/player').val() === $p"
+          }
+        }
+      },
+      "online": {
+        ".read": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true)",
+        "$p": {
+          ".write": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && root.child('users/' + auth.uid + '/player').val() === $p"
+        }
+      },
+      "prefs": {
+        "$p": {
+          ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p",
+          ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
+        }
+      },
+      "dm": {
+        "$k": {
+          ".read": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($k.beginsWith(root.child('users/' + auth.uid + '/player').val() + '~') || $k.endsWith('~' + root.child('users/' + auth.uid + '/player').val()))",
+          "msgs": {
+            "$m": {
+              ".write": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($k.beginsWith(root.child('users/' + auth.uid + '/player').val() + '~') || $k.endsWith('~' + root.child('users/' + auth.uid + '/player').val())) && ((!data.exists() && newData.child('by').val() === root.child('users/' + auth.uid + '/player').val()) || (data.exists() && data.child('by').val() === root.child('users/' + auth.uid + '/player').val()))",
+              "reacts": {
+                "$e": {
+                  "$p": {
+                    ".write": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($k.beginsWith(root.child('users/' + auth.uid + '/player').val() + '~') || $k.endsWith('~' + root.child('users/' + auth.uid + '/player').val())) && root.child('users/' + auth.uid + '/player').val() === $p"
+                  }
+                }
+              }
+            }
+          },
+          "seen": {
+            "$p": {
+              ".write": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($k.beginsWith(root.child('users/' + auth.uid + '/player').val() + '~') || $k.endsWith('~' + root.child('users/' + auth.uid + '/player').val())) && root.child('users/' + auth.uid + '/player').val() === $p"
+            }
+          },
+          "typing": {
+            "$p": {
+              ".write": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($k.beginsWith(root.child('users/' + auth.uid + '/player').val() + '~') || $k.endsWith('~' + root.child('users/' + auth.uid + '/player').val())) && root.child('users/' + auth.uid + '/player').val() === $p"
+            }
+          }
+        }
+      },
+      "dmimg": {
+        "$k": {
+          ".read": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($k.beginsWith(root.child('users/' + auth.uid + '/player').val() + '~') || $k.endsWith('~' + root.child('users/' + auth.uid + '/player').val()))",
+          "$m": {
+            ".write": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($k.beginsWith(root.child('users/' + auth.uid + '/player').val() + '~') || $k.endsWith('~' + root.child('users/' + auth.uid + '/player').val())) && ((!data.exists() && newData.child('by').val() === root.child('users/' + auth.uid + '/player').val() && newData.child('data').isString() && newData.child('data').val().length < 900000) || (data.exists() && !newData.exists() && data.child('by').val() === root.child('users/' + auth.uid + '/player').val()))"
+          }
+        }
+      },
+      "dmIdx": {
+        "$p": {
+          ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p",
+          "$k": {
+            ".write": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($k.beginsWith(root.child('users/' + auth.uid + '/player').val() + '~') || $k.endsWith('~' + root.child('users/' + auth.uid + '/player').val())) && ($k.beginsWith($p + '~') || $k.endsWith('~' + $p))"
+          }
         }
       }
     }

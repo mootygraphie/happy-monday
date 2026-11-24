@@ -212,10 +212,10 @@ def main():
                 targets = [to] if to in subs else []
             before = stats["envoyées"]
             print("Message de", q.get("by"), "→", q.get("to"), ":", q.get("title"))
-            results = [send(p, (q.get("title") or "Happy Monday")[:60], (q.get("body") or "")[:200], "./", f"msg-{qid}") for p in targets]
+            results = [send(p, (q.get("title") or "Happy Monday")[:60], (q.get("body") or "")[:200], f"./?nq={qid}", f"msg-{qid}") for p in targets]
             tries = (q.get("tries") or 0) + 1
             if not DRY and (any(results) or not targets or tries >= 6):  # réessaie aux passages suivants (6 fois max)
-                req(f"pushQueue/{qid}", "PATCH", {"sentAt": int(time.time() * 1000), "count": stats["envoyées"] - before})
+                req(f"pushQueue/{qid}", "PATCH", {"sentAt": int(time.time() * 1000), "count": stats["envoyées"] - before, "players": targets})
             elif not DRY:
                 req(f"pushQueue/{qid}", "PATCH", {"tries": tries})
     except Exception as e:
@@ -338,7 +338,8 @@ def main():
     block("Anniversaires", do_bday)
 
     # ── Le Vestiaire : nouveaux messages
-    block("Vestiaire", lambda: chat_push(subs, supers, sent, now_ms, send, allowed))
+    block("Vestiaire", lambda: chat_push(subs, supers, sent, now_ms, send, allowed, prefs))
+    block("Messagerie", lambda: dm_push(subs, supers, sent, now_ms, send, allowed))
 
     # ── propositions d'échange de vignettes reçues (une notification par proposition)
     def do_trades():
@@ -398,7 +399,7 @@ def main():
     print(stats)
 
 
-def chat_push(subs, supers, sent, now_ms, send, allowed=lambda p, k: True):
+def chat_push(subs, supers, sent, now_ms, send, allowed=lambda p, k: True, prefs=None):
     """Un push par salon et par personne, regroupant les messages arrivés depuis le dernier passage."""
     import re
     open_all = req("config/chatOpen") is True
@@ -430,7 +431,8 @@ def chat_push(subs, supers, sent, now_ms, send, allowed=lambda p, k: True):
             ment = [m for m in new if (not m.get("sys") and re.search("@" + re.escape(p) + r"(?![\wÀ-ÿ])", m.get("text") or "")) or (m.get("sys") == "bday" and m.get("who") == p)]
             tous = [m for m in new if not m.get("sys") and re.search(r"@tous(?![\wÀ-ÿ])", m.get("text") or "", re.I)]
             # cloche coupée sur ce salon, ou notifications du Vestiaire désactivées : seulement les mentions et @tous
-            if ((mutes.get(p) or {}).get(rid) or not allowed(p, "chat")) and not ment and not tous:
+            only_ment = ((prefs or {}).get(p) or {}).get("chatMentions") is True
+            if ((mutes.get(p) or {}).get(rid) or not allowed(p, "chat") or only_ment) and not ment and not tous:
                 mark_val(f"pushSent/chat/{p}/{rid}", top)
                 continue
             last = ment[-1] if ment else tous[-1] if tous else new[-1]
@@ -446,6 +448,35 @@ def chat_push(subs, supers, sent, now_ms, send, allowed=lambda p, k: True):
             print("Vestiaire :", p, rid, len(new), "mention" if ment else "")
             if send(p, title[:60], line[:180], f"./?n=chat&r={rid}", f"chat-{rid}"):
                 mark_val(f"pushSent/chat/{p}/{rid}", top)
+
+
+def dm_push(subs, supers, sent, now_ms, send, allowed=lambda p, k: True):
+    """Messagerie (messages privés) : un push par conversation et par destinataire."""
+    from urllib.parse import quote
+    open_all = req("config/chatOpen") is True
+    idx = req("chat/dmIdx") or {}
+    reads = req("chat/read") or {}
+    done = (sent.get("dm") or {})
+    window = now_ms - 2 * 3600 * 1000
+    for p, convs in idx.items():
+        if p not in subs or not isinstance(convs, dict) or not (open_all or supers.get(p) is True) or not allowed(p, "dm"):
+            continue
+        for k, c in convs.items():
+            if not isinstance(c, dict) or (c.get("at") or 0) <= window:
+                continue
+            seen = max(window, (done.get(p) or {}).get(k) or 0, (reads.get(p) or {}).get("dm:" + k) or 0)
+            if (c.get("at") or 0) <= seen:
+                continue
+            msgs = fetch(f"{DB}/chat/dm/{quote(k)}/msgs.json?orderBy=%22$key%22&limitToLast=20") or {}
+            new = [m for _, m in sorted(msgs.items()) if isinstance(m, dict) and (m.get("at") or 0) > seen and m.get("by") != p]
+            if not new:
+                continue
+            top = max(m.get("at") or 0 for m in new)
+            who = new[-1].get("by") or c.get("with") or "?"
+            title = f"💬 {who}" + (f" · {len(new)} messages" if len(new) > 1 else "")
+            print("Messagerie :", p, "←", who, len(new))
+            if send(p, title[:60], (new[-1].get("text") or "")[:180], f"./?n=chat&r={quote('dm:' + k)}", f"dm-{k}"):
+                mark_val(f"pushSent/dm/{p}/{k}", top)
 
 
 def recap_headline(date, ms):

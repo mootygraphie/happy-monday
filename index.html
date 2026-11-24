@@ -4278,6 +4278,109 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #chat .ch-btn:disabled { background: var(--bg3); color: var(--text3); cursor: default; }
   #chat .ch-del { border: 1px solid color-mix(in srgb, var(--bad) 45%, transparent); background: color-mix(in srgb, var(--bad) 9%, transparent); color: var(--bad); border-radius: 13px; padding: 11px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
   #chat .ch-note { font-size: 12px; color: var(--text3); margin: 0; text-align: center; line-height: 1.45; }
+  /* ── Le Vestiaire v2 (24/11) : toujours sombre, en-tête sobre, Salons / Messagerie, fonds d'écran ── */
+  #chat { --bg: #0e0e12; --bg2: #18181f; --bg3: #22222b; --text: #f2f2f4; --text2: #a3a3b0; --text3: #6c6c7a; --border: rgba(255,255,255,.08); --border2: rgba(255,255,255,.14); --gold: #ff3b30; --gold-bg: rgba(255,59,48,.14); --gold-border: rgba(255,59,48,.45); --ch-ok: #5fae86; --ch-live: #34c77b; color: var(--text); color-scheme: dark; }
+  #chat .ch-in { background: var(--bg); }
+  #chat svg { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  #chat .ch-top { flex: none; display: flex; align-items: center; gap: 10px; padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 10px; position: relative; z-index: 5; }
+  #chat .ch-top.room { border-bottom: 1px solid var(--border); background: rgba(14,14,18,.72); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  #chat .ch-top h2 { flex: 1; margin: 0; font-size: 25px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1; } #chat .ch-top h2 span { color: #ff3b30; } #chat .ch-top h2.sm { font-size: 17px; }
+  #chat .ch-ib { flex: none; height: 36px; min-width: 32px; display: grid; place-items: center; border: none; background: none; color: var(--text2); cursor: pointer; padding: 0; font: inherit; font-size: 14px; }
+  #chat .ch-ib svg { width: 22px; height: 22px; } #chat .ch-ib.sq { width: 36px; border-radius: 11px; background: var(--bg2); } #chat .ch-ib.sq svg { width: 19px; height: 19px; } #chat .ch-ib.ok { color: var(--ch-ok); } #chat .ch-ib.txt { color: var(--text2); padding-right: 4px; }
+  #chat .ch-top .ch-ti { flex: 1; min-width: 0; }
+  #chat .ch-top .ch-ti b { display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 800; font-style: italic; text-transform: uppercase; letter-spacing: 0; text-shadow: none; }
+  #chat .ch-top .ch-ti small { display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--text3); opacity: 1; }
+  #chat .ch-top .ch-ti small .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ch-live); flex: none; }
+  #chat .ch-rimg { width: 34px; height: 39px; object-fit: contain; flex: none; }
+  #chat .ch-remo.sm { width: 36px; height: 36px; border-radius: 11px; font-size: 18px; }
+  #chat .ch-tabs { flex: none; margin: 2px 12px 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 13px; background: var(--bg2); }
+  #chat .ch-tabs button { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 4px; border: none; border-radius: 10px; background: none; color: var(--text3); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  #chat .ch-tabs button[aria-selected="true"] { background: var(--bg3); color: var(--text); }
+  #chat .ch-tb { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #e30b0b; color: #fff; font-size: 10.5px; display: inline-grid; place-items: center; }
+  #chat .ch-search { flex: none; margin: 0 12px 6px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 12px; background: var(--bg2); color: var(--text3); }
+  #chat .ch-search svg { width: 16px; height: 16px; flex: none; }
+  #chat .ch-search input { flex: 1; min-width: 0; border: none; background: none; color: var(--text); font: inherit; font-size: 16px; padding: 9px 0; outline: none; }
+  #chat .ch-list { padding: 4px 8px calc(90px + env(safe-area-inset-bottom, 0px)); gap: 2px; }
+  #chat .ch-row { padding: 9px 8px; }
+  #chat .ch-row.hl { background: linear-gradient(90deg, rgba(227,11,11,.13), transparent 80%); }
+  #chat .ch-remo { width: 46px; height: 46px; border-radius: 15px; background: var(--bg2); border: none; }
+  #chat .ch-remo.gen { background: radial-gradient(120% 120% at 50% 0%, #3a0a0a, #18181f); }
+  #chat .ch-remo img { width: 34px; height: 38px; object-fit: contain; }
+  #chat .ch-pa { position: relative; flex: none; display: block; }
+  #chat .ch-row .ch-pa .acm-av { width: 46px; height: 46px; border-radius: 50%; }
+  #chat .ch-top .ch-pa .acm-av { width: 36px; height: 36px; border-radius: 50%; }
+  #chat .ch-pp .ch-pa .acm-av { width: 38px; height: 38px; border-radius: 50%; }
+  #chat .ch-pa.live::after { content: ""; position: absolute; right: -1px; bottom: -1px; width: 11px; height: 11px; border-radius: 50%; background: var(--ch-live); border: 2.5px solid var(--bg); }
+  #chat .ch-mute svg { width: 14px; height: 14px; color: var(--text3); }
+  #chat .ch-ub.at { background: #fff; color: #e30b0b; }
+  #chat .ch-tick { color: var(--text3); font-weight: 800; } #chat .ch-tick.ok { color: var(--ch-live); }
+  #chat .ch-fab { position: absolute; right: 16px; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); z-index: 6; width: 54px; height: 54px; border-radius: 16px; border: none; background: #e30b0b; color: #fff; display: grid; place-items: center; cursor: pointer; }
+  #chat .ch-fab svg { width: 23px; height: 23px; stroke-width: 2.4; }
+  #chat .ch-sec { padding: 12px 8px 4px; }
+  #chat .ch-pp { display: flex; align-items: center; gap: 11px; width: 100%; padding: 7px 8px; border: none; background: none; color: var(--text); font: inherit; text-align: left; cursor: pointer; border-radius: 12px; }
+  #chat .ch-pp b { flex: 1; font-size: 14.5px; } #chat .ch-pp small.on { font-size: 11.5px; color: var(--ch-live); }
+  #chat .ch-set { padding-bottom: 30px; }
+  #chat .ch-wps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 4px; }
+  #chat .ch-wp { display: flex; flex-direction: column; align-items: center; gap: 5px; border: none; background: none; color: var(--text2); font: inherit; font-size: 11px; cursor: pointer; padding: 0; line-height: 1.2; }
+  #chat .ch-wp small { font-size: 9.5px; color: var(--text3); }
+  #chat .ch-wp .th { position: relative; width: 100%; height: 104px; border-radius: 12px; overflow: hidden; border: 2px solid var(--border); display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 0 6px; }
+  #chat .ch-wp.on { color: var(--text); font-weight: 700; } #chat .ch-wp.on .th { border-color: #ff3b30; }
+  #chat .ch-wp .th i { display: block; height: 9px; border-radius: 5px; background: rgba(36,36,46,.95); width: 70%; position: relative; z-index: 1; } #chat .ch-wp .th i.r { align-self: flex-end; width: 55%; background: #d40a0a; }
+  #chat .ch-wp .ck { position: absolute; top: 4px; right: 4px; z-index: 2; width: 17px; height: 17px; border-radius: 50%; background: #ff3b30; color: #fff; font-size: 10px; font-weight: 900; display: grid; place-items: center; }
+  #chat .ch-grp { margin: 0 4px; border-radius: 14px; background: var(--bg2); overflow: hidden; }
+  #chat .ch-it { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border: none; border-bottom: 1px solid var(--border); background: none; color: var(--text); font: inherit; font-size: 14px; text-align: left; cursor: pointer; }
+  #chat .ch-it:last-child { border-bottom: none; } #chat .ch-it .tx { flex: 1; min-width: 0; } #chat .ch-it small { display: block; font-size: 11.5px; color: var(--text3); }
+  #chat .ch-swi { width: 42px; height: 25px; border-radius: 13px; background: var(--bg3); position: relative; flex: none; transition: background .2s; }
+  #chat .ch-swi::after { content: ""; position: absolute; top: 3px; left: 3px; width: 19px; height: 19px; border-radius: 50%; background: #8a8a97; transition: left .2s, background .2s; }
+  #chat .ch-it[aria-pressed="true"] .ch-swi { background: var(--ch-ok); } #chat .ch-it[aria-pressed="true"] .ch-swi::after { left: 20px; background: #fff; }
+  /* fonds d'écran (conversation + vignettes des réglages) */
+  #chat .wp-pat { background: url(icons/chat-motif.png) 0 0 / 62px 62px repeat, #0a0a0d; }
+  #chat .wp-ecu { background: #0e0e12; } #chat .wp-mai { background: #0e0e12; } #chat .wp-none { background: #0e0e12; }
+  #chat .ch-in.wp-ecu::before, #chat .ch-wp .th.wp-ecu::before { content: ""; position: absolute; inset: 0; background: url(icons/ecusson-flat.png) center 44% / 78% no-repeat, radial-gradient(90% 55% at 50% 44%, #4a0606, #0e0e12 75%); opacity: .4; pointer-events: none; }
+  #chat .ch-in.wp-mai::before, #chat .ch-wp .th.wp-mai::before { content: ""; position: absolute; inset: 0; background: url(icons/chat-maillots.jpg) center 30% / cover no-repeat; opacity: .4; pointer-events: none; }
+  #chat .ch-in.wp-ecu::after, #chat .ch-in.wp-mai::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(14,14,18,.5), transparent 28%, transparent 68%, #0e0e12); pointer-events: none; }
+  #chat .ch-in[class*="wp-"] > * { position: relative; z-index: 1; }
+  #chat .ch-in[class*="wp-"] > .ch-sheet { position: absolute; z-index: 40; }
+  /* fil */
+  #chat .ch-feed { gap: 2px; padding: 10px 10px 6px; }
+  #chat .ch-msg { gap: 7px; max-width: 86%; margin-top: 1px; }
+  #chat .ch-msg:not(.cont) { margin-top: 6px; }
+  #chat .ch-msg .acm-av, #chat .ch-avsp { width: 28px; height: 28px; flex: none; }
+  #chat .ch-bub { background: rgba(28,28,36,.92); border: none; border-radius: 18px; padding: 7px 11px 6px; font-size: 14.5px; }
+  #chat .ch-msg:not(.me).cont .ch-bub { border-top-left-radius: 6px; } #chat .ch-msg:not(.me):not(.last) .ch-bub { border-bottom-left-radius: 6px; }
+  #chat .ch-msg.me .ch-bub { background: linear-gradient(160deg, #f0241a, #c90606); border-radius: 18px; }
+  #chat .ch-msg.me.cont .ch-bub { border-top-right-radius: 6px; } #chat .ch-msg.me:not(.last) .ch-bub { border-bottom-right-radius: 6px; }
+  #chat .ch-bub .tm { opacity: .55; }
+  #chat .ch-reacts { margin-top: -4px; position: relative; z-index: 1; } #chat .ch-msg:not(.me) .ch-reacts { margin-left: 4px; }
+  #chat .ch-reacts button { border: 2px solid var(--bg); background: var(--bg3); border-radius: 10px; padding: 0 6px; font-size: 11.5px; }
+  #chat .ch-reacts button[aria-pressed="true"] { background: #3a1517; border-color: var(--bg); }
+  #chat .ch-day { background: rgba(24,24,31,.85); border: none; }
+  #chat .ch-sys.open.card { align-self: stretch; max-width: none; display: flex; align-items: center; gap: 10px; text-align: left; border-radius: 16px; background: rgba(24,24,31,.95); border: 1px solid var(--border); padding: 11px 12px; color: var(--text2); }
+  #chat .ch-sys.open .si { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: rgba(95,174,134,.14); color: var(--ch-ok); flex: none; } #chat .ch-sys.open .si svg { width: 20px; height: 20px; }
+  #chat .ch-sys.open .st { flex: 1; min-width: 0; font-size: 13px; color: var(--text); font-weight: 600; }
+  #chat .ch-sys.open .go { margin: 0; flex: none; padding: 8px 12px; border-radius: 10px; background: #fff; color: #0e0e12; font-weight: 800; font-size: 12.5px; }
+  #chat .ch-priv { align-self: center; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text3); background: var(--bg2); border-radius: 10px; padding: 5px 10px; margin: 2px 0 6px; } #chat .ch-priv svg { width: 13px; height: 13px; }
+  #chat .ch-seen { align-self: flex-end; font-size: 10.5px; color: var(--text3); margin: 2px 4px 0 0; } #chat .ch-seen b { font-weight: 900; } #chat .ch-seen.ok { color: var(--ch-live); }
+  #chat .ch-typing { flex: none; min-height: 0; padding: 0 14px; font-size: 11.5px; color: var(--text3); display: flex; align-items: center; gap: 7px; }
+  #chat .ch-typing:not(:empty) { padding: 2px 14px 4px; }
+  #chat .ch-typing .dots { display: inline-flex; gap: 3px; padding: 6px 8px; border-radius: 10px; background: var(--bg2); }
+  #chat .ch-typing .dots i { width: 5px; height: 5px; border-radius: 50%; background: var(--text2); animation: chTp 1.2s infinite; } #chat .ch-typing .dots i:nth-child(2) { animation-delay: .15s; } #chat .ch-typing .dots i:nth-child(3) { animation-delay: .3s; }
+  @keyframes chTp { 0%, 60%, 100% { opacity: .3; transform: none; } 30% { opacity: 1; transform: translateY(-2px); } }
+  @media (prefers-reduced-motion: reduce) { #chat .ch-typing .dots i { animation: none; } }
+  /* barre de saisie */
+  #chat .ch-comp { background: linear-gradient(transparent, var(--bg) 35%); border-top: none; }
+  #chat .ch-rowc { align-items: flex-end; }
+  #chat .ch-add { width: 40px; height: 40px; border: none; background: var(--bg2); color: var(--text2); display: grid; place-items: center; transition: transform .2s, background .2s; }
+  #chat .ch-add svg { width: 20px; height: 20px; } #chat .ch-add.act { background: #e30b0b; color: #fff; transform: rotate(45deg); }
+  #chat .ch-rowc textarea { background: var(--bg2); border: 1px solid var(--border); }
+  #chat .ch-send { width: 40px; height: 40px; display: grid; place-items: center; } #chat .ch-send svg { width: 19px; height: 19px; stroke-width: 2.3; } #chat .ch-send.off { background: var(--bg2); color: var(--text3); }
+  #chat .ch-plus { display: flex; flex-direction: column; gap: 2px; padding: 6px 2px 2px; }
+  #chat .ch-plus button { display: flex; align-items: center; gap: 12px; border: none; background: none; color: var(--text); font: inherit; font-size: 14.5px; font-weight: 600; text-align: left; padding: 8px 4px; cursor: pointer; border-radius: 12px; }
+  #chat .ch-plus .oi { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--bg3); flex: none; } #chat .ch-plus .oi svg { width: 20px; height: 20px; }
+  #chat .ch-plus small { display: block; font-size: 11.5px; font-weight: 400; color: var(--text3); }
+  /* appui sur un message : fond flouté */
+  #chat .ch-sheet { background: rgba(5,5,8,.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  #chat .ch-sheet-in { background: var(--bg2); border: 1px solid var(--border); }
   #chat .ch-sw { display: flex; align-items: center; gap: 11px; border: 1px solid var(--border); background: var(--bg3); border-radius: 13px; padding: 11px 12px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; color: var(--text); }
   #chat .ch-sw .grow { flex: 1; min-width: 0; }
   #chat .ch-sw small { display: block; font-size: 11.5px; color: var(--text3); font-weight: 500; margin-top: 1px; }
@@ -4300,6 +4403,26 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   #push-compose .pc-send { border: none; border-radius: 12px; padding: 13px; font: inherit; font-size: 15px; font-weight: 700; background: #e30b0b; color: #fff; cursor: pointer; }
   #push-compose .pc-note { margin: 0; font-size: 12px; color: var(--text3); }
   #push-compose .pc-lbl { font-size: 12px; font-weight: 600; color: var(--text2); }
+  /* historique : lue (rouge) / pas encore lue (gris) */
+  #push-compose .pc-fl { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 4px; border-radius: 12px; background: var(--bg3); }
+  #push-compose .pc-fl button { border: none; background: none; border-radius: 9px; padding: 7px 2px; font: inherit; font-size: 12.5px; font-weight: 700; color: var(--text3); cursor: pointer; }
+  #push-compose .pc-fl button[aria-pressed="true"] { background: var(--bg2); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.25); }
+  #push-compose .pc-cards { display: flex; flex-direction: column; gap: 7px; }
+  #push-compose .pc-card { position: relative; display: flex; flex-direction: column; gap: 5px; text-align: left; border: none; border-radius: 14px; background: var(--bg3); padding: 9px 30px 10px 12px; font: inherit; color: var(--text); cursor: pointer; }
+  #push-compose .pc-card::after { content: "›"; position: absolute; right: 12px; top: 8px; color: var(--text3); font-size: 16px; }
+  #push-compose .pc-t { display: flex; align-items: baseline; gap: 8px; } #push-compose .pc-t b { flex: 1; min-width: 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } #push-compose .pc-t small { font-size: 11px; color: var(--text3); flex: none; }
+  #push-compose .pc-m2 { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--text3); }
+  #push-compose .pc-cat { font-size: 9.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; padding: 2px 6px; border-radius: 5px; background: var(--border2); color: var(--text2); }
+  #push-compose .pc-cat.club { background: rgba(255,59,48,.16); color: #ff6b5e; }
+  #push-compose .pc-bw { display: flex; align-items: center; gap: 10px; } #push-compose .pc-bw .pc-pc { flex: none; font-size: 11.5px; font-weight: 700; color: var(--text2); min-width: 78px; text-align: right; }
+  #push-compose .pc-bar { flex: 1; height: 6px; border-radius: 4px; background: var(--border2); overflow: hidden; } #push-compose .pc-bar i { display: block; height: 100%; background: #ff3b30; }
+  #push-compose .pc-hero { border-radius: 14px; background: var(--bg3); padding: 12px; } #push-compose .pc-hero b { font-size: 15px; } #push-compose .pc-hero p { margin: 3px 0 6px; font-size: 13px; color: var(--text2); white-space: pre-wrap; }
+  #push-compose .pc-hero .pc-m2 { margin-top: 3px; }
+  #push-compose .pc-sh { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); margin-top: 2px; }
+  #push-compose .pc-lst { border-radius: 12px; background: var(--bg3); padding: 2px 12px; }
+  #push-compose .pc-li { display: flex; align-items: center; gap: 9px; padding: 5px 0; font-size: 13px; border-bottom: 1px solid var(--border); } #push-compose .pc-li:last-child { border-bottom: none; }
+  #push-compose .pc-li b { flex: 1; font-weight: 600; } #push-compose .pc-li small { font-size: 11px; color: var(--text3); } #push-compose .pc-li.no { color: var(--text3); }
+  #push-compose .pc-li i { width: 7px; height: 7px; border-radius: 50%; background: var(--border2); flex: none; } #push-compose .pc-li i.r { background: #ff3b30; }
   #push-compose .pc-seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; background: var(--bg); border: 1px solid var(--border2); border-radius: 11px; padding: 3px; }
   #push-compose .pc-seg button { border: none; background: none; border-radius: 8px; padding: 8px 4px; font: inherit; font-size: 13px; font-weight: 600; color: var(--text3); cursor: pointer; }
   #push-compose .pc-seg button[aria-pressed="true"] { background: #e30b0b; color: #fff; }
@@ -4564,8 +4687,8 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li>👥 <b>Membres</b> : nouvelles icônes, qui est en ligne, notifications activées</li><li>🎽 <b>Vignettes</b> : nouvelle photo pour la carte Kit Vintage</li><li>👤 <b>Création de compte</b> plus fiable quand l'appli démarre lentement</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 09:46</footer>
+<template id="hm-news" data-date="24/11/2026" data-for="sa"><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 10:17</footer>
 
 <script>
 
@@ -17260,7 +17383,7 @@ function _svApply() {
     const saveRead = s => {
       try { localStorage.setItem(READ_KEY, JSON.stringify([...s].slice(-200))); } catch (e) {}
       const p = me(); if (!p || typeof _db === "undefined" || !_db) return;
-      const up = {}; s.forEach(k => { if (!srvRead[k] && /^[\w-]+$/.test(k)) up[k] = true; });
+      const up = {}; s.forEach(k => { if (!srvRead[k] && /^[\w-]+$/.test(k)) up[k] = Date.now(); }); // heure de lecture (historique des envois)
       if (Object.keys(up).length) { Object.assign(srvRead, up); _db.ref(`notifRead/${p}`).update(up).catch(() => {}); }
     };
     function syncSrv() {
@@ -17268,6 +17391,8 @@ function _svApply() {
       if (p === srvP || typeof _db === "undefined" || !_db) return;
       if (srvOff) srvOff(); if (qOff) qOff(); srvOff = qOff = null; srvRead = {}; clubQ = {}; srvLoaded = qLoaded = false; srvP = p;
       if (!p) return;
+      // notification touchée sur le téléphone (lien ?nq={id}) : comptée comme lue
+      try { const nq = new URLSearchParams(location.search).get("nq"); if (nq && /^[\w-]+$/.test(nq)) { const k = "club-" + nq, s = readSet(); s.add(k); saveRead(s); history.replaceState(null, "", location.pathname + location.hash); } } catch (e) {}
       const r = _db.ref(`notifRead/${p}`), h = r.on("value", sn => { srvRead = sn.val() || {}; srvLoaded = true; light(); maybePop(); }, () => { srvLoaded = true; });
       srvOff = () => r.off("value", h);
       const q = _db.ref("pushQueue").limitToLast(40), h2 = q.on("value", sn => { clubQ = sn.val() || {}; qLoaded = true; light(); maybePop(); }, () => { qLoaded = true; });
@@ -17598,10 +17723,28 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
           <p class="pc-note">Envoi dans les 10 minutes environ.</p>
           <button type="button" class="pc-histlink" data-pc="hist">Historique des envois ›</button>`;
       }
-      function histView(L) {
+      // Historique : catégorie, expéditeur, lecture (notifRead/{joueur}/club-{id}, lue sur la notif ou dans l'appli)
+      const catOf = q => q.to === q.by ? "test" : q.to === "__all" ? "club" : "cib";
+      const CATL = { club: "Infos club", cib: "Ciblée", test: "Test" };
+      const recips = q => { let L = Array.isArray(q.players) ? q.players : q.to === "__all" ? st.subs : Array.isArray(q.to) ? q.to : q.to && typeof q.to === "object" ? Object.values(q.to) : [q.to]; L = [...new Set(L.filter(Boolean))]; return catOf(q) === "test" ? L : L.filter(n => n !== q.by); };
+      const readAt = (n, id) => ((st.reads || {})[n] || {})["club-" + id];
+      const barH = (r, tot) => `<div class="pc-bw"><div class="pc-bar"><i style="width:${tot ? r / tot * 100 : 0}%"></i></div><span class="pc-pc">${r}/${tot} · ${tot ? Math.round(r / tot * 100) : 0} %</span></div>`;
+      function histView() {
+        const L = (st.hist || []).filter(q => st.cat === "all" || catOf(q) === st.cat);
         inn.innerHTML = `<div class="pc-h"><button type="button" class="pc-back" data-pc="back" aria-label="Retour">‹</button><b>Historique des envois</b><button type="button" class="pc-x" aria-label="Fermer">✕</button></div>
-          <div class="pc-hlist">${L.map(q => `<div class="pc-hi"><div class="pc-hi-t"><b>${esc(q.title || "Happy Monday")}</b><small>${when(q.at)}</small></div>
-            <p>${esc(q.body || "")}</p><div class="pc-hi-m"><span>De ${esc(q.by || "?")} → ${esc(toLabel(q.to))}</span><span class="${q.sentAt && !q.refused ? "ok" : ""}">${status(q)}</span></div></div>`).join("") || `<p class="pc-note">Aucune notification envoyée pour l'instant.</p>`}</div>`;
+          <div class="pc-fl">${[["all", "Tout"], ["club", "Club"], ["cib", "Ciblées"], ["test", "Tests"]].map(([k, l]) => `<button type="button" data-pc="cat" data-c="${k}" aria-pressed="${st.cat === k}">${l}</button>`).join("")}</div>
+          <div class="pc-cards">${L.map(q => { const R = recips(q), n = R.filter(x => readAt(x, q.id)).length, c = catOf(q);
+            return `<button type="button" class="pc-card" data-pc="detail" data-id="${esc(q.id)}"><span class="pc-t"><b>${esc(q.title || "Happy Monday")}</b><small>${when(q.at)}</small></span><span class="pc-m2"><span class="pc-cat ${c}">${CATL[c]}</span><span>par ${esc(q.by || "?")}</span></span>${q.refused ? `<span class="pc-m2">refusée</span>` : !q.sentAt ? `<span class="pc-m2">⏳ en attente d'envoi</span>` : barH(n, R.length)}</button>`; }).join("") || `<p class="pc-note">Aucune notification dans cette catégorie.</p>`}</div>`;
+      }
+      function detailView(id) {
+        const q = (st.hist || []).find(x => x.id === id); if (!q) return histView();
+        const R = recips(q), rd = R.filter(x => readAt(x, q.id)).sort((a, b) => (+readAt(a, q.id) || 0) - (+readAt(b, q.id) || 0)), no = R.filter(x => !readAt(x, q.id)).sort((a, b) => a.localeCompare(b, "fr")), c = catOf(q);
+        const tm = v => typeof v === "number" ? new Date(v).toLocaleTimeString("fr", { hour: "2-digit", minute: "2-digit" }) : "";
+        inn.innerHTML = `<div class="pc-h"><button type="button" class="pc-back" data-pc="histBack" aria-label="Retour">‹</button><b>Détail</b><button type="button" class="pc-x" aria-label="Fermer">✕</button></div>
+          <div class="pc-hero"><b>${esc(q.title || "Happy Monday")}</b><p>${esc(q.body || "")}</p><div class="pc-m2"><span class="pc-cat ${c}">${CATL[c]}</span><span>par ${esc(q.by || "?")} · ${when(q.at)}</span></div><div class="pc-m2">À : ${q.to === "__all" ? `tous les abonnés (${R.length})` : esc(R.join(", "))}${q.count != null ? ` · ${q.count} appareil${q.count > 1 ? "s" : ""}` : ""}</div></div>
+          ${barH(rd.length, R.length)}
+          <div class="pc-sh">Lue · ${rd.length}</div><div class="pc-lst">${rd.map(n => `<div class="pc-li"><i class="r"></i><b>${esc(n)}</b><small>${tm(readAt(n, q.id))}</small></div>`).join("") || `<div class="pc-li no">Personne pour l'instant</div>`}</div>
+          <div class="pc-sh">Pas encore lue · ${no.length}</div><div class="pc-lst">${no.map(n => `<div class="pc-li no"><i></i><b>${esc(n)}</b></div>`).join("") || `<div class="pc-li no">Tout le monde l'a lue 🎉</div>`}</div>`;
       }
       formView();
       _db.ref("pushSubs").once("value").then(snap => { st.subs = Object.keys(snap.val() || {}).sort((a, b) => a.localeCompare(b, "fr")); if (inn.querySelector("#pc-title")) formView(); }).catch(() => {});
@@ -17618,9 +17761,16 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         if (a === "mode") { keepForm(); st.mode = t.dataset.m; formView(); return; }
         if (a === "pick") { keepForm(); const n = t.dataset.n; st.picked.has(n) ? st.picked.delete(n) : st.picked.add(n); formView(); return; }
         if (a === "back") { formView(); return; }
+        if (a === "cat") { st.cat = t.dataset.c; histView(); return; }
+        if (a === "detail") { detailView(t.dataset.id); return; }
+        if (a === "histBack") { histView(); return; }
         if (a === "hist") {
           keepForm(); inn.innerHTML = `<p class="pc-note">Chargement…</p>`;
-          try { const snap = await _db.ref("pushQueue").once("value"); histView(Object.values(snap.val() || {}).sort((x, y) => (y.at || 0) - (x.at || 0))); }
+          try {
+            const [snap, rs] = await Promise.all([_db.ref("pushQueue").once("value"), _db.ref("notifRead").once("value").catch(() => null)]);
+            st.reads = rs ? rs.val() || {} : {}; st.cat = st.cat || "all";
+            st.hist = Object.entries(snap.val() || {}).map(([id, q]) => Object.assign({ id }, q)).sort((x, y) => (y.at || 0) - (x.at || 0)); histView();
+          }
           catch (er) { inn.innerHTML = `<p class="pc-note">Historique indisponible. Vérifie ta connexion.</p><button type="button" class="pc-histlink" data-pc="back">‹ Retour</button>`; }
           return;
         }
@@ -17750,6 +17900,24 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   const IC_BELL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5a6 6 0 0 1 12 0c0 4.5 2 6 2 6H4s2-1.5 2-6"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>';
   const IC_BELLOFF = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5a6 6 0 0 1 12 0c0 4.5 2 6 2 6H4s2-1.5 2-6"/><path d="M10 19a2 2 0 0 0 4 0"/><path d="M3 3l18 18"/></svg>';
   const IC_GEAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>';
+  const IC = {
+    back: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+    dots: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+    pen: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
+    search: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
+    cam: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13.2" r="3.4"/></svg>',
+    gal: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="M20.5 16l-5-5-8.5 8.5"/></svg>',
+    send: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>',
+    vote: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+    lock: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>',
+  };
+  const ECU = "icons/ecusson-flat-s.png";
+  const NCOL = ["#7fb2ff", "#ffb067", "#ff8a80", "#7ed6a5", "#c9a3ff", "#f7c873", "#6fd3e0", "#ff9fd0"];
+  const ncol = n => { let x = 0; for (const c of String(n || "")) x = (x * 31 + c.charCodeAt(0)) >>> 0; return NCOL[x % NCOL.length]; };
+  const norm = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const WPS = [["pat", "Motif"], ["ecu", "Écusson"], ["mai", "Maillots"], ["none", "Sans image"]];
+  const wp = () => { try { const w = localStorage.getItem("hm_chat_wp"); return WPS.some(x => x[0] === w) ? w : "pat"; } catch (e) { return "pat"; } };
   const $ = id => document.getElementById(id);
   const esc = x => String(x == null ? "" : x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   const me = () => (typeof _accPlayer === "function" ? _accPlayer() : null);
@@ -17762,7 +17930,17 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
 
   let openAll = false, cfgOn = false, who = null, subs = [], msgSubs = {}, roomsLoaded = false;
   let rooms = {}, msgs = {}, reads = null, mutes = {}, accounts = [];
-  const V = { open: false, room: null, sheet: null, form: null, drop: false, reply: null, sugg: null, draft: {}, seen: {}, pushed: false, selMode: false, sel: new Set() };
+  let dms = {}, online = {}, cprefs = {}, pprefs = {}, seenBy = {}, typing = {}, typOff = null, typAt = 0, srvOff = 0, onlineAt = 0;
+  const V = { open: false, room: null, sheet: null, form: null, drop: false, reply: null, sugg: null, draft: {}, seen: {}, pushed: false, pushed2: false, selMode: false, sel: new Set(), tab: "rooms", view: null, q: "", pq: "", plus: false };
+  // Messagerie : conversation à deux = « dm:{A~B} » (prénoms triés), messages dans chat/dm/{A~B}/msgs
+  const isDM = id => typeof id === "string" && id.startsWith("dm:");
+  const dmKey = (a, b) => [a, b].sort((x, y) => x < y ? -1 : x > y ? 1 : 0).join("~");
+  const dmOther = id => { const L = id.slice(3).split("~"); return L[0] === me() ? L[1] : L[0]; };
+  const mP = id => isDM(id) ? `chat/dm/${id.slice(3)}/msgs` : `chat/msgs/${id}`;
+  const iP = id => isDM(id) ? `chat/dmimg/${id.slice(3)}` : `chat/img/${id}`;
+  const tP = id => isDM(id) ? `chat/dm/${id.slice(3)}/typing` : `chat/typing/${id}`;
+  const sNow = () => Date.now() + srvOff;
+  const isOn = n => n && online[n] && sNow() - online[n] < 3 * 60000;
   let pending = null;
   try { const q = new URLSearchParams(location.search); if (q.get("n") === "chat") pending = q.get("r") || ""; } catch (e) {}
   const enabled = () => !!me() && (isSA() || openAll);
@@ -17773,29 +17951,37 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
 
   // ── données
   function on(path, cb) { const r = _db.ref(path); const h = r.on("value", s => cb(s.val()), e => console.warn("chat:", path, e)); subs.push(() => r.off("value", h)); }
-  function detach() { subs.forEach(f => f()); subs = []; Object.values(msgSubs).forEach(f => f()); msgSubs = {}; rooms = {}; msgs = {}; reads = null; mutes = {}; roomsLoaded = false; }
+  function detach() { subs.forEach(f => f()); subs = []; Object.values(msgSubs).forEach(f => f()); msgSubs = {}; rooms = {}; msgs = {}; reads = null; mutes = {}; roomsLoaded = false; dms = {}; online = {}; seenBy = {}; if (typOff) { typOff(); typOff = null; } }
   function attach(p) {
     on("chat/rooms", v => { rooms = v || {}; roomsLoaded = true; syncMsgs(); if (V.room && !R(V.room)) { V.room = null; V.form = null; V.sheet = null; } refresh(true); });
     on(`chat/read/${p}`, v => { reads = Object.assign(reads || {}, v || {}); if (!v || v._init == null) _db.ref(`chat/read/${p}/_init`).set(TS()).catch(() => {}); refresh(); });
     on(`chat/mute/${p}`, v => { mutes = v || {}; refresh(true); });
     on("playerAccounts", v => { accounts = Object.keys(v || {}).sort((a, b) => a.localeCompare(b, "fr")); });
+    on(`chat/dmIdx/${p}`, v => { dms = v || {}; syncMsgs(); refresh(); });
+    on("chat/online", v => { online = v || {}; const s = $("ch-sub"); if (s && V.room) s.innerHTML = subLine(R(V.room)); });
+    on(`chat/prefs/${p}`, v => { cprefs = v || {}; if (V.view === "settings") render(); });
+    on(`pushPrefs/${p}`, v => { pprefs = v || {}; if (V.view === "settings") render(); });
+    _db.ref(".info/serverTimeOffset").once("value").then(s => { srvOff = s.val() || 0; }).catch(() => {});
     syncMsgs();
   }
   function roomList() {
-    const p = me(), L = [Object.assign({}, rooms[GEN] || {}, { id: GEN, name: "Le Vestiaire", emo: "👕", gen: true })];
+    const p = me(), L = [Object.assign({}, rooms[GEN] || {}, { id: GEN, name: "Vestiaire général", emo: "👕", gen: true })];
     Object.entries(rooms).forEach(([id, r]) => { if (id !== GEN && r && r.name && r.members && r.members[p]) L.push(Object.assign({}, r, { id })); });
     return L;
   }
-  const R = id => roomList().find(r => r.id === id);
-  const membersOf = r => r.gen ? accounts : Object.keys(r.members || {}).sort((a, b) => a.localeCompare(b, "fr"));
+  const dmList = () => Object.entries(dms).filter(([k, c]) => c && c.with).map(([k, c]) => ({ id: "dm:" + k, dm: true, name: c.with, other: c.with, at: c.at || 0 }));
+  const R = id => { if (isDM(id)) { const L = id.slice(3).split("~"); if (L.length !== 2 || !L.includes(me())) return null; const o = dmOther(id); return { id, dm: true, name: o, other: o }; } return roomList().find(r => r.id === id); };
+  const membersOf = r => r.dm ? [me(), r.other] : r.gen ? accounts : Object.keys(r.members || {}).sort((a, b) => a.localeCompare(b, "fr"));
   function syncMsgs() {
-    const want = new Set(roomList().map(r => r.id));
+    const want = new Set([...roomList(), ...dmList()].map(r => r.id)); if (isDM(V.room)) want.add(V.room);
     Object.keys(msgSubs).forEach(id => { if (!want.has(id)) { msgSubs[id](); delete msgSubs[id]; delete msgs[id]; } });
     want.forEach(id => {
       if (msgSubs[id]) return;
-      const q = _db.ref(`chat/msgs/${id}`).limitToLast(200);
+      const q = _db.ref(mP(id)).limitToLast(200);
       const h = q.on("value", s => { const L = []; s.forEach(c => { const m = c.val(); if (m && typeof m === "object") L.push(Object.assign({ id: c.key }, m)); }); msgs[id] = L; onMsgs(id); }, e => console.warn("chat msgs:", e));
-      msgSubs[id] = () => q.off("value", h);
+      let off2 = null;
+      if (isDM(id)) { const sr = _db.ref(`chat/dm/${id.slice(3)}/seen`), h2 = sr.on("value", s => { seenBy[id] = s.val() || {}; if (V.open && V.room === id) renderFeed(); else if (V.open && !V.room) render(); }, () => {}); off2 = () => sr.off("value", h2); }
+      msgSubs[id] = () => { q.off("value", h); if (off2) off2(); };
     });
   }
   const lastRead = id => { const r = reads || {}; return r[id] != null ? r[id] : r._init != null ? r._init : Date.now(); };
@@ -17806,6 +17992,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const L = msgs[id] || [], last = L.length ? (L[L.length - 1].at || 0) : 0;
     if (!reads) reads = {};
     if (reads[id] == null || last > lastRead(id)) { reads[id] = Math.max(last, Date.now()); _db.ref(`chat/read/${me()}/${id}`).set(TS()).catch(() => {}); }
+    // ✓ vert chez l'autre (Messagerie), sauf si on a coupé les confirmations de lecture
+    if (isDM(id) && cprefs.receipts !== false && L.some(m => m.by !== me() && (m.at || 0) > (((seenBy[id] || {})[me()]) || 0))) _db.ref(`chat/dm/${id.slice(3)}/seen/${me()}`).set(TS()).catch(() => {});
   }
   const muted = id => !!mutes[id];
 
@@ -17829,6 +18017,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const m = lastMsg(id); if (!m) return "Pas encore de message";
     if (m.sys === "club") return "📣 " + (m.title ? m.title + " · " : "") + (m.text || "");
     if (m.sys) return m.text || "";
+    if (isDM(id) && m.by !== me()) return m.text || "";
     return (m.by === me() ? "Toi" : m.by) + " : " + (m.text || "");
   }
   function fmt(t, mine) {
@@ -17846,13 +18035,13 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     b.hidden = !on; document.body.classList.toggle("ch-on", on);
     if (!on) return;
     let n = 0, at = false;
-    roomList().forEach(r => { n += unreadL(r.id).length; at = at || atMe(r.id); });
+    [...roomList(), ...dmList()].forEach(r => { n += unreadL(r.id).length; at = at || atMe(r.id); });
     b.innerHTML = IC_CHAT + (n ? `<span class="bn-bd${at ? " at" : ""}">${at ? "@" : n > 99 ? "99+" : n}</span>` : "");
   }
   function refresh(full) {
     renderBtn();
     if (pending != null && who && roomsLoaded) { const r = pending; pending = null; try { history.replaceState(null, "", location.pathname + location.hash); } catch (e) {} openChat(r && R(r) ? r : null); return; }
-    if (V.open) full ? render() : (V.room ? renderFeed() : render());
+    if (V.open) full || !V.room ? (V.room || !V.view || V.view === "settings" ? render() : null) : renderFeed();
   }
   function onMsgs(id) {
     if (V.open && V.room === id) { markRead(id); if (!V.sheet && !V.form) renderFeed(); }
@@ -17861,34 +18050,71 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   }
 
   // ── écrans
-  function rowHTML(r, cur) {
+  const tickH = id => { const m = lastMsg(id); if (!m || m.by !== me() || !isDM(id)) return ""; const ok = ((seenBy[id] || {})[dmOther(id)] || 0) >= (m.at || 0); return `<span class="ch-tick${ok ? " ok" : ""}" title="${ok ? "Lu" : "Envoyé"}">✓</span> `; };
+  function rowHTML(r) {
     const n = unreadL(r.id).length, at = atMe(r.id), m = lastMsg(r.id);
-    return `<button type="button" class="ch-row${n ? " unr" : ""}" data-ch="enter" data-r="${r.id}"${cur ? ` aria-current="${r.id === cur}"` : ""}>
-      <span class="ch-remo${r.gen ? " gen" : ""}">${esc(r.emo || "💬")}</span>
+    const ico = r.dm ? `<span class="ch-pa${isOn(r.other) ? " live" : ""}">${av(r.other)}</span>` : `<span class="ch-remo${r.gen ? " gen" : ""}">${r.gen ? `<img src="${ECU}" alt="">` : esc(r.emo || "💬")}</span>`;
+    return `<button type="button" class="ch-row${n ? " unr" : ""}${r.gen ? " hl" : ""}" data-ch="enter" data-r="${esc(r.id)}">${ico}
       <span class="ch-mid"><span class="ch-l1"><b>${esc(r.name)}</b><time>${m ? shortWhen(m.at) : ""}</time></span>
-        <span class="ch-l2"><span>${esc(plain(lastLine(r.id)))}</span>${muted(r.id) ? `<span class="ch-mute" title="Notifications coupées">🔕</span>` : ""}${n ? `<span class="ch-ub${at ? " at" : ""}">${at ? "@" : n}</span>` : ""}</span></span></button>`;
+        <span class="ch-l2"><span>${tickH(r.id)}${esc(plain(lastLine(r.id)))}</span>${muted(r.id) ? `<span class="ch-mute" title="Notifications coupées">${IC_BELLOFF}</span>` : ""}${n ? `<span class="ch-ub${at ? " at" : ""}">${at ? "@" : n}</span>` : ""}</span></span></button>`;
   }
   const sorted = () => { const L = roomList(); const t = r => (lastMsg(r.id) || {}).at || r.at || 0; return [L[0], ...L.slice(1).sort((a, b) => t(b) - t(a))]; };
-  function listHTML() {
-    const L = sorted(), oth = L.slice(1);
-    return `<div class="ch-hdr"><button type="button" class="ch-hb" data-ch="close" aria-label="Fermer le Vestiaire">‹</button>
-      <span class="ch-ti"><b><span class="nm">Le Vestiaire</span></b><small>${L.length} salon${L.length > 1 ? "s" : ""}</small></span>
-      ${isSA() ? `<button type="button" class="ch-hb" data-ch="new" aria-label="Nouveau salon">＋</button>` : ""}</div>
-      <div class="ch-list">${rowHTML(L[0])}<div class="ch-sec">Mes salons</div>
-        ${oth.map(r => rowHTML(r)).join("") || `<p class="ch-note" style="text-align:left;padding:4px 8px">Aucun salon privé pour l'instant.</p>`}
-        ${isSA() ? `<button type="button" class="ch-new" data-ch="new">＋ Nouveau salon</button>` : ""}
-        ${!openAll ? `<p class="ch-beta">Version d'essai : visible des super admins uniquement.</p>` : ""}</div>`;
+  const sortedDM = () => { const t = r => (lastMsg(r.id) || {}).at || r.at || 0; return dmList().sort((a, b) => t(b) - t(a)); };
+  const tabN = L => { let n = 0; L.forEach(r => { n += unreadL(r.id).length; }); return n; };
+  function searchHTML() {
+    const q = norm(V.q.trim()); if (q.length < 2) return "";
+    const hits = [];
+    [...roomList(), ...dmList()].forEach(r => (msgs[r.id] || []).forEach(m => { if (!m.sys && norm(m.text).includes(q)) hits.push({ r, m }); }));
+    hits.sort((a, b) => (b.m.at || 0) - (a.m.at || 0));
+    return hits.slice(0, 40).map(({ r, m }) => `<button type="button" class="ch-row ch-hit" data-ch="hit" data-r="${esc(r.id)}" data-m="${esc(m.id)}"><span class="ch-mid"><span class="ch-l1"><b>${esc(r.name)}</b><time>${shortWhen(m.at)}</time></span><span class="ch-l2"><span>${esc(m.by === me() ? "Toi" : m.by)} : ${esc(plain(m.text))}</span></span></span></button>`).join("") || `<p class="ch-empty">Aucun message trouvé.</p>`;
   }
-  function others(id) { let n = 0, at = false; roomList().forEach(r => { if (r.id !== id) { n += unreadL(r.id).length; at = at || atMe(r.id); } }); return { n, at }; }
+  function listHTML() {
+    const L = sorted(), D = sortedDM(), tab = V.tab, nR = tabN(L), nD = tabN(D);
+    const q = norm(V.q.trim());
+    let body;
+    if (tab === "rooms") body = q.length >= 2 ? searchHTML() : L.map(r => rowHTML(r)).join("") + (!openAll ? `<p class="ch-beta">Version d'essai : visible des super admins uniquement.</p>` : "");
+    else { const F = q ? D.filter(r => norm(r.name).includes(q)) : D; body = F.map(r => rowHTML(r)).join("") || `<p class="ch-empty">${q ? "Personne à ce nom." : "Pas encore de message privé.<br>Touche ✎ pour écrire à un joueur."}</p>`; }
+    return `<div class="ch-top"><button type="button" class="ch-ib" data-ch="close" aria-label="Fermer le Vestiaire">${IC.back}</button><h2>Le <span>Vestiaire</span></h2><button type="button" class="ch-ib sq" data-ch="settingsView" aria-label="Réglages du Vestiaire">${IC.dots}</button></div>
+      <div class="ch-tabs" role="tablist"><button type="button" role="tab" data-ch="tab" data-t="rooms" aria-selected="${tab === "rooms"}">Salons${nR ? `<span class="ch-tb">${nR}</span>` : ""}</button><button type="button" role="tab" data-ch="tab" data-t="dm" aria-selected="${tab === "dm"}">Messagerie${nD ? `<span class="ch-tb">${nD}</span>` : ""}</button></div>
+      <label class="ch-search">${IC.search}<input id="ch-q" type="search" autocomplete="off" placeholder="${tab === "rooms" ? "Rechercher un message" : "Rechercher une personne"}" value="${esc(V.q)}"></label>
+      <div class="ch-list">${body}</div>
+      ${tab === "rooms" ? (isSA() ? `<button type="button" class="ch-fab" data-ch="new" aria-label="Nouveau salon">${IC.plus}</button>` : "") : `<button type="button" class="ch-fab" data-ch="pickView" aria-label="Nouveau message">${IC.pen}</button>`}`;
+  }
+  function settingsHTML() {
+    const sw = (a, k, on, t, s) => `<button type="button" class="ch-it" data-ch="${a}" data-k="${k}" aria-pressed="${on}"><span class="tx">${t}${s ? `<small>${s}</small>` : ""}</span><i class="ch-swi"></i></button>`;
+    const w = wp();
+    return `<div class="ch-top"><button type="button" class="ch-ib" data-ch="viewBack" aria-label="Retour">${IC.back}</button><h2 class="sm">Réglages</h2></div>
+      <div class="ch-list ch-set"><div class="ch-sec">Fond d'écran</div>
+      <div class="ch-wps">${WPS.map(([k, l]) => `<button type="button" class="ch-wp${w === k ? " on" : ""}" data-ch="wp" data-w="${k}" aria-pressed="${w === k}"><span class="th wp-${k}">${w === k ? `<span class="ck">✓</span>` : ""}<i></i><i class="r"></i><i></i></span>${l}${k === "pat" ? `<small>par défaut</small>` : ""}</button>`).join("")}</div>
+      <div class="ch-sec">Notifications</div>
+      <div class="ch-grp">${sw("npref", "chat", pprefs.chat !== false, "Salons", "Tous les messages")}${sw("npref", "dm", pprefs.dm !== false, "Messagerie", "Messages privés")}${sw("npref", "chatMentions", pprefs.chatMentions === true, "Seulement les @mentions", "Dans les salons : @toi et @tous")}</div>
+      <div class="ch-sec">Confidentialité</div>
+      <div class="ch-grp">${sw("cpref", "receipts", cprefs.receipts !== false, "Confirmations de lecture", "Les autres voient le ✓ vert quand tu as lu")}${sw("cpref", "online", cprefs.online !== false, "Montrer quand je suis en ligne")}</div></div>`;
+  }
+  function pickHTML() {
+    const q = norm(V.pq.trim()), L = accounts.filter(n => n !== me() && (!q || norm(n).includes(q)));
+    const on = L.filter(isOn), off = L.filter(n => !isOn(n));
+    const row = n => `<button type="button" class="ch-pp" data-ch="dmGo" data-p="${esc(n)}"><span class="ch-pa${isOn(n) ? " live" : ""}">${av(n)}</span><b>${esc(n)}</b>${isOn(n) ? `<small class="on">en ligne</small>` : ""}</button>`;
+    return `<div class="ch-top"><button type="button" class="ch-ib txt" data-ch="viewBack">Annuler</button><h2 class="sm">Nouveau message</h2></div>
+      <label class="ch-search">${IC.search}<input id="ch-pq" type="search" autocomplete="off" placeholder="Rechercher un joueur" value="${esc(V.pq)}"></label>
+      <div class="ch-list">${on.length ? `<div class="ch-sec">En ligne</div>${on.map(row).join("")}` : ""}<div class="ch-sec">Tous les joueurs</div>${off.map(row).join("") || `<p class="ch-empty">Personne.</p>`}<p class="ch-note">Seuls les joueurs qui ont un compte peuvent recevoir un message.</p></div>`;
+  }
+  function others(id) { let n = 0, at = false; [...roomList(), ...dmList()].forEach(r => { if (r.id !== id) { n += unreadL(r.id).length; at = at || atMe(r.id); } }); return { n, at }; }
   function obHTML(id) { const o = others(id); return o.n ? `<span class="ch-ob${o.at ? " at" : ""}">${o.at ? "@" : o.n}</span>` : ""; }
+  function subLine(r) {
+    if (!r) return "";
+    if (r.dm) return isOn(r.other) ? `<i class="dot"></i>en ligne` : "";
+    const M = membersOf(r), n = M.filter(isOn).length;
+    return `${n ? `<i class="dot"></i>` : ""}${M.length} membre${M.length > 1 ? "s" : ""}${n ? ` · ${n} en ligne` : ""}`;
+  }
   function roomHTML() {
-    const r = R(V.room), p = me(), mem = r.gen ? `Tout le club` : `🔒 ${Object.keys(r.members || {}).length} membres`;
-    const right = isSA() ? `<button type="button" class="ch-hb" data-ch="settings" aria-label="Paramètres du salon">${IC_GEAR}</button>`
-      : `<button type="button" class="ch-hb${muted(r.id) ? " off" : ""}" data-ch="mute" aria-label="${muted(r.id) ? "Réactiver les notifications" : "Couper les notifications"}">${muted(r.id) ? IC_BELLOFF : IC_BELL}</button>`;
-    return `<div class="ch-hdr"><button type="button" class="ch-hb" data-ch="list" aria-label="Retour aux salons">‹</button>
-      <button type="button" class="ch-ti" data-ch="drop" aria-expanded="${V.drop}" aria-label="Changer de salon"><b>${esc(r.emo || "💬")} <span class="nm">${esc(r.name)}</span><svg class="car" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span id="ch-ob">${obHTML(r.id)}</span></b><small>${mem}${muted(r.id) ? " · 🔕 notifications coupées" : ""}</small></button>${right}</div>
-      ${V.drop ? `<div class="ch-scrim" data-ch="drop"></div><div class="ch-drop">${sorted().map(x => rowHTML(x, r.id)).join("")}</div>` : ""}
-      <div id="ch-pin"></div><div class="ch-feed" id="ch-feed"></div>
+    const r = R(V.room);
+    const ico = r.dm ? `<span class="ch-pa${isOn(r.other) ? " live" : ""}">${av(r.other)}</span>` : r.gen ? `<img class="ch-rimg" src="${ECU}" alt="">` : `<span class="ch-remo sm">${esc(r.emo || "💬")}</span>`;
+    const bell = `<button type="button" class="ch-ib sq${muted(r.id) ? "" : " ok"}" data-ch="mute" aria-label="${muted(r.id) ? "Réactiver les notifications" : "Couper les notifications"}">${muted(r.id) ? IC_BELLOFF : IC_BELL}</button>`;
+    const gear = isSA() && !r.dm ? `<button type="button" class="ch-ib sq" data-ch="settings" aria-label="Paramètres du salon">${IC_GEAR}</button>` : "";
+    return `<div class="ch-top room"><button type="button" class="ch-ib" data-ch="list" aria-label="Retour">${IC.back}</button>${ico}
+      <span class="ch-ti"><b><span class="nm">${esc(r.name)}</span><span id="ch-ob">${obHTML(r.id)}</span></b><small id="ch-sub">${subLine(r)}</small></span>${bell}${gear}</div>
+      <div id="ch-pin"></div><div class="ch-feed" id="ch-feed"></div><div id="ch-typing" class="ch-typing"></div>
       <div class="ch-comp" id="ch-comp">${compHTML()}</div>`;
   }
   function compHTML() {
@@ -17900,24 +18126,28 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const PH = V.photos || [];
     if (PH.length || V.photoBusy) h += `<div class="ch-photos"><div class="ch-thumbs">${PH.map((x, i) => `<span><img src="${x.data}" alt=""><button type="button" data-ch="photoDel" data-i="${i}" aria-label="Retirer la photo ${i + 1}">✕</button></span>`).join("")}${V.photoBusy ? `<span class="busy">…</span>` : ""}</div>
       <div class="ch-pinfo"><b>📷 ${PH.length} photo${PH.length > 1 ? "s" : ""}</b> · ${Math.round(PH.reduce((a, x) => a + x.size, 0) / 1024)} Ko${PH.length < 10 ? ` · <button type="button" data-ch="photo">+ Ajouter</button>` : " · 10 maximum"}<button type="button" class="x" data-ch="photoCancel" aria-label="Retirer toutes les photos">Tout retirer</button></div></div>`;
-    h += `<div class="ch-rowc"><button type="button" class="ch-add" data-ch="photo" aria-label="Ajouter une photo">📷</button><input type="file" id="ch-file" accept="image/*" multiple hidden><textarea id="ch-tx" rows="1" maxlength="1000" placeholder="Message dans ${esc(r.gen ? "le Vestiaire" : r.name)}…">${esc(V.draft[V.room] || "")}</textarea><button type="button" class="ch-send" data-ch="send" aria-label="Envoyer">➤</button></div>`;
+    const has = !!(V.draft[V.room] || "").trim() || PH.length;
+    h += `<div class="ch-rowc"><button type="button" class="ch-add${V.plus ? " act" : ""}" data-ch="plus" aria-label="Ajouter une photo" aria-expanded="${V.plus}">${IC.plus}</button><input type="file" id="ch-file" accept="image/*" multiple hidden><input type="file" id="ch-cam" accept="image/*" capture="environment" hidden><textarea id="ch-tx" rows="1" maxlength="1000" placeholder="${r.dm ? "Message à " + esc(r.other) : "Message"}">${esc(V.draft[V.room] || "")}</textarea><button type="button" class="ch-send${has ? "" : " off"}" data-ch="send" aria-label="Envoyer">${IC.send}</button></div>`;
+    if (V.plus) h += `<div class="ch-plus"><button type="button" data-ch="cam"><span class="oi">${IC.cam}</span><span>Prendre une photo<small>Ouvre l'appareil photo</small></span></button><button type="button" data-ch="gal"><span class="oi">${IC.gal}</span><span>Choisir dans la galerie<small>Jusqu'à 10 photos d'un coup</small></span></button></div>`;
     return h;
   }
-  function msgHTML(m, p) {
-    if (V.selMode) { const h = msgHTML0(m, p), on = V.sel.has(m.id);
+  function msgHTML(m, p, g) {
+    if (V.selMode) { const h = msgHTML0(m, p, g), on = V.sel.has(m.id);
       return `<div class="ch-selrow${on ? " on" : ""}" data-ch="selMsg" data-id="${m.id}"><span class="ch-ck" aria-hidden="true">${on ? "✓" : ""}</span>${h}</div>`; }
-    return msgHTML0(m, p);
+    return msgHTML0(m, p, g);
   }
-  function msgHTML0(m, p) {
+  function msgHTML0(m, p, g) {
+    g = g || { first: true, last: true };
     if (m.sys) {
       const ic = m.sys === "open" ? "🗓️ " : m.sys === "close" ? "🔒 " : "";
       if (m.sys === "club") return `<div class="ch-sys club" data-id="${m.id}"><b>📣 Infos Club${m.title && m.title !== "Happy Monday" ? " · " + esc(m.title) : ""}</b><br>${fmt(m.text)}</div>`;
-      return `<div class="ch-sys ${esc(m.sys)}" data-id="${m.id}">${ic}${esc(m.text)}${m.sys === "open" ? `<br><button type="button" class="go" data-ch="vote">Répondre au sondage ›</button>` : ""}</div>`;
+      if (m.sys === "open") return `<div class="ch-sys open card" data-id="${m.id}"><span class="si">${IC.vote}</span><span class="st">${esc(m.text)}</span><button type="button" class="go" data-ch="vote">Voter</button></div>`;
+      return `<div class="ch-sys ${esc(m.sys)}" data-id="${m.id}">${ic}${esc(m.text)}</div>`;
     }
     const mine = m.by === p, r = R(V.room), q = m.reply;
     const reacts = Object.entries(m.reacts || {}).map(([e, o]) => [e, Object.keys(o || {})]).filter(([, l]) => l.length);
-    return `<div class="ch-msg${mine ? " me" : ""}" data-id="${m.id}"><span class="ch-swipe">↩️</span>${av(m.by)}
-      <div><div class="ch-bub" data-ch="sheet" data-id="${m.id}">${mine ? "" : `<span class="who">${esc(m.by)}</span>`}${q ? `<div class="ch-quote" data-ch="goto" data-to="${esc(q.id)}"><b>${esc(q.by || "Infos Club")}</b>${esc(plain(q.text))}</div>` : ""}${m.img ? `<span class="ch-img" data-ch="img" data-id="${m.id}" style="aspect-ratio:${+m.img.w || 4} / ${+m.img.h || 3}"><img alt="Photo"${IMGS[m.id] ? ` src="${IMGS[m.id]}"` : ""}></span>` : ""}${Array.isArray(m.imgs) ? (m.imgs.length === 1
+    return `<div class="ch-msg${mine ? " me" : ""}${g.first ? "" : " cont"}${g.last ? " last" : ""}" data-id="${m.id}"><span class="ch-swipe">↩️</span>${mine ? "" : g.last ? av(m.by) : `<span class="ch-avsp"></span>`}
+      <div><div class="ch-bub" data-ch="sheet" data-id="${m.id}">${mine || !g.first || (r && r.dm) ? "" : `<span class="who" style="color:${ncol(m.by)}">${esc(m.by)}</span>`}${q ? `<div class="ch-quote" data-ch="goto" data-to="${esc(q.id)}"><b>${esc(q.by || "Infos Club")}</b>${esc(plain(q.text))}</div>` : ""}${m.img ? `<span class="ch-img" data-ch="img" data-id="${m.id}" style="aspect-ratio:${+m.img.w || 4} / ${+m.img.h || 3}"><img alt="Photo"${IMGS[m.id] ? ` src="${IMGS[m.id]}"` : ""}></span>` : ""}${Array.isArray(m.imgs) ? (m.imgs.length === 1
         ? `<span class="ch-img" data-ch="img" data-id="${m.id}_0" style="aspect-ratio:${+m.imgs[0].w || 4} / ${+m.imgs[0].h || 3}"><img alt="Photo"${IMGS[m.id + "_0"] ? ` src="${IMGS[m.id + "_0"]}"` : ""}></span>`
         : `<span class="ch-gal n${Math.min(m.imgs.length, 4)}">${m.imgs.map((x, i) => `<span class="ch-img" data-ch="img" data-id="${m.id}_${i}"><img alt="Photo ${i + 1}"${IMGS[m.id + "_" + i] ? ` src="${IMGS[m.id + "_" + i]}"` : ""}></span>`).join("")}</span>`) : ""}${m.photoOnly ? "" : fmt(m.text || "", mine)}<span class="tm">${r && r.pinned && r.pinned.id === m.id ? "📌 " : ""}${hm(m.at || Date.now())}</span></div>
       ${reacts.length ? `<div class="ch-reacts">${reacts.map(([e, l]) => `<button type="button" data-ch="react" data-id="${m.id}" data-e="${e}" aria-pressed="${l.includes(p)}" title="${esc(l.join(", "))}">${e} ${l.length}</button>`).join("")}</div>` : ""}</div></div>`;
@@ -17930,12 +18160,20 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     let h = "", lastDay = "", sepDone = false;
     if (!L) h = `<p class="ch-empty">Chargement…</p>`;
     else if (!L.length) h = `<p class="ch-empty">${r.gen ? "Le Vestiaire est ouvert : écris le premier message !" : "Salon tout neuf : lance la discussion !"}</p>`;
-    else L.forEach(m => {
-      const k = dayKey(m.at || Date.now());
-      if (k !== lastDay) { h += `<span class="ch-day">${dayLabel(m.at || Date.now())}</span>`; lastDay = k; }
-      if (!sepDone && seen && (m.at || 0) > seen && m.by !== p) { h += `<div class="ch-newsep">Nouveaux messages</div>`; sepDone = true; }
-      h += msgHTML(m, p);
-    });
+    else {
+      if (r.dm) h += `<div class="ch-priv">${IC.lock}Visible de vous deux seulement</div>`;
+      const same = (a, b) => a && b && !a.sys && !b.sys && a.by === b.by && dayKey(a.at || 0) === dayKey(b.at || 0) && Math.abs((b.at || 0) - (a.at || 0)) < 5 * 60000;
+      let myLast = null; L.forEach(m => { if (m.by === p && !m.sys) myLast = m; });
+      L.forEach((m, i) => {
+        const k = dayKey(m.at || Date.now());
+        if (k !== lastDay) { h += `<span class="ch-day">${dayLabel(m.at || Date.now())}</span>`; lastDay = k; }
+        let brk = false;
+        if (!sepDone && seen && (m.at || 0) > seen && m.by !== p) { h += `<div class="ch-newsep">Nouveaux messages</div>`; sepDone = true; brk = true; }
+        const prev = L[i - 1], next = L[i + 1];
+        h += msgHTML(m, p, { first: brk || !same(prev, m) || dayKey(prev.at || 0) !== k, last: !same(m, next) });
+        if (r.dm && myLast && m.id === myLast.id) { const ok = ((seenBy[r.id] || {})[r.other] || 0) >= (m.at || 0); h += `<div class="ch-seen${ok ? " ok" : ""}"><b>✓</b> ${ok ? "Lu" : "Envoyé"}</div>`; }
+      });
+    }
     f.innerHTML = h;
     const pin = r.pinned;
     $("ch-pin").innerHTML = pin && pin.id ? `<div class="ch-pin" data-ch="goPin">📌 <span class="tx"><b>${esc(pin.by || "Infos Club")}</b> · ${esc(plain(pin.text))}</span>${isSA() ? `<button type="button" class="x" data-ch="unpin" aria-label="Désépingler">✕</button>` : ""}</div>` : "";
@@ -17945,7 +18183,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   }
   function sheetHTML() {
     const m = (msgs[V.room] || []).find(x => x.id === V.sheet); if (!m) return "";
-    const r = R(V.room), p = me(), mine = m.reacts || {}, pinned = r.pinned && r.pinned.id === m.id;
+    const r = R(V.room), p = me(), mine = m.reacts || {}, pinned = !!(r.pinned && r.pinned.id === m.id);
     return `<div class="ch-sheet" data-ch="closeSheet"><div class="ch-sheet-in" data-stop="1"><div class="ch-grab"></div>
       <div class="ch-prev"><b>${esc(m.by)}</b> · ${esc(plain(m.text))}</div>
       ${V.emoMore === m.id
@@ -17954,8 +18192,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         : `<div class="ch-emo">${EMO.map(e => `<button type="button" data-ch="react" data-id="${m.id}" data-e="${e}" aria-pressed="${!!(mine[e] && mine[e][p])}">${e}</button>`).join("")}<button type="button" class="more" data-ch="emoMore" data-id="${m.id}" aria-label="Choisir un autre émoji">＋</button></div>`}
       <button type="button" class="ch-act" data-ch="replyTo" data-id="${m.id}">↩️ Répondre</button>
       <button type="button" class="ch-act" data-ch="copy" data-id="${m.id}">📋 Copier le texte</button>
-      ${isSA() ? `<button type="button" class="ch-act sa" data-ch="${pinned ? "unpin" : "pin"}" data-id="${m.id}">★ 📌 ${pinned ? "Désépingler" : "Épingler en haut du salon"}</button>` : ""}
-      ${m.by === p || isSA() ? `<button type="button" class="ch-act danger" data-ch="delMsg" data-id="${m.id}">${V.confirmDel === m.id ? "Confirmer la suppression ?" : "🗑️ Supprimer le message"}</button>` : ""}
+      ${isSA() && !r.dm ? `<button type="button" class="ch-act sa" data-ch="${pinned ? "unpin" : "pin"}" data-id="${m.id}">★ 📌 ${pinned ? "Désépingler" : "Épingler en haut du salon"}</button>` : ""}
+      ${m.by === p || (isSA() && !r.dm) ? `<button type="button" class="ch-act danger" data-ch="delMsg" data-id="${m.id}">${V.confirmDel === m.id ? "Confirmer la suppression ?" : "🗑️ Supprimer le message"}</button>` : ""}
     </div></div>`;
   }
   function muteRow(id) {
@@ -17990,7 +18228,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const fScroll = $("ch-feed") ? $("ch-feed").scrollTop : null, sheetIn = box.querySelector(".ch-sheet-in"), sScroll = sheetIn ? sheetIn.scrollTop : 0;
     const r = V.room && R(V.room);
     if (V.room && !r) V.room = null;
-    box.innerHTML = `<div class="ch-in" role="dialog" aria-modal="true" aria-label="Le Vestiaire">${V.room ? roomHTML() : listHTML()}${V.room && V.sheet ? sheetHTML() : ""}${V.form ? formHTML() : ""}</div>`;
+    box.innerHTML = `<div class="ch-in${V.room ? " wp-" + wp() : ""}" role="dialog" aria-modal="true" aria-label="Le Vestiaire">${V.room ? roomHTML() : V.view === "settings" ? settingsHTML() : V.view === "pick" ? pickHTML() : listHTML()}${V.room && V.sheet ? sheetHTML() : ""}${V.form ? formHTML() : ""}</div>`;
     if (V.room) { renderFeed(fScroll == null); if (fScroll != null) { const f = $("ch-feed"); if (f && !V.stick) f.scrollTop = fScroll; } V.stick = false; }
     const si = box.querySelector(".ch-sheet-in"); if (si && sScroll) si.scrollTop = sScroll;
     if (fid) { const el = $(fid); if (el) { el.focus(); try { el.setSelectionRange(caret, caret); } catch (e) {} } }
@@ -17999,7 +18237,31 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   function renderComp() { const c = $("ch-comp"); if (!c) return; const ae = document.activeElement, foc = ae && ae.id === "ch-tx", caret = foc ? ae.selectionStart : 0; c.innerHTML = compHTML(); if (foc) { const t = $("ch-tx"); t.focus(); try { t.setSelectionRange(caret, caret); } catch (e) {} autoGrow(t); } }
   const autoGrow = t => { if (!t) return; t.style.height = "auto"; t.style.height = Math.min(120, t.scrollHeight + 2) + "px"; };
 
+  // ── « … écrit »
+  function renderTyping() {
+    const el = $("ch-typing"); if (!el) return;
+    const now = sNow(), L = Object.entries(typing).filter(([n, t]) => n !== me() && now - t < 6000).map(([n]) => n);
+    el.innerHTML = L.length ? `<span class="dots"><i></i><i></i><i></i></span>${esc(L.slice(0, 2).join(", "))}${L.length > 2 ? " et d'autres" : ""} ${L.length > 1 ? "écrivent" : "écrit"}…` : "";
+  }
+  setInterval(() => { if (V.open && V.room) renderTyping(); }, 2000);
+  function watchTyping(id) {
+    if (typOff) { typOff(); typOff = null; } typing = {};
+    if (!id) return;
+    const r = _db.ref(tP(id)), hh = r.on("value", s => { typing = s.val() || {}; renderTyping(); }, () => {});
+    typOff = () => r.off("value", hh);
+  }
+  function iAmTyping() {
+    if (!V.room || Date.now() - typAt < 3000) return; typAt = Date.now();
+    _db.ref(`${tP(V.room)}/${me()}`).set(TS()).catch(() => {});
+  }
+  function stopTyping() { if (!V.room) return; typAt = 0; _db.ref(`${tP(V.room)}/${me()}`).remove().catch(() => {}); }
+
   // ── navigation
+  // Retour du téléphone : conversation (ou réglages) → liste ; liste → accueil
+  function push2() { if (!V.pushed2) { try { history.pushState({ hmChat: 2 }, ""); V.pushed2 = true; } catch (e) {} } }
+  function up() { // remonte d'un niveau (conversation/réglages → liste)
+    V.selMode = false; V.plus = false; if (V.room) { markRead(V.room); stopTyping(); } V.room = null; V.view = null; V.drop = false; watchTyping(null); render();
+  }
   function openChat(rid) {
     if (!enabled()) return;
     V.open = true; V.form = null; V.sheet = null; V.drop = false;
@@ -18019,12 +18281,19 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   }
   if (vv) { vv.addEventListener("resize", fitVV); vv.addEventListener("scroll", fitVV); }
   box.addEventListener("focusin", e => { if (e.target.id === "ch-tx") setTimeout(fitVV, 60); setTimeout(fitVV, 350); });
-  function hide() { box.style.top = ""; box.style.height = ""; box.style.bottom = ""; V.open = false; V.room = null; V.form = null; V.sheet = null; V.drop = false; box.hidden = true; box.innerHTML = ""; document.documentElement.classList.remove("ch-lock"); renderBtn(); }
-  function closeChat() { if (V.room) markRead(V.room); if (V.pushed) { V.pushed = false; hide(); try { history.back(); } catch (e) {} } else hide(); }
-  addEventListener("popstate", () => { if (V.open) { V.pushed = false; if (V.room) markRead(V.room); hide(); } });
+  function hide() { if (V.room) stopTyping(); watchTyping(null); box.style.top = ""; box.style.height = ""; box.style.bottom = ""; V.open = false; V.room = null; V.view = null; V.form = null; V.sheet = null; V.drop = false; V.plus = false; V.q = ""; box.hidden = true; box.innerHTML = ""; document.documentElement.classList.remove("ch-lock"); renderBtn(); }
+  const goHome = () => { const t = document.querySelector('.main-tab[data-tab="vote"]'); if (t && !t.classList.contains("active")) t.click(); };
+  function closeChat() { if (V.room) markRead(V.room); const back = (V.pushed ? 1 : 0) + (V.pushed2 ? 1 : 0); V.pushed = V.pushed2 = false; hide(); goHome(); if (back) { V.skipPop = 1; try { history.go(-back); } catch (e) {} } }
+  addEventListener("popstate", () => {
+    if (V.skipPop) { V.skipPop--; return; }
+    if (!V.open) return;
+    if (V.pushed2) { V.pushed2 = false; up(); return; }
+    V.pushed = false; if (V.room) markRead(V.room); hide(); goHome();
+  });
   function enterRoom(id) {
     if (V.room && V.room !== id) markRead(V.room);
-    V.room = id; V.seen[id] = lastRead(id); V.reply = null; V.sugg = null; V.drop = false; V.sheet = null; V.confirmDel = null;
+    V.room = id; V.view = null; V.seen[id] = lastRead(id); V.reply = null; V.sugg = null; V.drop = false; V.sheet = null; V.confirmDel = null; V.plus = false;
+    push2(); if (isDM(id)) syncMsgs(); watchTyping(id);
     render(); renderFeed(true); markRead(id);
     if (!("ontouchstart" in window)) $("ch-tx")?.focus();
   }
@@ -18050,7 +18319,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       const id = el.dataset.id, im = el.querySelector("img");
       if (IMGS[id]) { if (im.getAttribute("src") !== IMGS[id]) im.src = IMGS[id]; return; }
       if (imgLoading.has(id)) return; imgLoading.add(id);
-      _db.ref(`chat/img/${r.id}/${id}/data`).once("value").then(sn => { const d = sn.val(); imgLoading.delete(id); if (d) { IMGS[id] = d; box.querySelectorAll(`.ch-img[data-id="${CSS.escape(id)}"] img`).forEach(x => { x.src = d; }); } else el.classList.add("gone"); })
+      _db.ref(`${iP(r.id)}/${id}/data`).once("value").then(sn => { const d = sn.val(); imgLoading.delete(id); if (d) { IMGS[id] = d; box.querySelectorAll(`.ch-img[data-id="${CSS.escape(id)}"] img`).forEach(x => { x.src = d; }); } else el.classList.add("gone"); })
         .catch(() => { imgLoading.delete(id); });
     });
   }
@@ -18065,12 +18334,14 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const m = { by: me(), text: (text || (ph ? (ph.length > 1 ? `📷 ${ph.length} photos` : "📷 Photo") : "")).slice(0, 1000), at: TS() };
     if (ph) { m.imgs = ph.map(x => ({ w: x.w, h: x.h })); if (!text) m.photoOnly = true; V.photos = []; }
     if (V.reply) m.reply = { id: V.reply.id, by: V.reply.by || "", text: plain(V.reply.text).slice(0, 120) };
-    V.draft[V.room] = ""; V.reply = null; V.sugg = null; t.value = ""; autoGrow(t); renderComp(); $("ch-tx")?.focus();
+    V.draft[V.room] = ""; V.reply = null; V.sugg = null; V.plus = false; t.value = ""; autoGrow(t); renderComp(); $("ch-tx")?.focus();
     const f0 = $("ch-feed"); if (f0) f0.scrollTop = f0.scrollHeight;
     try {
-      const ref = _db.ref(`chat/msgs/${r.id}`).push();
-      if (ph) { ph.forEach((x, i) => { IMGS[`${ref.key}_${i}`] = x.data; }); await Promise.all(ph.map((x, i) => _db.ref(`chat/img/${r.id}/${ref.key}_${i}`).set({ by: m.by, data: x.data }))); }
-      await ref.set(m); renderFeed(true); fitVV();
+      const ref = _db.ref(mP(r.id)).push();
+      if (ph) { ph.forEach((x, i) => { IMGS[`${ref.key}_${i}`] = x.data; }); await Promise.all(ph.map((x, i) => _db.ref(`${iP(r.id)}/${ref.key}_${i}`).set({ by: m.by, data: x.data }))); }
+      await ref.set(m); stopTyping();
+      if (r.dm) { const k = r.id.slice(3); _db.ref().update({ [`chat/dmIdx/${m.by}/${k}`]: { with: r.other, at: TS() }, [`chat/dmIdx/${r.other}/${k}`]: { with: m.by, at: TS() } }).catch(() => {}); }
+      renderFeed(true); fitVV();
     }
     catch (e) { V.draft[V.room] = text; if (ph) V.photos = ph; renderComp(); toast(ph ? "Photo non envoyée : vérifie ta connexion." : "Message non envoyé : vérifie ta connexion."); }
   }
@@ -18083,14 +18354,14 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       document.body.appendChild(o); o.querySelector('[data-k="0"]').focus();
     });
   }
-  const imgPaths = (rid, id) => [`chat/img/${rid}/${id}`, ...Array.from({ length: 10 }, (_, i) => `chat/img/${rid}/${id}_${i}`)];
+  const imgPaths = (rid, id) => [`${iP(rid)}/${id}`, ...Array.from({ length: 10 }, (_, i) => `${iP(rid)}/${id}_${i}`)];
   async function delSelected() {
     const r = R(V.room), ids = [...V.sel]; if (!r || !ids.length || !isSA()) return;
     const ph = ids.filter(id => { const m = (msgs[r.id] || []).find(x => x.id === id); return m && (m.img || m.imgs); }).length;
     if (!await askConfirm(`Supprimer ${ids.length} message${ids.length > 1 ? "s" : ""} ?`, `Ils disparaîtront pour tout le monde${ph ? `, avec leurs photos` : ""}. Impossible de revenir en arrière.`, "Supprimer")) return;
-    const up = {}; ids.forEach(id => { up[`chat/msgs/${r.id}/${id}`] = null; imgPaths(r.id, id).forEach(x => { up[x] = null; }); });
-    if (r.pinned && ids.includes(r.pinned.id)) up[`chat/rooms/${r.id}/pinned`] = null;
-    try { await _db.ref().update(up); V.selMode = false; V.sel.clear(); toast(`${ids.length} message${ids.length > 1 ? "s" : ""} supprimé${ids.length > 1 ? "s" : ""}`); render(); renderFeed(); }
+    const upd = {}; ids.forEach(id => { upd[`${mP(r.id)}/${id}`] = null; imgPaths(r.id, id).forEach(x => { upd[x] = null; }); });
+    if (r.pinned && ids.includes(r.pinned.id)) upd[`chat/rooms/${r.id}/pinned`] = null;
+    try { await _db.ref().update(upd); V.selMode = false; V.sel.clear(); toast(`${ids.length} message${ids.length > 1 ? "s" : ""} supprimé${ids.length > 1 ? "s" : ""}`); render(); renderFeed(); }
     catch (e) { toast("Suppression impossible : vérifie ta connexion."); }
   }
   async function flushRoom() {
@@ -18151,8 +18422,16 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if ((a === "closeSheet" || a === "closeForm") && t.classList.contains("ch-sheet") && e.target.closest("[data-stop]")) return;
     const r = V.room && R(V.room), p = me();
     if (a === "close") return closeChat();
-    if (a === "list") { V.selMode = false; if (V.room) markRead(V.room); V.room = null; V.drop = false; return render(); }
+    if (a === "list" || a === "viewBack") { if (V.pushed2) { try { history.back(); } catch (er) { up(); } } else up(); return; }
     if (a === "enter") return enterRoom(t.dataset.r);
+    if (a === "tab") { V.tab = t.dataset.t; V.q = ""; return render(); }
+    if (a === "settingsView") { V.view = "settings"; push2(); return render(); }
+    if (a === "pickView") { V.view = "pick"; V.pq = ""; push2(); return render(); }
+    if (a === "dmGo") { const o = t.dataset.p, id = "dm:" + dmKey(me(), o); V.pushed2 = false; V.view = null; try { history.replaceState({ hmChat: 2 }, ""); V.pushed2 = true; } catch (er) {} return enterRoom(id); }
+    if (a === "hit") { const mid = t.dataset.m; enterRoom(t.dataset.r); setTimeout(() => flash(mid), 120); return; }
+    if (a === "wp") { try { localStorage.setItem("hm_chat_wp", t.dataset.w); } catch (er) {} return render(); }
+    if (a === "npref") { const k = t.dataset.k, cur = k === "chatMentions" ? pprefs[k] === true : pprefs[k] !== false; const v = k === "chatMentions" ? (!cur ? true : null) : (cur ? false : null); pprefs[k] = v === null ? undefined : v; render(); _db.ref(`pushPrefs/${p}/${k}`).set(v).catch(() => toast("Réglage non enregistré.")); return; }
+    if (a === "cpref") { const k = t.dataset.k, v = cprefs[k] !== false ? false : null; cprefs[k] = v === null ? undefined : v; render(); _db.ref(`chat/prefs/${p}/${k}`).set(v).catch(() => toast("Réglage non enregistré.")); if (k === "online" && v === false) _db.ref(`chat/online/${p}`).remove().catch(() => {}); return; }
     if (a === "drop") { V.drop = !V.drop; return render(); }
     if (a === "new") { if (isSA()) openForm("new"); return; }
     if (a === "settings") { if (isSA()) openForm("edit"); return; }
@@ -18187,8 +18466,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (a === "delMsg") {
       if (V.confirmDel !== t.dataset.id) { V.confirmDel = t.dataset.id; return render(); }
       V.confirmDel = null; V.sheet = null; render();
-      const up = { [`chat/msgs/${r.id}/${t.dataset.id}`]: null }; if (r.pinned && r.pinned.id === t.dataset.id) up[`chat/rooms/${r.id}/pinned`] = null;
-      _db.ref().update(up).catch(() => toast("Suppression impossible."));
+      const upd = { [`${mP(r.id)}/${t.dataset.id}`]: null }; imgPaths(r.id, t.dataset.id).forEach(x => { upd[x] = null; }); if (r.pinned && r.pinned.id === t.dataset.id) upd[`chat/rooms/${r.id}/pinned`] = null;
+      _db.ref().update(upd).catch(() => toast("Suppression impossible."));
       return;
     }
     if (a === "cancelReply") { V.reply = null; return renderComp(); }
@@ -18197,7 +18476,9 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (a === "unpin" && isSA()) { e.stopPropagation(); V.sheet = null; render(); _db.ref(`chat/rooms/${r.id}/pinned`).set(null).then(() => toast("Message désépinglé")).catch(() => {}); return; }
     if (a === "goPin") { if (r.pinned) flash(r.pinned.id); return; }
     if (a === "send") return send();
-    if (a === "photo") { $("ch-file")?.click(); return; }
+    if (a === "photo" || a === "gal") { V.plus = false; renderComp(); $("ch-file")?.click(); return; }
+    if (a === "cam") { V.plus = false; renderComp(); $("ch-cam")?.click(); return; }
+    if (a === "plus") { V.plus = !V.plus; return renderComp(); }
     if (a === "photoCancel") { V.photos = []; return renderComp(); }
     if (a === "photoDel") { (V.photos || []).splice(+t.dataset.i, 1); return renderComp(); }
     if (a === "img") { e.stopPropagation(); return openImg(t.dataset.id); }
@@ -18217,7 +18498,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const r = R(V.room), p = me(), m = r && (msgs[r.id] || []).find(x => x.id === mid); if (!m || !e) return;
     const has = !!(m.reacts && m.reacts[e] && m.reacts[e][p]);
     V.sheet = null; V.emoMore = null; render();
-    _db.ref(`chat/msgs/${r.id}/${m.id}/reacts/${e}/${p}`).set(has ? null : true).catch(() => toast("Réaction non enregistrée."));
+    _db.ref(`${mP(r.id)}/${m.id}/reacts/${e}/${p}`).set(has ? null : true).catch(() => toast("Réaction non enregistrée."));
   }
   box.addEventListener("input", e => {
     if (e.target.id !== "ch-emoin") return;
@@ -18225,7 +18506,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (em) { e.target.blur(); doReact(V.emoMore, em); } else if (e.target.value.trim()) { e.target.value = ""; toast("Choisis un émoji (touche 😀 du clavier)."); }
   });
   box.addEventListener("change", async e => {
-    if (e.target.id === "ch-file") {
+    if (e.target.id === "ch-file" || e.target.id === "ch-cam") {
       // jusqu'à 10 photos par message, réduites une par une
       const room = V.room, all = [...(e.target.files || [])].filter(f => /^image\//.test(f.type)); e.target.value = ""; if (!all.length) return;
       V.photos = V.photos || []; const free = 10 - V.photos.length;
@@ -18241,8 +18522,12 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   box.addEventListener("input", e => {
     if (e.target.id === "ch-fname") { V.form.name = e.target.value; return refreshForm(); }
     if (e.target.id === "ch-fq") { V.form.q = e.target.value; return filterMembers(); }
+    if (e.target.id === "ch-q") { V.q = e.target.value; return render(); }
+    if (e.target.id === "ch-pq") { V.pq = e.target.value; return render(); }
     if (e.target.id !== "ch-tx") return;
     V.draft[V.room] = e.target.value; autoGrow(e.target);
+    $("ch-comp")?.querySelector(".ch-send")?.classList.toggle("off", !e.target.value.trim() && !(V.photos || []).length);
+    if (e.target.value.trim()) iAmTyping();
     const c = e.target.selectionStart, m = e.target.value.slice(0, c).match(/(?:^|\s)@([\wÀ-ÿ'-]{0,20})$/), r = R(V.room);
     const next = m && r ? [..."tous".startsWith(m[1].toLowerCase()) ? ["tous"] : [], ...membersOf(r).filter(x => x !== me() && x.toLowerCase().startsWith(m[1].toLowerCase()))].slice(0, 6) : null; // « @tous » : notifie tout le monde
     const changed = JSON.stringify(next) !== JSON.stringify(V.sugg); V.sugg = next && next.length ? next : null;
@@ -18282,6 +18567,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (!cfgOn) { cfgOn = true; _db.ref("config/chatOpen").on("value", s => { openAll = s.val() === true; tick(); renderBtn(); }); }
     const p = enabled() ? me() : null;
     if (p !== who) { detach(); who = p; if (p) attach(p); else if (V.open) hide(); renderBtn(); }
+    // « en ligne » : signalé chaque minute tant que l'appli est ouverte (sauf si on l'a coupé dans les réglages)
+    if (who && document.visibilityState === "visible" && cprefs.online !== false && Date.now() - onlineAt > 60000) { onlineAt = Date.now(); _db.ref(`chat/online/${who}`).set(TS()).catch(() => { onlineAt = 0; }); }
   }
   setInterval(tick, 1500); setTimeout(tick, 300);
 })();
@@ -18313,14 +18600,20 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   }
   // Plein écran : date de la nouvelle version + « Quoi de neuf ? » lu dans la nouvelle page
   // (<template id="hm-news" data-date="jj/mm/aaaa">, affiché seulement s'il est du même jour).
-  function showFull(v, txt) {
+  async function showFull(v, txt) {
     shown = true;
+    // <template data-for="sa"> : mise à jour qui ne concerne que les super admins → proposée à eux seuls.
+    // <li data-sa> : nouveauté réservée aux super admins, montrée à eux seuls avec une ★.
+    try { await _accReady; } catch (e) {}
+    const sa = typeof _accIsSuper !== "undefined" && !!_accIsSuper;
+    if (/<template id="hm-news"[^>]*data-for="sa"/.test(txt) && !sa) return;
     const MO = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
     const [d, mo] = v.split("/"), day = v.slice(0, 10);
     let news = "";
     try {
-      const t = txt.match(/<template id="hm-news" data-date="([^"]*)">([\s\S]*?)<\/template>/);
-      if (t && t[1] === day && /<li/.test(t[2])) news = `<details class="uf-up"><summary>Quoi de neuf ?</summary><ul>${t[2]}</ul></details>`;
+      const t = txt.match(/<template id="hm-news" data-date="([^"]*)"[^>]*>([\s\S]*?)<\/template>/);
+      const items = t ? t[2].replace(/<li data-sa>([\s\S]*?)<\/li>/g, (_, x) => sa ? `<li>★ ${x}</li>` : "") : "";
+      if (t && t[1] === day && /<li/.test(items)) news = `<details class="uf-up"><summary>Quoi de neuf ?</summary><ul>${items}</ul></details>`;
     } catch (e) {}
     const o = document.createElement("div");
     o.id = "upd-full"; o.setAttribute("role", "dialog"); o.setAttribute("aria-modal", "true"); o.setAttribute("aria-label", "Nouvelle version");
