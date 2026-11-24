@@ -2962,7 +2962,16 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
 .hm .hm-tile span { position: absolute; right: 10px; top: 9px; font-size: 14px; color: var(--text3); }
 .hm .hm-tile b { font-size: 21px; font-weight: 800; font-style: italic; } .hm .hm-tile small { font-size: 11.5px; color: var(--text2); }
 .hm .hm-tile.on { border-color: var(--hm-red); } .hm .hm-tile.on b { color: var(--hm-red); }
-.hm .hm-know { padding: 16px; border-radius: 16px; background: var(--bg2); border: 1px solid var(--border2); }
+.hm .hm-tile.hm-art { overflow: hidden; align-content: start; min-height: 120px; padding: 13px 13px 14px; }
+.hm .hm-art small { font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; position: relative; z-index: 1; }
+.hm .hm-art b { font-size: 28px; line-height: 1.05; position: relative; z-index: 1; } .hm .hm-art em { font-style: normal; font-size: 11.5px; color: var(--text2); position: relative; z-index: 1; max-width: 75%; line-height: 1.3; }
+.hm .hm-art .art { position: absolute; z-index: 0; pointer-events: none; }
+.hm .hm-art.bdo { background: radial-gradient(120% 120% at 100% 0%, rgba(245,197,66,.2), var(--bg2) 60%); border-color: rgba(245,197,66,.45); } .hm .hm-art.bdo small { color: #f5c542; } .hm .hm-art.bdo b { color: #ffd24d; }
+html.light .hm .hm-art.bdo b { color: #b8860b; } html.light .hm .hm-art.bdo small { color: #a87a00; }
+.hm .hm-art.bdo .art { right: -16px; bottom: -22px; width: 84px; height: 84px; filter: drop-shadow(0 6px 14px rgba(0,0,0,.45)); opacity: .9; }
+.hm .hm-art.vg { background: radial-gradient(120% 120% at 100% 0%, rgba(184,146,255,.2), var(--bg2) 60%); border-color: rgba(184,146,255,.45); } .hm .hm-art.vg small { color: #b892ff; }
+.hm .hm-art.vg .art { right: -14px; bottom: -22px; width: 78px; height: 74px; opacity: .85; }
+.hm .hm-know { padding: 16px; border-radius: 16px; background: transparent; border: 1.5px dashed color-mix(in srgb, var(--text) 30%, transparent); }
 .hm .hm-know small { font-size: 10.5px; font-weight: 800; font-style: italic; letter-spacing: .06em; text-transform: uppercase; color: var(--hm-red); }
 .hm .hm-know p { margin: 10px 0 12px; font-size: 14.5px; font-weight: 700; line-height: 1.3; } .hm .hm-know p b { color: var(--hm-red); }
 .hm .hm-know button { border: 1px solid var(--border2); background: var(--bg3); color: var(--text); border-radius: 20px; padding: 4px 12px; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
@@ -4794,8 +4803,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li>🗓️ <b>Sondage</b> : il s'ouvre tout seul le samedi à 9h, la date est affichée à l'accueil</li><li>🚫 <b>Session annulée</b> : tout le monde est prévenu par notification</li><li>➕ <b>Jokers</b> : on peut encore en ajouter après la fermeture du sondage</li><li data-sa>💬 <b>Vestiaire</b> : le sondage en bandeau fixé en haut du Vestiaire général</li><li>🌙 <b>Sessions</b> : « Ta soirée », ton bilan du soir et 4 stats marrantes</li><li data-sa>💬 <b>Vestiaire</b> : bulles plus aérées, « Répondre » plus clair, appui sur un message avec fond flouté</li><li data-sa>💬 <b>Vestiaire</b> : Infos club lisibles sur tous les fonds d'écran</li><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 11:43</footer>
+<template id="hm-news" data-date="24/11/2026"><li>🏆 <b>Accueil</b> : nouvelles cases Ballon d'Or et Vignettes</li><li>🗓️ <b>Sondage</b> : il s'ouvre tout seul le samedi à 9h, la date est affichée à l'accueil</li><li>🚫 <b>Session annulée</b> : tout le monde est prévenu par notification</li><li>➕ <b>Jokers</b> : on peut encore en ajouter après la fermeture du sondage</li><li data-sa>💬 <b>Vestiaire</b> : le sondage en bandeau fixé en haut du Vestiaire général</li><li>🌙 <b>Sessions</b> : « Ta soirée », ton bilan du soir et 4 stats marrantes</li><li data-sa>💬 <b>Vestiaire</b> : bulles plus aérées, « Répondre » plus clair, appui sur un message avec fond flouté</li><li data-sa>💬 <b>Vestiaire</b> : Infos club lisibles sur tous les fonds d'écran</li><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 11:48</footer>
 
 <script>
 
@@ -17137,12 +17146,17 @@ function _svApply() {
     return `<button type="button" class="hm-last${big ? " big win" : ""}" data-sv="goRecap" data-d="${s.date}"${w ? ` style="--tc:${_crTV[w.t]}"` : ""}><small>${lbl}</small><b>${_crBox(esc(H.t), H.teams)}</b>
       <span class="hm-st">${M.stand.map((x, i) => `<span>${i + 1}. ${_crTL(x.t)} <b>${x.pts}${i ? "" : " pts"}</b></span>`).join("")}</span>${perf}<em>Voir le récap complet ›</em></button>`;
   }
+  const HM_TROPHY = `<svg class="art" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="hmT1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8a6200"/><stop offset=".35" stop-color="#ffe08a"/><stop offset=".55" stop-color="#f5c542"/><stop offset="1" stop-color="#9a6d00"/></linearGradient><linearGradient id="hmT2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5c542"/><stop offset="1" stop-color="#7a5600"/></linearGradient></defs><path d="M26 14h48v14c0 17-10 30-24 30S26 45 26 28z" fill="url(#hmT1)"/><path d="M26 20H12c0 14 7 22 18 23M74 20h14c0 14-7 22-18 23" fill="none" stroke="url(#hmT2)" stroke-width="5" stroke-linecap="round"/><path d="M44 57h12l2 14H42z" fill="url(#hmT1)"/><rect x="32" y="71" width="36" height="8" rx="2" fill="url(#hmT1)"/><rect x="26" y="79" width="48" height="10" rx="3" fill="#3a2a10" stroke="#f5c542" stroke-width="1.5"/><path d="M50 25l3.5 7 7.6 1.1-5.5 5.4 1.3 7.6L50 42.5l-6.8 3.6 1.3-7.6-5.5-5.4 7.6-1.1z" fill="#fff6d0" opacity=".85"/><path d="M33 18v10c0 7 2 13 6 18" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".35"/></svg>`;
+  const HM_CARDS = `<svg class="art" viewBox="0 0 92 86" aria-hidden="true"><g transform="rotate(-14 30 50)"><rect x="12" y="14" width="38" height="52" rx="6" fill="#2a2140" stroke="#8f6fd6" stroke-width="2"/></g><g transform="rotate(6 60 44)"><rect x="40" y="8" width="38" height="52" rx="6" fill="#3a2a10" stroke="#f5c542" stroke-width="2.4"/><circle cx="59" cy="28" r="9" fill="#f5c542" opacity=".8"/><rect x="47" y="42" width="24" height="5" rx="2.5" fill="#f5c542" opacity=".6"/><rect x="51" y="50" width="16" height="4" rx="2" fill="#f5c542" opacity=".4"/></g><g transform="rotate(-3 46 56)"><rect x="26" y="26" width="38" height="52" rx="6" fill="#1c1c26" stroke="#e30b0b" stroke-width="2.2"/><path d="M45 40l9 4-2 10-7 5-7-5-2-10z" fill="#e30b0b"/><rect x="33" y="62" width="24" height="4" rx="2" fill="#fff" opacity=".5"/></g></svg>`;
   function hmTiles(first) {
     const vg = typeof window._vgInfo === "function" ? window._vgInfo() : null, X = hmStats(), who = me();
-    const bi = X ? X.T.bdo.findIndex(r => r[0] === who) : -1;
-    const tile = (sv, big, sub) => `<button type="button" class="hm-tile" data-sv="${sv}"><span>›</span><b>${big}</b><small>${sub}</small></button>`;
-    const vgT = tile("goVg", vg && vg.boosters ? `${vg.boosters} booster${vg.boosters > 1 ? "s" : ""}` : "Vignettes", vg && vg.boosters ? "à ouvrir dans Vignettes" : "ton album de la saison");
-    const bdT = bi >= 0 ? tile("goStats", `${bi + 1}${bi ? "e" : "er"}`, "au Ballon d'Or · ta saison") : tile("goStats", "Récompenses", "les classements de la saison");
+    const bi = X ? X.T.bdo.findIndex(r => r[0] === who) : -1, pts = bi >= 0 ? X.T.bdo[bi][1] : null;
+    const bdT = `<button type="button" class="hm-tile hm-art bdo" data-sv="goStats">${HM_TROPHY}<small>Ballon d'Or</small><b>${bi >= 0 ? `${bi + 1}${bi ? "e" : "er"}` : "Classement"}</b><em>${bi >= 0 ? `ta saison${typeof pts === "number" ? ` · ${pts} pts` : ""}` : "les récompenses de la saison"}</em></button>`;
+    // Vignettes : boosters à ouvrir, sinon échanges en attente, sinon une invitation (échanges ou album, en alternance)
+    const alt = new Date().getDate() % 2;
+    const [vb, vs, vt] = vg && vg.boosters ? [vg.boosters, `booster${vg.boosters > 1 ? "s" : ""} à ouvrir`, ""] : vg && vg.trades ? [vg.trades, `échange${vg.trades > 1 ? "s" : ""} en attente`, "trades"]
+      : alt ? ["Échanges", "complète ta collection avec les autres", "trades"] : ["Album", "va voir où en est ton album", ""];
+    const vgT = `<button type="button" class="hm-tile hm-art vg" data-sv="goVg"${vt ? ` data-t="${vt}"` : ""}>${HM_CARDS}<small>Vignettes</small><b>${vb}</b><em>${vs}</em></button>`;
     return `<div class="hm-2">${first || bdT}${vgT}</div>`;
   }
   function hmFacts() {
@@ -17159,7 +17173,7 @@ function _svApply() {
     if (sv.inc) F.push(`${esc(sv.inc[0])} n'a raté aucune des <b>${sv.inc[1]} dernières soirées</b>.`);
     return F;
   }
-  function hmKnow() { const F = hmFacts(); if (!F.length) return ""; return `<div class="hm-know"><small>Le saviez-vous ?</small><p>${F[ui.k % F.length]}</p><button type="button" data-sv="know">Une autre ›</button></div>`; }
+  function hmKnow() { const F = hmFacts(); if (!F.length) return ""; return `<div class="hm-know"><small>💡 Le saviez-vous ?</small><p>${F[ui.k % F.length]}</p><button type="button" data-sv="know">Une autre ›</button></div>`; }
   const hmRest = () => hmLastCard(hmLast(), false) + hmTiles() + hmKnow();
   const hmHead = (lab, d) => `<div class="hm-hd"><small>${lab}</small><b>${hmCap(fdate(d))}</b></div>`;
   const hmSA = (p, acts) => `<div class="hm-sa"><span class="h">★ Super admin</span>${p ? `<p>${p}</p>` : ""}<div class="acts">${acts}</div></div>`;
@@ -17297,7 +17311,7 @@ function _svApply() {
       return write(() => ref0().update({ status: "cancelled", cancelledBy: who, cancelledAt: Date.now(), reason, msg: ui.msg, backDate: ui.msg === "date" ? ui.back : null }), "Session annulée : tout le monde sera prévenu"); }
     else if (a === "goSaisie") { document.getElementById("saisie-nav-btn")?.click(); return; }
     else if (a === "goRecap") { document.querySelector('.main-tab[data-tab="session"]')?.click(); const sel = document.getElementById("session-date"); if (sel && t.dataset.d) { sel.value = t.dataset.d; sel.dispatchEvent(new Event("change")); } window.scrollTo(0, 0); return; }
-    else if (a === "goVg") { document.querySelector('.main-tab[data-tab="vignettes"]')?.click(); return; }
+    else if (a === "goVg") { if (t.dataset.t && typeof window._vgSetTab === "function") window._vgSetTab(t.dataset.t); document.querySelector('.main-tab[data-tab="vignettes"]')?.click(); return; }
     else if (a === "goStats") { document.querySelector('.main-tab[data-tab="stats"]')?.click(); return; }
     else if (a === "know") ui.k++;
     else if (a === "depNew") { ui.dnew = !ui.dnew; ui.dq = ""; if (ui.dnew) setTimeout(() => document.getElementById("sv-dq")?.focus(), 0); }
