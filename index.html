@@ -4549,8 +4549,8 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="23/11/2026"><li>📊 <b>Statistiques</b> : équipe fétiche à la bonne taille</li><li>🔄 <b>Mises à jour</b> : nouvel écran d'annonce</li><li>👥 <b>Membres</b> : pseudo, mot de passe provisoire</li><li>📌 <b>Sessions</b> : tous les faits notables de la soirée</li><li>🔔 <b>Notifications</b> plus fiables sur Android</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 23/11/2026 - 23:33</footer>
+<template id="hm-news" data-date="24/11/2026"><li>👤 <b>Création de compte</b> plus fiable quand l'appli démarre lentement</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 06:52</footer>
 
 <script>
 
@@ -15001,6 +15001,13 @@ let _acc = { view: "login", step: 1, pseudo: "", pwd: "", pwd2: "", show: false,
 function _accPlayer() { return _accUser && _accProfile ? _accProfile.player : null; }
 function _accEmail(pseudo) { return pseudo.trim().toLowerCase() + "@" + ACC_DOMAIN; }
 
+// Le service de connexion peut être demandé avant _accInit (démarrage lent : on touche « Créer »
+// pendant que les données chargent) : on l'obtient à la demande, avec un message clair s'il manque.
+function _accAuth() {
+  if (!_auth) { try { if (firebase.auth) _auth = firebase.auth(); } catch (e) { console.warn("auth:", e); } }
+  if (!_auth) { const e = new Error("auth indisponible"); e.code = "hm/no-auth"; throw e; }
+  return _auth;
+}
 function _accInit() {
   if (!firebase.auth || !_db) { _accReadyResolve(); return; }
   try { _auth = firebase.auth(); } catch (e) { console.warn("auth:", e); _accReadyResolve(); return; }
@@ -15279,6 +15286,7 @@ const _ACC_ERR = {
   "auth/operation-not-allowed": "La création de compte n'est pas encore activée. Préviens un super admin.",
   "auth/admin-restricted-operation": "La création de compte est bloquée. Préviens un super admin.",
   "auth/password-does-not-meet-requirements": "Mot de passe trop simple : mets au moins 6 caractères avec des lettres et des chiffres.",
+  "hm/no-auth": "Le service de connexion n'est pas encore chargé. Recharge la page (ou ferme et rouvre l'appli), puis réessaie.",
   "auth/missing-password": "Choisis un mot de passe.", "auth/user-disabled": "Ce compte est désactivé. Préviens un super admin.",
 };
 // code entre parenthèses quand l'erreur n'est pas connue : permet de comprendre ce qui bloque
@@ -15308,14 +15316,14 @@ async function _accDoLogin() {
   _acc.busy = true; _acc.err = ""; _accRender();
   try {
     _accOpenAfterLogin = true;
-    await _auth.signInWithEmailAndPassword(_accEmail(pseudo), pwd);
+    await _accAuth().signInWithEmailAndPassword(_accEmail(pseudo), pwd);
     _acc.pwd = "";
   } catch (e) { _accOpenAfterLogin = false; _acc.busy = false; _acc.err = _accErrMsg(e); _accRender(); }
 }
 async function _accDoCreate() {
   const a = _acc; a.busy = true; a.err = ""; _accRender();
   let cred;
-  try { cred = await _auth.createUserWithEmailAndPassword(_accEmail(a.pseudo), a.pwd); }
+  try { cred = await _accAuth().createUserWithEmailAndPassword(_accEmail(a.pseudo), a.pwd); }
   catch (e) { a.busy = false; a.err = _accErrMsg(e); if (e && e.code === "auth/email-already-in-use") a.step = 1; _accRender(); return; }
   let ok = false;
   try { ok = await _accClaim(cred.user.uid, a.pick, (a.pseudo || "").trim().toLowerCase()); } catch (e) { ok = false; }
