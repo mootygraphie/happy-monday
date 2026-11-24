@@ -4700,8 +4700,8 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 10:38</footer>
+<template id="hm-news" data-date="24/11/2026"><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 10:52</footer>
 
 <script>
 
@@ -17750,7 +17750,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       const readAt = (n, id) => ((st.reads || {})[n] || {})["club-" + id];
       const barH = (r, tot) => `<div class="pc-bw"><div class="pc-bar"><i style="width:${tot ? r / tot * 100 : 0}%"></i></div><span class="pc-pc">${r}/${tot} · ${tot ? Math.round(r / tot * 100) : 0} %</span></div>`;
       function histView() {
-        const L = (st.hist || []).filter(q => st.cat === "all" || catOf(q) === st.cat);
+        // « Tous » visibles de tous les super admins ; envois ciblés et tests : seulement par leur auteur
+        const L = (st.hist || []).filter(q => (catOf(q) === "club" || q.by === p) && (st.cat === "all" || catOf(q) === st.cat));
         st.view = "hist";
         inn.innerHTML = `${hdr("Notifications")}
           <div class="pc-fl">${[["all", "Tout"], ["club", "Club"], ["cib", "Ciblées"], ["test", "Tests"]].map(([k, l]) => `<button type="button" data-pc="cat" data-c="${k}" aria-pressed="${st.cat === k}">${l}</button>`).join("")}</div>
@@ -17759,7 +17760,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
           <button type="button" class="pc-fab" data-pc="new" aria-label="Nouvelle notification"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>`;
       }
       function detailView(id) {
-        const q = (st.hist || []).find(x => x.id === id); if (!q) return histView();
+        const q = (st.hist || []).find(x => x.id === id); if (!q || (catOf(q) !== "club" && q.by !== p)) return histView();
         const R = recips(q), rd = R.filter(x => readAt(x, q.id)).sort((a, b) => (+readAt(a, q.id) || 0) - (+readAt(b, q.id) || 0)), no = R.filter(x => !readAt(x, q.id)).sort((a, b) => a.localeCompare(b, "fr")), c = catOf(q);
         const tm = v => typeof v === "number" ? new Date(v).toLocaleTimeString("fr", { hour: "2-digit", minute: "2-digit" }) : "";
         st.view = "detail";
