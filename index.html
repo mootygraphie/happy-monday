@@ -4209,6 +4209,8 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .ch-cf-act { display: flex; gap: 8px; justify-content: flex-end; }
   .ch-cf-act button { font: inherit; font-weight: 700; font-size: 14px; padding: 10px 16px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); cursor: pointer; }
   .ch-cf-act .dang { background: #e30b0b; border-color: #e30b0b; color: #fff; }
+  .hm-news ul { list-style: none; margin: 0 0 16px; padding: 10px 12px; border-radius: 12px; background: var(--bg3); display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; color: var(--text2); }
+  .hm-news ul b { color: var(--text); font-weight: 600; font-size: inherit; } .hm-news p { margin: 4px 0 12px; }
   #chat .ch-photos { margin-bottom: 8px; padding: 8px; border-radius: 14px; background: var(--bg3); border: 1px solid var(--border2); }
   #chat .ch-thumbs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 6px; }
   #chat .ch-thumbs > span { position: relative; flex: none; width: 58px; height: 58px; border-radius: 10px; overflow: hidden; background: var(--bg2); }
@@ -4687,8 +4689,8 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026" data-for="sa"><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 10:17</footer>
+<template id="hm-news" data-date="24/11/2026"><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 10:30</footer>
 
 <script>
 
@@ -17509,6 +17511,7 @@ function _svApply() {
         <span class="bm-lbl">Réglages</span><div class="bm-rows">
           ${pwaRows()}
           <button type="button" class="bm-row" data-bm="__theme" aria-pressed="${!light}">${ic("moon")}<span class="grow">Mode sombre</span><span class="sw"></span></button>
+          <button type="button" class="bm-row" data-bm="__news">${ic("gift")}<span class="grow">Quoi de neuf ?</span>${ic("chev", "chev")}</button>
           <button type="button" class="bm-row" data-bm="__update">${ic("swap")}<span class="grow">Mettre à jour l'appli${typeof window._hmVersion === "function" && window._hmVersion() ? ` <small>· version du ${esc(window._hmVersion().replace(/\/\d{4} - /, " à "))}</small>` : ""}</span>${ic("chev", "chev")}</button>
         </div>
         ${acc() && typeof _accIsSuper !== "undefined" && _accIsSuper ? `<span class="bm-lbl sa">★ Super admin</span><div class="bm-rows sa">
@@ -17581,6 +17584,7 @@ function _svApply() {
           const k = m.dataset.bm;
           if (k === "__theme") { $("theme-btn")?.click(); renderMenu(); return; }
           if (k === "__update") { window._hmUpdate?.(); return; }
+          if (k === "__news") { window._hmNews?.(); return; }
           if (k === "__push") { const pw = window._pwa; if (pw) pw.toggle().finally(() => { renderMenu(); renderBell(); }); return; }
           if (k === "__opts") { optsOpen = !optsOpen; renderMenu(); return; }
           if (k === "__pref") { const pw = window._pwa; if (pw) { pw.setPref(m.dataset.k, !pw.prefs()[m.dataset.k]); } setTimeout(renderMenu, 300); return; }
@@ -18582,6 +18586,16 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   const RE = /(\d\d\/\d\d\/\d{4} - \d\d:\d\d)\s*<\/footer>/;
   const cur = () => { const m = ((document.querySelector("footer") || {}).innerHTML || "").match(RE) || ((document.querySelector("footer") || {}).outerHTML || "").match(RE); return m ? m[1] : ""; };
   window._hmVersion = cur;
+  // Menu ☰ « Quoi de neuf ? » : nouveautés de la version installée (★ = réservées aux super admins)
+  window._hmNews = () => {
+    const t = document.getElementById("hm-news"), sa = typeof _accIsSuper !== "undefined" && !!_accIsSuper;
+    const items = t ? t.innerHTML.replace(/<li data-sa="?"?>([\s\S]*?)<\/li>/g, (_, x) => sa ? `<li>★ ${x}</li>` : "") : "";
+    const d = t ? t.dataset.date || "" : "", MO = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"], [dd, mm] = d.split("/");
+    const o = document.createElement("div"); o.className = "ch-cf hm-news";
+    o.innerHTML = `<div class="ch-cf-in" role="dialog" aria-modal="true" aria-label="Quoi de neuf ?"><b>Quoi de neuf ?</b><p>${d ? `Version du ${+dd} ${MO[+mm - 1] || ""}` : ""}</p>${/<li/.test(items) ? `<ul>${items}</ul>` : `<p>Pas de nouveauté particulière dans cette version.</p>`}<div class="ch-cf-act"><button type="button" data-k="0">Fermer</button></div></div>`;
+    o.addEventListener("click", e => { if (e.target === o || e.target.closest("[data-k]")) o.remove(); });
+    document.body.appendChild(o);
+  };
   window._hmUpdate = async () => {
     try { const regs = navigator.serviceWorker && navigator.serviceWorker.getRegistrations ? await navigator.serviceWorker.getRegistrations() : []; await Promise.all(regs.map(r => r.update().catch(() => {}))); } catch (e) {}
     try { if (window.caches) { const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); } } catch (e) {}
