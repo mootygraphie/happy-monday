@@ -4387,6 +4387,47 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   /* appui sur un message : fond flouté */
   #chat .ch-sheet { background: rgba(5,5,8,.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
   #chat .ch-sheet-in { background: var(--bg2); border: 1px solid var(--border); }
+  /* bulles plus aérées */
+  #chat .ch-feed { padding: 14px 12px 8px; gap: 3px; }
+  #chat .ch-msg { max-width: 82%; gap: 8px; } #chat .ch-msg:not(.cont) { margin-top: 10px; }
+  #chat .ch-bub { padding: 9px 13px 7px; font-size: 15px; line-height: 1.42; border-radius: 20px; }
+  #chat .ch-msg:not(.me).cont .ch-bub { border-top-left-radius: 7px; } #chat .ch-msg:not(.me):not(.last) .ch-bub { border-bottom-left-radius: 7px; }
+  #chat .ch-msg.me .ch-bub { border-radius: 20px; } #chat .ch-msg.me.cont .ch-bub { border-top-right-radius: 7px; } #chat .ch-msg.me:not(.last) .ch-bub { border-bottom-right-radius: 7px; }
+  #chat .ch-bub .who { font-size: 12px; margin-bottom: 2px; }
+  #chat .ch-bub .tm { font-size: 10.5px; margin-top: 3px; }
+  #chat .ch-reacts { margin-top: -5px; margin-bottom: 2px; }
+  /* citation dans une bulle + barre « Réponse à » */
+  #chat .ch-quote { border-left: 3px solid #ff3b30; background: rgba(255,255,255,.06); border-radius: 10px; padding: 5px 10px 6px; margin: 2px 0 6px; font-size: 12.5px; color: var(--text2); }
+  #chat .ch-quote b { color: #ff8a80; font-size: 11.5px; margin-bottom: 1px; }
+  #chat .ch-msg.me .ch-quote { border-left-color: rgba(255,255,255,.85); background: rgba(0,0,0,.2); color: rgba(255,255,255,.85); } #chat .ch-msg.me .ch-quote b { color: #fff; }
+  #chat .ch-replybar { margin: 0 2px 2px; padding: 8px 8px 8px 12px; border: none; border-left: 3px solid #ff3b30; border-radius: 14px; background: var(--bg2); box-shadow: 0 -6px 18px rgba(0,0,0,.35); animation: chUp .18s ease-out; }
+  #chat .ch-replybar .tx { display: flex; flex-direction: column; gap: 1px; white-space: normal; }
+  #chat .ch-replybar .tx b { color: #ff8a80; font-size: 11.5px; }
+  #chat .ch-replybar .tx span { font-size: 13px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #chat .ch-replybar button { width: 30px; height: 30px; border-radius: 50%; background: var(--bg3); display: grid; place-items: center; flex: none; color: var(--text2); }
+  #chat .ch-replybar button svg { width: 14px; height: 14px; }
+  @keyframes chUp { from { opacity: 0; transform: translateY(8px); } }
+  /* appui sur un message (façon iPhone) */
+  #chat .ch-sheet.ch-lp { align-items: center; justify-content: center; padding: 16px; background: rgba(5,5,8,.55); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); animation: chFade .15s ease-out; }
+  #chat .ch-lp-in { width: 100%; max-width: 440px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+  #chat .ch-lp.me .ch-lp-in { align-items: flex-end; }
+  #chat .ch-lp .ch-emo { justify-content: flex-start; gap: 2px; background: var(--bg2); border: 1px solid var(--border); border-radius: 999px; padding: 5px 6px; box-shadow: 0 12px 30px rgba(0,0,0,.5); animation: chPop .2s cubic-bezier(.2,1.3,.4,1); }
+  #chat .ch-lp .ch-emo button { width: 42px; height: 42px; font-size: 25px; }
+  #chat .ch-lp .ch-emo button[aria-pressed="true"] { background: var(--bg3); }
+  #chat .ch-lp .ch-emo .more { border: none; background: var(--bg3); color: var(--text2); display: grid; place-items: center; } #chat .ch-lp .ch-emo .more svg { width: 20px; height: 20px; }
+  #chat .ch-lp .ch-emoin { width: 100%; }
+  #chat .ch-lp-msg { max-width: 88%; display: flex; animation: chPop .22s cubic-bezier(.2,1.3,.4,1); }
+  #chat .ch-lp-msg .ch-bub { cursor: default; max-height: 40vh; overflow: hidden; box-shadow: 0 14px 34px rgba(0,0,0,.45); }
+  #chat .ch-lp.me .ch-lp-msg .ch-bub { background: linear-gradient(160deg, #f0241a, #c90606); color: #fff; }
+  #chat .ch-lp-ph { display: block; font-size: 13px; opacity: .8; margin-bottom: 2px; }
+  #chat .ch-lp-acts { width: 230px; border-radius: 16px; background: var(--bg2); border: 1px solid var(--border); overflow: hidden; box-shadow: 0 16px 40px rgba(0,0,0,.55); animation: chPop .24s cubic-bezier(.2,1.2,.4,1); }
+  #chat .ch-lp-act { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 12px 15px; border: none; border-bottom: 1px solid var(--border); background: none; color: var(--text); font: inherit; font-size: 15px; text-align: left; cursor: pointer; }
+  #chat .ch-lp-act:last-child { border-bottom: none; } #chat .ch-lp-act svg { width: 18px; height: 18px; color: var(--text2); flex: none; }
+  #chat .ch-lp-act.dg, #chat .ch-lp-act.dg svg { color: #ff453a; }
+  #chat .ch-lp-cf { width: 260px; } #chat .ch-lp-cf p { margin: 0; padding: 12px 15px 10px; font-size: 13px; color: var(--text2); line-height: 1.4; border-bottom: 1px solid var(--border); }
+  #chat .ch-lp-cf .ch-lp-act.dg { font-weight: 700; } #chat .ch-lp-cf .ch-lp-act:not(.dg) { justify-content: center; color: var(--text2); }
+  @keyframes chPop { from { opacity: 0; transform: scale(.92); } }
+  @media (prefers-reduced-motion: reduce) { #chat .ch-lp-msg, #chat .ch-lp-acts, #chat .ch-lp .ch-emo, #chat .ch-replybar, #chat .ch-sheet.ch-lp { animation: none; } }
   #chat .ch-sw { display: flex; align-items: center; gap: 11px; border: 1px solid var(--border); background: var(--bg3); border-radius: 13px; padding: 11px 12px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; color: var(--text); }
   #chat .ch-sw .grow { flex: 1; min-width: 0; }
   #chat .ch-sw small { display: block; font-size: 11.5px; color: var(--text3); font-weight: 500; margin-top: 1px; }
@@ -4704,8 +4745,8 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li data-sa>💬 <b>Vestiaire</b> : Infos club lisibles sur tous les fonds d'écran</li><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 10:55</footer>
+<template id="hm-news" data-date="24/11/2026"><li data-sa>💬 <b>Vestiaire</b> : bulles plus aérées, « Répondre » plus clair, appui sur un message avec fond flouté</li><li data-sa>💬 <b>Vestiaire</b> : Infos club lisibles sur tous les fonds d'écran</li><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 10:58</footer>
 
 <script>
 
@@ -18162,7 +18203,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (V.selMode) { const n = V.sel.size;
       return `<div class="ch-selbar"><button type="button" data-ch="selCancel">Annuler</button><span><b>${n}</b> sélectionné${n > 1 ? "s" : ""}</span><button type="button" data-ch="selAll">Tout</button><button type="button" class="dang" data-ch="selDel"${n ? "" : " disabled"}>🗑️ Supprimer</button></div>`; }
     if (V.sugg && V.sugg.length) h += `<div class="ch-sugg">${V.sugg.map(p => p === "tous" ? `<button type="button" class="all" data-ch="pickMention" data-p="tous">📣 tous</button>` : `<button type="button" data-ch="pickMention" data-p="${esc(p)}">${av(p)}${esc(p)}</button>`).join("")}</div>`;
-    if (V.reply) h += `<div class="ch-replybar"><span class="tx">↩️ Réponse à <b>${esc(V.reply.by || "Infos Club")}</b> · ${esc(plain(V.reply.text))}</span><button type="button" data-ch="cancelReply" aria-label="Annuler la réponse">✕</button></div>`;
+    if (V.reply) h += `<div class="ch-replybar"><span class="tx"><b>Réponse à ${esc(V.reply.by === me() ? "toi-même" : V.reply.by || "Infos Club")}</b><span>${esc(plain(V.reply.text)) || "📷 Photo"}</span></span><button type="button" data-ch="cancelReply" aria-label="Annuler la réponse"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>`;
     const PH = V.photos || [];
     if (PH.length || V.photoBusy) h += `<div class="ch-photos"><div class="ch-thumbs">${PH.map((x, i) => `<span><img src="${x.data}" alt=""><button type="button" data-ch="photoDel" data-i="${i}" aria-label="Retirer la photo ${i + 1}">✕</button></span>`).join("")}${V.photoBusy ? `<span class="busy">…</span>` : ""}</div>
       <div class="ch-pinfo"><b>📷 ${PH.length} photo${PH.length > 1 ? "s" : ""}</b> · ${Math.round(PH.reduce((a, x) => a + x.size, 0) / 1024)} Ko${PH.length < 10 ? ` · <button type="button" data-ch="photo">+ Ajouter</button>` : " · 10 maximum"}<button type="button" class="x" data-ch="photoCancel" aria-label="Retirer toutes les photos">Tout retirer</button></div></div>`;
@@ -18221,19 +18262,25 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     f.scrollTop = near ? f.scrollHeight : keep;
     bindSwipe(); loadImgs();
   }
+  // Appui sur un message : fond flouté, le message au centre, réactions au-dessus, actions en dessous
+  const ICA = {
+    reply: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 7L5 12l5 5M5 12h9a5 5 0 0 1 5 5v1"/></svg>',
+    copy: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>',
+    pin: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6l-1 6 3 3H7l3-3zM12 13v7"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V4.5h4V7M7 7l1 13h8l1-13"/></svg>',
+  };
   function sheetHTML() {
     const m = (msgs[V.room] || []).find(x => x.id === V.sheet); if (!m) return "";
-    const r = R(V.room), p = me(), mine = m.reacts || {}, pinned = !!(r.pinned && r.pinned.id === m.id);
-    return `<div class="ch-sheet" data-ch="closeSheet"><div class="ch-sheet-in" data-stop="1"><div class="ch-grab"></div>
-      <div class="ch-prev"><b>${esc(m.by)}</b> · ${esc(plain(m.text))}</div>
+    const r = R(V.room), p = me(), mine = m.reacts || {}, pinned = !!(r.pinned && r.pinned.id === m.id), isMe = m.by === p;
+    const nImg = m.img ? 1 : Array.isArray(m.imgs) ? m.imgs.length : 0;
+    const bub = `<div class="ch-bub">${isMe || (r && r.dm) ? "" : `<span class="who" style="color:${ncol(m.by)}">${esc(m.by)}</span>`}${m.reply ? `<div class="ch-quote"><b>${esc(m.reply.by || "Infos Club")}</b>${esc(plain(m.reply.text))}</div>` : ""}${nImg ? `<span class="ch-lp-ph">📷 ${nImg > 1 ? nImg + " photos" : "Photo"}</span>` : ""}${m.photoOnly ? "" : fmt(m.text || "", isMe)}<span class="tm">${hm(m.at || Date.now())}</span></div>`;
+    const act = (k, l, ic, cls) => `<button type="button" class="ch-lp-act${cls ? " " + cls : ""}" data-ch="${k}" data-id="${m.id}"><span>${l}</span>${ic}</button>`;
+    return `<div class="ch-sheet ch-lp${isMe ? " me" : ""}" data-ch="closeSheet"><div class="ch-lp-in" data-stop="1">
       ${V.emoMore === m.id
-        ? `<div class="ch-emoin"><input id="ch-emoin" autocomplete="off" enterkeyhint="done" placeholder="Choisis un émoji sur ton clavier 😀" aria-label="Réagir avec un émoji du clavier"><button type="button" data-ch="emoLess" aria-label="Revenir aux émojis rapides">✕</button></div>
-           <p class="ch-note">Touche la touche émoji 😀 de ton clavier, puis l'émoji de ton choix.</p>`
-        : `<div class="ch-emo">${EMO.map(e => `<button type="button" data-ch="react" data-id="${m.id}" data-e="${e}" aria-pressed="${!!(mine[e] && mine[e][p])}">${e}</button>`).join("")}<button type="button" class="more" data-ch="emoMore" data-id="${m.id}" aria-label="Choisir un autre émoji">＋</button></div>`}
-      <button type="button" class="ch-act" data-ch="replyTo" data-id="${m.id}">↩️ Répondre</button>
-      <button type="button" class="ch-act" data-ch="copy" data-id="${m.id}">📋 Copier le texte</button>
-      ${isSA() && !r.dm ? `<button type="button" class="ch-act sa" data-ch="${pinned ? "unpin" : "pin"}" data-id="${m.id}">★ 📌 ${pinned ? "Désépingler" : "Épingler en haut du salon"}</button>` : ""}
-      ${m.by === p || (isSA() && !r.dm) ? `<button type="button" class="ch-act danger" data-ch="delMsg" data-id="${m.id}">${V.confirmDel === m.id ? "Confirmer la suppression ?" : "🗑️ Supprimer le message"}</button>` : ""}
+        ? `<div class="ch-emoin"><input id="ch-emoin" autocomplete="off" enterkeyhint="done" placeholder="Choisis un émoji 😀" aria-label="Réagir avec un émoji du clavier"><button type="button" data-ch="emoLess" aria-label="Revenir aux émojis rapides">✕</button></div>`
+        : `<div class="ch-emo">${EMO.map(e => `<button type="button" data-ch="react" data-id="${m.id}" data-e="${e}" aria-pressed="${!!(mine[e] && mine[e][p])}">${e}</button>`).join("")}<button type="button" class="more" data-ch="emoMore" data-id="${m.id}" aria-label="Choisir un autre émoji">${IC.plus}</button></div>`}
+      <div class="ch-lp-msg">${bub}</div>
+      ${V.confirmDel === m.id ? `<div class="ch-lp-acts ch-lp-cf"><p>Supprimer ce message${nImg ? " et sa photo" : ""} ? Il disparaîtra pour tout le monde.</p>${act("delMsg", "Supprimer pour tous", ICA.trash, "dg")}<button type="button" class="ch-lp-act" data-ch="cancelDel"><span>Annuler</span></button></div>` : `<div class="ch-lp-acts">${act("replyTo", "Répondre", ICA.reply)}${m.text && !m.photoOnly ? act("copy", "Copier", ICA.copy) : ""}${isSA() && !r.dm ? act(pinned ? "unpin" : "pin", pinned ? "Désépingler" : "Épingler", ICA.pin) : ""}${isMe || (isSA() && !r.dm) ? act("delMsg", "Supprimer", ICA.trash, "dg") : ""}</div>`}
     </div></div>`;
   }
   function muteRow(id) {
@@ -18505,11 +18552,12 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (a === "copy") { const m = (msgs[r.id] || []).find(x => x.id === t.dataset.id); try { await navigator.clipboard.writeText(m ? m.text : ""); toast("Texte copié"); } catch (er) {} V.sheet = null; return render(); }
     if (a === "delMsg") {
       if (V.confirmDel !== t.dataset.id) { V.confirmDel = t.dataset.id; return render(); }
-      V.confirmDel = null; V.sheet = null; render();
+      V.confirmDel = null; V.sheet = null; render(); toast("Message supprimé");
       const upd = { [`${mP(r.id)}/${t.dataset.id}`]: null }; imgPaths(r.id, t.dataset.id).forEach(x => { upd[x] = null; }); if (r.pinned && r.pinned.id === t.dataset.id) upd[`chat/rooms/${r.id}/pinned`] = null;
       _db.ref().update(upd).catch(() => toast("Suppression impossible."));
       return;
     }
+    if (a === "cancelDel") { V.confirmDel = null; return render(); }
     if (a === "cancelReply") { V.reply = null; return renderComp(); }
     if (a === "goto") { flash(t.dataset.to); return; }
     if (a === "pin" && isSA()) { const m = (msgs[r.id] || []).find(x => x.id === t.dataset.id); V.sheet = null; render(); _db.ref(`chat/rooms/${r.id}/pinned`).set({ id: m.id, by: m.by || "", text: plain(m.text).slice(0, 140) }).then(() => toast("📌 Message épinglé pour tout le salon")).catch(() => toast("Épinglage impossible.")); return; }
