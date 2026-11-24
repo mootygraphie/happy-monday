@@ -1092,6 +1092,15 @@
   .saisie-repart-avatar.pending { border-width: 3.5px; box-shadow: 0 0 5px 1px var(--gold-bg); }
   .validate-row { display: flex; justify-content: center; margin-top: 14px; }
   .saisie-repart-validate { font-size: 13.5px; font-weight: 700; background: var(--gold); color: #fff; border: none; border-radius: 10px; padding: 10px 22px; cursor: pointer; font-family: inherit; transition: opacity .15s; }
+  .saisie-slide { position: relative; height: 66px; border-radius: 34px; background: linear-gradient(160deg, #f0241a, #b80000); display: flex; align-items: center; justify-content: center; padding: 0 16px 0 66px; overflow: hidden; user-select: none; -webkit-user-select: none; color: #fff; width: 100%; max-width: 420px; margin: 0 auto; touch-action: none; }
+  .saisie-slide .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 62px; background: rgba(0,0,0,.22); }
+  .saisie-slide .kn { position: absolute; left: 6px; top: 6px; width: 54px; height: 54px; border-radius: 50%; background: #fff; color: #c40000; display: grid; place-items: center; font-size: 24px; font-weight: 800; cursor: grab; z-index: 1; box-shadow: 0 4px 12px rgba(0,0,0,.35); }
+  .saisie-slide .tx { position: relative; display: flex; flex-direction: column; align-items: center; line-height: 1.15; pointer-events: none; }
+  .saisie-slide .tx b { font-size: 16px; font-weight: 800; } .saisie-slide .tx small { font-size: 12px; display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+  .saisie-slide .lv { font-size: 10px; font-weight: 800; letter-spacing: .1em; padding: 2px 7px; border-radius: 6px; background: #fff; color: #c40000; display: inline-flex; align-items: center; gap: 5px; }
+  .saisie-slide .lv i { width: 6px; height: 6px; border-radius: 50%; background: #e30b0b; animation: slLv 1.4s infinite; } @keyframes slLv { 50% { opacity: .3; } }
+  .saisie-slide.done { background: #1f9a5a; padding-left: 16px; } .saisie-slide.done .kn { display: none; }
+  @media (prefers-reduced-motion: reduce) { .saisie-slide .lv i { animation: none; } }
   .saisie-livebar { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; padding: 10px 12px; border-radius: 14px; border: 1px solid; }
   .saisie-livebar.on { border-color: rgba(255,59,48,.45); background: rgba(255,59,48,.1); } .saisie-livebar.off { border-color: var(--border2); background: var(--bg2); }
   .saisie-livebar .dot { width: 10px; height: 10px; border-radius: 50%; background: #ff3b30; box-shadow: 0 0 0 4px rgba(255,59,48,.2); flex: none; }
@@ -3461,6 +3470,63 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #npop .np-skip { display: block; width: 100%; border: none; background: none; color: var(--text3); font: inherit; font-size: 12.5px; text-decoration: underline; cursor: pointer; padding: 0 0 14px; }
   /* ── Effectif : liste épurée */
   .eff-wrap { max-width: 680px; margin: 0 auto; }
+  /* Effectif en trombinoscope (24/11) */
+  .eff-tb { display: flex; flex-direction: column; gap: 10px; }
+  .eff-hd { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; }
+  .eff-hd small { display: block; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
+  .eff-hd h2 { margin: 0; font-size: 28px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1; }
+  .eff-sab { font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--sa); padding: 4px 8px; border-radius: 8px; border: 1px solid var(--sa-border); }
+  .eff-search { display: flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 12px; background: var(--bg2); border: 1px solid var(--border); color: var(--text3); }
+  .eff-search input { flex: 1; min-width: 0; border: none; background: none; color: var(--text); font: inherit; font-size: 16px; padding: 10px 0; outline: none; }
+  .eff-dds { display: grid; grid-template-columns: 1fr 1.25fr auto; gap: 7px; }
+  .eff-dd { position: relative; display: flex; flex-direction: column; border-radius: 13px; background: var(--bg2); border: 1px solid var(--border2); padding: 6px 30px 7px 11px; cursor: pointer; }
+  .eff-dd small { font-size: 9.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
+  .eff-dd select { -webkit-appearance: none; appearance: none; border: none; background: none; color: var(--text); font: inherit; font-size: 14.5px; font-weight: 700; padding: 0; outline: none; cursor: pointer; width: 100%; }
+  .eff-dd select option { background: var(--bg2); color: var(--text); }
+  .eff-dd::after { content: ""; position: absolute; right: 12px; top: 50%; width: 7px; height: 7px; border-right: 2px solid var(--text2); border-bottom: 2px solid var(--text2); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+  .eff-dir { width: 46px; border-radius: 13px; border: 1px solid var(--border2); background: var(--bg2); color: var(--good); font: inherit; font-size: 18px; font-weight: 800; cursor: pointer; }
+  .eff-tb .eff-sec { margin-top: 4px; }
+  .eff-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  @media (min-width: 600px) { .eff-grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 900px) { .eff-grid { grid-template-columns: repeat(5, 1fr); } }
+  .eff-cc { position: relative; aspect-ratio: 3 / 4; border-radius: 13px; overflow: hidden; border: 2px solid var(--c); background: var(--bg2); padding: 0; font: inherit; color: #fff; cursor: pointer; transition: transform .2s; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
+  .eff-cc.gR { --c: #2f6b4d; } .eff-cc.gO { --c: #3a4a7a; } .eff-cc.gD { --c: #4a4a56; } .eff-cc.gI { --c: #6a2a2a; }
+  .eff-cc .eff-ph { position: absolute; inset: 0; display: grid; place-items: center; font-size: 22px; font-weight: 800; color: #8a8a97; background: linear-gradient(160deg, #2a2a34, #16161c); }
+  .eff-cc .eff-ph > .pf-img, .eff-fph > .pf-img, .eff-lp-card > .pf-img { transform: none; object-position: 50% 30%; -webkit-user-drag: none; }
+  .eff-cc.gD .eff-ph, .eff-cc.gI .eff-ph { filter: grayscale(.85) brightness(.75); }
+  .eff-cc::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 52%, rgba(0,0,0,.88)); pointer-events: none; }
+  .eff-cc b { position: absolute; left: 5px; right: 5px; bottom: 6px; z-index: 1; font-size: 11.5px; font-weight: 800; font-style: italic; text-transform: uppercase; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .eff-cc .v { position: absolute; top: 5px; right: 5px; z-index: 1; font-size: 10.5px; font-weight: 800; padding: 1px 6px; border-radius: 6px; background: rgba(0,0,0,.65); color: var(--vc); }
+  .eff-cc.zero .v { opacity: .5; } .eff-cc.press { transform: scale(.94); transition: transform .45s; }
+  .eff-empty { text-align: center; color: var(--text3); padding: 30px 0; }
+  html.eff-lock, html.eff-lock body { overflow: hidden; }
+  .eff-ov { position: fixed; inset: 0; z-index: 3200; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; opacity: 0; transition: opacity .2s; touch-action: none; }
+  .eff-ov.on { opacity: 1; }
+  .eff-sheet { width: 100%; max-width: 560px; border-radius: 24px 24px 0 0; background: var(--bg2); padding: 10px 16px calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateY(100%); transition: transform .28s cubic-bezier(.2,.9,.3,1); }
+  .eff-ov.on .eff-sheet { transform: none; }
+  .eff-grab { width: 40px; height: 4px; border-radius: 2px; background: var(--border2); margin: 0 auto 12px; cursor: pointer; }
+  .eff-fh { display: flex; gap: 14px; align-items: center; }
+  .eff-fph { width: 86px; height: 112px; border-radius: 14px; border: 2px solid var(--c, var(--border2)); flex: none; display: grid; place-items: center; font-size: 26px; font-weight: 800; color: var(--text3); background: var(--bg3); }
+  .eff-fph.gR, .eff-lp-card.gR { --c: #2f6b4d; } .eff-fph.gO, .eff-lp-card.gO { --c: #3a4a7a; } .eff-fph.gD, .eff-lp-card.gD { --c: #4a4a56; } .eff-fph.gI, .eff-lp-card.gI { --c: #6a2a2a; }
+  .eff-fh b { display: block; font-size: 24px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1; }
+  .eff-fh small { display: block; font-size: 12px; color: var(--text2); margin-top: 3px; }
+  .eff-fh em { display: inline-block; margin-top: 6px; font-style: normal; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; background: var(--bg3); color: var(--text2); }
+  .eff-fs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 14px; }
+  .eff-fs div { border-radius: 12px; background: var(--bg3); padding: 9px 8px; text-align: center; } .eff-fs b { display: block; font-size: 20px; font-weight: 800; font-style: italic; } .eff-fs small { font-size: 10.5px; color: var(--text3); }
+  .eff-fbtn { display: block; width: 100%; text-align: center !important; margin-top: 12px; border: none; border-radius: 12px; padding: 12px; font: inherit; font-weight: 800; font-size: 14px; background: #e30b0b; color: #fff; cursor: pointer; }
+  .eff-lp { position: fixed; inset: 0; z-index: 3300; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(5,5,8,.55); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); opacity: 0; transition: opacity .18s; touch-action: none; }
+  .eff-lp.on { opacity: 1; }
+  .eff-lp-in { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; max-width: 270px; }
+  .eff-lp-card { width: 120px; aspect-ratio: 3 / 4; border-radius: 16px; border: 2px solid var(--c); display: grid; place-items: center; font-size: 26px; font-weight: 800; color: #8a8a97; background: #22222b; box-shadow: 0 16px 40px rgba(0,0,0,.55); animation: effPop .22s cubic-bezier(.2,1.3,.4,1); }
+  .eff-lp-list { width: 100%; border-radius: 16px; background: var(--bg2); border: 1px solid var(--border); overflow: hidden; box-shadow: 0 16px 40px rgba(0,0,0,.55); animation: effPop .24s cubic-bezier(.2,1.2,.4,1); }
+  .eff-lp-list .h { padding: 10px 14px 6px; font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--sa); }
+  .eff-lp-list button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 14px; border: none; border-top: 1px solid var(--border); background: none; color: var(--text); font: inherit; font-size: 14.5px; text-align: left; cursor: pointer; }
+  .eff-lp-list button i { width: 10px; height: 10px; border-radius: 50%; flex: none; } .eff-lp-list button small { margin-left: auto; font-size: 11px; color: var(--text3); }
+  .eff-lp-list button[aria-current] { color: var(--text2); cursor: default; }
+  @keyframes effPop { from { opacity: 0; transform: scale(.9); } }
+  .eff-undo { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 3400; display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 12px; background: var(--toast-bg); border: 1px solid var(--toast-border); color: #f4eded; font-size: 13.5px; font-weight: 600; white-space: nowrap; box-shadow: 0 10px 28px rgba(0,0,0,.5); }
+  .eff-undo button { border: none; background: none; color: #ffb3ad; font: inherit; font-weight: 800; cursor: pointer; padding: 0; }
+  @media (prefers-reduced-motion: reduce) { .eff-lp-card, .eff-lp-list { animation: none; } .eff-sheet { transition: none; } }
   .eff-stats { display: flex; gap: 6px; margin: 4px 0 14px; padding: 6px 0; }
   .eff-stats button { flex: 1 1 0; min-width: 0; border: 1px solid var(--border2); background: var(--bg2); border-radius: 12px; padding: 8px 0; font: inherit; font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; filter: grayscale(.6); opacity: .8; color: var(--text); transition: flex-grow .2s, background .2s; }
   .eff-stats button[aria-pressed="true"] { flex-grow: 3.2; filter: none; opacity: 1; background: var(--gold-bg); border-color: var(--gold); color: var(--gold); font-size: 13.5px; font-weight: 700; }
@@ -4818,8 +4884,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li data-sa>✅ <b>Accueil</b> : confirmation avant d'ouvrir le sondage ou d'annuler la session</li><li data-sa>📡 <b>Saisie</b> : le direct se lance quand les équipes sont validées ; plus de bouton « Suspendre »</li><li>📊 <b>Statistiques</b> : ta place au classement sur chaque tuile, et la tuile « Décisif » (but ou passe)</li><li>🏆 <b>Récompenses</b> : ta ligne toujours visible dans chaque classement</li><li>💬 <b>Le Vestiaire</b> est ouvert à tous : salons, fonds d'écran, photos (bouton 💬 en haut)</li><li>✉️ <b>Messagerie</b> : écris en privé à n'importe quel joueur</li><li data-sa>👥 <b>Membres</b> : les fiches sans compte apparaissent en fin de liste</li><li>🏆 <b>Accueil</b> : nouvelles cases Ballon d'Or et Vignettes</li><li>🗓️ <b>Sondage</b> : il s'ouvre tout seul le samedi à 9h, la date est affichée à l'accueil</li><li>🚫 <b>Session annulée</b> : tout le monde est prévenu par notification</li><li>➕ <b>Jokers</b> : on peut encore en ajouter après la fermeture du sondage</li><li data-sa>💬 <b>Vestiaire</b> : le sondage en bandeau fixé en haut du Vestiaire général</li><li>🌙 <b>Sessions</b> : « Ta soirée », ton bilan du soir et 4 stats marrantes</li><li data-sa>💬 <b>Vestiaire</b> : bulles plus aérées, « Répondre » plus clair, appui sur un message avec fond flouté</li><li data-sa>💬 <b>Vestiaire</b> : Infos club lisibles sur tous les fonds d'écran</li><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 14:41</footer>
+<template id="hm-news" data-date="24/11/2026"><li>👥 <b>Effectif</b> : nouveau trombinoscope</li><li data-sa>📡 <b>Saisie</b> : glisser pour lancer le direct</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 15:05</footer>
 
 <script>
 
@@ -10806,7 +10872,7 @@ document.getElementById("delete-session-btn").addEventListener("click", () => {
 ══════════════════════════════════════════════════════════ */
 
 let rosterSort = { col: "taux", dir: 1 };
-let _effStat = { k: "taux", dir: -1 }; // Effectif : stat affichée et sens du tri
+let _effStat = { k: "taux", dir: -1, f: "all", q: "" }; // Effectif : stat affichée et sens du tri
 let jokerSort  = { col: "taux", dir: 1 };
 
 function computePlayerStats() {
@@ -11067,34 +11133,96 @@ function renderJoueurs() {
     </div>`;
   }
 
-  /* ── Liste épurée (validée le 21/11/2026) : classée par présence, sans icône sur les joueurs.
-     La barre d'icônes trie (du plus grand au plus petit, re-toucher inverse) et n'affiche que la stat choisie.
-     Super admins : statut du joueur en pastille-menu à droite, groupe Inactifs visible. */
-  const EFF_ST = [["taux", "✅", "Présence"], ["absences", "❌", "Absences"], ["blesses", "🤕", "Blessures"], ["pasRepondu", "⁉️", "Pas répondu"], ["sac", "🎒", "Sac"], ["maillots", "👕", "Maillots"]];
-  const EFF_COL = { taux: "var(--good)", absences: "var(--bad)", blesses: "#f39c12", pasRepondu: "var(--text3)", sac: "var(--bleu)", maillots: "#b892ff" };
+  /* ── Trombinoscope (validé le 24/11/2026) : photos par groupe, une seule valeur affichée (celle du tri),
+     menus déroulants Groupe / Trier par, mini-fiche au toucher. Super admins : groupe Inactifs +
+     appui long sur une photo = menu de statut (avec « Annuler » pendant 4 s). */
+  const SA = isAdmin || (typeof _accIsSuper !== "undefined" && !!_accIsSuper);
+  const ES = _effStat, k = ES.k;
+  const SORTS = [["taux", "✅ Présence", "%"], ["absences", "❌ Absences", ""], ["blesses", "🤕 Blessures", ""], ["pasRepondu", "⁉️ Pas répondu", ""], ["sac", "🎒 Sac", ""], ["maillots", "👕 Maillots", ""]];
+  const VC = { taux: "#8fe0b2", absences: "#ff8a80", blesses: "#ffb067", pasRepondu: "#a3a3b0", sac: "#7fb2ff", maillots: "#c9a3ff" };
   const byName = Object.fromEntries(rowsWithTaux.map(r => [r.name, r]));
-  const rowOf = n => byName[n] || { name: n, taux: 0, absences: 0, blesses: 0, pasRepondu: 0, sac: 0, maillots: 0 };
-  const absentNames = [...ABSENTS].filter(n => !INACTIFS.has(n));
-  const inactifNames = [...INACTIFS];
-  const groups = [["roster", "Réguliers", rosterRows], ["joker", "Occasionnels", jokerRows], ["absent", "Dépanneurs", absentNames.map(rowOf)]];
-  if (isAdmin) groups.push(["inactif", "Inactifs cette saison", inactifNames.map(rowOf)]);
-  const st = _effStat, k = st.k, max = Math.max(1, ...rowsWithTaux.map(r => r[k] || 0));
-  const sortRows = L => [...L].sort((a, b) => ((a[k] || 0) - (b[k] || 0)) * st.dir || a.name.localeCompare(b.name, "fr"));
-  const STS = [["roster", "to-roster", "Rég."], ["joker", "to-joker", "Occ."], ["absent", "to-absent", "Dép."], ["inactif", "to-inactif", "Inact."]];
-  const stsHTML = (n, g) => isAdmin ? `<label class="eff-sts s-${g} roster-status"><select class="roster-status-sel" data-player="${n}" aria-label="Statut de ${n}">${STS.map(([gg, act, sh]) => `<option value="${act}"${gg === g ? " selected" : ""}>${sh}</option>`).join("")}</select></label>` : "";
-  const rowHTML = (r, g) => { const v = r[k] || 0, w = k === "taux" ? v : v / max * 100;
-    return `<div class="eff-row" style="--c:${EFF_COL[k]}"><div class="roster-avatar pf pf-open eff-av${g === "roster" ? "" : " dim"}" data-player="${r.name}" title="Voir la fiche">${initials(r.name)}${portraitImg(r.name, true)}</div>
-      <div class="eff-mid"><button class="roster-name player-link" data-player="${r.name}">${r.name}</button><div class="eff-bar"><i style="width:${w}%"></i></div></div>
-      <span class="eff-val${v ? "" : " zero"}">${k === "taux" ? v + " %" : v}</span>${stsHTML(r.name, g)}</div>`; };
-  const bar = `<div class="eff-stats" role="group" aria-label="Trier l'effectif">${EFF_ST.map(([kk, e, w]) => `<button type="button" data-eff="${kk}" aria-pressed="${k === kk}" title="${w}">${e}<span class="w">${w} ${st.dir < 0 ? "↓" : "↑"}</span></button>`).join("")}</div>`;
-  container.innerHTML = `<div class="eff-wrap">${bar}${groups.map(([g, l, L]) => L.length ? `<div class="eff-sec">${l} · ${L.length}</div>${sortRows(L).map(r => rowHTML(r, g)).join("")}` : "").join("")}</div>`;
-  container.querySelectorAll("[data-eff]").forEach(btn => btn.addEventListener("click", () => {
-    const kk = btn.dataset.eff;
-    if (_effStat.k === kk) _effStat.dir *= -1; else { _effStat.k = kk; _effStat.dir = -1; }
-    renderJoueurs();
-  }));
+  const rowOf = n => byName[n] || { name: n, taux: 0, absences: 0, blesses: 0, pasRepondu: 0, sac: 0, maillots: 0, presences: 0 };
+  const GRP = [["R", "Réguliers", rosterRows], ["O", "Occasionnels", jokerRows], ["D", "Dépanneurs", [...ABSENTS].filter(n => !INACTIFS.has(n)).map(rowOf)]];
+  if (SA) GRP.push(["I", "Inactifs", [...INACTIFS].map(rowOf)]);
+  if (!GRP.some(g => g[0] === ES.f)) ES.f = "all";
+  const q = (ES.q || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const match = r => !q || r.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(q);
+  const unit = (SORTS.find(x => x[0] === k) || SORTS[0])[2];
+  const sortRows = L => [...L].sort((a, b) => ((a[k] || 0) - (b[k] || 0)) * ES.dir || a.name.localeCompare(b.name, "fr"));
+  const card = (r, g) => `<button type="button" class="eff-cc g${g}${r[k] ? "" : " zero"}" data-effp="${r.name}" style="--vc:${VC[k]}"><span class="pf eff-ph">${initials(r.name)}${portraitImg(r.name, true)}</span><span class="v">${r[k] || 0}${unit}</span><b>${r.name}</b></button>`;
+  const nVis = GRP.filter(g => g[0] !== "I").reduce((a, g) => a + g[2].length, 0);
+  const body = GRP.filter(([g]) => ES.f === "all" || ES.f === g).map(([g, l, L]) => { const X = sortRows(L.filter(match)); return X.length ? `<div class="eff-sec">${l} · ${X.length}</div><div class="eff-grid">${X.map(r => card(r, g)).join("")}</div>` : ""; }).join("") || `<p class="eff-empty">Personne à ce nom.</p>`;
+  const focused = document.activeElement && document.activeElement.id === "eff-q";
+  container.innerHTML = `<div class="eff-wrap eff-tb"><div class="eff-hd"><div><small>${nVis} joueurs</small><h2>Effectif</h2></div>${SA ? `<span class="eff-sab">★ Super admin</span>` : ""}</div>
+    <label class="eff-search"><span aria-hidden="true">🔍</span><input id="eff-q" type="search" placeholder="Rechercher un joueur" value="${(ES.q || "").replace(/"/g, "&quot;")}" autocomplete="off"></label>
+    <div class="eff-dds"><label class="eff-dd"><small>Groupe</small><select id="eff-f">${[["all", "Tous"], ...GRP.map(g => [g[0], g[1]])].map(([v, l]) => `<option value="${v}"${ES.f === v ? " selected" : ""}>${l}</option>`).join("")}</select></label>
+      <label class="eff-dd"><small>Trier par</small><select id="eff-s">${SORTS.map(([v, l]) => `<option value="${v}"${k === v ? " selected" : ""}>${l}</option>`).join("")}</select></label>
+      <button type="button" class="eff-dir" id="eff-dir" aria-label="${ES.dir < 0 ? "Du plus grand au plus petit" : "Du plus petit au plus grand"}">${ES.dir < 0 ? "↓" : "↑"}</button></div>
+    ${body}</div>`;
+  if (focused) { const el = document.getElementById("eff-q"); el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
+  window._effRow = rowOf; window._effGroups = GRP; window._effSA = SA;
 }
-
+// ── Effectif : interactions (installées une seule fois)
+(function () {
+  const C = document.getElementById("joueurs-content"); if (!C) return;
+  const GL = { R: "Régulier", O: "Occasionnel", D: "Dépanneur", I: "Inactif" }, GD = { R: "#34c77b", O: "#5b8cff", D: "#8a8a97", I: "#ff6b5e" };
+  const ACT = { R: "to-roster", O: "to-joker", D: "to-absent", I: "to-inactif" };
+  const grpOf = n => INACTIFS.has(n) ? "I" : ABSENTS.has(n) ? "D" : JOKERS.has(n) ? "O" : "R";
+  const esc = x => String(x).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  C.addEventListener("input", e => { if (e.target.id === "eff-q") { _effStat.q = e.target.value; renderJoueurs(); } });
+  C.addEventListener("change", e => {
+    if (e.target.id === "eff-f") { _effStat.f = e.target.value; renderJoueurs(); }
+    if (e.target.id === "eff-s") { _effStat.k = e.target.value; _effStat.dir = -1; renderJoueurs(); }
+  });
+  // mini-fiche
+  function sheet(n) {
+    const r = window._effRow(n), g = grpOf(n), tot = SESSIONS.length;
+    const o = document.createElement("div"); o.className = "eff-ov";
+    o.innerHTML = `<div class="eff-sheet" role="dialog" aria-label="${esc(n)}"><div class="eff-grab"></div>
+      <div class="eff-fh"><span class="pf eff-fph g${g}">${esc(n.slice(0, 2).toUpperCase())}${portraitImg(n)}</span><span><b>${esc(n)}</b><small>${r.presences || 0} soirée${(r.presences || 0) > 1 ? "s" : ""} sur ${tot}</small><em>${GL[g]}</em></span></div>
+      <div class="eff-fs"><div><b style="color:#8fe0b2">${r.taux || 0}%</b><small>présence</small></div><div><b style="color:#ff8a80">${r.absences || 0}</b><small>absences</small></div><div><b style="color:#ffb067">${r.blesses || 0}</b><small>blessures</small></div>
+        <div><b>${r.pasRepondu || 0}</b><small>pas répondu</small></div><div><b style="color:#7fb2ff">${r.sac || 0}</b><small>sac</small></div><div><b style="color:#c9a3ff">${r.maillots || 0}</b><small>maillots</small></div></div>
+      <button type="button" class="eff-fbtn player-link" data-player="${esc(n)}">Voir sa fiche complète ›</button></div>`;
+    const close = () => { o.remove(); document.documentElement.classList.remove("eff-lock"); };
+    o.addEventListener("click", ev => { if (ev.target === o || ev.target.closest(".eff-grab") || ev.target.closest(".eff-fbtn")) close(); });
+    document.body.appendChild(o); document.documentElement.classList.add("eff-lock");
+    requestAnimationFrame(() => o.classList.add("on"));
+  }
+  // appui long (super admin) : menu de statut
+  let lpT = null, lpDone = false;
+  C.addEventListener("pointerdown", e => {
+    const c = e.target.closest(".eff-cc"); if (!c || !window._effSA) return;
+    lpDone = false; c.classList.add("press");
+    lpT = setTimeout(() => { lpDone = true; c.classList.remove("press"); if (navigator.vibrate) navigator.vibrate(15); menu(c.dataset.effp); }, 480);
+  });
+  ["pointerup", "pointerleave", "pointercancel", "scroll"].forEach(ev => C.addEventListener(ev, () => { clearTimeout(lpT); C.querySelectorAll(".eff-cc.press").forEach(x => x.classList.remove("press")); }, true));
+  C.addEventListener("contextmenu", e => { if (window._effSA && e.target.closest(".eff-cc")) e.preventDefault(); });
+  function menu(n) {
+    const g = grpOf(n), o = document.createElement("div"); o.className = "eff-lp";
+    o.innerHTML = `<div class="eff-lp-in"><span class="pf eff-lp-card g${g}">${esc(n.slice(0, 2).toUpperCase())}${portraitImg(n)}</span>
+      <div class="eff-lp-list"><div class="h">★ Statut de ${esc(n)}</div>${["R", "O", "D", "I"].map(x => `<button type="button" data-lg="${x}"${x === g ? ' aria-current="true"' : ""}><i style="background:${GD[x]}"></i>${GL[x]}${x === g ? "<small>actuel</small>" : ""}</button>`).join("")}</div></div>`;
+    const close = () => { o.remove(); document.documentElement.classList.remove("eff-lock"); };
+    o.addEventListener("click", ev => {
+      const b = ev.target.closest("[data-lg]");
+      if (b && b.dataset.lg !== g) { _effApplyStatus(n, ACT[b.dataset.lg]); undoToast(`${n} → ${GL[b.dataset.lg]}`, () => _effApplyStatus(n, ACT[g])); }
+      if (b || !ev.target.closest(".eff-lp-in")) close();
+    });
+    document.body.appendChild(o); document.documentElement.classList.add("eff-lock");
+    requestAnimationFrame(() => o.classList.add("on"));
+  }
+  function undoToast(msg, undo) {
+    document.getElementById("eff-undo")?.remove();
+    const t = document.createElement("div"); t.id = "eff-undo"; t.className = "eff-undo";
+    t.innerHTML = `<span>${esc(msg)}</span><button type="button">Annuler</button>`;
+    t.querySelector("button").onclick = () => { undo(); t.remove(); };
+    document.body.appendChild(t); setTimeout(() => t.remove(), 4000);
+  }
+  C.addEventListener("click", e => {
+    if (lpDone) { lpDone = false; e.preventDefault(); e.stopPropagation(); return; }
+    if (e.target.closest("#eff-dir")) { _effStat.dir *= -1; renderJoueurs(); return; }
+    const c = e.target.closest(".eff-cc"); if (c) sheet(c.dataset.effp);
+  });
+})();
 function _effApplyStatus(player, action) {
   if (action === 'to-roster')  { JOKERS.delete(player); ABSENTS.delete(player); INACTIFS.delete(player); _saveJokers(); _saveAbsents(); _saveInactifs(); }
   if (action === 'to-joker')   { ABSENTS.delete(player); INACTIFS.delete(player); JOKERS.add(player);    _saveAbsents(); _saveInactifs(); _saveJokers(); }
@@ -12742,7 +12870,10 @@ function _buildRepartitionScreenHTML() {
     <p class="saisie-repart-hint">Touchez un joueur pour choisir sa couleur, puis validez.</p>
     <div class="saisie-repart-cols n${visibleZonesCount}">${colsHtml}</div>
     <div class="validate-row">
-      <button class="saisie-repart-validate" data-act="saisie-repart-validate"${nPending || teamsComplete ? "" : " disabled"}>${nPending ? "Valider la répartition" : teamsComplete ? "✓ Valider les équipes" : (anyAssigned ? "✓ Répartition validée" : "Valider la répartition")}</button>
+      ${!nPending && teamsComplete
+        ? (_draft.liveStartedAt ? `<button class="saisie-repart-validate" data-act="saisie-repart-validate">Retour aux matchs ›</button>` // direct déjà lancé : pas besoin de re-glisser
+          : `<div class="saisie-slide" id="saisie-slide"><span class="fill"></span><span class="kn" aria-hidden="true">›</span><span class="tx"><b>Confirmer les équipes</b><small>et lancer le <span class="lv"><i></i>DIRECT</span></small></span></div>`)
+        : `<button class="saisie-repart-validate" data-act="saisie-repart-validate"${nPending ? "" : " disabled"}>${nPending ? "Valider la répartition" : (anyAssigned ? "✓ Répartition validée" : "Valider la répartition")}</button>`}
     </div>
     <div class="saisie-auto-teams-note" style="text-align:center">${nPending
       ? `${nPending} changement${nPending>1?"s":""} en attente — rien ne bouge tant que vous ne validez pas`
@@ -18841,6 +18972,29 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (who && document.visibilityState === "visible" && cprefs.online !== false && Date.now() - onlineAt > 60000) { onlineAt = Date.now(); _db.ref(`chat/online/${who}`).set(TS()).catch(() => { onlineAt = 0; }); }
   }
   setInterval(tick, 1500); setTimeout(tick, 300);
+})();
+
+/* ══════════ SAISIE : « Confirmer les équipes et lancer le direct » à glisser ══════════
+   On fait glisser le rond jusqu'au bout : équipes confirmées, direct lancé, écran des Matchs. */
+(function () {
+  let sl = null, x0 = null, max = 0;
+  const reset = () => { if (!sl) return; sl.querySelector(".kn").style.left = ""; sl.querySelector(".fill").style.width = ""; sl.querySelector(".tx").style.opacity = ""; };
+  document.addEventListener("pointerdown", e => {
+    const k = e.target.closest("#saisie-slide .kn"); if (!k) return;
+    sl = k.closest("#saisie-slide"); x0 = e.clientX; max = sl.clientWidth - 62; try { k.setPointerCapture(e.pointerId); } catch (er) {} e.preventDefault();
+  });
+  document.addEventListener("pointermove", e => {
+    if (x0 == null || !sl) return; const d = Math.max(0, Math.min(max, e.clientX - x0));
+    sl.querySelector(".kn").style.left = 6 + d + "px"; sl.querySelector(".fill").style.width = 62 + d + "px"; sl.querySelector(".tx").style.opacity = 1 - d / max * .8;
+  });
+  const end = e => {
+    if (x0 == null || !sl) return; const d = e.clientX - x0; x0 = null;
+    if (d >= max - 8) { sl.classList.add("done"); sl.querySelector(".tx").innerHTML = "<b>● Direct lancé</b>"; if (navigator.vibrate) navigator.vibrate(20);
+      setTimeout(() => { document.querySelector('.saisie-step-pill[data-step="matchs"]')?.click(); if (typeof _saisieStep !== "undefined" && _saisieStep === "matchs") _showToast("Équipes confirmées : le direct est lancé !"); }, 250); }
+    else reset();
+    sl = null;
+  };
+  document.addEventListener("pointerup", end); document.addEventListener("pointercancel", e => { x0 = null; reset(); sl = null; });
 })();
 
 /* ══════════ MISE À JOUR : forcer le chargement de la dernière version ══════════
