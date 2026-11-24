@@ -260,6 +260,42 @@ def main(fast=False):
 
     vote = {}
 
+    # ── session annulée (avant ou après l'ouverture du sondage) : une notification à tous, une seule fois
+    def do_cancel():
+        v = req(f"sessionVotes/{mon_iso}") or {}
+        if v.get("status") not in ("none", "cancelled") or (sent.get("cancel") or {}).get(mon_iso):
+            return
+        mon18 = datetime.datetime(monday.year, monday.month, monday.day, 18, 0, tzinfo=PARIS).timestamp() * 1000
+        if now_ms >= mon18:
+            return
+        back = v.get("backDate") if v.get("msg") == "date" and v.get("backDate") else (monday + datetime.timedelta(days=7)).isoformat()
+        try:
+            bd = datetime.date.fromisoformat(back)
+            back_lbl = f"{bd.day if bd.day > 1 else '1er'} {MOIS[bd.month - 1]}"
+        except Exception:
+            back_lbl = "la semaine prochaine"
+        day_lbl = f"{monday.day if monday.day > 1 else '1er'} {MOIS[monday.month - 1]}"
+        print("Session annulée :", mon_iso, "→ retour", back_lbl)
+        mark(f"pushSent/cancel/{mon_iso}")
+        for p in subs:
+            auto_send(p, "🚫 Session Annulée", f"Pas foot le {day_lbl}.\nRDV le {back_lbl} !", "./#vote", f"cancel-{mon_iso}")
+
+    # ── ouverture automatique du sondage : samedi 9h (heure de Paris), sauf session annulée
+    def do_auto_open():
+        wd = now.weekday()  # samedi = 5, dimanche = 6
+        sun_close = datetime.datetime(monday.year, monday.month, monday.day, 21, 30, tzinfo=PARIS) - datetime.timedelta(days=1)
+        if not ((wd == 5 and now.hour >= 9) or (wd == 6 and now < sun_close)):
+            return
+        if req(f"sessionVotes/{mon_iso}"):
+            return  # déjà ouvert, ou annulé par un super admin
+        print("Ouverture automatique du sondage :", mon_iso)
+        if DRY:
+            return
+        req(f"sessionVotes/{mon_iso}", "PUT", {"status": "open", "by": "auto", "at": int(now_ms), "closesAt": int(sun_close.timestamp() * 1000)})
+        req("chat/msgs/g", "POST", {"sys": "open", "by": "auto", "text": f"Le sondage est ouvert pour {mon_lbl}.", "at": {".sv": "timestamp"}})
+
+    block("Ouverture auto", do_auto_open)
+
     def do_vote():
         nonlocal vote
         vote = req(f"sessionVotes/{mon_iso}") or {}
@@ -283,11 +319,13 @@ def main(fast=False):
                     mark(f"pushSent/rem3h/{mon_iso}/{p}")
                     auto_send(p, "⏳ Plus que 3 h pour répondre", f"Le sondage pour {mon_lbl} se ferme ce soir à 21h30.", "./?n=vote#vote", f"rem-{mon_iso}")
     if fast:
+        block("Annulation", do_cancel)
         block("Vestiaire", lambda: chat_push(subs, supers, sent, now_ms, send, allowed, prefs))
         block("Messagerie", lambda: dm_push(subs, supers, sent, now_ms, send, allowed))
         if stats["envoyées"] or stats["échecs"]:
             print(stats)
         return
+    block("Annulation", do_cancel)
     block("Sondage", do_vote)
 
     # ── récap de la soirée prêt : dès qu'une soirée récente (aujourd'hui ou hier) est enregistrée
@@ -534,7 +572,10 @@ def activity():
     rooms = sorted(set((fetch(f"{DB}/chat/rooms.json?shallow=true") or {}).keys()) | {"g"})
     last = tuple((r, tuple((fetch(f"{DB}/chat/msgs/{urllib.parse.quote(r)}.json?orderBy=%22$key%22&limitToLast=1") or {}).keys())) for r in rooms)
     dm = json.dumps(fetch(f"{DB}/chat/dmIdx.json") or {}, sort_keys=True)
-    return (q, last, dm)
+    t = datetime.datetime.now(PARIS).date()
+    mon = t if t.weekday() == 0 else t + datetime.timedelta(days=7 - t.weekday())
+    sv = fetch(f"{DB}/sessionVotes/{mon.isoformat()}/status.json")
+    return (q, last, dm, sv)
 
 
 def watch(seconds):

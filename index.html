@@ -2991,6 +2991,13 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
 .hm .hm-mine.A { --vc: #ef5350; } .hm .hm-mine.B { --vc: #f5c842; }
 .hm .hm-mine b { display: block; color: var(--vc); font-size: 15px; }
 .hm .hm-mine button { border: 1px solid var(--border2); background: var(--bg3); color: var(--text); border-radius: 10px; padding: 5px 10px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.hm .hm-sched { display: flex; align-items: center; gap: 11px; border-radius: 14px; padding: 12px 14px; margin: 4px 0 12px; background: rgba(52,199,123,.1); border: 1.5px solid rgba(52,199,123,.55); color: #8fe0b2; font-size: 14px; line-height: 1.3; }
+.hm .hm-sched svg { width: 24px; height: 24px; flex: none; fill: none; stroke: #34c77b; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; } .hm .hm-sched b { color: var(--text); }
+html.light .hm .hm-sched { color: #1f7a4a; }
+.hm .hm-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
+.hm .hm-duo button { font: inherit; font-size: 13.5px; font-weight: 600; padding: 11px 8px; border-radius: 12px; color: var(--text); cursor: pointer; }
+.hm .hm-duo .o { background: rgba(255,159,10,.06); border: 1px solid rgba(255,159,10,.45); } .hm .hm-duo .r { background: rgba(255,59,48,.06); border: 1px solid rgba(255,59,48,.45); }
+.hm .hm-jk { display: flex; flex-direction: column; gap: 8px; margin: 0 0 12px; } .hm .hm-jk p { margin: 0; font-size: 13.5px; color: var(--text2); } .hm .hm-jk.low p b { color: #ff6b5e; }
 .hm .hm-deplink { border: 1px dashed color-mix(in srgb, #b892ff 60%, transparent); background: transparent; color: #cdb8ff; border-radius: 12px; padding: 10px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
 .hm .hm-depc { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text2); padding: 7px 10px; border-radius: 12px; background: rgba(184,146,255,.1); border: 1px solid rgba(184,146,255,.35); }
 .hm .hm-depc b { color: var(--text); } .hm .hm-depc button { margin-left: auto; border: 0; background: var(--bg3); color: var(--text2); width: 24px; height: 24px; border-radius: 50%; cursor: pointer; }
@@ -4409,6 +4416,26 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   /* appui sur un message : fond flouté */
   #chat .ch-sheet { background: rgba(5,5,8,.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
   #chat .ch-sheet-in { background: var(--bg2); border: 1px solid var(--border); }
+  /* bandeau du sondage (Vestiaire général) */
+  #chat .ch-pollb { flex: none; position: relative; z-index: 3; margin: 8px 10px 0; border-radius: 16px; padding: 10px 11px; display: flex; align-items: center; gap: 10px; background: rgba(20,20,26,.94); border: 1px solid var(--border); box-shadow: 0 8px 22px rgba(0,0,0,.45); }
+  #chat .ch-pollb .ico { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; flex: none; } #chat .ch-pollb .ico svg { width: 20px; height: 20px; }
+  #chat .ch-pollb .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  #chat .ch-pollb small { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  #chat .ch-pollb b { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } #chat .ch-pollb .tx > span:not(.gauge) { font-size: 11.5px; color: var(--text2); }
+  #chat .ch-pollb .gauge { display: block; height: 5px; border-radius: 3px; background: var(--bg3); margin-top: 5px; overflow: hidden; position: relative; }
+  #chat .ch-pollb .gauge i { display: block; height: 100%; }
+  #chat .ch-pollb .gauge::after { content: ""; position: absolute; top: 0; bottom: 0; left: 55.5%; width: 2px; background: rgba(255,255,255,.55); }
+  #chat .ch-pollb .go { flex: none; padding: 8px 12px; border-radius: 10px; border: none; font: inherit; font-weight: 800; font-size: 12.5px; background: #fff; color: #0e0e12; cursor: pointer; } #chat .ch-pollb .go.g { background: var(--bg3); color: var(--text2); }
+  #chat .ch-pollb.todo { border-color: rgba(255,59,48,.5); } #chat .ch-pollb.todo .ico { background: rgba(255,59,48,.16); color: #ff8a80; } #chat .ch-pollb.todo small { color: #ff8a80; } #chat .ch-pollb.todo .gauge i { background: #ff6b5e; }
+  #chat .ch-pollb.done .gauge i { background: var(--ch-live); }
+  #chat .ch-pollb.vP .ico { background: rgba(52,199,123,.15); color: var(--ch-live); } #chat .ch-pollb.vP small { color: var(--ch-live); }
+  #chat .ch-pollb.vA .ico { background: rgba(255,59,48,.15); color: #ff6b5e; } #chat .ch-pollb.vA small { color: #ff6b5e; }
+  #chat .ch-pollb.vB .ico { background: rgba(255,159,10,.15); color: #ffb067; } #chat .ch-pollb.vB small { color: #ffb067; }
+  #chat .ch-pollb.closed .ico { background: var(--bg3); color: var(--text2); } #chat .ch-pollb.closed small { color: var(--text3); } #chat .ch-pollb.closed .gauge i { background: #8a8a97; }
+  #chat .ch-pollb.low { border-color: rgba(255,59,48,.35); } #chat .ch-pollb.low .ico { background: rgba(255,59,48,.14); color: #ff8a80; } #chat .ch-pollb.low small { color: #ff8a80; } #chat .ch-pollb.low .gauge i { background: #ff6b5e; }
+  #chat .ch-pollb.off { border-color: rgba(255,159,10,.4); } #chat .ch-pollb.off .ico { background: rgba(255,159,10,.15); color: #ffb067; } #chat .ch-pollb.off small { color: #ffb067; }
+  #chat .ch-sysline { align-self: center; display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text3); background: rgba(14,14,18,.85); border-radius: 10px; padding: 4px 10px; margin: 4px 0; text-align: center; }
+  #chat .ch-sysline svg { width: 13px; height: 13px; flex: none; }
   /* bulles plus aérées */
   #chat .ch-feed { padding: 14px 12px 8px; gap: 3px; }
   #chat .ch-msg { max-width: 82%; gap: 8px; } #chat .ch-msg:not(.cont) { margin-top: 10px; }
@@ -4767,8 +4794,8 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li>🌙 <b>Sessions</b> : « Ta soirée », ton bilan du soir et 4 stats marrantes</li><li data-sa>💬 <b>Vestiaire</b> : bulles plus aérées, « Répondre » plus clair, appui sur un message avec fond flouté</li><li data-sa>💬 <b>Vestiaire</b> : Infos club lisibles sur tous les fonds d'écran</li><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 11:10</footer>
+<template id="hm-news" data-date="24/11/2026"><li>🗓️ <b>Sondage</b> : il s'ouvre tout seul le samedi à 9h, la date est affichée à l'accueil</li><li>🚫 <b>Session annulée</b> : tout le monde est prévenu par notification</li><li>➕ <b>Jokers</b> : on peut encore en ajouter après la fermeture du sondage</li><li data-sa>💬 <b>Vestiaire</b> : le sondage en bandeau fixé en haut du Vestiaire général</li><li>🌙 <b>Sessions</b> : « Ta soirée », ton bilan du soir et 4 stats marrantes</li><li data-sa>💬 <b>Vestiaire</b> : bulles plus aérées, « Répondre » plus clair, appui sur un message avec fond flouté</li><li data-sa>💬 <b>Vestiaire</b> : Infos club lisibles sur tous les fonds d'écran</li><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 11:43</footer>
 
 <script>
 
@@ -16920,13 +16947,13 @@ function _svApply() {
   if (!panel) return;
   const ST = { P: ["✅", "Présent"], A: ["❌", "Absent"], B: ["🤕", "Blessé"], N: ["❓", "Pas répondu"] };
   const CYC = ["N", "P", "A", "B"];
-  const REASONS = [["🎉", "Jour férié"], ["🏖️", "Vacances"], ["🎄", "Noël"], ["🥂", "Nouvel an"], ["✏️", "Autre"]];
+  const REASONS = [["🔒", "Gymnase fermé"], ["🎉", "Jour férié"], ["🏖️", "Vacances"], ["🎄", "Noël"], ["🥂", "Nouvel an"], ["✏️", "Autre"]];
   const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
   const JOURS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
   const fdate = iso => { const d = new Date(iso + "T12:00:00Z"); return `${JOURS[d.getUTCDay()]} ${d.getUTCDate() === 1 ? "1er" : d.getUTCDate()} ${MOIS[d.getUTCMonth()]}`; };
   const esc = x => String(x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
   const ui = { draft: null, editing: false, plus: false, depSel: "", depNew: "", open: "P", q: "", pres: false, pq: "", pf: "all",
-    mode: "open", reason: "Noël", other: "", msg: "next", back: "", confirmCancel: false, busy: false, err: "", k: Math.floor(Math.random() * 7), og: "", dq: "", dnew: false };
+    mode: "open", reason: "Gymnase fermé", other: "", msg: "next", back: "", confirmCancel: false, busy: false, err: "", k: Math.floor(Math.random() * 7), og: "", dq: "", dnew: false };
   let ref = null;
 
   const me = () => (typeof _accPlayer === "function" ? _accPlayer() : null);
@@ -16976,22 +17003,21 @@ function _svApply() {
   // ── vues
   function offHTML(o) {
     const e = (REASONS.find(r => r[1] === o.reason) || ["✏️"])[0];
-    return `<div class="sv-off"><div class="big">${e}</div><h3>Pas de session ${fdate(_svDate)}</h3><p>${esc(o.reason || "")}</p>
+    return `<div class="sv-off"><div class="big">${e}</div><h3>Session annulée · ${fdate(_svDate)}</h3><p>${esc(o.reason || "")}</p>
       <div class="msg">${o.msg === "date" && o.backDate ? `On se revoit le ${fdate(o.backDate)} !` : "On se revoit la semaine prochaine !"}</div></div>`;
   }
   function vCreate() {
     const none = ui.mode === "none", rLbl = ui.reason === "Autre" ? (ui.other.trim() || "Autre") : ui.reason;
     if (!ui.back) { const t = Date.parse(_svDate + "T12:00:00Z") + 7 * 86400000; ui.back = _svIso(t); }
-    return `<div class="sv-sec"><span class="sv-st">🗓️ Prochaine session</span><h3 class="sv-date">${fdate(_svDate)}</h3>
-      <div class="sv-two"><button class="sv-vb P" data-sv="mode" data-m="open" aria-pressed="${!none}"><i>✅</i><b>Ouvrir la session</b></button>
-        <button class="sv-vb A" data-sv="mode" data-m="none" aria-pressed="${none}"><i>🚫</i><b>Pas de session</b></button></div>
+    return `<div class="sv-sec">${none ? "" : `<span class="sv-st">🗓️ Prochaine session</span><h3 class="sv-date">${fdate(_svDate)}</h3>`}
       ${none ? `<span class="sv-lbl">Raison</span><div class="sv-reasons">${REASONS.map(([e, r]) => `<button data-sv="reason" data-r="${r}" aria-pressed="${ui.reason === r}">${e} ${r}</button>`).join("")}</div>
         ${ui.reason === "Autre" ? `<input class="sv-inp" id="sv-other" placeholder="Ex. terrain fermé" value="${esc(ui.other)}">` : ""}
         <span class="sv-lbl">Message</span>
         <div class="sv-radio"><label><input type="radio" name="sv-msg" value="next"${ui.msg === "next" ? " checked" : ""}> On se revoit la semaine prochaine !</label>
           <label><input type="radio" name="sv-msg" value="date"${ui.msg === "date" ? " checked" : ""}> On se revoit le… <input type="date" id="sv-back" value="${ui.back}"></label></div>
         <span class="sv-lbl">Aperçu</span><div class="sv-preview">${offHTML({ reason: rLbl, msg: ui.msg, backDate: ui.back })}</div>
-        <button class="sv-btn" data-sv="publishNone"${ui.busy ? " disabled" : ""}>Annoncer : pas de session</button>`
+        <button class="sv-btn" data-sv="${_svData && _svData.status === "open" ? "publishCancel" : "publishNone"}"${ui.busy ? " disabled" : ""}>Confirmer annulation</button>
+        <button class="sv-btn sec" data-sv="mode" data-m="open">Retour</button>`
       : `<div class="sv-lock">Réponses jusqu'au <b>${fdate(_svIso(Date.parse(_svDate + "T12:00:00Z") - 86400000))} à 21h30</b></div>
         <button class="sv-btn green" data-sv="publishOpen"${ui.busy ? " disabled" : ""}>Ouvrir la session</button>`}
       ${ui.err ? `<p class="sv-err">${ui.err}</p>` : ""}</div>`;
@@ -17080,7 +17106,7 @@ function _svApply() {
     h += `${ui.err ? `<p class="sv-err">${ui.err}</p>` : ""}</div>`;
     if (mine || closed() || isSA()) h += recapHTML();
     if (isSA()) h += `<div class="sv-sa"><span class="sv-sa-t">★</span><button class="sv-sa-b" data-sv="presOpen">👥 Présences</button>
-      <button class="sv-sa-b danger" data-sv="cancel">✕ Annuler la session</button></div>`;
+      <button class="sv-sa-b danger" data-sv="cancel">Annuler session</button></div>`;
     return h;
   }
   /* ══ Écran d'accueil « Prochaine » (refonte du 22/11/2026, préfixe hm-) ══
@@ -17193,7 +17219,7 @@ function _svApply() {
   function hmPoll() {
     const R = rows(), nR = R.filter(r => !r.dep && r.v !== "N").length, nN = R.filter(r => r.v === "N").length;
     return hmHead("Prochaine session", _svDate)
-      + (isSA() ? hmSA(`<b>${nR} réponse${nR > 1 ? "s" : ""}</b> · ${nN} sans réponse`, `<button type="button" data-sv="presOpen">Modifier les votes</button><button type="button" class="dang" data-sv="cancel">Annuler la session</button>`) : "")
+      + (isSA() ? hmSA(`<b>${nR} réponse${nR > 1 ? "s" : ""}</b> · ${nN} sans réponse`, `<button type="button" data-sv="presOpen">Modifier les votes</button><button type="button" class="dang" data-sv="cancel">Annuler session</button>`) : "")
       + hmVote() + hmFeuille(true) + hmOthers() + hmSep + hmRest();
   }
   function hmClosed() {
@@ -17204,21 +17230,33 @@ function _svApply() {
       : tonight && canSaisie ? `<button type="button" class="hm-tile on" data-sv="goSaisie"><span>›</span><b>Ce soir</b><small>Aller à la Saisie</small></button>` : null;
     return hmHead("Prochaine session", _svDate)
       + (isSA() ? hmSA(`Sondage clos : <b>${nP} convoqué${nP > 1 ? "s" : ""}</b>. Tu peux encore corriger une présence.`, `${canSaisie && tonight ? `<button type="button" class="pri" data-sv="goSaisie">Aller à la Saisie</button>` : ""}<button type="button" data-sv="presOpen">Modifier les présences</button>`) : "")
+      + (tonight ? "" : `<div class="hm-jk${nP < 10 ? " low" : ""}">${nP < 10 ? `<p><b>${nP} présent${nP > 1 ? "s" : ""}</b> · il en manque ${10 - nP}. Les jokers sont encore possibles.</p>` : ""}<button type="button" class="hm-deplink" data-sv="plusOpen" aria-expanded="${ui.plus}">＋ Ajouter un joker</button>${hmDeps(true)}</div>`)
       + hmFeuille(false) + hmOthers(true) + (liveOn || tonight ? hmTiles(first) : hmSep + hmRest()); // avant la soirée : « Et aussi » (récap, Ballon d'Or, Vignettes)
   }
+  // Avant l'ouverture : sondage programmé le samedi à 9h (ouverture automatique par l'Action)
+  const hmSat = () => fdate(_svIso(Date.parse(_svDate + "T12:00:00Z") - 2 * 86400000));
+  const hmSched = () => { const sat9 = _svParisMs(...(d => [d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate()])(new Date(Date.parse(_svDate + "T12:00:00Z") - 2 * 86400000)), 9, 0);
+    return `<div class="hm-sched"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>${_liveNow() >= sat9 ? "Le sondage s'ouvre dans quelques minutes" : `Sondage programmé pour le<br><b>${hmSat()} à 9h</b>`}</span></div>`; };
+  const hmSAduo = () => `<div class="hm-sa"><span class="h">★ Super admin</span><div class="hm-duo"><button type="button" class="o" data-sv="publishOpen"${ui.busy ? " disabled" : ""}>Ouvrir maintenant</button><button type="button" class="r" data-sv="mode" data-m="none">Annuler la session</button></div></div>`;
   function hmBefore() {
     const sa = isSA();
-    return hmHead("Prochaine session", _svDate)
-      + (sa ? (ui.mode === "none" ? `<div class="hm-sa"><span class="h">★ Super admin</span>${vCreate()}</div>` : hmSA(`Pas encore de sondage pour <b>${fdate(_svDate)}</b>.`, `<button type="button" class="pri" data-sv="publishOpen"${ui.busy ? " disabled" : ""}>Ouvrir le sondage</button><button type="button" data-sv="mode" data-m="none">Pas de session</button>`)) : "")
-      + `<div class="hm-nopoll"><b>Pas de sondage<br>pour le moment !</b><span>On te bipe dès qu'il ouvre.</span></div>` + hmRest();
+    return hmHead("Prochaine session", _svDate) + hmSched()
+      + (sa ? (ui.mode === "none" ? `<div class="hm-sa"><span class="h">★ Super admin · Annulation</span>${vCreate()}</div>` : hmSAduo()) : "") + hmRest();
   }
   function hmAfterView(s, dd) {
     const when = ["Ce soir", "Hier soir", "Lundi soir"][dd], next = _svDate !== s.date ? _svDate : _svIso(Date.parse(s.date + "T12:00:00Z") + 7 * 86400000);
     const canOpen = isSA() && !_svData && _svDate !== s.date;
+    // dès mardi 8h : on prépare la suivante (sondage programmé + case super admin), le récap reste en dessous
+    const sd = s.date.split("-").map(Number), tue8 = _svParisMs(sd[0], sd[1], sd[2] + 1, 8, 0);
+    if (_svDate !== s.date && _liveNow() >= tue8 && (!_svData || _svData.status === "none" || _svData.status === "cancelled")) {
+      const off = _svData ? offHTML(_svData) + (isSA() ? `<button class="sv-btn sec" data-sv="reannounce">Annuler le signalement : ouvrir la session</button>` : "") : "";
+      return hmHead("Prochaine session", _svDate) + (off || hmSched() + (isSA() ? (ui.mode === "none" ? `<div class="hm-sa"><span class="h">★ Super admin · Annulation</span>${vCreate()}</div>` : hmSAduo()) : ""))
+        + hmLastCard(s, true, when) + hmTiles();
+    }
     return hmHead("Soirée terminée", s.date)
-      + (isSA() ? hmSA(`Soirée validée · <b>${(s.matchs || []).length} matchs</b> enregistrés.`, `${canOpen ? `<button type="button" class="pri" data-sv="publishOpen">Ouvrir le sondage du ${fdate(_svDate).replace(/^lundi /, "")}</button>` : ""}<button type="button" data-sv="goRecap" data-d="${s.date}">Voir la soirée</button>`) : "")
-      + hmLastCard(s, true, when) + hmTiles()
-      + `<div class="hm-wait">Prochaine session : <b>${fdate(next)}</b>.${_svData && _svData.status === "open" ? "" : " Le sondage ouvrira bientôt."}</div>`;
+      + (canOpen && ui.mode === "none" ? `<div class="hm-sa"><span class="h">★ Super admin · Annulation du ${fdate(_svDate)}</span>${vCreate()}</div>` : "")
+      + (isSA() ? hmSA(`Soirée validée · <b>${(s.matchs || []).length} matchs</b> enregistrés.`, `${canOpen ? `<button type="button" data-sv="publishOpen">Ouvrir le sondage du ${fdate(_svDate).replace(/^lundi /, "")}</button><button type="button" data-sv="mode" data-m="none">Annuler la session du ${fdate(_svDate).replace(/^lundi /, "")}</button>` : ""}<button type="button" data-sv="goRecap" data-d="${s.date}">Voir la soirée</button>`) : "")
+      + hmLastCard(s, true, when) + hmTiles();
   }
   function body() {
     const d = _svData;
@@ -17227,9 +17265,10 @@ function _svApply() {
     const A = hmAfter(), pollOpen = d && d.status === "open" && !closed();
     if (A && !(pollOpen && _svDate !== A[0].date)) return hmAfterView(A[0], A[1]);
     if (!d) return hmBefore();
-    if (d.status === "none") return hmHead("Prochaine session", _svDate) + offHTML(d) + (isSA() ? `<button class="sv-btn sec" data-sv="reannounce">Changer d'avis : ouvrir la session</button>` : "") + hmSep + hmRest();
-    if (d.status === "cancelled") return hmHead("Prochaine session", _svDate) + `<div class="sv-off cx"><div class="big">🚫</div><h3>Session annulée</h3><p>${fdate(_svDate)}</p><div class="msg">On se revoit la semaine prochaine !</div></div>`
+    if (d.status === "none") return hmHead("Prochaine session", _svDate) + offHTML(d) + (isSA() ? `<button class="sv-btn sec" data-sv="reannounce">Annuler le signalement : ouvrir la session</button>` : "") + hmSep + hmRest();
+    if (d.status === "cancelled") return hmHead("Prochaine session", _svDate) + (d.reason ? offHTML(d) : `<div class="sv-off cx"><div class="big">🚫</div><h3>Session annulée</h3><p>${fdate(_svDate)}</p><div class="msg">On se revoit la semaine prochaine !</div></div>`)
       + (isSA() ? `<button class="sv-btn sec" data-sv="reopen">Rétablir la session</button>` : "") + hmSep + hmRest();
+    if (isSA() && ui.mode === "none") return hmHead("Prochaine session", _svDate) + `<div class="hm-sa"><span class="h">★ Super admin · Annulation</span>${vCreate()}</div>`;
     return closed() ? hmClosed() : hmPoll();
   }
   function render(keep) {
@@ -17253,13 +17292,9 @@ function _svApply() {
       return write(() => ref0().transaction(cur => cur ? undefined : { status: "none", by: who, at: Date.now(), reason, msg: ui.msg, backDate: ui.msg === "date" ? ui.back : null }), "Annonce publiée"); }
     else if (a === "reannounce" && sa) return write(async () => { await ref0().update({ status: "open", reason: null, msg: null, backDate: null, closesAt: _svClosesAt(_svDate), by: who }); window._chatSys?.("open", `Le sondage est ouvert pour ${fdate(_svDate)}. Réponds avant dimanche 21h30.`); }, "Session ouverte : le vote est lancé");
     else if (a === "reopen" && sa) return write(() => ref0().update({ status: "open" }), "Session rétablie");
-    else if (a === "cancel" && sa) {
-      // vraie fenêtre de confirmation (évite une annulation par erreur)
-      ui.confirmCancel = false;
-      const nP = Object.values((_svData && _svData.votes) || {}).filter(x => x === "P").length + Object.keys((_svData && _svData.plus) || {}).length;
-      if (!confirm(`Annuler la session du ${fdate(_svDate)} ?\n\n${nP} joueur${nP > 1 ? "s ont" : " a"} répondu présent. La session sera marquée « annulée » pour tout le monde.`)) return;
-      return write(() => ref0().update({ status: "cancelled", cancelledBy: who, cancelledAt: Date.now() }), "Session annulée");
-    }
+    else if (a === "cancel" && sa) { ui.mode = "none"; ui.pres = false; window.scrollTo(0, 0); }
+    else if (a === "publishCancel" && sa) { const reason = ui.reason === "Autre" ? (ui.other.trim() || "Autre") : ui.reason; ui.mode = "open";
+      return write(() => ref0().update({ status: "cancelled", cancelledBy: who, cancelledAt: Date.now(), reason, msg: ui.msg, backDate: ui.msg === "date" ? ui.back : null }), "Session annulée : tout le monde sera prévenu"); }
     else if (a === "goSaisie") { document.getElementById("saisie-nav-btn")?.click(); return; }
     else if (a === "goRecap") { document.querySelector('.main-tab[data-tab="session"]')?.click(); const sel = document.getElementById("session-date"); if (sel && t.dataset.d) { sel.value = t.dataset.d; sel.dispatchEvent(new Event("change")); } window.scrollTo(0, 0); return; }
     else if (a === "goVg") { document.querySelector('.main-tab[data-tab="vignettes"]')?.click(); return; }
@@ -17271,8 +17306,7 @@ function _svApply() {
       const n = (t.dataset.n || "").trim(); if (!n) return;
       if (/[.#$\/\[\]]/.test(n)) { ui.err = `Le nom « ${n} » contient un caractère interdit ( . # $ / [ ] ).`; return render(true); }
       if (rows().some(r => r.n === n && r.v === "P")) { ui.err = `${n} est déjà présent.`; return render(true); }
-      if (closed() && !sa) return;
-      ui.plus = false; ui.dq = ""; ui.dnew = false; ui.err = "";
+      ui.plus = false; ui.dq = ""; ui.dnew = false; ui.err = ""; // jokers possibles même sondage fermé (jusqu'au lundi)
       return write(() => ref0().child("plus").push({ n, by: who }), `${n} appelé par ${who}`);
     }
     else if (a === "goLive") { document.querySelector('.main-tab[data-tab="live"]')?.click(); return; }
@@ -17293,7 +17327,6 @@ function _svApply() {
       if (R.some(r => r.n === n && r.v === "P")) { ui.err = `${n} est déjà présent.`; return render(true); }
       ui.depSel = ""; ui.depNew = ""; ui.err = "";
       if (mode === "admin" && R.some(r => r.n === n && !r.dep)) return write(() => ref0().child("votes/" + n).set("P"), `${n} ajouté aux présents`);
-      if (mode === "plus" && closed() && !sa) return;
       ui.plus = false;
       return write(() => ref0().child("plus").push({ n, by: who }), `${n} appelé par ${who}`);
     }
@@ -18237,6 +18270,39 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   }
   function others(id) { let n = 0, at = false; [...roomList(), ...dmList()].forEach(r => { if (r.id !== id) { n += unreadL(r.id).length; at = at || atMe(r.id); } }); return { n, at }; }
   function obHTML(id) { const o = others(id); return o.n ? `<span class="ch-ob${o.at ? " at" : ""}">${o.at ? "@" : o.n}</span>` : ""; }
+  // ── Sondage : bandeau fixé en haut du Vestiaire général (ouvert → fermé → disparaît lundi 18h)
+  const PIC = {
+    cal: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M8.5 14.5h2M13.5 14.5h2"/></svg>',
+    P: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8 12.3l2.7 2.7L16.2 9.5"/></svg>',
+    A: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M9 9l6 6M15 9l-6 6"/></svg>',
+    B: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/></svg>',
+    lock: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>',
+    ban: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></svg>',
+  };
+  function pollHTML() {
+    try {
+      if (typeof _svData === "undefined" || !_svData || !_svDate || typeof _svParisMs !== "function") return "";
+      const d = _svData, now = typeof _liveNow === "function" ? _liveNow() : Date.now();
+      const [y, mo, dd] = _svDate.split("-").map(Number), mon18 = _svParisMs(y, mo, dd, 18, 0);
+      if (now >= mon18) return "";
+      const MO = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+      const day = `Lundi ${dd === 1 ? "1er" : dd} ${MO[mo - 1]}`, short = `lundi ${dd === 1 ? "1er" : dd}`;
+      if (d.status === "none" || d.status === "cancelled") {
+        const back = d.msg === "date" && d.backDate ? (([, m2, d2]) => `retour le ${+d2} ${MO[+m2 - 1]}`)(d.backDate.split("-")) : "";
+        return `<div class="ch-pollb off"><span class="ico">${PIC.ban}</span><span class="tx"><small>Session annulée</small><b>${day}</b>${d.reason || back ? `<span>${esc([d.reason, back].filter(Boolean).join(" · "))}</span>` : ""}</span></div>`;
+      }
+      if (d.status !== "open") return "";
+      const n = Object.values(d.votes || {}).filter(x => x === "P").length + Object.keys(d.plus || {}).length;
+      const g = `<span class="gauge"><i style="width:${Math.min(100, n / 18 * 100)}%"></i></span>`, mine = (d.votes || {})[me()];
+      if (now < (d.closesAt || 0)) {
+        if (!mine) return `<div class="ch-pollb todo"><span class="ico">${PIC.cal}</span><span class="tx"><small>Sondage ouvert</small><b>${day}</b>${g}</span><button type="button" class="go" data-ch="vote">Voter</button></div>`;
+        return `<div class="ch-pollb done v${mine}"><span class="ico">${PIC[mine] || PIC.P}</span><span class="tx"><small>${day}</small><b>${n} présent${n > 1 ? "s" : ""}</b>${g}</span><button type="button" class="go g" data-ch="vote">Modifier</button></div>`;
+      }
+      const low = n < 10;
+      return `<div class="ch-pollb closed${low ? " low" : ""}"><span class="ico">${PIC.lock}</span><span class="tx"><small>Sondage fermé${low ? ` · il manque ${10 - n} joueur${10 - n > 1 ? "s" : ""}` : ""}</small><b>${n} présent${n > 1 ? "s" : ""} ${short}</b>${low ? `<span>Tu peux encore ajouter un joker</span>` : ""}${g}</span>${low ? `<button type="button" class="go g" data-ch="vote">＋ Joker</button>` : ""}</div>`;
+    } catch (e) { return ""; }
+  }
+  setInterval(() => { const el = $("ch-poll"); if (el && V.open) { const x = pollHTML(); if (el.innerHTML !== x) el.innerHTML = x; } }, 5000);
   function subLine(r) {
     if (!r) return "";
     if (r.dm) return isOn(r.other) ? `<i class="dot"></i>en ligne` : "";
@@ -18250,7 +18316,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const gear = isSA() && !r.dm ? `<button type="button" class="ch-ib sq" data-ch="settings" aria-label="Paramètres du salon">${IC_GEAR}</button>` : "";
     return `<div class="ch-top room"><button type="button" class="ch-ib" data-ch="list" aria-label="Retour">${IC.back}</button>${ico}
       <span class="ch-ti"><b><span class="nm">${esc(r.name)}</span><span id="ch-ob">${obHTML(r.id)}</span></b><small id="ch-sub">${subLine(r)}</small></span>${bell}${gear}</div>
-      <div id="ch-pin"></div><div class="ch-feed" id="ch-feed"></div><div id="ch-typing" class="ch-typing"></div>
+      ${r.gen ? `<div id="ch-poll">${pollHTML()}</div>` : ""}<div id="ch-pin"></div><div class="ch-feed" id="ch-feed"></div><div id="ch-typing" class="ch-typing"></div>
       <div class="ch-comp" id="ch-comp">${compHTML()}</div>`;
   }
   function compHTML() {
@@ -18277,7 +18343,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (m.sys) {
       const ic = m.sys === "open" ? "🗓️ " : m.sys === "close" ? "🔒 " : "";
       if (m.sys === "club") return `<div class="ch-sys club" data-id="${m.id}"><b>📣 Infos Club${m.title && m.title !== "Happy Monday" ? " · " + esc(m.title) : ""}</b><br>${fmt(m.text)}</div>`;
-      if (m.sys === "open") return `<div class="ch-sys open card" data-id="${m.id}"><span class="si">${IC.vote}</span><span class="st">${esc(m.text)}</span><button type="button" class="go" data-ch="vote">Voter</button></div>`;
+      if (m.sys === "open" || m.sys === "close") return `<div class="ch-sysline" data-id="${m.id}">${PIC.cal}${esc(m.sys === "open" ? "Sondage ouvert" + ((m.text || "").match(/pour (lundi [^.]*)/) ? " · " + (m.text || "").match(/pour (lundi [^.]*)/)[1] : "") : (m.text || "Sondage fermé").replace(/^Le sondage est fermé/, "Sondage fermé").replace(/\.$/, ""))}</div>`;
       return `<div class="ch-sys ${esc(m.sys)}" data-id="${m.id}">${ic}${esc(m.text)}</div>`;
     }
     const mine = m.by === p, r = R(V.room), q = m.reply;
