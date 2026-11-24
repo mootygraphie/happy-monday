@@ -2853,6 +2853,9 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .acm-mem .acm-i.ok { color: var(--acm-ok); }
   .acm-mem .acm-i.dvq.ok { border-color: color-mix(in srgb, var(--acm-ok) 55%, transparent); background: color-mix(in srgb, var(--acm-ok) 12%, transparent); }
   .acm-mem .acm-i.cot svg { width: 22px; height: 22px; }
+  .acm-mem button.acm-i.tgl { border: none; background: none; padding: 0; margin-left: 6px; cursor: pointer; font: inherit; -webkit-tap-highlight-color: transparent; }
+  .acm-mem button.acm-i.tgl:active { transform: scale(.9); }
+  .acm-mem .acm-pl.nocc .acm-i.cot.ok { color: var(--acm-ok); }
   .acm-mem .acm-avw { position: relative; flex: none; display: block; }
   /* fiches sans compte : en fin de liste, thème rouge */
   .acm-mem .acm-pl.nocc { background: rgba(255,59,48,.06) !important; border-color: rgba(255,59,48,.28); margin-top: 2px; }
@@ -4884,8 +4887,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li>⚽ <b>Saisie</b> : ouverte à tous le lundi dès 19h45</li><li>👥 <b>Effectif</b> : nouveau trombinoscope</li><li data-sa>📡 <b>Saisie</b> : glisser pour lancer le direct</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 15:09</footer>
+<template id="hm-news" data-date="24/11/2026"><li>⚽ <b>Saisie</b> : ouverte à tous le lundi dès 19h45</li><li>👥 <b>Effectif</b> : nouveau trombinoscope</li><li data-sa>📡 <b>Saisie</b> : glisser pour lancer le direct</li><li data-sa>💳 <b>Membres</b> : cotisation modifiable aussi sans compte</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 16:27</footer>
 
 <script>
 
@@ -15668,10 +15671,10 @@ function _accRender(keepFocus) {
     // dernière ouverture : lastSeen (site ou appli), sinon la dernière ouverture de l'appli connue
     const seenOf = r => { const x = (a.seen || {})[r.player], t = Math.max((x && x.at) || 0, (r.app && r.app.lastSeen) || 0); return t ? { t, app: x && x.at >= ((r.app && r.app.lastSeen) || 0) ? x.via === "app" : !!r.app } : null; };
     const ago = t => { const m = Math.round((Date.now() - t) / 60000); if (m < 2) return "à l'instant"; if (m < 60) return `il y a ${m} min`; const h = Math.round(m / 60); if (h < 24) return `il y a ${h} h`; const d = Math.round(h / 24); if (d === 1) return "hier"; if (d < 7) return `il y a ${d} j`; return new Date(t).toLocaleDateString("fr", { day: "numeric", month: "short" }); };
-    const nPaid = (rows || []).filter(r => cot[r.player]).length;
+    const nPaid = (rows || []).filter(r => cot[r.player]).length, nPaidAll = [...new Set(ALL_PLAYERS)].filter(n => cot[n]).length;
     h = `<div class="acm-top"><button class="acm-back" data-a="tome" aria-label="Retour">‹</button><span class="acm-kicker" style="color:var(--sa)">★ Super admin</span></div>
       <h4 class="acm-h">Membres</h4>
-      <p class="acm-sub">${rows ? `<b>${rows.length}</b> compte${rows.length > 1 ? "s" : ""} sur ${total} joueurs · <span style="color:var(--good)">${nPaid} payée${nPaid > 1 ? "s" : ""}</span> · <span style="color:#ff9f0a">${rows.length - nPaid} à payer</span>` : "Chargement…"}</p>${err}
+      <p class="acm-sub">${rows ? `<b>${rows.length}</b> compte${rows.length > 1 ? "s" : ""} sur ${total} joueurs · <span style="color:var(--good)">${nPaidAll} cotisation${nPaidAll > 1 ? "s" : ""} payée${nPaidAll > 1 ? "s" : ""}</span> · <span style="color:#ff9f0a">${total - nPaidAll} à payer</span>` : "Chargement…"}</p>${err}
       <div class="acm-list acm-accl acm-mem" style="max-height:58vh">${(rows || []).map(r => `<div class="acm-pl${r.uid === myUid ? " me" : ""}">
         <button class="acm-star${r.super ? " on" : ""}" data-a="star" data-n="${_accEsc(r.player)}"${r.uid === myUid ? " disabled" : ""} aria-label="${r.super ? `Retirer les droits super admin de ${_accEsc(r.player)}` : `Passer ${_accEsc(r.player)} super admin`}">${r.super ? "★" : "☆"}</button>
         <button class="acm-memrow" data-a="member" data-n="${_accEsc(r.player)}">${(s0 => { const live = s0 && Date.now() - s0.t < 3 * 60000, on = !!(a.subs || {})[r.player], paid = !!cot[r.player];
@@ -15682,7 +15685,7 @@ function _accRender(keepFocus) {
           + `<span class="acm-i cot${paid ? " ok" : ""}" title="Cotisation ${paid ? "payée" : "à payer"}">${_ACM_IC.card}</span>`; })(seenOf(r))}</button></div>`).join("")}${
         // fiches sans compte rattaché, en fin de liste (ordre alphabétique), thème rouge
         rows ? [...new Set(ALL_PLAYERS)].filter(n => !rows.some(r => r.player === n) && !(typeof _isDepanneur === "function" && _isDepanneur(n))).sort((x, y) => x.localeCompare(y, "fr"))
-          .map(n => `<div class="acm-pl nocc"><span class="acm-star-sp" aria-hidden="true"></span><div class="acm-memrow">${_accAvHTML(n, "")}<b>${_accEsc(n)}<i class="ps">pas de compte</i></b><small class="ls"></small><span class="acm-i dvq no" title="Pas de compte créé">${_ACM_IC.ban}</span></div></div>`).join("") : ""}</div>
+          .map(n => `<div class="acm-pl nocc"><span class="acm-star-sp" aria-hidden="true"></span><div class="acm-memrow">${_accAvHTML(n, "")}<b>${_accEsc(n)}<i class="ps">pas de compte</i></b><small class="ls"></small><span class="acm-i dvq no" title="Pas de compte créé">${_ACM_IC.ban}</span><button class="acm-i cot tgl${cot[n] ? " ok" : ""}" data-a="paid" data-n="${_accEsc(n)}" title="Cotisation ${cot[n] ? "payée" : "à payer"} · toucher pour changer" aria-label="Cotisation de ${_accEsc(n)} : ${cot[n] ? "payée" : "à payer"}">${_ACM_IC.card}</button></div></div>`).join("") : ""}</div>
       ${(o => o.length ? `<div class="acm-sec">Identifiants sans fiche</div><p class="acm-sub" style="margin:0 0 6px">Anciens comptes détachés ou jamais rattachés : leur pseudo reste pris tant qu'ils existent.</p><div class="acm-orph">${o.map(([uid, x]) => `<div><span><b>@${_accEsc(x.pseudo || "?")}</b><small>${x.last ? `dernière connexion le ${new Date(x.last).toLocaleDateString("fr", { day: "numeric", month: "short" })}` : "jamais connecté"}</small></span>${(a.authDelete || {})[uid] ? `<em>suppression d'ici 10 min</em>` : `<button class="acm-cbtn" data-a="orphdel" data-u="${uid}">${a.confirmOrph === uid ? "Confirmer ?" : "Libérer le pseudo"}</button>`}</div>`).join("")}</div>` : "")(Object.entries(a.authOrphans || {}))}
       <p class="acm-help">À droite : dernière ouverture (point vert sur la photo = en ligne), appli ou site, notifications, cotisation. En vert : appli installée, notifications activées, cotisation payée. ☆/★ : super admin (un toucher). Touche un membre pour ses infos, sa cotisation ou détacher sa carte.</p>`;
   } else if (a.view === "member") {
