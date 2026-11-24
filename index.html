@@ -3726,6 +3726,11 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .st2 .ptiles > div small { font-size: 10.5px; font-weight: 800; font-style: italic; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); }
   .st2 .ptiles > div b { display: block; font-size: 28px; font-style: italic; font-weight: 800; line-height: 1.1; }
   .st2 .ptiles > div > span { font-size: 11.5px; color: var(--text2); }
+  /* place au classement de la période : gros chiffre gris discret */
+  .st2 .ptiles > div { position: relative; overflow: hidden; }
+  .st2 .ptiles > div .rk { position: absolute; top: 6px; right: 12px; font-size: 64px; font-weight: 800; font-style: italic; line-height: 1; color: color-mix(in srgb, var(--text) 9%, transparent); letter-spacing: -.03em; pointer-events: none; z-index: 0; }
+  .st2 .ptiles > div .rk sup { font-size: 24px; vertical-align: top; position: relative; top: 6px; margin-left: 1px; }
+  .st2 .ptiles > div > :not(.rk) { position: relative; z-index: 1; }
   .st2 .mate { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
   .st2 .mate:last-child { border-bottom: 0; }
   .st2 .mate b { font-size: 14px; } .st2 .mate small { display: block; font-size: 11.5px; color: var(--text2); }
@@ -3995,6 +4000,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .rw-row .p { font-size: 20px; font-weight: 800; font-style: italic; font-variant-numeric: tabular-nums; }
   .rw-row.me { outline: 1.5px solid var(--gold); outline-offset: -1.5px; }
   .rw-row.rw-more { display: none; } .rw-board.all .rw-row.rw-more { display: grid; }
+  .rw-board:not(.all) .rw-row.rw-more.me { display: grid; }
+  .rw-gap { text-align: center; color: var(--text3); font-weight: 800; letter-spacing: .2em; line-height: 1; padding: 2px 0 4px; } .rw-board.all .rw-gap { display: none; }
   .rw-pile { display: flex; } .rw-pile .cr-av + .cr-av { margin-left: -12px; }
   .rw-all { all: unset; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 12.5px; font-weight: 600; color: var(--text2); padding: 8px 12px; border-radius: 10px; border: 1px dashed var(--border2); margin-top: 8px; }
   /* ta saison */
@@ -4809,8 +4816,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li>💬 <b>Le Vestiaire</b> est ouvert à tous : salons, fonds d'écran, photos (bouton 💬 en haut)</li><li>✉️ <b>Messagerie</b> : écris en privé à n'importe quel joueur</li><li data-sa>👥 <b>Membres</b> : les fiches sans compte apparaissent en fin de liste</li><li>🏆 <b>Accueil</b> : nouvelles cases Ballon d'Or et Vignettes</li><li>🗓️ <b>Sondage</b> : il s'ouvre tout seul le samedi à 9h, la date est affichée à l'accueil</li><li>🚫 <b>Session annulée</b> : tout le monde est prévenu par notification</li><li>➕ <b>Jokers</b> : on peut encore en ajouter après la fermeture du sondage</li><li data-sa>💬 <b>Vestiaire</b> : le sondage en bandeau fixé en haut du Vestiaire général</li><li>🌙 <b>Sessions</b> : « Ta soirée », ton bilan du soir et 4 stats marrantes</li><li data-sa>💬 <b>Vestiaire</b> : bulles plus aérées, « Répondre » plus clair, appui sur un message avec fond flouté</li><li data-sa>💬 <b>Vestiaire</b> : Infos club lisibles sur tous les fonds d'écran</li><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 13:38</footer>
+<template id="hm-news" data-date="24/11/2026"><li>📊 <b>Statistiques</b> : ta place au classement sur chaque tuile, et la tuile « Décisif » (but ou passe)</li><li>🏆 <b>Récompenses</b> : ta ligne toujours visible dans chaque classement</li><li>💬 <b>Le Vestiaire</b> est ouvert à tous : salons, fonds d'écran, photos (bouton 💬 en haut)</li><li>✉️ <b>Messagerie</b> : écris en privé à n'importe quel joueur</li><li data-sa>👥 <b>Membres</b> : les fiches sans compte apparaissent en fin de liste</li><li>🏆 <b>Accueil</b> : nouvelles cases Ballon d'Or et Vignettes</li><li>🗓️ <b>Sondage</b> : il s'ouvre tout seul le samedi à 9h, la date est affichée à l'accueil</li><li>🚫 <b>Session annulée</b> : tout le monde est prévenu par notification</li><li>➕ <b>Jokers</b> : on peut encore en ajouter après la fermeture du sondage</li><li data-sa>💬 <b>Vestiaire</b> : le sondage en bandeau fixé en haut du Vestiaire général</li><li>🌙 <b>Sessions</b> : « Ta soirée », ton bilan du soir et 4 stats marrantes</li><li data-sa>💬 <b>Vestiaire</b> : bulles plus aérées, « Répondre » plus clair, appui sur un message avec fond flouté</li><li data-sa>💬 <b>Vestiaire</b> : Infos club lisibles sur tous les fonds d'écran</li><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 14:03</footer>
 
 <script>
 
@@ -8463,7 +8470,8 @@ function _rwBoard(rows, start, id, adm) {
   if (!rows.length) return "";
   const max = Math.max(...rows.map(r => Math.abs(_rwNum(r[1]))), 0.0001);
   const row = (r, i) => { const k = i + start, nm = String(r[0]), two = nm.includes(" & ") ? nm.split(" & ") : null;
-    return `<button type="button" class="rw-row${i >= 5 ? " rw-more" : ""}${r[0] === _accPlayer() ? " me" : ""}${_rwPL(nm)}" style="--w:${Math.abs(_rwNum(r[1])) / max * 100}%">
+    const mine = r[0] === _accPlayer() && i >= 5; // hors du top affiché : ma ligne reste visible, après « … »
+    return `${mine ? `<div class="rw-gap" aria-hidden="true">…</div>` : ""}<button type="button" class="rw-row${i >= 5 ? " rw-more" : ""}${r[0] === _accPlayer() ? " me" : ""}${_rwPL(nm)}" style="--w:${Math.abs(_rwNum(r[1])) / max * 100}%">
       <em>${k + 1}</em>${two ? `<span class="rw-pile">${two.map(q => _rwAv(q, 24)).join("")}</span>` : _rwAv(nm, 28)}<span class="n"><b>${_rwEsc(_rwShort(nm))}</b>${r[2] ? `<small>${_rwEsc(r[2])}</small>` : ""}</span><span class="p">${r[1]}</span></button>`; };
   return `<div class="rw-board${adm ? " adm" : ""}" data-rwlist="${id}">${rows.map(row).join("")}</div>${rows.length > 5 ? `<button type="button" class="rw-all" data-rwmore="${id}" data-n="${rows.length + start}">Voir le classement complet (${rows.length + start}) ›</button>` : ""}`;
 }
@@ -8718,7 +8726,7 @@ function prevOf(per, key) {
 function perLabel(per, key) { return per === "soir" ? `le ${dl(key)}` : per === "mois" ? `en ${ml(key)}` : per === "saison" ? `la saison ${_seasonLabel(_currentSeason())}` : "depuis le début"; }
 function agg(list) {
   const A = { nS: list.length, nM: 0, goals: 0, draws: 0, zero: 0, cs: 0, sides: 0, pres: 0, abs: 0, inj: 0, T: {}, P: {}, matches: [] };
-  const P = n => A.P[n] || (A.P[n] = { m: 0, w: 0, d: 0, g: 0, a: 0, ms: 0, gc: 0, gkH: 0, gkC: 0, gkCS: 0, cols: {}, sess: {}, best: null, mates: {} });
+  const P = n => A.P[n] || (A.P[n] = { m: 0, w: 0, d: 0, g: 0, a: 0, ms: 0, md: 0, gc: 0, gkH: 0, gkC: 0, gkCS: 0, cols: {}, sess: {}, best: null, mates: {} });
   ["Rouge", "Vert", "Bleue"].forEach(t => A.T[t] = { m: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, form: [], sc: {}, as: {}, res: [] });
   list.forEach(([date, M, PR]) => {
     Object.values(PR).forEach(v => { if (v[0] === "Présent") A.pres++; else if (v[0] === "Absent") A.abs++; else if (v[0] === "Blessé") A.inj++; });
@@ -8731,9 +8739,9 @@ function agg(list) {
         const T = A.T[t], r = f > c ? "V" : f === c ? "N" : "D";
         T.m++; T.gf += f; T.ga += c; if (r === "V") T.w++; else if (r === "N") T.d++; else T.l++; T.form.push(r); T.res.push({ date, f, c, o });
         A.sides++; if (!c) A.cs++;
-        const F = field(t), gl = {};
-        B.forEach((b, i) => { if (!b || b === "CSC") return; gl[b] = (gl[b] || 0) + 1; T.sc[b] = (T.sc[b] || 0) + 1; P(b).g++; const pa = Pa[i]; if (pa && pa !== "CSC") { P(pa).a++; T.as[pa] = (T.as[pa] || 0) + 1; } });
-        F.forEach(p => { const x = P(p); x.m++; if (r === "V") x.w++; if (r === "N") x.d++; x.gc += c; x.cols[t] = x.cols[t] || [0, 0]; x.cols[t][0]++; if (r === "V") x.cols[t][1]++; x.sess[date] = x.sess[date] || [0, 0]; x.sess[date][0] += gl[p] || 0; if (gl[p]) x.ms++;
+        const F = field(t), gl = {}, as = {};
+        B.forEach((b, i) => { if (!b || b === "CSC") return; gl[b] = (gl[b] || 0) + 1; T.sc[b] = (T.sc[b] || 0) + 1; P(b).g++; const pa = Pa[i]; if (pa && pa !== "CSC") { P(pa).a++; as[pa] = 1; T.as[pa] = (T.as[pa] || 0) + 1; } });
+        F.forEach(p => { const x = P(p); x.m++; if (r === "V") x.w++; if (r === "N") x.d++; x.gc += c; x.cols[t] = x.cols[t] || [0, 0]; x.cols[t][0]++; if (r === "V") x.cols[t][1]++; x.sess[date] = x.sess[date] || [0, 0]; x.sess[date][0] += gl[p] || 0; if (gl[p]) x.ms++; if (gl[p] || as[p]) x.md++;
           F.forEach(q => { if (q !== p) { const k = x.mates[q] = x.mates[q] || [0, 0]; k[0]++; if (r === "V") k[1]++; } });
           const sc = (gl[p] || 0) * 1 + 0; if (!x.best || sc > x.best.g || (sc === x.best.g && f - c > x.best.f - x.best.c)) x.best = { g: sc, date, f, c, o }; });
         Pa.forEach((pa, i) => { if (pa && pa !== "CSC" && B[i] && B[i] !== "CSC") { const x = P(pa); x.sess[date] = x.sess[date] || [0, 0]; x.sess[date][1]++; } });
@@ -8880,15 +8888,25 @@ function joueurs(wide) {
     const fav = Object.entries(x.cols).map(([t, v]) => [TLB[t], v[0], v[1]]).sort((a, b) => b[2] / b[1] - a[2] / a[1])[0];
     const duo = Object.entries(x.mates).filter(([q, v]) => v[0] >= Math.max(2, x.m * .2)).sort((a, b) => b[1][1] / b[1][0] - a[1][1] / a[1][0])[0];
     const sess = Object.entries(x.sess).sort();
-    const tile = (l, v, s, dlt) => `<div class="card"><small>${l}</small><b>${v}${dlt}</b><span>${s}</span></div>`;
+    // place du joueur dans le classement de la période choisie (gros chiffre gris discret en haut à droite)
+    const rankOf = (val, ok, asc) => { const L = Object.entries(A.P).filter(([q, y]) => !DEPS.has(q) && y.m && ok(y)); if (!ok(x) || DEPS.has(p)) return 0; const v0 = val(x); return 1 + L.filter(([, y]) => asc ? val(y) < v0 : val(y) > v0).length; };
+    const minM = Math.max(2, Math.round(A.nM * .15)), mh = gkMin(A);
+    const RK = {
+      but: x.g ? rankOf(y => y.g, y => y.g > 0) : 0,
+      pas: x.a ? rankOf(y => y.a, y => y.a > 0) : 0,
+      dec: rankOf(y => y.md / y.m, y => y.m >= minM),
+      def: rankOf(y => y.gc / y.m, y => y.m >= minM, true),
+      gk: x.gkH ? rankOf(y => y.gkC / y.gkH, y => y.gkH >= mh, true) : 0,
+    };
+    const tile = (l, v, s, dlt, rk) => `<div class="card">${rk ? `<i class="rk" title="${rk}${rk > 1 ? "e" : "er"} du classement sur la période">${rk}<sup>${rk > 1 ? "e" : "er"}</sup></i>` : ""}<small>${l}</small><b>${v}${dlt}</b><span>${s}</span></div>`;
     return `<div class="phero"><div class="pic">${_crPh(p, "")}</div><div><b class="nm">${esc(p)}</b><div class="sub">${x.m} matchs ${perLabel(st.per, perKey())} · ${Object.keys(x.sess).length} soirée${Object.keys(x.sess).length > 1 ? "s" : ""}</div></div></div>
     <div class="ptiles">
       ${tile("Victoires", Math.round(x.w / x.m * 100) + "%", `${x.w}V ${x.d}N ${x.m - x.w - x.d}D`, delta(x.w / x.m * 100, b && b.m ? b.w / b.m * 100 : null, { pct: true }))}
-      ${tile("Buts", x.g, `${f2(x.g / x.m)} par match`, delta(x.g, b ? b.g : null))}
-      ${tile("Passes", x.a, `${f2(x.a / x.m)} par match`, delta(x.a, b ? b.a : null))}
-      ${tile("Il marque", Math.round(x.ms / x.m * 100) + "%", "des matchs joués", delta(x.ms / x.m * 100, b && b.m ? b.ms / b.m * 100 : null, { pct: true }))}
-      ${tile("Défense", f1(x.gc / x.m), "but encaissé / match", delta(x.gc / x.m, b && b.m ? b.gc / b.m : null, { dec: 1, inv: true }))}
-      ${tile("Gardien", x.gkH ? f2(x.gkC / x.gkH) : "—", x.gkH ? `but / mi-temps · ${x.gkCS} clean sheets` : "pas gardé", "")}
+      ${tile("Buts", x.g, `${f2(x.g / x.m)} par match`, delta(x.g, b ? b.g : null), RK.but)}
+      ${tile("Passes", x.a, `${f2(x.a / x.m)} par match`, delta(x.a, b ? b.a : null), RK.pas)}
+      ${tile("Décisif", Math.round(x.md / x.m * 100) + "%", "des matchs (but ou passe)", delta(x.md / x.m * 100, b && b.m ? b.md / b.m * 100 : null, { pct: true }), RK.dec)}
+      ${tile("Défense", f1(x.gc / x.m), "but encaissé / match", delta(x.gc / x.m, b && b.m ? b.gc / b.m : null, { dec: 1, inv: true }), RK.def)}
+      ${tile("Gardien", x.gkH ? f2(x.gkC / x.gkH) : "—", x.gkH ? `but / mi-temps · ${x.gkCS} clean sheets` : "pas gardé", "", RK.gk)}
       ${tile("Équipe fétiche", `<span class="${TCLS[fav[0]]}" style="color:var(--tc)">${fav[0]}</span>`, `${Math.round(fav[2] / fav[1] * 100)}% de victoires (${fav[2]}/${fav[1]})`, "")}
       ${tile("Meilleur duo", duo ? esc(duo[0]) : "—", duo ? `${Math.round(duo[1][1] / duo[1][0] * 100)}% de victoires ensemble (${duo[1][0]} m.)` : "", "")}
     </div>
