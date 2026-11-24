@@ -4202,6 +4202,10 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .rw-row .n { min-width: 0; } .rw-row .n b { display: block; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .rw-row .n small { font-size: 11px; color: var(--text2); }
   .rw-row .p { font-size: 20px; font-weight: 800; font-style: italic; font-variant-numeric: tabular-nums; }
   .rw-row.me { outline: 1.5px solid var(--gold); outline-offset: -1.5px; }
+  .rw-wait { margin-top: 12px; display: flex; flex-direction: column; gap: 4px; }
+  .rw-wait > summary { cursor: pointer; font-size: 11.5px; font-weight: 700; letter-spacing: .04em; color: var(--text3); padding: 6px 2px; list-style: none; }
+  .rw-wait > summary::before { content: "▸ "; } .rw-wait[open] > summary::before { content: "▾ "; }
+  .rw-wait .rw-row { opacity: .6; }
   .rw-row.rw-more { display: none; } .rw-board.all .rw-row.rw-more { display: grid; }
   .rw-board:not(.all) .rw-row.rw-more.me { display: grid; }
   .rw-gap { text-align: center; color: var(--text3); font-weight: 800; letter-spacing: .2em; line-height: 1; padding: 2px 0 4px; } .rw-board.all .rw-gap { display: none; }
@@ -5022,7 +5026,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
 </div>
 
 <template id="hm-news" data-date="24/11/2026"><li>⚽ <b>Saisie des matchs</b> : plein écran, un toucher par but ⚽ ou fait ⭐️</li><li>📺 <b>Direct</b> : le fil du match commenté</li><li>🧤 <b>Gardiens</b> : nouveau classement (buts encaissés par mi-temps)</li><li>🃏 <b>Vignettes</b> : nouvelles catégories et raretés (6 Légendaires)</li><li data-sa>💳 <b>Membres</b> : cotisation modifiable aussi sans compte</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 20:23</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 20:26</footer>
 
 <script>
 
@@ -6772,8 +6776,8 @@ function _awardSimpleListHtml(id, rows, emptyMsg) {
   if (!rows.length) return `<div style="padding:20px 22px;color:var(--text3);font-size:13px;font-style:italic">${emptyMsg}</div>`;
   let html = rows.map((p, i) => {
     const more = i >= 5, attr = more ? ` data-award-id="${id}"` : '';
-    return `<div class="award-row${i===0?' award-first':''}${more?' award-more-row':''}"${attr}>
-        <span class="award-rank num">${i+1}</span>
+    return `<div class="award-row${i===0 && !p.dim?' award-first':''}${more?' award-more-row':''}"${attr}${p.dim?' style="opacity:.55"':''}>
+        <span class="award-rank num">${p.dim ? "–" : i+1}</span>
         <span class="award-name">${pLink(p.name)}</span>
         <span class="award-pts">${p.value}</span>
         <span class="award-detail">${p.detail}</span>
@@ -6790,10 +6794,12 @@ function buildCalamityJamesHtml(sessions) {
   const year = _currentSeason();
   const season = sessions.filter(s => _seasonStart(s.date) === year);
   const min = _gkSeasonThreshold(season.filter(s => (s.matchs || []).length).length).halves;
-  const all = computeGardiensRanking(season).filter(p => p.matchs >= min).sort(_gkCalamCmp);
+  const G = computeGardiensRanking(season), all = G.filter(p => p.matchs >= min).sort(_gkCalamCmp), low = G.filter(p => p.matchs > 0 && p.matchs < min).sort(_gkCalamCmp);
   const max = Math.max(...all.map(p => p.rate), 0.01);
   const rows = all.map(p => ({ name: p.name, value: p.rate.toFixed(2).replace('.', ','), bar: p.rate / max,
-    detail: `${p.buts} but${p.buts !== 1 ? "s" : ""} / ${p.matchs} mi-t. · ${p.cleanSheets} CS` }));
+    detail: `${p.buts} but${p.buts !== 1 ? "s" : ""} / ${p.matchs} mi-t. · ${p.cleanSheets} CS` }))
+    .concat(low.map(p => ({ dim: true, name: p.name, value: p.rate.toFixed(2).replace('.', ','), bar: 0,
+    detail: `sous le seuil (${p.matchs}/${min} mi-t.) · ${p.buts} but${p.buts !== 1 ? "s" : ""} · ${p.cleanSheets} CS` })));
   return `<div class="award-card" style="--award-color:var(--neutral);--award-bg:var(--neutral-bg);--award-border:var(--neutral-border)">
     <div class="award-head">
       <span class="award-ico">🌪️</span>
@@ -8570,7 +8576,13 @@ function _rwCompute() {
   T.pass = ga.filter(x => x.a).sort((a, b) => b.a - a.a || b.g - a.g || a.p.localeCompare(b.p, "fr")).map(x => [x.p, x.a, `${x.a} passe${x.a > 1 ? "s" : ""}`]);
   const yr = _gkAwardRanking(SESSIONS);
   T.yach = yr.ranked.filter(x => !_rwDep(x.name)).map(x => [x.name, _rwF2(x.rate), `${x.buts} but${x.buts !== 1 ? "s" : ""} / ${x.matchs} mi-t. · ${x.cleanSheets} CS`]);
-  T.yachMin = yr.min; T.yachWait = yr.waiting.filter(x => !_rwDep(x.name));
+  T.yachMin = yr.min;
+  // Gardiens sous le seuil : visibles à part dans les 3 classements gardiens, triés entre eux
+  // selon la même logique que le classement (Yachine, Calamity James, Clean sheets).
+  const gkW = computeGardiensRanking(S).filter(x => x.matchs > 0 && x.matchs < yr.min && !_rwDep(x.name)), gkTxt = x => `${x.buts} but${x.buts !== 1 ? "s" : ""} / ${x.matchs} mi-t. · ${x.cleanSheets} CS`;
+  T.yachW = gkW.slice().sort(_gkCmp).map(x => [x.name, _rwF2(x.rate), gkTxt(x)]);
+  T.calamW = gkW.slice().sort(_gkCalamCmp).map(x => [x.name, _rwF2(x.rate), gkTxt(x)]);
+  T.gkW = gkW.slice().sort(_gkCsCmp).map(x => [x.name, Math.round(x.cleanSheets / x.matchs * 100) + "%", `${x.cleanSheets} sur ${x.matchs} mi-t.`]);
   T.def = computeTopDefendersStats(S, 10).filter(x => !_rwDep(x.name)).map(x => [x.name, _rwF2(x.avg), `${x.goalsAgainst} enc. en ${x.matchCount} passages`]);
   // Clean sheets : part des mi-temps au but sans encaisser (même seuil que le Prix Yachine).
   T.gk = computeGardiensRanking(S).filter(x => x.matchs >= yr.min && !_rwDep(x.name)).sort(_gkCsCmp)
@@ -8740,12 +8752,13 @@ function _rwPodiumPh(rows, unit) {
 function _rwClsHTML(adm) {
   const c = _RW_CATS.find(x => x.id === _RW.cat && (adm || !x.adm)) || _RW_CATS[0];
   if (c.id === "hf") return _rwHfAdminHTML();
-  const rows = _RW.data.T[c.id] || [];
-  if (!rows.length) return `<div class="rw-empty">Pas encore de classement pour cette saison.</div>`;
+  const rows = _RW.data.T[c.id] || [], W = _RW.data.T[c.id + "W"] || [];
+  const wHTML = W.length ? `<details class="rw-wait"><summary>Sous le seuil d'éligibilité · moins de ${_RW.data.T.yachMin} mi-temps au but (${W.length})</summary>${W.map(r => `<button type="button" class="rw-row${r[0] === _accPlayer() ? " me" : ""}${_rwPL(r[0])}" style="--w:0%"><em>–</em>${_rwAv(r[0], 28)}<span class="n"><b>${_rwEsc(r[0])}</b><small>${_rwEsc(r[2])}</small></span><span class="p">${r[1]}</span></button>`).join("")}</details>` : "";
+  if (!rows.length) return `<div class="rw-empty">${W.length ? "Personne n'atteint encore le seuil." : "Pas encore de classement pour cette saison."}</div>${wHTML}`;
   return `<div class="rw-cat">
       <div class="rw-pod-d">${_rwPodiumDesk(rows)}</div>
       <div class="rw-pod-m">${_rwPodiumPh(rows, c.unit)}</div>
-      <div class="rw-list">${_rwBoard(rows.slice(3), 3, c.id, c.adm)}</div>
+      <div class="rw-list">${_rwBoard(rows.slice(3), 3, c.id, c.adm)}${wHTML}</div>
     </div>${c.note ? `<p class="rw-note">${c.note}</p>` : ""}`;
 }
 
@@ -16721,14 +16734,14 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
         if (!n) break; held[role[n]] = held[role[n]].filter(x => x !== n); moved.add(n); }
       held[k].push(n); held[k].sort(byIdx(k)); role[n] = k; }
     core.forEach(n => { if (!role[n]) role[n] = "GUE"; });
-    const ovOf = Object.fromEntries(pcards.map(c => [c.n, c.ov])), RAR = ["L", "E", "R", "R"], rar = {};
+    const ovOf = Object.fromEntries(pcards.map(c => [c.n, c.ov])), RAR = ["L", "E", "R", "R"], rar = {}, rkC = {};
     ["ATT", "PAS", "DEF", "GAR", "GUE", "DEP"].forEach(k => {
       names.filter(n => role[n] === k).sort(SECK.includes(k) ? byIdx(k) : (x, y) => ovOf[y] - ovOf[x] || x.localeCompare(y, "fr"))
-        .forEach((n, i) => { rar[n] = RAR[i] || "C"; }); });
+        .forEach((n, i) => { rar[n] = RAR[i] || "C"; rkC[n] = i + 1; }); });
     const rarOf = n => rar[n] || "C";
     PLAYERS = pcards.map((c, i) => {
       const tm = Object.entries(c.v.teams).sort((a, b) => b[1] - a[1])[0];
-      return { k: "p:" + c.n, ty: "p", n: c.n, o: c.o, s: c.s, t: TITLES[role[c.n]], r: rarOf(c.n), team: tm ? tm[0] : "",
+      return { k: "p:" + c.n, ty: "p", n: c.n, o: c.o, s: c.s, t: TITLES[role[c.n]], r: rarOf(c.n), rk: rkC[c.n] || 99, team: tm ? tm[0] : "",
         st: { pres: c.v.pres, mj: c.v.mj, v: c.v.v, nu: c.v.n, d: c.v.d, b: c.v.b, p: c.v.p, gk: c.v.gk, enc: c.v.enc }, nt: Object.entries(c.v.nt), nSess: sessions.length };
     });
     PLAYERS.forEach(c => { NTEAM[c.n] = c.team; });
@@ -17178,7 +17191,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   const CATORD = ["Attaque", "Défense", "Collectif", "Présence", "Distinctions", "Secrets"];
   function buildSections() {
     SECS.forEach(s => {
-      s.items = ALL.filter(s.f).sort((a, b) => a.ty === "h" ? (CATORD.indexOf(a.cat) - CATORD.indexOf(b.cat) || RO[a.r] - RO[b.r]) : (RO[a.r] - RO[b.r] || (a.ty === "p" ? b.o - a.o : 0)));
+      s.items = ALL.filter(s.f).sort((a, b) => a.ty === "h" ? (CATORD.indexOf(a.cat) - CATORD.indexOf(b.cat) || RO[a.r] - RO[b.r]) : (RO[a.r] - RO[b.r] || (a.ty === "p" ? (a.rk || 99) - (b.rk || 99) || b.o - a.o : 0)));
     });
     let no = 0; SECS.forEach(s => s.items.forEach(c => { c.no = ++no; }));
   }
