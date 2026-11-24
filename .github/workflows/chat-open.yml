@@ -1,0 +1,38 @@
+# Ouvre (ou referme) le Vestiaire à tous les joueurs qui ont un compte : config/chatOpen = true / false.
+# Lancement à la main uniquement (Actions → « Vestiaire : ouverture » → Run workflow).
+name: "Vestiaire : ouverture"
+
+on:
+  workflow_dispatch:
+    inputs:
+      open:
+        description: "Ouvrir le Vestiaire à tous ? (true = oui, false = super admins seulement)"
+        required: true
+        default: "true"
+
+jobs:
+  set:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "google-auth>=2.29,<3" requests
+      - name: Écrire config/chatOpen
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+          OPEN: ${{ github.event.inputs.open }}
+        run: |
+          python - <<'PY'
+          import json, os, requests
+          from google.oauth2 import service_account
+          from google.auth.transport.requests import Request
+          cred = service_account.Credentials.from_service_account_info(json.loads(os.environ["FIREBASE_SA"]), scopes=["https://www.googleapis.com/auth/firebase.database", "https://www.googleapis.com/auth/userinfo.email"])
+          cred.refresh(Request())
+          v = os.environ.get("OPEN", "true").strip().lower() == "true"
+          url = "https://happy-monday-a2404-default-rtdb.europe-west1.firebasedatabase.app/config/chatOpen.json"
+          r = requests.put(url, json=v, headers={"Authorization": "Bearer " + cred.token}, timeout=30)
+          r.raise_for_status()
+          print("config/chatOpen =", requests.get(url, headers={"Authorization": "Bearer " + cred.token}, timeout=30).json())
+          PY
