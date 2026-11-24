@@ -4887,8 +4887,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li>⚽ <b>Saisie</b> : ouverte à tous le lundi dès 19h45</li><li>👥 <b>Effectif</b> : nouveau trombinoscope</li><li data-sa>📡 <b>Saisie</b> : glisser pour lancer le direct</li><li data-sa>💳 <b>Membres</b> : cotisation modifiable aussi sans compte</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 16:27</footer>
+<template id="hm-news" data-date="24/11/2026"><li>⚽ <b>Saisie</b> : ouverte à tous le lundi dès 19h45</li><li>👥 <b>Effectif</b> : nouveau trombinoscope</li><li data-sa>📡 <b>Saisie</b> : glisser pour lancer le direct</li><li>🃏 <b>Accueil</b> : file échanger tes doubles en un toucher</li><li data-sa>💳 <b>Membres</b> : cotisation modifiable aussi sans compte</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 16:56</footer>
 
 <script>
 
@@ -17333,10 +17333,9 @@ function _svApply() {
     const vg = typeof window._vgInfo === "function" ? window._vgInfo() : null, X = hmStats(), who = me();
     const bi = X ? X.T.bdo.findIndex(r => r[0] === who) : -1, pts = bi >= 0 ? X.T.bdo[bi][1] : null;
     const bdT = `<button type="button" class="hm-tile hm-art bdo" data-sv="goStats">${HM_TROPHY}<small>Ballon d'Or</small><b>${bi >= 0 ? `${bi + 1}${bi ? "e" : "er"}` : "Classement"}</b><em>${bi >= 0 ? `ta saison${typeof pts === "number" ? ` · ${pts} pts` : ""}` : "les récompenses de la saison"}</em></button>`;
-    // Vignettes : boosters à ouvrir, sinon échanges en attente, sinon une invitation (échanges ou album, en alternance)
-    const alt = new Date().getDate() % 2;
-    const [vb, vs, vt] = vg && vg.boosters ? [vg.boosters, `booster${vg.boosters > 1 ? "s" : ""} à ouvrir`, ""] : vg && vg.trades ? [vg.trades, `échange${vg.trades > 1 ? "s" : ""} en attente`, "trades"]
-      : alt ? ["Échanges", "complète ta collection avec les autres", "trades"] : ["Album", "va voir où en est ton album", ""];
+    // Vignettes : boosters à ouvrir, sinon échanges en attente, sinon direction la liste des échanges disponibles
+    const [vb, vs, vt] = vg && vg.boosters ? [vg.boosters, `booster${vg.boosters > 1 ? "s" : ""} à ouvrir`, ""] : vg && vg.trades ? [vg.trades, `échange${vg.trades > 1 ? "s" : ""} en attente`, "trades|recu"]
+      : ["Échanges", "File échanger tes doubles", "trades|swap"];
     const vgT = `<button type="button" class="hm-tile hm-art vg" data-sv="goVg"${vt ? ` data-t="${vt}"` : ""}>${HM_CARDS}<small>Vignettes</small><b>${vb}</b><em>${vs}</em></button>`;
     return `<div class="hm-2">${first || bdT}${vgT}</div>`;
   }
@@ -17511,7 +17510,7 @@ function _svApply() {
       return write(() => ref0().update({ status: "cancelled", cancelledBy: who, cancelledAt: Date.now(), reason, msg: ui.msg, backDate: ui.msg === "date" ? ui.back : null }), "Session annulée : tout le monde sera prévenu"); }
     else if (a === "goSaisie") { document.getElementById("saisie-nav-btn")?.click(); return; }
     else if (a === "goRecap") { document.querySelector('.main-tab[data-tab="session"]')?.click(); const sel = document.getElementById("session-date"); if (sel && t.dataset.d) { sel.value = t.dataset.d; sel.dispatchEvent(new Event("change")); } window.scrollTo(0, 0); return; }
-    else if (a === "goVg") { if (t.dataset.t && typeof window._vgSetTab === "function") window._vgSetTab(t.dataset.t); document.querySelector('.main-tab[data-tab="vignettes"]')?.click(); return; }
+    else if (a === "goVg") { if (t.dataset.t && typeof window._vgSetTab === "function") { const [tb, sb] = t.dataset.t.split("|"); window._vgSetTab(tb, sb); } document.querySelector('.main-tab[data-tab="vignettes"]')?.click(); return; }
     else if (a === "goStats") { document.querySelector('.main-tab[data-tab="stats"]')?.click(); return; }
     else if (a === "know") ui.k++;
     else if (a === "depNew") { ui.dnew = !ui.dnew; ui.dq = ""; if (ui.dnew) setTimeout(() => document.getElementById("sv-dq")?.focus(), 0); }
