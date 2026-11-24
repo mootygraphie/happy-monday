@@ -5022,7 +5022,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
 </div>
 
 <template id="hm-news" data-date="24/11/2026"><li>⚽ <b>Saisie des matchs</b> : plein écran, un toucher par but ⚽ ou fait ⭐️</li><li>📺 <b>Direct</b> : le fil du match commenté</li><li>🧤 <b>Gardiens</b> : nouveau classement (buts encaissés par mi-temps)</li><li>🃏 <b>Accueil</b> : file échanger tes doubles</li><li data-sa>💳 <b>Membres</b> : cotisation modifiable aussi sans compte</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 19:48</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 19:51</footer>
 
 <script>
 
@@ -6421,6 +6421,15 @@ function buildGardienTop10HTML() {
 function _gkCmp(a, b) {
   return (a.buts * b.matchs - b.buts * a.matchs) || (b.cleanSheets - a.cleanSheets) || (b.matchs - a.matchs) || String(a.name).localeCompare(String(b.name), "fr");
 }
+// Calamity James : logique inverse — le ratio le plus élevé, puis le moins de clean sheets,
+// puis le plus de mi-temps au but, puis l'ordre alphabétique.
+function _gkCalamCmp(a, b) {
+  return (b.buts * a.matchs - a.buts * b.matchs) || (a.cleanSheets - b.cleanSheets) || (b.matchs - a.matchs) || String(a.name).localeCompare(String(b.name), "fr");
+}
+// Part de clean sheets : mi-temps sans encaisser / mi-temps au but (le plus haut gagne).
+function _gkCsCmp(a, b) {
+  return (b.cleanSheets * a.matchs - a.cleanSheets * b.matchs) || (b.matchs - a.matchs) || String(a.name).localeCompare(String(b.name), "fr");
+}
 function _gkSeasonThreshold(nSessions) {
   const eq = Math.max(3, Math.min(20, 20 * (nSessions || 0) / 30));
   return { eq, halves: Math.ceil(eq * 2) };
@@ -6775,22 +6784,22 @@ function _awardSimpleListHtml(id, rows, emptyMsg) {
   return html;
 }
 
-/* Calamity James : le plus de buts encaisses au total sur la saison ; a egalite, celui qui
-   les a pris en moins de mi-temps est le moins bon. */
+/* Calamity James : logique inverse du Prix Yachine — le plus de buts encaisses par mi-temps
+   au but, avec le meme seuil d eligibilite dynamique que le Prix Yachine (_gkCalamCmp). */
 function buildCalamityJamesHtml(sessions) {
   const year = _currentSeason();
-  const all = computeGardiensRanking(sessions.filter(s => _seasonStart(s.date) === year))
-    .filter(p => p.buts > 0)
-    .sort((a, b) => b.buts - a.buts || a.matchs - b.matchs || a.name.localeCompare(b.name, 'fr'));
-  const max = Math.max(...all.map(p => p.buts), 1);
-  const rows = all.map(p => ({ name: p.name, value: p.buts, bar: p.buts / max,
-    detail: `${p.matchs} mi-temps · ${p.rate.toFixed(2).replace('.', ',')} / mi-temps` }));
+  const season = sessions.filter(s => _seasonStart(s.date) === year);
+  const min = _gkSeasonThreshold(season.filter(s => (s.matchs || []).length).length).halves;
+  const all = computeGardiensRanking(season).filter(p => p.matchs >= min).sort(_gkCalamCmp);
+  const max = Math.max(...all.map(p => p.rate), 0.01);
+  const rows = all.map(p => ({ name: p.name, value: p.rate.toFixed(2).replace('.', ','), bar: p.rate / max,
+    detail: `${p.buts} but${p.buts !== 1 ? "s" : ""} / ${p.matchs} mi-t. · ${p.cleanSheets} CS` }));
   return `<div class="award-card" style="--award-color:var(--neutral);--award-bg:var(--neutral-bg);--award-border:var(--neutral-border)">
     <div class="award-head">
       <span class="award-ico">🌪️</span>
       <div>
         <div class="award-title">Calamity James ${_seasonLabel(year)}</div>
-        <div class="award-meta">Le plus de buts encaissés au but · à égalité, en moins de mi-temps</div>
+        <div class="award-meta">Le plus de buts encaissés par mi-temps au but · min. ${min} mi-t.</div>
       </div>
     </div>
     <div class="award-list">${_awardSimpleListHtml("calamity", rows, `Aucun but encaissé en ${year}.`)}</div></div>`;
@@ -8531,9 +8540,9 @@ function renderRivBody(pA, pB, period) {
 const _RW = { cat: "bdo", team: "best", data: null };
 const _RW_SUB = {
   bdo: "1 pt par but · 2 pts par passe · réguliers et occasionnels", yach: "Buts encaissés par mi-temps au but", but: "Buts marqués", pass: "Passes décisives",
-  def: "Buts encaissés par match sur le terrain", gk: "% de clean sheets · min. 3 matchs gardés", link: "Buteur + passeur, toujours le même duo",
+  def: "Buts encaissés par match sur le terrain", gk: "% de mi-temps sans encaisser", link: "Buteur + passeur, toujours le même duo",
   dep: "Les renforts · G/A par match", bonnet: "Absences de la saison", infirm: "Soirées manquées sur blessure",
-  plomb: "Le moins de G/A par match · min. 10 matchs", calam: "Le plus de buts encaissés au but", hf: "Matrice et rareté"
+  plomb: "Le moins de G/A par match · min. 10 matchs", calam: "Le plus de buts encaissés par mi-temps au but", hf: "Matrice et rareté"
 };
 const _rwEsc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
 const _rwF2 = x => x.toFixed(2).replace(".", ",");
@@ -8563,8 +8572,9 @@ function _rwCompute() {
   T.yach = yr.ranked.filter(x => !_rwDep(x.name)).map(x => [x.name, _rwF2(x.rate), `${x.buts} but${x.buts !== 1 ? "s" : ""} / ${x.matchs} mi-t. · ${x.cleanSheets} CS`]);
   T.yachMin = yr.min; T.yachWait = yr.waiting.filter(x => !_rwDep(x.name));
   T.def = computeTopDefendersStats(S, 10).filter(x => !_rwDep(x.name)).map(x => [x.name, _rwF2(x.avg), `${x.goalsAgainst} enc. en ${x.matchCount} passages`]);
-  T.gk = ALL_PLAYERS.filter(p => !_rwDep(p)).map(p => { const s = computeAchievementStats(p); return { p, m: s.gardiensMatchs, r: s.gardienRate }; })
-    .filter(x => x.m >= 3).sort((a, b) => b.r - a.r || b.m - a.m || a.p.localeCompare(b.p, "fr")).map(x => [x.p, x.r + "%", `${x.m} matchs gardés`]);
+  // Clean sheets : part des mi-temps au but sans encaisser (même seuil que le Prix Yachine).
+  T.gk = computeGardiensRanking(S).filter(x => x.matchs >= yr.min && !_rwDep(x.name)).sort(_gkCsCmp)
+    .map(x => [x.name, Math.round(x.cleanSheets / x.matchs * 100) + "%", `${x.cleanSheets} sur ${x.matchs} mi-t.`]);
   T.link = computeLinkUpStats(S).filter(d => !_rwDep(d.p1) && !_rwDep(d.p2)).map(d => [`${d.p1} & ${d.p2}`, d.connexions, `${d.p1} ${d.p1Goals}G · ${d.p2} ${d.p2Goals}G`]);
   // Présences terrain (matchs joués, victoires, +/-), duos, face-à-face
   const PM = {}, PAIR = {}, H2H = {};
@@ -8598,8 +8608,8 @@ function _rwCompute() {
     (s.matchs || []).forEach((m, mi) => { if (m.eqA !== i.equipe && m.eqB !== i.equipe) return; if (_isPlayerOutForSessionMatch(s, p, mi)) return; (pl[p] = pl[p] || { m: 0 }).m++; }); }); });
   T.plomb = Object.entries(pl).filter(([, x]) => x.m >= BALLON_PLOMB_MIN_MATCHS).map(([p, x]) => ({ p, m: x.m, g: G[p] || 0, a: A[p] || 0 }))
     .map(x => ({ ...x, r: (x.g + x.a) / x.m })).sort((a, b) => a.r - b.r || b.m - a.m || a.p.localeCompare(b.p, "fr")).map(x => [x.p, _rwF2(x.r), `${gaTxt(x)} en ${x.m} m.`]);
-  T.calam = computeGardiensRanking(S).filter(x => x.buts > 0 && !_rwDep(x.name)).sort((a, b) => b.buts - a.buts || a.matchs - b.matchs || a.name.localeCompare(b.name, "fr"))
-    .map(x => [x.name, x.buts, `${x.matchs} mi-temps · ${_rwF2(x.rate)} / mi-t.`]);
+  T.calam = computeGardiensRanking(S).filter(x => x.matchs >= yr.min && !_rwDep(x.name)).sort(_gkCalamCmp)
+    .map(x => [x.name, _rwF2(x.rate), `${x.buts} but${x.buts !== 1 ? "s" : ""} / ${x.matchs} mi-t. · ${x.cleanSheets} CS`]);
 
   // Meilleure équipe d'une soirée (saison en cours)
   let best = null;
@@ -8694,13 +8704,13 @@ const _RW_CATS = [
   { id: "but", ico: "⚽", lbl: "Buteurs", unit: "buts" },
   { id: "pass", ico: "🎯", lbl: "Passeurs", unit: "passes" },
   { id: "def", ico: "🔒", lbl: "Défenseurs", unit: "b.c./m.", note: "Buts encaissés par match passé sur le terrain (min. 10 passages)." },
-  { id: "gk", ico: "🥅", lbl: "Clean sheets", unit: "", note: "Minimum 3 matchs gardés." },
+  { id: "gk", ico: "🥅", lbl: "Clean sheets", unit: "", note: "Part des mi-temps au but sans encaisser, avec le même seuil d'éligibilité que le Prix Yachine." },
   { id: "link", ico: "⚡", lbl: "Link-up", unit: "buts" },
   { id: "dep", ico: "🧰", lbl: "Dépanneurs", unit: "G/A par m.", note: "Uniquement les dépanneurs (min. 3 matchs). Ils ne figurent pas dans les autres classements." },
   { id: "bonnet", ico: "🫏", lbl: "Bonnet d'âne", unit: "abs." },
   { id: "infirm", ico: "🩼", lbl: "Infirmerie", unit: "soirées" },
   { id: "plomb", ico: "🪨", lbl: "Ballon de Plomb", unit: "G/A par m.", adm: true, note: "Le moins de G/A par match joué, minimum 10 matchs. Occasionnels et dépanneurs exclus." },
-  { id: "calam", ico: "🌪️", lbl: "Calamity James", unit: "buts pris", adm: true, note: "Le plus de buts encaissés au but ; à égalité, en moins de mi-temps." },
+  { id: "calam", ico: "🌪️", lbl: "Calamity James", unit: "b./mi-t.", adm: true, note: "L'inverse du Prix Yachine : le plus de buts encaissés par mi-temps au but (puis le moins de clean sheets), avec le même seuil d'éligibilité." },
   { id: "hf", ico: "🎖️", lbl: "Hauts faits", adm: true },
 ];
 function _rwDDHTML(adm) {
@@ -9409,10 +9419,13 @@ function _dbxComputeAgg(sessions) {
   const byAlpha = (a,b) => a[0].localeCompare(b[0], "fr");
   const topScorers  = st.buteursRank.slice(0,5);
   const topAssists  = st.passeursRank.slice(0,5);
+  // Part de clean sheets : mi-temps sans encaisser / mi-temps au but, parmi les gardiens
+  // éligibles de la période (même seuil que les classements gardiens, cf _gkMinFor).
+  const _csMin = _gkMinFor(sessions);
   const topCleanSheets = computeGardiensRanking(sessions)
-    .filter(r => r.cleanSheets > 0)
-    .sort((a,b) => b.cleanSheets-a.cleanSheets || a.name.localeCompare(b.name,"fr")).slice(0,5)
-    .map(r => [r.name, { cleanSheets: r.cleanSheets }]);
+    .filter(r => r.matchs >= _csMin && r.cleanSheets > 0)
+    .sort(_gkCsCmp).slice(0,5)
+    .map(r => [r.name, { pct: Math.round(r.cleanSheets / r.matchs * 100) }]);
   const goalsBySession = sorted.map(s => ({ date: s.date, goals: (s.matchs||[]).reduce((a,m) => a+m.scoreA+m.scoreB, 0) }));
   const assistsBySession = sorted.map(s => ({ date: s.date, assists: (s.matchs||[]).reduce((a,m) => a+_dbxCountAssists(m), 0) }));
   /* Clean sheets : une equipe garde sa cage inviolee des qu elle ne concede aucun
@@ -9575,7 +9588,7 @@ function _dbxRenderEquipeType(sessions) {
   return _ttPanelHtml("dbx", team, ttGkCriteria);
 }
 
-function _dbxLeaderCol(title, icon, entries, unit) {
+function _dbxLeaderCol(title, icon, entries, unit, suffix) {
   if (!entries.length) return `<div class="dbx-card dbx-lead-card"><div class="dbx-lead-head">${icon} ${title}</div><div class="dbx-lead-empty">Aucune donnée</div></div>`;
   const max = entries[0][1][unit];
   const rows = entries.map(([name,p],i) => `
@@ -9583,7 +9596,7 @@ function _dbxLeaderCol(title, icon, entries, unit) {
       <div class="dbx-lead-rank">${i+1}</div>
       <div class="dbx-lead-name">${pLink(name)}</div>
       <div class="dbx-lead-bar-wrap"><div class="dbx-lead-bar" style="width:${max?p[unit]/max*100:0}%"></div></div>
-      <div class="dbx-lead-val">${p[unit]}</div>
+      <div class="dbx-lead-val">${p[unit]}${suffix || ""}</div>
     </div>`).join("");
   return `<div class="dbx-card dbx-lead-card"><div class="dbx-lead-head">${icon} ${title}</div>${rows}</div>`;
 }
@@ -10518,7 +10531,7 @@ function renderDashboard() {
     h += `<div class="dbx-lead-grid">
       ${_dbxLeaderCol("Buteurs","⚽",agg.topScorers,"buts")}
       ${_dbxLeaderCol("Passeurs","🎯",agg.topAssists,"passes")}
-      ${_dbxLeaderCol("Clean sheets","🧤",agg.topCleanSheets,"cleanSheets")}
+      ${_dbxLeaderCol("Clean sheets %","🧤",agg.topCleanSheets,"pct","%")}
     </div>`;
     h += `<div class="dbx-sec-head"><span class="dbx-sec-title">Assiduité</span></div>`;
     h += _dbxRenderAssiduity(agg);
