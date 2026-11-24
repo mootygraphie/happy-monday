@@ -5021,8 +5021,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li>⚽ <b>Saisie des matchs</b> : plein écran, un toucher par but ⚽ ou fait ⭐️</li><li>📺 <b>Direct</b> : le fil du match commenté</li><li>🃏 <b>Accueil</b> : file échanger tes doubles</li><li data-sa>💳 <b>Membres</b> : cotisation modifiable aussi sans compte</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 17:09</footer>
+<template id="hm-news" data-date="24/11/2026"><li>⚽ <b>Saisie des matchs</b> : plein écran, un toucher par but ⚽ ou fait ⭐️</li><li>📺 <b>Direct</b> : le fil du match commenté</li><li>🧤 <b>Gardiens</b> : nouveau classement (buts encaissés par mi-temps)</li><li>🃏 <b>Accueil</b> : file échanger tes doubles</li><li data-sa>💳 <b>Membres</b> : cotisation modifiable aussi sans compte</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 19:48</footer>
 
 <script>
 
@@ -6409,6 +6409,32 @@ function buildGardienTop10HTML() {
   </div>`;
 }
 
+/* ── Classement des gardiens (refonte 24/11/2026) ──
+   Indicateur unique : ratio = buts encaissés en tant que gardien / mi-temps jouées au but
+   (données brutes agrégées sur la période, jamais une moyenne de ratios).
+   Éligibilité : soirée et mois → au moins 2 mi-temps au but ; saison (Prix Yachine) → seuil
+   dynamique selon le nombre de soirées jouées : max(3, min(20, 20 × soirées / 30)) matchs
+   équivalents, convertis en mi-temps (× 2, arrondi au supérieur).
+   Départage : 1) ratio le plus faible (comparé en fractions exactes), 2) le plus de clean
+   sheets, 3) le plus de mi-temps au but (échantillon le plus solide), 4) ordre alphabétique
+   (déterministe). Les gardiens sous le seuil restent visibles à part, jamais classés. */
+function _gkCmp(a, b) {
+  return (a.buts * b.matchs - b.buts * a.matchs) || (b.cleanSheets - a.cleanSheets) || (b.matchs - a.matchs) || String(a.name).localeCompare(String(b.name), "fr");
+}
+function _gkSeasonThreshold(nSessions) {
+  const eq = Math.max(3, Math.min(20, 20 * (nSessions || 0) / 30));
+  return { eq, halves: Math.ceil(eq * 2) };
+}
+function _gkSplit(list, minHalves) {
+  const all = (list || []).filter(g => g && g.matchs > 0).slice().sort(_gkCmp);
+  return { min: minHalves, ranked: all.filter(g => g.matchs >= minHalves), waiting: all.filter(g => g.matchs < minHalves) };
+}
+// Seuil d'une période quelconque : une soirée ou un même mois → 2 mi-temps ; au-delà → seuil saisonnier.
+function _gkMinFor(sessions) {
+  const S = (sessions || []).filter(s => (s.matchs || []).length);
+  if (S.length <= 1 || new Set(S.map(s => String(s.date).slice(0, 7))).size <= 1) return 2;
+  return _gkSeasonThreshold(S.length).halves;
+}
 function computeGardiensRanking(sessions) {
   const stats = {};
   sessions.forEach(s => {
@@ -6523,7 +6549,7 @@ function _dbxTeamScopedEquipeType(sessions, color) {
     if (team) team.gk = null;
     return team;
   }
-  return _pickEquipeType(outfield, gks, ttGkCriteria);
+  return _pickEquipeType(outfield, gks, ttGkCriteria, _gkMinFor(sessions));
 }
 
 /* Équipe-type (soirée ou période) : 1 gardien + jusqu'à 4 joueurs de champ répartis en
@@ -6580,12 +6606,12 @@ function _fillEquipeTypeFormation(candidates, roleCaps, scoreFor, forcedTopScore
   return { picks, total };
 }
 
-function _pickEquipeType(outfield, gks, gkCriteria) {
+function _pickEquipeType(outfield, gks, gkCriteria, gkMinHalves) {
   if (!gks.length) return null;
-  const gk = gks.slice().sort((a,b) => gkCriteria === "cs"
-    ? (b.cleanSheets - a.cleanSheets) || (a.rate - b.rate)
-    : (a.rate - b.rate) || (b.cleanSheets - a.cleanSheets)
-  )[0];
+  // Gardien : même règle que les classements gardiens (ratio, puis clean sheets…) parmi les
+  // éligibles de la période ; si personne n'atteint le seuil, le meilleur de tous.
+  const sp = _gkSplit(gks, gkMinHalves || 2);
+  const gk = sp.ranked[0] || sp.waiting[0] || gks[0];
   const candidates = outfield.filter(p => p.name !== gk.name);
   if (!candidates.length) return { gk, attaquants: [], milieux: [], defenseurs: [], shape: "0-0-0" };
 
@@ -6659,9 +6685,7 @@ function _ttPitchSvg() {
 /* idPrefix distingue les instances (session vs dashboard) pour le toggle gardien */
 function _ttPanelHtml(idPrefix, team, gkCriteria) {
   if (!team) return `<div class="dbx-card tt-pitch-card"><div class="tt-pitch-empty">Pas assez de données pour générer une équipe-type.</div></div>`;
-  const gkStat = !team.gk ? "—" : gkCriteria === "cs"
-    ? `${team.gk.cleanSheets} clean sheet${team.gk.cleanSheets>1?"s":""}`
-    : `${team.gk.rate.toFixed(2)} enc./match`;
+  const gkStat = !team.gk ? "—" : `${team.gk.rate.toFixed(2).replace(".", ",")} b./mi-t.`;
   return `<div class="dbx-card tt-pitch-card" data-tt-id="${idPrefix}">
     <div class="tt-pitch-head">
       <span class="tt-pitch-title">Équipe-type</span>
@@ -6685,11 +6709,9 @@ function _ttPanelHtml(idPrefix, team, gkCriteria) {
 function _gkAwardRanking(sessions) {
   const year = _currentSeason();
   const season = sessions.filter(s => _seasonStart(s.date) === year);
-  const nMatchs = season.reduce((n, s) => n + (s.matchs || []).length, 0);
-  const min = Math.max(1, Math.ceil(nMatchs / 10));
-  const all = computeGardiensRanking(season).sort((a, b) =>
-    a.rate - b.rate || b.matchs - a.matchs || a.name.localeCompare(b.name, 'fr'));
-  return { year, min, ranked: all.filter(p => p.matchs >= min), waiting: all.filter(p => p.matchs < min) };
+  const nS = season.filter(s => (s.matchs || []).length).length, thr = _gkSeasonThreshold(nS);
+  const r = _gkSplit(computeGardiensRanking(season), thr.halves);
+  return { year, nS, eq: thr.eq, min: thr.halves, ranked: r.ranked, waiting: r.waiting };
 }
 function _gkAwardListHtml(id, r, medals) {
   const { ranked, waiting, min } = r;
@@ -6701,7 +6723,7 @@ function _gkAwardListHtml(id, r, medals) {
     const rank = dim ? `<span class="award-rank num">–</span>`
       : medals && i < 3 ? `<span class="award-rank">${medals[i]}</span>` : `<span class="award-rank num">${i+1}</span>`;
     const bar = Math.round((p.rate / maxRate) * 100);
-    const detail = `${p.buts} but${p.buts!==1?'s':''} / ${p.matchs} mi-temps`;
+    const detail = `${p.buts} but${p.buts!==1?'s':''} / ${p.matchs} mi-temps · ${p.cleanSheets} CS`;
     const attr = more ? ` data-award-id="${id}"` : '';
     return `<div class="award-row${i===0 && !dim?' award-first':''}${more?' award-more-row':''}"${attr}${dim?' style="opacity:.55"':''}>
         ${rank}
@@ -6714,7 +6736,7 @@ function _gkAwardListHtml(id, r, medals) {
   let html = ranked.length ? ranked.map((p, i) => row(p, i, i >= 5, false)).join("")
     : `<div style="padding:14px 22px 6px;color:var(--text3);font-size:13px;font-style:italic">Personne n'a encore gardé ${min} mi-temps cette saison.</div>`;
   if (waiting.length) {
-    html += `<div class="award-sep award-more-row" data-award-id="${id}">Pas encore classés (moins de ${min} mi-temps au but)</div>`;
+    html += `<div class="award-sep award-more-row" data-award-id="${id}">Sous le seuil minimum d'éligibilité (moins de ${min} mi-temps au but)</div>`;
     html += waiting.map((p, i) => row(p, i, true, true)).join("");
   }
   const hidden = Math.max(0, ranked.length - 5) + waiting.length;
@@ -6729,7 +6751,7 @@ function buildYachineHtml(sessions) {
       <span class="award-ico">🧤</span>
       <div>
         <div class="award-title">Prix Yachine ${_seasonLabel(r.year)}</div>
-        <div class="award-meta">Buts encaissés par mi-temps au but · min. ${r.min} mi-tps.</div>
+        <div class="award-meta">Buts encaissés par mi-temps au but · seuil : ${String(Math.round(r.eq * 10) / 10).replace(".", ",")} matchs (${r.min} mi-t.) après ${r.nS} soirée${r.nS > 1 ? "s" : ""}</div>
       </div>
     </div>
     <div class="award-list">${_gkAwardListHtml("yachine", r, ['🥇','🥈','🥉'])}</div></div>`;
@@ -7156,7 +7178,7 @@ function _sfmRecapSentence(session, matchs, totalButs, buteursRanked, passeursRa
       `Derrière, ${fullCleanSheet.name} n'a rien laissé filtrer sur l'intégralité d'un match : soirée tranquille dans ses buts.`,
     ]));
   } else if (gkRanking && gkRanking.length) {
-    const best = [...gkRanking].filter(g => g.matchs >= 2).sort((a,b) => a.rate - b.rate)[0];
+    const best = _gkSplit(gkRanking, 2).ranked[0];
     if (best && best.buts > 0) {
       parts.push(_sfmPick([
         `${best.name} n'a craqué que ${best.buts} fois sur ses ${best.matchs} passages dans les buts — pas parfait, mais solide.`,
@@ -7324,14 +7346,13 @@ function _sfmBuildBestOfNightCard(session, buteursCount, passeursCount, gkRankin
   const mvpRanked = Object.entries(mvpMap).map(([name,ga]) => ({name, ga})).sort((a,b) => b.ga - a.ga || a.name.localeCompare(b.name,"fr"));
   const buteursRanked = Object.entries(buteursCount).map(([name,buts]) => ({name, buts})).sort((a,b) => b.buts - a.buts || a.name.localeCompare(b.name,"fr"));
   const passeursRanked = Object.entries(passeursCount).map(([name,passes]) => ({name, passes})).sort((a,b) => b.passes - a.passes || a.name.localeCompare(b.name,"fr"));
-  const gkEligible = (gkRanking||[]).filter(g => g.matchs >= 2);
-  const gkRankedBest = [...gkEligible].sort((a,b) => a.rate-b.rate || b.matchs-a.matchs || a.name.localeCompare(b.name,"fr"));
+  const gkRankedBest = _gkSplit(gkRanking, 2).ranked;
 
   const slides = [
     _sfmBestCategoryHTML("MVP · buts + passes", mvpRanked, r => `${r.ga} G/A`, teamOf),
     _sfmBestCategoryHTML("Meilleur buteur", buteursRanked, r => `${r.buts} but${r.buts>1?"s":""}`, teamOf),
     _sfmBestCategoryHTML("Meilleur passeur", passeursRanked, r => `${r.passes} passe${r.passes>1?"s":""}`, teamOf),
-    _sfmBestCategoryHTML("Meilleur gardien", gkRankedBest, r => `${r.rate.toFixed(1)} enc./m.`, teamOf),
+    _sfmBestCategoryHTML("Meilleur gardien", gkRankedBest, r => `${r.rate.toFixed(2).replace(".", ",")} b./mi-t.`, teamOf),
   ].filter(Boolean);
   if (!slides.length) return "";
   const arrows = slides.length > 1
@@ -7482,8 +7503,7 @@ function _sfmBuildPerformers(session, matchs, buteursCount, passeursCount, gkRan
   // Mur infranchissable : exige au moins 2 mi-temps gardées pour éviter de valoriser un
   // échantillon trop faible (ex : 0 encaissé sur une seule mi-temps, pas convaincant).
   if (gkRanking && gkRanking.length) {
-    const eligible = gkRanking.filter(g => g.matchs >= 2);
-    const best = [...eligible].sort((a,b) => a.rate-b.rate || b.matchs-a.matchs || a.name.localeCompare(b.name,"fr"))[0];
+    const best = _gkSplit(gkRanking, 2).ranked[0];
     if (best) {
       const stat = best.buts === 0
         ? `0 but encaissé dans les buts (${best.matchs} mi-temps)`
@@ -8540,7 +8560,8 @@ function _rwCompute() {
   T.but = ga.filter(x => x.g).sort((a, b) => b.g - a.g || b.a - a.a || a.p.localeCompare(b.p, "fr")).map(x => [x.p, x.g, `${x.g} but${x.g > 1 ? "s" : ""}`]);
   T.pass = ga.filter(x => x.a).sort((a, b) => b.a - a.a || b.g - a.g || a.p.localeCompare(b.p, "fr")).map(x => [x.p, x.a, `${x.a} passe${x.a > 1 ? "s" : ""}`]);
   const yr = _gkAwardRanking(SESSIONS);
-  T.yach = yr.ranked.filter(x => !_rwDep(x.name)).map(x => [x.name, _rwF2(x.rate), `${x.buts} but${x.buts !== 1 ? "s" : ""} / ${x.matchs} mi-t.`]);
+  T.yach = yr.ranked.filter(x => !_rwDep(x.name)).map(x => [x.name, _rwF2(x.rate), `${x.buts} but${x.buts !== 1 ? "s" : ""} / ${x.matchs} mi-t. · ${x.cleanSheets} CS`]);
+  T.yachMin = yr.min; T.yachWait = yr.waiting.filter(x => !_rwDep(x.name));
   T.def = computeTopDefendersStats(S, 10).filter(x => !_rwDep(x.name)).map(x => [x.name, _rwF2(x.avg), `${x.goalsAgainst} enc. en ${x.matchCount} passages`]);
   T.gk = ALL_PLAYERS.filter(p => !_rwDep(p)).map(p => { const s = computeAchievementStats(p); return { p, m: s.gardiensMatchs, r: s.gardienRate }; })
     .filter(x => x.m >= 3).sort((a, b) => b.r - a.r || b.m - a.m || a.p.localeCompare(b.p, "fr")).map(x => [x.p, x.r + "%", `${x.m} matchs gardés`]);
@@ -8669,7 +8690,7 @@ function _rwTeamHTML() {
 
 const _RW_CATS = [
   { id: "bdo", ico: "🏆", lbl: "Ballon d'Or", unit: "pts", note: "1 pt par but, 2 pts par passe décisive. Égalité : le plus de passes, puis le plus de matchs avec un but." },
-  { id: "yach", ico: "🧤", lbl: "Yachine", unit: "b./mi-t.", note: "Buts encaissés par mi-temps au but, avec un minimum de mi-temps gardées (1 pour 10 matchs de la saison)." },
+  { id: "yach", ico: "🧤", lbl: "Yachine", unit: "b./mi-t.", note: "Buts encaissés par mi-temps au but (le plus bas gagne, puis le plus de clean sheets). Seuil d'éligibilité qui grandit avec la saison : 3 matchs complets au début, 20 (40 mi-temps) après 30 soirées." },
   { id: "but", ico: "⚽", lbl: "Buteurs", unit: "buts" },
   { id: "pass", ico: "🎯", lbl: "Passeurs", unit: "passes" },
   { id: "def", ico: "🔒", lbl: "Défenseurs", unit: "b.c./m.", note: "Buts encaissés par match passé sur le terrain (min. 10 passages)." },
@@ -8984,12 +9005,14 @@ function delta(cur, prev, { unit = "", pct = false, inv = false, dec = 0 } = {})
 function prevLbl() { const pk = prevOf(st.per, perKey()); return pk ? (st.per === "soir" ? `vs ${dd(pk)}` : `vs ${MOISL[+pk.slice(5) - 1]}`) : ""; }
 function topList(A, key, n = 5, minM = 0) {
   const L = Object.entries(A.P).filter(([p, x]) => !(DEPS.has(p)) && x.m >= minM);
-  if (key === "cs") { const mh = gkMin(A); return L.filter(([p, x]) => x.gkH >= mh).map(([p, x]) => [p, Math.round(x.gkCS / x.gkH * 100), `${x.gkCS} sur ${x.gkH} mi-t.`]).sort((a, b) => b[1] - a[1] || b[2].localeCompare(a[2]) || a[0].localeCompare(b[0], "fr")).slice(0, n); }
+  if (key === "cs") { const mh = gkMin(A), G = L.filter(([, x]) => x.gkH > 0).map(([p, x]) => ({ name: p, buts: x.gkC, matchs: x.gkH, cleanSheets: x.gkCS, rate: x.gkC / x.gkH })), sp = _gkSplit(G, mh);
+    const row = g => [g.name, g.rate, `${g.buts} enc. / ${g.matchs} mi-t. · ${g.cleanSheets} CS`];
+    const out = sp.ranked.map(row).slice(0, n); out.waiting = sp.waiting.map(row); out.min = mh; return out; }
   const v = { but: x => x.g, pass: x => x.a, ga: x => x.g + x.a }[key];
   return L.map(([p, x]) => [p, v(x)]).filter(r => r[1] > 0).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "fr")).slice(0, n);
 }
 const DEPS = ABSENTS;
-const gkMin = A => Math.max(2, Math.ceil(A.nM / 10)); // même règle que le Prix Yachine : 1 mi-temps au but pour 10 matchs
+const gkMin = A => st.per === "saison" || st.per === "tout" ? _gkSeasonThreshold(A.nS).halves : 2; // soirée et mois : 2 mi-temps au but ; saison et « tout » : seuil dynamique du Prix Yachine
 
 /* ── barre de période ── */
 function periodBar(noCmp) {
@@ -9030,8 +9053,8 @@ function apercu(wide) {
         return `<div class="st ${TCLS[c]}"><em>${i + 1}</em><span><b>${c}</b><span class="wdl"><i class="w" style="width:${x.w / x.m * 100}%"></i><i class="d" style="width:${x.d / x.m * 100}%"></i><i class="l" style="width:${x.l / x.m * 100}%"></i></span><small>${x.w}V ${x.d}N ${x.l}D · ${x.gf} pour, ${x.ga} contre · forme ${x.form.slice(-5).map(r => `<i class="fm ${r}">${r}</i>`).join("")}</small></span><span class="pc"><b>${Math.round(x.w / x.m * 100)}%</b>${delta(x.w / x.m * 100, pv, { pct: true }) || `<small>de victoires</small>`}</span></div>`; }).join("")}</div></div>
     <div><div class="h2">Équipe-type <span>· ${perLabel(st.per, perKey())}</span></div>${isoTy(ty)}</div></div>
     <div class="g2"><div><div class="h2">${st.per === "soir" ? "Buts match par match" : "Buts soirée par soirée"}</div>${bars(ser)}</div>
-    <div><div class="h2">Classements</div><div class="card"><div class="tabs3">${[["but", "⚽ Buteurs"], ["pass", "🎯 Passeurs"], ["cs", "🧤 Clean sheets %"]].map(([k, l]) => `<button type="button" data-top="${k}" aria-pressed="${st.top === k}">${l}</button>`).join("")}</div>
-      <div class="lst">${T.map((r, i) => `<div><em>${i + 1}</em>${av(r[0], 26)}<span>${esc(r[0])} ${prevRank(st.top, r[0], i)}${r[2] ? `<small style="display:block;font-size:11px;color:var(--text3)">${r[2]}</small>` : ""}</span><u><i style="width:${r[1] / max * 100}%"></i></u><b>${r[1]}${st.top === "cs" ? "%" : ""}</b></div>`).join("") || `<p style="color:var(--text2);font-size:13px">Rien sur cette période.</p>`}</div></div></div></div>
+    <div><div class="h2">Classements</div><div class="card"><div class="tabs3">${[["but", "⚽ Buteurs"], ["pass", "🎯 Passeurs"], ["cs", "🧤 Gardiens"]].map(([k, l]) => `<button type="button" data-top="${k}" aria-pressed="${st.top === k}">${l}</button>`).join("")}</div>
+      <div class="lst">${T.map((r, i) => `<div><em>${i + 1}</em>${av(r[0], 26)}<span>${esc(r[0])} ${prevRank(st.top, r[0], i)}${r[2] ? `<small style="display:block;font-size:11px;color:var(--text3)">${r[2]}</small>` : ""}</span><u><i style="width:${st.top === "cs" ? Math.max(6, (1 - r[1] / ((Math.max(...T.map(x => x[1])) || 1) * 1.25)) * 100) : r[1] / max * 100}%"></i></u><b>${st.top === "cs" ? f2(r[1]) : r[1]}</b></div>`).join("") || (st.top === "cs" ? `<p style="color:var(--text2);font-size:13px">Personne n'a gardé ${T.min} mi-temps sur cette période.</p>` : `<p style="color:var(--text2);font-size:13px">Rien sur cette période.</p>`)}${st.top === "cs" && (T.waiting || []).length ? `<div style="margin-top:10px;padding-top:8px;border-top:1px dashed var(--border);opacity:.6"><small style="display:block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Sous le seuil minimum d'éligibilité · moins de ${T.min} mi-t.</small>${T.waiting.map(r => `<div><em>–</em>${av(r[0], 22)}<span>${esc(r[0])}<small style="display:block;font-size:11px;color:var(--text3)">${r[2]}</small></span><u></u><b>${f2(r[1])}</b></div>`).join("")}</div>` : ""}${st.top === "cs" ? `<p style="font-size:11px;color:var(--text3);margin:8px 0 0">Buts encaissés par mi-temps au but · le plus bas gagne, puis le plus de clean sheets · min. ${T.min} mi-t.${st.per === "saison" || st.per === "tout" ? " (seuil du Prix Yachine)" : ""}</p>` : ""}</div></div></div></div>
     <div class="h2">Matchs marquants</div><div class="marq">
       ${mt ? `<div class="card mq"><small>Plus grand écart</small><span>${dl(mt.date)}</span><div class="sc"><span class="dot ${TCLS[TLB[mt.ea]]}"></span>${TLB[mt.ea]} <b>${mt.sa}–${mt.sb}</b> ${TLB[mt.eb]}<span class="dot ${TCLS[TLB[mt.eb]]}"></span></div></div>` : ""}
       ${mg ? `<div class="card mq"><small>Match le plus prolifique</small><span>${dl(mg.date)}</span><div class="sc"><span class="dot ${TCLS[TLB[mg.ea]]}"></span>${TLB[mg.ea]} <b>${mg.sa}–${mg.sb}</b> ${TLB[mg.eb]}<span class="dot ${TCLS[TLB[mg.eb]]}"></span></div></div>` : ""}
@@ -9041,17 +9064,17 @@ function isoTy(ty) {
   const pos = [[7, 50], [34, 14], [34, 86], [70, 28], [70, 72]];
   const P = ty.map(([r, p, v], i) => p ? `<div class="pl" style="--x:${pos[i][0]}%;--y:${pos[i][1]}%">${av(p, 34, i ? "var(--gold)" : "var(--text2)")}<b>${esc(p)}</b><small>${v.replace(" clean sheets", " CS").replace(" enc./match", " enc./m")}</small></div>` : "").join("");
   return `<div class="iso" style="background:radial-gradient(120% 80% at 50% 100%, var(--gold-bg), var(--bg2))"><div class="ttl"><b style="color:var(--gold)">Équipe-type</b><span>${perLabel(st.per, perKey())}</span></div><div class="pitch"><span class="goal l"></span><span class="goal r"></span>${P}</div></div>
-    <p style="font-size:11px;color:var(--text3);margin:6px 0 0">Gardien : meilleur % de mi-temps sans encaisser · défenseur : le moins encaissé par match · puis le meilleur passeur et les 2 meilleurs buteurs, sans doublon.</p>`;
+    <p style="font-size:11px;color:var(--text3);margin:6px 0 0">Gardien : le moins de buts encaissés par mi-temps au but (min. ${gkMin(A)} mi-t.) · défenseur : le moins encaissé par match · puis le meilleur passeur et les 2 meilleurs buteurs, sans doublon.</p>`;
 }
 function typeOf(A) {
   const L = Object.entries(A.P).filter(([p]) => !DEPS.has(p)), minM = Math.max(2, Math.round(A.nM * .15)), used = new Set();
   const pick = (f, s, fmt) => { const r = L.filter(([p, x]) => !used.has(p) && f(x)).sort((a, b) => s(b[1]) - s(a[1]))[0]; if (!r) return [null]; used.add(r[0]); return [r[0], fmt(r[1])]; };
-  const gk = pick(x => x.gkH >= gkMin(A), x => x.gkCS / x.gkH - x.gkC / x.gkH / 100, x => `${Math.round(x.gkCS / x.gkH * 100)}% clean sheets`);
+  const gk = pick(x => x.gkH >= gkMin(A), x => -(x.gkC / x.gkH) + x.gkCS * 1e-4 + x.gkH * 1e-7, x => `${f2(x.gkC / x.gkH)} b./mi-t.`);
   const de = pick(x => x.m >= minM, x => -x.gc / x.m, x => `${f1(x.gc / x.m)} enc./match`);
   const pa = pick(x => x.a > 0, x => x.a * 10 + x.g, x => `${x.a} passe${x.a > 1 ? "s" : ""}`);
   const b1 = pick(x => x.g > 0, x => x.g * 10 + x.a, x => `${x.g} but${x.g > 1 ? "s" : ""}`);
   const b2 = pick(x => x.g > 0, x => x.g * 10 + x.a, x => `${x.g} but${x.g > 1 ? "s" : ""}`);
-  return [["Gardien · meilleur % de clean sheets", ...gk], ["Défenseur · le moins encaissé", ...de], ["Passeur", ...pa], ["Buteur", ...b1], ["Buteur", ...b2]];
+  return [["Gardien · moins encaissé par mi-temps", ...gk], ["Défenseur · le moins encaissé", ...de], ["Passeur", ...pa], ["Buteur", ...b1], ["Buteur", ...b2]];
 }
 function bars(ser) {
   const W = 600, H = 180, L = 24, R = 8, T = 14, B = 22, n = Math.max(1, ser.length), max = Math.max(4, ...ser.map(s => s[1])), bw = (W - L - R) / n;
@@ -9548,7 +9571,7 @@ function _dbxRenderEquipeType(sessions) {
     matchCount: d.matchCount
   }));
   const gks = computeGardiensRanking(sessions).map(g => ({ ...g, team: teamOf(g.name) }));
-  const team = _pickEquipeType(outfield, gks, ttGkCriteria);
+  const team = _pickEquipeType(outfield, gks, ttGkCriteria, _gkMinFor(sessions));
   return _ttPanelHtml("dbx", team, ttGkCriteria);
 }
 
@@ -11833,7 +11856,7 @@ function _computeSeasonEquipeTypeAppearances() {
       matchCount: d.matchCount
     }));
     const gks = computeGardiensRanking(sessions).map(g => ({ ...g, team: teamOf(g.name) }));
-    const team = _pickEquipeType(outfield, gks, "cs");
+    const team = _pickEquipeType(outfield, gks, "cs", _gkSeasonThreshold(sessions.filter(s => (s.matchs || []).length).length).halves);
     if (!team) return;
     [team.gk, ...team.attaquants, ...team.milieux, ...team.defenseurs].filter(Boolean).forEach(p => {
       counts[p.name] = (counts[p.name]||0) + 1;
