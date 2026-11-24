@@ -126,9 +126,10 @@ def mark(path):
         req(path, "PUT", True)
 
 
-def main():
+def main(fast=False):
+    """fast=True : seulement les messages des super admins, le Vestiaire et la Messagerie (passage éclair)."""
     subs = req("pushSubs") or {}
-    test = os.environ.get("TEST_PLAYER", "").strip()
+    test = "" if fast else os.environ.get("TEST_PLAYER", "").strip()
     key = os.environ.get("VAPID_PRIVATE_KEY", "")
     if not key and not DRY:
         sys.exit("VAPID_PRIVATE_KEY manquant")
@@ -281,6 +282,12 @@ def main():
                     print("Rappel 3 h :", p)
                     mark(f"pushSent/rem3h/{mon_iso}/{p}")
                     auto_send(p, "⏳ Plus que 3 h pour répondre", f"Le sondage pour {mon_lbl} se ferme ce soir à 21h30.", "./?n=vote#vote", f"rem-{mon_iso}")
+    if fast:
+        block("Vestiaire", lambda: chat_push(subs, supers, sent, now_ms, send, allowed, prefs))
+        block("Messagerie", lambda: dm_push(subs, supers, sent, now_ms, send, allowed))
+        if stats["envoyées"] or stats["échecs"]:
+            print(stats)
+        return
     block("Sondage", do_vote)
 
     # ── récap de la soirée prêt : dès qu'une soirée récente (aujourd'hui ou hier) est enregistrée
@@ -520,6 +527,46 @@ def mark_val(path, value):
         req(path, "PUT", value)
 
 
+def activity():
+    """Empreinte légère de ce qui peut déclencher un envoi rapide (quelques Ko) :
+    demandes des super admins, dernier message de chaque salon, index de la Messagerie."""
+    q = tuple(sorted((fetch(f"{DB}/pushQueue.json?shallow=true") or {}).keys()))
+    rooms = sorted(set((fetch(f"{DB}/chat/rooms.json?shallow=true") or {}).keys()) | {"g"})
+    last = tuple((r, tuple((fetch(f"{DB}/chat/msgs/{urllib.parse.quote(r)}.json?orderBy=%22$key%22&limitToLast=1") or {}).keys())) for r in rooms)
+    dm = json.dumps(fetch(f"{DB}/chat/dmIdx.json") or {}, sort_keys=True)
+    return (q, last, dm)
+
+
+def watch(seconds):
+    """Reste éveillé ~9 min : regarde toutes les 15 s s'il se passe quelque chose et envoie aussitôt.
+    cron-job.org relance l'Action toutes les 10 min : la surveillance est quasi continue."""
+    end = time.time() + seconds
+    try:
+        prev = activity()
+    except Exception as e:
+        print("Surveillance : erreur", type(e).__name__, str(e)[:200])
+        prev = None
+    n = 0
+    while time.time() < end - 15:
+        time.sleep(15)
+        try:
+            cur = activity()
+        except Exception as e:
+            print("Surveillance : erreur", type(e).__name__, str(e)[:200])
+            continue
+        if cur != prev:
+            n += 1
+            print(time.strftime("%H:%M:%S"), "→ activité, passage éclair")
+            try:
+                main(fast=True)
+            except SystemExit:
+                pass
+            except Exception:
+                traceback.print_exc()
+            prev = cur
+    print("Surveillance terminée :", n, "passage(s) éclair")
+
+
 if __name__ == "__main__":
     try:
         main()
@@ -527,3 +574,6 @@ if __name__ == "__main__":
         raise
     except Exception:  # panne générale (réseau, base) : écrite dans le journal, sans faire échouer l'Action
         traceback.print_exc()
+    w = os.environ.get("WATCH", "").strip()
+    if w.isdigit() and int(w) > 0 and not DRY and not os.environ.get("TEST_PLAYER", "").strip():
+        watch(int(w))
