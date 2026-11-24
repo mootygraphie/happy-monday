@@ -4884,8 +4884,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li>👥 <b>Effectif</b> : nouveau trombinoscope</li><li data-sa>📡 <b>Saisie</b> : glisser pour lancer le direct</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 15:05</footer>
+<template id="hm-news" data-date="24/11/2026"><li>⚽ <b>Saisie</b> : ouverte à tous le lundi dès 19h45</li><li>👥 <b>Effectif</b> : nouveau trombinoscope</li><li data-sa>📡 <b>Saisie</b> : glisser pour lancer le direct</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 15:09</footer>
 
 <script>
 
@@ -4895,7 +4895,10 @@ function applyRole(role) {
   const isSaisie = role === "saisie";
   // "compte" = compte joueur connecte : acces a la Saisie EN PLUS de tous les onglets
   // (contrairement a l ancien mot de passe "saisie", qui masque le reste du site).
-  const canSaisie = isAdmin || isSaisie || (role === "compte" && !_accSaisieBlocked());
+  // Saisie : tout le monde le lundi dès 19h45 (et tant que la soirée est en cours) ;
+  // super admins : dès que le sondage est ouvert (date de la Saisie = date du sondage).
+  const W = _saisieWindow();
+  const canSaisie = (isAdmin && W.sa) || isSaisie || (role === "compte" && !_accSaisieBlocked() && W.all);
   const coefBtn = document.getElementById("footer-coef-btn");
   if (coefBtn) coefBtn.style.display = isAdmin ? "inline" : "none";
   const pronosWrap = document.getElementById("footer-pronos-wrap");
@@ -4919,6 +4922,19 @@ function applyRole(role) {
     history.replaceState(null, '', '#sessions');
   }
 }
+
+function _saisieWindow() {
+  try {
+    const p = _svParis(_liveNow()), today = _svIso(Date.UTC(p.y, p.m - 1, p.d)), mins = p.h * 60 + p.mi;
+    const d = typeof _svData !== "undefined" ? _svData : null;
+    const live = !!(typeof _liveDraft !== "undefined" && _liveDraft && _liveDraft.liveStartedAt && _liveNow() - _liveDraft.liveStartedAt < 10 * 3600000);
+    if (d && (d.status === "none" || d.status === "cancelled")) return { all: live, sa: live };
+    const tonight = typeof _svDate !== "undefined" && _svDate === today && p.wd === 1 && mins >= 19 * 60 + 45;
+    return { all: tonight || live, sa: tonight || live || !!(d && d.status === "open") };
+  } catch (e) { return { all: false, sa: true }; }
+}
+// l'heure tourne : on revérifie l'accès à la Saisie chaque minute
+setInterval(() => { const r = sessionStorage.getItem("hmft_role"); if (r === "admin" || r === "compte") applyRole(r); }, 60000);
 
 /* Accès Saisie d'un compte joueur : refusé si sa fiche est « absent pour la saison » ou
    « inactif » — SAUF s'il est coché Présent pour la soirée en cours (un absent pour la
@@ -13236,8 +13252,10 @@ function _saisieTeamsLocked() {
   return _draft.date > today || p.h * 60 + p.mi < 19 * 60 + 45;
 }
 function renderSaisie() {
-  if (typeof _svAutoImport === "function") _svAutoImport();
   if (!_draft) _loadDraft();
+  // la Saisie prend la date du sondage ouvert (tant qu'aucun match n'est saisi)
+  if (_draft && typeof _svData !== "undefined" && _svData && _svData.status === "open" && _svDate && _draft.date !== _svDate && !(_draft.matchs || []).length) { _draft.date = _svDate; _saveDraft(); }
+  if (typeof _svAutoImport === "function") _svAutoImport();
   if (_draft && _saisieStep !== "presences" && _saisieTeamsLocked()) { _saisieStep = "presences"; _draft.step = "presences"; }
   // Chaque appel remplace tout le contenu du panneau (innerHTML) : ceci recree entierement
   // .saisie-pres-list, qui a son propre defilement interne (overflow-y:auto) — recreer
@@ -17152,6 +17170,7 @@ function _svApply() {
     ref = _db.ref("sessionVotes/" + t);
     ref.on("value", snap => {
       _svData = snap.val();
+      try { const r = sessionStorage.getItem("hmft_role"); if (r === "admin" || r === "compte") applyRole(r); } catch (e) {}
       if (panel.classList.contains("active") && !ui.busy) render(true);
       if (document.getElementById("panel-saisie")?.classList.contains("active") && typeof _saisieStep !== "undefined" && _saisieStep === "presences" && document.querySelector(".saisie-pres-list")) {
         const box = document.querySelector(".saisie-sv-import"), html = _svImportHTML();
