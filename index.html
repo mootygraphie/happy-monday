@@ -5026,7 +5026,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
 </div>
 
 <template id="hm-news" data-date="24/11/2026"><li>⚽ <b>Saisie des matchs</b> : plein écran, un toucher par but ⚽ ou fait ⭐️</li><li>📺 <b>Direct</b> : le fil du match commenté</li><li>🧤 <b>Gardiens</b> : nouveau classement (buts encaissés par mi-temps)</li><li>🃏 <b>Vignettes</b> : nouvelles catégories et raretés (6 Légendaires)</li><li data-sa>💳 <b>Membres</b> : cotisation modifiable aussi sans compte</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 20:26</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 20:29</footer>
 
 <script>
 
@@ -16048,6 +16048,7 @@ const ACC_DOMAIN = "happymonday.local";
 var _auth = null, _accUser = null, _accProfile = null, _accIsSuper = false, _accOpenAfterLogin = false;
 let _accReadyResolve;
 const _accReady = new Promise(r => { _accReadyResolve = r; });
+var _accAuthKnown = false; // vrai une fois l'état de connexion réellement connu (pas seulement le délai de 4 s)
 let _acc = { view: "login", step: 1, pseudo: "", pwd: "", pwd2: "", show: false, q: "", pick: null, ok: false, err: "", busy: false, taken: {} };
 
 function _accPlayer() { return _accUser && _accProfile ? _accProfile.player : null; }
@@ -16098,6 +16099,7 @@ function _accInit() {
         }
       } catch (e) { console.warn("profil compte:", e); }
     }
+    _accAuthKnown = true;
     _accApplyRole();
     _accReadyResolve();
     if (u && _accOpenAfterLogin) {
@@ -18630,14 +18632,25 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       lsSet(OWNER, player);
     }
     async function drop(player) { if (!sub || !player) return; const id = await subId(sub.endpoint); await _db.ref(`pushSubs/${player}/${id}`).remove(); }
-    // l'abonnement de ce téléphone suit le compte connecté (changement de compte, déconnexion)
+    // l'abonnement de ce téléphone suit le compte connecté (changement de compte, déconnexion).
+    // Correctif 24/11/2026 : au démarrage (après une mise à jour par exemple), le compte n'est pas
+    // encore chargé et me() vaut null quelques instants ; on prenait ça pour une déconnexion et on
+    // supprimait l'abonnement côté serveur. On ne retire désormais l'abonnement que si l'on sait
+    // vraiment que personne n'est connecté, et on le réenregistre une fois par ouverture (ce qui
+    // répare aussi les abonnements perdus par l'ancien comportement).
+    let ensured = null;
     async function sync() {
       try {
         if (!sub || !_db) return;
         const owner = lsGet(OWNER), p = me();
-        if (owner === p) return;
-        if (owner) await drop(owner).catch(() => {});
-        if (p) await save(p); else lsSet(OWNER, null);
+        if (!p) {
+          const loggedOut = typeof _accAuthKnown !== "undefined" && _accAuthKnown && typeof _accUser !== "undefined" && !_accUser;
+          if (!loggedOut) return; // compte pas encore chargé : on ne touche à rien
+          if (owner) await drop(owner).catch(() => {});
+          lsSet(OWNER, null); ensured = null; return;
+        }
+        if (owner && owner !== p) await drop(owner).catch(() => {});
+        if (owner !== p || ensured !== p) { await save(p); ensured = p; }
       } catch (e) {}
     }
     function guide() {
@@ -18836,7 +18849,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (hasSW) navigator.serviceWorker.register("sw.js").then(async r => {
       reg = r;
       if (pushOK()) { try { sub = await r.pushManager.getSubscription(); } catch (e) {} }
-      refresh(); sync();
+      refresh(); sync(); _accReady.then(() => sync()).catch(() => {}); // dès que le compte est connu
     }).catch(e => console.warn("sw:", e));
     window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferred = e; refresh(); });
     window.addEventListener("appinstalled", () => { deferred = null; refresh(); toast("Appli installée !"); });
