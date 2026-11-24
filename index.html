@@ -2834,6 +2834,21 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .acm-mem .acm-memrow .acm-av { width: 32px; height: 32px; border-radius: 9px; flex: none; }
   .acm-mem .acm-memrow b { flex: 0 1 auto; display: block; min-width: 0; font-size: 14.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .acm-mem .acm-memrow .dv { flex: none; display: block !important; font-size: 13px; opacity: .75; }
+  /* Membres : icônes appli/site, notifications, cotisation (vert doux = « c'est bon », gris sinon) */
+  .acm-mem { --acm-ok: #5fae86; --acm-off: #55555f; }
+  html.light .acm-mem { --acm-ok: #2f8a5c; --acm-off: #a4a4ae; }
+  .acm-mem .acm-i { flex: none; display: grid; place-items: center; color: var(--acm-off); }
+  .acm-mem .acm-i svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .acm-mem .acm-i.dvq { width: 24px; height: 24px; border-radius: 7px; border: 1px solid var(--border2); }
+  .acm-mem .acm-i.dvq svg { width: 14px; height: 14px; }
+  .acm-mem .acm-i.ok { color: var(--acm-ok); }
+  .acm-mem .acm-i.dvq.ok { border-color: color-mix(in srgb, var(--acm-ok) 55%, transparent); background: color-mix(in srgb, var(--acm-ok) 12%, transparent); }
+  .acm-mem .acm-i.cot svg { width: 22px; height: 22px; }
+  .acm-mem .acm-avw { position: relative; flex: none; display: block; }
+  .acm-mem .acm-avw.live::after { content: ""; position: absolute; right: -3px; bottom: -3px; width: 11px; height: 11px; border-radius: 50%; background: #34c77b; border: 2.5px solid var(--bg2); }
+  .acm-mem .acm-pl:nth-child(odd) .acm-avw.live::after { border-color: var(--bg3); }
+  .acm-mem .acm-memrow .ls.now { color: #34c77b; }
+  html.light .acm-mem .acm-memrow .ls.now { color: #1f8a52; }
   .acm-mem .acm-memrow .ls { flex: 1; display: block !important; min-width: 0; text-align: right; font-size: 11.5px; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 2px; }
   .acm-mem .acm-memrow .ls.rec { color: var(--text2); }
   .acm-cdot { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 900; line-height: 1; }
@@ -4549,8 +4564,8 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li>🎽 <b>Vignettes</b> : nouvelle photo pour la carte Kit Vintage</li><li>👤 <b>Création de compte</b> plus fiable quand l'appli démarre lentement</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 09:21</footer>
+<template id="hm-news" data-date="24/11/2026"><li>👥 <b>Membres</b> : nouvelles icônes, qui est en ligne, notifications activées</li><li>🎽 <b>Vignettes</b> : nouvelle photo pour la carte Kit Vintage</li><li>👤 <b>Création de compte</b> plus fiable quand l'appli démarre lentement</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 09:27</footer>
 
 <script>
 
@@ -15147,6 +15162,13 @@ function _accPlayersList() {
     return { n, team: t, pres: pres[n] || 0, statut };
   });
 }
+const _ACM_IC = {
+  phone: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.2h2"/></svg>',
+  web: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.4 2.6 3.6 5.6 3.6 9s-1.2 6.4-3.6 9c-2.4-2.6-3.6-5.6-3.6-9S9.6 5.6 12 3z"/></svg>',
+  bell: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.6 2H4.4z"/><path d="M10 21a2.1 2.1 0 0 0 4 0"/></svg>',
+  belloff: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 9.5-4.9M18 11v5.5l1.6 2H6.5"/><path d="M10 21a2.1 2.1 0 0 0 4 0M3.5 3.5l17 17"/></svg>',
+  card: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="8.5" cy="10.8" r="2.1"/><path d="M5.4 16c.6-1.5 1.7-2.3 3.1-2.3s2.5.8 3.1 2.3M14.2 10h4.3M14.2 13.4h3"/></svg>',
+};
 function _accAvHTML(n, team, big) {
   const col = team === "Rouge" ? "var(--rouge)" : team === "Vert" ? "var(--vert)" : team === "Bleue" ? "var(--bleu)" : "var(--border2)";
   return `<span class="acm-av pf${big ? " big" : ""}" style="--tc:${col}">${_saisieInitials(n)}${portraitImg(n, !big)}</span>`;
@@ -15206,9 +15228,14 @@ function _accRender(keepFocus) {
       <p class="acm-sub">${rows ? `<b>${rows.length}</b> compte${rows.length > 1 ? "s" : ""} sur ${total} joueurs · <span style="color:var(--good)">${nPaid} payée${nPaid > 1 ? "s" : ""}</span> · <span style="color:#ff9f0a">${rows.length - nPaid} à payer</span>` : "Chargement…"}</p>${err}
       <div class="acm-list acm-accl acm-mem" style="max-height:58vh">${(rows || []).map(r => `<div class="acm-pl${r.uid === myUid ? " me" : ""}">
         <button class="acm-star${r.super ? " on" : ""}" data-a="star" data-n="${_accEsc(r.player)}"${r.uid === myUid ? " disabled" : ""} aria-label="${r.super ? `Retirer les droits super admin de ${_accEsc(r.player)}` : `Passer ${_accEsc(r.player)} super admin`}">${r.super ? "★" : "☆"}</button>
-        <button class="acm-memrow" data-a="member" data-n="${_accEsc(r.player)}">${_accAvHTML(r.player, "")}<b>${r.player}${r.pseudo ? `<i class="ps">@${_accEsc(r.pseudo)}</i>` : ""}</b><small class="dv" title="${r.app ? "Utilise l'appli" : "Utilise le site"}">${r.app ? "📲" : "🌐"}</small><small class="ls${(s0 => s0 && Date.now() - s0.t < 7 * 86400000 ? " rec" : "")(seenOf(r))}" title="Dernière ouverture">${(s0 => s0 ? ago(s0.t) : "—")(seenOf(r))}</small><span class="acm-cdot ${cot[r.player] ? "ok" : "due"}" title="Cotisation ${cot[r.player] ? "payée" : "à payer"}">${cot[r.player] ? "✓" : "!"}</span></button></div>`).join("")}</div>
+        <button class="acm-memrow" data-a="member" data-n="${_accEsc(r.player)}">${(s0 => { const live = s0 && Date.now() - s0.t < 3 * 60000, on = !!(a.subs || {})[r.player], paid = !!cot[r.player];
+          return `<span class="acm-avw${live ? " live" : ""}">${_accAvHTML(r.player, "")}</span><b>${r.player}${r.pseudo ? `<i class="ps">@${_accEsc(r.pseudo)}</i>` : ""}</b>`
+          + `<small class="ls${live ? " now" : s0 && Date.now() - s0.t < 7 * 86400000 ? " rec" : ""}" title="Dernière ouverture">${live ? "en ligne" : s0 ? ago(s0.t) : "—"}</small>`
+          + `<span class="acm-i dvq${r.app ? " ok" : ""}" title="${r.app ? "Utilise l'appli" : "Utilise le site"}">${r.app ? _ACM_IC.phone : _ACM_IC.web}</span>`
+          + `<span class="acm-i${on ? " ok" : ""}" title="Notifications ${on ? "activées" : "désactivées"}">${on ? _ACM_IC.bell : _ACM_IC.belloff}</span>`
+          + `<span class="acm-i cot${paid ? " ok" : ""}" title="Cotisation ${paid ? "payée" : "à payer"}">${_ACM_IC.card}</span>`; })(seenOf(r))}</button></div>`).join("")}</div>
       ${(o => o.length ? `<div class="acm-sec">Identifiants sans fiche</div><p class="acm-sub" style="margin:0 0 6px">Anciens comptes détachés ou jamais rattachés : leur pseudo reste pris tant qu'ils existent.</p><div class="acm-orph">${o.map(([uid, x]) => `<div><span><b>@${_accEsc(x.pseudo || "?")}</b><small>${x.last ? `dernière connexion le ${new Date(x.last).toLocaleDateString("fr", { day: "numeric", month: "short" })}` : "jamais connecté"}</small></span>${(a.authDelete || {})[uid] ? `<em>suppression d'ici 10 min</em>` : `<button class="acm-cbtn" data-a="orphdel" data-u="${uid}">${a.confirmOrph === uid ? "Confirmer ?" : "Libérer le pseudo"}</button>`}</div>`).join("")}</div>` : "")(Object.entries(a.authOrphans || {}))}
-      <p class="acm-help">Dernière ouverture du site ou de l'appli à droite. ☆/★ : super admin (un toucher). <span style="color:var(--good)">✓</span> cotisation payée, <span style="color:#ff9f0a">!</span> à payer. 📲 appli, 🌐 site. Touche un membre pour ses infos, sa cotisation ou détacher sa carte.</p>`;
+      <p class="acm-help">À droite : dernière ouverture (point vert sur la photo = en ligne), appli ou site, notifications, cotisation. En vert : appli installée, notifications activées, cotisation payée. ☆/★ : super admin (un toucher). Touche un membre pour ses infos, sa cotisation ou détacher sa carte.</p>`;
   } else if (a.view === "member") {
     const n = a.member, r = (a.accounts || []).find(x => x.player === n) || {}, pf = a.mprof, paid = !!(a.cot || {})[n], cy = _currentSeason(), cl = `${String(cy).slice(2)}/${String(cy + 1).slice(2)}`;
     const kv = (l, v) => `<span>${l}</span><b>${v ? _accEsc(v) : "—"}</b>`;
@@ -15383,6 +15410,7 @@ async function _accExportCsv() {
 async function _accLoadAccounts() {
   try {
     _db.ref(`cotisations/${_currentSeason()}`).once("value").then(c => { _acc.cot = c.val() || {}; if (_acc.view === "accounts" || _acc.view === "member") _accRender(); }).catch(() => {});
+    _db.ref("pushSubs").once("value").then(c => { const v = c.val() || {}; _acc.subs = Object.fromEntries(Object.keys(v).filter(k => v[k] && Object.keys(v[k]).length).map(k => [k, true])); if (_acc.view === "accounts") _accRender(); }).catch(() => {});
     _db.ref("lastSeen").once("value").then(c => { _acc.seen = c.val() || {}; if (_acc.view === "accounts" || _acc.view === "member") _accRender(); }).catch(() => {});
     ["authOrphans", "pwReset", "pushDebug", "authDelete"].forEach(k => _db.ref(k).once("value").then(c => { _acc[k] = c.val() || {}; if (_acc.view === "accounts" || _acc.view === "member") _accRender(); }).catch(() => {}));
     const [pa, us, sa, ai] = await Promise.all(["playerAccounts", "users", "config/superAdmins", "appInstalls"].map(p => _db.ref(p).once("value")));
@@ -17691,7 +17719,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     function markSeen() {
       try {
         const p = me(); if (!p || !_db || document.visibilityState === "hidden") return;
-        if (p === seenFor && Date.now() - seenAt < 5 * 60000) return;
+        if (p === seenFor && Date.now() - seenAt < 2 * 60000) return; // « en ligne » = vu il y a moins de 3 min
         seenFor = p; seenAt = Date.now();
         _db.ref(`lastSeen/${p}`).set({ at: firebase.database.ServerValue.TIMESTAMP, via: standalone() ? "app" : "site" }).catch(() => { seenAt = 0; });
       } catch (e) {}
