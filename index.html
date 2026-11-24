@@ -2845,6 +2845,12 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .acm-mem .acm-i.dvq.ok { border-color: color-mix(in srgb, var(--acm-ok) 55%, transparent); background: color-mix(in srgb, var(--acm-ok) 12%, transparent); }
   .acm-mem .acm-i.cot svg { width: 22px; height: 22px; }
   .acm-mem .acm-avw { position: relative; flex: none; display: block; }
+  /* fiches sans compte : en fin de liste, thème rouge */
+  .acm-mem .acm-pl.nocc { background: rgba(255,59,48,.06) !important; border-color: rgba(255,59,48,.28); margin-top: 2px; }
+  .acm-mem .acm-pl.nocc .acm-memrow { cursor: default; } .acm-mem .acm-pl.nocc b { color: var(--text2); } .acm-mem .acm-pl.nocc .ps { color: #ff6b5e; }
+  .acm-mem .acm-pl.nocc .acm-av { opacity: .7; }
+  .acm-mem .acm-star-sp { flex: none; width: 34px; }
+  .acm-mem .acm-i.dvq.no { color: #ff453a; border-color: rgba(255,59,48,.55); background: rgba(255,59,48,.12); }
   .acm-mem .acm-avw.live::after { content: ""; position: absolute; right: -3px; bottom: -3px; width: 11px; height: 11px; border-radius: 50%; background: #34c77b; border: 2.5px solid var(--bg2); }
   .acm-mem .acm-pl:nth-child(odd) .acm-avw.live::after { border-color: var(--bg3); }
   .acm-mem .acm-memrow .ls.now { color: #34c77b; }
@@ -4803,8 +4809,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li>🏆 <b>Accueil</b> : nouvelles cases Ballon d'Or et Vignettes</li><li>🗓️ <b>Sondage</b> : il s'ouvre tout seul le samedi à 9h, la date est affichée à l'accueil</li><li>🚫 <b>Session annulée</b> : tout le monde est prévenu par notification</li><li>➕ <b>Jokers</b> : on peut encore en ajouter après la fermeture du sondage</li><li data-sa>💬 <b>Vestiaire</b> : le sondage en bandeau fixé en haut du Vestiaire général</li><li>🌙 <b>Sessions</b> : « Ta soirée », ton bilan du soir et 4 stats marrantes</li><li data-sa>💬 <b>Vestiaire</b> : bulles plus aérées, « Répondre » plus clair, appui sur un message avec fond flouté</li><li data-sa>💬 <b>Vestiaire</b> : Infos club lisibles sur tous les fonds d'écran</li><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 11:51</footer>
+<template id="hm-news" data-date="24/11/2026"><li data-sa>👥 <b>Membres</b> : les fiches sans compte apparaissent en fin de liste</li><li>🏆 <b>Accueil</b> : nouvelles cases Ballon d'Or et Vignettes</li><li>🗓️ <b>Sondage</b> : il s'ouvre tout seul le samedi à 9h, la date est affichée à l'accueil</li><li>🚫 <b>Session annulée</b> : tout le monde est prévenu par notification</li><li>➕ <b>Jokers</b> : on peut encore en ajouter après la fermeture du sondage</li><li data-sa>💬 <b>Vestiaire</b> : le sondage en bandeau fixé en haut du Vestiaire général</li><li>🌙 <b>Sessions</b> : « Ta soirée », ton bilan du soir et 4 stats marrantes</li><li data-sa>💬 <b>Vestiaire</b> : bulles plus aérées, « Répondre » plus clair, appui sur un message avec fond flouté</li><li data-sa>💬 <b>Vestiaire</b> : Infos club lisibles sur tous les fonds d'écran</li><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 12:01</footer>
 
 <script>
 
@@ -15439,6 +15445,7 @@ const _ACM_IC = {
   web: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.4 2.6 3.6 5.6 3.6 9s-1.2 6.4-3.6 9c-2.4-2.6-3.6-5.6-3.6-9S9.6 5.6 12 3z"/></svg>',
   bell: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.6 2H4.4z"/><path d="M10 21a2.1 2.1 0 0 0 4 0"/></svg>',
   belloff: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 9.5-4.9M18 11v5.5l1.6 2H6.5"/><path d="M10 21a2.1 2.1 0 0 0 4 0M3.5 3.5l17 17"/></svg>',
+  ban: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></svg>',
   card: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="8.5" cy="10.8" r="2.1"/><path d="M5.4 16c.6-1.5 1.7-2.3 3.1-2.3s2.5.8 3.1 2.3M14.2 10h4.3M14.2 13.4h3"/></svg>',
 };
 function _accAvHTML(n, team, big) {
@@ -15505,7 +15512,10 @@ function _accRender(keepFocus) {
           + `<small class="ls${live ? " now" : s0 && Date.now() - s0.t < 7 * 86400000 ? " rec" : ""}" title="Dernière ouverture">${live ? "en ligne" : s0 ? ago(s0.t) : "—"}</small>`
           + `<span class="acm-i dvq${r.app ? " ok" : ""}" title="${r.app ? "Utilise l'appli" : "Utilise le site"}">${r.app ? _ACM_IC.phone : _ACM_IC.web}</span>`
           + `<span class="acm-i${on ? " ok" : ""}" title="Notifications ${on ? "activées" : "désactivées"}">${on ? _ACM_IC.bell : _ACM_IC.belloff}</span>`
-          + `<span class="acm-i cot${paid ? " ok" : ""}" title="Cotisation ${paid ? "payée" : "à payer"}">${_ACM_IC.card}</span>`; })(seenOf(r))}</button></div>`).join("")}</div>
+          + `<span class="acm-i cot${paid ? " ok" : ""}" title="Cotisation ${paid ? "payée" : "à payer"}">${_ACM_IC.card}</span>`; })(seenOf(r))}</button></div>`).join("")}${
+        // fiches sans compte rattaché, en fin de liste (ordre alphabétique), thème rouge
+        rows ? [...new Set(ALL_PLAYERS)].filter(n => !rows.some(r => r.player === n) && !(typeof _isDepanneur === "function" && _isDepanneur(n))).sort((x, y) => x.localeCompare(y, "fr"))
+          .map(n => `<div class="acm-pl nocc"><span class="acm-star-sp" aria-hidden="true"></span><div class="acm-memrow">${_accAvHTML(n, "")}<b>${_accEsc(n)}<i class="ps">pas de compte</i></b><small class="ls"></small><span class="acm-i dvq no" title="Pas de compte créé">${_ACM_IC.ban}</span></div></div>`).join("") : ""}</div>
       ${(o => o.length ? `<div class="acm-sec">Identifiants sans fiche</div><p class="acm-sub" style="margin:0 0 6px">Anciens comptes détachés ou jamais rattachés : leur pseudo reste pris tant qu'ils existent.</p><div class="acm-orph">${o.map(([uid, x]) => `<div><span><b>@${_accEsc(x.pseudo || "?")}</b><small>${x.last ? `dernière connexion le ${new Date(x.last).toLocaleDateString("fr", { day: "numeric", month: "short" })}` : "jamais connecté"}</small></span>${(a.authDelete || {})[uid] ? `<em>suppression d'ici 10 min</em>` : `<button class="acm-cbtn" data-a="orphdel" data-u="${uid}">${a.confirmOrph === uid ? "Confirmer ?" : "Libérer le pseudo"}</button>`}</div>`).join("")}</div>` : "")(Object.entries(a.authOrphans || {}))}
       <p class="acm-help">À droite : dernière ouverture (point vert sur la photo = en ligne), appli ou site, notifications, cotisation. En vert : appli installée, notifications activées, cotisation payée. ☆/★ : super admin (un toucher). Touche un membre pour ses infos, sa cotisation ou détacher sa carte.</p>`;
   } else if (a.view === "member") {
