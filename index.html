@@ -4260,6 +4260,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .ch-cf-act { display: flex; gap: 8px; justify-content: flex-end; }
   .ch-cf-act button { font: inherit; font-weight: 700; font-size: 14px; padding: 10px 16px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); cursor: pointer; }
   .ch-cf-act .dang { background: #e30b0b; border-color: #e30b0b; color: #fff; }
+  .ch-cf-act .ok { background: #ff9f0a; border-color: #ff9f0a; color: #1b1100; }
+  .ch-cf-in p b { font-size: inherit; color: var(--text); }
   .hm-news ul { list-style: none; margin: 0 0 16px; padding: 10px 12px; border-radius: 12px; background: var(--bg3); display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; color: var(--text2); }
   .hm-news ul b { color: var(--text); font-weight: 600; font-size: inherit; } .hm-news p { margin: 4px 0 12px; }
   #chat .ch-photos { margin-bottom: 8px; padding: 8px; border-radius: 14px; background: var(--bg3); border: 1px solid var(--border2); }
@@ -4816,8 +4818,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li>📊 <b>Statistiques</b> : ta place au classement sur chaque tuile, et la tuile « Décisif » (but ou passe)</li><li>🏆 <b>Récompenses</b> : ta ligne toujours visible dans chaque classement</li><li>💬 <b>Le Vestiaire</b> est ouvert à tous : salons, fonds d'écran, photos (bouton 💬 en haut)</li><li>✉️ <b>Messagerie</b> : écris en privé à n'importe quel joueur</li><li data-sa>👥 <b>Membres</b> : les fiches sans compte apparaissent en fin de liste</li><li>🏆 <b>Accueil</b> : nouvelles cases Ballon d'Or et Vignettes</li><li>🗓️ <b>Sondage</b> : il s'ouvre tout seul le samedi à 9h, la date est affichée à l'accueil</li><li>🚫 <b>Session annulée</b> : tout le monde est prévenu par notification</li><li>➕ <b>Jokers</b> : on peut encore en ajouter après la fermeture du sondage</li><li data-sa>💬 <b>Vestiaire</b> : le sondage en bandeau fixé en haut du Vestiaire général</li><li>🌙 <b>Sessions</b> : « Ta soirée », ton bilan du soir et 4 stats marrantes</li><li data-sa>💬 <b>Vestiaire</b> : bulles plus aérées, « Répondre » plus clair, appui sur un message avec fond flouté</li><li data-sa>💬 <b>Vestiaire</b> : Infos club lisibles sur tous les fonds d'écran</li><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 14:03</footer>
+<template id="hm-news" data-date="24/11/2026"><li data-sa>✅ <b>Accueil</b> : confirmation avant d'ouvrir le sondage ou d'annuler la session</li><li data-sa>📡 <b>Saisie</b> : le direct se lance quand les équipes sont validées ; plus de bouton « Suspendre »</li><li>📊 <b>Statistiques</b> : ta place au classement sur chaque tuile, et la tuile « Décisif » (but ou passe)</li><li>🏆 <b>Récompenses</b> : ta ligne toujours visible dans chaque classement</li><li>💬 <b>Le Vestiaire</b> est ouvert à tous : salons, fonds d'écran, photos (bouton 💬 en haut)</li><li>✉️ <b>Messagerie</b> : écris en privé à n'importe quel joueur</li><li data-sa>👥 <b>Membres</b> : les fiches sans compte apparaissent en fin de liste</li><li>🏆 <b>Accueil</b> : nouvelles cases Ballon d'Or et Vignettes</li><li>🗓️ <b>Sondage</b> : il s'ouvre tout seul le samedi à 9h, la date est affichée à l'accueil</li><li>🚫 <b>Session annulée</b> : tout le monde est prévenu par notification</li><li>➕ <b>Jokers</b> : on peut encore en ajouter après la fermeture du sondage</li><li data-sa>💬 <b>Vestiaire</b> : le sondage en bandeau fixé en haut du Vestiaire général</li><li>🌙 <b>Sessions</b> : « Ta soirée », ton bilan du soir et 4 stats marrantes</li><li data-sa>💬 <b>Vestiaire</b> : bulles plus aérées, « Répondre » plus clair, appui sur un message avec fond flouté</li><li data-sa>💬 <b>Vestiaire</b> : Infos club lisibles sur tous les fonds d'écran</li><li data-sa>🔒 <b>Notifications</b> : envois ciblés et tests visibles seulement par leur auteur</li><li>⚡ <b>Notifications</b> : messages, Vestiaire et Messagerie arrivent en quelques secondes</li><li data-sa>📣 <b>Notifications</b> : nouveau panneau, historique d'abord et + pour envoyer</li><li>🆕 <b>Menu ☰</b> : « Quoi de neuf ? » pour revoir les nouveautés</li><li data-sa>💬 <b>Le Vestiaire</b> : nouveau design, fonds d'écran, réglages</li><li data-sa>✉️ <b>Messagerie</b> : messages privés entre joueurs</li><li data-sa>📷 <b>Photos</b> : appareil photo ou galerie, dans le +</li><li data-sa>📊 <b>Notifications</b> : historique avec le taux de lecture</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 14:41</footer>
 
 <script>
 
@@ -13155,7 +13157,6 @@ function renderSaisie() {
       </div>
     </div>
 
-    ${_draft && _draft.liveStartedAt && !_editMode ? `<div class="saisie-livebar ${_draft.livePaused ? "off" : "on"}"><span class="dot"></span><span class="tx"><b>${_draft.livePaused ? "Direct suspendu" : "Direct en cours"}</b><small>${_draft.livePaused ? "Personne ne voit la soirée en direct" : "Tout le monde voit la soirée en direct"}</small></span><button type="button" data-act="live-toggle">${_draft.livePaused ? "▶ Reprendre" : "⏸ Suspendre"}</button></div>` : ""}
     <div class="saisie-stepper">${stepperHTML}</div>
     <div class="saisie-stepsel"><select id="saisie-stepsel" aria-label="Étape de la saisie">${_SAISIE_STEPS.map((st, i) => `<option value="${st.key}"${st.key === _saisieStep ? " selected" : ""}>${i + 1}. ${st.icon} ${st.label}${i < doneIdx ? " ✓" : ""}</option>`).join("")}</select></div>
 
@@ -13379,9 +13380,7 @@ async function _commitSession() {
 
 /* ── Événements saisie (attachés une seule fois) ── */
 document.getElementById("saisie-content").addEventListener("click", e => {
-  if (e.target.closest('[data-act="live-toggle"]') && _draft) {
-    _draft.livePaused = !_draft.livePaused; _saveDraft(); renderSaisie();
-    _showToast(_draft.livePaused ? "Direct suspendu" : "Direct réactivé"); return;
+  if (false) {
   }
   if (!_draft) return;
 
@@ -13404,7 +13403,8 @@ document.getElementById("saisie-content").addEventListener("click", e => {
     }
     _saisieStep = stepBtn.dataset.step; _saisieStandOpen = false; _saisiePicker = null; _saisieTeamSwap = null; _saisieNotableMatch = null; _saisieNotableStep = null; _saisieNotablePlayer = null;
     _draft.step = _saisieStep;
-    if (_saisieStep === "matchs") { _liveMarkStarted(); if (_draft.livePaused) { _draft.livePaused = false; _showToast("Direct réactivé"); } } // retour aux matchs : le direct reprend
+    // le direct démarre quand les équipes sont validées (tous les présents ont une équipe, 2 équipes au moins)
+    if (_saisieStep === "matchs") { const pr = _presentList(), tm = new Set(pr.map(q => _draft.presences[q]?.equipe).filter(Boolean)); if (pr.length && pr.every(q => _draft.presences[q]?.equipe) && tm.size >= 2) { _liveMarkStarted(); _draft.livePaused = false; } }
     _saveDraft();
     renderSaisie(); window.scrollTo({top:0, behavior:"smooth"}); return;
   }
@@ -17324,6 +17324,25 @@ function _svApply() {
   }
 
   // ── actions
+  // confirmation dans la page (super admin : ouvrir le sondage, annuler la session)
+  function svConfirm(title, text, ok, cls) {
+    return new Promise(res => {
+      const o = document.createElement("div"); o.className = "ch-cf";
+      o.innerHTML = `<div class="ch-cf-in" role="alertdialog" aria-modal="true"><b>${title}</b><p>${text}</p><div class="ch-cf-act"><button type="button" data-k="0">Retour</button><button type="button" class="${cls || "dang"}" data-k="1">${ok}</button></div></div>`;
+      o.addEventListener("click", ev => { const b = ev.target.closest("[data-k]"); if (b || ev.target === o) { o.remove(); res(!!(b && b.dataset.k === "1")); } });
+      document.body.appendChild(o); o.querySelector('[data-k="0"]').focus();
+    });
+  }
+  panel.addEventListener("click", async e => {
+    const t0 = e.target.closest("[data-sv]");
+    if (t0 && !t0.dataset.ok && isSA() && !ui.busy) {
+      const a0 = t0.dataset.sv, d0 = fdate(_svDate);
+      const q = a0 === "publishOpen" ? ["Ouvrir le sondage maintenant ?", `Le sondage du <b>${d0}</b> s'ouvre tout de suite et tout le monde reçoit une notification. Sinon, il s'ouvrira tout seul samedi à 9h.`, "Ouvrir le sondage", "ok"]
+        : (a0 === "mode" && t0.dataset.m === "none") || a0 === "cancel" ? ["Annuler la session ?", `Tu vas annuler la session du <b>${d0}</b>. Tu choisiras ensuite la raison, puis tout le monde sera prévenu.`, "Continuer", "dang"]
+        : null;
+      if (q) { e.stopImmediatePropagation(); if (await svConfirm(...q)) { t0.dataset.ok = "1"; t0.click(); delete t0.dataset.ok; } return; }
+    }
+  });
   panel.addEventListener("click", e => {
     const t = e.target.closest("[data-sv]"); if (!t || ui.busy) return;
     const a = t.dataset.sv, who = me(), sa = isSA();
