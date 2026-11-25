@@ -32,14 +32,23 @@ jobs:
       - run: pip install pillow==11.0.0
       - name: Reduire les portraits trop grands
         run: python .github/scripts/resize_portraits.py
+      - name: Liste du Pantheon (photos Pantheon_<Prenom>)
+        run: |
+          python - <<'PY'
+          import os, json
+          L = sorted([{"n": os.path.splitext(f)[0][9:], "f": os.path.splitext(f)[0]} for f in os.listdir("portraits")
+                      if f.lower().startswith("pantheon_") and not f.endswith(".json")], key=lambda x: x["n"].lower())
+          json.dump(L, open("portraits/pantheon.json", "w"), ensure_ascii=False)
+          PY
       - name: Enregistrer et republier
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if git diff --quiet; then echo "Rien a enregistrer."; exit 0; fi
+          git add -A portraits
+          if git diff --cached --quiet; then echo "Rien a enregistrer."; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -am "Portraits reduits a 900 px (automatique)"
+          git commit -m "Portraits reduits a 900 px / liste du Pantheon (automatique)"
           # si quelqu un a pousse entre-temps : on se recale et on reessaie
           for i in 1 2 3; do git pull --rebase -q origin main && git push && break; sleep 5; done
           gh api -X POST "repos/${{ github.repository }}/pages/builds" || true

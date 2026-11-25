@@ -4696,6 +4696,11 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #chat .ch-lp .ch-emo button[aria-pressed="true"] { background: var(--bg3); }
   #chat .ch-lp .ch-emo .more { border: none; background: var(--bg3); color: var(--text2); display: grid; place-items: center; } #chat .ch-lp .ch-emo .more svg { width: 20px; height: 20px; }
   #chat .ch-lp .ch-emoin { width: 100%; }
+  #chat .ch-lp-rx { align-self: stretch; max-height: 30vh; overflow-y: auto; display: flex; flex-direction: column; background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 4px 0; box-shadow: 0 12px 30px rgba(0,0,0,.5); }
+  #chat .ch-lp-rx .r { display: grid; grid-template-columns: 30px 1fr auto; gap: 8px; align-items: center; padding: 7px 12px; font-size: 13px; }
+  #chat .ch-lp-rx .r + .r { border-top: 1px solid var(--border); }
+  #chat .ch-lp-rx .e { font-size: 20px; text-align: center; } #chat .ch-lp-rx .w { color: var(--text2); line-height: 1.35; } #chat .ch-lp-rx .w b { color: var(--text); }
+  #chat .ch-lp-rx .n { font-size: 12px; font-weight: 800; color: var(--text3); font-variant-numeric: tabular-nums; }
   #chat .ch-lp-msg { max-width: 88%; display: flex; animation: chPop .22s cubic-bezier(.2,1.3,.4,1); }
   #chat .ch-lp-msg .ch-bub { cursor: default; max-height: 40vh; overflow: hidden; box-shadow: 0 14px 34px rgba(0,0,0,.45); }
   #chat .ch-lp.me .ch-lp-msg .ch-bub { background: linear-gradient(160deg, #f0241a, #c90606); color: #fff; }
@@ -5025,8 +5030,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="24/11/2026"><li>⚽ <b>Saisie des matchs</b> : plein écran, un toucher par but ⚽ ou fait ⭐️</li><li>📺 <b>Direct</b> : le fil du match commenté</li><li>🧤 <b>Gardiens</b> : nouveau classement (buts encaissés par mi-temps)</li><li>🃏 <b>Vignettes</b> : nouvelles catégories et raretés (6 Légendaires)</li><li data-sa>💳 <b>Membres</b> : cotisation modifiable aussi sans compte</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 24/11/2026 - 20:29</footer>
+<template id="hm-news" data-date="25/11/2026"><li>🏛️ <b>Vignettes</b> : le Panthéon, 5 légendes du club en cartes mythiques</li><li>💬 <b>Vestiaire</b> : vois qui a réagi à un message</li><li>🔔 <b>Cloche</b> : échanges et messages non lus du Vestiaire</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 25/11/2026 - 09:34</footer>
 
 <script>
 
@@ -16632,6 +16637,13 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   // Pour les autres : visible en gris dans l'album, sans animation, et non comptée dans leur total.
   const VINT_KEY = "g:vintage", VINT_OWN = new Set(["Boris", "Sylvain", "Guy", "Cédric", "Mahdi", "Raph P", "Ben", "JB", "Houari", "Tof", "Pierre-Olivier", "Yassir"]);
   const withClub = (c, who) => { c = c || {}; CLUB_KEYS.forEach(k => { if (!c[k]) c[k] = 1; }); if (VINT_OWN.has(who) && !c[VINT_KEY]) c[VINT_KEY] = 1; return c; }; // cartes du club
+  // Panthéon : anciens joueurs qui ont marqué le club. Chaque photo portraits/Pantheon_<Prénom>
+  // ajoute une carte (liste portraits/pantheon.json, tenue à jour par l'Action des portraits).
+  let PANTH = [];
+  fetch("portraits/pantheon.json?v=" + Math.floor(Date.now() / 36e5)).then(r => r.ok ? r.json() : []).then(L => {
+    if (!Array.isArray(L) || !L.length) return; PANTH = L.filter(x => x && x.n && x.f); buildSig = "";
+    try { if (panel.classList.contains("active")) render(); } catch (e) {}
+  }).catch(() => {});
   function build() {
     const sessions = SESSIONS.filter(s => _seasonStart(s.date) === SY);
     const ABSs = (typeof _accStatusAbs !== "undefined" && _accStatusAbs) || ABSENTS, INAs = (typeof _accStatusInact !== "undefined" && _accStatusInact) || INACTIFS;
@@ -16776,7 +16788,10 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
       { k: "g:gymnase", ty: "g", nm: "Gymnase Alain Fournier", ic: "🏟️", img: "portraits/gymnase_fournier.png", sub: "Là où tout se joue, chaque lundi soir", r: "M", nSess: sessions.length }];
     const VINT = { k: VINT_KEY, ty: "g", nm: "Kit Vintage", ic: "🎽", img: "portraits/Maillots.png", sub: "Les maillots des débuts", r: "M", nSess: sessions.length };
     const vOwn = VINT_OWN.has(ME);
-    ALL = [...CLUB, ...(vOwn ? [VINT] : []), ...PLAYERS, ...HF, ...NT];
+    // Panthéon : cartes Mythiques, stats à 100, sans influence sur les autres cartes
+    const PAN = PANTH.map(x => ({ k: "m:" + x.n, ty: "p", pan: true, n: x.n, img: x.f, o: 100, s: Object.fromEntries(STATS.map(k => [k, 100])), t: "Légende", r: "M", team: "",
+      st: { pres: 0, mj: 0, v: 0, nu: 0, d: 0, b: 0, p: 0, gk: 0, enc: 0 }, nt: [], nSess: sessions.length }));
+    ALL = [...CLUB, ...(vOwn ? [VINT] : []), ...PLAYERS, ...HF, ...NT, ...PAN];
     BYK = Object.fromEntries(ALL.map(c => [c.k, c]));
     buildSections();
     if (!vOwn) { const lk = { ...VINT, locked: true }; BYK[VINT_KEY] = lk; const club = SECS.find(x => x.id === "club"); if (club) { club.items.push(lk); lk.no = club.items.length; } }
@@ -16794,8 +16809,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
         <div class="holo"></div>${twinkles(c.r)}</div>${gem(c)}`;
     }
     if (c.ty === "p") {
-      return `<div class="face-in"><div class="art pf"><div class="gen"><span>${ini(c.n)}</span><small>Portrait à venir</small></div>${portraitImg(c.n, lazy)}</div><div class="ovr"><b>${c.o}</b><span>${c.t}</span></div>
-        <div class="strip" data-sub="${c.st.pres ? c.t + (c.team ? " · " + teamName(c.team) : "") : "Pas encore joué"}"><div class="nm"><i></i>${c.n}</div><div class="mini">${["ATT", "PAS", "VIC", "FID"].map(k => `<span><b>${c.s[k]}</b>${k}</span>`).join("")}</div></div>
+      return `<div class="face-in"><div class="art pf"><div class="gen"><span>${ini(c.n)}</span><small>Portrait à venir</small></div>${portraitImg(c.img || c.n, lazy)}</div><div class="ovr"><b>${c.o}</b><span>${c.t}</span></div>
+        <div class="strip" data-sub="${c.pan ? "Légende du Futsal" : c.st.pres ? c.t + (c.team ? " · " + teamName(c.team) : "") : "Pas encore joué"}"><div class="nm"><i></i>${c.n}</div><div class="mini">${["ATT", "PAS", "VIC", "FID"].map(k => `<span><b>${c.s[k]}</b>${k}</span>`).join("")}</div></div>
         <div class="holo"></div>${twinkles(c.r)}</div>${gem(c)}`;
     }
     if (c.ty === "h" && lockedSecret(c)) {
@@ -16825,6 +16840,13 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
         <div class="bk-row"><span>${c.logo ? "Le blason du Happy Monday Football Team : rouge, blanc et noir, avec son dragon." : "Le terrain du Happy Monday Football Team, tous les lundis soir."}</span></div>
         <div class="bk-row"><span>Soirées cette saison</span><b>${c.nSess}</b></div>
         <div class="bk-f">Carte offerte à tous · ${RL[c.r]}</div></div>`;
+    }
+    if (c.ty === "p" && c.pan) {
+      const bars = STATS.map(k => `<div class="bk-bar"><span>${k}</span><u><i style="width:100%"></i></u><b>100</b></div>`).join("");
+      return `<div class="face-in bk"><div class="bk-h"><b>${c.n}</b><span>🏛️ Panthéon</span></div>
+        <div class="bk-row"><span>Légende du Futsal</span></div>
+        <div class="bk-row"><span>Un ancien qui a marqué l'histoire du Happy Monday Football Team.</span></div>
+        <div class="bk-bars">${bars}</div><div class="bk-f">Panthéon · ${RL[c.r]} · carte rare à obtenir</div></div>`;
     }
     if (c.ty === "p") {
       const s = c.st;
@@ -16946,8 +16968,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
       const w = document.createElement("div");
       w.className = "wo"; w.setAttribute("role", "dialog"); w.setAttribute("aria-label", "Carte légendaire");
       w.innerHTML = `<div class="wo-rays"></div><div class="wo-flash"></div><div class="wo-ring"></div>
-        <div class="wo-kicker">${TYPE[c.ty]}</div><div class="wo-card">${cardHTML(c)}</div>
-        <div class="wo-title">★ Légendaire ★</div><div class="wo-sub">Touche pour continuer</div>`;
+        <div class="wo-kicker">${c.pan ? "🏛️ Panthéon" : TYPE[c.ty]}</div><div class="wo-card">${cardHTML(c)}</div>
+        <div class="wo-title">★ ${c.r === "M" ? "Mythique" : "Légendaire"} ★</div><div class="wo-sub">Touche pour continuer</div>`;
       fxRoot().appendChild(w);
       let rain;
       setTimeout(() => {
@@ -16964,7 +16986,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   }
   async function revealCard(s, c, nw) {
     if (!nw) { s.classList.add("shown"); return; }
-    if (c.r === "L") { await legendary(c); s.classList.add("shown"); return; }
+    if (c.r === "L" || c.r === "M") { await legendary(c); s.classList.add("shown"); return; }
     s.classList.add("shown");
     if (c.r === "E") setTimeout(() => {
       const [x, y] = center(s); const f = document.createElement("div"); f.className = "flash";
@@ -17045,8 +17067,10 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     }
   }
   function drawPack() {
-    const out = ["p", "p", "p", "h", "n"].map(t => pickOf(t, roll())).filter(Boolean);
+    const PANS = ALL.filter(c => c.pan);
+    const out = ["p", "p", "p", "h", "n"].map(t => t === "p" && PANS.length && Math.random() < .01 ? PANS[Math.floor(Math.random() * PANS.length)] : pickOf(t, roll())).filter(Boolean);
     if (!out.some(c => c.r !== "C")) out[0] = pickOf("p", Math.random() < .25 ? "E" : "R");
+    // pickOf ne tire jamais le Panthéon (rareté M absente de ses listes) : seul le 1 % ci-dessus le donne
     return out.sort((a, b) => RO[b.r] - RO[a.r]);
   }
   function stockLine() {
@@ -17065,7 +17089,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
         <div class="pack-body"></div><div class="pack-top"></div>
         <div class="pack-label"><span class="ball">⚽</span><b>Happy <span>Monday</span></b><div class="kinds">👤 🏅 📌</div><small>Booster · 5 cartes</small></div></button>
       <button class="cta" id="vg-open"${n < 1 ? " disabled" : ""}>${n < 1 ? "Plus de booster pour aujourd'hui" : "Ouvrir un booster"}</button>
-      <p class="odds">3 joueurs, 1 haut fait, 1 fait notable. Chances par carte : légendaire 5 %, épique 12 %, rare 30 %, commune 53 %. Au moins une rare.</p>`;
+      <p class="odds">3 joueurs, 1 haut fait, 1 fait notable. Chances par carte : légendaire 5 %, épique 12 %, rare 30 %, commune 53 %. Au moins une rare. Chaque joueur a 1 % de chance d'être une légende du Panthéon (mythique).</p>`;
     if (n >= 1) { document.getElementById("vg-pack").addEventListener("click", openPack); document.getElementById("vg-open").addEventListener("click", openPack); }
   }
   let opening = false;
@@ -17181,7 +17205,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   /* ═════════ ALBUM ═════════ */
   const SECS = [
     { id: "club", t: "Le Club", ic: "🏟️", col: "#ff2b1c", sub: "Là où tout se joue, chaque lundi soir", f: c => c.ty === "g" },
-    { id: "buteurs", t: "Les Buteurs", ic: "⚽", col: "#ff5c7a", sub: "Ceux qui font trembler les filets", f: c => c.ty === "p" && c.t === "Buteur" },
+    { id: "buteurs", t: "Les Buteurs", ic: "⚽", col: "#ff5c7a", sub: "Ceux qui font trembler les filets", f: c => c.ty === "p" && !c.pan && c.t === "Buteur" },
     { id: "passeurs", t: "Les Passeurs", ic: "🎯", col: "#4fc3f7", sub: "Les meilleurs distributeurs de caviars", f: c => c.ty === "p" && c.t === "Passeur" },
     { id: "defenseurs", t: "Les Défenseurs", ic: "🛡️", col: "#5b8def", sub: "Avec eux sur le terrain, l'équipe encaisse le moins", f: c => c.ty === "p" && c.t === "Défenseur" },
     { id: "murailles", t: "Les Gardiens", ic: "🧤", col: "#f59e5b", sub: "Les remparts dans les cages", f: c => c.ty === "p" && (c.t === "Gardien" || c.t === "Muraille") },
@@ -17189,6 +17213,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     { id: "depanneurs", t: "Les Dépanneurs", ic: "🧰", col: "#b892ff", sub: "Venus en renfort, toujours prêts à rendre service", f: c => c.ty === "p" && c.t === "Dépanneur" },
     { id: "hf", t: "Hauts faits", ic: "🏅", col: "#f5c842", sub: "Les exploits débloqués", f: c => c.ty === "h" },
     { id: "nt", t: "Faits notables", ic: "📌", col: "#e2c58f", sub: "Les moments qui ont marqué les soirées", f: c => c.ty === "n" },
+    { id: "pantheon", t: "Le Panthéon", ic: "🏛️", col: "#f5c542", sub: "Les légendes qui ont marqué l'histoire du club", f: c => !!c.pan },
   ];
   const CATORD = ["Attaque", "Défense", "Collectif", "Présence", "Distinctions", "Secrets"];
   function buildSections() {
@@ -17646,8 +17671,13 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     if (!watchFor || !albumsLoaded) return null;
     const b = ALBUMS[watchFor] && ALBUMS[watchFor].boosters, today = parisDay();
     const boosters = !VG_OPEN() ? 0 : !b ? 5 : Math.min(5, (b.stock || 0) + Math.max(0, today - (b.day || today)));
-    const pend = trPending();
-    return { boosters, trades: pend.length, tradeKey: pend.map(t => t.id).sort().join(","), day: today };
+    const pend = trPending(), now = _liveNow(), W = 7 * 864e5, events = [];
+    // Cloche : demandes reçues (en attente), réponses à mes propositions et annulations (7 derniers jours)
+    trList().forEach(t => { const gift = !t.get.length;
+      if (t.to === watchFor && t.status === "wait" && !trExpired(t) && trValid(t)) events.push({ id: `trq-${t.id}`, kind: "req", who: t.from, gift, at: t.at || 0 });
+      else if (t.from === watchFor && (t.status === "ok" || t.status === "ko") && now - (t.doneAt || 0) < W) events.push({ id: `trr-${t.id}`, kind: t.status, who: t.to, gift, at: t.doneAt || 0 });
+      else if (t.to === watchFor && t.status === "cancel" && now - (t.doneAt || 0) < W) events.push({ id: `trc-${t.id}`, kind: "cancel", who: t.from, gift, at: t.doneAt || 0 }); });
+    return { boosters, trades: pend.length, tradeKey: pend.map(t => t.id).sort().join(","), day: today, events: events.sort((a, b) => b.at - a.at) };
   };
   window._vgSetTab = (t, sub) => { tab = t; if (sub) Object.assign(TR, { sub, partner: null, q: "" }); };
 })();
@@ -18236,6 +18266,7 @@ function _svApply() {
       clock: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 3h5"/>',
       gift: '<rect x="4" y="9" width="16" height="11.5" rx="2"/><path d="M3 9h18M12 9v11.5"/><path d="M12 9c-1.5-4-6-4.5-6-1.5S12 9 12 9zM12 9c1.5-4 6-4.5 6-1.5S12 9 12 9z"/>',
       swap: '<path d="M5 8h13l-3.5-3.5M19 16H6l3.5 3.5"/>',
+      chat: '<path d="M4.5 6.5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H11l-4.5 3.5v-3.5h0a2 2 0 0 1-2-2z"/><path d="M8.5 9.5h7M8.5 12.5h4"/>',
     };
     const ic = (k, cls) => `<svg viewBox="0 0 24 24" aria-hidden="true"${cls ? ` class="${cls}"` : ""}>${IC[k]}</svg>`;
     const $ = id => document.getElementById(id);
@@ -18392,7 +18423,15 @@ function _svApply() {
         L.push({ id: `club-${key}`, ic: "bell", c: "var(--gold)", t: `📣 ${q.title || "Infos Club"}`, d: q.body || "", go: "", all: true, at: q.at, k: "Infos Club", e: "📣", body: q.body || "", title: q.title || "Infos Club", by: q.by });
       });
       if (v && v.boosters) L.push({ id: `boost-${v.day}-${v.boosters}`, ic: "gift", c: "#b892ff", t: v.boosters > 1 ? `${v.boosters} boosters t'attendent` : "Un booster t'attend", d: "À ouvrir dans Vignettes", go: "boost" });
-      if (v && v.trades) L.push({ id: `trade-${v.tradeKey}`, ic: "swap", c: "var(--good)", t: v.trades > 1 ? `${v.trades} propositions d'échange` : "Une proposition d'échange", d: "À voir dans Vignettes · Échanges", go: "trades" });
+      if (v && v.events) v.events.forEach(x => L.push(x.kind === "req"
+          ? { id: x.id, ic: "swap", c: "var(--good)", t: x.gift ? `🎁 ${x.who} t'offre une carte !` : `🔄 Tu as une demande d'échange de ${x.who} !`, d: "À voir dans Vignettes · Échanges", go: "trades", at: x.at }
+          : x.kind === "ok" ? { id: x.id, ic: "swap", c: "var(--good)", t: `✅ ${x.who} a accepté ${x.gift ? "ton cadeau" : "ton échange"}`, d: "Les cartes sont dans ton album", go: "tradesDone", at: x.at }
+          : x.kind === "ko" ? { id: x.id, ic: "swap", c: "var(--bad)", t: `❌ ${x.who} a refusé ${x.gift ? "ton cadeau" : "ton échange"}`, d: "Vignettes · Échanges · Terminés", go: "tradesDone", at: x.at }
+          : { id: x.id, ic: "swap", c: "var(--text2)", t: `L'échange avec ${x.who} a été annulé`, d: "Vignettes · Échanges · Terminés", go: "tradesDone", at: x.at }));
+      else if (v && v.trades) L.push({ id: `trade-${v.tradeKey}`, ic: "swap", c: "var(--good)", t: v.trades > 1 ? `${v.trades} propositions d'échange` : "Une proposition d'échange", d: "À voir dans Vignettes · Échanges", go: "trades" });
+      // Vestiaire : messages non lus (salons + Messagerie) ; disparaît une fois lus
+      try { const u = window._chatUnread && window._chatUnread();
+        if (u && u.n) L.push({ id: `chat-${u.last}`, ic: "chat", c: "var(--rouge, #e30b0b)", t: `💬 Tu as ${u.n} message${u.n > 1 ? "s" : ""} à lire dans le Vestiaire !`, d: u.at ? "Dont une mention de toi" : "Salons et Messagerie", go: "chat", at: u.last }); } catch (e) {}
       return L;
     }
     function renderBell() {
@@ -18538,7 +18577,8 @@ function _svApply() {
           if (it && it.all) { close(); render(); showPop([it]); return; }
           r.add(n.dataset.bnn); saveRead(r); close();
           const g = n.dataset.go;
-          if (g === "boost" || g === "trades") { try { window._vgSetTab && window._vgSetTab(g === "boost" ? "booster" : "trades", g === "trades" ? "recu" : null); } catch (er) {} goTab("vignettes"); try { window._vgOnShow && window._vgOnShow(); } catch (er) {} }
+          if (g === "chat") { render(); document.getElementById("chat-btn")?.click(); return; }
+          if (g === "boost" || g === "trades" || g === "tradesDone") { try { window._vgSetTab && window._vgSetTab(g === "boost" ? "booster" : "trades", g === "trades" ? "recu" : g === "tradesDone" ? "done" : null); } catch (er) {} goTab("vignettes"); try { window._vgOnShow && window._vgOnShow(); } catch (er) {} }
           else goTab(g);
           render(); return;
         }
@@ -19029,6 +19069,11 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   const plain = t => String(t || "").replace(/\s+/g, " ").trim();
 
   // ── bouton 💬 de l'en-tête
+  let lastUnreadSig = "";
+  // pour la cloche : nombre de messages non lus (salons + Messagerie), mention, heure du dernier
+  window._chatUnread = () => { if (!enabled()) return null; let n = 0, at = false, last = 0;
+    [...roomList(), ...dmList()].forEach(r => { const L = unreadL(r.id); n += L.length; at = at || atMe(r.id); L.forEach(m => { if ((m.at || 0) > last) last = m.at || 0; }); });
+    return { n, at, last }; };
   function renderBtn() {
     const b = $("chat-btn"), on = enabled();
     b.hidden = !on; document.body.classList.toggle("ch-on", on);
@@ -19036,6 +19081,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     let n = 0, at = false;
     [...roomList(), ...dmList()].forEach(r => { n += unreadL(r.id).length; at = at || atMe(r.id); });
     b.innerHTML = IC_CHAT + (n ? `<span class="bn-bd${at ? " at" : ""}">${at ? "@" : n > 99 ? "99+" : n}</span>` : "");
+    const sig = n + "|" + at; if (sig !== lastUnreadSig) { lastUnreadSig = sig; try { window._bnRefresh && window._bnRefresh(); } catch (e) {} }
   }
   function refresh(full) {
     renderBtn();
@@ -19231,6 +19277,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ? `<div class="ch-emoin"><input id="ch-emoin" autocomplete="off" enterkeyhint="done" placeholder="Choisis un émoji 😀" aria-label="Réagir avec un émoji du clavier"><button type="button" data-ch="emoLess" aria-label="Revenir aux émojis rapides">✕</button></div>`
         : `<div class="ch-emo">${EMO.map(e => `<button type="button" data-ch="react" data-id="${m.id}" data-e="${e}" aria-pressed="${!!(mine[e] && mine[e][p])}">${e}</button>`).join("")}<button type="button" class="more" data-ch="emoMore" data-id="${m.id}" aria-label="Choisir un autre émoji">${IC.plus}</button></div>`}
       <div class="ch-lp-msg">${bub}</div>
+      ${(rx => rx.length ? `<div class="ch-lp-rx" aria-label="Réactions">${rx.map(([e, l]) => `<div class="r"><span class="e">${e}</span><span class="w">${l.map(n => n === p ? "<b>Toi</b>" : esc(n)).join(", ")}</span><span class="n">${l.length}</span></div>`).join("")}</div>` : "")(
+        Object.entries(m.reacts || {}).map(([e, o]) => [e, Object.keys(o || {}).filter(k => o[k]).sort((a, b) => (a === p) - (b === p) || a.localeCompare(b, "fr"))]).filter(([, l]) => l.length).sort((a, b) => b[1].length - a[1].length))}
       ${V.confirmDel === m.id ? `<div class="ch-lp-acts ch-lp-cf"><p>Supprimer ce message${nImg ? " et sa photo" : ""} ? Il disparaîtra pour tout le monde.</p>${act("delMsg", "Supprimer pour tous", ICA.trash, "dg")}<button type="button" class="ch-lp-act" data-ch="cancelDel"><span>Annuler</span></button></div>` : `<div class="ch-lp-acts">${act("replyTo", "Répondre", ICA.reply)}${m.text && !m.photoOnly ? act("copy", "Copier", ICA.copy) : ""}${isSA() && !r.dm ? act(pinned ? "unpin" : "pin", pinned ? "Désépingler" : "Épingler", ICA.pin) : ""}${isMe || (isSA() && !r.dm) ? act("delMsg", "Supprimer", ICA.trash, "dg") : ""}</div>`}
     </div></div>`;
   }
