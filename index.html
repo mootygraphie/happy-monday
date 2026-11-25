@@ -3040,7 +3040,7 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .acm-mem .acm-i svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
   .acm-mem .acm-i.dvq { width: 24px; height: 24px; border-radius: 7px; border: 1px solid var(--border2); }
   .acm-mem .acm-i.dvq svg { width: 14px; height: 14px; }
-  .acm-mem .acm-i.ok { color: var(--acm-ok); } .acm-mem .acm-i.warn { color: #ff9f0a; }
+  .acm-mem .acm-i.ok { color: var(--acm-ok); } .acm-mem .acm-i.warn { color: #ff9f0a; } .acm-mem .acm-i.cot.na { opacity: .18; }
   #push-again { position: fixed; left: 12px; right: 12px; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); z-index: 1500; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: #1c1c22; color: #fff; border: 1px solid rgba(255,159,10,.5); box-shadow: 0 12px 30px rgba(0,0,0,.4); font-size: 13.5px; }
   #push-again span { flex: 1; } #push-again button { border: none; border-radius: 10px; font: inherit; font-weight: 700; cursor: pointer; padding: 8px 12px; background: #e30b0b; color: #fff; }
   #push-again button[data-pa="x"] { background: none; color: #aaa; padding: 8px; }
@@ -5092,7 +5092,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
 </div>
 
 <template id="hm-news" data-date="25/11/2026"><li>🏛️ <b>Vignettes</b> : le Panthéon, 5 légendes du club en cartes mythiques, avec leur propre révélation</li><li>💬 <b>Vestiaire</b> : vois qui a réagi à un message</li><li>🔔 <b>Cloche</b> : les échanges, datés, et les 10 dernières seulement</li><li>🔒 <b>Notifications</b> : se réparent toutes seules, bouton « Tester » dans Mon compte</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 25/11/2026 - 13:08</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 25/11/2026 - 15:35</footer>
 
 <script>
 
@@ -16307,7 +16307,7 @@ function _accRender(keepFocus) {
       ${_accSaisieBlocked() ? `<p class="acm-sub" style="margin:0">⏸️ Saisie indisponible : ta fiche est Dépanneur ou Inactif cette saison.</p>` : ""}
       <button class="acm-link2" data-a="fiche">👤 Voir ma fiche joueur<span>›</span></button>
       <div class="acm-sec">Cotisation</div>
-      ${a.paid === undefined ? `<p class="acm-sub">Chargement…</p>` : `<div class="acm-cot ${a.paid ? "ok" : "due"}"><span><b>Cotisation ${cl}</b></span><span class="st">${a.paid ? "✓ Payée" : "À payer"}</span></div>`}
+      ${_accNoCotis(_accPlayer()) && !a.paid ? `<div class="acm-cot ok"><span><b>Cotisation ${cl}</b></span><span class="st">Pas de cotisation</span></div>` : a.paid === undefined ? `<p class="acm-sub">Chargement…</p>` : `<div class="acm-cot ${a.paid ? "ok" : "due"}"><span><b>Cotisation ${cl}</b></span><span class="st">${a.paid ? "✓ Payée" : "À payer"}</span></div>`}
       <div class="acm-sec">Compte</div>
       ${(() => { const pw = window._pwa, st = pw && pw.pushState ? pw.pushState() : "unsupported", d = a.myPush;
         const lab = { on: `<span style="color:var(--good)">✓ actives sur ce téléphone</span>`, off: `<span style="color:#ff9f0a">désactivées sur ce téléphone</span>`, denied: `<span style="color:var(--bad)">bloquées dans les réglages</span>`, install: `<span style="color:#ff9f0a">installe d'abord l'appli</span>`, unsupported: `<span style="color:var(--text3)">pas gérées par ce navigateur</span>` }[st] || "—";
@@ -16328,10 +16328,10 @@ function _accRender(keepFocus) {
     // dernière ouverture : lastSeen (site ou appli), sinon la dernière ouverture de l'appli connue
     const seenOf = r => { const x = (a.seen || {})[r.player], t = Math.max((x && x.at) || 0, (r.app && r.app.lastSeen) || 0); return t ? { t, app: x && x.at >= ((r.app && r.app.lastSeen) || 0) ? x.via === "app" : !!r.app } : null; };
     const ago = t => { const m = Math.round((Date.now() - t) / 60000); if (m < 2) return "à l'instant"; if (m < 60) return `il y a ${m} min`; const h = Math.round(m / 60); if (h < 24) return `il y a ${h} h`; const d = Math.round(h / 24); if (d === 1) return "hier"; if (d < 7) return `il y a ${d} j`; return new Date(t).toLocaleDateString("fr", { day: "numeric", month: "short" }); };
-    const nPaid = (rows || []).filter(r => cot[r.player]).length, nPaidAll = [...new Set(ALL_PLAYERS)].filter(n => cot[n]).length;
+    const nPaid = (rows || []).filter(r => cot[r.player]).length, cotL = [...new Set(ALL_PLAYERS)].filter(n => !_accNoCotis(n)), nPaidAll = cotL.filter(n => cot[n]).length, nDue = cotL.length - nPaidAll;
     h = `<div class="acm-top"><button class="acm-back" data-a="tome" aria-label="Retour">‹</button><span class="acm-kicker" style="color:var(--sa)">★ Super admin</span></div>
       <h4 class="acm-h">Membres</h4>
-      <p class="acm-sub">${rows ? `<b>${rows.length}</b> compte${rows.length > 1 ? "s" : ""} sur ${total} joueurs · <span style="color:var(--good)">${nPaidAll} cotisation${nPaidAll > 1 ? "s" : ""} payée${nPaidAll > 1 ? "s" : ""}</span> · <span style="color:#ff9f0a">${total - nPaidAll} à payer</span>` : "Chargement…"}</p>${err}
+      <p class="acm-sub">${rows ? `<b>${rows.length}</b> compte${rows.length > 1 ? "s" : ""} sur ${total} joueurs · <span style="color:var(--good)">${nPaidAll} cotisation${nPaidAll > 1 ? "s" : ""} payée${nPaidAll > 1 ? "s" : ""}</span> · <span style="color:#ff9f0a">${nDue} à payer</span>` : "Chargement…"}</p>${err}
       <div class="acm-list acm-accl acm-mem" style="max-height:58vh">${(rows || []).map(r => `<div class="acm-pl${r.uid === myUid ? " me" : ""}">
         <button class="acm-star${r.super ? " on" : ""}" data-a="star" data-n="${_accEsc(r.player)}"${r.uid === myUid ? " disabled" : ""} aria-label="${r.super ? `Retirer les droits super admin de ${_accEsc(r.player)}` : `Passer ${_accEsc(r.player)} super admin`}">${r.super ? "★" : "☆"}</button>
         <button class="acm-memrow" data-a="member" data-n="${_accEsc(r.player)}">${(s0 => { const live = s0 && Date.now() - s0.t < 3 * 60000, pst = (a.subs || {})[r.player] || "none", on = pst === "ok", paid = !!cot[r.player];
@@ -16339,9 +16339,9 @@ function _accRender(keepFocus) {
           + `<small class="ls${live ? " now" : s0 && Date.now() - s0.t < 7 * 86400000 ? " rec" : ""}" title="Dernière ouverture">${live ? "en ligne" : s0 ? ago(s0.t) : "—"}</small>`
           + `<span class="acm-i dvq${r.app ? " ok" : ""}" title="${r.app ? "Utilise l'appli" : "Utilise le site"}">${r.app ? _ACM_IC.phone : _ACM_IC.web}</span>`
           + `<span class="acm-i${on ? " ok" : pst === "bad" ? " warn" : ""}" title="Notifications ${on ? "activées et reçues" : pst === "bad" ? "activées mais les derniers envois échouent" : "désactivées"}">${on || pst === "bad" ? _ACM_IC.bell : _ACM_IC.belloff}</span>`
-          + `<span class="acm-i cot${paid ? " ok" : ""}" title="Cotisation ${paid ? "payée" : "à payer"}">${_ACM_IC.card}</span>`; })(seenOf(r))}</button></div>`).join("")}${
+          + (_accNoCotis(r.player) ? `<span class="acm-i cot na" title="Pas de cotisation (dépanneur ou inactif)">${_ACM_IC.card}</span>` : `<span class="acm-i cot${paid ? " ok" : ""}" title="Cotisation ${paid ? "payée" : "à payer"}">${_ACM_IC.card}</span>`); })(seenOf(r))}</button></div>`).join("")}${
         // fiches sans compte rattaché, en fin de liste (ordre alphabétique), thème rouge
-        rows ? [...new Set(ALL_PLAYERS)].filter(n => !rows.some(r => r.player === n) && !(typeof _isDepanneur === "function" && _isDepanneur(n))).sort((x, y) => x.localeCompare(y, "fr"))
+        rows ? [...new Set(ALL_PLAYERS)].filter(n => !rows.some(r => r.player === n) && !_accNoCotis(n)).sort((x, y) => x.localeCompare(y, "fr"))
           .map(n => `<div class="acm-pl nocc"><span class="acm-star-sp" aria-hidden="true"></span><div class="acm-memrow">${_accAvHTML(n, "")}<b>${_accEsc(n)}<i class="ps">pas de compte</i></b><small class="ls"></small><span class="acm-i dvq no" title="Pas de compte créé">${_ACM_IC.ban}</span><button class="acm-i cot tgl${cot[n] ? " ok" : ""}" data-a="paid" data-n="${_accEsc(n)}" title="Cotisation ${cot[n] ? "payée" : "à payer"} · toucher pour changer" aria-label="Cotisation de ${_accEsc(n)} : ${cot[n] ? "payée" : "à payer"}">${_ACM_IC.card}</button></div></div>`).join("") : ""}</div>
       ${(o => o.length ? `<div class="acm-sec">Identifiants sans fiche</div><p class="acm-sub" style="margin:0 0 6px">Anciens comptes détachés ou jamais rattachés : leur pseudo reste pris tant qu'ils existent.</p><div class="acm-orph">${o.map(([uid, x]) => `<div><span><b>@${_accEsc(x.pseudo || "?")}</b><small>${x.last ? `dernière connexion le ${new Date(x.last).toLocaleDateString("fr", { day: "numeric", month: "short" })}` : "jamais connecté"}</small></span>${(a.authDelete || {})[uid] ? `<em>suppression d'ici 10 min</em>` : `<button class="acm-cbtn" data-a="orphdel" data-u="${uid}">${a.confirmOrph === uid ? "Confirmer ?" : "Libérer le pseudo"}</button>`}</div>`).join("")}</div>` : "")(Object.entries(a.authOrphans || {}))}
       <p class="acm-help">À droite : dernière ouverture (point vert sur la photo = en ligne), appli ou site, notifications, cotisation. En vert : appli installée, notifications activées, cotisation payée. ☆/★ : super admin (un toucher). Touche un membre pour ses infos, sa cotisation ou détacher sa carte.</p>`;
@@ -16519,6 +16519,8 @@ async function _accExportCsv() {
 }
 // Santé des notifications d'un joueur : « ok » si au moins un appareil reçoit (pas d'erreur après
 // son dernier envoi réussi), « bad » si tous ses appareils échouent, « none » sans abonnement.
+// Cotisation : seulement pour les réguliers et les occasionnels (ni inactifs, ni dépanneurs)
+function _accNoCotis(n) { const ina = _accStatusInact || INACTIFS, dep = _accStatusAbs || ABSENTS; return ina.has(n) || dep.has(n); }
 function _accPushHealth(devs) {
   const L = Object.values(devs || {}).filter(d => d && typeof d === "object");
   if (!L.length) return "none";
