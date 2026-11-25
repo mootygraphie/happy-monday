@@ -2586,6 +2586,62 @@ html:has(#vg-modal:not([hidden])), html:has(#vg-modal:not([hidden])) body { over
 #panel-vignettes .wo-title { position: relative; font-size: clamp(30px, 8cqw, 58px); font-weight: 700; font-style: italic; letter-spacing: .12em; text-transform: uppercase; background: linear-gradient(90deg,#c48a0c,#fff3b0,#f5c842,#fff3b0,#c48a0c); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 18px rgba(255,59,48,.6)); animation: vg-slam .55s cubic-bezier(.2,1.6,.4,1) 2s both, vg-flow 3s linear 2.5s infinite; }
 @keyframes vg-slam { from { transform: scale(2.6); opacity: 0; letter-spacing: .6em; } to { transform: none; opacity: 1; } }
 #panel-vignettes .wo-sub { position: relative; color: rgba(255,240,200,.7); font-size: 13px; animation: vg-fadeIn .5s ease 2.7s both; }
+/* ── Révélation d'une carte du Panthéon (25/11/2026) : tension, explosion, couronne de laurier, fumée, carte vivante ── */
+#panel-vignettes .pz { position: fixed; inset: 0; z-index: 2000; overflow: hidden; cursor: pointer; perspective: 900px; touch-action: none; --pzw: min(240px, 46vw, 31vh); }
+#panel-vignettes .pz-bg { position: absolute; inset: 0; background: radial-gradient(70% 45% at 50% 42%, rgba(140,12,12,.6), rgba(0,0,0,.97) 72%); opacity: 0; transition: opacity .5s; }
+#panel-vignettes .pz.on .pz-bg { opacity: 1; }
+#panel-vignettes .pz-rays { position: absolute; left: 50%; top: 42%; width: calc(var(--pzw) * 4.2); aspect-ratio: 1; transform: translate(-50%,-50%) scale(.2); opacity: 0; border-radius: 50%; background: repeating-conic-gradient(rgba(255,215,90,.28) 0 7deg, transparent 7deg 18deg); -webkit-mask: radial-gradient(circle, #000 18%, transparent 62%); mask: radial-gradient(circle, #000 18%, transparent 62%); transition: transform .9s cubic-bezier(.2,1.2,.3,1), opacity .6s; }
+#panel-vignettes .pz.burst .pz-rays { opacity: 1; transform: translate(-50%,-50%) scale(1); animation: pz-spin 18s linear infinite; }
+@keyframes pz-spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+#panel-vignettes .pz-glow { position: absolute; left: 50%; top: 42%; width: calc(var(--pzw) * 1.9); aspect-ratio: 1; transform: translate(-50%,-50%); border-radius: 50%; background: radial-gradient(circle, rgba(255,200,90,.55), rgba(227,11,11,.25) 40%, transparent 65%); opacity: 0; filter: blur(6px); }
+#panel-vignettes .pz.charge .pz-glow { animation: pz-pulse .5s ease-in-out infinite alternate; }
+#panel-vignettes .pz.burst .pz-glow { animation: none; opacity: .9; }
+@keyframes pz-pulse { from { opacity: .2; transform: translate(-50%,-50%) scale(.8); } to { opacity: .75; transform: translate(-50%,-50%) scale(1.05); } }
+#panel-vignettes .pz canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+#panel-vignettes .pz .smk-b { z-index: 1; } #panel-vignettes .pz-wr { z-index: 2; } #panel-vignettes .pz-stage { z-index: 3; } #panel-vignettes .pz .smk-f { z-index: 4; } #panel-vignettes .pz .cfx { z-index: 6; } #panel-vignettes .pz-txt { z-index: 7; } #panel-vignettes .pz-flash { z-index: 8; }
+#panel-vignettes .pz-wr { position: absolute; left: 50%; top: 43%; width: calc(var(--pzw) * 2); aspect-ratio: 1; transform: translate(-50%,-50%); }
+#panel-vignettes .pz-wr svg { width: 100%; height: 100%; overflow: visible; }
+#panel-vignettes .pz .leaf { transform-origin: 0 0; transform: scale(0); opacity: 0; }
+#panel-vignettes .pz.burst .leaf { animation: pz-leaf .45s cubic-bezier(.2,1.6,.4,1) forwards; }
+@keyframes pz-leaf { to { transform: scale(1); opacity: 1; } }
+#panel-vignettes .pz .stem { stroke-dasharray: 420; stroke-dashoffset: 420; } #panel-vignettes .pz.burst .stem { transition: stroke-dashoffset 1.1s ease-out; stroke-dashoffset: 0; }
+#panel-vignettes .pz .ribbon { opacity: 0; transform-box: fill-box; transform-origin: 50% 0; transform: scaleY(0); } #panel-vignettes .pz.burst .ribbon { transition: all .5s cubic-bezier(.2,1.4,.4,1) .9s; opacity: 1; transform: none; }
+#panel-vignettes .pz .wsh { animation: pz-wsh 4s ease-in-out infinite; } @keyframes pz-wsh { 50% { filter: drop-shadow(0 0 10px rgba(255,215,90,.6)) brightness(1.15); } }
+#panel-vignettes .pz-stage { position: absolute; left: 50%; top: 42%; width: var(--pzw); aspect-ratio: 5 / 7; transform: translate(-50%,-50%); transform-style: preserve-3d; }
+#panel-vignettes .pz-card { position: absolute; inset: 0; transform-style: preserve-3d; transform: scale(.3) rotateY(180deg); opacity: 0; transition: transform .5s cubic-bezier(.2,1.3,.3,1), opacity .3s; }
+#panel-vignettes .pz.charge .pz-card { opacity: 1; transform: scale(.92) rotateY(180deg); }
+#panel-vignettes .pz.burst .pz-card { opacity: 1; transition: transform .75s cubic-bezier(.2,1.5,.35,1); transform: scale(1) rotateY(0); }
+#panel-vignettes .pz-jit, #panel-vignettes .pz-tilt { position: absolute; inset: 0; transform-style: preserve-3d; }
+#panel-vignettes .pz.charge .pz-jit { animation: pz-jit .09s linear infinite; } #panel-vignettes .pz.charge2 .pz-jit { animation: pz-jit2 .06s linear infinite; }
+@keyframes pz-jit { 25% { transform: translate(2px,-1px) rotate(1deg); } 50% { transform: translate(-2px,1px) rotate(-1deg); } 75% { transform: translate(1px,2px) rotate(.5deg); } }
+@keyframes pz-jit2 { 25% { transform: translate(5px,-3px) rotate(2.5deg); } 50% { transform: translate(-5px,3px) rotate(-2.5deg); } 75% { transform: translate(3px,5px) rotate(1.5deg); } }
+#panel-vignettes .pz-jit.vib { animation: pz-vib .4s linear; }
+@keyframes pz-vib { 10%, 50%, 90% { transform: translate(-3px,1px) rotate(-1.2deg); } 30%, 70% { transform: translate(3px,-1px) rotate(1.2deg); } 100% { transform: none; } }
+#panel-vignettes .pz-back, #panel-vignettes .pz-front { position: absolute; inset: 0; }
+#panel-vignettes .pz-back { transform: rotateY(180deg); border-radius: 5.5%; padding: 2%; background: linear-gradient(120deg,#120000,#8a0000 14%,#ff4a3a 28%,#2a0000 42%,#e30b0b 55%,#ffb3a8 63%,#6a0000 76%,#0b0b0d); box-shadow: 0 0 30px rgba(255,43,28,.7); }
+#panel-vignettes .pz-back .in { position: relative; width: 100%; height: 100%; border-radius: 4%; overflow: hidden; display: grid; place-items: center; background: repeating-radial-gradient(circle at 50% 50%, #1a0000 0 6px, #240303 6px 7px); }
+#panel-vignettes .pz-back .em { font-size: calc(var(--pzw) * .22); filter: drop-shadow(0 0 14px rgba(245,197,66,.8)); }
+#panel-vignettes .pz-back .bt { position: absolute; bottom: 7%; left: 0; right: 0; text-align: center; font-weight: 800; font-size: calc(var(--pzw) * .05); letter-spacing: .25em; color: #f5c542; }
+#panel-vignettes .pz-back .crk { position: absolute; inset: 0; opacity: 0; mix-blend-mode: screen; background: conic-gradient(from 30deg, transparent 0 40deg, rgba(255,235,170,.9) 41deg 42deg, transparent 43deg 130deg, rgba(255,235,170,.9) 131deg 132deg, transparent 133deg 220deg, rgba(255,235,170,.9) 221deg 222deg, transparent 223deg 300deg, rgba(255,235,170,.9) 301deg 302deg, transparent 303deg); }
+#panel-vignettes .pz.charge2 .pz-back .crk { animation: pz-crk .12s steps(2) infinite; } @keyframes pz-crk { 50% { opacity: .9; } }
+#panel-vignettes .pz-front { opacity: 0; } #panel-vignettes .pz.faced .pz-front { opacity: 1; } #panel-vignettes .pz.faced .pz-back { opacity: 0; }
+#panel-vignettes .pz-front .card { width: 100%; } #panel-vignettes .pz-front .card-in { transition: none; }
+#panel-vignettes .pz-spec { position: absolute; inset: 0; border-radius: 5.5%; pointer-events: none; mix-blend-mode: screen; background: radial-gradient(60% 45% at var(--sx,30%) var(--sy,20%), rgba(255,255,255,.5), rgba(255,231,163,.16) 40%, transparent 70%); }
+#panel-vignettes .pz-holo { position: absolute; inset: 0; border-radius: 5.5%; pointer-events: none; mix-blend-mode: color-dodge; opacity: .22; background: linear-gradient(var(--ha,115deg), transparent 25%, rgba(255,120,120,.5) 38%, rgba(255,231,163,.7) 46%, rgba(180,230,255,.5) 54%, transparent 68%); background-size: 220% 220%; background-position: var(--hp,50%) 50%; }
+#panel-vignettes .pz-flash { position: absolute; inset: 0; background: radial-gradient(circle at 50% 42%, #fff, rgba(255,220,140,.6) 30%, transparent 65%); opacity: 0; pointer-events: none; }
+#panel-vignettes .pz.burst .pz-flash { animation: pz-flash .8s ease-out; } @keyframes pz-flash { 10% { opacity: 1; } 100% { opacity: 0; } }
+#panel-vignettes .pz-ring { position: absolute; left: 50%; top: 42%; width: 40px; height: 40px; margin: -20px; border-radius: 50%; border: 3px solid #f5c542; opacity: 0; z-index: 5; }
+#panel-vignettes .pz.burst .pz-ring { animation: pz-ring .9s ease-out; } @keyframes pz-ring { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(12); } }
+#panel-vignettes .pz-txt { position: absolute; left: 0; right: 0; top: calc(42% + var(--pzw) * .7 + 84px); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+#panel-vignettes .pz-txt > * { opacity: 0; transform: translateY(10px); }
+#panel-vignettes .pz.txt .pz-txt > * { transition: all .5s ease-out; opacity: 1; transform: none; }
+#panel-vignettes .pz.txt .pz-txt > :nth-child(2) { transition-delay: .15s; } #panel-vignettes .pz.txt .pz-txt > :nth-child(3) { transition-delay: .5s; } #panel-vignettes .pz.txt .pz-txt > :nth-child(4) { transition-delay: .7s; }
+#panel-vignettes .pz-kick { font-size: 11px; font-weight: 800; letter-spacing: .34em; color: #f5c542; }
+#panel-vignettes .pz-name { font-size: clamp(30px, 9vw, 46px); font-weight: 800; font-style: italic; letter-spacing: .08em; line-height: 1.05; text-transform: uppercase; color: transparent; background: linear-gradient(180deg, #fff6d8, #f5c542 55%, #b8860b); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 2px 12px rgba(245,197,66,.55)); }
+#panel-vignettes .pz-sub { font-size: 13px; font-weight: 600; color: #f3f0ea; } #panel-vignettes .pz-rar { font-size: 12px; font-weight: 800; letter-spacing: .18em; color: #ff8a7a; }
+#panel-vignettes .pz-tap { position: absolute; left: 0; right: 0; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); text-align: center; font-size: 12px; color: rgba(255,240,200,.65); opacity: 0; z-index: 7; }
+#panel-vignettes .pz.done .pz-tap { transition: opacity .6s; opacity: 1; animation: pz-blink 1.6s ease-in-out .6s infinite; } @keyframes pz-blink { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { #panel-vignettes .pz * { animation: none !important; transition: none !important; } }
 #panel-vignettes .shelf { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 12px; }
 #panel-vignettes .shelf-item { display: flex; align-items: center; gap: 10px; padding: 9px 14px 9px 10px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg2); cursor: pointer; text-align: left; color: var(--text); }
 #panel-vignettes .shelf-item .spine { width: 14px; height: 38px; border-radius: 3px 5px 5px 3px; background: linear-gradient(90deg, #8a6512, var(--gold) 60%, #fff1b0); box-shadow: inset -2px 0 0 rgba(0,0,0,.3); }
@@ -5030,8 +5086,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="25/11/2026"><li>🏛️ <b>Vignettes</b> : le Panthéon, 5 légendes du club en cartes mythiques</li><li>💬 <b>Vestiaire</b> : vois qui a réagi à un message</li><li>🔔 <b>Cloche</b> : échanges et messages non lus du Vestiaire</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 25/11/2026 - 09:34</footer>
+<template id="hm-news" data-date="25/11/2026"><li>🏛️ <b>Vignettes</b> : le Panthéon, 5 légendes du club en cartes mythiques, avec leur propre révélation</li><li>💬 <b>Vestiaire</b> : vois qui a réagi à un message</li><li>🔔 <b>Cloche</b> : échanges et messages non lus du Vestiaire</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 25/11/2026 - 09:48</footer>
 
 <script>
 
@@ -16963,6 +17019,91 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     }
   }
   const center = el => { const b = el.getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2]; };
+  // Carte du Panthéon : grande révélation (tension, explosion, couronne de laurier, fumée, carte vivante).
+  // Mêmes règles que legendary() : on ne ferme qu'au bout de quelques secondes, Échap / Entrée ou toucher.
+  function pzWreath() {
+    const cx = 150, cy = 150, R = 128, leaves = [], leaf = "M0 0 C 7 -7, 22 -7, 32 0 C 22 7, 7 7, 0 0 Z"; let i = 0;
+    [-1, 1].forEach(side => {
+      for (let a = 100; a <= 250; a += 11.5) {
+        const t = a * Math.PI / 180, x = cx - side * R * Math.cos(t), y = cy - R * Math.sin(t), tang = Math.atan2(-Math.cos(t), side * Math.sin(t)) * 180 / Math.PI, d = (a - 100) / 150;
+        [[-32, 0], [32, 1]].forEach(([off, j]) => { const rot = (side < 0 ? tang + 180 : tang) + off * (side < 0 ? -1 : 1);
+          leaves.push(`<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${rot.toFixed(1)}) scale(${(1.05 - d * .35).toFixed(2)})"><path class="leaf" d="${leaf}" fill="url(#pzl${j})" stroke="#7a560a" stroke-width=".8" style="animation-delay:${(i++ * .035).toFixed(2)}s"/></g>`); });
+      }
+    });
+    const arc = side => { const p = []; for (let a = 100; a <= 252; a += 4) { const t = a * Math.PI / 180; p.push(`${(cx - side * R * Math.cos(t)).toFixed(1)},${(cy - R * Math.sin(t)).toFixed(1)}`); } return `<polyline class="stem" points="${p.join(" ")}" fill="none" stroke="url(#pzl0)" stroke-width="3" stroke-linecap="round"/>`; };
+    return `<svg viewBox="0 0 300 300" aria-hidden="true"><defs><linearGradient id="pzl0" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2b8"/><stop offset=".45" stop-color="#f5c542"/><stop offset="1" stop-color="#9a6b08"/></linearGradient>
+      <linearGradient id="pzl1" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#b8860b"/><stop offset=".5" stop-color="#ffd970"/><stop offset="1" stop-color="#fff6d0"/></linearGradient></defs>
+      <g class="wsh">${arc(-1)}${arc(1)}${leaves.join("")}<g class="ribbon"><path d="M128 268 L118 296 L128 290 L134 298 L142 272 Z" fill="#b30000"/><path d="M172 268 L182 296 L172 290 L166 298 L158 272 Z" fill="#b30000"/><path d="M120 262 Q150 284 180 262 L176 276 Q150 294 124 276 Z" fill="#e30b0b" stroke="#ffb3a8" stroke-width=".8"/></g></g></svg>`;
+  }
+  function pantheonReveal(c) {
+    return new Promise(resolve => {
+      const w = document.createElement("div"), T = [], at = (ms, f) => T.push(setTimeout(f, ms)), red = reduced();
+      w.className = "pz"; w.setAttribute("role", "dialog"); w.setAttribute("aria-label", `Carte mythique du Panthéon : ${c.n}`);
+      w.innerHTML = `<div class="pz-bg"></div><div class="pz-rays"></div><div class="pz-glow"></div><canvas class="smk-b"></canvas><div class="pz-wr">${pzWreath()}</div>
+        <div class="pz-stage"><div class="pz-card"><div class="pz-jit"><div class="pz-tilt">
+          <div class="pz-back"><div class="in"><span class="em">🏛️</span><span class="bt">PANTHÉON</span><span class="crk"></span></div></div>
+          <div class="pz-front">${cardHTML(c)}<div class="pz-holo"></div><div class="pz-spec"></div></div></div></div></div></div>
+        <canvas class="smk-f"></canvas><div class="pz-ring"></div><canvas class="cfx"></canvas>
+        <div class="pz-txt"><div class="pz-kick">🏛️ PANTHÉON</div><div class="pz-name">${c.n}</div><div class="pz-sub">Légende du Futsal</div><div class="pz-rar">★ Mythique ★</div></div>
+        <div class="pz-flash"></div><div class="pz-tap">Touche pour continuer</div>`;
+      fxRoot().appendChild(w);
+      const W = innerWidth, H = innerHeight, CY = H * .42, dpr = Math.min(2, devicePixelRatio || 1), cvs = [".smk-b", ".smk-f", ".cfx"].map(s => w.querySelector(s));
+      cvs.forEach(cv => { cv.width = W * dpr; cv.height = H * dpr; cv.getContext("2d").scale(dpr, dpr); });
+      const [cb, cf, cc] = cvs.map(cv => cv.getContext("2d")), SM = [], CF = [], SP = [], t0 = performance.now();
+      const tilt = w.querySelector(".pz-tilt"), jit = w.querySelector(".pz-jit"), holo = w.querySelector(".pz-holo"), spec = w.querySelector(".pz-spec");
+      let idle = false, px = 0, py = 0, ptAt = 0, lastVib = 0, raf = 0;
+      const puff = (x, y, vx, vy, front, sz, a) => SM.push({ x, y, vx, vy, front, r: sz * .4, g: sz, a, life: 0, max: 180 + Math.random() * 120, tint: Math.random() < .35 });
+      const COLS = ["#f5c542", "#ffe7a3", "#e30b0b", "#ff6a5a", "#ffffff", "#b30000"];
+      const conf = (x, y, vx, vy) => CF.push({ x, y, vx, vy, rot: Math.random() * 6, vr: (Math.random() - .5) * .35, w: 4 + Math.random() * 5, h: 2 + Math.random() * 3, col: COLS[Math.floor(Math.random() * COLS.length)], flip: Math.random() * 6 });
+      const spark = (x, y) => SP.push({ x, y, life: 0, max: 30 + Math.random() * 30, s: 1 + Math.random() * 2.5 });
+      const smoke = (ctx, front) => { for (const p of SM) { if (p.front !== front) continue; const al = p.a * Math.sin(Math.PI * Math.min(1, p.life / p.max)) * (front ? .55 : 1);
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r), col = p.tint ? "170,50,45" : "215,205,200"; g.addColorStop(0, `rgba(${col},${al})`); g.addColorStop(1, `rgba(${col},0)`); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7); ctx.fill(); } };
+      function step(now) {
+        const t = (now - t0) / 1000;
+        if (Math.random() < (t < 2.2 ? .5 : .22)) puff(W * (.1 + Math.random() * .8), H * (.7 + Math.random() * .35), (Math.random() - .5) * .5, -(.4 + Math.random() * .7), false, 80 + Math.random() * 70, .42);
+        if (t > 2.4 && Math.random() < .12) { const l = Math.random() < .5; puff(l ? -30 : W + 30, CY + (Math.random() - .2) * H * .35, l ? .7 + Math.random() * .5 : -.7 - Math.random() * .5, -.1, true, 70 + Math.random() * 60, .3); }
+        if (t > 2.6 && Math.random() < .35) conf(Math.random() * W, -10, (Math.random() - .5) * .8, 1 + Math.random() * 1.6);
+        for (let i = SM.length - 1; i >= 0; i--) { const p = SM[i]; p.life++; p.x += p.vx; p.y += p.vy; p.vx *= .985; p.vy *= .985; p.r += (p.g - p.r) * .02 + .15; if (p.life > p.max) SM.splice(i, 1); }
+        cb.clearRect(0, 0, W, H); cf.clearRect(0, 0, W, H); cc.clearRect(0, 0, W, H); smoke(cb, false); smoke(cf, true);
+        for (let i = CF.length - 1; i >= 0; i--) { const p = CF[i]; p.x += p.vx; p.y += p.vy; p.vy = Math.min(p.vy + .09, 3.2); p.vx *= .99; p.rot += p.vr; p.flip += .15;
+          cc.save(); cc.translate(p.x, p.y); cc.rotate(p.rot); cc.scale(1, Math.cos(p.flip)); cc.fillStyle = p.col; cc.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); cc.restore(); if (p.y > H + 20) CF.splice(i, 1); }
+        for (let i = SP.length - 1; i >= 0; i--) { const p = SP[i]; p.life++; const a = 1 - p.life / p.max, s = p.s * (1 + Math.sin(p.life * .5) * .4); cc.fillStyle = `rgba(255,240,190,${a})`;
+          cc.beginPath(); cc.moveTo(p.x, p.y - s * 3); cc.lineTo(p.x + s * .6, p.y); cc.lineTo(p.x, p.y + s * 3); cc.lineTo(p.x - s * .6, p.y); cc.closePath(); cc.fill();
+          cc.beginPath(); cc.moveTo(p.x - s * 3, p.y); cc.lineTo(p.x, p.y + s * .6); cc.lineTo(p.x + s * 3, p.y); cc.lineTo(p.x, p.y - s * .6); cc.closePath(); cc.fill(); if (p.life > p.max) SP.splice(i, 1); }
+        if (idle) {
+          const user = now - ptAt < 1500, rx = user ? -py * 28 : Math.sin(t * 1.3) * 7, ry = user ? px * 34 : Math.sin(t * .9) * 12, ty = Math.sin(t * 1.6) * 5;
+          tilt.style.transform = `translateY(${ty}px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+          spec.style.setProperty("--sx", (50 + ry * 2.2) + "%"); spec.style.setProperty("--sy", (35 - rx * 2.2) + "%");
+          holo.style.setProperty("--hp", (50 + ry * 3) + "%"); holo.style.setProperty("--ha", (115 + rx * 3) + "deg");
+          if (t - lastVib > 3.2) { lastVib = t; jit.classList.remove("vib"); void jit.offsetWidth; jit.classList.add("vib"); for (let i = 0; i < 12; i++) spark(W * .5 + (Math.random() - .5) * W * .5, CY + (Math.random() - .5) * H * .32); }
+          if (Math.random() < .08) spark(W * .5 + (Math.random() - .5) * W * .48, CY + (Math.random() - .5) * H * .3);
+        }
+        raf = requestAnimationFrame(step);
+      }
+      const burst = () => {
+        for (let i = 0; i < 26; i++) { const a = Math.random() * Math.PI * 2, v = 1.5 + Math.random() * 3.5; puff(W / 2, CY, Math.cos(a) * v, Math.sin(a) * v * .7, Math.random() < .5, 60 + Math.random() * 50, .5); }
+        for (let i = 0; i < 140; i++) { const a = Math.random() * Math.PI * 2, v = 3 + Math.random() * 7; conf(W / 2, CY, Math.cos(a) * v, Math.sin(a) * v - 3); }
+        for (let i = 0; i < 30; i++) spark(W / 2 + (Math.random() - .5) * 60, CY + (Math.random() - .5) * 80);
+      };
+      let ready;
+      if (red) { w.className = "pz on burst faced txt done"; ready = Date.now() + 600; }
+      else {
+        raf = requestAnimationFrame(step);
+        requestAnimationFrame(() => w.classList.add("on"));
+        at(400, () => w.classList.add("charge"));
+        at(1400, () => w.classList.add("charge2"));
+        at(2200, () => { w.classList.remove("charge", "charge2"); w.classList.add("burst"); burst(); at(260, () => w.classList.add("faced")); });
+        at(3000, () => w.classList.add("txt"));
+        at(3900, () => { w.classList.add("done"); idle = true; });
+        ready = Date.now() + 3200;
+      }
+      w.addEventListener("pointermove", e => { px = e.clientX / W - .5; py = e.clientY / H - .4; ptAt = performance.now(); });
+      const close = () => { T.forEach(clearTimeout); cancelAnimationFrame(raf); w.remove(); document.removeEventListener("keydown", key); resolve(); };
+      const key = e => { if ((e.key === "Escape" || e.key === "Enter") && Date.now() >= ready) close(); };
+      w.addEventListener("click", () => { if (Date.now() >= ready) close(); });
+      document.addEventListener("keydown", key);
+    });
+  }
   function legendary(c) {
     return new Promise(resolve => {
       const w = document.createElement("div");
@@ -16986,6 +17127,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   }
   async function revealCard(s, c, nw) {
     if (!nw) { s.classList.add("shown"); return; }
+    if (c.pan) { await pantheonReveal(c); s.classList.add("shown"); return; }
     if (c.r === "L" || c.r === "M") { await legendary(c); s.classList.add("shown"); return; }
     s.classList.add("shown");
     if (c.r === "E") setTimeout(() => {
