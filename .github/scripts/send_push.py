@@ -119,6 +119,16 @@ def req(path, method="GET", value=None):
         return json.load(resp)
 
 
+def note(path, value):
+    """Petite écriture de suivi (jamais bloquante) : dernier envoi réussi, erreur, abonnement mort."""
+    if DRY:
+        return
+    try:
+        req(path, "PUT", value)
+    except Exception as e:
+        print("suivi impossible", path, type(e).__name__, str(e)[:120])
+
+
 def mark(path):
     if DRY:
         print("  (simulation) marquer", path)
@@ -159,6 +169,7 @@ def main(fast=False):
                         vapid_private_key=keyfile, vapid_claims={"sub": VAPID_SUB}, ttl=6 * 3600)
                 stats["envoyées"] += 1
                 ok = True
+                note(f"pushSubs/{player}/{sid}/ok", int(time.time() * 1000))  # dernier envoi réussi (fiche membre)
             except WebPushException as e:
                 code = getattr(e.response, "status_code", None)
                 if code in (404, 410):  # abonnement expiré ou révoqué : on le supprime
@@ -167,16 +178,32 @@ def main(fast=False):
                             req(f"pushSubs/{player}/{sid}", "DELETE")
                     except Exception as er:
                         print("suppression abonnement impossible", player, type(er).__name__, str(er)[:120])
+                    note(f"pushDead/{player}/{sid}", int(time.time() * 1000))  # le téléphone se réabonnera à sa prochaine ouverture
                     stats["abonnements expirés"] += 1
                     (subs.get(player) or {}).pop(sid, None)  # plus retenté pendant ce passage
                     expired += 1
                 else:
                     stats["échecs"] += 1
                     print("échec", player, code, str(e)[:200])
+                    note(f"pushSubs/{player}/{sid}/err", {"at": int(time.time() * 1000), "code": code or "?"})
             except Exception as e:  # une erreur sur un abonnement n'arrête pas les autres envois
                 stats["échecs"] += 1
                 print("échec", player, type(e).__name__, str(e)[:200])
         return ok or (items and expired == len(items))
+
+    # ── tests demandés depuis l'appli (Mon compte › Tester) : pushTest/{joueur} = {at}
+    try:
+        for tp, tv in (req("pushTest") or {}).items():
+            if not isinstance(tv, dict) or tv.get("done"):
+                continue
+            before = stats["envoyées"]
+            if tp in subs:
+                send(tp, "✅ Test réussi", "Tes notifications Happy Monday fonctionnent sur cet appareil.", "./", f"test-{tv.get('at')}")
+            print("Test demandé :", tp, "→", stats["envoyées"] - before, "appareil(s)")
+            if not DRY:
+                req(f"pushTest/{tp}", "PUT", {"at": tv.get("at") or 0, "done": int(time.time() * 1000), "sent": stats["envoyées"] - before})
+    except Exception as e:
+        print("Tests : erreur", type(e).__name__, str(e)[:200])
 
     if test:
         if test not in subs:
@@ -400,7 +427,7 @@ def main(fast=False):
                 mark(f"pushSent/trade/{tid}")  # trop ancienne (premier passage) : on ne la notifie pas
                 continue
             to, frm = t.get("to"), t.get("from")
-            if not to or not allowed(to, "trades"):
+            if not to or not allowed(to, "trades") or to not in subs:  # pas d'abonnement : rien à envoyer (la cloche l'affiche)
                 mark(f"pushSent/trade/{tid}")
                 continue
             n = len(t.get("give") or [])
@@ -568,7 +595,7 @@ def mark_val(path, value):
 def activity():
     """Empreinte légère de ce qui peut déclencher un envoi rapide (quelques Ko) :
     demandes des super admins, dernier message de chaque salon, index de la Messagerie."""
-    q = tuple(sorted((fetch(f"{DB}/pushQueue.json?shallow=true") or {}).keys()))
+    q = tuple(sorted((fetch(f"{DB}/pushQueue.json?shallow=true") or {}).keys())) + tuple(sorted((k, json.dumps(v, sort_keys=True)) for k, v in (fetch(f"{DB}/pushTest.json") or {}).items()))
     rooms = sorted(set((fetch(f"{DB}/chat/rooms.json?shallow=true") or {}).keys()) | {"g"})
     last = tuple((r, tuple((fetch(f"{DB}/chat/msgs/{urllib.parse.quote(r)}.json?orderBy=%22$key%22&limitToLast=1") or {}).keys())) for r in rooms)
     dm = json.dumps(fetch(f"{DB}/chat/dmIdx.json") or {}, sort_keys=True)

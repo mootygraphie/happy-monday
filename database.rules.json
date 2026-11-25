@@ -257,6 +257,19 @@
           }
         }
       }
+    },
+    "pushDead": {
+      ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
+      "$p": {
+        ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p",
+        ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
+      }
+    },
+    "pushTest": {
+      "$p": {
+        ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p",
+        ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
+      }
     }
   }
 }

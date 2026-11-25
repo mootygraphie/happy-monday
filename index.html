@@ -3040,7 +3040,11 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .acm-mem .acm-i svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
   .acm-mem .acm-i.dvq { width: 24px; height: 24px; border-radius: 7px; border: 1px solid var(--border2); }
   .acm-mem .acm-i.dvq svg { width: 14px; height: 14px; }
-  .acm-mem .acm-i.ok { color: var(--acm-ok); }
+  .acm-mem .acm-i.ok { color: var(--acm-ok); } .acm-mem .acm-i.warn { color: #ff9f0a; }
+  #push-again { position: fixed; left: 12px; right: 12px; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); z-index: 1500; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: #1c1c22; color: #fff; border: 1px solid rgba(255,159,10,.5); box-shadow: 0 12px 30px rgba(0,0,0,.4); font-size: 13.5px; }
+  #push-again span { flex: 1; } #push-again button { border: none; border-radius: 10px; font: inherit; font-weight: 700; cursor: pointer; padding: 8px 12px; background: #e30b0b; color: #fff; }
+  #push-again button[data-pa="x"] { background: none; color: #aaa; padding: 8px; }
+  .acm-devs { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 4px; margin-top: 2px; } .acm-devs div { font-size: 12px; color: var(--text2); display: flex; gap: 6px; flex-wrap: wrap; } .acm-devs b { color: var(--text); font-weight: 600; } .acm-devs .ko { color: #ff9f0a; }
   .acm-mem .acm-i.dvq.ok { border-color: color-mix(in srgb, var(--acm-ok) 55%, transparent); background: color-mix(in srgb, var(--acm-ok) 12%, transparent); }
   .acm-mem .acm-i.cot svg { width: 22px; height: 22px; }
   .acm-mem button.acm-i.tgl { border: none; background: none; padding: 0; margin-left: 6px; cursor: pointer; font: inherit; -webkit-tap-highlight-color: transparent; }
@@ -5086,8 +5090,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="25/11/2026"><li>🏛️ <b>Vignettes</b> : le Panthéon, 5 légendes du club en cartes mythiques, avec leur propre révélation</li><li>💬 <b>Vestiaire</b> : vois qui a réagi à un message</li><li>🔔 <b>Cloche</b> : échanges et messages non lus du Vestiaire</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 25/11/2026 - 09:48</footer>
+<template id="hm-news" data-date="25/11/2026"><li>🏛️ <b>Vignettes</b> : le Panthéon, 5 légendes du club en cartes mythiques, avec leur propre révélation</li><li>💬 <b>Vestiaire</b> : vois qui a réagi à un message</li><li>🔔 <b>Cloche</b> : échanges et messages non lus du Vestiaire</li><li>🔒 <b>Notifications</b> : se réparent toutes seules, bouton « Tester » dans Mon compte</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 25/11/2026 - 10:13</footer>
 
 <script>
 
@@ -16306,7 +16310,7 @@ function _accRender(keepFocus) {
       <div class="acm-sec">Compte</div>
       ${(() => { const pw = window._pwa, st = pw && pw.pushState ? pw.pushState() : "unsupported", d = a.myPush;
         const lab = { on: `<span style="color:var(--good)">✓ actives sur ce téléphone</span>`, off: `<span style="color:#ff9f0a">désactivées sur ce téléphone</span>`, denied: `<span style="color:var(--bad)">bloquées dans les réglages</span>`, install: `<span style="color:#ff9f0a">installe d'abord l'appli</span>`, unsupported: `<span style="color:var(--text3)">pas gérées par ce navigateur</span>` }[st] || "—";
-        return `<div class="acm-kv"><span>Pseudo</span><b>@${_accEsc((_accProfile && _accProfile.pseudo) || ((_accUser && _accUser.email) || "").split("@")[0])}</b><span>Notifications</span><b>${lab}${d && !d.ok && st !== "on" ? `<small class="acm-kvs">dernier essai : ${_accEsc(d.err || d.step || "")}</small>` : ""}${st === "off" || st === "install" ? `<button type="button" class="acm-mini" data-a="pushon">${st === "install" ? "Comment faire ›" : "Activer"}</button>` : ""}</b></div>`; })()}
+        return `<div class="acm-kv"><span>Pseudo</span><b>@${_accEsc((_accProfile && _accProfile.pseudo) || ((_accUser && _accUser.email) || "").split("@")[0])}</b><span>Notifications</span><b>${lab}${d && !d.ok && st !== "on" ? `<small class="acm-kvs">dernier essai : ${_accEsc(d.err || d.step || "")}</small>` : ""}${st === "off" || st === "install" ? `<button type="button" class="acm-mini" data-a="pushon">${st === "install" ? "Comment faire ›" : "Activer"}</button>` : ""}${st === "on" ? `<button type="button" class="acm-mini" data-a="pushtest">Tester</button>` : ""}</b></div>`; })()}
       <div class="acm-sec">Coordonnées</div>${err}
       ${a.prof === undefined ? `<p class="acm-sub">Chargement…</p>` : !ed ? `<div class="acm-kv acm-kvc">${(() => { const kv = (l, v) => `<span>${l}</span><b>${v ? _accEsc(v) : `<i class="no">à renseigner</i>`}</b>`, fd = d => { if (!d) return ""; const [y, m, j] = d.split("-"); return `${+j} ${MONTH_NAMES[+m - 1]} ${y}`; };
           return kv("Prénom", pf.prenom) + kv("Nom", pf.nom) + kv("Naissance", fd(pf.naissance)) + kv("Téléphone", pf.tel) + kv("E-mail", pf.email); })()}<button type="button" class="acm-pensq" data-a="pedit" aria-label="Modifier mes coordonnées" title="Modifier"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button></div>
@@ -16329,11 +16333,11 @@ function _accRender(keepFocus) {
       <p class="acm-sub">${rows ? `<b>${rows.length}</b> compte${rows.length > 1 ? "s" : ""} sur ${total} joueurs · <span style="color:var(--good)">${nPaidAll} cotisation${nPaidAll > 1 ? "s" : ""} payée${nPaidAll > 1 ? "s" : ""}</span> · <span style="color:#ff9f0a">${total - nPaidAll} à payer</span>` : "Chargement…"}</p>${err}
       <div class="acm-list acm-accl acm-mem" style="max-height:58vh">${(rows || []).map(r => `<div class="acm-pl${r.uid === myUid ? " me" : ""}">
         <button class="acm-star${r.super ? " on" : ""}" data-a="star" data-n="${_accEsc(r.player)}"${r.uid === myUid ? " disabled" : ""} aria-label="${r.super ? `Retirer les droits super admin de ${_accEsc(r.player)}` : `Passer ${_accEsc(r.player)} super admin`}">${r.super ? "★" : "☆"}</button>
-        <button class="acm-memrow" data-a="member" data-n="${_accEsc(r.player)}">${(s0 => { const live = s0 && Date.now() - s0.t < 3 * 60000, on = !!(a.subs || {})[r.player], paid = !!cot[r.player];
+        <button class="acm-memrow" data-a="member" data-n="${_accEsc(r.player)}">${(s0 => { const live = s0 && Date.now() - s0.t < 3 * 60000, pst = (a.subs || {})[r.player] || "none", on = pst === "ok", paid = !!cot[r.player];
           return `<span class="acm-avw${live ? " live" : ""}">${_accAvHTML(r.player, "")}</span><b>${r.player}${r.pseudo ? `<i class="ps">@${_accEsc(r.pseudo)}</i>` : ""}</b>`
           + `<small class="ls${live ? " now" : s0 && Date.now() - s0.t < 7 * 86400000 ? " rec" : ""}" title="Dernière ouverture">${live ? "en ligne" : s0 ? ago(s0.t) : "—"}</small>`
           + `<span class="acm-i dvq${r.app ? " ok" : ""}" title="${r.app ? "Utilise l'appli" : "Utilise le site"}">${r.app ? _ACM_IC.phone : _ACM_IC.web}</span>`
-          + `<span class="acm-i${on ? " ok" : ""}" title="Notifications ${on ? "activées" : "désactivées"}">${on ? _ACM_IC.bell : _ACM_IC.belloff}</span>`
+          + `<span class="acm-i${on ? " ok" : pst === "bad" ? " warn" : ""}" title="Notifications ${on ? "activées et reçues" : pst === "bad" ? "activées mais les derniers envois échouent" : "désactivées"}">${on || pst === "bad" ? _ACM_IC.bell : _ACM_IC.belloff}</span>`
           + `<span class="acm-i cot${paid ? " ok" : ""}" title="Cotisation ${paid ? "payée" : "à payer"}">${_ACM_IC.card}</span>`; })(seenOf(r))}</button></div>`).join("")}${
         // fiches sans compte rattaché, en fin de liste (ordre alphabétique), thème rouge
         rows ? [...new Set(ALL_PLAYERS)].filter(n => !rows.some(r => r.player === n) && !(typeof _isDepanneur === "function" && _isDepanneur(n))).sort((x, y) => x.localeCompare(y, "fr"))
@@ -16349,7 +16353,8 @@ function _accRender(keepFocus) {
       <div class="acm-cot ${paid ? "ok" : "due"}"><span><b>Cotisation ${cl}</b>${paid && a.cot[n].by ? `<small>validée par ${_accEsc(a.cot[n].by)}</small>` : ""}</span>
         <button class="acm-cbtn" data-a="paid" data-n="${_accEsc(n)}">${paid ? "Annuler" : "✓ Valider le paiement"}</button></div>
       <div class="acm-sec">Compte</div>
-      <div class="acm-kv">${kv("Pseudo", r.pseudo ? "@" + r.pseudo : "")}${(d => `<span>Notifications</span><b>${d ? (d.ok ? `<span style="color:var(--good)">✓ actives</span>` : `<span style="color:#ff9f0a">✕ ${_accEsc(d.err || d.step || "échec")}</span>`) + `<small class="acm-kvs">${_accEsc(d.ua || "")} · ${new Date(d.at || 0).toLocaleDateString("fr", { day: "numeric", month: "short" })}</small>` : "—"}</b>`)((a.pushDebug || {})[n])}</div>
+      <div class="acm-kv">${kv("Pseudo", r.pseudo ? "@" + r.pseudo : "")}${(d => `<span>Notifications</span><b>${d ? (d.ok ? `<span style="color:var(--good)">✓ actives</span>` : `<span style="color:#ff9f0a">✕ ${_accEsc(d.err || d.step || "échec")}</span>`) + `<small class="acm-kvs">${_accEsc(d.ua || "")} · ${new Date(d.at || 0).toLocaleDateString("fr", { day: "numeric", month: "short" })}</small>` : "—"}</b>`)((a.pushDebug || {})[n])}${(devs => devs.length ? `<div class="acm-devs">${devs.map(d => { const f = t => t ? new Date(t).toLocaleString("fr", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "jamais"; const bad = d.err && d.err.at && (!d.ok || d.err.at > d.ok);
+        return `<div><b>📱 ${_accEsc(_accDevName(d.ua))}</b><span>ouvert ${f(d.at)}</span><span class="${bad ? "ko" : ""}">${bad ? `✕ échec ${f(d.err.at)}${d.err.code ? " (" + _accEsc(String(d.err.code)) + ")" : ""}` : `reçu ${f(d.ok)}`}</span></div>`; }).join("")}</div>` : "")(Object.values(((a.subsRaw || {})[n]) || {}).filter(x => x && typeof x === "object").sort((x, y) => (y.at || 0) - (x.at || 0)))}</div>
       ${(() => { const pend = Object.values(a.pwReset || {}).filter(x => x && x.player === n).sort((x, y) => (y.at || 0) - (x.at || 0))[0], shown = (a.pwShown || {})[n];
         if (shown || (pend && pend.status === "wait")) return `<div class="acm-pw"><b>🔑 Mot de passe provisoire : <code>${_accEsc(shown || pend.pwd || "")}</code></b><small>${pend && pend.status === "done" ? "Actif ✓" : "Actif d'ici 10 minutes"} · à transmettre à ${_accEsc(n)}${r.pseudo ? ` avec son pseudo <b>@${_accEsc(r.pseudo)}</b>` : ""}. Il pourra se connecter avec.</small></div>`;
         if (pend && pend.status === "error") return `<p class="acm-err">Réinitialisation impossible : ${_accEsc(pend.err || "")}</p>`;
@@ -16511,10 +16516,22 @@ async function _accExportCsv() {
     setTimeout(() => URL.revokeObjectURL(url), 4000); _showToast(`${names.length} membres exportés`);
   } catch (e) { _acc.err = "Export impossible. Vérifie ta connexion."; _accRender(); }
 }
+// Santé des notifications d'un joueur : « ok » si au moins un appareil reçoit (pas d'erreur après
+// son dernier envoi réussi), « bad » si tous ses appareils échouent, « none » sans abonnement.
+function _accPushHealth(devs) {
+  const L = Object.values(devs || {}).filter(d => d && typeof d === "object");
+  if (!L.length) return "none";
+  return L.some(d => !(d.err && d.err.at && (!d.ok || d.err.at > d.ok))) ? "ok" : "bad";
+}
+function _accDevName(ua) {
+  ua = ua || ""; const os = /iPhone/.test(ua) ? "iPhone" : /iPad/.test(ua) ? "iPad" : /Android/.test(ua) ? "Android" : /Mac OS X/.test(ua) ? "Mac" : /Windows/.test(ua) ? "PC" : "Appareil";
+  const br = /SamsungBrowser/.test(ua) ? "Samsung Internet" : /CriOS|Chrome/.test(ua) ? "Chrome" : /Firefox|FxiOS/.test(ua) ? "Firefox" : /Safari/.test(ua) ? "Safari / appli" : "";
+  return br ? `${os} · ${br}` : os;
+}
 async function _accLoadAccounts() {
   try {
     _db.ref(`cotisations/${_currentSeason()}`).once("value").then(c => { _acc.cot = c.val() || {}; if (_acc.view === "accounts" || _acc.view === "member") _accRender(); }).catch(() => {});
-    _db.ref("pushSubs").once("value").then(c => { const v = c.val() || {}; _acc.subs = Object.fromEntries(Object.keys(v).filter(k => v[k] && Object.keys(v[k]).length).map(k => [k, true])); if (_acc.view === "accounts") _accRender(); }).catch(() => {});
+    _db.ref("pushSubs").once("value").then(c => { const v = c.val() || {}; _acc.subsRaw = v; _acc.subs = Object.fromEntries(Object.keys(v).filter(k => v[k] && Object.keys(v[k]).length).map(k => [k, _accPushHealth(v[k])])); if (_acc.view === "accounts" || _acc.view === "member") _accRender(); }).catch(() => {});
     _db.ref("lastSeen").once("value").then(c => { _acc.seen = c.val() || {}; if (_acc.view === "accounts" || _acc.view === "member") _accRender(); }).catch(() => {});
     ["authOrphans", "pwReset", "pushDebug", "authDelete"].forEach(k => _db.ref(k).once("value").then(c => { _acc[k] = c.val() || {}; if (_acc.view === "accounts" || _acc.view === "member") _accRender(); }).catch(() => {}));
     const [pa, us, sa, ai] = await Promise.all(["playerAccounts", "users", "config/superAdmins", "appInstalls"].map(p => _db.ref(p).once("value")));
@@ -16569,6 +16586,7 @@ document.getElementById("acc-modal").addEventListener("click", e => {
   else if (act === "fiche") { _accClose(); _accShowMyFiche(); return; }
   else if (act === "csv") { _accExportCsv(); return; }
   else if (act === "pedit") { a.editProf = true; _accRender(); setTimeout(() => document.getElementById("acm-pf-prenom")?.focus(), 30); return; }
+  else if (act === "pushtest") { window._pwa && window._pwa.test(); return; }
   else if (act === "pushon") { const pw = window._pwa; if (pw) { const st = pw.pushState(); if (st === "install") pw.install(); else pw.toggle().finally(() => { _accLoadMe(); }); } return; }
   else if (act === "pcancel") { a.editProf = false; a.err = ""; _accRender(); return; }
   else if (act === "pwreset") {
@@ -18808,10 +18826,43 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const subId = async endpoint => { const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(endpoint)); return [...new Uint8Array(h)].slice(0, 12).map(x => x.toString(16).padStart(2, "0")).join(""); };
     const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
     const lsSet = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} };
+    // update (et non set) : garde « ok » (dernier envoi réussi) et « err » notés par le serveur
     async function save(player) {
       const j = sub.toJSON(), id = await subId(j.endpoint);
-      await _db.ref(`pushSubs/${player}/${id}`).set({ endpoint: j.endpoint, keys: j.keys, at: firebase.database.ServerValue.TIMESTAMP, ua: navigator.userAgent.slice(0, 120) });
-      lsSet(OWNER, player);
+      await _db.ref(`pushSubs/${player}/${id}`).update({ endpoint: j.endpoint, keys: j.keys, at: firebase.database.ServerValue.TIMESTAMP, ua: navigator.userAgent.slice(0, 120) });
+      lsSet(OWNER, player); lsSet(WANT, "1");
+    }
+    const WANT = "hmft_push_want"; // ce téléphone a choisi de recevoir les notifications
+    // Verrou (25/11/2026) : à chaque ouverture, on vérifie que l'abonnement de ce téléphone est vivant.
+    // - le serveur note dans pushDead/{joueur}/{id} les abonnements refusés (Apple / Google « 410 ») :
+    //   on se désabonne et on se réabonne avec un abonnement neuf ;
+    // - abonnement disparu alors que les notifications sont autorisées et voulues : on se réabonne ;
+    // - si le téléphone refuse sans un toucher (iPhone), bandeau « Réactiver ».
+    let healing = false, healedFor = null;
+    async function heal() {
+      const p = me(); if (!p || !_db || !pushOK() || healing || healedFor === p) return;
+      if (Notification.permission !== "granted") return;
+      healing = true;
+      try {
+        if (!reg) reg = await navigator.serviceWorker.ready;
+        try { sub = await reg.pushManager.getSubscription(); } catch (e) {}
+        let dead = false;
+        if (sub) { const id = await subId(sub.endpoint), d = await _db.ref(`pushDead/${p}/${id}`).once("value"); dead = !!d.val(); }
+        if (!sub && lsGet(WANT) !== "1" && lsGet(OWNER) !== p) { healedFor = p; return; } // jamais activé ici : on ne force rien
+        if (dead) { try { await sub.unsubscribe(); } catch (e) {} sub = null; }
+        if (!sub) {
+          try { sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(_PWA_VAPID) }); }
+          catch (e) { sub = null; askAgain(); }
+        }
+        if (sub) { await save(p); ensured = p; _db.ref(`pushDead/${p}`).remove().catch(() => {}); }
+        healedFor = p; refresh();
+      } catch (e) { console.warn("push heal:", e); }
+      finally { healing = false; }
+    }
+    function askAgain() {
+      if (document.getElementById("push-again")) return;
+      document.body.insertAdjacentHTML("beforeend", `<div id="push-again" role="alert"><span>🔔 Tes notifications se sont coupées sur ce téléphone.</span><button type="button" data-pa="on">Réactiver</button><button type="button" data-pa="x" aria-label="Plus tard">✕</button></div>`);
+      document.getElementById("push-again").addEventListener("click", e => { const b = e.target.closest("[data-pa]"); if (!b) return; document.getElementById("push-again")?.remove(); if (b.dataset.pa === "on" && window._pwa) window._pwa.toggle(); });
     }
     async function drop(player) { if (!sub || !player) return; const id = await subId(sub.endpoint); await _db.ref(`pushSubs/${player}/${id}`).remove(); }
     // l'abonnement de ce téléphone suit le compte connecté (changement de compte, déconnexion).
@@ -18976,6 +19027,16 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       setPref: (k, v) => { const p = me(); if (p && _db) _db.ref(`pushPrefs/${p}/${k}`).set(v).catch(() => toast("Réglage non enregistré : vérifie ta connexion.")); },
       compose,
       canInstall: () => !standalone() && (!!deferred || isIOS),
+      async test() {
+        const p = me(); if (!p || !_db) return;
+        await heal();
+        const ref = _db.ref(`pushTest/${p}`), t0 = Date.now();
+        await ref.set({ at: firebase.database.ServerValue.TIMESTAMP });
+        toast("Test demandé : la notification arrive dans ~15 secondes");
+        const off = ref.on("value", s => { const v = s.val(); if (!v || !v.done) return; ref.off("value", off);
+          toast(v.sent ? `✅ Notification de test envoyée sur ${v.sent} appareil${v.sent > 1 ? "s" : ""}` : "❌ Aucun appareil n'a pu la recevoir : désactive puis réactive les notifications"); });
+        setTimeout(() => ref.off("value", off), 120000);
+      },
       pushState: () => {
         if (!pushOK()) return isIOS && !standalone() ? "install" : "unsupported";
         if (Notification.permission === "denied") return "denied";
@@ -19000,7 +19061,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
           if (st === "on") {
             try { await drop(lsGet(OWNER) || p); } catch (e) {}
             try { await sub.unsubscribe(); } catch (e) {}
-            sub = null; lsSet(OWNER, null); toast("Notifications désactivées sur ce téléphone"); return;
+            sub = null; lsSet(OWNER, null); lsSet(WANT, null); toast("Notifications désactivées sur ce téléphone"); return;
           }
           if (!p) { toast("Connecte-toi pour recevoir les notifications."); return; }
           // Étapes affichées et notées une par une : on voit où ça bloque (cas d'un Samsung qui restait sans réponse)
@@ -19031,7 +19092,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (hasSW) navigator.serviceWorker.register("sw.js").then(async r => {
       reg = r;
       if (pushOK()) { try { sub = await r.pushManager.getSubscription(); } catch (e) {} }
-      refresh(); sync(); _accReady.then(() => sync()).catch(() => {}); // dès que le compte est connu
+      if (sub) lsSet(WANT, "1");
+      refresh(); sync(); _accReady.then(() => { sync(); heal(); }).catch(() => {}); // dès que le compte est connu
     }).catch(e => console.warn("sw:", e));
     window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferred = e; refresh(); });
     window.addEventListener("appinstalled", () => { deferred = null; refresh(); toast("Appli installée !"); });
@@ -19055,7 +19117,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         _db.ref(`lastSeen/${p}`).set({ at: firebase.database.ServerValue.TIMESTAMP, via: standalone() ? "app" : "site" }).catch(() => { seenAt = 0; });
       } catch (e) {}
     }
-    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") markSeen(); });
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") { markSeen(); healedFor = null; heal(); } });
     setTimeout(markSeen, 4000);
     setTimeout(markApp, 4000);
     setInterval(() => { sync(); watchPrefs(); markApp(); markSeen(); }, 15000);

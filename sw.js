@@ -17,6 +17,14 @@ self.addEventListener("push", e => {
   })));
 });
 
+// Le navigateur a remplacé ou supprimé l'abonnement (expiration, réinitialisation) : on se réabonne
+// tout de suite avec la même clé ; la page enregistre le nouvel abonnement à la prochaine ouverture.
+self.addEventListener("pushsubscriptionchange", e => {
+  const opts = (e.oldSubscription && e.oldSubscription.options) || null;
+  if (!opts || !opts.applicationServerKey) return;
+  e.waitUntil(self.registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: opts.applicationServerKey }).catch(() => {}));
+});
+
 // Toucher la notification : ouvre (ou ramène) le site sur le bon écran
 self.addEventListener("notificationclick", e => {
   e.notification.close();
