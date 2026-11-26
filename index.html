@@ -3219,6 +3219,14 @@ html.light .hm .hm-art.bdo b { color: #b8860b; } html.light .hm .hm-art.bdo smal
 .hm .hm-sched { display: flex; align-items: center; gap: 11px; border-radius: 14px; padding: 12px 14px; margin: 4px 0 12px; background: rgba(52,199,123,.1); border: 1.5px solid rgba(52,199,123,.55); color: #8fe0b2; font-size: 14px; line-height: 1.3; }
 .hm .hm-sched svg { width: 24px; height: 24px; flex: none; fill: none; stroke: #34c77b; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; } .hm .hm-sched b { color: var(--text); }
 html.light .hm .hm-sched { color: #1f7a4a; }
+.hm .hm-schedw { position: relative; }
+.hm .hm-gear { margin-left: auto; flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgba(245,200,66,.45); background: rgba(245,200,66,.08); cursor: pointer; padding: 0; }
+.hm .hm-gear svg { width: 18px; height: 18px; stroke: var(--sa); stroke-width: 1.8; }
+.hm .hm-gear[aria-expanded="true"] { background: rgba(245,200,66,.22); }
+.hm .hm-samenu { position: absolute; right: 8px; top: calc(100% - 6px); z-index: 20; display: grid; gap: 6px; min-width: 230px; padding: 10px; border-radius: 14px; background: var(--bg2); border: 1px solid rgba(245,200,66,.4); box-shadow: 0 12px 30px rgba(0,0,0,.35); }
+.hm .hm-samenu small { font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--sa); padding: 0 2px 2px; }
+.hm .hm-samenu button { font: inherit; font-size: 13.5px; font-weight: 600; text-align: left; padding: 11px 12px; border-radius: 10px; color: var(--text); cursor: pointer; }
+.hm .hm-samenu .o { background: rgba(255,159,10,.06); border: 1px solid rgba(255,159,10,.45); } .hm .hm-samenu .r { background: rgba(255,59,48,.06); border: 1px solid rgba(255,59,48,.45); }
 .hm .hm-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
 .hm .hm-duo button { font: inherit; font-size: 13.5px; font-weight: 600; padding: 11px 8px; border-radius: 12px; color: var(--text); cursor: pointer; }
 .hm .hm-duo .o { background: rgba(255,159,10,.06); border: 1px solid rgba(255,159,10,.45); } .hm .hm-duo .r { background: rgba(255,59,48,.06); border: 1px solid rgba(255,59,48,.45); }
@@ -18043,7 +18051,7 @@ function _svApply() {
   const fdate = iso => { const d = new Date(iso + "T12:00:00Z"); return `${JOURS[d.getUTCDay()]} ${d.getUTCDate() === 1 ? "1er" : d.getUTCDate()} ${MOIS[d.getUTCMonth()]}`; };
   const esc = x => String(x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
   const ui = { draft: null, editing: false, plus: false, depSel: "", depNew: "", open: "P", q: "", pres: false, pq: "", pf: "all",
-    mode: "open", reason: "Gymnase fermé", other: "", msg: "next", back: "", confirmCancel: false, busy: false, err: "", k: Math.floor(Math.random() * 7), og: "", dq: "", dnew: false };
+    mode: "open", reason: "Gymnase fermé", other: "", msg: "next", back: "", confirmCancel: false, busy: false, err: "", k: Math.floor(Math.random() * 7), og: "", dq: "", dnew: false, saMenu: false };
   let ref = null;
 
   const me = () => (typeof _accPlayer === "function" ? _accPlayer() : null);
@@ -18330,13 +18338,12 @@ function _svApply() {
   }
   // Avant l'ouverture : sondage programmé le samedi à 9h (ouverture automatique par l'Action)
   const hmSat = () => fdate(_svIso(Date.parse(_svDate + "T12:00:00Z") - 2 * 86400000));
-  const hmSched = () => { const sat9 = _svParisMs(...(d => [d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate()])(new Date(Date.parse(_svDate + "T12:00:00Z") - 2 * 86400000)), 9, 0);
-    return `<div class="hm-sched"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>${_liveNow() >= sat9 ? "Le sondage s'ouvre dans quelques minutes" : `Sondage programmé pour le<br><b>${hmSat()} à 9h</b>`}</span></div>`; };
-  const hmSAduo = () => `<div class="hm-sa"><span class="h">★ Super admin</span><div class="hm-duo"><button type="button" class="o" data-sv="publishOpen"${ui.busy ? " disabled" : ""}>Ouvrir maintenant</button><button type="button" class="r" data-sv="mode" data-m="none">Annuler la session</button></div></div>`;
+  const hmSched = sa => { const sat9 = _svParisMs(...(d => [d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate()])(new Date(Date.parse(_svDate + "T12:00:00Z") - 2 * 86400000)), 9, 0);
+    return `<div class="hm-schedw"><div class="hm-sched"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>${_liveNow() >= sat9 ? "Le sondage s'ouvre dans quelques minutes" : `Sondage programmé pour le<br><b>${hmSat()} à 9h</b>`}</span>${sa ? `<button type="button" class="hm-gear" data-sv="saMenu" aria-haspopup="menu" aria-expanded="${ui.saMenu}" aria-label="Réglages super admin" title="Réglages super admin"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>` : ""}</div>${sa && ui.saMenu ? `<div class="hm-samenu" role="menu"><small>★ Super admin</small><button type="button" role="menuitem" class="o" data-sv="publishOpen"${ui.busy ? " disabled" : ""}>Ouvrir le sondage maintenant</button><button type="button" role="menuitem" class="r" data-sv="mode" data-m="none">Annuler la session</button></div>` : ""}</div>`; };
   function hmBefore() {
     const sa = isSA();
-    return hmHead("Prochaine session", _svDate) + hmSched()
-      + (sa ? (ui.mode === "none" ? `<div class="hm-sa"><span class="h">★ Super admin · Annulation</span>${vCreate()}</div>` : hmSAduo()) : "") + hmRest();
+    return hmHead("Prochaine session", _svDate) + hmSched(sa && ui.mode !== "none")
+      + (sa && ui.mode === "none" ? `<div class="hm-sa"><span class="h">★ Super admin · Annulation</span>${vCreate()}</div>` : "") + hmRest();
   }
   function hmAfterView(s, dd) {
     const when = ["Ce soir", "Hier soir", "Lundi soir"][dd], next = _svDate !== s.date ? _svDate : _svIso(Date.parse(s.date + "T12:00:00Z") + 7 * 86400000);
@@ -18345,7 +18352,7 @@ function _svApply() {
     const sd = s.date.split("-").map(Number), tue8 = _svParisMs(sd[0], sd[1], sd[2] + 1, 8, 0);
     if (_svDate !== s.date && _liveNow() >= tue8 && (!_svData || _svData.status === "none" || _svData.status === "cancelled")) {
       const off = _svData ? offHTML(_svData) + (isSA() ? `<button class="sv-btn sec" data-sv="reannounce">Annuler le signalement : ouvrir la session</button>` : "") : "";
-      return hmHead("Prochaine session", _svDate) + (off || hmSched() + (isSA() ? (ui.mode === "none" ? `<div class="hm-sa"><span class="h">★ Super admin · Annulation</span>${vCreate()}</div>` : hmSAduo()) : ""))
+      return hmHead("Prochaine session", _svDate) + (off || hmSched(isSA() && ui.mode !== "none") + (isSA() && ui.mode === "none" ? `<div class="hm-sa"><span class="h">★ Super admin · Annulation</span>${vCreate()}</div>` : ""))
         + hmLastCard(s, true, when) + hmTiles();
     }
     return hmHead("Soirée terminée", s.date)
@@ -18396,10 +18403,15 @@ function _svApply() {
       if (q) { e.stopImmediatePropagation(); if (await svConfirm(...q)) { t0.dataset.ok = "1"; t0.click(); delete t0.dataset.ok; } return; }
     }
   });
+  // menu ★ : se referme au clic à côté ou avec Échap
+  document.addEventListener("click", e => { if (ui.saMenu && !e.target.closest(".hm-samenu, .hm-gear, .ch-cf")) { ui.saMenu = false; render(true); } });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && ui.saMenu && !document.querySelector(".ch-cf")) { ui.saMenu = false; render(true); } });
   panel.addEventListener("click", e => {
     const t = e.target.closest("[data-sv]"); if (!t || ui.busy) return;
     const a = t.dataset.sv, who = me(), sa = isSA();
-    if (a === "mode") ui.mode = t.dataset.m;
+    if (a !== "saMenu") ui.saMenu = false; // le menu ★ se referme dès qu'on choisit quelque chose
+    if (a === "saMenu") ui.saMenu = !ui.saMenu;
+    else if (a === "mode") ui.mode = t.dataset.m;
     else if (a === "reason") ui.reason = t.dataset.r;
     else if (a === "publishOpen" && sa) return write(async () => { const r = await ref0().transaction(cur => cur ? undefined : { status: "open", by: who, at: Date.now(), closesAt: _svClosesAt(_svDate) }); if (r && r.committed) window._chatSys?.("open", `Le sondage est ouvert pour ${fdate(_svDate)}. Réponds avant dimanche 21h30.`); }, "Session ouverte : le vote est lancé");
     else if (a === "publishNone" && sa) { const reason = ui.reason === "Autre" ? (ui.other.trim() || "Autre") : ui.reason;
