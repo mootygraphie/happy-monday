@@ -617,13 +617,14 @@
   .pph-hero.has-portrait .pph-hero-name { margin-top: 0; }
   @media (max-width: 420px) {
     .pph-hero.has-portrait .pph-hero-row { flex-direction: column; text-align: center; }
+    .pph-hero.has-portrait .pph-id { align-self: stretch; }
     .pph-portrait { width: min(240px, 100%); }
   }
   #pf-lightbox { position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,.82); display: flex; align-items: center; justify-content: center; padding: 24px; cursor: zoom-out; }
   #pf-lightbox[hidden] { display: none; }
   #pf-lightbox img { max-width: min(92vw, 480px); max-height: 88vh; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
   .pph-freq-pill { display: inline-flex; align-items: center; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 4px 12px; margin-top: 8px; background: var(--bg2); border: 1px solid var(--border2); color: var(--text2); }
-  .pph-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 8px; }
+  .pph-pills { display: flex; flex-wrap: wrap; justify-content: flex-start; align-self: stretch; width: 100%; gap: 6px; margin-top: 8px; }
   .pph-pills .pph-freq-pill { margin-top: 0; background: transparent; border-width: 1.5px; }
   .pph-freq-pill.st-reg { color: #34c77b; border-color: rgba(52,199,123,.6); background: rgba(52,199,123,.1); }
   .pph-freq-pill.st-occ { color: #60A5FA; border-color: rgba(96,165,250,.6); background: rgba(96,165,250,.1); }
