@@ -623,6 +623,18 @@
   #pf-lightbox[hidden] { display: none; }
   #pf-lightbox img { max-width: min(92vw, 480px); max-height: 88vh; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
   .pph-freq-pill { display: inline-flex; align-items: center; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 4px 12px; margin-top: 8px; background: var(--bg2); border: 1px solid var(--border2); color: var(--text2); }
+  .pph-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 8px; }
+  .pph-pills .pph-freq-pill { margin-top: 0; background: transparent; border-width: 1.5px; }
+  .pph-freq-pill.st-reg { color: #34c77b; border-color: rgba(52,199,123,.6); background: rgba(52,199,123,.1); }
+  .pph-freq-pill.st-occ { color: #60A5FA; border-color: rgba(96,165,250,.6); background: rgba(96,165,250,.1); }
+  .pph-freq-pill.st-dep { color: #b892ff; border-color: rgba(184,146,255,.6); background: rgba(184,146,255,.1); }
+  .pph-freq-pill.st-in  { color: #9CA3AF; border-color: rgba(156,163,175,.55); background: rgba(156,163,175,.1); }
+  .pph-freq-pill.pph-since { color: #8e8e93; border-color: #8e8e93; }
+  .pph-freq-pill.pph-founder { border-color: #d4a72c; color: #f5c842; background: linear-gradient(110deg, #c9971c 0%, #f5c842 38%, #fff6d0 50%, #f5c842 62%, #c9971c 100%) 0 0 / 250% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: pphGold 3.2s linear infinite; }
+  @keyframes pphGold { from { background-position: 100% 0; } to { background-position: -150% 0; } }
+  @media (prefers-reduced-motion: reduce) { .pph-freq-pill.pph-founder { animation: none; } }
+  html.light .pph-freq-pill.st-reg { color: #1f8a52; } html.light .pph-freq-pill.st-occ { color: #2563eb; } html.light .pph-freq-pill.st-dep { color: #7c4dda; } html.light .pph-freq-pill.st-in { color: #6b7280; } html.light .pph-freq-pill.pph-since { color: #6e6e73; border-color: #8e8e93; }
+  html.light .pph-freq-pill.pph-founder { border-color: #b8860b; background-image: linear-gradient(110deg, #8a6300 0%, #b8860b 38%, #f0c850 50%, #b8860b 62%, #8a6300 100%); }
   .pph-top-grid { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--border); gap: 1px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
   .pph-top-cell { background: var(--bg3); padding: 12px 4px 10px; text-align: center; }
   .pph-top-num { font-size: 21px; font-weight: 800; line-height: 1; }
@@ -12308,18 +12320,10 @@ function openPlayerPanel(playerName) {
     const _avatarBg = _colorVar ? `var(--${_colorVar})` : "var(--text3)";
     const _avatarFg = _colorVar === "vert" ? "#111" : "#fff";
     const _initials = computeAllInitials([...new Set([...ALL_PLAYERS, playerName])])[playerName];
-    const _totalExpected = st.presences + st.absences;
-    let _freqLabel = null;
-    if (_totalExpected >= 3) {
-      const _rate = st.presences / _totalExpected;
-      _freqLabel = _rate >= 0.75 ? "Régulier" : _rate >= 0.4 ? "Occasionnel" : "Rare";
-    }
-    // Statut d effectif (ex-badge de l en-tete, retire pour ne pas repeter prenom + statut) :
-    // affiche seulement s il dit autre chose que la frequence (ex. « Absent pour la saison »).
-    const _ppS = INACTIFS.has(playerName) ? { label: "Inactif cette saison", badge: "regl-badge-quitte" }
-      : ABSENTS.has(playerName) ? { label: "Dépanneur", badge: "regl-badge-plus1" }
-      : REGL_STATUTS[JOKERS.has(playerName) ? 'plus1' : 'actif'];
-    const _ppStatutHtml = _ppS && _ppS.label !== _freqLabel ? `<span class="regl-badge ${_ppS.badge}" style="margin-left:6px;vertical-align:middle">${_ppS.label}</span>` : "";
+    // 2 pastilles sous le nom : le statut d'effectif (couleur), puis l'ancienneté au club
+    const _ppS = INACTIFS.has(playerName) ? ["Inactif", "in"] : ABSENTS.has(playerName) ? ["Dépanneur", "dep"]
+      : JOKERS.has(playerName) ? ["Occasionnel", "occ"] : ["Régulier", "reg"];
+    const _ppSince = _hmSinceLabel(playerName);
     // Portrait : carte entiere, cachee jusqu a son chargement (_pphPortraitLoaded) ; sans
     // fichier, l avatar a initiales reste affiche comme avant.
     const _portraitHtml =
@@ -12333,9 +12337,7 @@ function openPlayerPanel(playerName) {
         <div class="pph-id">
           <div class="pph-avatar" style="background:${_avatarBg};color:${_avatarFg}">${_initials}</div>
           <div class="pph-hero-name">${playerName}</div>
-          ${_freqLabel ? `<span class="pph-freq-pill">${_freqLabel}</span>` : ""}
-          ${_hmSinceLabel(playerName) ? `<span class="pph-freq-pill pph-since">${_hmSinceLabel(playerName)}</span>` : ""}
-          ${_ppStatutHtml}
+          <div class="pph-pills"><span class="pph-freq-pill st-${_ppS[1]}">${_ppS[0]}</span>${_ppSince ? `<span class="pph-freq-pill ${/fondateur/i.test(_ppSince) ? "pph-founder" : "pph-since"}">${_ppSince}</span>` : ""}</div>
         </div>
       </div>
     </div>`;
@@ -20100,7 +20102,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Quels classements existent ?", "Dans Récomp., un menu déroulant passe d'un classement à l'autre : Ballon d'Or, Yachine, Buteurs, Passeurs, Défenseurs, Clean sheets, Link-up, Dépanneurs, Bonnet d'âne, Infirmerie, Collectionneurs, Traders et Généreux. Ta ligne reste visible même hors du podium.", "classements liste recompenses menu deroulant"],
         ["Comment sont calculés Collectionneurs, Traders et Généreux ?", "Collectionneurs : vignettes différentes collées dans l'album (les doubles ne comptent pas). Traders : cartes données et reçues dans les échanges acceptés. Généreux : cartes données, cadeaux compris.", "collectionneurs traders genereux vignettes echanges classement"],
         ["Comment ouvrir la fiche d'un joueur ?", "Touche un nom ou une photo, partout dans l'appli. Menu ☰ › Effectif affiche le trombinoscope du club.", "fiche joueur effectif trombinoscope profil"],
-        ["Que veut dire « Au club depuis » sur une fiche ?", "C'est l'année d'arrivée du joueur au club. Les 3 fondateurs (Cédric, Guy et Tof) ont « Membre fondateur » à la place. Elle n'est pas modifiable dans l'appli.", "annee arrivee club depuis anciennete fiche fondateur"],
+        ["Que veulent dire les pastilles sous le nom, sur une fiche ?", "La 1re donne le statut du joueur : Régulier (vert), Occasionnel (bleu), Dépanneur (violet) ou Inactif (gris). La 2e donne son année d'arrivée au club (« Au club depuis… »), ou « Membre fondateur » en doré pour Cédric, Guy et Tof. L'année n'est pas modifiable dans l'appli.", "pastille statut regulier occasionnel depanneur inactif annee arrivee club depuis anciennete fiche fondateur"],
         ["Que sont les hauts faits ?", "Des défis à débloquer, du bronze au diamant. Tu les trouves en bas de Récomp., avec Ta saison et Inédit.", "hauts faits badges succes debloquer"]
       ]},
       { n: "06", ico: "🃏", t: "Les vignettes", s: "L'album, les boosters, les échanges", qa: [
