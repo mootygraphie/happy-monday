@@ -12334,7 +12334,7 @@ function openPlayerPanel(playerName) {
           <div class="pph-avatar" style="background:${_avatarBg};color:${_avatarFg}">${_initials}</div>
           <div class="pph-hero-name">${playerName}</div>
           ${_freqLabel ? `<span class="pph-freq-pill">${_freqLabel}</span>` : ""}
-          ${_HM_ARRIVEES[playerName] ? `<span class="pph-freq-pill pph-since">Au club depuis ${String(_HM_ARRIVEES[playerName]).replace(/[^0-9]/g, "")}</span>` : ""}
+          ${_hmSinceLabel(playerName) ? `<span class="pph-freq-pill pph-since">${_hmSinceLabel(playerName)}</span>` : ""}
           ${_ppStatutHtml}
         </div>
       </div>
@@ -16183,8 +16183,25 @@ let _acc = { view: "login", step: 1, pseudo: "", pwd: "", pwd2: "", show: false,
 
 function _accPlayer() { return _accUser && _accProfile ? _accProfile.player : null; }
 // Visiteur = personne connectee a aucun compte rattache a une fiche : Sessions uniquement
-// Année d'arrivée au club (non modifiable dans l'appli) : config/arrivees = { "Nom du joueur": 2019, ... }
-var _HM_ARRIVEES = {};
+// Année d'arrivée au club (non modifiable dans l'appli). Liste de base ci-dessous ;
+// config/arrivees en base (= { "Nom du joueur": 2019 ou "Fondateur", ... }) la complète ou la corrige.
+const _HM_ARRIVEES_BASE = {
+  "Cédric": "Fondateur", "Guy": "Fondateur", "Tof": "Fondateur",
+  "Ben": 2015, "Boris": 2015, "Clément": 2015, "Houari": 2015, "JB": 2015, "Raph P": 2015, "Sylvain": 2015, "Yassir": 2015,
+  "Antoine": 2016, "Loïc": 2017,
+  "Madani": 2019, "Mahdi": 2019, "Pierre-Olivier": 2019, "Zoltan": 2019,
+  "Benji": 2021, "Raph L": 2021, "Virgile": 2022,
+  "Jordan": 2024, "Ludo": 2024, "Morgane": 2024,
+  "Renaud": 2025, "Tabley": 2025,
+  "Jérémie": 2026, "Matthieu": 2026, "Godefroy": 2026, "Alexi": 2026, "Harone": 2026,
+};
+var _HM_ARRIVEES = { ..._HM_ARRIVEES_BASE };
+// Pastille de la fiche : « Membre fondateur » ou « Au club depuis 2019 »
+function _hmSinceLabel(p) {
+  const v = _HM_ARRIVEES[p]; if (v == null || v === "") return "";
+  if (/fondateur/i.test(String(v))) return "Membre fondateur";
+  const y = String(v).replace(/[^0-9]/g, ""); return y ? `Au club depuis ${y}` : "";
+}
 const HM_VISITOR_TABS = new Set(["session", "live"]);
 function _hmIsVisitor() { return !(typeof _accUser !== "undefined" && _accUser && typeof _accProfile !== "undefined" && _accProfile); }
 function _accEmail(pseudo) { return pseudo.trim().toLowerCase() + "@" + ACC_DOMAIN; }
@@ -16206,7 +16223,7 @@ function _accInit() {
   _db.ref('config/depanneurs').on('value', snap => { const v = snap.val(); if (v) _VG_DEP = new Set(Array.isArray(v) ? v : Object.values(v)); });
   _db.ref('config/absents').on('value', snap => { _accStatusAbs = toSet(snap.val()); _accRefreshSaisieAccess(); });
   _db.ref('config/inactifs').on('value', snap => { _accStatusInact = toSet(snap.val()); _accRefreshSaisieAccess(); });
-  _db.ref('config/arrivees').on('value', snap => { _HM_ARRIVEES = snap.val() || {}; }, () => {});
+  _db.ref('config/arrivees').on('value', snap => { _HM_ARRIVEES = { ..._HM_ARRIVEES_BASE, ...(snap.val() || {}) }; }, () => {});
   _auth.onAuthStateChanged(async u => {
     _accUser = u; _accProfile = null; _accIsSuper = false;
     if (u) {
@@ -20083,7 +20100,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Quels classements existent ?", "Dans Récomp., un menu déroulant passe d'un classement à l'autre : Ballon d'Or, Yachine, Buteurs, Passeurs, Défenseurs, Clean sheets, Link-up, Dépanneurs, Bonnet d'âne, Infirmerie, Collectionneurs, Traders et Généreux. Ta ligne reste visible même hors du podium.", "classements liste recompenses menu deroulant"],
         ["Comment sont calculés Collectionneurs, Traders et Généreux ?", "Collectionneurs : vignettes différentes collées dans l'album (les doubles ne comptent pas). Traders : cartes données et reçues dans les échanges acceptés. Généreux : cartes données, cadeaux compris.", "collectionneurs traders genereux vignettes echanges classement"],
         ["Comment ouvrir la fiche d'un joueur ?", "Touche un nom ou une photo, partout dans l'appli. Menu ☰ › Effectif affiche le trombinoscope du club.", "fiche joueur effectif trombinoscope profil"],
-        ["Que veut dire « Au club depuis » sur une fiche ?", "C'est l'année d'arrivée du joueur au club. Elle n'est pas modifiable dans l'appli : un super admin la renseigne.", "annee arrivee club depuis anciennete fiche"],
+        ["Que veut dire « Au club depuis » sur une fiche ?", "C'est l'année d'arrivée du joueur au club. Les 3 fondateurs (Cédric, Guy et Tof) ont « Membre fondateur » à la place. Elle n'est pas modifiable dans l'appli.", "annee arrivee club depuis anciennete fiche fondateur"],
         ["Que sont les hauts faits ?", "Des défis à débloquer, du bronze au diamant. Tu les trouves en bas de Récomp., avec Ta saison et Inédit.", "hauts faits badges succes debloquer"]
       ]},
       { n: "06", ico: "🃏", t: "Les vignettes", s: "L'album, les boosters, les échanges", qa: [
@@ -20163,7 +20180,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Que se passe-t-il à la clôture du vote du Règlement ?", "L'Effectif se met à jour tout seul : actif › Réguliers, +1 › Occasionnels, dépanneur › Dépanneurs, quitte ou sans réponse › Inactifs.", "cloture vote reglement effectif"],
         ["Quelles sont les autres fonctions ★ ?", "Datas (une trentaine de stats pointues dans Statistiques), Récompenses ★ (Ballon de Plomb, Calamity James), l'interrupteur Pronos et les Coefficients joueurs dans le menu ☰.", "datas pronos coefficients fonctions"],
         ["Comment activer ou couper les pronostics ?", "Menu ☰ › ★ Pronos : l'interrupteur affiche « Pronos : activés » ou « Pronos : désactivés ». Activés, les joueurs votent sur chaque match du soir dès que ses 2 équipes sont choisies dans la Saisie, jusqu'à la mi-temps.", "activer desactiver pronos pronostics interrupteur"],
-        ["Comment renseigner l'année d'arrivée d'un joueur ?", "Elle n'est pas modifiable dans l'appli. Elle se renseigne dans la base Firebase, sous config/arrivees (par exemple « Boris » : 2016).", "annee arrivee renseigner club depuis"],
+        ["Comment renseigner l'année d'arrivée d'un joueur ?", "Elle n'est pas modifiable dans l'appli. Les années de l'effectif actuel sont déjà intégrées. Pour un nouveau joueur ou une correction : base Firebase, sous config/arrivees (par exemple « Boris » : 2016, ou « Fondateur »). Ce qui est en base passe avant la liste intégrée.", "annee arrivee renseigner club depuis fondateur"],
         ["Comment supprimer une soirée ?", "Touche la croix ronde sur la date, avec confirmation.", "supprimer soiree session date"]
       ]},
       { n: "08", ico: "🧯", t: "Que faire si…", s: "Les procédures express", qa: [
