@@ -3576,6 +3576,87 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #bnav .bn-c.sh-ko .bn-tile { filter: drop-shadow(0 6px 10px rgba(227,11,11,.4)); }
   #bnav .bn-c.sh-ok .bn-tile svg, #bnav .bn-c.sh-ko .bn-tile svg { width: 25px; height: 25px; margin-top: -4px; stroke-width: 1.7; }
   #bnav .bn-l2 { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .02em; color: #3a3a44; }
+  /* ── Événements du club ── */
+  .hm .ev-home { display: grid; gap: 10px; margin: 2px 0 14px; }
+  .hm .ev-hl { font-size: 10.5px; font-weight: 800; font-style: italic; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); }
+  .ev-card { all: unset; box-sizing: border-box; cursor: pointer; position: relative; overflow: hidden; isolation: isolate; display: grid; gap: 9px; padding: 16px; border-radius: 16px; border: 1px solid var(--gold-border); background: linear-gradient(150deg, var(--gold-bg), transparent 60%), var(--bg2); color: var(--text); }
+  .ev-card:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .ev-card .ev-em, .ev-hero .ev-em { position: absolute; right: -14px; top: -20px; font-size: 104px; line-height: 1; opacity: .13; transform: rotate(-10deg); pointer-events: none; z-index: -1; }
+  .ev-t { font-size: 21px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1.08; padding-right: 40px; }
+  .ev-meta { display: grid; gap: 4px; font-size: 13.5px; color: var(--text2); }
+  .ev-meta > span { display: flex; gap: 8px; align-items: center; min-width: 0; }
+  .ev-meta svg, .ev-loc svg, .ev-picked svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .ev-gauge { display: grid; gap: 5px; }
+  .ev-gauge u { display: block; height: 7px; border-radius: 4px; background: var(--bg3); overflow: hidden; text-decoration: none; }
+  .ev-gauge i { display: block; height: 100%; background: #34c77b; border-radius: 4px; }
+  .ev-gauge small { font-size: 12px; color: var(--text2); } .ev-gauge b { color: var(--text); }
+  .ev-cta { font-size: 13px; font-weight: 700; color: var(--gold); }
+  .ev-box { max-width: 460px; gap: 12px; }
+  .ev-hero { position: relative; overflow: hidden; isolation: isolate; display: grid; gap: 8px; padding: 16px; border-radius: 16px; border: 1px solid var(--gold-border); background: linear-gradient(150deg, var(--gold-bg), transparent 60%), var(--bg); }
+  .ev-hero .ev-t { font-size: 24px; }
+  .ev-desc { margin: 0; font-size: 13.5px; color: var(--text2); white-space: pre-line; }
+  .ev-place { display: grid; gap: 8px; padding: 8px; border-radius: 14px; background: var(--bg3); }
+  .ev-place iframe { width: 100%; height: 150px; border: 0; border-radius: 10px; background: var(--bg); }
+  .ev-place > div { padding: 0 4px 2px; } .ev-place b, .ev-picked b { display: block; font-size: 14px; } .ev-place small, .ev-picked small { display: block; font-size: 12px; color: var(--text2); }
+  .ev-lnks { display: flex; gap: 14px; margin-top: 4px; } .ev-lnks a { font-size: 13px; font-weight: 700; color: #00BBFF; text-decoration: none; }
+  .ev-loc { display: flex; gap: 8px; align-items: center; padding: 10px 12px; border-radius: 12px; background: var(--bg3); font-size: 14px; }
+  .ev-price { display: flex; justify-content: space-between; padding: 10px 12px; border-radius: 12px; background: var(--sa-bg); color: var(--sa); font-weight: 700; font-size: 13.5px; }
+  .ev-free { padding: 8px 12px; border-radius: 12px; background: rgba(52,199,123,.12); color: #34c77b; font-weight: 700; font-size: 13px; }
+  .ev-sec { display: grid; gap: 10px; padding: 14px; border-radius: 16px; background: var(--bg); border: 1px solid var(--border); }
+  .ev-lbl { font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); }
+  .ev-rsvp { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .ev-rsvp button { border: 1.5px solid var(--border2); background: var(--bg3); color: var(--text); border-radius: 12px; padding: 10px 4px; font: inherit; font-size: 13px; font-weight: 700; display: grid; gap: 2px; justify-items: center; cursor: pointer; }
+  .ev-rsvp button i { font-style: normal; font-size: 16px; }
+  .ev-rsvp .y[aria-pressed="true"] { border-color: #34c77b; background: rgba(52,199,123,.12); color: #34c77b; }
+  .ev-rsvp .m[aria-pressed="true"] { border-color: #00BBFF; background: rgba(0,187,255,.12); color: #00BBFF; }
+  .ev-rsvp .n[aria-pressed="true"] { border-color: var(--gold); background: var(--gold-bg); color: var(--gold); }
+  .ev-full { margin: 0; padding: 8px 12px; border-radius: 12px; background: rgba(0,187,255,.12); color: #00BBFF; font-size: 12.5px; }
+  .ev-step { display: flex; align-items: center; justify-content: space-between; font-size: 14px; }
+  .ev-step .ctl { display: flex; align-items: center; gap: 10px; } .ev-step .ctl b { min-width: 18px; text-align: center; }
+  .ev-step .ctl button { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); font: inherit; font-size: 17px; font-weight: 700; cursor: pointer; }
+  .ev-cal { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .ev-cal a, .ev-cal button { display: grid; justify-items: center; gap: 3px; text-decoration: none; color: var(--text); border: 1px solid var(--border2); background: var(--bg3); border-radius: 12px; padding: 9px 4px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .ev-cal span { font-size: 18px; line-height: 1; }
+  .ev-note { margin: 0; font-size: 12.5px; color: var(--text3); }
+  .ev-resp { border-radius: 16px; background: var(--bg); border: 1px solid var(--border); }
+  .ev-resp summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 13px 14px; font-size: 14px; font-weight: 700; }
+  .ev-resp summary::-webkit-details-marker { display: none; }
+  .ev-resp summary small { display: block; font-size: 12px; font-weight: 500; color: var(--text2); }
+  .ev-resp .chev { margin-left: auto; color: var(--text3); transition: transform .2s; } .ev-resp[open] .chev { transform: rotate(180deg); }
+  .ev-rlist { padding: 0 14px 10px; }
+  .ev-rgrp { font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); padding: 10px 0 4px; }
+  .ev-rrow { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--border); font-size: 14px; }
+  .ev-rrow .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .ev-rrow .g { font-size: 12px; color: var(--text2); }
+  .ev-rrow .pd { margin-left: auto; font-size: 11.5px; font-weight: 700; color: var(--text3); } .ev-rrow .pd.ok { color: var(--sa); }
+  .ev-rrow.me b { color: #34c77b; }
+  .ev-pay { display: grid; gap: 6px; }
+  .ev-pay label { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; background: var(--bg3); font-size: 13.5px; cursor: pointer; }
+  .ev-pay input { width: 18px; height: 18px; accent-color: var(--sa); } .ev-pay em { margin-left: auto; font-style: normal; font-size: 12px; color: var(--text3); }
+  .ev-adm { display: flex; gap: 8px; justify-content: flex-end; }
+  .ev-adm button { border-radius: 12px; padding: 10px 16px; font: inherit; font-weight: 700; font-size: 14px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); cursor: pointer; }
+  .ev-adm .dang { color: #ef5350; border-color: rgba(239,83,80,.45); background: transparent; }
+  .ev-adm .pri { background: var(--gold); border-color: var(--gold); color: #fff; } .ev-adm .pri:disabled { opacity: .45; cursor: default; }
+  .ev-new { border: 1px dashed var(--sa-border); background: var(--sa-bg); color: var(--sa); border-radius: 14px; padding: 12px; font: inherit; font-weight: 700; font-size: 14px; cursor: pointer; }
+  .ev-gh { font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); margin-top: 4px; }
+  .ev-li { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; text-align: left; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font: inherit; cursor: pointer; }
+  .ev-li .ev-em { font-size: 24px; } .ev-li b { display: block; font-size: 14.5px; } .ev-li small { display: block; font-size: 12px; color: var(--text2); } .ev-li .chev { color: var(--text3); }
+  .ev-fld { display: grid; gap: 5px; }
+  .ev-in { width: 100%; box-sizing: border-box; background: var(--bg3); border: 1px solid var(--border2); border-radius: 12px; padding: 10px 12px; color: var(--text); font: inherit; font-size: 16px; }
+  textarea.ev-in { resize: vertical; }
+  .ev-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .ev-emos { display: flex; gap: 4px; flex-wrap: wrap; }
+  .ev-emos button { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg3); font-size: 19px; cursor: pointer; }
+  .ev-emos button[aria-pressed="true"] { border-color: var(--gold); background: var(--gold-bg); }
+  .ev-opt { display: grid; gap: 8px; padding: 12px; border-radius: 14px; background: var(--bg); border: 1px solid var(--border); }
+  .ev-sw { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; cursor: pointer; }
+  .ev-sw small { display: block; font-size: 12px; color: var(--text3); }
+  .ev-sw input { width: 20px; height: 20px; accent-color: var(--gold); flex: none; }
+  .ev-sugg { display: grid; gap: 4px; }
+  .ev-sugg button { text-align: left; border: 1px solid var(--border); background: var(--bg2); color: var(--text); border-radius: 10px; padding: 8px 10px; font: inherit; font-size: 13px; cursor: pointer; }
+  .ev-sugg small { display: block; color: var(--text3); font-size: 11.5px; }
+  .ev-picked { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; background: var(--bg3); }
+  .ev-picked button { margin-left: auto; border: 0; background: none; color: #00BBFF; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
   .sz-ov { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.65); }
   .sz-box, .sz-box * { box-sizing: border-box; }
   .sz-box { width: 100%; min-width: 0; max-width: 440px; max-height: calc(100vh - 32px); overflow-y: auto; border-radius: 20px; padding: 18px; background: var(--bg2); border: 1px solid var(--border2); color: var(--text); display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 50px rgba(0,0,0,.5); }
@@ -4144,8 +4225,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .st2 .form { display: flex; gap: 3px; margin-top: 6px; flex-wrap: wrap; } .st2 .form .fm { width: 22px; height: 22px; font-size: 11px; margin: 0; }
   .st2 .tyl .mate .v { font-size: 13px; color: var(--gold); font-style: italic; }
   .st2 .mom { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-  .st2 .mom .card { position: relative; padding: 12px; }
-  .st2 .mom span { position: absolute; right: 10px; top: 8px; font-size: 20px; }
+  .st2 .mom .card { position: relative; padding: 12px; overflow: hidden; isolation: isolate; }
+  .st2 .mom span { position: absolute; right: -12px; top: -16px; font-size: 64px; line-height: 1; opacity: .13; transform: rotate(-8deg); pointer-events: none; z-index: -1; }
   .st2 .mom small { font-size: 10px; font-weight: 800; font-style: italic; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); display: block; padding-right: 24px; }
   .st2 .mom b { display: block; font-size: 22px; font-weight: 800; font-style: italic; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .st2 .mom em { font-style: normal; font-size: 11.5px; color: var(--text2); }
@@ -4593,6 +4674,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .ch-cf-act { display: flex; gap: 8px; justify-content: flex-end; }
   .ch-cf-act button { font: inherit; font-weight: 700; font-size: 14px; padding: 10px 16px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); cursor: pointer; }
   .ch-cf-act .dang { background: #e30b0b; border-color: #e30b0b; color: #fff; }
+  .pc-deltests { display: block; width: 100%; margin: 4px 0 10px; border: 1px dashed rgba(239,83,80,.5); background: transparent; color: #ef5350; border-radius: 12px; padding: 10px; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; }
   .ch-cf-act .ok { background: #ff9f0a; border-color: #ff9f0a; color: #1b1100; }
   .ch-cf-act button:disabled { opacity: .45; cursor: default; }
   /* mini-sondages */
@@ -5220,8 +5302,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="26/11/2026" data-for="sa"><li>🏆 <b>Récompenses</b> : 2 nouveaux classements, Collectionneurs (vignettes collées) et Traders (total, données ou reçues)</li><li>❓ <b>Aide</b> : le guide de l'appli dans le menu ☰, avec une recherche pour poser ta question</li><li>🗓️ <b>Fiche joueur</b> : l'année d'arrivée au club</li><li>🟠 <b>Mises à jour</b> : les petites ne s'affichent plus en grand, juste un point orange sur Menu</li><li>📲 <b>Pastille de l'appli</b> : elle compte aussi les messages non lus du Vestiaire</li><li data-sa>🔒 <b>Visiteurs</b> : sans compte, on ne voit plus que les Sessions</li><li data-sa>⚙️ <b>Accueil</b> : « Ouvrir maintenant » et « Annuler la session » sont rangés sous la roue dentée de la case verte du sondage programmé</li><li>🙂 <b>Vestiaire</b> : emojis style Teams et GIF, avec le bouton 🙂 à côté du message</li><li>📊 <b>Vestiaire</b> : les sondages, avec le + à côté du message (une ou plusieurs réponses, votes visibles ou non, date limite)</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 26/11/2026 - 19:15</footer>
+<template id="hm-news" data-date="26/11/2026" data-for="sa"><li>🏆 <b>Récompenses</b> : 2 nouveaux classements, Collectionneurs (vignettes collées) et Traders (total, données ou reçues)</li><li>❓ <b>Aide</b> : le guide de l'appli dans le menu ☰, avec une recherche pour poser ta question</li><li>🗓️ <b>Fiche joueur</b> : l'année d'arrivée au club</li><li>🟠 <b>Mises à jour</b> : les petites ne s'affichent plus en grand, juste un point orange sur Menu</li><li>📲 <b>Pastille de l'appli</b> : elle compte aussi les messages non lus du Vestiaire</li><li data-sa>🔒 <b>Visiteurs</b> : sans compte, on ne voit plus que les Sessions</li><li data-sa>⚙️ <b>Accueil</b> : « Ouvrir maintenant » et « Annuler la session » sont rangés sous la roue dentée de la case verte du sondage programmé</li><li>📅 <b>Événements</b> : repas, tournoi, sortie… sur l'Accueil sous le sondage, avec réponse, carte et ajout au calendrier</li><li data-sa>★ <b>Menu Super admin</b> : Membres, Notifications, Événements, Paramètres saison, Pronostics ; suppression des anciens tests de notification</li><li>🙂 <b>Vestiaire</b> : emojis style Teams et GIF, avec le bouton 🙂 à côté du message</li><li>📊 <b>Vestiaire</b> : les sondages, avec le + à côté du message (une ou plusieurs réponses, votes visibles ou non, date limite)</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 26/11/2026 - 20:08</footer>
 
 <script>
 
@@ -18354,6 +18436,7 @@ function _svApply() {
   }
   function hmKnow() { const F = hmFacts(); if (!F.length) return ""; return `<div class="hm-know"><small>💡 Le saviez-vous ?</small><p>${F[ui.k % F.length]}</p><button type="button" data-sv="know">Une autre ›</button></div>`; }
   const hmRest = () => hmLastCard(hmLast(), false) + hmTiles() + hmKnow();
+  const hmEv = () => (typeof window._evHomeHTML === "function" ? window._evHomeHTML() : ""); // événements du club, sous le sondage
   const hmHead = (lab, d) => `<div class="hm-hd"><small>${lab}</small><b>${hmCap(fdate(d))}</b></div>`;
   const hmSA = (p, acts) => `<div class="hm-sa"><span class="h">★ Super admin</span>${p ? `<p>${p}</p>` : ""}<div class="acts">${acts}</div></div>`;
   const hmFmt = (ms, big) => { const s = Math.max(0, Math.ceil(ms / 1000)), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), x = s % 60, p = v => String(v).padStart(2, "0");
@@ -18413,7 +18496,7 @@ function _svApply() {
     const R = rows(), nR = R.filter(r => !r.dep && r.v !== "N").length, nN = R.filter(r => r.v === "N").length;
     return hmHead("Prochaine session", _svDate)
       + (isSA() ? hmSA(`<b>${nR} réponse${nR > 1 ? "s" : ""}</b> · ${nN} sans réponse`, `<button type="button" data-sv="presOpen">Modifier les votes</button><button type="button" class="dang" data-sv="cancel">Annuler session</button>`) : "")
-      + hmVote() + hmFeuille(true) + hmOthers() + hmSep + hmRest();
+      + hmVote() + hmFeuille(true) + hmOthers() + hmEv() + hmSep + hmRest();
   }
   function hmClosed() {
     const R = rows(), nP = R.filter(r => r.v === "P").length, p = _svParis(_liveNow()), tonight = hmToday() === _svDate && p.h * 60 + p.mi >= 19 * 60 + 45; // soirée commencée : affichage des équipes dès 19h45
@@ -18424,7 +18507,7 @@ function _svApply() {
     return hmHead("Prochaine session", _svDate)
       + (isSA() ? hmSA(`Sondage clos : <b>${nP} convoqué${nP > 1 ? "s" : ""}</b>. Tu peux encore corriger une présence.`, `${canSaisie && tonight ? `<button type="button" class="pri" data-sv="goSaisie">Aller à la Saisie</button>` : ""}<button type="button" data-sv="presOpen">Modifier les présences</button>`) : "")
       + (tonight ? "" : `<div class="hm-jk${nP < 10 ? " low" : ""}">${nP < 10 ? `<p><b>${nP} présent${nP > 1 ? "s" : ""}</b> · il en manque ${10 - nP}. Les jokers sont encore possibles.</p>` : ""}<button type="button" class="hm-deplink" data-sv="plusOpen" aria-expanded="${ui.plus}">＋ Ajouter un joker</button>${hmDeps(true)}</div>`)
-      + hmFeuille(false) + hmOthers(true) + (liveOn || tonight ? hmTiles(first) : hmSep + hmRest()); // avant la soirée : « Et aussi » (récap, Ballon d'Or, Vignettes)
+      + hmFeuille(false) + hmOthers(true) + hmEv() + (liveOn || tonight ? hmTiles(first) : hmSep + hmRest()); // avant la soirée : « Et aussi » (récap, Ballon d'Or, Vignettes)
   }
   // Avant l'ouverture : sondage programmé le samedi à 9h (ouverture automatique par l'Action)
   const hmSat = () => fdate(_svIso(Date.parse(_svDate + "T12:00:00Z") - 2 * 86400000));
@@ -18433,7 +18516,7 @@ function _svApply() {
   function hmBefore() {
     const sa = isSA();
     return hmHead("Prochaine session", _svDate) + hmSched(sa && ui.mode !== "none")
-      + (sa && ui.mode === "none" ? `<div class="hm-sa"><span class="h">★ Super admin · Annulation</span>${vCreate()}</div>` : "") + hmRest();
+      + (sa && ui.mode === "none" ? `<div class="hm-sa"><span class="h">★ Super admin · Annulation</span>${vCreate()}</div>` : "") + hmEv() + hmRest();
   }
   function hmAfterView(s, dd) {
     const when = ["Ce soir", "Hier soir", "Lundi soir"][dd], next = _svDate !== s.date ? _svDate : _svIso(Date.parse(s.date + "T12:00:00Z") + 7 * 86400000);
@@ -18442,10 +18525,10 @@ function _svApply() {
     if (_svDate !== s.date && _liveNow() >= tue8 && (!_svData || _svData.status === "none" || _svData.status === "cancelled")) {
       const off = _svData ? offHTML(_svData) + (isSA() ? `<button class="sv-btn sec" data-sv="reannounce">Annuler le signalement : ouvrir la session</button>` : "") : "";
       return hmHead("Prochaine session", _svDate) + (off || hmSched(isSA() && ui.mode !== "none") + (isSA() && ui.mode === "none" ? `<div class="hm-sa"><span class="h">★ Super admin · Annulation</span>${vCreate()}</div>` : ""))
-        + hmLastCard(s, true, when) + hmTiles();
+        + hmEv() + hmLastCard(s, true, when) + hmTiles();
     }
     // soirée terminée (jusqu'à mardi 8h) : plus d'actions super admin, le récap se lit dans la case du dessous
-    return hmHead("Soirée terminée", s.date) + hmLastCard(s, true, when) + hmTiles();
+    return hmHead("Soirée terminée", s.date) + hmLastCard(s, true, when) + hmEv() + hmTiles();
   }
   function body() {
     const d = _svData;
@@ -18454,9 +18537,9 @@ function _svApply() {
     const A = hmAfter(), pollOpen = d && d.status === "open" && !closed();
     if (A && !(pollOpen && _svDate !== A[0].date)) return hmAfterView(A[0], A[1]);
     if (!d) return hmBefore();
-    if (d.status === "none") return hmHead("Prochaine session", _svDate) + offHTML(d) + (isSA() ? `<button class="sv-btn sec" data-sv="reannounce">Annuler le signalement : ouvrir la session</button>` : "") + hmSep + hmRest();
+    if (d.status === "none") return hmHead("Prochaine session", _svDate) + offHTML(d) + (isSA() ? `<button class="sv-btn sec" data-sv="reannounce">Annuler le signalement : ouvrir la session</button>` : "") + hmEv() + hmSep + hmRest();
     if (d.status === "cancelled") return hmHead("Prochaine session", _svDate) + (d.reason ? offHTML(d) : `<div class="sv-off cx"><div class="big">🚫</div><h3>Session annulée</h3><p>${fdate(_svDate)}</p><div class="msg">On se revoit la semaine prochaine !</div></div>`)
-      + (isSA() ? `<button class="sv-btn sec" data-sv="reopen">Rétablir la session</button>` : "") + hmSep + hmRest();
+      + (isSA() ? `<button class="sv-btn sec" data-sv="reopen">Rétablir la session</button>` : "") + hmEv() + hmSep + hmRest();
     if (isSA() && ui.mode === "none") return hmHead("Prochaine session", _svDate) + `<div class="hm-sa"><span class="h">★ Super admin · Annulation</span>${vCreate()}</div>`;
     return closed() ? hmClosed() : hmPoll();
   }
@@ -18905,10 +18988,11 @@ function _svApply() {
           ${acc() || window._hmUpdAvail ? `<button type="button" class="bm-row${window._hmUpdAvail ? " bm-upd" : ""}" data-bm="__update">${ic("swap")}<span class="grow">Mettre à jour l'appli${window._hmUpdAvail ? ` <small class="bm-upd-t">· Nouvelle MàJ disponible !</small>` : typeof window._hmVersion === "function" && window._hmVersion() ? ` <small>· version du ${esc(window._hmVersion().replace(/\/\d{4} - /, " à "))}</small>` : ""}</span>${window._hmUpdAvail ? `<span class="bm-upd-i" aria-label="Mise à jour disponible">!</span>` : ""}${ic("chev", "chev")}</button>` : ""}
         </div>
         ${acc() && typeof _accIsSuper !== "undefined" && _accIsSuper ? `<span class="bm-lbl sa">★ Super admin</span><div class="bm-rows sa">
-          <button type="button" class="bm-row" data-bm="__compose"><span class="bm-star">★</span><span class="grow">Notifications</span>${ic("chev", "chev")}</button>
           <button type="button" class="bm-row" data-bm="__accounts"><span class="bm-star">★</span><span class="grow">Membres</span>${ic("chev", "chev")}</button>
-          <button type="button" class="bm-row" data-bm="__seasons"><span class="bm-star">★</span><span class="grow">Saisons</span>${ic("chev", "chev")}</button>
-          ${shown("footer-pronos-wrap") ? `<button type="button" class="bm-row" data-bm="__pronos"><span class="bm-star">★</span><span class="grow">${esc(($("footer-pronos-btn") || {}).textContent || "Pronos")}</span></button>` : ""}
+          <button type="button" class="bm-row" data-bm="__compose"><span class="bm-star">★</span><span class="grow">Notifications</span>${ic("chev", "chev")}</button>
+          <button type="button" class="bm-row" data-bm="__events"><span class="bm-star">★</span><span class="grow">Événements</span>${ic("chev", "chev")}</button>
+          <button type="button" class="bm-row" data-bm="__seasons"><span class="bm-star">★</span><span class="grow">Paramètres saison</span>${ic("chev", "chev")}</button>
+          ${shown("footer-pronos-wrap") ? `<button type="button" class="bm-row" data-bm="__pronos"><span class="bm-star">★</span><span class="grow">Pronostics <small>· ${esc((($("footer-pronos-btn") || {}).textContent || "").replace(/^Pronos\s*:\s*/i, "") || "réglage")}</small></span></button>` : ""}
         </div>` : ""}
         ${acc() ? `<div class="bm-rows"><button type="button" class="bm-row danger" data-bm="__logout">${ic("out")}<span class="grow">Se déconnecter</span></button></div>` : ""}
         <div class="bm-links">${shown("footer-reglement-btn") ? `<button type="button" class="bm-rules" data-bm="__rules">${ic("rules")}Règlement 26/27</button>` : ""}
@@ -18981,6 +19065,7 @@ function _svApply() {
           if (k === "__opts") { optsOpen = !optsOpen; renderMenu(); return; }
           if (k === "__pref") { const pw = window._pwa; if (pw) { pw.setPref(m.dataset.k, !pw.prefs()[m.dataset.k]); } setTimeout(renderMenu, 300); return; }
           if (k === "__seasons") { close(); render(); if (window._seasonsAdmin) window._seasonsAdmin(); return; }
+          if (k === "__events") { close(); render(); if (window._evAdmin) window._evAdmin(); return; }
           if (k === "__compose") { const pw = window._pwa; close(); render(); if (pw) pw.compose(); return; }
           if (k === "__install") { const pw = window._pwa; close(); render(); if (pw) pw.install(); return; }
           close(); render();
@@ -19181,6 +19266,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         st.view = "hist";
         inn.innerHTML = `${hdr("Notifications")}
           <div class="pc-fl">${[["all", "Tout"], ["club", "Club"], ["cib", "Ciblées"], ["test", "Tests"]].map(([k, l]) => `<button type="button" data-pc="cat" data-c="${k}" aria-pressed="${st.cat === k}">${l}</button>`).join("")}</div>
+          ${(() => { const T = (st.hist || []).filter(q => catOf(q) === "test" && q.by === p); return T.length && (st.cat === "test" || st.cat === "all") ? `<button type="button" class="pc-deltests" data-pc="delTests">🗑️ Supprimer mes tests (${T.length})</button>` : ""; })()}
           <div class="pc-cards">${L.map(q => { const R = recips(q), n = R.filter(x => readAt(x, q.id)).length, c = catOf(q);
             return `<button type="button" class="pc-card" data-pc="detail" data-id="${esc(q.id)}"><span class="pc-t"><b>${esc(q.title || "Happy Monday")}</b><small>${when(q.at)}</small></span><span class="pc-m2"><span class="pc-cat ${c}">${CATL[c]}</span><span>par ${esc(q.by || "?")}</span></span>${q.refused ? `<span class="pc-m2">refusée</span>` : !q.sentAt ? `<span class="pc-m2">⏳ en attente d'envoi</span>` : barH(n, R.length)}</button>`; }).join("") || `<p class="pc-note">Aucune notification dans cette catégorie.</p>`}</div>
           <button type="button" class="pc-fab" data-pc="new" aria-label="Nouvelle notification"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>`;
@@ -19194,7 +19280,19 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
           <div class="pc-hero"><b>${esc(q.title || "Happy Monday")}</b><p>${esc(q.body || "")}</p><div class="pc-m2"><span class="pc-cat ${c}">${CATL[c]}</span><span>par ${esc(q.by || "?")} · ${when(q.at)}</span></div><div class="pc-m2">À : ${q.to === "__all" ? `tous les abonnés (${R.length})` : esc(R.join(", "))}${q.count != null ? ` · ${q.count} appareil${q.count > 1 ? "s" : ""}` : ""}</div></div>
           ${barH(rd.length, R.length)}
           <div class="pc-sh">Lue · ${rd.length}</div><div class="pc-lst">${rd.map(n => `<div class="pc-li"><i class="r"></i><b>${esc(n)}</b><small>${tm(readAt(n, q.id))}</small></div>`).join("") || `<div class="pc-li no">Personne pour l'instant</div>`}</div>
-          <div class="pc-sh">Pas encore lue · ${no.length}</div><div class="pc-lst">${no.map(n => `<div class="pc-li no"><i></i><b>${esc(n)}</b></div>`).join("") || `<div class="pc-li no">Tout le monde l'a lue 🎉</div>`}</div>`;
+          <div class="pc-sh">Pas encore lue · ${no.length}</div><div class="pc-lst">${no.map(n => `<div class="pc-li no"><i></i><b>${esc(n)}</b></div>`).join("") || `<div class="pc-li no">Tout le monde l'a lue 🎉</div>`}</div>
+          ${c === "test" && q.by === p ? `<button type="button" class="pc-deltests" data-pc="delOne" data-id="${esc(q.id)}">🗑️ Supprimer ce test</button>` : ""}`;
+      }
+      // Confirmation dans la page (pas de boîte système)
+      const pcAsk = (title, text, ok) => new Promise(res => { const o = document.createElement("div"); o.className = "ch-cf";
+        o.innerHTML = `<div class="ch-cf-in" role="alertdialog" aria-modal="true"><b>${title}</b><p>${text}</p><div class="ch-cf-act"><button type="button" data-k="0">Annuler</button><button type="button" class="dang" data-k="1">${ok}</button></div></div>`;
+        o.addEventListener("click", ev => { const b = ev.target.closest("[data-k]"); if (b || ev.target === o) { o.remove(); res(!!(b && b.dataset.k === "1")); } });
+        document.body.appendChild(o); o.querySelector('[data-k="0"]').focus(); });
+      async function delTests(ids) {
+        if (!ids.length) return;
+        if (!await pcAsk(ids.length > 1 ? `Supprimer ${ids.length} tests ?` : "Supprimer ce test ?", "Ils disparaissent de l'historique. Les notifications déjà reçues sur ton téléphone ne changent pas.", "Supprimer")) return;
+        try { await _db.ref("pushQueue").update(Object.fromEntries(ids.map(id => [id, null]))); st.hist = (st.hist || []).filter(q => !ids.includes(q.id)); histView(); }
+        catch (er) { inn.insertAdjacentHTML("afterbegin", `<p class="pc-note">Suppression impossible : vérifie ta connexion.</p>`); }
       }
       async function loadHist() {
         inn.innerHTML = `${hdr("Notifications")}<p class="pc-note">Chargement…</p>`;
@@ -19223,6 +19321,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         if (a === "back") { formView(); return; }
         if (a === "new") { formView(); inn.scrollTop = 0; return; }
         if (a === "cat") { st.cat = t.dataset.c; histView(); return; }
+        if (a === "delTests") { delTests((st.hist || []).filter(q => catOf(q) === "test" && q.by === p).map(q => q.id)); return; }
+        if (a === "delOne") { delTests([t.dataset.id]); return; }
         if (a === "detail") { detailView(t.dataset.id); return; }
         if (a === "histBack") { keepForm(); histView(); return; }
         if (a === "hist") {
@@ -20243,6 +20343,193 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   setInterval(tick, 1500); setTimeout(tick, 300);
 })();
 
+/* ══════════ ÉVÉNEMENTS DU CLUB (repas, tournoi, sortie…) ══════════
+   events/{id} = { emo, t, d (aaaa-mm-jj), h, e, loc, map { n, a, lat, lon } | null, cal, desc, price, max, guests, by, at }
+   eventRsvp/{id}/{joueur} = { s: "Y" | "M" | "N", g (accompagnants), at } ; eventPaid/{id}/{joueur} = true (super admins).
+   Liste d'attente calculée : parmi les « Je viens », dans l'ordre des réponses, tant qu'il reste des places. */
+(function () {
+  let EV = {}, RS = {}, PAID = {}, on = false;
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+  const me = () => (typeof _accPlayer === "function" ? _accPlayer() : null);
+  const isSA = () => typeof _accIsSuper !== "undefined" && !!_accIsSuper;
+  const today = () => _parisNowIso().slice(0, 10);
+  const J = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], M = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+  const fd = d => { const x = new Date(d + "T12:00:00"); return `${J[x.getDay()]} ${x.getDate() === 1 ? "1er" : x.getDate()} ${M[x.getMonth()]}`; };
+  const fh = h => h ? h.replace(":", "h").replace(/h00$/, "h") : "";
+  const toast = t => (typeof _showToast === "function" ? _showToast(t) : null);
+  const IC = {
+    cal: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
+    pin: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>',
+    ppl: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.6-3.4 3-5.4 6-5.4s5.4 2 6 5.4"/><path d="M16 4.8a3 3 0 0 1 0 6M18 14.8c1.7.7 2.8 2.4 3 5.2"/></svg>',
+    eur: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 6.5a6.5 6.5 0 1 0 0 11M4 10.5h9M4 13.5h9"/></svg>',
+  };
+  const EMOS = ["🍽️", "🏆", "🍻", "⚽", "🎳", "🎉", "🏖️", "🎂", "🎄", "🎮"];
+  const list = () => Object.entries(EV).filter(([, e]) => e && e.t && e.d).map(([id, e]) => Object.assign({ id }, e));
+  // réponses d'un événement, avec la liste d'attente calculée
+  function state(ev) {
+    const R = Object.entries(RS[ev.id] || {}).filter(([, r]) => r && r.s).map(([p, r]) => ({ p, s: r.s, g: Math.max(0, +r.g || 0), at: r.at || 0 })).sort((a, b) => a.at - b.at);
+    let seats = 0; R.filter(r => r.s === "Y").forEach(r => { const n = 1 + (ev.guests ? r.g : 0); if (!ev.max || seats + n <= ev.max) { seats += n; r.in = true; } else r.s = "W"; });
+    return { R, seats, mine: (R.find(r => r.p === me()) || {}), full: !!ev.max && seats >= ev.max };
+  }
+  function watch() {
+    if (on || typeof _db === "undefined" || !_db || !me()) return; on = true;
+    const rr = () => { if (typeof window._svRender === "function") window._svRender(); redraw(); };
+    _db.ref("events").on("value", s => { EV = s.val() || {}; rr(); }, () => {});
+    _db.ref("eventRsvp").on("value", s => { RS = s.val() || {}; rr(); }, () => {});
+    _db.ref("eventPaid").on("value", s => { PAID = s.val() || {}; redraw(); }, () => {});
+  }
+  setInterval(watch, 2000); setTimeout(watch, 500);
+
+  // ── Accueil : événements à venir, sous le sondage. Rien s'il n'y en a pas.
+  window._evHomeHTML = () => {
+    watch(); if (!me()) return "";
+    const L = list().filter(e => e.d >= today()).sort((a, b) => (a.d + a.h).localeCompare(b.d + b.h));
+    if (!L.length) return "";
+    return `<div class="ev-home"><div class="ev-hl">Événement${L.length > 1 ? "s" : ""} du club</div>${L.map(ev => { const S = state(ev), n = S.seats, m = S.mine.s;
+      return `<button type="button" class="ev-card" data-evopen="${esc(ev.id)}"><span class="ev-em">${esc(ev.emo || "📅")}</span><span class="ev-t">${esc(ev.t)}</span>
+        <span class="ev-meta"><span>${IC.cal}${fd(ev.d)}${ev.h ? " · " + fh(ev.h) : ""}</span>${ev.loc ? `<span>${IC.pin}${esc(ev.loc)}</span>` : ""}<span>${IC.eur}${ev.price ? `${ev.price} € par personne` : "Gratuit"}</span></span>
+        <span class="ev-gauge"><u><i style="width:${Math.min(100, ev.max ? n / ev.max * 100 : n / 20 * 100)}%"></i></u><small><b>${n}</b> ${ev.max ? `inscrits sur ${ev.max} places` : `inscrit${n > 1 ? "s" : ""}`}${m ? ` · ta réponse : ${{ Y: "je viens", M: "peut-être", N: "je ne viens pas", W: "liste d'attente" }[m]}` : ""}</small></span>
+        <span class="ev-cta">${m ? "Voir l'événement ›" : "Répondre ›"}</span></button>`; }).join("")}</div>`;
+  };
+
+  // ── fenêtre (détail, liste super admin, formulaire)
+  let box = null, view = null;
+  function open(v) { view = v; if (!box) { box = document.createElement("div"); box.className = "sz-ov ev-ov"; document.body.appendChild(box); box.addEventListener("click", onClick); box.addEventListener("input", onInput); box.addEventListener("change", onChange); } redraw(); }
+  function close() { if (box) box.remove(); box = null; view = null; clearTimeout(geoT); }
+  function redraw() { if (!box || !view) return; const sc = box.querySelector(".sz-box"), top = sc ? sc.scrollTop : 0;
+    const f = document.activeElement, fid = f && box.contains(f) && f.id, pos = f && f.selectionStart;
+    box.innerHTML = `<div class="sz-box ev-box" role="dialog" aria-modal="true">${view.k === "detail" ? detail() : view.k === "admin" ? admin() : form()}</div>`;
+    const n = box.querySelector(".sz-box"); if (n) n.scrollTop = top;
+    if (fid) { const el = $(fid); if (el) { el.focus(); try { el.setSelectionRange(pos, pos); } catch (e) {} } } }
+  const head = (k, sa) => `<div class="sz-h"><span class="sz-k"${sa ? "" : ' style="color:var(--text3)"'}>${sa ? "<span>★</span> Super admin · " : ""}${k}</span><button type="button" class="sz-x" data-ev="close" aria-label="Fermer">✕</button></div>`;
+  const mapsUrl = ev => ev.map && ev.map.lat ? `https://www.google.com/maps/search/?api=1&query=${ev.map.lat},${ev.map.lon}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ev.loc || "")}`;
+  const routeUrl = ev => ev.map && ev.map.lat ? `https://www.google.com/maps/dir/?api=1&destination=${ev.map.lat},${ev.map.lon}` : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(ev.loc || "")}`;
+  const osm = m => { const d = .004; return `https://www.openstreetmap.org/export/embed.html?bbox=${m.lon - d},${m.lat - d * .6},${+m.lon + d},${+m.lat + d * .6}&layer=mapnik&marker=${m.lat},${m.lon}`; };
+  const stamp = (d, h) => d.replace(/-/g, "") + "T" + (h || "12:00").replace(":", "") + "00";
+  const endOf = ev => ev.e && ev.e > (ev.h || "") ? ev.e : (() => { const [a, b] = (ev.h || "20:00").split(":").map(Number), x = a * 60 + b + 120; return `${String(Math.min(23, Math.floor(x / 60))).padStart(2, "0")}:${String(x % 60).padStart(2, "0")}`; })();
+  const gcal = ev => `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("Happy Monday · " + ev.t)}&dates=${stamp(ev.d, ev.h)}/${stamp(ev.d, endOf(ev))}&ctz=Europe/Paris&details=${encodeURIComponent(ev.desc || "")}&location=${encodeURIComponent(ev.map && ev.map.a ? ev.map.n + ", " + ev.map.a : ev.loc || "")}`;
+  function ics(ev) {
+    const z = s => String(s || "").replace(/\\/g, "\\\\").replace(/;/g, "\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+    const txt = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Happy Monday//Evenements//FR", "BEGIN:VEVENT", `UID:${ev.id}@happy-monday`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`,
+      `DTSTART;TZID=Europe/Paris:${stamp(ev.d, ev.h)}`, `DTEND;TZID=Europe/Paris:${stamp(ev.d, endOf(ev))}`, `SUMMARY:${z("Happy Monday · " + ev.t)}`, `DESCRIPTION:${z(ev.desc)}`, `LOCATION:${z(ev.map && ev.map.a ? ev.map.n + ", " + ev.map.a : ev.loc)}`,
+      "BEGIN:VALARM", "TRIGGER:-P1D", "ACTION:DISPLAY", `DESCRIPTION:${z(ev.t)} demain`, "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([txt], { type: "text/calendar;charset=utf-8" })); a.download = `happy-monday-${ev.d}.ics`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  }
+  function detail() {
+    const ev = list().find(x => x.id === view.id); if (!ev) return head("Événement") + `<p class="ev-note">Cet événement n'existe plus.</p>`;
+    const S = state(ev), m = S.mine, past = ev.d < today(), paid = PAID[ev.id] || {};
+    const GR = [["Y", "Je viens", "var(--good, #34c77b)"], ["W", "Liste d'attente", "#00BBFF"], ["M", "Peut-être", "#00BBFF"], ["N", "Ne viennent pas", "var(--gold)"]];
+    const g = k => S.R.filter(r => r.s === k).sort((a, b) => (b.p === me()) - (a.p === me()) || a.p.localeCompare(b.p, "fr"));
+    const sum = GR.map(([k, l]) => [g(k).length, l]).filter(x => x[0]).map(([c, l]) => `${c} ${l.toLowerCase()}`).join(" · ");
+    const row = (r, c) => `<div class="ev-rrow${r.p === me() ? " me" : ""}"><span class="dot" style="background:${c}"></span><b>${esc(r.p)}${r.p === me() ? " (toi)" : ""}</b>${ev.guests && r.g ? `<span class="g">+${r.g} accompagnant${r.g > 1 ? "s" : ""}</span>` : ""}${ev.price && r.s === "Y" ? `<span class="pd${paid[r.p] ? " ok" : ""}">${paid[r.p] ? "✓ payé" : "à régler"}</span>` : ""}</div>`;
+    return head(past ? "Événement passé" : "Événement") + `<div class="ev-hero"><span class="ev-em">${esc(ev.emo || "📅")}</span><b class="ev-t">${esc(ev.t)}</b>
+        <span class="ev-meta"><span>${IC.cal}${fd(ev.d)}${ev.h ? " · " + fh(ev.h) : ""}${ev.e ? " à " + fh(ev.e) : ""}</span><span>${IC.ppl}${S.seats} inscrit${S.seats > 1 ? "s" : ""}${ev.max ? ` sur ${ev.max} places` : ""}</span></span>
+        ${ev.desc ? `<p class="ev-desc">${esc(ev.desc)}</p>` : ""}</div>
+      ${ev.map && ev.map.lat ? `<div class="ev-place"><iframe src="${osm(ev.map)}" title="Carte : ${esc(ev.map.n)}" loading="lazy"></iframe><div><b>${esc(ev.map.n)}</b><small>${esc(ev.map.a || "")}</small><span class="ev-lnks"><a href="${mapsUrl(ev)}" target="_blank" rel="noopener">Ouvrir dans Maps</a><a href="${routeUrl(ev)}" target="_blank" rel="noopener">Itinéraire</a></span></div></div>` : ev.loc ? `<div class="ev-loc">${IC.pin}${esc(ev.loc)}</div>` : ""}
+      ${ev.price ? `<div class="ev-price"><span>${ev.price} € par personne</span><span>${paid[me()] ? "✓ Payé" : m.s === "Y" ? "À régler" : ""}</span></div>` : `<div class="ev-free">Gratuit</div>`}
+      ${past ? "" : `<div class="ev-sec"><span class="ev-lbl">Ta réponse</span>
+        <div class="ev-rsvp"><button type="button" class="y" data-ev="rs" data-s="Y" aria-pressed="${m.s === "Y" || m.s === "W"}"><i>✓</i>${m.s === "W" ? "En attente" : "Je viens"}</button><button type="button" class="m" data-ev="rs" data-s="M" aria-pressed="${m.s === "M"}"><i>?</i>Peut-être</button><button type="button" class="n" data-ev="rs" data-s="N" aria-pressed="${m.s === "N"}"><i>✕</i>Je ne viens pas</button></div>
+        ${m.s === "W" ? `<p class="ev-full">Complet : tu es en liste d'attente. Tu passes dans la liste dès qu'une place se libère.</p>` : S.full && m.s !== "Y" ? `<p class="ev-full">Complet : si tu réponds « Je viens », tu passes en liste d'attente.</p>` : ""}
+        ${ev.guests && (m.s === "Y" || m.s === "W") ? `<div class="ev-step"><span>Accompagnants</span><span class="ctl"><button type="button" data-ev="g" data-d="-1" aria-label="Retirer un accompagnant">−</button><b>${m.g || 0}</b><button type="button" data-ev="g" data-d="1" aria-label="Ajouter un accompagnant">+</button></span></div>` : ""}</div>`}
+      ${ev.cal && !past ? `<div class="ev-sec"><span class="ev-lbl">Ajouter à mon calendrier</span><div class="ev-cal"><a href="${gcal(ev)}" target="_blank" rel="noopener"><span>📅</span>Google</a><button type="button" data-ev="ics"><span>🍎</span>Apple</button><button type="button" data-ev="ics"><span>📆</span>Outlook</button></div><p class="ev-note">Avec le lieu et un rappel la veille.</p></div>` : ""}
+      <details class="ev-resp"${view.open ? " open" : ""}><summary><span>Réponses<small>${sum || "Pas encore de réponse"}</small></span><span class="chev">▾</span></summary>
+        <div class="ev-rlist">${GR.map(([k, l, c]) => g(k).length ? `<div class="ev-rgrp">${l} · ${g(k).length}</div>${g(k).map(r => row(r, c)).join("")}` : "").join("") || `<p class="ev-note">Personne n'a encore répondu.</p>`}</div></details>
+      ${isSA() && ev.price && g("Y").length ? `<div class="ev-sec sa"><span class="ev-lbl" style="color:var(--sa)">★ Cagnotte · ${g("Y").filter(r => paid[r.p]).length} sur ${g("Y").length} ont payé</span><div class="ev-pay">${g("Y").map(r => `<label><input type="checkbox" data-pay="${esc(r.p)}"${paid[r.p] ? " checked" : ""}>${esc(r.p)}<em>${ev.price * (1 + (ev.guests ? r.g : 0))} €</em></label>`).join("")}</div></div>` : ""}
+      ${isSA() ? `<div class="ev-adm"><button type="button" data-ev="edit">★ Modifier</button><button type="button" class="dang" data-ev="del">Supprimer</button></div>` : ""}`;
+  }
+  function admin() {
+    const L = list(), t = today(), up = L.filter(e => e.d >= t).sort((a, b) => a.d.localeCompare(b.d)), past = L.filter(e => e.d < t).sort((a, b) => b.d.localeCompare(a.d));
+    const it = ev => { const S = state(ev); return `<button type="button" class="ev-li" data-ev="open" data-id="${esc(ev.id)}"><span class="ev-em">${esc(ev.emo || "📅")}</span><span><b>${esc(ev.t)}</b><small>${fd(ev.d)}${ev.h ? " · " + fh(ev.h) : ""} · ${S.seats} inscrit${S.seats > 1 ? "s" : ""}${ev.price ? ` · ${ev.price} €` : ""}</small></span><span class="chev">›</span></button>`; };
+    return head("Événements", true) + `<button type="button" class="ev-new" data-ev="new">＋ Créer un événement</button>
+      <div class="ev-gh">À venir · ${up.length}</div>${up.length ? up.map(it).join("") : `<p class="ev-note">Aucun événement à venir. Rien ne s'affiche sur l'Accueil.</p>`}
+      <div class="ev-gh">Passés · ${past.length}</div>${past.length ? past.map(it).join("") : `<p class="ev-note">Aucun événement passé.</p>`}`;
+  }
+  const blank = () => ({ emo: "🍽️", t: "", d: "", h: "20:00", e: "", loc: "", useMap: false, map: null, cal: true, desc: "", pay: false, price: 15, lim: false, max: 20, guests: true, sugg: null });
+  function form() {
+    const f = view.f, ok = f.t.trim() && f.d && f.h && (!f.useMap || f.map);
+    return head(view.id ? "Modifier l'événement" : "Nouvel événement", true) + `
+      <div class="ev-fld"><span class="ev-lbl">Icône</span><div class="ev-emos">${EMOS.map(x => `<button type="button" data-ev="emo" data-e="${x}" aria-pressed="${f.emo === x}">${x}</button>`).join("")}</div></div>
+      <div class="ev-fld"><label class="ev-lbl" for="ev-t">Titre</label><input class="ev-in" id="ev-t" maxlength="40" value="${esc(f.t)}" placeholder="Repas de fin de saison"></div>
+      <div class="ev-fld"><label class="ev-lbl" for="ev-d">Date</label><input class="ev-in" id="ev-d" type="date" value="${f.d}"></div>
+      <div class="ev-2"><div class="ev-fld"><label class="ev-lbl" for="ev-h">Début</label><input class="ev-in" id="ev-h" type="time" value="${f.h}"></div><div class="ev-fld"><label class="ev-lbl" for="ev-e">Fin (facultatif)</label><input class="ev-in" id="ev-e" type="time" value="${f.e}"></div></div>
+      <div class="ev-opt"><div class="ev-fld"><label class="ev-lbl" for="ev-l">Lieu</label><input class="ev-in" id="ev-l" value="${esc(f.loc)}" placeholder="${f.useMap ? "Chercher une adresse" : "Ex. : chez Boris, salle du haut…"}" autocomplete="off"></div>
+        <label class="ev-sw"><span>Afficher une carte<small>Recherche de l'adresse, lien vers Maps et itinéraire</small></span><input type="checkbox" id="ev-map"${f.useMap ? " checked" : ""}></label>
+        ${f.useMap ? f.map ? `<div class="ev-picked">${IC.pin}<span><b>${esc(f.map.n)}</b><small>${esc(f.map.a || "")}</small></span><button type="button" data-ev="unmap">Changer</button></div>`
+          : f.sugg === "…" ? `<p class="ev-note">Recherche…</p>` : Array.isArray(f.sugg) ? (f.sugg.length ? `<div class="ev-sugg">${f.sugg.map((p, k) => `<button type="button" data-ev="pick" data-k="${k}"><b>${esc(p.n)}</b><small>${esc(p.a)}</small></button>`).join("")}</div>` : `<p class="ev-note">Aucune adresse trouvée. Essaie avec la ville.</p>`) : `<p class="ev-note">Tape le nom du lieu ou l'adresse, puis choisis dans la liste.</p>` : ""}</div>
+      <div class="ev-fld"><label class="ev-lbl" for="ev-x">Description</label><textarea class="ev-in" id="ev-x" maxlength="300" rows="3" placeholder="Ce qu'il faut savoir">${esc(f.desc)}</textarea></div>
+      <div class="ev-opt">
+        <label class="ev-sw"><span>Ajout au calendrier<small>Boutons Google, Apple et Outlook sur l'événement</small></span><input type="checkbox" id="ev-cal"${f.cal ? " checked" : ""}></label>
+        <label class="ev-sw"><span>Événement payant<small>Prix par personne et suivi de qui a payé</small></span><input type="checkbox" id="ev-pay"${f.pay ? " checked" : ""}></label>
+        ${f.pay ? `<div class="ev-fld"><label class="ev-lbl" for="ev-pr">Prix par personne (€)</label><input class="ev-in" id="ev-pr" type="number" min="1" step="1" value="${f.price}"></div>` : ""}
+        <label class="ev-sw"><span>Places limitées<small>Liste d'attente automatique quand c'est complet</small></span><input type="checkbox" id="ev-lim"${f.lim ? " checked" : ""}></label>
+        ${f.lim ? `<div class="ev-fld"><label class="ev-lbl" for="ev-mx">Nombre de places</label><input class="ev-in" id="ev-mx" type="number" min="2" step="1" value="${f.max}"></div>` : ""}
+        <label class="ev-sw"><span>Accompagnants autorisés</span><input type="checkbox" id="ev-gu"${f.guests ? " checked" : ""}></label></div>
+      ${view.id ? "" : `<label class="ev-sw"><span>Prévenir tout le monde<small>Une notification à la publication, un rappel la veille</small></span><input type="checkbox" id="ev-not"${f.notify !== false ? " checked" : ""}></label>`}
+      <div class="ev-adm"><button type="button" data-ev="${view.id ? "open" : "admin"}" data-id="${esc(view.id || "")}">Annuler</button><button type="button" class="pri" data-ev="save"${ok ? "" : " disabled"}>${view.id ? "Enregistrer" : "Publier"}</button></div>`;
+  }
+  // recherche d'adresse (OpenStreetMap, gratuit, sans clé)
+  let geoT = null, geoQ = "";
+  function geo(q) {
+    clearTimeout(geoT); if (!view || !view.f) return; const f = view.f;
+    if (q.trim().length < 3) { f.sugg = null; return; }
+    geoT = setTimeout(async () => { geoQ = q; f.sugg = "…"; redraw();
+      try { const r = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&accept-language=fr&countrycodes=fr,lu,be,de&q=${encodeURIComponent(q)}`); const d = await r.json(); if (geoQ !== q || !view || view.f !== f) return;
+        f.sugg = (d || []).map(x => { const parts = String(x.display_name || "").split(", "); return { n: x.name || parts[0], a: parts.slice(x.name ? 1 : 1, 5).join(", "), lat: +(+x.lat).toFixed(6), lon: +(+x.lon).toFixed(6) }; }); }
+      catch (e) { f.sugg = []; }
+      redraw(); }, 600);
+  }
+  async function save() {
+    const f = view.f, id = view.id || _db.ref("events").push().key;
+    const ev = { emo: f.emo, t: f.t.trim().slice(0, 40), d: f.d, h: f.h, e: f.e || null, loc: f.useMap && f.map ? f.map.n : f.loc.trim().slice(0, 80) || null, map: f.useMap && f.map ? f.map : null, cal: !!f.cal, desc: f.desc.trim().slice(0, 300) || null,
+      price: f.pay ? Math.max(1, Math.round(+f.price || 0)) : 0, max: f.lim ? Math.max(2, Math.round(+f.max || 0)) : 0, guests: !!f.guests, by: (EV[id] || {}).by || me(), at: (EV[id] || {}).at || firebase.database.ServerValue.TIMESTAMP };
+    try {
+      await _db.ref("events/" + id).set(ev);
+      if (!view.id && f.notify !== false) Promise.resolve().then(() => _db.ref("pushQueue").push({ by: me(), to: "__all", title: `${ev.emo} ${ev.t}`.slice(0, 60), body: `${fd(ev.d).replace(/^./, c => c.toUpperCase())}${ev.h ? " à " + fh(ev.h) : ""}${ev.loc ? " · " + ev.loc : ""}. Réponds sur l'Accueil.`.slice(0, 200), at: firebase.database.ServerValue.TIMESTAMP })).catch(() => {});
+      toast(view.id ? "Événement modifié" : "Événement publié"); view = { k: "detail", id }; redraw();
+    } catch (e) { toast("Enregistrement impossible : vérifie ta connexion."); }
+  }
+  const ask = (title, text, okL) => new Promise(res => { const o = document.createElement("div"); o.className = "ch-cf";
+    o.innerHTML = `<div class="ch-cf-in" role="alertdialog" aria-modal="true"><b>${title}</b><p>${text}</p><div class="ch-cf-act"><button type="button" data-k="0">Annuler</button><button type="button" class="dang" data-k="1">${okL}</button></div></div>`;
+    o.addEventListener("click", ev => { const b = ev.target.closest("[data-k]"); if (b || ev.target === o) { o.remove(); res(!!(b && b.dataset.k === "1")); } });
+    document.body.appendChild(o); o.querySelector('[data-k="0"]').focus(); });
+  async function onClick(e) {
+    if (e.target === box) return close();
+    const t = e.target.closest("[data-ev], input[data-pay]"); if (!t) return; const a = t.dataset.ev, p = me();
+    if (t.dataset.pay != null) { try { await _db.ref(`eventPaid/${view.id}/${t.dataset.pay}`).set(t.checked ? true : null); } catch (er) { toast("Non enregistré : vérifie ta connexion."); } return; }
+    if (a === "close") return close();
+    if (a === "admin") { view = { k: "admin" }; return redraw(); }
+    if (a === "open") { view = { k: "detail", id: t.dataset.id, back: view && view.k === "admin" }; return redraw(); }
+    if (a === "new") { view = { k: "form", f: blank() }; return redraw(); }
+    if (a === "emo") { view.f.emo = t.dataset.e; return redraw(); }
+    if (a === "pick") { const s = view.f.sugg[+t.dataset.k]; if (s) { view.f.map = s; view.f.loc = s.n; view.f.sugg = null; } return redraw(); }
+    if (a === "unmap") { view.f.map = null; return redraw(); }
+    if (a === "save") return save();
+    if (a === "edit") { const ev = EV[view.id]; if (!ev) return; view = { k: "form", id: view.id, f: Object.assign(blank(), { emo: ev.emo, t: ev.t, d: ev.d, h: ev.h || "", e: ev.e || "", loc: ev.loc || "", useMap: !!ev.map, map: ev.map || null, cal: !!ev.cal, desc: ev.desc || "", pay: !!ev.price, price: ev.price || 15, lim: !!ev.max, max: ev.max || 20, guests: !!ev.guests }) }; return redraw(); }
+    if (a === "del") { const ev = EV[view.id]; if (!ev || !await ask("Supprimer l'événement ?", `« ${esc(ev.t)} » et toutes ses réponses disparaissent pour tout le monde.`, "Supprimer")) return;
+      try { await _db.ref().update({ [`events/${view.id}`]: null, [`eventRsvp/${view.id}`]: null, [`eventPaid/${view.id}`]: null }); toast("Événement supprimé"); view = { k: "admin" }; redraw(); } catch (er) { toast("Suppression impossible : vérifie ta connexion."); } return; }
+    if (a === "ics") { const ev = list().find(x => x.id === view.id); if (ev) ics(ev); return; }
+    if (a === "rs" && p) { const cur = (RS[view.id] || {})[p] || {}, s = t.dataset.s;
+      const val = { s, g: s === "Y" ? (cur.g || 0) : 0, at: cur.s === "Y" && s === "Y" ? cur.at : firebase.database.ServerValue.TIMESTAMP };
+      try { await _db.ref(`eventRsvp/${view.id}/${p}`).set(val); toast(s === "Y" ? "C'est noté, à bientôt !" : "Réponse enregistrée"); } catch (er) { toast("Réponse non enregistrée : vérifie ta connexion."); } return; }
+    if (a === "g" && p) { const cur = (RS[view.id] || {})[p]; if (!cur) return; const g = Math.max(0, Math.min(5, (cur.g || 0) + +t.dataset.d));
+      try { await _db.ref(`eventRsvp/${view.id}/${p}/g`).set(g); } catch (er) { toast("Non enregistré : vérifie ta connexion."); } return; }
+  }
+  function onInput(e) { if (!view || view.k !== "form") return; const t = e.target, f = view.f;
+    const k = { "ev-t": "t", "ev-d": "d", "ev-h": "h", "ev-e": "e", "ev-x": "desc", "ev-pr": "price", "ev-mx": "max" }[t.id];
+    if (k) f[k] = t.value;
+    if (t.id === "ev-l") { f.loc = t.value; f.map = null; if (f.useMap) geo(t.value); }
+    const b = box.querySelector('[data-ev="save"]'); if (b) b.disabled = !(f.t.trim() && f.d && f.h && (!f.useMap || f.map)); }
+  function onChange(e) { if (!view || view.k !== "form") return; const t = e.target, f = view.f;
+    const k = { "ev-map": "useMap", "ev-cal": "cal", "ev-pay": "pay", "ev-lim": "lim", "ev-gu": "guests", "ev-not": "notify" }[t.id];
+    if (k) { f[k] = t.checked; if (k === "useMap") { f.map = null; f.sugg = null; if (t.checked && f.loc) geo(f.loc); } redraw(); } }
+  box && box.addEventListener("toggle", () => {}, true);
+  document.addEventListener("toggle", e => { if (box && e.target.classList && e.target.classList.contains("ev-resp") && view) view.open = e.target.open; }, true);
+  // ouverture depuis l'Accueil
+  document.addEventListener("click", e => { const b = e.target.closest("[data-evopen]"); if (!b) return; watch(); open({ k: "detail", id: b.dataset.evopen }); });
+  window._evAdmin = () => { if (!isSA()) return; watch(); open({ k: "admin" }); };
+})();
+
 /* ══════════ SAISIE : « Confirmer les équipes et lancer le direct » à glisser ══════════
    On fait glisser le rond jusqu'au bout : équipes confirmées, direct lancé, écran des Matchs. */
 (function () {
@@ -20338,6 +20625,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Comment ouvrir le Vestiaire ?", "Touche 💬 en haut. Il s'ouvre par-dessus l'appli avec deux onglets : Salons et Messagerie.", "ouvrir vestiaire chat discussion"],
         ["Comment envoyer un message privé ?", "Onglet Messagerie, bouton ✎, puis choisis le joueur. Seuls vous deux voyez la conversation.", "message prive mp messagerie ecrire joueur vestiaire chat"],
         ["Comment envoyer une photo ?", "Bouton +, puis prends une photo ou choisis-en jusqu'à 10 dans la galerie.", "photo image galerie envoyer vestiaire chat message"],
+        ["Comment répondre à un événement du club ?", "Les événements à venir (repas, tournoi, sortie…) s'affichent sur l'Accueil, sous le sondage du lundi. Touche la carte puis Je viens, Peut-être ou Je ne viens pas, et indique tes accompagnants si c'est permis. Quand c'est complet, tu passes en liste d'attente. Tu peux l'ajouter à ton calendrier (Google, Apple, Outlook) et voir qui vient en ouvrant « Réponses ». Rappel la veille à 18h.", "evenement repas tournoi sortie repondre calendrier agenda liste attente"],
+        ["Comment créer un événement ?", "Menu ☰ › ★ Événements › Créer un événement. Titre, date, horaires, lieu (en texte, ou avec une carte en cochant « Afficher une carte »), description. Options : ajout au calendrier, payant (avec suivi de qui a payé), places limitées, accompagnants. Tout le monde est prévenu à la publication. On peut ensuite le modifier ou le supprimer depuis l'événement.", "creer evenement repas tournoi carte prix places cagnotte"],
         ["Comment mettre un emoji ou un GIF ?", "Dans le Vestiaire, touche le bouton 🙂 à gauche du message. Onglet Emojis : choisis une catégorie ou cherche en français (ballon, bière, rire…), tes derniers emojis sont dans Récents. Onglet GIF : cherche un GIF et touche-le pour l'envoyer tout de suite. Touche le clavier pour revenir à la saisie.", "emoji emojis gif smiley sourire animation vestiaire"],
         ["Comment créer un sondage dans le Vestiaire ?", "Dans un salon, touche le + à gauche du message › Créer un sondage. Écris la question et jusqu'à 10 réponses. Par défaut, une seule réponse par personne et les votes sont visibles ; tu peux autoriser plusieurs réponses, cacher qui a voté quoi et fixer une date limite. Touche une réponse pour voter, touche-la encore pour retirer ton vote. L'auteur (ou un super admin) peut clore le vote. Pas de sondage dans les messages privés.", "sondage vestiaire vote question reponses date limite clore plusieurs"],
         ["Comment mentionner quelqu'un ?", "Tape @ puis choisis un joueur. @tous prévient tout le monde.", "mentionner mention arobase tous vestiaire chat message"],

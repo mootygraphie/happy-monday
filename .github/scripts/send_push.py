@@ -409,6 +409,26 @@ def main(fast=False):
             mark(f"pushSent/bday/{now.year}/{p}")
     block("Anniversaires", do_bday)
 
+    # ── événements du club : rappel la veille à 18h à ceux qui viennent (ou peut-être), une fois par événement
+    def do_event_reminders():
+        if now.hour != 18:
+            return
+        tomorrow = (today + datetime.timedelta(days=1)).isoformat()
+        done = sent.get("evrem") or {}
+        evs = req("events") or {}
+        rsvp = req("eventRsvp") or {}
+        for eid, ev in evs.items():
+            if not isinstance(ev, dict) or ev.get("d") != tomorrow or done.get(eid):
+                continue
+            mark(f"pushSent/evrem/{eid}")  # noté AVANT d'envoyer : jamais deux fois
+            h = (ev.get("h") or "").replace(":", "h")
+            body = f"C'est demain{' à ' + h if h else ''}{' · ' + ev['loc'] if ev.get('loc') else ''}."
+            for p, r in (rsvp.get(eid) or {}).items():
+                if isinstance(r, dict) and r.get("s") in ("Y", "M") and p in subs:
+                    print("Rappel événement :", ev.get("t"), "→", p)
+                    auto_send(p, f"{ev.get('emo') or '📅'} {ev.get('t') or 'Événement'}"[:60], body[:200], "./", f"ev-{eid}")
+    block("Événements", do_event_reminders)
+
     # ── Le Vestiaire : nouveaux messages
     block("Vestiaire", lambda: chat_push(subs, supers, sent, now_ms, send, allowed, prefs))
     block("Messagerie", lambda: dm_push(subs, supers, sent, now_ms, send, allowed))

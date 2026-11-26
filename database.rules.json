@@ -278,6 +278,27 @@
         ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p",
         ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
       }
+    },
+    "events": {
+      ".read": "auth != null",
+      "$id": {
+        ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
+      }
+    },
+    "eventRsvp": {
+      ".read": "auth != null",
+      "$id": {
+        ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
+        "$p": {
+          ".write": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p && root.child('events/' + $id).exists()"
+        }
+      }
+    },
+    "eventPaid": {
+      ".read": "auth != null",
+      "$id": {
+        ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
+      }
     }
   }
 }
