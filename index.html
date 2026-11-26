@@ -5131,7 +5131,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
 </div>
 
 <template id="hm-news" data-date="26/11/2026" data-maj="grosse"><li>🏆 <b>Récompenses</b> : 2 nouveaux classements, Collectionneurs (vignettes collées) et Traders (total, données ou reçues)</li><li>❓ <b>Aide</b> : le guide de l'appli dans le menu ☰, avec une recherche pour poser ta question</li><li>🗓️ <b>Fiche joueur</b> : l'année d'arrivée au club</li><li>🟠 <b>Mises à jour</b> : les petites ne s'affichent plus en grand, juste un point orange sur Menu</li><li>📲 <b>Pastille de l'appli</b> : elle compte aussi les messages non lus du Vestiaire</li><li data-sa>🔒 <b>Visiteurs</b> : sans compte, on ne voit plus que les Sessions</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 26/11/2026 - 09:35</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 26/11/2026 - 09:42</footer>
 
 <script>
 
@@ -18801,8 +18801,8 @@ function _svApply() {
           ${pwaRows()}
           <button type="button" class="bm-row" data-bm="__theme" aria-pressed="${!light}">${ic("moon")}<span class="grow">Mode sombre</span><span class="sw"></span></button>
           ${acc() ? `<button type="button" class="bm-row" data-bm="__news">${ic("gift")}<span class="grow">Quoi de neuf ?</span>${ic("chev", "chev")}</button>` : ""}
-          ${acc() || window._hmUpdAvail ? `<button type="button" class="bm-row${window._hmUpdAvail ? " bm-upd" : ""}" data-bm="__update">${ic("swap")}<span class="grow">Mettre à jour l'appli${window._hmUpdAvail ? ` <small class="bm-upd-t">· Nouvelle MàJ disponible !</small>` : typeof window._hmVersion === "function" && window._hmVersion() ? ` <small>· version du ${esc(window._hmVersion().replace(/\/\d{4} - /, " à "))}</small>` : ""}</span>${window._hmUpdAvail ? `<span class="bm-upd-i" aria-label="Mise à jour disponible">!</span>` : ""}${ic("chev", "chev")}</button>` : ""}
           ${acc() ? `<button type="button" class="bm-row" data-bm="__help">${ic("help")}<span class="grow">Aide${typeof _accIsSuper !== "undefined" && _accIsSuper ? ` <small>· joueur et ★ super admin</small>` : ""}</span>${ic("chev", "chev")}</button>` : ""}
+          ${acc() || window._hmUpdAvail ? `<button type="button" class="bm-row${window._hmUpdAvail ? " bm-upd" : ""}" data-bm="__update">${ic("swap")}<span class="grow">Mettre à jour l'appli${window._hmUpdAvail ? ` <small class="bm-upd-t">· Nouvelle MàJ disponible !</small>` : typeof window._hmVersion === "function" && window._hmVersion() ? ` <small>· version du ${esc(window._hmVersion().replace(/\/\d{4} - /, " à "))}</small>` : ""}</span>${window._hmUpdAvail ? `<span class="bm-upd-i" aria-label="Mise à jour disponible">!</span>` : ""}${ic("chev", "chev")}</button>` : ""}
         </div>
         ${acc() && typeof _accIsSuper !== "undefined" && _accIsSuper ? `<span class="bm-lbl sa">★ Super admin</span><div class="bm-rows sa">
           <button type="button" class="bm-row" data-bm="__compose"><span class="bm-star">★</span><span class="grow">Notifications</span>${ic("chev", "chev")}</button>
