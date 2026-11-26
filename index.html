@@ -502,6 +502,10 @@
   .player-link:hover { color: #fff; text-decoration-color: rgba(255,255,255,.55); }
   .player-chip.player-link { text-decoration: none; padding: 5px 13px; }
   .player-chip.player-link:hover { color: inherit; opacity: .82; text-decoration: none; }
+  /* Mode visiteur (non connecte) : Sessions uniquement, aucun lien vers les fiches joueurs */
+  html.hm-visitor .player-link, html.hm-visitor .pf-open { cursor: default; pointer-events: none; text-decoration: none; }
+  html.hm-visitor .main-tab[data-tab="dashboard"], html.hm-visitor .main-tab[data-tab="joueurs"], html.hm-visitor .main-tab[data-tab="stats"],
+  html.hm-visitor .hnav-tab[data-tab="dashboard"], html.hm-visitor .hnav-tab[data-tab="joueurs"], html.hm-visitor .hnav-tab[data-tab="stats"] { display: none !important; }
 
   /* ── Fiche joueur (panneau latéral) ── */
   #player-panel-overlay {
@@ -4162,6 +4166,36 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .st2 .cf b { text-align: center; font-style: italic; font-size: 15px; } .st2 .cf b.w { color: var(--gold); } .st2 .cf b.l { color: var(--text2); }
   /* ═══ Onglet Récompenses (refonte 22/11/2026, préfixe rw-) ═══ */
   .rw { --rwv: #b892ff; }
+  /* ── Aide (FAQ des guides) ── */
+  #hm-help { position: fixed; inset: 0; z-index: 1300; background: var(--bg); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  #hm-help[hidden] { display: none; }
+  #hm-help .hh-in { max-width: 720px; margin: 0 auto; padding: calc(env(safe-area-inset-top, 0px) + 14px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 40px) max(16px, env(safe-area-inset-left, 0px)); position: relative; }
+  #hm-help .hh-x { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); right: max(16px, env(safe-area-inset-right, 0px)); width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text); font-size: 15px; cursor: pointer; }
+  #hm-help .hh-title { margin: 6px 0 12px; padding-right: 48px; font-size: clamp(28px, 7.5vw, 44px); line-height: 1.04; font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: -.015em; }
+  #hm-help .hh-search { display: flex; align-items: center; gap: 10px; padding: 0 14px; height: 50px; border-radius: 16px; background: linear-gradient(135deg, rgba(255,59,48,.16), rgba(255,59,48,.03) 70%), var(--bg2); border: 1.5px solid rgba(255,59,48,.5); margin-bottom: 6px; position: sticky; top: 0; z-index: 2; }
+  #hm-help .hh-search svg { width: 20px; height: 20px; flex: none; fill: none; stroke: var(--gold); stroke-width: 2; stroke-linecap: round; }
+  #hm-help .hh-search input { flex: 1; min-width: 0; border: 0; background: none; color: var(--text); font: inherit; font-size: 16px; outline: none; }
+  #hm-help .hh-search input::placeholder { color: var(--text3); }
+  #hm-help .hh-ch { margin-top: 22px; }
+  #hm-help .hh-chh { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  #hm-help .hh-chh b { display: block; font-size: 17px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1.1; }
+  #hm-help .hh-chh small { display: block; font-size: 12px; color: var(--text2); margin-top: 1px; }
+  #hm-help .hh-n { font-size: 13px; font-weight: 800; font-style: italic; color: var(--gold); font-variant-numeric: tabular-nums; }
+  #hm-help .hh-ico { width: 38px; height: 38px; border-radius: 11px; background: var(--bg2); border: 1px solid var(--border); display: grid; place-items: center; font-size: 19px; flex: none; }
+  #hm-help .hh-q { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; margin-top: 6px; overflow: hidden; }
+  #hm-help .hh-q button { all: unset; box-sizing: border-box; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; font-size: 14px; font-weight: 600; }
+  #hm-help .hh-q button:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+  #hm-help .hh-q .car { color: var(--text3); font-size: 18px; transition: transform .2s; flex: none; }
+  #hm-help .hh-q.open { border-color: var(--gold-border); }
+  #hm-help .hh-q.open .car { transform: rotate(90deg); color: var(--gold); }
+  #hm-help .hh-q p { margin: 0; padding: 0 14px 14px; font-size: 13.5px; line-height: 1.55; color: var(--text2); }
+  #hm-help .hh-ans { margin-top: 14px; padding: 16px; border-radius: 16px; background: var(--bg2); border: 1.5px solid var(--gold-border); box-shadow: inset 3px 0 0 var(--gold); }
+  #hm-help .hh-ans .hh-k { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+  #hm-help .hh-ans b { display: block; font-size: 16px; line-height: 1.3; }
+  #hm-help .hh-ans p { margin: 8px 0 0; font-size: 14px; line-height: 1.6; color: var(--text); }
+  #hm-help .hh-none { margin-top: 14px; padding: 18px 16px; border-radius: 16px; background: var(--bg2); border: 1px dashed var(--border2); }
+  #hm-help .hh-none p { margin: 6px 0 12px; color: var(--text2); font-size: 13.5px; line-height: 1.5; }
+  #hm-help .hh-none button { border: 0; border-radius: 10px; padding: 9px 14px; background: var(--gold); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
   .rw-eb { display: block; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); padding-top: 6px; }
   .rw-head { margin: 6px 0 4px; font-size: clamp(32px, 8vw, 52px); line-height: 1.04; font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: -.015em; }
   .rw-g { display: grid; gap: 0 28px; grid-template-columns: minmax(0, 1fr); grid-template-areas: "team" "cls" "me" "ined"; }
@@ -8613,7 +8647,7 @@ const _RW = { cat: "bdo", team: "best", data: null };
 const _RW_SUB = {
   bdo: "1 pt par but · 2 pts par passe · réguliers et occasionnels", yach: "Buts encaissés par mi-temps au but", but: "Buts marqués", pass: "Passes décisives",
   def: "Buts encaissés par match sur le terrain", gk: "% de mi-temps sans encaisser", link: "Buteur + passeur, toujours le même duo",
-  dep: "Les renforts · G/A par match", bonnet: "Absences de la saison", infirm: "Soirées manquées sur blessure",
+  dep: "Les renforts · G/A par match", vgcol: "Vignettes collées dans l'album", vgtr: "Cartes échangées · données et reçues", vggen: "Cartes données, cadeaux compris", bonnet: "Absences de la saison", infirm: "Soirées manquées sur blessure",
   plomb: "Le moins de G/A par match · min. 10 matchs", calam: "Le plus de buts encaissés par mi-temps au but", hf: "Matrice et rareté"
 };
 const _rwEsc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
@@ -8787,6 +8821,9 @@ const _RW_CATS = [
   { id: "dep", ico: "🧰", lbl: "Dépanneurs", unit: "G/A par m.", note: "Uniquement les dépanneurs (min. 3 matchs). Ils ne figurent pas dans les autres classements." },
   { id: "bonnet", ico: "🫏", lbl: "Bonnet d'âne", unit: "abs." },
   { id: "infirm", ico: "🩼", lbl: "Infirmerie", unit: "soirées" },
+  { id: "vgcol", ico: "📒", lbl: "Collectionneurs", unit: "collées", vg: true, note: "Vignettes différentes collées dans l'album de la saison. Les doubles ne comptent pas, ni l'Équipement Vintage (réservé à certains joueurs)." },
+  { id: "vgtr", ico: "🔄", lbl: "Traders", unit: "cartes", vg: true, note: "Cartes échangées (données + reçues) dans les échanges acceptés. Égalité : le plus d'échanges." },
+  { id: "vggen", ico: "🎁", lbl: "Généreux", unit: "données", vg: true, note: "Cartes données dans les échanges acceptés, cadeaux compris. Égalité : le plus de cadeaux." },
   { id: "plomb", ico: "🪨", lbl: "Ballon de Plomb", unit: "G/A par m.", adm: true, note: "Le moins de G/A par match joué, minimum 10 matchs. Occasionnels et dépanneurs exclus." },
   { id: "calam", ico: "🌪️", lbl: "Calamity James", unit: "b./mi-t.", adm: true, note: "L'inverse du Prix Yachine : le plus de buts encaissés par mi-temps au but (puis le moins de clean sheets), avec le même seuil d'éligibilité." },
   { id: "hf", ico: "🎖️", lbl: "Hauts faits", adm: true },
@@ -8818,7 +8855,9 @@ function _rwPodiumPh(rows, unit) {
 function _rwClsHTML(adm) {
   const c = _RW_CATS.find(x => x.id === _RW.cat && (adm || !x.adm)) || _RW_CATS[0];
   if (c.id === "hf") return _rwHfAdminHTML();
-  const rows = _RW.data.T[c.id] || [], W = _RW.data.T[c.id + "W"] || [];
+  const VR = c.vg ? (typeof window._vgRank === "function" ? window._vgRank() : null) : null;
+  if (c.vg && !VR) return `<div class="rw-empty">Chargement des albums…</div>`;
+  const rows = c.vg ? (VR[c.id] || []) : (_RW.data.T[c.id] || []), W = c.vg ? [] : (_RW.data.T[c.id + "W"] || []);
   const wHTML = W.length ? `<details class="rw-wait"><summary>Sous le seuil d'éligibilité · moins de ${_RW.data.T.yachMin} mi-temps au but (${W.length})</summary>${W.map(r => `<button type="button" class="rw-row${r[0] === _accPlayer() ? " me" : ""}${_rwPL(r[0])}" style="--w:0%"><em>–</em>${_rwAv(r[0], 28)}<span class="n"><b>${_rwEsc(r[0])}</b><small>${_rwEsc(r[2])}</small></span><span class="p">${r[1]}</span></button>`).join("")}</details>` : "";
   if (!rows.length) return `<div class="rw-empty">${W.length ? "Personne n'atteint encore le seuil." : "Pas encore de classement pour cette saison."}</div>${wHTML}`;
   return `<div class="rw-cat">
@@ -10997,6 +11036,7 @@ function renderSessionResults(date) {
 
 document.querySelectorAll(".main-tab").forEach(tab => {
   tab.addEventListener("click", () => {
+    if (_hmIsVisitor() && !HM_VISITOR_TABS.has(tab.dataset.tab)) return; // visiteur : Sessions uniquement
     _liveUserNavigated = true;
     // Quitter la Saisie via un autre onglet pendant une edition non enregistree doit passer
     // par le meme garde-fou que le reste (nav Saisie, deconnexion, rechargement sur #saisie).
@@ -12222,6 +12262,7 @@ function renderAchievementsGrid(achSt) {
 }
 
 function openPlayerPanel(playerName) {
+  if (_hmIsVisitor()) return; // visiteur : pas de fiche joueur
   const st = computePlayerDetailStats(playerName);
   const isJoker = JOKERS.has(playerName);
   const medals  = ["🥇","🥈","🥉"];
@@ -12271,6 +12312,7 @@ function openPlayerPanel(playerName) {
           <div class="pph-avatar" style="background:${_avatarBg};color:${_avatarFg}">${_initials}</div>
           <div class="pph-hero-name">${playerName}</div>
           ${_freqLabel ? `<span class="pph-freq-pill">${_freqLabel}</span>` : ""}
+          ${_HM_ARRIVEES[playerName] ? `<span class="pph-freq-pill pph-since">Au club depuis ${String(_HM_ARRIVEES[playerName]).replace(/[^0-9]/g, "")}</span>` : ""}
           ${_ppStatutHtml}
         </div>
       </div>
@@ -16118,6 +16160,11 @@ var _accAuthKnown = false; // vrai une fois l'état de connexion réellement con
 let _acc = { view: "login", step: 1, pseudo: "", pwd: "", pwd2: "", show: false, q: "", pick: null, ok: false, err: "", busy: false, taken: {} };
 
 function _accPlayer() { return _accUser && _accProfile ? _accProfile.player : null; }
+// Visiteur = personne connectee a aucun compte rattache a une fiche : Sessions uniquement
+// Année d'arrivée au club (non modifiable dans l'appli) : config/arrivees = { "Nom du joueur": 2019, ... }
+var _HM_ARRIVEES = {};
+const HM_VISITOR_TABS = new Set(["session", "live"]);
+function _hmIsVisitor() { return !(typeof _accUser !== "undefined" && _accUser && typeof _accProfile !== "undefined" && _accProfile); }
 function _accEmail(pseudo) { return pseudo.trim().toLowerCase() + "@" + ACC_DOMAIN; }
 
 // Le service de connexion peut être demandé avant _accInit (démarrage lent : on touche « Créer »
@@ -16137,6 +16184,7 @@ function _accInit() {
   _db.ref('config/depanneurs').on('value', snap => { const v = snap.val(); if (v) _VG_DEP = new Set(Array.isArray(v) ? v : Object.values(v)); });
   _db.ref('config/absents').on('value', snap => { _accStatusAbs = toSet(snap.val()); _accRefreshSaisieAccess(); });
   _db.ref('config/inactifs').on('value', snap => { _accStatusInact = toSet(snap.val()); _accRefreshSaisieAccess(); });
+  _db.ref('config/arrivees').on('value', snap => { _HM_ARRIVEES = snap.val() || {}; }, () => {});
   _auth.onAuthStateChanged(async u => {
     _accUser = u; _accProfile = null; _accIsSuper = false;
     if (u) {
@@ -16196,6 +16244,19 @@ function _accApplyRole() {
   if (document.getElementById("panel-stats")?.classList.contains("active") && typeof renderStats === "function" && SESSIONS.length) renderStats();
   // Onglet Vignettes et Règlement : visibles uniquement avec un compte rattaché à une fiche
   const vgOn = !!(_accUser && _accProfile);
+  document.documentElement.classList.toggle("hm-visitor", !vgOn);
+  if (!vgOn) {
+    if (typeof closePlayerPanel === "function" && document.getElementById("player-panel")?.classList.contains("open")) closePlayerPanel();
+    const act = document.querySelector(".tab-panel.active");
+    if (act && !["panel-session", "panel-live", "panel-saisie"].includes(act.id)) {
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+      document.querySelectorAll(".main-tab").forEach(t => t.classList.remove("active"));
+      document.getElementById("panel-session").classList.add("active");
+      document.querySelector('.main-tab[data-tab="session"]')?.classList.add("active");
+      history.replaceState(null, '', '#sessions');
+      const sd = document.getElementById("session-date")?.value; if (sd && typeof renderSessionResults === "function") renderSessionResults(sd);
+    }
+  }
   const rb = document.getElementById("footer-reglement-btn"); if (rb) rb.style.display = vgOn ? "" : "none";
   if (!vgOn && document.getElementById("panel-reglement")?.classList.contains("active")) {
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
@@ -17596,6 +17657,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
         }
       });
       trBadge();
+      try { const cat = (_RW_CATS.find(c => c.id === _RW.cat) || {}); const box = document.getElementById("rw-cls");
+        if (cat.vg && box && document.getElementById("panel-stats")?.classList.contains("active")) box.innerHTML = _rwClsHTML(sessionStorage.getItem("hmft_role") === "admin"); } catch (e) {}
       if (panel.classList.contains("active") && tab === "trades" && !TR.busy) {
         const sx = [...panel.querySelectorAll(".vt-scroll")].map(x => x.scrollLeft), q = document.activeElement && document.activeElement.id === "vt-q";
         renderTrades();
@@ -17841,6 +17904,32 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
       else if (t.from === watchFor && (t.status === "ok" || t.status === "ko") && now - (t.doneAt || 0) < W) events.push({ id: `trr-${t.id}`, kind: t.status, who: t.to, gift, at: t.doneAt || 0 });
       else if (t.to === watchFor && t.status === "cancel" && now - (t.doneAt || 0) < W) events.push({ id: `trc-${t.id}`, kind: "cancel", who: t.from, gift, at: t.doneAt || 0 }); });
     return { boosters, trades: pend.length, tradeKey: pend.map(t => t.id).sort().join(","), day: today, events: events.sort((a, b) => b.at - a.at) };
+  };
+  // Classements Récompenses : collectionneurs (vignettes collées), traders et généreux (échanges acceptés)
+  window._vgRank = () => {
+    if (!albumsLoaded) return null;
+    try { build(); } catch (e) {}
+    const keys = ALL.filter(c => !c.locked && c.k !== VINT_KEY).map(c => c.k), total = keys.length;
+    const fr = (a, b) => a[0].localeCompare(b[0], "fr");
+    const vgcol = [];
+    Object.entries(ALBUMS).forEach(([p, a]) => {
+      if (p === TRK || !a || typeof a !== "object") return;
+      const cards = withClub(Object.assign({}, a.cards || {}), p), past = a.pasted || {};
+      const n = keys.filter(k => cards[k] && (past[k] || CLUB_KEYS.includes(k))).length;
+      if (n > CLUB_KEYS.length) vgcol.push([p, n, `${Math.round(n / Math.max(total, 1) * 100)} % de l'album · ${n}/${total}`]);
+    });
+    vgcol.sort((a, b) => b[1] - a[1] || fr(a, b));
+    const X = {}, x = p => X[p] = X[p] || { tr: 0, don: 0, rec: 0, gift: 0 };
+    trList().filter(t => t.status === "ok").forEach(t => {
+      const f = x(t.from), d = x(t.to), gv = t.give.length, gt = t.get.length;
+      f.tr++; d.tr++; f.don += gv; f.rec += gt; d.don += gt; d.rec += gv; if (!gt) f.gift += gv;
+    });
+    const E = Object.entries(X);
+    const vgtr = E.filter(([, v]) => v.don + v.rec).map(([p, v]) => [p, v.don + v.rec, `${v.don} donnée${v.don > 1 ? "s" : ""} · ${v.rec} reçue${v.rec > 1 ? "s" : ""} · ${v.tr} échange${v.tr > 1 ? "s" : ""}`, v])
+      .sort((a, b) => b[1] - a[1] || b[3].tr - a[3].tr || fr(a, b)).map(r => r.slice(0, 3));
+    const vggen = E.filter(([, v]) => v.don).map(([p, v]) => [p, v.don, `${v.gift ? `dont ${v.gift} en cadeau · ` : ""}${v.tr} échange${v.tr > 1 ? "s" : ""}`, v])
+      .sort((a, b) => b[1] - a[1] || b[3].gift - a[3].gift || fr(a, b)).map(r => r.slice(0, 3));
+    return { vgcol, vgtr, vggen, total };
   };
   window._vgSetTab = (t, sub) => { tab = t; if (sub) Object.assign(TR, { sub, partner: null, q: "" }); };
 })();
@@ -18406,6 +18495,7 @@ function _svApply() {
 (function () {
   try {
     const IC = {
+      help: '<circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.7"/><circle cx="12" cy="17" r=".6"/>',
       sessions: '<path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="1.4"/>',
       live: '<circle cx="12" cy="12" r="2.6"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14"/>',
       trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"/><path d="M12 13v4M8.5 20.5h7M10 17h4l.5 3.5h-5z"/>',
@@ -18473,6 +18563,12 @@ function _svApply() {
     // ── barre
     function items() {
       const L = [];
+      // Visiteur : une case vide (pour centrer), Sessions ou le Direct dans l'écusson central, puis le Menu
+      if (!acc()) {
+        L.push({ k: "__sp", sp: true });
+        L.push(soiree() ? { k: "live", ic: "live", l: "En direct", center: true, sh: "r", dot: true } : { k: "session", ic: "sessions", l: "Sessions", center: true, sh: "r" });
+        L.push({ k: "__menu", ic: "menu", l: "Menu" }); return L;
+      }
       L.push(soiree() ? { k: "live", ic: "live", l: "En direct", dot: true } : { k: "session", ic: "sessions", l: "Sessions" });
       L.push({ k: "stats", ic: "trophy", l: "Récomp." });
       // Bouton central en écusson : grisé si rien d'urgent, rouge pendant le sondage (pastille = ta réponse),
@@ -18508,6 +18604,7 @@ function _svApply() {
       const nav = $("bnav"); nav.style.setProperty("--bn-n", L.length);
       nav.classList.toggle("notch", L.some(it => it.sh === "n"));
       nav.innerHTML = L.map(it => {
+        if (it.sp) return `<span aria-hidden="true"></span>`;
         const on = it.k === "__menu" ? menuOpen : (!menuOpen && cur === it.k);
         const inner = it.center ? `<span class="bn-tile">${ic(it.ic)}${it.eb ? `<span class="bn-eb e${it.eb[0]}">${it.eb[1]}</span>` : ""}</span>${it.l2 || `<span>${it.l}</span>`}` : `${ic(it.ic)}<span>${it.l}</span>`;
         return `<button type="button" class="${it.center ? `bn-c${it.red ? " saisie" : ""}${it.sh ? ` sh sh-${it.sh}` : ""}` : ""}" data-bn="${it.k}" aria-current="${on}" aria-label="${it.l}">${it.dot ? `<span class="bn-dot"></span>` : ""}${it.bd ? `<span class="bn-bd">${it.bd}</span>` : ""}${inner}</button>`;
@@ -18611,8 +18708,14 @@ function _svApply() {
       b.setAttribute("aria-expanded", String(notifOpen));
       $("dmenu-btn")?.setAttribute("aria-expanded", String(menuOpen));
       b.innerHTML = ic("bell") + (n ? `<span class="bn-bd">${n}</span>` : "");
-      // Pastille sur l'icône de l'appli installée (même nombre que la cloche)
-      try { if (acc() && navigator.setAppBadge) { (n ? navigator.setAppBadge(n) : navigator.clearAppBadge()).catch(() => {}); } } catch (e) {}
+      // Pastille sur l'icône de l'appli installée : notifications non lues de la cloche + messages non lus du Vestiaire
+      try {
+        if (navigator.setAppBadge) {
+          let tot = 0;
+          if (acc()) { const ch = typeof window._chatUnread === "function" ? window._chatUnread() : null; tot = n + (ch && ch.n ? ch.n : 0); }
+          (tot ? navigator.setAppBadge(tot) : navigator.clearAppBadge()).catch(() => {});
+        }
+      } catch (e) {}
     }
     function renderNotif() {
       const p = $("bnotif"), sc = $("bnotif-scrim");
@@ -18670,21 +18773,24 @@ function _svApply() {
       const p = me(), light = document.documentElement.classList.contains("light");
       const row = (k, i, l, sub) => `<button type="button" class="bm-row" data-bm="${k}">${ic(i)}<span class="grow">${l}${sub ? ` <small>· ${sub}</small>` : ""}</span>${ic("chev", "chev")}</button>`;
       const pages = [];
+      if (acc()) {
       if (soiree()) pages.push(row("session", "sessions", "Sessions"));
       if (soiree() && acc()) pages.push(row("vote", "next", "Prochaine session"));
       pages.push(row("dashboard", "dash", "Statistiques"));
       if (acc()) pages.push(row("joueurs", "team", "Effectif"));
       if (!soiree() && !voteOpen() && sessionStorage.getItem("hmft_role") === "admin" && canSaisie()) pages.push(row("saisie", "saisie", "Saisie", "★ super admin")); // pas de Saisie tant que le sondage est ouvert
+      }
       const prof = acc()
         ? `<button type="button" class="bm-prof" data-bm="fiche"><span class="av pf">${esc((p || "").slice(0, 2).toUpperCase())}${typeof portraitImg === "function" ? portraitImg(p, true) : ""}</span><span><b>${esc(p)}</b><small>${typeof _accIsSuper !== "undefined" && _accIsSuper ? "★ Super admin · " : ""}mon compte</small></span>${ic("chev", "chev")}</button>`
         : `<button type="button" class="bm-prof" data-bm="login"><span class="av">${ic("user")}</span><span><b>Se connecter</b><small>ou créer mon compte joueur</small></span>${ic("chev", "chev")}</button>`;
       m.innerHTML = `<div class="bm-in"><div class="bm-grab"></div>${prof}
-        <span class="bm-lbl bm-pg">Autres pages</span><div class="bm-rows bm-pg">${pages.join("")}</div>
+        ${pages.length ? `<span class="bm-lbl bm-pg">Autres pages</span><div class="bm-rows bm-pg">${pages.join("")}</div>` : ""}
         <span class="bm-lbl">Réglages</span><div class="bm-rows">
           ${pwaRows()}
           <button type="button" class="bm-row" data-bm="__theme" aria-pressed="${!light}">${ic("moon")}<span class="grow">Mode sombre</span><span class="sw"></span></button>
-          <button type="button" class="bm-row" data-bm="__news">${ic("gift")}<span class="grow">Quoi de neuf ?</span>${ic("chev", "chev")}</button>
-          <button type="button" class="bm-row" data-bm="__update">${ic("swap")}<span class="grow">Mettre à jour l'appli${typeof window._hmVersion === "function" && window._hmVersion() ? ` <small>· version du ${esc(window._hmVersion().replace(/\/\d{4} - /, " à "))}</small>` : ""}</span>${ic("chev", "chev")}</button>
+          ${acc() ? `<button type="button" class="bm-row" data-bm="__help">${ic("help")}<span class="grow">Aide${typeof _accIsSuper !== "undefined" && _accIsSuper ? ` <small>· joueur et ★ super admin</small>` : ""}</span>${ic("chev", "chev")}</button>` : ""}
+          ${acc() ? `<button type="button" class="bm-row" data-bm="__news">${ic("gift")}<span class="grow">Quoi de neuf ?</span>${ic("chev", "chev")}</button>` : ""}
+          ${acc() ? `<button type="button" class="bm-row" data-bm="__update">${ic("swap")}<span class="grow">Mettre à jour l'appli${typeof window._hmVersion === "function" && window._hmVersion() ? ` <small>· version du ${esc(window._hmVersion().replace(/\/\d{4} - /, " à "))}</small>` : ""}</span>${ic("chev", "chev")}</button>` : ""}
         </div>
         ${acc() && typeof _accIsSuper !== "undefined" && _accIsSuper ? `<span class="bm-lbl sa">★ Super admin</span><div class="bm-rows sa">
           <button type="button" class="bm-row" data-bm="__compose"><span class="bm-star">★</span><span class="grow">Notifications</span>${ic("chev", "chev")}</button>
@@ -18758,6 +18864,7 @@ function _svApply() {
           if (k === "__theme") { $("theme-btn")?.click(); renderMenu(); return; }
           if (k === "__update") { window._hmUpdate?.(); return; }
           if (k === "__news") { window._hmNews?.(); return; }
+          if (k === "__help") { close(); render(); window._hmHelp?.(); return; }
           if (k === "__push") { const pw = window._pwa; if (pw) pw.toggle().finally(() => { renderMenu(); renderBell(); }); return; }
           if (k === "__opts") { optsOpen = !optsOpen; renderMenu(); return; }
           if (k === "__pref") { const pw = window._pwa; if (pw) { pw.setPref(m.dataset.k, !pw.prefs()[m.dataset.k]); } setTimeout(renderMenu, 300); return; }
@@ -19897,6 +20004,207 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   document.addEventListener("pointerup", end); document.addEventListener("pointercancel", e => { x0 = null; reset(); sl = null; });
 })();
 
+/* ══════════ AIDE : guide joueur + guide super admin, en FAQ avec recherche ══════════
+   Contenu repris des guides PDF (novembre 2026). Chaque entrée : [question, réponse, mots-clés].
+   La recherche compare les mots de la question posée aux questions, mots-clés et réponses. */
+(function () {
+  const HELP = {
+    joueur: { t: "Guide du joueur", ch: [
+      { n: "01", ico: "📲", t: "Installer l'appli", s: "Téléphone, compte, connexion", qa: [
+        ["Comment installer l'appli sur iPhone ou iPad ?", "Dans Safari, touche le bouton Partager puis « Sur l'écran d'accueil ». Sur iPad, le bouton est en haut à droite. Ouvre ensuite l'appli depuis l'écran d'accueil et reconnecte-toi une fois.", "installer iphone ipad safari ecran accueil icone apple ios"],
+        ["Comment installer l'appli sur Android ?", "Menu ☰ › Installer l'appli, ou menu du navigateur › « Installer l'application » (Chrome, Samsung).", "installer android chrome samsung telecharger"],
+        ["Comment créer mon compte ?", "Ouvre l'appli et touche « Créer mon compte ». Choisis un pseudo et un mot de passe (6 caractères minimum), puis ta fiche dans la liste. Le message « Bienvenue ! Ton compte est prêt » confirme que c'est bon.", "creer compte inscription inscrire pseudo mot de passe fiche"],
+        ["Ma fiche n'apparaît pas dans la liste", "Les fiches déjà prises n'apparaissent plus. Si la tienne est prise par erreur, demande à un super admin de la détacher.", "fiche absente prise liste introuvable"],
+        ["Je peux changer mon pseudo ?", "Non, le pseudo n'est pas modifiable.", "changer modifier pseudo identifiant"],
+        ["J'ai oublié mon mot de passe", "Demande à un super admin. Il te donne un mot de passe provisoire (par exemple « Crampon-4821 »), actif d'ici 10 minutes.", "oublie mot de passe perdu reinitialiser mdp connexion"],
+        ["Que peut-on faire sans compte ?", "Sans compte, tu vois seulement l'onglet Sessions (les résultats des soirées). Pour le reste (récompenses, effectif, vote, Vestiaire, vignettes, notifications), il faut se connecter.", "sans compte visiteur non connecte acces"]
+      ]},
+      { n: "02", ico: "🧭", t: "Se repérer", s: "L'en-tête, le menu du bas, le menu ☰", qa: [
+        ["À quoi servent les boutons en haut ?", "💬 ouvre le Vestiaire, le chat du club, avec le nombre de messages non lus (ou « @ » si on t'a mentionné). 🔔 ouvre les notifications de l'appli, avec un compteur rouge.", "entete haut bouton cloche bulle vestiaire notifications"],
+        ["À quoi sert le menu du bas ?", "Sessions (les soirées passées, devient En direct pendant la soirée), Récomp. (les récompenses de la saison), l'écusson Accueil (prochaine session et sondage), Vignettes (ton album) et Menu ☰ pour tout le reste.", "menu bas barre onglets ecusson accueil"],
+        ["Que veut dire l'écusson rouge avec une pastille ?", "Le sondage attend ta réponse. Touche l'écusson pour répondre.", "ecusson rouge pastille sondage"],
+        ["Qu'est-ce qu'il y a dans le menu ☰ ?", "Ta carte profil (Mon compte), Statistiques, Effectif, Règlement, Notifications, Installer l'appli, Mode sombre, « Quoi de neuf ? », « Mettre à jour l'appli », Aide et Se déconnecter.", "menu hamburger trois traits reglages"],
+        ["À quoi sert le bandeau au-dessus du menu du bas ?", "Il te rappelle ce qui est urgent : sondage pas encore répondu ou score du match en cours. Touche-le pour y aller.", "bandeau rappel urgent score"],
+        ["Comment mettre à jour l'appli ?", "Quand une nouvelle version sort, l'écran « Le vestiaire a été repeint » s'affiche : touche Mettre à jour. Rien de ce que tu saisissais n'est perdu. Sur iPhone, Menu ☰ › Mettre à jour l'appli force le chargement.", "mise a jour nouvelle version actualiser repeint"],
+        ["Comment passer en mode clair ou sombre ?", "Menu ☰ › Mode sombre, avec l'interrupteur.", "theme clair sombre nuit couleur"],
+        ["Que veulent dire les couleurs ?", "Vert = OK, présent, payé. Orange = à faire, blessé. Rouge = absent, alerte. Doré = récompenses.", "couleurs vert orange rouge dore signification"]
+      ]},
+      { n: "03", ico: "🗓️", t: "Le sondage du lundi", s: "Répondre, modifier, appeler un joker", qa: [
+        ["Quand s'ouvre et se ferme le sondage ?", "Il s'ouvre le samedi à 9h (avec une notification), un rappel « plus que 3 h » part le dimanche à 18h30 si tu n'as pas répondu, et il ferme le dimanche à 21h30. La soirée commence le lundi à 19h45.", "sondage ouverture fermeture horaire quand samedi dimanche cloture"],
+        ["Comment répondre au sondage ?", "Sur l'Accueil, choisis Présent, Absent ou Blessé, puis valide.", "repondre voter vote present absent blesse"],
+        ["Je peux changer ma réponse ?", "Oui, jusqu'à la clôture, le dimanche à 21h30.", "changer modifier reponse vote"],
+        ["Comment amener un joker ou un dépanneur ?", "Depuis l'Accueil, ajoute un dépanneur : un joueur du club qui vient en plus, ou un nouveau prénom. C'est possible même après la fermeture du sondage, jusqu'au lundi. Tu peux retirer ton propre dépanneur.", "joker depanneur amener invite ami ajouter"],
+        ["À quoi sert la jauge ?", "Elle montre le nombre de présents. Le trait correspond à 10 joueurs, le minimum. À 11, c'est le nombre maudit 💀 : une équipe joue en sous-nombre.", "jauge nombre presents minimum 10 11"],
+        ["La session est annulée s'il manque du monde ?", "Jamais automatiquement. L'appli affiche « il en manque 2 » et invite à ajouter des jokers. Si un super admin annule, tout le monde reçoit une notification.", "annulee annulation manque joueurs pas assez"]
+      ]},
+      { n: "04", ico: "⚽", t: "La soirée", s: "Le direct, puis le récap", qa: [
+        ["Comment suivre la soirée en direct ?", "L'onglet Sessions devient En direct et le bandeau du bas affiche le score du match en cours. Tu y trouves le fil du match (le plus récent en haut), le classement provisoire, les buteurs et les passeurs du soir.", "direct live score match en cours suivre"],
+        ["Comment revoir un match terminé ?", "Touche le bouton œil d'un match terminé pour rouvrir son fil complet.", "revoir match termine oeil fil"],
+        ["Comment voir le récap d'une ancienne soirée ?", "Dans Sessions, change de date avec les étiquettes en haut.", "recap ancienne soiree date historique resultats"],
+        ["Qu'y a-t-il dans le récap ?", "Ta soirée (ton équipe, ton bilan, tes buts et passes, 4 stats marrantes), Les héros (MVP, buteur, passeur, gardien : touche une carte pour le top 5), l'équipe-type, le classement (touche une équipe pour sa composition) et les faits notables.", "recap contenu heros mvp equipe type faits notables"],
+        ["Quelles sont les couleurs des équipes ?", "Roses (rouge), Jaunes (vert) et Bleus (bleu).", "couleurs equipes roses jaunes bleus"]
+      ]},
+      { n: "05", ico: "🏆", t: "Stats et récompenses", s: "Ta saison en chiffres", qa: [
+        ["Où trouver les statistiques ?", "Menu ☰ › Statistiques. Choisis la période (Soirée, Mois, Saison ou Tout). L'appli compare avec la période précédente : ▲ mieux, ▼ moins bien, = pareil. Sous-onglets : Aperçu, Équipes, Joueurs et Duels.", "statistiques stats chiffres periode comparer duels"],
+        ["Comment fonctionne le Ballon d'Or ?", "1 point par but, 2 points par passe décisive. Égalité : le plus de passes, puis le plus de matchs avec un but.", "ballon d or points calcul classement"],
+        ["Comment fonctionne le Prix Yachine ?", "Il récompense le gardien qui encaisse le moins de buts par mi-temps au but. Il faut un minimum de mi-temps, qui grandit avec la saison.", "yachine gardien prix buts encaisses"],
+        ["Quels classements existent ?", "Dans Récomp., un menu déroulant passe d'un classement à l'autre : Ballon d'Or, Yachine, Buteurs, Passeurs, Défenseurs, Clean sheets, Link-up, Dépanneurs, Bonnet d'âne, Infirmerie, Collectionneurs, Traders et Généreux. Ta ligne reste visible même hors du podium.", "classements liste recompenses menu deroulant"],
+        ["Comment sont calculés Collectionneurs, Traders et Généreux ?", "Collectionneurs : vignettes différentes collées dans l'album (les doubles ne comptent pas). Traders : cartes données et reçues dans les échanges acceptés. Généreux : cartes données, cadeaux compris.", "collectionneurs traders genereux vignettes echanges classement"],
+        ["Comment ouvrir la fiche d'un joueur ?", "Touche un nom ou une photo, partout dans l'appli. Menu ☰ › Effectif affiche le trombinoscope du club.", "fiche joueur effectif trombinoscope profil"],
+        ["Que sont les hauts faits ?", "Des défis à débloquer, du bronze au diamant. Tu les trouves en bas de Récomp., avec Ta saison et Inédit.", "hauts faits badges succes debloquer"]
+      ]},
+      { n: "06", ico: "🃏", t: "Les vignettes", s: "L'album, les boosters, les échanges", qa: [
+        ["Combien de boosters je reçois ?", "Un booster par jour, jusqu'à 5 en réserve. La pastille rouge sur Vignettes indique combien t'attendent.", "boosters combien par jour pastille ouvrir"],
+        ["Quelles sont les raretés ?", "Légendaire (1er de chaque section), Épique (2e), Rare (3e et 4e), Commune (les suivants) et Mythique (cartes du Club).", "rarete legendaire epique rare commune mythique"],
+        ["Comment sont rangés les joueurs ?", "Chaque joueur est rangé dans sa meilleure spécialité de la saison : Buteurs, Passeurs, Défenseurs, Gardiens (6 joueurs chacune), Guerriers (tous les autres) et Dépanneurs. Après chaque soirée, un joueur peut changer de section ou de rareté, mais une carte collée le reste.", "sections rangement specialite change"],
+        ["Comment échanger mes doubles ?", "Vignettes › 🔄 Échanges. Propose jusqu'à 3 doubles contre 3 cartes à un autre joueur. Une proposition expire après 3 jours, et les doubles proposés sont réservés le temps de l'échange.", "echanger doubles echange proposer trade"],
+        ["Je peux offrir une carte ?", "Oui : propose une carte sans rien demander en retour. Le joueur reçoit « … t'offre une carte ! ».", "offrir cadeau donner carte"],
+        ["Que se passe-t-il en fin de saison ?", "Les cartes sont figées le 31/07. Plus de boosters ni d'échanges jusqu'à l'ouverture du nouvel album, le 01/09.", "fin saison 31 juillet nouvel album septembre"]
+      ]},
+      { n: "07", ico: "💬", t: "Le Vestiaire", s: "Salons et messages privés", qa: [
+        ["Comment ouvrir le Vestiaire ?", "Touche 💬 en haut. Il s'ouvre par-dessus l'appli avec deux onglets : Salons et Messagerie.", "ouvrir vestiaire chat discussion"],
+        ["Comment envoyer un message privé ?", "Onglet Messagerie, bouton ✎, puis choisis le joueur. Seuls vous deux voyez la conversation.", "message prive mp messagerie ecrire joueur vestiaire chat"],
+        ["Comment envoyer une photo ?", "Bouton +, puis prends une photo ou choisis-en jusqu'à 10 dans la galerie.", "photo image galerie envoyer vestiaire chat message"],
+        ["Comment mentionner quelqu'un ?", "Tape @ puis choisis un joueur. @tous prévient tout le monde.", "mentionner mention arobase tous vestiaire chat message"],
+        ["Comment répondre ou réagir à un message ?", "Glisse le message vers la droite pour répondre. Touche-le pour réagir (👍 😂 🔥 ⚽ ❤️), répondre, copier ou supprimer le tien.", "repondre reagir reaction supprimer copier vestiaire chat message"],
+        ["Que veulent dire les coches ?", "✓ gris = envoyé, ✓ vert = lu. Un point vert sur une photo = la personne est en ligne.", "coche lu envoye en ligne point vert vestiaire chat message"],
+        ["Comment couper les notifications d'un salon ?", "Dans le salon, touche la cloche. Le bouton ⋯ de la liste règle aussi le fond d'écran, les notifications (tout ou seulement les @mentions), les confirmations de lecture et le statut en ligne.", "couper notifications salon silence cloche reglages"]
+      ]},
+      { n: "08", ico: "🔔", t: "Notifications et Mon compte", s: "Être prévenu, gérer ses infos", qa: [
+        ["Comment activer les notifications ?", "Menu ☰ › Notifications › Activer. Le téléphone demande l'autorisation en 3 étapes. Sur Android, si rien ne s'affiche : cadenas de la barre d'adresse › Notifications › Autoriser.", "activer notifications push autoriser"],
+        ["Je ne reçois plus de notifications", "Rouvre l'appli une fois : ton abonnement se réenregistre tout seul. Tu peux aussi utiliser le bouton « Tester » dans Mon compte.", "plus de notifications recois pas marche pas probleme"],
+        ["Quelles notifications je reçois ?", "Toujours : ouverture du sondage, rappel « plus que 3 h », session annulée, Infos Club et récap de la soirée. Au choix : boosters, échanges reçus, Vestiaire, Messagerie, anniversaires. Maximum 4 notifications automatiques par jour.", "quelles notifications choisir liste"],
+        ["Comment savoir si ma cotisation est payée ?", "Menu ☰ › ta carte profil : « À payer » en rouge ou « Payée » en vert. Le paiement se fait hors appli et un super admin le valide.", "cotisation payer paiement payee"],
+        ["Comment modifier mes coordonnées ?", "Menu ☰ › ta carte profil, puis touche le crayon. Elles ne sont visibles que par toi et les super admins.", "coordonnees telephone email adresse modifier"],
+        ["À quoi sert le Règlement ?", "Chaque saison, pendant la période de vote, indique ton statut pour la saison suivante : actif, +1 occasionnel, dépanneur ou je quitte. Sans réponse, tu passes inactif.", "reglement statut saison prochaine vote actif occasionnel"],
+        ["J'ai une autre question", "Pose-la dans le Vestiaire, un super admin te répondra.", "autre question contact aide"]
+      ]}
+    ]},
+    sa: { t: "Guide super admin", ch: [
+      { n: "01", ico: "★", t: "Le rôle de super admin", s: "L'étoile et ce qu'elle débloque", qa: [
+        ["Qu'est-ce qu'un super admin voit en plus ?", "Une case ★ Super admin sur l'Accueil, des entrées ★ dans le menu ☰ (Membres, Notifications, Saisons), les stats Datas, les classements ★ (Ballon de Plomb, Calamity James) et les nouveautés ★ dans « Quoi de neuf ? ».", "super admin voit plus etoile droits"],
+        ["Comment nommer ou retirer un super admin ?", "Menu ☰ › Mon compte › ★ Membres, puis touche l'étoile ☆ / ★ à gauche du joueur. Tu ne peux pas te retirer l'étoile toi-même.", "nommer retirer super admin etoile droits"],
+        ["Comment changer le statut d'un joueur ?", "Menu ☰ › Effectif, appui long sur un joueur : Régulier, Occasionnel, Dépanneur ou Inactif. Un message permet d'annuler juste après. Les dépanneurs sont exclus des classements, sauf du leur.", "statut joueur regulier occasionnel depanneur inactif appui long"]
+      ]},
+      { n: "02", ico: "👥", t: "Gérer les membres", s: "Comptes, cotisations, mots de passe", qa: [
+        ["Comment lire la liste des membres ?", "Menu ☰ › Mon compte › ★ Membres. D'abord les super admins, puis les comptes créés, puis en rouge 🚫 les joueurs sans compte. Point vert = en ligne (moins de 3 min), téléphone vert = appli installée, cloche verte = notifications activées, carte verte = cotisation payée.", "membres liste lire icones en ligne"],
+        ["Comment valider une cotisation ?", "Joueur avec compte : touche sa ligne › Cotisation › marquer payée. Joueur sans compte 🚫 : touche directement la carte au bout de sa ligne. Un second toucher la remet « à payer ».", "valider cotisation payee paiement"],
+        ["Comment réinitialiser le mot de passe d'un joueur ?", "Membres › sa fiche › Réinitialiser le mot de passe (double toucher). Transmets-lui le mot de passe provisoire : il marche d'ici 10 minutes.", "reinitialiser mot de passe oublie joueur mdp"],
+        ["Un joueur veut recréer son compte", "Membres › sa fiche › Détacher la carte (double toucher). Ça délie le compte et libère le pseudo d'ici 10 minutes. Si un vieux pseudo bloque : section « Identifiants sans fiche » › Libérer le pseudo.", "recreer compte detacher carte liberer pseudo"],
+        ["Comment exporter la liste des membres ?", "Bouton ★ Export CSV dans Mon compte : coordonnées et cotisations, lisible dans Excel.", "export csv excel liste membres"]
+      ]},
+      { n: "03", ico: "🗓️", t: "Le sondage du lundi", s: "Ouvrir, annuler, corriger les présences", qa: [
+        ["Comment ouvrir le sondage plus tôt ?", "Sur l'Accueil, case ★ Super admin › Ouvrir maintenant. À garder pour les cas exceptionnels : tout le monde reçoit une notification.", "ouvrir sondage maintenant plus tot"],
+        ["Comment annuler une session ?", "Accueil › case ★ › Annuler la session. Choisis une raison (gymnase fermé, férié, vacances…) et la date de retour, puis Confirmer annulation. Tout le monde est prévenu.", "annuler session annulation gymnase ferie"],
+        ["J'ai annulé une session par erreur", "Touche « Annuler le signalement : ouvrir la session » pour tout remettre en place.", "erreur annulation retablir"],
+        ["Comment corriger les présences ?", "Modifier les votes ouvre l'écran Présences. Touche le statut d'un joueur pour le faire tourner : ❓ › ✅ › ❌ › 🤕. Pratique pour ceux qui n'ont pas de compte.", "corriger presences modifier votes"],
+        ["Faut-il annuler sous 10 présents ?", "Une session n'est jamais annulée automatiquement faute de joueurs. Sous 10 présents, c'est à toi de décider. Les jokers restent possibles pour tous jusqu'au lundi.", "moins de 10 presents annuler decider"]
+      ]},
+      { n: "04", ico: "⚽", t: "La saisie de la soirée", s: "Équipes, matchs, logistique", qa: [
+        ["Qui peut saisir la soirée ?", "Tous les joueurs connectés le lundi dès 19h45. Les super admins dès l'ouverture du sondage.", "saisie qui acces horaire"],
+        ["Quelles sont les étapes de la saisie ?", "1. Présences (reprises du sondage, ajoute les dépanneurs du soir). 2. Équipes (générer ou à la main, puis glisser « Confirmer les équipes et lancer le DIRECT »). 3. Matchs en plein écran. 4. Logistique (sac et maillots), puis Clôturer la soirée (définitif).", "etapes saisie presences equipes matchs logistique cloturer"],
+        ["Comment lancer un match ?", "Choisis les 2 couleurs, vérifie le gardien 🧤 de chaque équipe et, à 6 joueurs, qui commence sur le banc 🪑. Puis Coup d'envoi.", "lancer match coup d envoi gardien banc"],
+        ["Comment saisir un but ?", "Touche le ballon au bout de la ligne du buteur, choisis le passeur (ou « Sans passe »), puis ✓ Valider.", "saisir but buteur passeur"],
+        ["Comment saisir un fait notable, un CSC ou une blessure ?", "L'étoile à côté du joueur ajoute un fait notable (poteau, arrêt, Jingle Bells…). Toucher le nom propose CSC, Gants (il passe gardien) ou Blessé.", "fait notable csc blessure gants"],
+        ["Comment retirer un but saisi par erreur ?", "Dans le match : ⋯ Actions › Buts du match › Retirer. Match déjà fini : crayon du match › corriger › 🏁 Fin du match.", "retirer but erreur corriger"],
+        ["Les équipes sont mauvaises", "⋯ Actions › Changer les équipes, tant qu'aucun but n'est marqué.", "changer equipes mauvaises erreur"],
+        ["Comment tourne-t-on à 3 équipes ?", "Le 1er match est tiré au sort, le gagnant reste pour le 2e, puis l'appli fait tourner les équipes. Tu peux toujours modifier l'affiche proposée.", "trois equipes rotation tirage"]
+      ]},
+      { n: "05", ico: "📣", t: "Envoyer une notification", s: "Infos Club et messages ciblés", qa: [
+        ["Comment envoyer une notification ?", "Menu ☰ › ★ Notifications › bouton + rouge. Écris un titre et un message (200 caractères max), choisis les destinataires (Tous, Choisir… ou Moi (test)), vérifie l'aperçu et envoie. Ça arrive en général en moins d'une minute.", "envoyer notification push message tous infos club"],
+        ["Comment savoir qui a lu une notification ?", "L'historique liste chaque envoi avec une barre de lecture (par exemple « 19/24 · 79 % »). Touche une case pour voir qui l'a lue, et à quelle heure.", "qui a lu lecture historique"],
+        ["Les Infos Club comptent dans la limite de 4 par jour ?", "Non. Les joueurs reçoivent au maximum 4 notifications automatiques par jour, mais tes Infos Club ne comptent pas dans cette limite.", "limite 4 par jour infos club"]
+      ]},
+      { n: "06", ico: "💬", t: "Animer le Vestiaire", s: "Salons, épingles, modération", qa: [
+        ["Comment créer un salon ?", "Onglet Salons › + rouge › icône, nom, membres › Créer.", "creer salon groupe"],
+        ["Comment épingler un message ?", "Touche le message › Épingler. Il reste en haut du salon pour tous.", "epingler message"],
+        ["Comment supprimer un message ?", "Tu peux supprimer n'importe quel message d'un salon, jamais dans la Messagerie privée.", "supprimer message moderation"],
+        ["Comment gérer un salon ?", "Paramètres du salon : renommer, changer les membres, supprimer plusieurs messages, 🧹 vider ou supprimer le salon. Le Vestiaire général ne peut être ni renommé ni supprimé.", "parametres salon renommer vider membres"],
+        ["Je peux lire les messages privés ?", "Non, les messages privés restent privés.", "lire messages prives"]
+      ]},
+      { n: "07", ico: "⚙️", t: "Saisons et autres réglages", s: "Les fonctions ★ à connaître", qa: [
+        ["Comment régler les dates de saison ?", "Menu ☰ › ★ Saisons : début, fin, album des vignettes, fin des échanges et période de vote du Règlement. Après la fin officielle, l'appli propose de créer la saison suivante avec des dates pré-remplies.", "saison dates reglage album echanges"],
+        ["Que se passe-t-il à la clôture du vote du Règlement ?", "L'Effectif se met à jour tout seul : actif › Réguliers, +1 › Occasionnels, dépanneur › Dépanneurs, quitte ou sans réponse › Inactifs.", "cloture vote reglement effectif"],
+        ["Quelles sont les autres fonctions ★ ?", "Datas (une trentaine de stats pointues dans Statistiques), Récompenses ★ (Ballon de Plomb, Calamity James), l'interrupteur Pronos et les Coefficients joueurs dans le menu ☰.", "datas pronos coefficients fonctions"],
+        ["Comment supprimer une soirée ?", "Touche la croix ronde sur la date, avec confirmation.", "supprimer soiree session date"]
+      ]},
+      { n: "08", ico: "🧯", t: "Que faire si…", s: "Les procédures express", qa: [
+        ["Un joueur ne reçoit pas les notifications", "Regarde le diagnostic sur sa fiche. Fais-lui activer via Menu ☰ › Notifications, puis envoie-lui un test. S'il les recevait avant, il suffit qu'il rouvre l'appli une fois.", "joueur recoit pas notifications diagnostic"],
+        ["La mise à jour ne s'affiche pas", "Menu ☰ › Mettre à jour l'appli. Sur iPhone, ferme complètement l'appli puis rouvre-la.", "mise a jour affiche pas iphone"],
+        ["J'ai une question qui n'est pas ici", "Demande à un autre super admin dans le Vestiaire.", "autre question"]
+      ]}
+    ]}
+  };
+
+  /* ── recherche ── */
+  const norm = s => String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9@]+/g, " ").trim();
+  const STOP = new Set("je tu il on le la les un une des de du d l a au aux et ou en est c ce ca que qui quoi comment pourquoi quand ou est-ce mon ma mes ton ta tes son sa ses pour par sur dans avec pas ne plus faire fait peut peux veux dois y a t il moi me te se s n qu j".split(" "));
+  const SYN = { mdp: "mot passe", password: "mot passe", app: "appli", application: "appli", chat: "vestiaire", messages: "message", notif: "notifications", notifs: "notifications", push: "notifications", carte: "vignette", cartes: "vignettes", album: "vignettes", trade: "echange", troc: "echange", cotis: "cotisation", payer: "cotisation", vote: "sondage", voter: "sondage", match: "match", goal: "but", buts: "but", gardien: "gardien", absent: "absent", inscrire: "creer compte", inscription: "creer compte", supprime: "supprimer", efface: "supprimer", effacer: "supprimer" };
+  const toks = s => norm(s).split(" ").flatMap(w => (SYN[w] || w).split(" ")).filter(w => w.length > 1 && !STOP.has(w));
+  const INDEX = {};
+  Object.entries(HELP).forEach(([g, G]) => { INDEX[g] = []; G.ch.forEach(c => c.qa.forEach((x, i) => INDEX[g].push({ c, i, q: x[0], a: x[1], tq: toks(x[0] + " " + x[2]), ta: toks(x[1]) }))); });
+  const hit = (w, L) => L.some(t => t === w || (w.length >= 4 && (t.startsWith(w) || w.startsWith(t) && t.length >= 4)));
+  function search(g, q) {
+    const W = [...new Set(toks(q))]; if (!W.length) return [];
+    // au moins 2 mots de la question doivent correspondre (ou le seul mot, si la question n'en a qu'un)
+    const need = Math.min(2, W.length);
+    return INDEX[g].map(e => { let s = 0, m = 0; W.forEach(w => { if (hit(w, e.tq)) { s += 3; m++; } else if (hit(w, e.ta)) { s += 1; m++; } }); return { e, s: s / Math.sqrt(W.length), m }; })
+      .filter(x => x.m >= need && x.s >= 1.2).sort((a, b) => b.s - a.s).slice(0, 4).map(x => x.e);
+  }
+
+  /* ── affichage ── */
+  const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  const isSA = () => typeof _accIsSuper !== "undefined" && !!_accIsSuper;
+  let G = "joueur", Q = "", OPEN = null, el = null;
+  function body() {
+    const D = HELP[G];
+    if (Q.trim()) {
+      const R = search(G, Q);
+      if (!R.length) return `<div class="hh-none"><b>Pas de réponse dans le guide.</b><p>Essaie avec d'autres mots, ou pose ta question dans le Vestiaire : ${G === "sa" ? "un autre super admin" : "un super admin"} te répondra.</p><button type="button" data-hh="chat">Ouvrir le Vestiaire ›</button></div>`;
+      const [b, ...o] = R;
+      return `<div class="hh-ans"><span class="hh-k">${esc(b.c.ico)} ${esc(b.c.t)}</span><b>${esc(b.q)}</b><p>${esc(b.a)}</p></div>
+        ${o.length ? `<div class="cr-h2">Ça peut aussi t'aider</div>${o.map(e => qa(e.c, e.i, true)).join("")}` : ""}`;
+    }
+    return D.ch.map(c => `<section class="hh-ch"><div class="hh-chh"><span class="hh-n">${c.n}</span><span class="hh-ico">${esc(c.ico)}</span><span><b>${esc(c.t)}</b><small>${esc(c.s)}</small></span></div>
+      ${c.qa.map((x, i) => qa(c, i)).join("")}</section>`).join("");
+  }
+  function qa(c, i, flat) {
+    const id = `${G}-${c.n}-${i}`, o = OPEN === id, x = c.qa[i];
+    return `<div class="hh-q${o ? " open" : ""}${flat ? " flat" : ""}"><button type="button" data-hq="${id}" aria-expanded="${o}">${esc(x[0])}<span class="car">›</span></button>${o ? `<p>${esc(x[1])}</p>` : ""}</div>`;
+  }
+  function render(keepFocus) {
+    if (!el) return;
+    const D = HELP[G];
+    el.querySelector(".hh-top").innerHTML = `<span class="rw-eb">Aide · guides Happy Monday</span><div class="hh-title">${esc(D.t)}</div>
+      ${isSA() ? `<div class="rw-tseg" role="tablist"><button type="button" data-hg="joueur" aria-pressed="${G === "joueur"}">Guide joueur</button><button type="button" data-hg="sa" aria-pressed="${G === "sa"}">★ Super admin</button></div>` : ""}`;
+    el.querySelector(".hh-body").innerHTML = body();
+    if (!keepFocus) { const i = el.querySelector("#hh-q"); if (i) i.value = Q; }
+  }
+  function open(g) {
+    if (typeof _hmIsVisitor === "function" && _hmIsVisitor()) return;
+    G = g && HELP[g] && (g !== "sa" || isSA()) ? g : "joueur"; Q = ""; OPEN = null;
+    if (!el) {
+      el = document.createElement("div"); el.id = "hm-help"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-label", "Aide");
+      el.innerHTML = `<div class="hh-in"><button type="button" class="hh-x" data-hh="close" aria-label="Fermer">✕</button><div class="hh-top"></div>
+        <label class="hh-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="hh-q" type="search" placeholder="Pose ta question…" autocomplete="off" enterkeyhint="search"></label>
+        <div class="hh-body"></div></div>`;
+      document.body.appendChild(el);
+      el.addEventListener("input", e => { if (e.target.id === "hh-q") { Q = e.target.value; OPEN = null; render(true); } });
+      el.addEventListener("click", e => {
+        const t = e.target.closest("[data-hh],[data-hg],[data-hq]"); if (!t) return;
+        if (t.dataset.hh === "close") return close();
+        if (t.dataset.hh === "chat") { close(); document.getElementById("chat-btn")?.click(); return; }
+        if (t.dataset.hg) { G = t.dataset.hg; OPEN = null; render(true); el.querySelector(".hh-body").scrollTop = 0; return; }
+        if (t.dataset.hq) { OPEN = OPEN === t.dataset.hq ? null : t.dataset.hq; render(true); }
+      });
+      document.addEventListener("keydown", e => { if (e.key === "Escape" && el && !el.hidden) close(); });
+    }
+    el.hidden = false; document.documentElement.classList.add("bn-lock"); render();
+  }
+  function close() { if (el) el.hidden = true; document.documentElement.classList.remove("bn-lock"); }
+  window._hmHelp = open;
+})();
+
 /* ══════════ MISE À JOUR : forcer le chargement de la dernière version ══════════
    L'appli installée (surtout sur iPhone/iPad) n'a pas de bouton « actualiser » et garde parfois
    l'ancienne page en cache. On compare la date du pied de page avec celle du site en ligne :
@@ -19985,7 +20293,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     } else {
       history.replaceState(null, '', '#session');
     }
-  } else if ((_hash === "vignettes" || _hash === "reglement" || _hash === "vote") && !(_accUser && _accProfile)) {
+  } else if ((_hash === "vignettes" || _hash === "reglement" || _hash === "vote" || _hash === "joueurs" || _hash === "stats" || _hash.indexOf("dashboard") === 0) && !(_accUser && _accProfile)) {
     history.replaceState(null, '', '#sessions');
   } else if (_hash === "joueurs" || _hash === "sessions" || _hash === "stats" || _hash === "reglement" || _hash === "vignettes" || _hash === "vote") {
     const _tabKey = _hash === "sessions" ? "session" : _hash;
