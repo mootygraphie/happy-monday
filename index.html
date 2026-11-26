@@ -4166,6 +4166,9 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .st2 .cf b { text-align: center; font-style: italic; font-size: 15px; } .st2 .cf b.w { color: var(--gold); } .st2 .cf b.l { color: var(--text2); }
   /* ═══ Onglet Récompenses (refonte 22/11/2026, préfixe rw-) ═══ */
   .rw { --rwv: #b892ff; }
+  #bnav .bn-upd { position: absolute; top: 9px; right: calc(50% - 17px); width: 10px; height: 10px; border-radius: 50%; background: #ff9500; box-shadow: 0 0 0 2px #fff; }
+  .bm-row .bm-upd-t { color: #ff9500 !important; font-weight: 700; }
+  .bm-row .bm-upd-i { flex: none; width: 20px; height: 20px; border-radius: 50%; background: #ff9500; color: #fff; font-size: 13px; font-weight: 900; display: grid; place-items: center; margin-right: 2px; }
   /* ── Aide (FAQ des guides) ── */
   #hm-help { position: fixed; inset: 0; z-index: 1300; background: var(--bg); overflow-y: auto; -webkit-overflow-scrolling: touch; }
   #hm-help[hidden] { display: none; }
@@ -4187,6 +4190,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #hm-help .hh-q button:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
   #hm-help .hh-q .car { color: var(--text3); font-size: 18px; transition: transform .2s; flex: none; }
   #hm-help .hh-q.open { border-color: var(--gold-border); }
+  #hm-help .hh-star { color: var(--sa); }
   #hm-help .hh-q.open .car { transform: rotate(90deg); color: var(--gold); }
   #hm-help .hh-q p { margin: 0; padding: 0 14px 14px; font-size: 13.5px; line-height: 1.55; color: var(--text2); }
   #hm-help .hh-ans { margin-top: 14px; padding: 16px; border-radius: 16px; background: var(--bg2); border: 1.5px solid var(--gold-border); box-shadow: inset 3px 0 0 var(--gold); }
@@ -4253,6 +4257,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .rw-pc.p1 .pim { animation-delay: .25s; } .rw-pc.p3 .pim { animation-delay: .35s; }
   .rw-pc .pim .cr-ph, .rw-lead .pic .cr-ph, .rw-split .cr-ph { position: absolute; inset: 0; width: 100%; height: 100%; }
   .rw-pc .nm { font-size: 12.5px; font-weight: 700; text-align: center; padding: 5px 2px; background: color-mix(in srgb, var(--mc) 18%, var(--bg2)); border-left: 2px solid var(--mc); border-right: 2px solid var(--mc); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rw-trseg { margin: 12px 0 0; }
   .rw-pc.ex .nm::after { content: " ex æquo"; font-weight: 500; color: var(--text2); font-size: 10px; }
   .rw-pc .stp { display: flex; flex-direction: column; align-items: center; padding-top: 8px; border-radius: 0 0 10px 10px; background: linear-gradient(180deg, color-mix(in srgb, var(--mc) 45%, var(--bg3)), var(--bg3)); border: 2px solid var(--mc); border-top: 0; transform-origin: bottom; animation: rwgrow .6s cubic-bezier(.2,.9,.3,1) both; }
   .rw-pc .stp b { font-size: 26px; font-weight: 800; font-style: italic; line-height: 1; }
@@ -5125,8 +5130,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="25/11/2026"><li>🏛️ <b>Vignettes</b> : le Panthéon, 5 légendes du club en cartes mythiques, avec leur propre révélation</li><li>💬 <b>Vestiaire</b> : vois qui a réagi à un message</li><li>🔔 <b>Cloche</b> : les échanges, datés, et les 10 dernières seulement</li><li>🔒 <b>Notifications</b> : se réparent toutes seules, bouton « Tester » dans Mon compte</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 25/11/2026 - 15:35</footer>
+<template id="hm-news" data-date="26/11/2026" data-maj="grosse"><li>🏆 <b>Récompenses</b> : 2 nouveaux classements, Collectionneurs (vignettes collées) et Traders (total, données ou reçues)</li><li>❓ <b>Aide</b> : le guide de l'appli dans le menu ☰, avec une recherche pour poser ta question</li><li>🗓️ <b>Fiche joueur</b> : l'année d'arrivée au club</li><li>🟠 <b>Mises à jour</b> : les petites ne s'affichent plus en grand, juste un point orange sur Menu</li><li>📲 <b>Pastille de l'appli</b> : elle compte aussi les messages non lus du Vestiaire</li><li data-sa>🔒 <b>Visiteurs</b> : sans compte, on ne voit plus que les Sessions</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 26/11/2026 - 09:35</footer>
 
 <script>
 
@@ -8643,11 +8648,11 @@ function renderRivBody(pA, pB, period) {
    déroulant (podium portraits sur ordinateur, « le leader » sur téléphone), « Ta saison »,
    « Inédit », volet Hauts faits. Les dépanneurs sont exclus des classements, sauf le leur.
 ══════════════════════════════════════════════════════════ */
-const _RW = { cat: "bdo", team: "best", data: null };
+const _RW = { cat: "bdo", team: "best", data: null, tr: "tot", rk: null };
 const _RW_SUB = {
   bdo: "1 pt par but · 2 pts par passe · réguliers et occasionnels", yach: "Buts encaissés par mi-temps au but", but: "Buts marqués", pass: "Passes décisives",
   def: "Buts encaissés par match sur le terrain", gk: "% de mi-temps sans encaisser", link: "Buteur + passeur, toujours le même duo",
-  dep: "Les renforts · G/A par match", vgcol: "Vignettes collées dans l'album", vgtr: "Cartes échangées · données et reçues", vggen: "Cartes données, cadeaux compris", bonnet: "Absences de la saison", infirm: "Soirées manquées sur blessure",
+  dep: "Les renforts · G/A par match", vgcol: "Vignettes collées dans l'album", vgtr: "Cartes échangées · total, données ou reçues", bonnet: "Absences de la saison", infirm: "Soirées manquées sur blessure",
   plomb: "Le moins de G/A par match · min. 10 matchs", calam: "Le plus de buts encaissés par mi-temps au but", hf: "Matrice et rareté"
 };
 const _rwEsc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
@@ -8822,8 +8827,7 @@ const _RW_CATS = [
   { id: "bonnet", ico: "🫏", lbl: "Bonnet d'âne", unit: "abs." },
   { id: "infirm", ico: "🩼", lbl: "Infirmerie", unit: "soirées" },
   { id: "vgcol", ico: "📒", lbl: "Collectionneurs", unit: "collées", vg: true, note: "Vignettes différentes collées dans l'album de la saison. Les doubles ne comptent pas, ni l'Équipement Vintage (réservé à certains joueurs)." },
-  { id: "vgtr", ico: "🔄", lbl: "Traders", unit: "cartes", vg: true, note: "Cartes échangées (données + reçues) dans les échanges acceptés. Égalité : le plus d'échanges." },
-  { id: "vggen", ico: "🎁", lbl: "Généreux", unit: "données", vg: true, note: "Cartes données dans les échanges acceptés, cadeaux compris. Égalité : le plus de cadeaux." },
+  { id: "vgtr", ico: "🔄", lbl: "Traders", unit: "cartes", vg: true, note: "Cartes des échanges acceptés. Total = données + reçues. Les cadeaux comptent comme des cartes données. Égalité : le plus d'échanges." },
   { id: "plomb", ico: "🪨", lbl: "Ballon de Plomb", unit: "G/A par m.", adm: true, note: "Le moins de G/A par match joué, minimum 10 matchs. Occasionnels et dépanneurs exclus." },
   { id: "calam", ico: "🌪️", lbl: "Calamity James", unit: "b./mi-t.", adm: true, note: "L'inverse du Prix Yachine : le plus de buts encaissés par mi-temps au but (puis le moins de clean sheets), avec le même seuil d'éligibilité." },
   { id: "hf", ico: "🎖️", lbl: "Hauts faits", adm: true },
@@ -8836,33 +8840,41 @@ function _rwDDHTML(adm) {
 function _rwBoard(rows, start, id, adm) {
   if (!rows.length) return "";
   const max = Math.max(...rows.map(r => Math.abs(_rwNum(r[1]))), 0.0001);
+  const RK = _RW.rk && _RW.rk.length === rows.length + start ? _RW.rk : null; // rangs avec égalités (classement entier)
   const row = (r, i) => { const k = i + start, nm = String(r[0]), two = nm.includes(" & ") ? nm.split(" & ") : null;
     const mine = r[0] === _accPlayer() && i >= 5; // hors du top affiché : ma ligne reste visible, après « … »
     return `${mine ? `<div class="rw-gap" aria-hidden="true">…</div>` : ""}<button type="button" class="rw-row${i >= 5 ? " rw-more" : ""}${r[0] === _accPlayer() ? " me" : ""}${_rwPL(nm)}" style="--w:${Math.abs(_rwNum(r[1])) / max * 100}%">
-      <em>${k + 1}</em>${two ? `<span class="rw-pile">${two.map(q => _rwAv(q, 24)).join("")}</span>` : _rwAv(nm, 28)}<span class="n"><b>${_rwEsc(_rwShort(nm))}</b>${r[2] ? `<small>${_rwEsc(r[2])}</small>` : ""}</span><span class="p">${r[1]}</span></button>`; };
+      <em>${RK ? RK[k] : k + 1}</em>${two ? `<span class="rw-pile">${two.map(q => _rwAv(q, 24)).join("")}</span>` : _rwAv(nm, 28)}<span class="n"><b>${_rwEsc(_rwShort(nm))}</b>${r[2] ? `<small>${_rwEsc(r[2])}</small>` : ""}</span><span class="p">${r[1]}</span></button>`; };
   return `<div class="rw-board${adm ? " adm" : ""}" data-rwlist="${id}">${rows.map(row).join("")}</div>${rows.length > 5 ? `<button type="button" class="rw-all" data-rwmore="${id}" data-n="${rows.length + start}">Voir le classement complet (${rows.length + start}) ›</button>` : ""}`;
 }
+// Rangs avec égalités : même valeur = même rang (1, 2, 2, 4…). Calculés sur le classement entier.
+function _rwRanks(rows) { const R = []; rows.forEach((r, i) => { R.push(i && String(r[1]) === String(rows[i - 1][1]) ? R[i - 1] : i + 1); }); return R; }
+const _rwExq = (R, i) => R[i] != null && (R[i - 1] === R[i] || R[i + 1] === R[i]);
 function _rwPodiumDesk(rows) {
-  const ex = rows[1] && String(rows[0][1]) === String(rows[1][1]);
-  const cell = (r, p) => r ? `<div class="rw-pc p${p}${p <= 2 && ex ? " ex" : ""}"><div class="pim${_rwPL(r[0])}">${_rwFace(r[0])}</div><div class="nm">${_rwEsc(_rwShort(r[0]))}</div><div class="stp"><b>${r[1]}</b><small>${_rwEsc(r[2] || "")}</small><em>${p}</em></div></div>` : "<div></div>";
+  const R = _rwRanks(rows), idx = { 1: 0, 2: 1, 3: 2 };
+  const cell = (r, p) => r ? `<div class="rw-pc p${p}${_rwExq(R, idx[p]) ? " ex" : ""}"><div class="pim${_rwPL(r[0])}">${_rwFace(r[0])}</div><div class="nm">${_rwEsc(_rwShort(r[0]))}</div><div class="stp"><b>${r[1]}</b><small>${_rwEsc(r[2] || "")}</small><em>${R[idx[p]]}</em></div></div>` : "<div></div>";
   return `<div class="rw-pod3">${cell(rows[1], 2)}${cell(rows[0], 1)}${cell(rows[2], 3)}</div>`;
 }
 function _rwPodiumPh(rows, unit) {
-  const [a, b, c] = rows, ex = b && String(a[1]) === String(b[1]);
+  const [a, b, c] = rows, R = _rwRanks(rows), ex = _rwExq(R, 0);
   return `<div class="rw-lead${_rwPL(a[0])}"><div class="pic">${_rwFace(a[0])}</div><div class="tx"><span class="rk">${ex ? "1er ex æquo" : "1er"}</span><span class="nm">${_rwEsc(_rwShort(a[0]))}</span><span class="v">${a[1]}<small>${_rwEsc(unit || "")}</small></span>${a[2] ? `<span class="dt">${_rwEsc(a[2])}</span>` : ""}</div></div>
-    <div class="rw-two">${[[b, 2], [c, 3]].map(([r, p]) => r ? `<div class="p${p}${_rwPL(r[0])}">${_rwAv(String(r[0]).split(" & ")[0], 44)}<b>${_rwEsc(_rwShort(r[0]))}</b><span class="v"><em>${p}e</em>${r[1]}</span></div>` : "").join("")}</div>`;
+    <div class="rw-two">${[[b, 2, 1], [c, 3, 2]].map(([r, p, i]) => r ? `<div class="p${p}${_rwPL(r[0])}">${_rwAv(String(r[0]).split(" & ")[0], 44)}<b>${_rwEsc(_rwShort(r[0]))}</b><span class="v"><em>${R[i] === 1 ? "1er" : R[i] + "e"}${_rwExq(R, i) ? " ex" : ""}</em>${r[1]}</span></div>` : "").join("")}</div>`;
 }
 function _rwClsHTML(adm) {
   const c = _RW_CATS.find(x => x.id === _RW.cat && (adm || !x.adm)) || _RW_CATS[0];
   if (c.id === "hf") return _rwHfAdminHTML();
   const VR = c.vg ? (typeof window._vgRank === "function" ? window._vgRank() : null) : null;
   if (c.vg && !VR) return `<div class="rw-empty">Chargement des albums…</div>`;
-  const rows = c.vg ? (VR[c.id] || []) : (_RW.data.T[c.id] || []), W = c.vg ? [] : (_RW.data.T[c.id + "W"] || []);
+  // Traders : filtre Total / Données / Reçues
+  const trSeg = c.id === "vgtr" ? `<div class="rw-tseg rw-trseg" role="tablist">${[["tot", "Total"], ["don", "Données"], ["rec", "Reçues"]].map(([k, l]) => `<button type="button" data-rwtr="${k}" aria-pressed="${_RW.tr === k}">${l}</button>`).join("")}</div>` : "";
+  const rows = c.vg ? (VR[c.id === "vgtr" ? "vgtr_" + _RW.tr : c.id] || []) : (_RW.data.T[c.id] || []), W = c.vg ? [] : (_RW.data.T[c.id + "W"] || []);
+  _RW.rk = _rwRanks(rows);
   const wHTML = W.length ? `<details class="rw-wait"><summary>Sous le seuil d'éligibilité · moins de ${_RW.data.T.yachMin} mi-temps au but (${W.length})</summary>${W.map(r => `<button type="button" class="rw-row${r[0] === _accPlayer() ? " me" : ""}${_rwPL(r[0])}" style="--w:0%"><em>–</em>${_rwAv(r[0], 28)}<span class="n"><b>${_rwEsc(r[0])}</b><small>${_rwEsc(r[2])}</small></span><span class="p">${r[1]}</span></button>`).join("")}</details>` : "";
-  if (!rows.length) return `<div class="rw-empty">${W.length ? "Personne n'atteint encore le seuil." : "Pas encore de classement pour cette saison."}</div>${wHTML}`;
-  return `<div class="rw-cat">
+  if (!rows.length) return `${trSeg}<div class="rw-empty">${W.length ? "Personne n'atteint encore le seuil." : "Pas encore de classement pour cette saison."}</div>${wHTML}`;
+  const unit = c.id === "vgtr" ? ({ tot: "cartes", don: "données", rec: "reçues" })[_RW.tr] : c.unit;
+  return `${trSeg}<div class="rw-cat">
       <div class="rw-pod-d">${_rwPodiumDesk(rows)}</div>
-      <div class="rw-pod-m">${_rwPodiumPh(rows, c.unit)}</div>
+      <div class="rw-pod-m">${_rwPodiumPh(rows, unit)}</div>
       <div class="rw-list">${_rwBoard(rows.slice(3), 3, c.id, c.adm)}${wHTML}</div>
     </div>${c.note ? `<p class="rw-note">${c.note}</p>` : ""}`;
 }
@@ -8968,8 +8980,9 @@ function renderStats() {
 }
 function _rwClick(e) {
   const c = document.getElementById("panel-stats"), isAdmin = sessionStorage.getItem("hmft_role") === "admin";
-  const t = e.target.closest("[data-rwdd],[data-rwcat],[data-rwteam],[data-rwmore],[data-rwhfall],[data-rwmx],[data-rwach]");
+  const t = e.target.closest("[data-rwdd],[data-rwcat],[data-rwteam],[data-rwmore],[data-rwhfall],[data-rwmx],[data-rwach],[data-rwtr]");
   if (!t) return;
+  if (t.dataset.rwtr) { _RW.tr = t.dataset.rwtr; c.querySelector("#rw-cls").innerHTML = _rwClsHTML(isAdmin); return; }
   if (t.hasAttribute("data-rwdd")) { const dd = t.closest(".rw-dd"), o = !dd.classList.contains("open"); dd.classList.toggle("open", o); t.setAttribute("aria-expanded", String(o)); return; }
   if (t.dataset.rwcat) { _RW.cat = t.dataset.rwcat; c.querySelector("#rw-dd-wrap").innerHTML = _rwDDHTML(isAdmin); c.querySelector("#rw-cls").innerHTML = _rwClsHTML(isAdmin); return; }
   if (t.dataset.rwteam) { _RW.team = t.dataset.rwteam; c.querySelector("#rw-team").innerHTML = _rwTeamHTML(); return; }
@@ -17925,11 +17938,10 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
       f.tr++; d.tr++; f.don += gv; f.rec += gt; d.don += gt; d.rec += gv; if (!gt) f.gift += gv;
     });
     const E = Object.entries(X);
-    const vgtr = E.filter(([, v]) => v.don + v.rec).map(([p, v]) => [p, v.don + v.rec, `${v.don} donnée${v.don > 1 ? "s" : ""} · ${v.rec} reçue${v.rec > 1 ? "s" : ""} · ${v.tr} échange${v.tr > 1 ? "s" : ""}`, v])
-      .sort((a, b) => b[1] - a[1] || b[3].tr - a[3].tr || fr(a, b)).map(r => r.slice(0, 3));
-    const vggen = E.filter(([, v]) => v.don).map(([p, v]) => [p, v.don, `${v.gift ? `dont ${v.gift} en cadeau · ` : ""}${v.tr} échange${v.tr > 1 ? "s" : ""}`, v])
-      .sort((a, b) => b[1] - a[1] || b[3].gift - a[3].gift || fr(a, b)).map(r => r.slice(0, 3));
-    return { vgcol, vgtr, vggen, total };
+    const pl = (n, w) => `${n} ${w}${n > 1 ? "s" : ""}`;
+    const det = v => `${pl(v.don, "donnée")}${v.gift ? ` (dont ${v.gift} en cadeau)` : ""} · ${pl(v.rec, "reçue")} · ${pl(v.tr, "échange")}`;
+    const list = f => E.filter(([, v]) => f(v)).map(([p, v]) => [p, f(v), det(v), v]).sort((a, b) => b[1] - a[1] || b[3].tr - a[3].tr || fr(a, b)).map(r => r.slice(0, 3));
+    return { vgcol, vgtr_tot: list(v => v.don + v.rec), vgtr_don: list(v => v.don), vgtr_rec: list(v => v.rec), total };
   };
   window._vgSetTab = (t, sub) => { tab = t; if (sub) Object.assign(TR, { sub, partner: null, q: "" }); };
 })();
@@ -18567,7 +18579,7 @@ function _svApply() {
       if (!acc()) {
         L.push({ k: "__sp", sp: true });
         L.push(soiree() ? { k: "live", ic: "live", l: "En direct", center: true, sh: "r", dot: true } : { k: "session", ic: "sessions", l: "Sessions", center: true, sh: "r" });
-        L.push({ k: "__menu", ic: "menu", l: "Menu" }); return L;
+        L.push({ k: "__menu", ic: "menu", l: "Menu", upd: !!window._hmUpdAvail }); return L;
       }
       L.push(soiree() ? { k: "live", ic: "live", l: "En direct", dot: true } : { k: "session", ic: "sessions", l: "Sessions" });
       L.push({ k: "stats", ic: "trophy", l: "Récomp." });
@@ -18589,7 +18601,7 @@ function _svApply() {
         L.push({ k: "vote", ic: poll ? "next" : "home", l: poll ? "Sondage" : "Accueil", center: true, sh: op ? "r" : "g", eb: op ? (v ? { P: ["P", "✓"], A: ["A", "✕"], B: ["B", "✚"] }[v] : ["N", "!"]) : null }); }
       if (acc()) { const v = vg(); L.push({ k: "vignettes", ic: "cards", l: "Vignettes", bd: v && v.boosters ? v.boosters : 0 }); }
       else L.push({ k: "joueurs", ic: "team", l: "Effectif" });
-      L.push({ k: "__menu", ic: "menu", l: "Menu" });
+      L.push({ k: "__menu", ic: "menu", l: "Menu", upd: !!window._hmUpdAvail });
       return L;
     }
     let reglVoted = false, reglRef = null, reglKey = "";
@@ -18607,7 +18619,7 @@ function _svApply() {
         if (it.sp) return `<span aria-hidden="true"></span>`;
         const on = it.k === "__menu" ? menuOpen : (!menuOpen && cur === it.k);
         const inner = it.center ? `<span class="bn-tile">${ic(it.ic)}${it.eb ? `<span class="bn-eb e${it.eb[0]}">${it.eb[1]}</span>` : ""}</span>${it.l2 || `<span>${it.l}</span>`}` : `${ic(it.ic)}<span>${it.l}</span>`;
-        return `<button type="button" class="${it.center ? `bn-c${it.red ? " saisie" : ""}${it.sh ? ` sh sh-${it.sh}` : ""}` : ""}" data-bn="${it.k}" aria-current="${on}" aria-label="${it.l}">${it.dot ? `<span class="bn-dot"></span>` : ""}${it.bd ? `<span class="bn-bd">${it.bd}</span>` : ""}${inner}</button>`;
+        return `<button type="button" class="${it.center ? `bn-c${it.red ? " saisie" : ""}${it.sh ? ` sh sh-${it.sh}` : ""}` : ""}" data-bn="${it.k}" aria-current="${on}" aria-label="${it.l}">${it.dot ? `<span class="bn-dot"></span>` : ""}${it.upd ? `<span class="bn-upd" aria-label="Mise à jour disponible"></span>` : ""}${it.bd ? `<span class="bn-bd">${it.bd}</span>` : ""}${inner}</button>`;
       }).join("");
     }
     // ── bandeau : score en direct pendant la soirée, sinon ta réponse au vote
@@ -18788,9 +18800,9 @@ function _svApply() {
         <span class="bm-lbl">Réglages</span><div class="bm-rows">
           ${pwaRows()}
           <button type="button" class="bm-row" data-bm="__theme" aria-pressed="${!light}">${ic("moon")}<span class="grow">Mode sombre</span><span class="sw"></span></button>
-          ${acc() ? `<button type="button" class="bm-row" data-bm="__help">${ic("help")}<span class="grow">Aide${typeof _accIsSuper !== "undefined" && _accIsSuper ? ` <small>· joueur et ★ super admin</small>` : ""}</span>${ic("chev", "chev")}</button>` : ""}
           ${acc() ? `<button type="button" class="bm-row" data-bm="__news">${ic("gift")}<span class="grow">Quoi de neuf ?</span>${ic("chev", "chev")}</button>` : ""}
-          ${acc() ? `<button type="button" class="bm-row" data-bm="__update">${ic("swap")}<span class="grow">Mettre à jour l'appli${typeof window._hmVersion === "function" && window._hmVersion() ? ` <small>· version du ${esc(window._hmVersion().replace(/\/\d{4} - /, " à "))}</small>` : ""}</span>${ic("chev", "chev")}</button>` : ""}
+          ${acc() || window._hmUpdAvail ? `<button type="button" class="bm-row${window._hmUpdAvail ? " bm-upd" : ""}" data-bm="__update">${ic("swap")}<span class="grow">Mettre à jour l'appli${window._hmUpdAvail ? ` <small class="bm-upd-t">· Nouvelle MàJ disponible !</small>` : typeof window._hmVersion === "function" && window._hmVersion() ? ` <small>· version du ${esc(window._hmVersion().replace(/\/\d{4} - /, " à "))}</small>` : ""}</span>${window._hmUpdAvail ? `<span class="bm-upd-i" aria-label="Mise à jour disponible">!</span>` : ""}${ic("chev", "chev")}</button>` : ""}
+          ${acc() ? `<button type="button" class="bm-row" data-bm="__help">${ic("help")}<span class="grow">Aide${typeof _accIsSuper !== "undefined" && _accIsSuper ? ` <small>· joueur et ★ super admin</small>` : ""}</span>${ic("chev", "chev")}</button>` : ""}
         </div>
         ${acc() && typeof _accIsSuper !== "undefined" && _accIsSuper ? `<span class="bm-lbl sa">★ Super admin</span><div class="bm-rows sa">
           <button type="button" class="bm-row" data-bm="__compose"><span class="bm-star">★</span><span class="grow">Notifications</span>${ic("chev", "chev")}</button>
@@ -18914,6 +18926,7 @@ function _svApply() {
       m.addEventListener("touchend", end); m.addEventListener("touchcancel", end);
     })();
     window._bnRefresh = light;
+    window._bnRenderMenu = () => { try { renderMenu(); } catch (e) {} };
     window._bnOpenMenu = () => { menuOpen = true; notifOpen = false; render(); };
     setInterval(light, 3000);
     render();
@@ -20025,7 +20038,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Que veut dire l'écusson rouge avec une pastille ?", "Le sondage attend ta réponse. Touche l'écusson pour répondre.", "ecusson rouge pastille sondage"],
         ["Qu'est-ce qu'il y a dans le menu ☰ ?", "Ta carte profil (Mon compte), Statistiques, Effectif, Règlement, Notifications, Installer l'appli, Mode sombre, « Quoi de neuf ? », « Mettre à jour l'appli », Aide et Se déconnecter.", "menu hamburger trois traits reglages"],
         ["À quoi sert le bandeau au-dessus du menu du bas ?", "Il te rappelle ce qui est urgent : sondage pas encore répondu ou score du match en cours. Touche-le pour y aller.", "bandeau rappel urgent score"],
-        ["Comment mettre à jour l'appli ?", "Quand une nouvelle version sort, l'écran « Le vestiaire a été repeint » s'affiche : touche Mettre à jour. Rien de ce que tu saisissais n'est perdu. Sur iPhone, Menu ☰ › Mettre à jour l'appli force le chargement.", "mise a jour nouvelle version actualiser repeint"],
+        ["Comment mettre à jour l'appli ?", "Petite mise à jour : un point orange apparaît sur Menu, et « Nouvelle MàJ disponible ! » à côté de Mettre à jour l'appli. Touche-le quand tu veux. Grosse mise à jour (nouvelle fonctionnalité) : l'écran « Le vestiaire a été repeint » s'affiche, touche Mettre à jour. Rien de ce que tu saisissais n'est perdu.", "mise a jour nouvelle version actualiser repeint point orange maj"],
+        ["Que veut dire le point orange sur Menu ?", "Une nouvelle version de l'appli est disponible. Menu ☰ › Mettre à jour l'appli pour la charger.", "point orange menu pastille orange"],
         ["Comment passer en mode clair ou sombre ?", "Menu ☰ › Mode sombre, avec l'interrupteur.", "theme clair sombre nuit couleur"],
         ["Que veulent dire les couleurs ?", "Vert = OK, présent, payé. Orange = à faire, blessé. Rouge = absent, alerte. Doré = récompenses.", "couleurs vert orange rouge dore signification"]
       ]},
@@ -20044,6 +20058,14 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Qu'y a-t-il dans le récap ?", "Ta soirée (ton équipe, ton bilan, tes buts et passes, 4 stats marrantes), Les héros (MVP, buteur, passeur, gardien : touche une carte pour le top 5), l'équipe-type, le classement (touche une équipe pour sa composition) et les faits notables.", "recap contenu heros mvp equipe type faits notables"],
         ["Quelles sont les couleurs des équipes ?", "Roses (rouge), Jaunes (vert) et Bleus (bleu).", "couleurs equipes roses jaunes bleus"]
       ]},
+      { n: "", ico: "🎲", t: "Les pronostics", s: "Parier sur les matchs du soir", qa: [
+        ["Comment marchent les pronostics ?", "Pendant la soirée, quand les pronos sont activés, chaque match s'ouvre au vote dès que ses 2 équipes sont choisies dans la Saisie. Dans En direct, choisis l'issue (victoire d'une équipe ou nul), puis tente le score exact si tu veux.", "pronostics pronos parier pari vote match fonctionnement"],
+        ["Jusqu'à quand je peux pronostiquer ?", "Jusqu'à la mi-temps du match. Après, les votes sont clos.", "pronos jusqu quand mi temps clos delai"],
+        ["Combien de points je gagne ?", "Si l'issue est bonne, tu gagnes la cote de ton choix, affichée sur le bouton (« Gain possible »). Score exact en plus : le gain est doublé. Mauvaise issue : 0 point.", "pronos points gain cote score exact double"],
+        ["Comment sont calculées les cotes ?", "Elles suivent la forme des deux équipes dans la soirée (points par match joué). Une équipe en forme rapporte moins, le nul et l'outsider rapportent plus.", "cotes calcul forme favori outsider"],
+        ["Pourquoi je ne peux pas pronostiquer un match ?", "Tu joues ce match : pas de prono pour toi cette fois. Il faut aussi être connecté avec ton compte joueur, et que les pronos soient activés ce soir-là.", "pronos impossible bloque joue match connecte desactives"],
+        ["Où voir le classement des pronostiqueurs ?", "En bas de Récomp. : « Pronostiqueurs de la saison », avec les points et le taux de réussite. Il faut au moins 10 pronos pour être classé. Égalité : le plus de scores exacts.", "classement pronostiqueurs saison reussite"]
+      ]},
       { n: "05", ico: "🏆", t: "Stats et récompenses", s: "Ta saison en chiffres", qa: [
         ["Où trouver les statistiques ?", "Menu ☰ › Statistiques. Choisis la période (Soirée, Mois, Saison ou Tout). L'appli compare avec la période précédente : ▲ mieux, ▼ moins bien, = pareil. Sous-onglets : Aperçu, Équipes, Joueurs et Duels.", "statistiques stats chiffres periode comparer duels"],
         ["Comment fonctionne le Ballon d'Or ?", "1 point par but, 2 points par passe décisive. Égalité : le plus de passes, puis le plus de matchs avec un but.", "ballon d or points calcul classement"],
@@ -20051,9 +20073,11 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Quels classements existent ?", "Dans Récomp., un menu déroulant passe d'un classement à l'autre : Ballon d'Or, Yachine, Buteurs, Passeurs, Défenseurs, Clean sheets, Link-up, Dépanneurs, Bonnet d'âne, Infirmerie, Collectionneurs, Traders et Généreux. Ta ligne reste visible même hors du podium.", "classements liste recompenses menu deroulant"],
         ["Comment sont calculés Collectionneurs, Traders et Généreux ?", "Collectionneurs : vignettes différentes collées dans l'album (les doubles ne comptent pas). Traders : cartes données et reçues dans les échanges acceptés. Généreux : cartes données, cadeaux compris.", "collectionneurs traders genereux vignettes echanges classement"],
         ["Comment ouvrir la fiche d'un joueur ?", "Touche un nom ou une photo, partout dans l'appli. Menu ☰ › Effectif affiche le trombinoscope du club.", "fiche joueur effectif trombinoscope profil"],
+        ["Que veut dire « Au club depuis » sur une fiche ?", "C'est l'année d'arrivée du joueur au club. Elle n'est pas modifiable dans l'appli : un super admin la renseigne.", "annee arrivee club depuis anciennete fiche"],
         ["Que sont les hauts faits ?", "Des défis à débloquer, du bronze au diamant. Tu les trouves en bas de Récomp., avec Ta saison et Inédit.", "hauts faits badges succes debloquer"]
       ]},
       { n: "06", ico: "🃏", t: "Les vignettes", s: "L'album, les boosters, les échanges", qa: [
+        ["Qu'est-ce que le Panthéon ?", "5 légendes du club en cartes mythiques, avec leur propre révélation, dans l'album Vignettes.", "pantheon legendes mythiques"],
         ["Combien de boosters je reçois ?", "Un booster par jour, jusqu'à 5 en réserve. La pastille rouge sur Vignettes indique combien t'attendent.", "boosters combien par jour pastille ouvrir"],
         ["Quelles sont les raretés ?", "Légendaire (1er de chaque section), Épique (2e), Rare (3e et 4e), Commune (les suivants) et Mythique (cartes du Club).", "rarete legendaire epique rare commune mythique"],
         ["Comment sont rangés les joueurs ?", "Chaque joueur est rangé dans sa meilleure spécialité de la saison : Buteurs, Passeurs, Défenseurs, Gardiens (6 joueurs chacune), Guerriers (tous les autres) et Dépanneurs. Après chaque soirée, un joueur peut changer de section ou de rareté, mais une carte collée le reste.", "sections rangement specialite change"],
@@ -20067,12 +20091,14 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Comment envoyer une photo ?", "Bouton +, puis prends une photo ou choisis-en jusqu'à 10 dans la galerie.", "photo image galerie envoyer vestiaire chat message"],
         ["Comment mentionner quelqu'un ?", "Tape @ puis choisis un joueur. @tous prévient tout le monde.", "mentionner mention arobase tous vestiaire chat message"],
         ["Comment répondre ou réagir à un message ?", "Glisse le message vers la droite pour répondre. Touche-le pour réagir (👍 😂 🔥 ⚽ ❤️), répondre, copier ou supprimer le tien.", "repondre reagir reaction supprimer copier vestiaire chat message"],
+        ["Comment voir qui a réagi à un message ?", "Touche le message : sous le message, la liste des réactions montre qui a réagi avec chaque emoji.", "qui a reagi reactions voir"],
         ["Que veulent dire les coches ?", "✓ gris = envoyé, ✓ vert = lu. Un point vert sur une photo = la personne est en ligne.", "coche lu envoye en ligne point vert vestiaire chat message"],
         ["Comment couper les notifications d'un salon ?", "Dans le salon, touche la cloche. Le bouton ⋯ de la liste règle aussi le fond d'écran, les notifications (tout ou seulement les @mentions), les confirmations de lecture et le statut en ligne.", "couper notifications salon silence cloche reglages"]
       ]},
       { n: "08", ico: "🔔", t: "Notifications et Mon compte", s: "Être prévenu, gérer ses infos", qa: [
         ["Comment activer les notifications ?", "Menu ☰ › Notifications › Activer. Le téléphone demande l'autorisation en 3 étapes. Sur Android, si rien ne s'affiche : cadenas de la barre d'adresse › Notifications › Autoriser.", "activer notifications push autoriser"],
         ["Je ne reçois plus de notifications", "Rouvre l'appli une fois : ton abonnement se réenregistre tout seul. Tu peux aussi utiliser le bouton « Tester » dans Mon compte.", "plus de notifications recois pas marche pas probleme"],
+        ["Que montre la cloche ?", "Les 10 dernières notifications, datées : sondage, Infos Club, boosters et échanges de vignettes.", "cloche historique echanges dates"],
         ["Quelles notifications je reçois ?", "Toujours : ouverture du sondage, rappel « plus que 3 h », session annulée, Infos Club et récap de la soirée. Au choix : boosters, échanges reçus, Vestiaire, Messagerie, anniversaires. Maximum 4 notifications automatiques par jour.", "quelles notifications choisir liste"],
         ["Comment savoir si ma cotisation est payée ?", "Menu ☰ › ta carte profil : « À payer » en rouge ou « Payée » en vert. Le paiement se fait hors appli et un super admin le valide.", "cotisation payer paiement payee"],
         ["Comment modifier mes coordonnées ?", "Menu ☰ › ta carte profil, puis touche le crayon. Elles ne sont visibles que par toi et les super admins.", "coordonnees telephone email adresse modifier"],
@@ -20126,6 +20152,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Comment régler les dates de saison ?", "Menu ☰ › ★ Saisons : début, fin, album des vignettes, fin des échanges et période de vote du Règlement. Après la fin officielle, l'appli propose de créer la saison suivante avec des dates pré-remplies.", "saison dates reglage album echanges"],
         ["Que se passe-t-il à la clôture du vote du Règlement ?", "L'Effectif se met à jour tout seul : actif › Réguliers, +1 › Occasionnels, dépanneur › Dépanneurs, quitte ou sans réponse › Inactifs.", "cloture vote reglement effectif"],
         ["Quelles sont les autres fonctions ★ ?", "Datas (une trentaine de stats pointues dans Statistiques), Récompenses ★ (Ballon de Plomb, Calamity James), l'interrupteur Pronos et les Coefficients joueurs dans le menu ☰.", "datas pronos coefficients fonctions"],
+        ["Comment activer ou couper les pronostics ?", "Menu ☰ › ★ Pronos : l'interrupteur affiche « Pronos : activés » ou « Pronos : désactivés ». Activés, les joueurs votent sur chaque match du soir dès que ses 2 équipes sont choisies dans la Saisie, jusqu'à la mi-temps.", "activer desactiver pronos pronostics interrupteur"],
+        ["Comment renseigner l'année d'arrivée d'un joueur ?", "Elle n'est pas modifiable dans l'appli. Elle se renseigne dans la base Firebase, sous config/arrivees (par exemple « Boris » : 2016).", "annee arrivee renseigner club depuis"],
         ["Comment supprimer une soirée ?", "Touche la croix ronde sur la date, avec confirmation.", "supprimer soiree session date"]
       ]},
       { n: "08", ico: "🧯", t: "Que faire si…", s: "Les procédures express", qa: [
@@ -20156,21 +20184,22 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
   const isSA = () => typeof _accIsSuper !== "undefined" && !!_accIsSuper;
   let G = "joueur", Q = "", OPEN = null, el = null;
+  const star = () => G === "sa" ? `<span class="hh-star">★</span> ` : ""; // questions du guide super admin
   function body() {
     const D = HELP[G];
     if (Q.trim()) {
       const R = search(G, Q);
       if (!R.length) return `<div class="hh-none"><b>Pas de réponse dans le guide.</b><p>Essaie avec d'autres mots, ou pose ta question dans le Vestiaire : ${G === "sa" ? "un autre super admin" : "un super admin"} te répondra.</p><button type="button" data-hh="chat">Ouvrir le Vestiaire ›</button></div>`;
       const [b, ...o] = R;
-      return `<div class="hh-ans"><span class="hh-k">${esc(b.c.ico)} ${esc(b.c.t)}</span><b>${esc(b.q)}</b><p>${esc(b.a)}</p></div>
+      return `<div class="hh-ans"><span class="hh-k">${esc(b.c.ico)} ${esc(b.c.t)}</span><b>${star()}${esc(b.q)}</b><p>${esc(b.a)}</p></div>
         ${o.length ? `<div class="cr-h2">Ça peut aussi t'aider</div>${o.map(e => qa(e.c, e.i, true)).join("")}` : ""}`;
     }
-    return D.ch.map(c => `<section class="hh-ch"><div class="hh-chh"><span class="hh-n">${c.n}</span><span class="hh-ico">${esc(c.ico)}</span><span><b>${esc(c.t)}</b><small>${esc(c.s)}</small></span></div>
+    return D.ch.map((c, ci) => `<section class="hh-ch"><div class="hh-chh"><span class="hh-n">${String(ci + 1).padStart(2, "0")}</span><span class="hh-ico">${esc(c.ico)}</span><span><b>${esc(c.t)}</b><small>${esc(c.s)}</small></span></div>
       ${c.qa.map((x, i) => qa(c, i)).join("")}</section>`).join("");
   }
   function qa(c, i, flat) {
-    const id = `${G}-${c.n}-${i}`, o = OPEN === id, x = c.qa[i];
-    return `<div class="hh-q${o ? " open" : ""}${flat ? " flat" : ""}"><button type="button" data-hq="${id}" aria-expanded="${o}">${esc(x[0])}<span class="car">›</span></button>${o ? `<p>${esc(x[1])}</p>` : ""}</div>`;
+    const id = `${G}-${c.t}-${i}`, o = OPEN === id, x = c.qa[i];
+    return `<div class="hh-q${o ? " open" : ""}${flat ? " flat" : ""}"><button type="button" data-hq="${id}" aria-expanded="${o}">${star()}${esc(x[0])}<span class="car">›</span></button>${o ? `<p>${esc(x[1])}</p>` : ""}</div>`;
   }
   function render(keepFocus) {
     if (!el) return;
@@ -20243,12 +20272,17 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   // Plein écran : date de la nouvelle version + « Quoi de neuf ? » lu dans la nouvelle page
   // (<template id="hm-news" data-date="jj/mm/aaaa">, affiché seulement s'il est du même jour).
   async function showFull(v, txt) {
-    shown = true;
     // <template data-for="sa"> : mise à jour qui ne concerne que les super admins → proposée à eux seuls.
     // <li data-sa> : nouveauté réservée aux super admins, montrée à eux seuls avec une ★.
     try { await _accReady; } catch (e) {}
     const sa = typeof _accIsSuper !== "undefined" && !!_accIsSuper;
     if (/<template id="hm-news"[^>]*data-for="sa"/.test(txt) && !sa) return;
+    // Petite mise à jour (par défaut) : pas de plein écran, juste un « ! » orange sur Menu et sur « Mettre à jour l'appli ».
+    // Grosse mise à jour (nouvelle fonctionnalité) : <template id="hm-news" data-date="jj/mm/aaaa" data-maj="grosse">,
+    // le plein écran « Le vestiaire a été repeint » s'affiche, seulement si data-date est le jour de cette version.
+    const tm = txt.match(/<template id="hm-news"([^>]*)>/), big = !!(tm && /data-maj="grosse"/.test(tm[1]) && (tm[1].match(/data-date="([^"]*)"/) || [])[1] === v.slice(0, 10));
+    if (!big) { if (window._hmUpdAvail !== v) { window._hmUpdAvail = v; try { window._bnRefresh && window._bnRefresh(); window._bnRenderMenu && window._bnRenderMenu(); } catch (e) {} } return; }
+    shown = true;
     const MO = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
     const [d, mo] = v.split("/"), day = v.slice(0, 10);
     let news = "";

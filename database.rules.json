@@ -78,6 +78,9 @@
       },
       "seasons": {
         ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
+      },
+      "arrivees": {
+        ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
       }
     },
     "users": {
