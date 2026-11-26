@@ -4843,7 +4843,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #chat .ch-reacts img.emo { width: 15px; height: 15px; vertical-align: -3px; margin: 0; }
   #chat .ch-emob svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   #chat .ch-emob.on { background: var(--gold); color: #fff; }
-  #chat .ch-emo { display: grid; gap: 8px; padding: 8px 2px 2px; }
+  #chat .ch-emo { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 8px 2px 2px; width: 100%; align-self: stretch; box-sizing: border-box; }
   #chat .ch-emo-tabs { display: flex; gap: 8px; }
   #chat .ch-emo-tabs button { flex: none; width: auto; height: auto; margin: 0; position: static; transform: none; border: 1px solid var(--border2); background: var(--bg2); color: var(--text2); border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
   #chat .ch-emo-tabs button[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); color: #fff; }
@@ -4852,12 +4852,12 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #chat .ch-emo-cats button { flex: none; width: 38px; height: 34px; border: 0; border-radius: 10px; background: transparent; cursor: pointer; display: grid; place-items: center; opacity: .55; }
   #chat .ch-emo-cats button[aria-pressed="true"] { opacity: 1; background: var(--bg2); }
   #chat .ch-emo-cats img.emo { width: 22px; height: 22px; margin: 0; }
-  #chat .ch-emo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); max-height: 34vh; overflow-y: auto; overscroll-behavior: contain; }
+  #chat .ch-emo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); max-height: 34vh; overflow-y: auto; overscroll-behavior: contain; width: 100%; }
   #chat .ch-emo-grid button { aspect-ratio: 1; border: 0; background: transparent; border-radius: 10px; cursor: pointer; display: grid; place-items: center; padding: 0; }
   #chat .ch-emo-grid button:active { background: var(--bg2); }
   #chat .ch-emo-grid img.emo { width: 32px; height: 32px; margin: 0; }
   #chat .ch-emo-msg { margin: 8px 4px; font-size: 13px; color: var(--text3); }
-  #chat .ch-gifs { columns: 2; column-gap: 6px; max-height: 38vh; overflow-y: auto; overscroll-behavior: contain; }
+  #chat .ch-gifs { columns: 2 170px; column-gap: 6px; width: 100%; max-height: 46vh; overflow-y: auto; overscroll-behavior: contain; }
   #chat .ch-gifs button { display: block; width: 100%; margin: 0 0 6px; padding: 0; border: 0; border-radius: 10px; overflow: hidden; background: var(--bg2); cursor: pointer; break-inside: avoid; }
   #chat .ch-gifs img { display: block; width: 100%; height: auto; }
   #chat .ch-emo-by { font-size: 10px; color: var(--text3); text-align: right; letter-spacing: .04em; }
@@ -19517,7 +19517,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const q = (E.gq || "").trim(), u = q ? `https://api.giphy.com/v1/gifs/search?api_key=${giphyKey}&q=${encodeURIComponent(q)}&lang=fr&limit=30&rating=pg-13` : `https://api.giphy.com/v1/gifs/trending?api_key=${giphyKey}&limit=30&rating=pg-13`;
     E.gload = true; E.gerr = "";
     try { const d = await (await fetch(u)).json(); if (V.emo !== E || (E.gq || "").trim() !== q) return;
-      E.gifs = (d.data || []).map(g => { const a = (g.images || {}).fixed_height || {}, b = (g.images || {}).fixed_width_small || a; return { id: g.id, u: a.webp || a.url, w: +a.width || 200, h: +a.height || 200, p: b.webp || b.url, t: g.title || "GIF" }; }).filter(g => g.u);
+      E.gifs = (d.data || []).map(g => { const a = (g.images || {}).fixed_height || {}, b = (g.images || {}).fixed_width || a; return { id: g.id, u: a.webp || a.url, w: +a.width || 200, h: +a.height || 200, p: b.webp || b.url, t: g.title || "GIF" }; }).filter(g => g.u);
     } catch (e) { E.gerr = "GIF indisponibles : vérifie ta connexion."; E.gifs = []; }
     E.gload = false; renderComp();
   }
