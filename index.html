@@ -4601,30 +4601,31 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .ch-pf-x { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 0; background: var(--bg3); color: var(--text2); cursor: pointer; font: inherit; }
   .ch-pf-add { justify-self: start; border: 1px dashed var(--border2); background: transparent; color: var(--text2); border-radius: 10px; padding: 8px 12px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
   .ch-pf-sw { display: flex; align-items: center; gap: 10px; font-size: 14px; padding: 4px 0; cursor: pointer; }
-  .ch-pf-sw input { width: 18px; height: 18px; accent-color: #ff9f0a; flex: none; }
+  .ch-pf-sw input { width: 18px; height: 18px; accent-color: var(--gold); flex: none; }
   .ch-pf .ch-cf-act { margin-top: 6px; }
+  .ch-pf .ch-cf-act .pub { background: var(--gold); border-color: var(--gold); color: #fff; }
   #chat .ch-bub.ch-pl { min-width: min(280px, 72vw); }
-  #chat .ch-pl-h { display: flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: #ff9f0a; }
+  #chat .ch-pl-h { display: flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--gold); }
   #chat .ch-pl-h svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
   #chat .ch-pl-q { display: block; font-size: 15px; margin: 3px 0 1px; }
   #chat .ch-pl-m { display: block; font-size: 11px; color: var(--text3); margin-bottom: 8px; }
   #chat .ch-pl-l { display: grid; gap: 6px; }
   #chat .ch-pl-o { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 8px; align-items: start; width: 100%; text-align: left; border: 1px solid var(--border2); background: rgba(127,127,127,.06); border-radius: 10px; padding: 8px 9px; color: var(--text); font: inherit; cursor: pointer; }
   #chat .ch-pl-o:disabled { cursor: default; }
-  #chat .ch-pl-o.on { border-color: rgba(255,159,10,.7); background: rgba(255,159,10,.1); }
+  #chat .ch-pl-o.on { border-color: rgba(255,59,48,.7); background: rgba(255,59,48,.1); }
   #chat .ch-pl-o.top .lb { font-weight: 800; }
-  #chat .ch-pl-o .ck { width: 18px; height: 18px; margin-top: 1px; display: grid; place-items: center; border: 1.5px solid var(--border2); font-size: 11px; font-weight: 900; color: #1b1100; }
+  #chat .ch-pl-o .ck { width: 18px; height: 18px; margin-top: 1px; display: grid; place-items: center; border: 1.5px solid var(--border2); font-size: 11px; font-weight: 900; color: #fff; }
   #chat .ch-pl-o .ck.rd { border-radius: 50%; } #chat .ch-pl-o .ck.sq { border-radius: 5px; }
-  #chat .ch-pl-o.on .ck { background: #ff9f0a; border-color: #ff9f0a; }
+  #chat .ch-pl-o.on .ck { background: var(--gold); border-color: var(--gold); }
   #chat .ch-pl-o .tx { display: grid; gap: 4px; min-width: 0; }
   #chat .ch-pl-o .lb { font-size: 14px; line-height: 1.3; overflow-wrap: anywhere; }
   #chat .ch-pl-o .br { display: block; height: 5px; border-radius: 3px; background: rgba(127,127,127,.18); overflow: hidden; }
-  #chat .ch-pl-o .br i { display: block; height: 100%; border-radius: 3px; background: #ff9f0a; transition: width .3s; }
+  #chat .ch-pl-o .br i { display: block; height: 100%; border-radius: 3px; background: var(--gold); transition: width .3s; }
   #chat .ch-pl-o .vs { font-size: 11px; color: var(--text3); line-height: 1.35; }
   #chat .ch-pl-o .nb { font-size: 14px; font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; line-height: 1.1; }
   #chat .ch-pl-o .nb small { display: block; font-size: 10.5px; font-weight: 600; color: var(--text3); }
   #chat .ch-pl-f { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 11.5px; color: var(--text3); }
-  #chat .ch-pl-f button { border: 0; background: none; padding: 0; color: #ff9f0a; font: inherit; font-weight: 700; cursor: pointer; }
+  #chat .ch-pl-f button { border: 0; background: none; padding: 0; color: var(--gold); font: inherit; font-weight: 700; cursor: pointer; }
   #chat .ch-pl-f .tm { margin-left: auto; position: static; }
   .ch-cf-in p b { font-size: inherit; color: var(--text); }
   .hm-news ul { list-style: none; margin: 0 0 16px; padding: 10px 12px; border-radius: 12px; background: var(--bg3); display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; color: var(--text2); }
@@ -4833,8 +4834,34 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #chat .ch-msg.me .ch-bub { border-radius: 20px; } #chat .ch-msg.me.cont .ch-bub { border-top-right-radius: 7px; } #chat .ch-msg.me:not(.last) .ch-bub { border-bottom-right-radius: 7px; }
   #chat .ch-bub .who { font-size: 12px; margin-bottom: 2px; }
   #chat .ch-bub .tm { font-size: 10.5px; margin-top: 3px; }
+  /* emojis et GIF */
+  #chat img.emo { width: 1.3em; height: 1.3em; vertical-align: -0.28em; margin: 0 .03em; display: inline-block; }
+  #chat .emo-big img.emo { width: 44px; height: 44px; vertical-align: middle; margin: 2px 1px; }
+  #chat .ch-reacts img.emo { width: 15px; height: 15px; vertical-align: -3px; margin: 0; }
+  #chat .ch-emob svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  #chat .ch-emob.on { background: var(--gold); color: #fff; }
+  #chat .ch-emo { display: grid; gap: 8px; padding: 8px 2px 2px; }
+  #chat .ch-emo-tabs { display: flex; gap: 8px; }
+  #chat .ch-emo-tabs button { flex: none; width: auto; height: auto; margin: 0; position: static; transform: none; border: 1px solid var(--border2); background: var(--bg2); color: var(--text2); border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+  #chat .ch-emo-tabs button[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); color: #fff; }
+  #chat .ch-emo-q { width: 100%; box-sizing: border-box; background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; padding: 9px 12px; color: var(--text); font: inherit; font-size: 16px; }
+  #chat .ch-emo-cats { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+  #chat .ch-emo-cats button { flex: none; width: 38px; height: 34px; border: 0; border-radius: 10px; background: transparent; cursor: pointer; display: grid; place-items: center; opacity: .55; }
+  #chat .ch-emo-cats button[aria-pressed="true"] { opacity: 1; background: var(--bg2); }
+  #chat .ch-emo-cats img.emo { width: 22px; height: 22px; margin: 0; }
+  #chat .ch-emo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); max-height: 34vh; overflow-y: auto; overscroll-behavior: contain; }
+  #chat .ch-emo-grid button { aspect-ratio: 1; border: 0; background: transparent; border-radius: 10px; cursor: pointer; display: grid; place-items: center; padding: 0; }
+  #chat .ch-emo-grid button:active { background: var(--bg2); }
+  #chat .ch-emo-grid img.emo { width: 32px; height: 32px; margin: 0; }
+  #chat .ch-emo-msg { margin: 8px 4px; font-size: 13px; color: var(--text3); }
+  #chat .ch-gifs { columns: 2; column-gap: 6px; max-height: 38vh; overflow-y: auto; overscroll-behavior: contain; }
+  #chat .ch-gifs button { display: block; width: 100%; margin: 0 0 6px; padding: 0; border: 0; border-radius: 10px; overflow: hidden; background: var(--bg2); cursor: pointer; break-inside: avoid; }
+  #chat .ch-gifs img { display: block; width: 100%; height: auto; }
+  #chat .ch-emo-by { font-size: 10px; color: var(--text3); text-align: right; letter-spacing: .04em; }
+  #chat .ch-gif { display: block; width: min(240px, 62vw); border-radius: 12px; overflow: hidden; margin: 2px 0 4px; background: rgba(127,127,127,.15); }
+  #chat .ch-gif img { display: block; width: 100%; height: 100%; object-fit: cover; }
   /* sondage : bulle neutre, même pour ses propres messages (l'orange reste lisible) */
-  #chat .ch-msg .ch-bub.ch-pl, #chat .ch-msg.me .ch-bub.ch-pl { background: rgba(28,28,36,.94); border: 1px solid rgba(255,159,10,.4); color: var(--text); white-space: normal; padding: 10px 12px 8px; }
+  #chat .ch-msg .ch-bub.ch-pl, #chat .ch-msg.me .ch-bub.ch-pl { background: rgba(28,28,36,.94); border: 1px solid rgba(255,59,48,.45); color: var(--text); white-space: normal; padding: 10px 12px 8px; }
   #chat .ch-reacts { margin-top: -5px; margin-bottom: 2px; }
   /* citation dans une bulle + barre « Réponse à » */
   #chat .ch-quote { border-left: 3px solid #ff3b30; background: rgba(255,255,255,.06); border-radius: 10px; padding: 5px 10px 6px; margin: 2px 0 6px; font-size: 12.5px; color: var(--text2); }
@@ -5190,7 +5217,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="26/11/2026" data-for="sa"><li>🏆 <b>Récompenses</b> : 2 nouveaux classements, Collectionneurs (vignettes collées) et Traders (total, données ou reçues)</li><li>❓ <b>Aide</b> : le guide de l'appli dans le menu ☰, avec une recherche pour poser ta question</li><li>🗓️ <b>Fiche joueur</b> : l'année d'arrivée au club</li><li>🟠 <b>Mises à jour</b> : les petites ne s'affichent plus en grand, juste un point orange sur Menu</li><li>📲 <b>Pastille de l'appli</b> : elle compte aussi les messages non lus du Vestiaire</li><li data-sa>🔒 <b>Visiteurs</b> : sans compte, on ne voit plus que les Sessions</li><li data-sa>⚙️ <b>Accueil</b> : « Ouvrir maintenant » et « Annuler la session » sont rangés sous la roue dentée de la case verte du sondage programmé</li><li>📊 <b>Vestiaire</b> : les sondages, avec le + à côté du message (une ou plusieurs réponses, votes visibles ou non, date limite)</li></template>
+<template id="hm-news" data-date="26/11/2026" data-for="sa"><li>🏆 <b>Récompenses</b> : 2 nouveaux classements, Collectionneurs (vignettes collées) et Traders (total, données ou reçues)</li><li>❓ <b>Aide</b> : le guide de l'appli dans le menu ☰, avec une recherche pour poser ta question</li><li>🗓️ <b>Fiche joueur</b> : l'année d'arrivée au club</li><li>🟠 <b>Mises à jour</b> : les petites ne s'affichent plus en grand, juste un point orange sur Menu</li><li>📲 <b>Pastille de l'appli</b> : elle compte aussi les messages non lus du Vestiaire</li><li data-sa>🔒 <b>Visiteurs</b> : sans compte, on ne voit plus que les Sessions</li><li data-sa>⚙️ <b>Accueil</b> : « Ouvrir maintenant » et « Annuler la session » sont rangés sous la roue dentée de la case verte du sondage programmé</li><li>🙂 <b>Vestiaire</b> : emojis style Teams et GIF, avec le bouton 🙂 à côté du message</li><li>📊 <b>Vestiaire</b> : les sondages, avec le + à côté du message (une ou plusieurs réponses, votes visibles ou non, date limite)</li></template>
 <footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 26/11/2026 - 19:15</footer>
 
 <script>
@@ -19346,6 +19373,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     dots: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>',
     plus: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
     poll: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-6"/></svg>',
+    smile: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 14.2c.9 1.3 2.1 2 3.5 2s2.6-.7 3.5-2"/><circle cx="9.2" cy="10" r=".9" fill="currentColor" stroke="none"/><circle cx="14.8" cy="10" r=".9" fill="currentColor" stroke="none"/></svg>',
+    kb: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6.5" width="18" height="11" rx="2"/><path d="M7 10h.01M10 10h.01M13 10h.01M16 10h.01M8 14h8"/></svg>',
     pen: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
     search: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
     cam: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13.2" r="3.4"/></svg>',
@@ -19462,12 +19491,74 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (isDM(id) && m.by !== me()) return m.text || "";
     return (m.by === me() ? "Toi" : m.by) + " : " + (m.text || "");
   }
+  // ── Emojis style Teams (Fluent, licence MIT) et GIF (Giphy)
+  const EMO_RE = /\p{RI}\p{RI}|[#*0-9]️?⃣|\p{Extended_Pictographic}(?:️|\p{EMod})?(?:‍\p{Extended_Pictographic}(?:️|\p{EMod})?)*/gu;
+  const FLU = c => `https://cdn.jsdelivr.net/npm/@lobehub/fluent-emoji-3d@1.1.0/assets/${c}.webp`;
+  const emoCode = ch => [...ch].map(c => c.codePointAt(0).toString(16)).join("-");
+  const emoImg = (ch, c) => `<img class="emo" src="${FLU(c || emoCode(ch))}" alt="${ch}" draggable="false" loading="lazy" onerror="_emoFail(this)">`;
+  const emoHTML = h => String(h).replace(EMO_RE, ch => emoImg(ch));
+  window._emoFail = el => { const u = el.getAttribute("src") || "", c = (u.match(/assets\/([0-9a-f-]+)\.webp/) || [])[1] || "";
+    if (!el.dataset.r && c) { el.dataset.r = 1; const alt = /-fe0f/.test(c) ? c.replace(/-fe0f/g, "") : c.includes("-") ? "" : c + "-fe0f"; if (alt) { el.src = FLU(alt); return; } }
+    el.replaceWith(document.createTextNode(el.alt || "")); };
+  let EMOD = null, EMOL = null;
+  const loadEmo = () => EMOL || (EMOL = fetch("icons/emoji-fr.json").then(r => r.json()).then(d => { EMOD = d; if (V.emo) renderComp(); }).catch(() => { EMOL = null; }));
+  const enorm = x => String(x || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const GIPHY_KEY = ""; // clé publique Giphy (sinon lue dans config/giphyKey)
+  let giphyKey = GIPHY_KEY, gifT = null;
+  async function gifLoad() {
+    const E = V.emo; if (!E) return;
+    if (!giphyKey && _db) { try { giphyKey = (await _db.ref("config/giphyKey").once("value")).val() || ""; } catch (e) {} }
+    if (!giphyKey) { E.gifs = []; E.gerr = "Les GIF arrivent bientôt."; return renderComp(); }
+    const q = (E.gq || "").trim(), u = q ? `https://api.giphy.com/v1/gifs/search?api_key=${giphyKey}&q=${encodeURIComponent(q)}&lang=fr&limit=30&rating=pg-13` : `https://api.giphy.com/v1/gifs/trending?api_key=${giphyKey}&limit=30&rating=pg-13`;
+    E.gload = true; E.gerr = "";
+    try { const d = await (await fetch(u)).json(); if (V.emo !== E || (E.gq || "").trim() !== q) return;
+      E.gifs = (d.data || []).map(g => { const a = (g.images || {}).fixed_height || {}, b = (g.images || {}).fixed_width_small || a; return { id: g.id, u: a.webp || a.url, w: +a.width || 200, h: +a.height || 200, p: b.webp || b.url, t: g.title || "GIF" }; }).filter(g => g.u);
+    } catch (e) { E.gerr = "GIF indisponibles : vérifie ta connexion."; E.gifs = []; }
+    E.gload = false; renderComp();
+  }
+  function emoPanelHTML() {
+    const E = V.emo; if (!E) return "";
+    const tabs = `<div class="ch-emo-tabs"><button type="button" data-ch="emoTab" data-t="emo" aria-pressed="${E.tab === "emo"}">Emojis</button><button type="button" data-ch="emoTab" data-t="gif" aria-pressed="${E.tab === "gif"}">GIF</button></div>`;
+    if (E.tab === "gif") {
+      if (!E.gifs && !E.gload) setTimeout(gifLoad, 0);
+      const body = E.gerr ? `<p class="ch-emo-msg">${esc(E.gerr)}</p>` : !E.gifs ? `<p class="ch-emo-msg">Chargement…</p>` : !E.gifs.length ? `<p class="ch-emo-msg">Aucun GIF trouvé.</p>`
+        : `<div class="ch-gifs">${E.gifs.map((g, k) => `<button type="button" data-ch="gifSend" data-k="${k}" aria-label="Envoyer le GIF ${esc(g.t)}"><img src="${esc(g.p)}" alt="" loading="lazy"></button>`).join("")}</div>`;
+      return `<div class="ch-emo">${tabs}<input id="ch-gq" class="ch-emo-q" type="search" placeholder="Chercher un GIF" value="${esc(E.gq || "")}" autocomplete="off">${body}<small class="ch-emo-by">Powered by GIPHY</small></div>`;
+    }
+    if (!EMOD) { loadEmo(); return `<div class="ch-emo">${tabs}<p class="ch-emo-msg">Chargement…</p></div>`; }
+    const q = enorm(E.q), rec = V.recent || [];
+    const G = [[-1, "🕘", "Récents"], [0, "😀"], [1, "👋"], [3, "🐶"], [4, "🍔"], [6, "⚽"], [5, "🚗"], [7, "💡"], [8, "❤️"], [9, "🏁"]].filter(g => g[0] !== -1 || rec.length);
+    if (E.cat === -1 && !rec.length) E.cat = 0;
+    const byE = ch => EMOD.e.find(x => x[0] === ch);
+    const L = q ? EMOD.e.filter(x => enorm(x[2]).includes(q)).slice(0, 160) : E.cat === -1 ? rec.map(ch => byE(ch) || [ch, -1, "", 0]) : EMOD.e.filter(x => x[1] === E.cat);
+    const cats = G.map(([g, ic, lb]) => `<button type="button" data-ch="emoCat" data-g="${g}" aria-pressed="${!q && E.cat === g}" title="${esc(lb || EMOD.g[g] || "")}">${emoImg(ic, (byE(ic) || [])[3] || "")}</button>`).join("");
+    return `<div class="ch-emo">${tabs}<input id="ch-eq" class="ch-emo-q" type="search" placeholder="Chercher un emoji (ballon, bière, rire…)" value="${esc(E.q || "")}" autocomplete="off">${q ? "" : `<div class="ch-emo-cats">${cats}</div>`}
+      <div class="ch-emo-grid">${L.length ? L.map(x => `<button type="button" data-ch="emoPick" data-e="${x[0]}" aria-label="${esc(x[2].split(" ")[0])}">${emoImg(x[0], x[3] || "")}</button>`).join("") : `<p class="ch-emo-msg">Aucun emoji trouvé.</p>`}</div></div>`;
+  }
+  function emoInsert(ch) {
+    const t = $("ch-tx"); if (!t) return; const a = V.caret != null ? V.caret : t.value.length;
+    t.value = t.value.slice(0, a) + ch + t.value.slice(a); V.caret = a + ch.length;
+    t.dispatchEvent(new Event("input", { bubbles: true }));
+    const r = V.recent = [ch, ...(V.recent || []).filter(x => x !== ch)].slice(0, 24); try { localStorage.setItem("hmft_emo_recent", JSON.stringify(r)); } catch (e) {}
+  }
+  async function gifSend(g) {
+    const r = R(V.room); if (!r || !g) return;
+    const m = { by: me(), text: "🎞️ GIF", photoOnly: true, gif: { u: g.u, w: g.w, h: g.h, id: g.id }, at: TS() };
+    if (V.reply) m.reply = { id: V.reply.id, by: V.reply.by || "", text: plain(V.reply.text).slice(0, 120) };
+    V.reply = null; V.emo = null; renderComp();
+    try { await _db.ref(mP(r.id)).push(m);
+      if (r.dm) { const k = r.id.slice(3); _db.ref().update({ [`chat/dmIdx/${m.by}/${k}`]: { with: r.other, at: TS() }, [`chat/dmIdx/${r.other}/${k}`]: { with: m.by, at: TS() } }).catch(() => {}); }
+      renderFeed(true); fitVV(); } catch (e) { toast("GIF non envoyé : vérifie ta connexion."); }
+  }
   function fmt(t, mine) {
     let h = esc(t).replace(/@tous(?![\wÀ-ÿ])/gi, `<span class="mention all">@tous</span>`);
     [...accounts].sort((a, b) => b.length - a.length).forEach(p => {
       h = h.replace(new RegExp("@" + rx(esc(p)) + "(?![\\wÀ-ÿ])", "g"), `<span class="mention${p === me() && !mine ? " you" : ""}">@${esc(p)}</span>`);
     });
-    return h;
+    // emojis style Teams ; un message fait seulement de 1 à 3 emojis s'affiche en grand
+    const only = String(t || "").replace(EMO_RE, "").trim() === "" && (String(t || "").match(EMO_RE) || []).length <= 3;
+    h = emoHTML(h);
+    return only && h ? `<span class="emo-big">${h}</span>` : h;
   }
   const plain = t => String(t || "").replace(/\s+/g, " ").trim();
 
@@ -19608,7 +19699,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (PH.length || V.photoBusy) h += `<div class="ch-photos"><div class="ch-thumbs">${PH.map((x, i) => `<span><img src="${x.data}" alt=""><button type="button" data-ch="photoDel" data-i="${i}" aria-label="Retirer la photo ${i + 1}">✕</button></span>`).join("")}${V.photoBusy ? `<span class="busy">…</span>` : ""}</div>
       <div class="ch-pinfo"><b>📷 ${PH.length} photo${PH.length > 1 ? "s" : ""}</b> · ${Math.round(PH.reduce((a, x) => a + x.size, 0) / 1024)} Ko${PH.length < 10 ? ` · <button type="button" data-ch="photo">+ Ajouter</button>` : " · 10 maximum"}<button type="button" class="x" data-ch="photoCancel" aria-label="Retirer toutes les photos">Tout retirer</button></div></div>`;
     const has = !!(V.draft[V.room] || "").trim() || PH.length;
-    h += `<div class="ch-rowc"><button type="button" class="ch-add${V.plus ? " act" : ""}" data-ch="plus" aria-label="Ajouter une photo" aria-expanded="${V.plus}">${IC.plus}</button><input type="file" id="ch-file" accept="image/*" multiple hidden><input type="file" id="ch-cam" accept="image/*" capture="environment" hidden><textarea id="ch-tx" rows="1" maxlength="1000" placeholder="${r.dm ? "Message à " + esc(r.other) : "Message"}">${esc(V.draft[V.room] || "")}</textarea><button type="button" class="ch-send${has ? "" : " off"}" data-ch="send" aria-label="Envoyer">${IC.send}</button></div>`;
+    h += `<div class="ch-rowc"><button type="button" class="ch-add${V.plus ? " act" : ""}" data-ch="plus" aria-label="Ajouter une photo" aria-expanded="${V.plus}">${IC.plus}</button><button type="button" class="ch-add ch-emob${V.emo ? " on" : ""}" data-ch="emoPanel" aria-label="${V.emo ? "Revenir au clavier" : "Emojis et GIF"}" aria-expanded="${!!V.emo}">${V.emo ? IC.kb : IC.smile}</button><input type="file" id="ch-file" accept="image/*" multiple hidden><input type="file" id="ch-cam" accept="image/*" capture="environment" hidden><textarea id="ch-tx" rows="1" maxlength="1000" placeholder="${r.dm ? "Message à " + esc(r.other) : "Message"}">${esc(V.draft[V.room] || "")}</textarea><button type="button" class="ch-send${has ? "" : " off"}" data-ch="send" aria-label="Envoyer">${IC.send}</button></div>`;
+    if (V.emo) h += emoPanelHTML();
     if (V.plus) h += `<div class="ch-plus"><button type="button" data-ch="cam"><span class="oi">${IC.cam}</span><span>Prendre une photo<small>Ouvre l'appareil photo</small></span></button><button type="button" data-ch="gal"><span class="oi">${IC.gal}</span><span>Choisir dans la galerie<small>Jusqu'à 10 photos d'un coup</small></span></button>${r.dm ? "" : `<button type="button" data-ch="pollNew"><span class="oi">${IC.poll}</span><span>Créer un sondage<small>Une question, jusqu'à 10 réponses</small></span></button>`}</div>`;
     return h;
   }
@@ -19631,8 +19723,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     return `<div class="ch-msg${mine ? " me" : ""}${g.first ? "" : " cont"}${g.last ? " last" : ""}" data-id="${m.id}"><span class="ch-swipe">↩️</span>${mine ? "" : g.last ? av(m.by) : `<span class="ch-avsp"></span>`}
       <div><div class="ch-bub" data-ch="sheet" data-id="${m.id}">${mine || !g.first || (r && r.dm) ? "" : `<span class="who" style="color:${ncol(m.by)}">${esc(m.by)}</span>`}${q ? `<div class="ch-quote" data-ch="goto" data-to="${esc(q.id)}"><b>${esc(q.by || "Infos Club")}</b>${esc(plain(q.text))}</div>` : ""}${m.img ? `<span class="ch-img" data-ch="img" data-id="${m.id}" style="aspect-ratio:${+m.img.w || 4} / ${+m.img.h || 3}"><img alt="Photo"${IMGS[m.id] ? ` src="${IMGS[m.id]}"` : ""}></span>` : ""}${Array.isArray(m.imgs) ? (m.imgs.length === 1
         ? `<span class="ch-img" data-ch="img" data-id="${m.id}_0" style="aspect-ratio:${+m.imgs[0].w || 4} / ${+m.imgs[0].h || 3}"><img alt="Photo"${IMGS[m.id + "_0"] ? ` src="${IMGS[m.id + "_0"]}"` : ""}></span>`
-        : `<span class="ch-gal n${Math.min(m.imgs.length, 4)}">${m.imgs.map((x, i) => `<span class="ch-img" data-ch="img" data-id="${m.id}_${i}"><img alt="Photo ${i + 1}"${IMGS[m.id + "_" + i] ? ` src="${IMGS[m.id + "_" + i]}"` : ""}></span>`).join("")}</span>`) : ""}${m.photoOnly ? "" : fmt(m.text || "", mine)}<span class="tm">${r && r.pinned && r.pinned.id === m.id ? "📌 " : ""}${hm(m.at || Date.now())}</span></div>
-      ${reacts.length ? `<div class="ch-reacts">${reacts.map(([e, l]) => `<button type="button" data-ch="react" data-id="${m.id}" data-e="${e}" aria-pressed="${l.includes(p)}" title="${esc(l.join(", "))}">${e} ${l.length}</button>`).join("")}</div>` : ""}</div></div>`;
+        : `<span class="ch-gal n${Math.min(m.imgs.length, 4)}">${m.imgs.map((x, i) => `<span class="ch-img" data-ch="img" data-id="${m.id}_${i}"><img alt="Photo ${i + 1}"${IMGS[m.id + "_" + i] ? ` src="${IMGS[m.id + "_" + i]}"` : ""}></span>`).join("")}</span>`) : ""}${m.gif && m.gif.u ? `<span class="ch-gif" style="aspect-ratio:${+m.gif.w || 1} / ${+m.gif.h || 1}"><img src="${esc(m.gif.u)}" alt="GIF" loading="lazy"></span>` : ""}${m.photoOnly ? "" : fmt(m.text || "", mine)}<span class="tm">${r && r.pinned && r.pinned.id === m.id ? "📌 " : ""}${hm(m.at || Date.now())}</span></div>
+      ${reacts.length ? `<div class="ch-reacts">${reacts.map(([e, l]) => `<button type="button" data-ch="react" data-id="${m.id}" data-e="${e}" aria-pressed="${l.includes(p)}" title="${esc(l.join(", "))}">${emoHTML(e)} ${l.length}</button>`).join("")}</div>` : ""}</div></div>`;
   }
   // ── Mini-sondages : chat/msgs/{salon}/{id} = { by, text, at, poll: { q, opts[], multi, voters, until }, votes: { joueur: { index: true } } }
   const pollDone = pl => !!(pl.until && Date.now() >= pl.until);
@@ -19649,7 +19741,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     return `<div class="ch-msg${mine ? " me" : ""}${g.first ? "" : " cont"}${g.last ? " last" : ""}" data-id="${m.id}"><span class="ch-swipe">↩️</span>${mine ? "" : g.last ? av(m.by) : `<span class="ch-avsp"></span>`}
       <div><div class="ch-bub ch-pl" data-ch="sheet" data-id="${m.id}">${mine || !g.first ? "" : `<span class="who" style="color:${ncol(m.by)}">${esc(m.by)}</span>`}<span class="ch-pl-h">${IC.poll}<span>Sondage</span></span><b class="ch-pl-q">${esc(pl.q || "")}</b><small class="ch-pl-m">${meta}</small>
         <div class="ch-pl-l">${rows}</div><span class="ch-pl-f"><span>${nV} votant${nV > 1 ? "s" : ""}</span>${(mine || isSA()) && !done ? `<button type="button" data-ch="pclose" data-id="${m.id}">Clore le vote</button>` : ""}<span class="tm">${r && r.pinned && r.pinned.id === m.id ? "📌 " : ""}${hm(m.at || Date.now())}</span></span></div>
-      ${reacts.length ? `<div class="ch-reacts">${reacts.map(([e, l]) => `<button type="button" data-ch="react" data-id="${m.id}" data-e="${e}" aria-pressed="${l.includes(p)}" title="${esc(l.join(", "))}">${e} ${l.length}</button>`).join("")}</div>` : ""}</div></div>`.replace(/>\s+</g, "><");
+      ${reacts.length ? `<div class="ch-reacts">${reacts.map(([e, l]) => `<button type="button" data-ch="react" data-id="${m.id}" data-e="${e}" aria-pressed="${l.includes(p)}" title="${esc(l.join(", "))}">${emoHTML(e)} ${l.length}</button>`).join("")}</div>` : ""}</div></div>`.replace(/>\s+</g, "><");
   }
   async function pollVote(id, k) {
     const r = R(V.room), p = me(), m = (msgs[r.id] || []).find(x => x.id === id); if (!m || !m.poll || !p) return;
@@ -19681,7 +19773,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         <label class="ch-pf-sw"><input type="checkbox" id="ch-pf-voters"${st.voters ? " checked" : ""}><span>Montrer qui a voté quoi</span></label>
         <label class="ch-pf-sw"><input type="checkbox" id="ch-pf-dl"${st.dl ? " checked" : ""}><span>Date limite</span></label>
         ${st.dl ? `<input type="datetime-local" id="ch-pf-until" class="ch-pf-in" min="${loc(new Date())}" value="${st.until}">` : ""}
-        <div class="ch-cf-act"><button type="button" data-k="0">Annuler</button><button type="button" class="ok" data-k="1"${ok() ? "" : " disabled"}>Publier</button></div></div>`;
+        <div class="ch-cf-act"><button type="button" data-k="0">Annuler</button><button type="button" class="ok pub" data-k="1"${ok() ? "" : " disabled"}>Publier</button></div></div>`;
       const f = focus && o.querySelector("#" + focus); if (f) { f.focus(); try { f.setSelectionRange(f.value.length, f.value.length); } catch (e) {} }
     };
     const okBtn = () => { const b = o.querySelector('[data-k="1"]'); if (b) b.disabled = !ok(); };
@@ -19841,7 +19933,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (f && near) f.scrollTop = f.scrollHeight;
   }
   if (vv) { vv.addEventListener("resize", fitVV); vv.addEventListener("scroll", fitVV); }
-  box.addEventListener("focusin", e => { if (e.target.id === "ch-tx") setTimeout(fitVV, 60); setTimeout(fitVV, 350); });
+  box.addEventListener("focusin", e => { if (e.target.id === "ch-tx" && V.emo) { V.emo = null; const c = box.querySelector(".ch-emo"); if (c) c.remove(); const b = box.querySelector(".ch-emob"); if (b) { b.classList.remove("on"); b.innerHTML = IC.smile; b.setAttribute("aria-expanded", "false"); } } if (e.target.id === "ch-tx") setTimeout(fitVV, 60); setTimeout(fitVV, 350); });
   function hide() { if (V.room) stopTyping(); watchTyping(null); box.style.top = ""; box.style.height = ""; box.style.bottom = ""; V.open = false; V.room = null; V.view = null; V.form = null; V.sheet = null; V.drop = false; V.plus = false; V.q = ""; box.hidden = true; box.innerHTML = ""; document.documentElement.classList.remove("ch-lock"); renderBtn(); }
   const goHome = () => { const t = document.querySelector('.main-tab[data-tab="vote"]'); if (t && !t.classList.contains("active")) t.click(); };
   function closeChat() { if (V.room) markRead(V.room); const back = (V.pushed ? 1 : 0) + (V.pushed2 ? 1 : 0); V.pushed = V.pushed2 = false; hide(); goHome(); if (back) { V.skipPop = 1; try { history.go(-back); } catch (e) {} } }
@@ -19895,7 +19987,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const m = { by: me(), text: (text || (ph ? (ph.length > 1 ? `📷 ${ph.length} photos` : "📷 Photo") : "")).slice(0, 1000), at: TS() };
     if (ph) { m.imgs = ph.map(x => ({ w: x.w, h: x.h })); if (!text) m.photoOnly = true; V.photos = []; }
     if (V.reply) m.reply = { id: V.reply.id, by: V.reply.by || "", text: plain(V.reply.text).slice(0, 120) };
-    V.draft[V.room] = ""; V.reply = null; V.sugg = null; V.plus = false; t.value = ""; autoGrow(t); renderComp(); $("ch-tx")?.focus();
+    V.draft[V.room] = ""; V.reply = null; V.sugg = null; V.plus = false; V.caret = 0; t.value = ""; autoGrow(t); renderComp(); if (!V.emo) $("ch-tx")?.focus();
     const f0 = $("ch-feed"); if (f0) f0.scrollTop = f0.scrollHeight;
     try {
       const ref = _db.ref(mP(r.id)).push();
@@ -20040,8 +20132,13 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (a === "send") return send();
     if (a === "photo" || a === "gal") { V.plus = false; renderComp(); $("ch-file")?.click(); return; }
     if (a === "cam") { V.plus = false; renderComp(); $("ch-cam")?.click(); return; }
-    if (a === "plus") { V.plus = !V.plus; return renderComp(); }
+    if (a === "plus") { V.plus = !V.plus; V.emo = null; return renderComp(); }
     if (a === "pollNew") { V.plus = false; renderComp(); pollForm(); return; }
+    if (a === "emoPanel") { if (V.emo) { V.emo = null; renderComp(); $("ch-tx")?.focus(); return; } const tx = $("ch-tx"); V.caret = tx ? tx.selectionStart : null; tx?.blur(); V.plus = false; if (!V.recent) { try { V.recent = JSON.parse(localStorage.getItem("hmft_emo_recent") || "[]"); } catch (e) { V.recent = []; } } V.emo = { tab: "emo", cat: V.recent.length ? -1 : 0, q: "" }; loadEmo(); renderComp(); fitVV(); return; }
+    if (a === "emoTab") { V.emo.tab = t.dataset.t; renderComp(); return; }
+    if (a === "emoCat") { V.emo.cat = +t.dataset.g; V.emo.q = ""; renderComp(); box.querySelector(".ch-emo-grid")?.scrollTo(0, 0); return; }
+    if (a === "emoPick") { emoInsert(t.dataset.e); return; }
+    if (a === "gifSend") { gifSend((V.emo && V.emo.gifs || [])[+t.dataset.k]); return; }
     if (a === "pvote") { e.stopPropagation(); pollVote(t.dataset.id, +t.dataset.o); return; }
     if (a === "pclose") { e.stopPropagation(); pollClose(t.dataset.id); return; }
     if (a === "photoCancel") { V.photos = []; return renderComp(); }
@@ -20089,6 +20186,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (e.target.id === "ch-fq") { V.form.q = e.target.value; return filterMembers(); }
     if (e.target.id === "ch-q") { V.q = e.target.value; return render(); }
     if (e.target.id === "ch-pq") { V.pq = e.target.value; return render(); }
+    if (e.target.id === "ch-eq" && V.emo) { V.emo.q = e.target.value; const g = box.querySelector(".ch-emo"); renderComp(); const n = $("ch-eq"); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } return; }
+    if (e.target.id === "ch-gq" && V.emo) { V.emo.gq = e.target.value; clearTimeout(gifT); gifT = setTimeout(() => { V.emo && (V.emo.gifs = null, gifLoad()); }, 450); return; }
     if (e.target.id !== "ch-tx") return;
     V.draft[V.room] = e.target.value; autoGrow(e.target);
     $("ch-comp")?.querySelector(".ch-send")?.classList.toggle("off", !e.target.value.trim() && !(V.photos || []).length);
@@ -20233,6 +20332,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Comment ouvrir le Vestiaire ?", "Touche 💬 en haut. Il s'ouvre par-dessus l'appli avec deux onglets : Salons et Messagerie.", "ouvrir vestiaire chat discussion"],
         ["Comment envoyer un message privé ?", "Onglet Messagerie, bouton ✎, puis choisis le joueur. Seuls vous deux voyez la conversation.", "message prive mp messagerie ecrire joueur vestiaire chat"],
         ["Comment envoyer une photo ?", "Bouton +, puis prends une photo ou choisis-en jusqu'à 10 dans la galerie.", "photo image galerie envoyer vestiaire chat message"],
+        ["Comment mettre un emoji ou un GIF ?", "Dans le Vestiaire, touche le bouton 🙂 à gauche du message. Onglet Emojis : choisis une catégorie ou cherche en français (ballon, bière, rire…), tes derniers emojis sont dans Récents. Onglet GIF : cherche un GIF et touche-le pour l'envoyer tout de suite. Touche le clavier pour revenir à la saisie.", "emoji emojis gif smiley sourire animation vestiaire"],
         ["Comment créer un sondage dans le Vestiaire ?", "Dans un salon, touche le + à gauche du message › Créer un sondage. Écris la question et jusqu'à 10 réponses. Par défaut, une seule réponse par personne et les votes sont visibles ; tu peux autoriser plusieurs réponses, cacher qui a voté quoi et fixer une date limite. Touche une réponse pour voter, touche-la encore pour retirer ton vote. L'auteur (ou un super admin) peut clore le vote. Pas de sondage dans les messages privés.", "sondage vestiaire vote question reponses date limite clore plusieurs"],
         ["Comment mentionner quelqu'un ?", "Tape @ puis choisis un joueur. @tous prévient tout le monde.", "mentionner mention arobase tous vestiaire chat message"],
         ["Comment répondre ou réagir à un message ?", "Glisse le message vers la droite pour répondre. Touche-le pour réagir (👍 😂 🔥 ⚽ ❤️), répondre, copier ou supprimer le tien.", "repondre reagir reaction supprimer copier vestiaire chat message"],
