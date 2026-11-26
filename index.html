@@ -4591,6 +4591,41 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .ch-cf-act button { font: inherit; font-weight: 700; font-size: 14px; padding: 10px 16px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); cursor: pointer; }
   .ch-cf-act .dang { background: #e30b0b; border-color: #e30b0b; color: #fff; }
   .ch-cf-act .ok { background: #ff9f0a; border-color: #ff9f0a; color: #1b1100; }
+  .ch-cf-act button:disabled { opacity: .45; cursor: default; }
+  /* mini-sondages */
+  .ch-pf .ch-cf-in { display: grid; gap: 8px; max-height: calc(100dvh - 32px); overflow-y: auto; }
+  .ch-pf-lb { font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--text3); margin-top: 4px; }
+  .ch-pf-in { width: 100%; box-sizing: border-box; background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 12px; color: var(--text); font: inherit; font-size: 16px; }
+  .ch-pf-os { display: grid; gap: 6px; }
+  .ch-pf-or { display: flex; gap: 6px; align-items: center; }
+  .ch-pf-x { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 0; background: var(--bg3); color: var(--text2); cursor: pointer; font: inherit; }
+  .ch-pf-add { justify-self: start; border: 1px dashed var(--border2); background: transparent; color: var(--text2); border-radius: 10px; padding: 8px 12px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .ch-pf-sw { display: flex; align-items: center; gap: 10px; font-size: 14px; padding: 4px 0; cursor: pointer; }
+  .ch-pf-sw input { width: 18px; height: 18px; accent-color: #ff9f0a; flex: none; }
+  .ch-pf .ch-cf-act { margin-top: 6px; }
+  #chat .ch-bub.ch-pl { min-width: min(280px, 72vw); }
+  #chat .ch-pl-h { display: flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: #ff9f0a; }
+  #chat .ch-pl-h svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+  #chat .ch-pl-q { display: block; font-size: 15px; margin: 3px 0 1px; }
+  #chat .ch-pl-m { display: block; font-size: 11px; color: var(--text3); margin-bottom: 8px; }
+  #chat .ch-pl-l { display: grid; gap: 6px; }
+  #chat .ch-pl-o { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 8px; align-items: start; width: 100%; text-align: left; border: 1px solid var(--border2); background: rgba(127,127,127,.06); border-radius: 10px; padding: 8px 9px; color: var(--text); font: inherit; cursor: pointer; }
+  #chat .ch-pl-o:disabled { cursor: default; }
+  #chat .ch-pl-o.on { border-color: rgba(255,159,10,.7); background: rgba(255,159,10,.1); }
+  #chat .ch-pl-o.top .lb { font-weight: 800; }
+  #chat .ch-pl-o .ck { width: 18px; height: 18px; margin-top: 1px; display: grid; place-items: center; border: 1.5px solid var(--border2); font-size: 11px; font-weight: 900; color: #1b1100; }
+  #chat .ch-pl-o .ck.rd { border-radius: 50%; } #chat .ch-pl-o .ck.sq { border-radius: 5px; }
+  #chat .ch-pl-o.on .ck { background: #ff9f0a; border-color: #ff9f0a; }
+  #chat .ch-pl-o .tx { display: grid; gap: 4px; min-width: 0; }
+  #chat .ch-pl-o .lb { font-size: 14px; line-height: 1.3; overflow-wrap: anywhere; }
+  #chat .ch-pl-o .br { display: block; height: 5px; border-radius: 3px; background: rgba(127,127,127,.18); overflow: hidden; }
+  #chat .ch-pl-o .br i { display: block; height: 100%; border-radius: 3px; background: #ff9f0a; transition: width .3s; }
+  #chat .ch-pl-o .vs { font-size: 11px; color: var(--text3); line-height: 1.35; }
+  #chat .ch-pl-o .nb { font-size: 14px; font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  #chat .ch-pl-o .nb small { display: block; font-size: 10.5px; font-weight: 600; color: var(--text3); }
+  #chat .ch-pl-f { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 11.5px; color: var(--text3); }
+  #chat .ch-pl-f button { border: 0; background: none; padding: 0; color: #ff9f0a; font: inherit; font-weight: 700; cursor: pointer; }
+  #chat .ch-pl-f .tm { margin-left: auto; position: static; }
   .ch-cf-in p b { font-size: inherit; color: var(--text); }
   .hm-news ul { list-style: none; margin: 0 0 16px; padding: 10px 12px; border-radius: 12px; background: var(--bg3); display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; color: var(--text2); }
   .hm-news ul b { color: var(--text); font-weight: 600; font-size: inherit; } .hm-news p { margin: 4px 0 12px; }
@@ -4798,6 +4833,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #chat .ch-msg.me .ch-bub { border-radius: 20px; } #chat .ch-msg.me.cont .ch-bub { border-top-right-radius: 7px; } #chat .ch-msg.me:not(.last) .ch-bub { border-bottom-right-radius: 7px; }
   #chat .ch-bub .who { font-size: 12px; margin-bottom: 2px; }
   #chat .ch-bub .tm { font-size: 10.5px; margin-top: 3px; }
+  /* sondage : bulle neutre, même pour ses propres messages (l'orange reste lisible) */
+  #chat .ch-msg .ch-bub.ch-pl, #chat .ch-msg.me .ch-bub.ch-pl { background: rgba(28,28,36,.94); border: 1px solid rgba(255,159,10,.4); color: var(--text); white-space: normal; padding: 10px 12px 8px; }
   #chat .ch-reacts { margin-top: -5px; margin-bottom: 2px; }
   /* citation dans une bulle + barre « Réponse à » */
   #chat .ch-quote { border-left: 3px solid #ff3b30; background: rgba(255,255,255,.06); border-radius: 10px; padding: 5px 10px 6px; margin: 2px 0 6px; font-size: 12.5px; color: var(--text2); }
@@ -5153,8 +5190,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="26/11/2026" data-for="sa"><li>🏆 <b>Récompenses</b> : 2 nouveaux classements, Collectionneurs (vignettes collées) et Traders (total, données ou reçues)</li><li>❓ <b>Aide</b> : le guide de l'appli dans le menu ☰, avec une recherche pour poser ta question</li><li>🗓️ <b>Fiche joueur</b> : l'année d'arrivée au club</li><li>🟠 <b>Mises à jour</b> : les petites ne s'affichent plus en grand, juste un point orange sur Menu</li><li>📲 <b>Pastille de l'appli</b> : elle compte aussi les messages non lus du Vestiaire</li><li data-sa>🔒 <b>Visiteurs</b> : sans compte, on ne voit plus que les Sessions</li><li data-sa>⚙️ <b>Accueil</b> : « Ouvrir maintenant » et « Annuler la session » sont rangés sous la roue dentée de la case verte du sondage programmé</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 26/11/2026 - 13:52</footer>
+<template id="hm-news" data-date="26/11/2026" data-for="sa"><li>🏆 <b>Récompenses</b> : 2 nouveaux classements, Collectionneurs (vignettes collées) et Traders (total, données ou reçues)</li><li>❓ <b>Aide</b> : le guide de l'appli dans le menu ☰, avec une recherche pour poser ta question</li><li>🗓️ <b>Fiche joueur</b> : l'année d'arrivée au club</li><li>🟠 <b>Mises à jour</b> : les petites ne s'affichent plus en grand, juste un point orange sur Menu</li><li>📲 <b>Pastille de l'appli</b> : elle compte aussi les messages non lus du Vestiaire</li><li data-sa>🔒 <b>Visiteurs</b> : sans compte, on ne voit plus que les Sessions</li><li data-sa>⚙️ <b>Accueil</b> : « Ouvrir maintenant » et « Annuler la session » sont rangés sous la roue dentée de la case verte du sondage programmé</li><li>📊 <b>Vestiaire</b> : les sondages, avec le + à côté du message (une ou plusieurs réponses, votes visibles ou non, date limite)</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 26/11/2026 - 19:15</footer>
 
 <script>
 
@@ -19308,6 +19345,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     back: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
     dots: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>',
     plus: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+    poll: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-6"/></svg>',
     pen: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
     search: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
     cam: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13.2" r="3.4"/></svg>',
@@ -19571,7 +19609,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       <div class="ch-pinfo"><b>📷 ${PH.length} photo${PH.length > 1 ? "s" : ""}</b> · ${Math.round(PH.reduce((a, x) => a + x.size, 0) / 1024)} Ko${PH.length < 10 ? ` · <button type="button" data-ch="photo">+ Ajouter</button>` : " · 10 maximum"}<button type="button" class="x" data-ch="photoCancel" aria-label="Retirer toutes les photos">Tout retirer</button></div></div>`;
     const has = !!(V.draft[V.room] || "").trim() || PH.length;
     h += `<div class="ch-rowc"><button type="button" class="ch-add${V.plus ? " act" : ""}" data-ch="plus" aria-label="Ajouter une photo" aria-expanded="${V.plus}">${IC.plus}</button><input type="file" id="ch-file" accept="image/*" multiple hidden><input type="file" id="ch-cam" accept="image/*" capture="environment" hidden><textarea id="ch-tx" rows="1" maxlength="1000" placeholder="${r.dm ? "Message à " + esc(r.other) : "Message"}">${esc(V.draft[V.room] || "")}</textarea><button type="button" class="ch-send${has ? "" : " off"}" data-ch="send" aria-label="Envoyer">${IC.send}</button></div>`;
-    if (V.plus) h += `<div class="ch-plus"><button type="button" data-ch="cam"><span class="oi">${IC.cam}</span><span>Prendre une photo<small>Ouvre l'appareil photo</small></span></button><button type="button" data-ch="gal"><span class="oi">${IC.gal}</span><span>Choisir dans la galerie<small>Jusqu'à 10 photos d'un coup</small></span></button></div>`;
+    if (V.plus) h += `<div class="ch-plus"><button type="button" data-ch="cam"><span class="oi">${IC.cam}</span><span>Prendre une photo<small>Ouvre l'appareil photo</small></span></button><button type="button" data-ch="gal"><span class="oi">${IC.gal}</span><span>Choisir dans la galerie<small>Jusqu'à 10 photos d'un coup</small></span></button>${r.dm ? "" : `<button type="button" data-ch="pollNew"><span class="oi">${IC.poll}</span><span>Créer un sondage<small>Une question, jusqu'à 10 réponses</small></span></button>`}</div>`;
     return h;
   }
   function msgHTML(m, p, g) {
@@ -19588,12 +19626,84 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       return `<div class="ch-sys ${esc(m.sys)}" data-id="${m.id}">${ic}${esc(m.text)}</div>`;
     }
     const mine = m.by === p, r = R(V.room), q = m.reply;
+    if (m.poll && typeof m.poll === "object") return pollMsgHTML(m, p, g, mine, r);
     const reacts = Object.entries(m.reacts || {}).map(([e, o]) => [e, Object.keys(o || {})]).filter(([, l]) => l.length);
     return `<div class="ch-msg${mine ? " me" : ""}${g.first ? "" : " cont"}${g.last ? " last" : ""}" data-id="${m.id}"><span class="ch-swipe">↩️</span>${mine ? "" : g.last ? av(m.by) : `<span class="ch-avsp"></span>`}
       <div><div class="ch-bub" data-ch="sheet" data-id="${m.id}">${mine || !g.first || (r && r.dm) ? "" : `<span class="who" style="color:${ncol(m.by)}">${esc(m.by)}</span>`}${q ? `<div class="ch-quote" data-ch="goto" data-to="${esc(q.id)}"><b>${esc(q.by || "Infos Club")}</b>${esc(plain(q.text))}</div>` : ""}${m.img ? `<span class="ch-img" data-ch="img" data-id="${m.id}" style="aspect-ratio:${+m.img.w || 4} / ${+m.img.h || 3}"><img alt="Photo"${IMGS[m.id] ? ` src="${IMGS[m.id]}"` : ""}></span>` : ""}${Array.isArray(m.imgs) ? (m.imgs.length === 1
         ? `<span class="ch-img" data-ch="img" data-id="${m.id}_0" style="aspect-ratio:${+m.imgs[0].w || 4} / ${+m.imgs[0].h || 3}"><img alt="Photo"${IMGS[m.id + "_0"] ? ` src="${IMGS[m.id + "_0"]}"` : ""}></span>`
         : `<span class="ch-gal n${Math.min(m.imgs.length, 4)}">${m.imgs.map((x, i) => `<span class="ch-img" data-ch="img" data-id="${m.id}_${i}"><img alt="Photo ${i + 1}"${IMGS[m.id + "_" + i] ? ` src="${IMGS[m.id + "_" + i]}"` : ""}></span>`).join("")}</span>`) : ""}${m.photoOnly ? "" : fmt(m.text || "", mine)}<span class="tm">${r && r.pinned && r.pinned.id === m.id ? "📌 " : ""}${hm(m.at || Date.now())}</span></div>
       ${reacts.length ? `<div class="ch-reacts">${reacts.map(([e, l]) => `<button type="button" data-ch="react" data-id="${m.id}" data-e="${e}" aria-pressed="${l.includes(p)}" title="${esc(l.join(", "))}">${e} ${l.length}</button>`).join("")}</div>` : ""}</div></div>`;
+  }
+  // ── Mini-sondages : chat/msgs/{salon}/{id} = { by, text, at, poll: { q, opts[], multi, voters, until }, votes: { joueur: { index: true } } }
+  const pollDone = pl => !!(pl.until && Date.now() >= pl.until);
+  const pollWhen = t => { const d = new Date(t), j = d.toLocaleDateString("fr", { weekday: "short", day: "numeric", month: "numeric" }); return `${j} à ${hm(t)}`; };
+  function pollMsgHTML(m, p, g, mine, r) {
+    const pl = m.poll, opts = (Array.isArray(pl.opts) ? pl.opts : Object.values(pl.opts || {})).slice(0, 10), V0 = m.votes || {};
+    const who = opts.map(() => []); Object.entries(V0).forEach(([n, o]) => Object.keys(o || {}).forEach(k => { if (who[+k]) who[+k].push(n); }));
+    const nV = Object.keys(V0).filter(n => Object.keys(V0[n] || {}).length).length, max = Math.max(1, ...who.map(l => l.length)), done = pollDone(pl), myV = V0[p] || {};
+    const reacts = Object.entries(m.reacts || {}).map(([e, o]) => [e, Object.keys(o || {})]).filter(([, l]) => l.length);
+    const rows = opts.map((o, k) => { const n = who[k].length, on = !!myV[k], pc = nV ? Math.round(n / nV * 100) : 0, top = done && n && n === max;
+      return `<button type="button" class="ch-pl-o${on ? " on" : ""}${top ? " top" : ""}" data-ch="pvote" data-id="${m.id}" data-o="${k}"${done ? " disabled" : ""} aria-pressed="${on}">
+        <span class="ck ${pl.multi ? "sq" : "rd"}" aria-hidden="true">${on ? "✓" : ""}</span><span class="tx"><span class="lb">${esc(o)}</span><span class="br"><i style="width:${n / max * 100}%"></i></span>${pl.voters !== false && n ? `<span class="vs">${who[k].sort((a, b) => a.localeCompare(b, "fr")).map(esc).join(", ")}</span>` : ""}</span><span class="nb">${n}<small>${pc}%</small></span></button>`; }).join("");
+    const meta = [pl.multi ? "Plusieurs réponses possibles" : "Une seule réponse", pl.voters === false ? "Votes anonymes" : "Votes visibles", done ? "Vote terminé" : pl.until ? `Jusqu'au ${pollWhen(pl.until)}` : ""].filter(Boolean).join(" · ");
+    return `<div class="ch-msg${mine ? " me" : ""}${g.first ? "" : " cont"}${g.last ? " last" : ""}" data-id="${m.id}"><span class="ch-swipe">↩️</span>${mine ? "" : g.last ? av(m.by) : `<span class="ch-avsp"></span>`}
+      <div><div class="ch-bub ch-pl" data-ch="sheet" data-id="${m.id}">${mine || !g.first ? "" : `<span class="who" style="color:${ncol(m.by)}">${esc(m.by)}</span>`}<span class="ch-pl-h">${IC.poll}<span>Sondage</span></span><b class="ch-pl-q">${esc(pl.q || "")}</b><small class="ch-pl-m">${meta}</small>
+        <div class="ch-pl-l">${rows}</div><span class="ch-pl-f"><span>${nV} votant${nV > 1 ? "s" : ""}</span>${(mine || isSA()) && !done ? `<button type="button" data-ch="pclose" data-id="${m.id}">Clore le vote</button>` : ""}<span class="tm">${r && r.pinned && r.pinned.id === m.id ? "📌 " : ""}${hm(m.at || Date.now())}</span></span></div>
+      ${reacts.length ? `<div class="ch-reacts">${reacts.map(([e, l]) => `<button type="button" data-ch="react" data-id="${m.id}" data-e="${e}" aria-pressed="${l.includes(p)}" title="${esc(l.join(", "))}">${e} ${l.length}</button>`).join("")}</div>` : ""}</div></div>`.replace(/>\s+</g, "><");
+  }
+  async function pollVote(id, k) {
+    const r = R(V.room), p = me(), m = (msgs[r.id] || []).find(x => x.id === id); if (!m || !m.poll || !p) return;
+    if (pollDone(m.poll)) { toast("Le vote est terminé."); return; }
+    const cur = Object.assign({}, (m.votes || {})[p] || {}); let next;
+    if (m.poll.multi) { if (cur[k]) delete cur[k]; else cur[k] = true; next = cur; } else next = cur[k] && Object.keys(cur).length === 1 ? {} : { [k]: true };
+    const val = Object.keys(next).length ? next : null;
+    m.votes = Object.assign({}, m.votes || {}, { [p]: val || undefined }); if (!val) delete m.votes[p]; renderFeed();
+    try { await _db.ref(`${mP(r.id)}/${id}/votes/${p}`).set(val); } catch (e) { toast("Vote non enregistré : vérifie ta connexion."); }
+  }
+  async function pollClose(id) {
+    const r = R(V.room), m = (msgs[r.id] || []).find(x => x.id === id); if (!m || !m.poll) return;
+    if (!await askConfirm("Clore le vote ?", "Plus personne ne pourra voter ni changer sa réponse. Les résultats restent affichés.", "Clore")) return;
+    try { await _db.ref(`${mP(r.id)}/${id}/poll/until`).set(Date.now()); } catch (e) { toast("Impossible de clore le vote : vérifie ta connexion."); }
+  }
+  // Formulaire de création (fenêtre dans la page)
+  function pollForm() {
+    const r = R(V.room); if (!r || r.dm) return;
+    const st = { q: "", opts: ["", ""], multi: false, voters: true, dl: false, until: "" };
+    const pad = n => String(n).padStart(2, "0"), loc = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    const o = document.createElement("div"); o.className = "ch-cf ch-pf";
+    const ok = () => st.q.trim() && st.opts.filter(x => x.trim()).length >= 2 && (!st.dl || (st.until && new Date(st.until).getTime() > Date.now()));
+    const draw = (focus) => {
+      o.innerHTML = `<div class="ch-cf-in" role="dialog" aria-modal="true" aria-labelledby="ch-pf-t"><b id="ch-pf-t">Nouveau sondage</b>
+        <label class="ch-pf-lb" for="ch-pf-q">Question</label><input id="ch-pf-q" class="ch-pf-in" maxlength="140" placeholder="Bar après le match ?" value="${esc(st.q)}">
+        <span class="ch-pf-lb">Réponses</span><div class="ch-pf-os">${st.opts.map((x, i) => `<div class="ch-pf-or"><input id="ch-pf-o${i}" class="ch-pf-in" maxlength="60" placeholder="Réponse ${i + 1}" value="${esc(x)}" data-o="${i}">${st.opts.length > 2 ? `<button type="button" class="ch-pf-x" data-k="del" data-o="${i}" aria-label="Retirer la réponse ${i + 1}">✕</button>` : ""}</div>`).join("")}</div>
+        ${st.opts.length < 10 ? `<button type="button" class="ch-pf-add" data-k="add">+ Ajouter une réponse</button>` : ""}
+        <label class="ch-pf-sw"><input type="checkbox" id="ch-pf-multi"${st.multi ? " checked" : ""}><span>Autoriser plusieurs réponses</span></label>
+        <label class="ch-pf-sw"><input type="checkbox" id="ch-pf-voters"${st.voters ? " checked" : ""}><span>Montrer qui a voté quoi</span></label>
+        <label class="ch-pf-sw"><input type="checkbox" id="ch-pf-dl"${st.dl ? " checked" : ""}><span>Date limite</span></label>
+        ${st.dl ? `<input type="datetime-local" id="ch-pf-until" class="ch-pf-in" min="${loc(new Date())}" value="${st.until}">` : ""}
+        <div class="ch-cf-act"><button type="button" data-k="0">Annuler</button><button type="button" class="ok" data-k="1"${ok() ? "" : " disabled"}>Publier</button></div></div>`;
+      const f = focus && o.querySelector("#" + focus); if (f) { f.focus(); try { f.setSelectionRange(f.value.length, f.value.length); } catch (e) {} }
+    };
+    const okBtn = () => { const b = o.querySelector('[data-k="1"]'); if (b) b.disabled = !ok(); };
+    o.addEventListener("input", e => { const t = e.target; if (t.id === "ch-pf-q") st.q = t.value; else if (t.dataset.o != null) st.opts[+t.dataset.o] = t.value; else if (t.id === "ch-pf-until") st.until = t.value; okBtn(); });
+    o.addEventListener("change", e => { const t = e.target; if (t.id === "ch-pf-multi") st.multi = t.checked; else if (t.id === "ch-pf-voters") st.voters = t.checked;
+      else if (t.id === "ch-pf-dl") { st.dl = t.checked; if (st.dl && !st.until) { const d = new Date(Date.now() + 86400000); d.setMinutes(0, 0, 0); st.until = loc(d); } draw("ch-pf-until"); } else if (t.id === "ch-pf-until") { st.until = t.value; okBtn(); } });
+    o.addEventListener("click", async e => {
+      if (e.target === o) { o.remove(); return; }
+      const b = e.target.closest("[data-k]"); if (!b) return; const k = b.dataset.k;
+      if (k === "add") { st.opts.push(""); draw("ch-pf-o" + (st.opts.length - 1)); return; }
+      if (k === "del") { st.opts.splice(+b.dataset.o, 1); draw(); return; }
+      if (k === "0") { o.remove(); return; }
+      if (k === "1" && ok()) {
+        const opts = st.opts.map(x => x.trim()).filter(Boolean).slice(0, 10), q = st.q.trim().slice(0, 140);
+        const poll = { q, opts, multi: st.multi, voters: st.voters }; if (st.dl && st.until) poll.until = new Date(st.until).getTime();
+        b.disabled = true;
+        try { await _db.ref(mP(r.id)).push({ by: me(), text: `📊 Sondage : ${q}`, at: TS(), poll }); o.remove(); renderFeed(true); }
+        catch (err) { b.disabled = false; toast("Sondage non publié : vérifie ta connexion."); }
+      }
+    });
+    o.addEventListener("keydown", e => { if (e.key === "Escape") o.remove(); });
+    draw("ch-pf-q"); document.body.appendChild(o);
   }
   function renderFeed(force) {
     const f = $("ch-feed"); if (!f || !V.room) return;
@@ -19931,6 +20041,9 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (a === "photo" || a === "gal") { V.plus = false; renderComp(); $("ch-file")?.click(); return; }
     if (a === "cam") { V.plus = false; renderComp(); $("ch-cam")?.click(); return; }
     if (a === "plus") { V.plus = !V.plus; return renderComp(); }
+    if (a === "pollNew") { V.plus = false; renderComp(); pollForm(); return; }
+    if (a === "pvote") { e.stopPropagation(); pollVote(t.dataset.id, +t.dataset.o); return; }
+    if (a === "pclose") { e.stopPropagation(); pollClose(t.dataset.id); return; }
     if (a === "photoCancel") { V.photos = []; return renderComp(); }
     if (a === "photoDel") { (V.photos || []).splice(+t.dataset.i, 1); return renderComp(); }
     if (a === "img") { e.stopPropagation(); return openImg(t.dataset.id); }
@@ -20120,6 +20233,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Comment ouvrir le Vestiaire ?", "Touche 💬 en haut. Il s'ouvre par-dessus l'appli avec deux onglets : Salons et Messagerie.", "ouvrir vestiaire chat discussion"],
         ["Comment envoyer un message privé ?", "Onglet Messagerie, bouton ✎, puis choisis le joueur. Seuls vous deux voyez la conversation.", "message prive mp messagerie ecrire joueur vestiaire chat"],
         ["Comment envoyer une photo ?", "Bouton +, puis prends une photo ou choisis-en jusqu'à 10 dans la galerie.", "photo image galerie envoyer vestiaire chat message"],
+        ["Comment créer un sondage dans le Vestiaire ?", "Dans un salon, touche le + à gauche du message › Créer un sondage. Écris la question et jusqu'à 10 réponses. Par défaut, une seule réponse par personne et les votes sont visibles ; tu peux autoriser plusieurs réponses, cacher qui a voté quoi et fixer une date limite. Touche une réponse pour voter, touche-la encore pour retirer ton vote. L'auteur (ou un super admin) peut clore le vote. Pas de sondage dans les messages privés.", "sondage vestiaire vote question reponses date limite clore plusieurs"],
         ["Comment mentionner quelqu'un ?", "Tape @ puis choisis un joueur. @tous prévient tout le monde.", "mentionner mention arobase tous vestiaire chat message"],
         ["Comment répondre ou réagir à un message ?", "Glisse le message vers la droite pour répondre. Touche-le pour réagir (👍 😂 🔥 ⚽ ❤️), répondre, copier ou supprimer le tien.", "repondre reagir reaction supprimer copier vestiaire chat message"],
         ["Comment voir qui a réagi à un message ?", "Touche le message : sous le message, la liste des réactions montre qui a réagi avec chaque emoji.", "qui a reagi reactions voir"],

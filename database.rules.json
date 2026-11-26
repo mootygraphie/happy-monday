@@ -181,6 +181,11 @@
                   ".write": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($r === 'g' || root.child('chat/rooms/' + $r + '/members/' + root.child('users/' + auth.uid + '/player').val()).val() === true) && root.child('users/' + auth.uid + '/player').val() === $p"
                 }
               }
+            },
+            "votes": {
+              "$p": {
+                ".write": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($r === 'g' || root.child('chat/rooms/' + $r + '/members/' + root.child('users/' + auth.uid + '/player').val()).val() === true) && root.child('users/' + auth.uid + '/player').val() === $p && data.parent().parent().child('poll').exists() && (!data.parent().parent().child('poll/until').exists() || now < data.parent().parent().child('poll/until').val())"
+              }
             }
           }
         }
