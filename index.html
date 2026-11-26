@@ -18347,7 +18347,6 @@ function _svApply() {
   }
   function hmAfterView(s, dd) {
     const when = ["Ce soir", "Hier soir", "Lundi soir"][dd], next = _svDate !== s.date ? _svDate : _svIso(Date.parse(s.date + "T12:00:00Z") + 7 * 86400000);
-    const canOpen = isSA() && !_svData && _svDate !== s.date;
     // dès mardi 8h : on prépare la suivante (sondage programmé + case super admin), le récap reste en dessous
     const sd = s.date.split("-").map(Number), tue8 = _svParisMs(sd[0], sd[1], sd[2] + 1, 8, 0);
     if (_svDate !== s.date && _liveNow() >= tue8 && (!_svData || _svData.status === "none" || _svData.status === "cancelled")) {
@@ -18355,10 +18354,8 @@ function _svApply() {
       return hmHead("Prochaine session", _svDate) + (off || hmSched(isSA() && ui.mode !== "none") + (isSA() && ui.mode === "none" ? `<div class="hm-sa"><span class="h">★ Super admin · Annulation</span>${vCreate()}</div>` : ""))
         + hmLastCard(s, true, when) + hmTiles();
     }
-    return hmHead("Soirée terminée", s.date)
-      + (canOpen && ui.mode === "none" ? `<div class="hm-sa"><span class="h">★ Super admin · Annulation du ${fdate(_svDate)}</span>${vCreate()}</div>` : "")
-      + (isSA() ? hmSA(`Soirée validée · <b>${(s.matchs || []).length} matchs</b> enregistrés.`, `${canOpen ? `<button type="button" data-sv="publishOpen">Ouvrir le sondage du ${fdate(_svDate).replace(/^lundi /, "")}</button><button type="button" data-sv="mode" data-m="none">Annuler la session du ${fdate(_svDate).replace(/^lundi /, "")}</button>` : ""}<button type="button" data-sv="goRecap" data-d="${s.date}">Voir la soirée</button>`) : "")
-      + hmLastCard(s, true, when) + hmTiles();
+    // soirée terminée (jusqu'à mardi 8h) : plus d'actions super admin, le récap se lit dans la case du dessous
+    return hmHead("Soirée terminée", s.date) + hmLastCard(s, true, when) + hmTiles();
   }
   function body() {
     const d = _svData;
