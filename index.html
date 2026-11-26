@@ -16885,6 +16885,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   // Panthéon : anciens joueurs qui ont marqué le club. Chaque photo portraits/Pantheon_<Prénom>
   // ajoute une carte (liste portraits/pantheon.json, tenue à jour par l'Action des portraits).
   let PANTH = [];
+  // Prénom corrigé : la carte garde son ancien identifiant pour rester dans les albums déjà remplis
+  const _PANTH_KEY = { Paulo: "Polo" };
   fetch("portraits/pantheon.json?v=" + Math.floor(Date.now() / 36e5)).then(r => r.ok ? r.json() : []).then(L => {
     if (!Array.isArray(L) || !L.length) return; PANTH = L.filter(x => x && x.n && x.f); buildSig = "";
     try { if (panel.classList.contains("active")) render(); } catch (e) {}
@@ -17034,7 +17036,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const VINT = { k: VINT_KEY, ty: "g", nm: "Kit Vintage", ic: "🎽", img: "portraits/Maillots.png", sub: "Les maillots des débuts", r: "M", nSess: sessions.length };
     const vOwn = VINT_OWN.has(ME);
     // Panthéon : cartes Mythiques, stats à 100, sans influence sur les autres cartes
-    const PAN = PANTH.map(x => ({ k: "m:" + x.n, ty: "p", pan: true, n: x.n, img: x.f, o: 100, s: Object.fromEntries(STATS.map(k => [k, 100])), t: "Légende", r: "M", team: "",
+    const PAN = PANTH.map(x => ({ k: "m:" + (_PANTH_KEY[x.n] || x.n), ty: "p", pan: true, n: x.n, img: x.f, o: 100, s: Object.fromEntries(STATS.map(k => [k, 100])), t: "Légende", r: "M", team: "",
       st: { pres: 0, mj: 0, v: 0, nu: 0, d: 0, b: 0, p: 0, gk: 0, enc: 0 }, nt: [], nSess: sessions.length }));
     ALL = [...CLUB, ...(vOwn ? [VINT] : []), ...PLAYERS, ...HF, ...NT, ...PAN];
     BYK = Object.fromEntries(ALL.map(c => [c.k, c]));
@@ -19503,7 +19505,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   let EMOD = null, EMOL = null;
   const loadEmo = () => EMOL || (EMOL = fetch("icons/emoji-fr.json").then(r => r.json()).then(d => { EMOD = d; if (V.emo) renderComp(); }).catch(() => { EMOL = null; }));
   const enorm = x => String(x || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
-  const GIPHY_KEY = ""; // clé publique Giphy (sinon lue dans config/giphyKey)
+  const GIPHY_KEY = "RgKatkub4m9ThR1jsuNX2iqNJQi8jNLC"; // clé publique Giphy (une clé web est toujours visible dans le code du site)
   let giphyKey = GIPHY_KEY, gifT = null;
   async function gifLoad() {
     const E = V.emo; if (!E) return;
