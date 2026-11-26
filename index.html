@@ -4191,6 +4191,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #hm-help .hh-q .car { color: var(--text3); font-size: 18px; transition: transform .2s; flex: none; }
   #hm-help .hh-q.open { border-color: var(--gold-border); }
   #hm-help .hh-star { color: var(--sa); }
+  #hm-help .hh-qt { flex: 1; min-width: 0; text-align: left; }
   #hm-help .hh-q.open .car { transform: rotate(90deg); color: var(--gold); }
   #hm-help .hh-q p { margin: 0; padding: 0 14px 14px; font-size: 13.5px; line-height: 1.55; color: var(--text2); }
   #hm-help .hh-ans { margin-top: 14px; padding: 16px; border-radius: 16px; background: var(--bg2); border: 1.5px solid var(--gold-border); box-shadow: inset 3px 0 0 var(--gold); }
@@ -5130,8 +5131,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="26/11/2026" data-maj="grosse"><li>🏆 <b>Récompenses</b> : 2 nouveaux classements, Collectionneurs (vignettes collées) et Traders (total, données ou reçues)</li><li>❓ <b>Aide</b> : le guide de l'appli dans le menu ☰, avec une recherche pour poser ta question</li><li>🗓️ <b>Fiche joueur</b> : l'année d'arrivée au club</li><li>🟠 <b>Mises à jour</b> : les petites ne s'affichent plus en grand, juste un point orange sur Menu</li><li>📲 <b>Pastille de l'appli</b> : elle compte aussi les messages non lus du Vestiaire</li><li data-sa>🔒 <b>Visiteurs</b> : sans compte, on ne voit plus que les Sessions</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 26/11/2026 - 09:42</footer>
+<template id="hm-news" data-date="26/11/2026" data-for="sa"><li>🏆 <b>Récompenses</b> : 2 nouveaux classements, Collectionneurs (vignettes collées) et Traders (total, données ou reçues)</li><li>❓ <b>Aide</b> : le guide de l'appli dans le menu ☰, avec une recherche pour poser ta question</li><li>🗓️ <b>Fiche joueur</b> : l'année d'arrivée au club</li><li>🟠 <b>Mises à jour</b> : les petites ne s'affichent plus en grand, juste un point orange sur Menu</li><li>📲 <b>Pastille de l'appli</b> : elle compte aussi les messages non lus du Vestiaire</li><li data-sa>🔒 <b>Visiteurs</b> : sans compte, on ne voit plus que les Sessions</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 26/11/2026 - 09:51</footer>
 
 <script>
 
@@ -20199,7 +20200,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   }
   function qa(c, i, flat) {
     const id = `${G}-${c.t}-${i}`, o = OPEN === id, x = c.qa[i];
-    return `<div class="hh-q${o ? " open" : ""}${flat ? " flat" : ""}"><button type="button" data-hq="${id}" aria-expanded="${o}">${star()}${esc(x[0])}<span class="car">›</span></button>${o ? `<p>${esc(x[1])}</p>` : ""}</div>`;
+    return `<div class="hh-q${o ? " open" : ""}${flat ? " flat" : ""}"><button type="button" data-hq="${id}" aria-expanded="${o}"><span class="hh-qt">${star()}${esc(x[0])}</span><span class="car">›</span></button>${o ? `<p>${esc(x[1])}</p>` : ""}</div>`;
   }
   function render(keepFocus) {
     if (!el) return;
