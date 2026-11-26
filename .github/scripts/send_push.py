@@ -409,20 +409,28 @@ def main(fast=False):
             mark(f"pushSent/bday/{now.year}/{p}")
     block("Anniversaires", do_bday)
 
-    # ── événements du club : rappel la veille à 18h à ceux qui viennent (ou peut-être), une fois par événement
+    # ── événements du club : rappel à 18h, X jours avant (réglé à la création), à ceux qui viennent (ou peut-être), une fois
     def do_event_reminders():
         if now.hour != 18:
             return
-        tomorrow = (today + datetime.timedelta(days=1)).isoformat()
         done = sent.get("evrem") or {}
         evs = req("events") or {}
         rsvp = req("eventRsvp") or {}
         for eid, ev in evs.items():
-            if not isinstance(ev, dict) or ev.get("d") != tomorrow or done.get(eid):
+            if not isinstance(ev, dict) or ev.get("pub") is False or done.get(eid):
+                continue
+            rem = ev.get("rem", 1)
+            try:
+                rem = int(rem)
+                day = datetime.date.fromisoformat(ev.get("d") or "")
+            except (TypeError, ValueError):
+                continue
+            if rem <= 0 or (day - today).days != rem:
                 continue
             mark(f"pushSent/evrem/{eid}")  # noté AVANT d'envoyer : jamais deux fois
             h = (ev.get("h") or "").replace(":", "h")
-            body = f"C'est demain{' à ' + h if h else ''}{' · ' + ev['loc'] if ev.get('loc') else ''}."
+            quand = "C'est demain" if rem == 1 else f"C'est dans {rem} jours"
+            body = f"{quand}{' à ' + h if h else ''}{' · ' + ev['loc'] if ev.get('loc') else ''}."
             for p, r in (rsvp.get(eid) or {}).items():
                 if isinstance(r, dict) and r.get("s") in ("Y", "M") and p in subs:
                     print("Rappel événement :", ev.get("t"), "→", p)

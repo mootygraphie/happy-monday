@@ -3579,6 +3579,19 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   /* ── Événements du club ── */
   .hm .ev-home { display: grid; gap: 10px; margin: 2px 0 14px; }
   .hm .ev-hl { font-size: 10.5px; font-weight: 800; font-style: italic; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); }
+  .ev-track { display: grid; }
+  .ev-track.many { grid-auto-flow: column; grid-auto-columns: 88%; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; margin: 0 -2px; padding: 0 2px; }
+  .ev-track.many::-webkit-scrollbar { display: none; }
+  .ev-track.many > .ev-card { scroll-snap-align: start; }
+  .ev-dots { display: flex; justify-content: center; gap: 6px; }
+  .ev-dots button { width: 7px; height: 7px; border-radius: 4px; border: 0; padding: 0; background: var(--border2); cursor: pointer; transition: width .2s, background .2s; }
+  .ev-dots button[aria-current="true"] { width: 20px; background: var(--gold); }
+  .ev-eye { flex: none; width: 38px; height: 38px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text3); display: grid; place-items: center; cursor: pointer; padding: 0; }
+  .ev-eye svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .ev-eye.on { color: #34c77b; border-color: rgba(52,199,123,.45); background: rgba(52,199,123,.1); }
+  .ev-eye-h { position: absolute; top: 12px; right: 12px; width: auto; height: 32px; padding: 0 10px; display: flex; gap: 6px; font: inherit; font-size: 12px; font-weight: 700; z-index: 1; }
+  .ev-eye-h svg { width: 17px; height: 17px; }
+  .ev-li.off .ev-lo { opacity: .55; }
   .ev-card { all: unset; box-sizing: border-box; cursor: pointer; position: relative; overflow: hidden; isolation: isolate; display: grid; gap: 9px; padding: 16px; border-radius: 16px; border: 1px solid var(--gold-border); background: linear-gradient(150deg, var(--gold-bg), transparent 60%), var(--bg2); color: var(--text); }
   .ev-card:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   .ev-card .ev-em, .ev-hero .ev-em { position: absolute; right: -14px; top: -20px; font-size: 104px; line-height: 1; opacity: .13; transform: rotate(-10deg); pointer-events: none; z-index: -1; }
@@ -3639,8 +3652,10 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .ev-adm .pri { background: var(--gold); border-color: var(--gold); color: #fff; } .ev-adm .pri:disabled { opacity: .45; cursor: default; }
   .ev-new { border: 1px dashed var(--sa-border); background: var(--sa-bg); color: var(--sa); border-radius: 14px; padding: 12px; font: inherit; font-weight: 700; font-size: 14px; cursor: pointer; }
   .ev-gh { font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); margin-top: 4px; }
-  .ev-li { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; text-align: left; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font: inherit; cursor: pointer; }
-  .ev-li .ev-em { font-size: 24px; } .ev-li b { display: block; font-size: 14.5px; } .ev-li small { display: block; font-size: 12px; color: var(--text2); } .ev-li .chev { color: var(--text3); }
+  .ev-li { display: flex; gap: 8px; align-items: center; padding: 6px 8px 6px 6px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); }
+  .ev-lo { flex: 1; min-width: 0; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; align-items: center; text-align: left; padding: 4px 6px; border: 0; background: none; color: var(--text); font: inherit; cursor: pointer; }
+  .ev-li .ev-em { font-size: 24px; } .ev-li b { display: block; font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ev-li small { display: block; font-size: 12px; color: var(--text2); }
+  .ev-hero .ev-t { padding-right: 96px; }
   .ev-fld { display: grid; gap: 5px; }
   .ev-in { width: 100%; box-sizing: border-box; background: var(--bg3); border: 1px solid var(--border2); border-radius: 12px; padding: 10px 12px; color: var(--text); font: inherit; font-size: 16px; }
   textarea.ev-in { resize: vertical; }
@@ -4939,9 +4954,9 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #chat .ch-emo-grid button:active { background: var(--bg2); }
   #chat .ch-emo-grid img.emo { width: 32px; height: 32px; margin: 0; }
   #chat .ch-emo-msg { margin: 8px 4px; font-size: 13px; color: var(--text3); }
-  #chat .ch-gifs { columns: 2 170px; column-gap: 6px; width: 100%; max-height: 46vh; overflow-y: auto; overscroll-behavior: contain; }
-  #chat .ch-gifs button { display: block; width: 100%; margin: 0 0 6px; padding: 0; border: 0; border-radius: 10px; overflow: hidden; background: var(--bg2); cursor: pointer; break-inside: avoid; }
-  #chat .ch-gifs img { display: block; width: 100%; height: auto; }
+  #chat .ch-gifs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; width: 100%; max-height: 50vh; overflow-y: auto; overscroll-behavior: contain; }
+  #chat .ch-gifs button { display: block; width: 100%; height: 170px; padding: 0; border: 0; border-radius: 12px; overflow: hidden; background: var(--bg2); cursor: pointer; }
+  #chat .ch-gifs img { display: block; width: 100%; height: 100%; object-fit: cover; }
   #chat .ch-emo-by { font-size: 10px; color: var(--text3); text-align: right; letter-spacing: .04em; }
   #chat .ch-gif { display: block; width: min(240px, 62vw); border-radius: 12px; overflow: hidden; margin: 2px 0 4px; background: rgba(127,127,127,.15); }
   #chat .ch-gif img { display: block; width: 100%; height: 100%; object-fit: cover; }
@@ -19617,7 +19632,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const q = (E.gq || "").trim(), u = q ? `https://api.giphy.com/v1/gifs/search?api_key=${giphyKey}&q=${encodeURIComponent(q)}&lang=fr&limit=30&rating=pg-13` : `https://api.giphy.com/v1/gifs/trending?api_key=${giphyKey}&limit=30&rating=pg-13`;
     E.gload = true; E.gerr = "";
     try { const d = await (await fetch(u)).json(); if (V.emo !== E || (E.gq || "").trim() !== q) return;
-      E.gifs = (d.data || []).map(g => { const a = (g.images || {}).fixed_height || {}, b = (g.images || {}).fixed_width || a; return { id: g.id, u: a.webp || a.url, w: +a.width || 200, h: +a.height || 200, p: b.webp || b.url, t: g.title || "GIF" }; }).filter(g => g.u);
+      E.gifs = (d.data || []).map(g => { const a = (g.images || {}).fixed_height || {}, b = (g.images || {}).fixed_height || a; return { id: g.id, u: a.webp || a.url, w: +a.width || 200, h: +a.height || 200, p: b.webp || b.url, t: g.title || "GIF" }; }).filter(g => g.u);
     } catch (e) { E.gerr = "GIF indisponibles : vérifie ta connexion."; E.gifs = []; }
     E.gload = false; renderComp();
   }
@@ -20364,8 +20379,13 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     ppl: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.6-3.4 3-5.4 6-5.4s5.4 2 6 5.4"/><path d="M16 4.8a3 3 0 0 1 0 6M18 14.8c1.7.7 2.8 2.4 3 5.2"/></svg>',
     eur: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 6.5a6.5 6.5 0 1 0 0 11M4 10.5h9M4 13.5h9"/></svg>',
   };
+  const EYE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const EYEX = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M10.6 5.6A9.6 9.6 0 0 1 12 5.5C18 5.5 21.5 12 21.5 12a16 16 0 0 1-3.2 3.9M6.2 6.9C3.9 8.6 2.5 12 2.5 12S6 18.5 12 18.5c1.7 0 3.2-.5 4.4-1.2M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
   const EMOS = ["🍽️", "🏆", "🍻", "⚽", "🎳", "🎉", "🏖️", "🎂", "🎄", "🎮"];
   const list = () => Object.entries(EV).filter(([, e]) => e && e.t && e.d).map(([id, e]) => Object.assign({ id }, e));
+  const shownEv = e => e.pub !== false; // masqué = en préparation, invisible pour les joueurs
+  const REM = [[0, "Pas de rappel"], [1, "La veille"], [2, "2 jours avant"], [3, "3 jours avant"], [7, "1 semaine avant"], [14, "2 semaines avant"]];
+  const remL = n => (REM.find(r => r[0] === n) || [0, `${n} jours avant`])[1];
   // réponses d'un événement, avec la liste d'attente calculée
   function state(ev) {
     const R = Object.entries(RS[ev.id] || {}).filter(([, r]) => r && r.s).map(([p, r]) => ({ p, s: r.s, g: Math.max(0, +r.g || 0), at: r.at || 0 })).sort((a, b) => a.at - b.at);
@@ -20384,14 +20404,20 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   // ── Accueil : événements à venir, sous le sondage. Rien s'il n'y en a pas.
   window._evHomeHTML = () => {
     watch(); if (!me()) return "";
-    const L = list().filter(e => e.d >= today()).sort((a, b) => (a.d + a.h).localeCompare(b.d + b.h));
+    const L = list().filter(e => shownEv(e) && e.d >= today()).sort((a, b) => (a.d + a.h).localeCompare(b.d + b.h));
     if (!L.length) return "";
-    return `<div class="ev-home"><div class="ev-hl">Événement${L.length > 1 ? "s" : ""} du club</div>${L.map(ev => { const S = state(ev), n = S.seats, m = S.mine.s;
+    const many = L.length > 1;
+    return `<div class="ev-home"><div class="ev-hl">Événement${many ? "s" : ""} du club${many ? ` · ${L.length}` : ""}</div><div class="ev-track${many ? " many" : ""}">${L.map(ev => { const S = state(ev), n = S.seats, m = S.mine.s;
       return `<button type="button" class="ev-card" data-evopen="${esc(ev.id)}"><span class="ev-em">${esc(ev.emo || "📅")}</span><span class="ev-t">${esc(ev.t)}</span>
         <span class="ev-meta"><span>${IC.cal}${fd(ev.d)}${ev.h ? " · " + fh(ev.h) : ""}</span>${ev.loc ? `<span>${IC.pin}${esc(ev.loc)}</span>` : ""}<span>${IC.eur}${ev.price ? `${ev.price} € par personne` : "Gratuit"}</span></span>
         <span class="ev-gauge"><u><i style="width:${Math.min(100, ev.max ? n / ev.max * 100 : n / 20 * 100)}%"></i></u><small><b>${n}</b> ${ev.max ? `inscrits sur ${ev.max} places` : `inscrit${n > 1 ? "s" : ""}`}${m ? ` · ta réponse : ${{ Y: "je viens", M: "peut-être", N: "je ne viens pas", W: "liste d'attente" }[m]}` : ""}</small></span>
-        <span class="ev-cta">${m ? "Voir l'événement ›" : "Répondre ›"}</span></button>`; }).join("")}</div>`;
+        <span class="ev-cta">${m ? "Voir l'événement ›" : "Répondre ›"}</span></button>`; }).join("")}</div>${many ? `<div class="ev-dots" role="tablist" aria-label="Événements">${L.map((e, k) => `<button type="button" data-evdot="${k}" aria-label="Événement ${k + 1} : ${esc(e.t)}" aria-current="${k === 0}"></button>`).join("")}</div>` : ""}</div>`;
   };
+  // carrousel : points suivent le défilement, un point fait défiler jusqu'à la carte
+  document.addEventListener("scroll", e => { const t = e.target; if (!t.classList || !t.classList.contains("ev-track")) return;
+    const k = Math.round(t.scrollLeft / Math.max(1, t.firstElementChild ? t.firstElementChild.offsetWidth + 10 : t.clientWidth));
+    t.parentElement.querySelectorAll("[data-evdot]").forEach((d, i) => d.setAttribute("aria-current", i === k)); }, true);
+  document.addEventListener("click", e => { const d = e.target.closest("[data-evdot]"); if (!d) return; const tr = d.closest(".ev-home").querySelector(".ev-track"), c = tr && tr.children[+d.dataset.evdot]; if (c) tr.scrollTo({ left: c.offsetLeft - tr.offsetLeft, behavior: "smooth" }); });
 
   // ── fenêtre (détail, liste super admin, formulaire)
   let box = null, view = null;
@@ -20413,7 +20439,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const z = s => String(s || "").replace(/\\/g, "\\\\").replace(/;/g, "\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
     const txt = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Happy Monday//Evenements//FR", "BEGIN:VEVENT", `UID:${ev.id}@happy-monday`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`,
       `DTSTART;TZID=Europe/Paris:${stamp(ev.d, ev.h)}`, `DTEND;TZID=Europe/Paris:${stamp(ev.d, endOf(ev))}`, `SUMMARY:${z("Happy Monday · " + ev.t)}`, `DESCRIPTION:${z(ev.desc)}`, `LOCATION:${z(ev.map && ev.map.a ? ev.map.n + ", " + ev.map.a : ev.loc)}`,
-      "BEGIN:VALARM", "TRIGGER:-P1D", "ACTION:DISPLAY", `DESCRIPTION:${z(ev.t)} demain`, "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+      ...(ev.rem ? ["BEGIN:VALARM", `TRIGGER:-P${ev.rem}D`, "ACTION:DISPLAY", `DESCRIPTION:${z(ev.t)} · ${z(remL(ev.rem).toLowerCase())}`, "END:VALARM"] : []), "END:VEVENT", "END:VCALENDAR"].join("\r\n");
     const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([txt], { type: "text/calendar;charset=utf-8" })); a.download = `happy-monday-${ev.d}.ics`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
   }
   function detail() {
@@ -20423,7 +20449,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const g = k => S.R.filter(r => r.s === k).sort((a, b) => (b.p === me()) - (a.p === me()) || a.p.localeCompare(b.p, "fr"));
     const sum = GR.map(([k, l]) => [g(k).length, l]).filter(x => x[0]).map(([c, l]) => `${c} ${l.toLowerCase()}`).join(" · ");
     const row = (r, c) => `<div class="ev-rrow${r.p === me() ? " me" : ""}"><span class="dot" style="background:${c}"></span><b>${esc(r.p)}${r.p === me() ? " (toi)" : ""}</b>${ev.guests && r.g ? `<span class="g">+${r.g} accompagnant${r.g > 1 ? "s" : ""}</span>` : ""}${ev.price && r.s === "Y" ? `<span class="pd${paid[r.p] ? " ok" : ""}">${paid[r.p] ? "✓ payé" : "à régler"}</span>` : ""}</div>`;
-    return head(past ? "Événement passé" : "Événement") + `<div class="ev-hero"><span class="ev-em">${esc(ev.emo || "📅")}</span><b class="ev-t">${esc(ev.t)}</b>
+    return head(past ? "Événement passé" : "Événement") + `<div class="ev-hero"><span class="ev-em">${esc(ev.emo || "📅")}</span><b class="ev-t">${esc(ev.t)}</b>${isSA() ? `<button type="button" class="ev-eye${shownEv(ev) ? " on" : ""} ev-eye-h" data-ev="eye" data-id="${esc(ev.id)}" aria-pressed="${shownEv(ev)}" aria-label="${shownEv(ev) ? "Visible sur l'Accueil : masquer" : "Masqué : afficher sur l'Accueil"}">${shownEv(ev) ? EYE : EYEX}<span>${shownEv(ev) ? "Visible" : "Masqué"}</span></button>` : ""}
         <span class="ev-meta"><span>${IC.cal}${fd(ev.d)}${ev.h ? " · " + fh(ev.h) : ""}${ev.e ? " à " + fh(ev.e) : ""}</span><span>${IC.ppl}${S.seats} inscrit${S.seats > 1 ? "s" : ""}${ev.max ? ` sur ${ev.max} places` : ""}</span></span>
         ${ev.desc ? `<p class="ev-desc">${esc(ev.desc)}</p>` : ""}</div>
       ${ev.map && ev.map.lat ? `<div class="ev-place"><iframe src="${osm(ev.map)}" title="Carte : ${esc(ev.map.n)}" loading="lazy"></iframe><div><b>${esc(ev.map.n)}</b><small>${esc(ev.map.a || "")}</small><span class="ev-lnks"><a href="${mapsUrl(ev)}" target="_blank" rel="noopener">Ouvrir dans Maps</a><a href="${routeUrl(ev)}" target="_blank" rel="noopener">Itinéraire</a></span></div></div>` : ev.loc ? `<div class="ev-loc">${IC.pin}${esc(ev.loc)}</div>` : ""}
@@ -20432,7 +20458,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         <div class="ev-rsvp"><button type="button" class="y" data-ev="rs" data-s="Y" aria-pressed="${m.s === "Y" || m.s === "W"}"><i>✓</i>${m.s === "W" ? "En attente" : "Je viens"}</button><button type="button" class="m" data-ev="rs" data-s="M" aria-pressed="${m.s === "M"}"><i>?</i>Peut-être</button><button type="button" class="n" data-ev="rs" data-s="N" aria-pressed="${m.s === "N"}"><i>✕</i>Je ne viens pas</button></div>
         ${m.s === "W" ? `<p class="ev-full">Complet : tu es en liste d'attente. Tu passes dans la liste dès qu'une place se libère.</p>` : S.full && m.s !== "Y" ? `<p class="ev-full">Complet : si tu réponds « Je viens », tu passes en liste d'attente.</p>` : ""}
         ${ev.guests && (m.s === "Y" || m.s === "W") ? `<div class="ev-step"><span>Accompagnants</span><span class="ctl"><button type="button" data-ev="g" data-d="-1" aria-label="Retirer un accompagnant">−</button><b>${m.g || 0}</b><button type="button" data-ev="g" data-d="1" aria-label="Ajouter un accompagnant">+</button></span></div>` : ""}</div>`}
-      ${ev.cal && !past ? `<div class="ev-sec"><span class="ev-lbl">Ajouter à mon calendrier</span><div class="ev-cal"><a href="${gcal(ev)}" target="_blank" rel="noopener"><span>📅</span>Google</a><button type="button" data-ev="ics"><span>🍎</span>Apple</button><button type="button" data-ev="ics"><span>📆</span>Outlook</button></div><p class="ev-note">Avec le lieu et un rappel la veille.</p></div>` : ""}
+      ${ev.cal && !past ? `<div class="ev-sec"><span class="ev-lbl">Ajouter à mon calendrier</span><div class="ev-cal"><a href="${gcal(ev)}" target="_blank" rel="noopener"><span>📅</span>Google</a><button type="button" data-ev="ics"><span>🍎</span>Apple</button><button type="button" data-ev="ics"><span>📆</span>Outlook</button></div><p class="ev-note">Avec le lieu${ev.rem ? ` et un rappel ${remL(ev.rem).toLowerCase()}` : ""}.</p></div>` : ""}
       <details class="ev-resp"${view.open ? " open" : ""}><summary><span>Réponses<small>${sum || "Pas encore de réponse"}</small></span><span class="chev">▾</span></summary>
         <div class="ev-rlist">${GR.map(([k, l, c]) => g(k).length ? `<div class="ev-rgrp">${l} · ${g(k).length}</div>${g(k).map(r => row(r, c)).join("")}` : "").join("") || `<p class="ev-note">Personne n'a encore répondu.</p>`}</div></details>
       ${isSA() && ev.price && g("Y").length ? `<div class="ev-sec sa"><span class="ev-lbl" style="color:var(--sa)">★ Cagnotte · ${g("Y").filter(r => paid[r.p]).length} sur ${g("Y").length} ont payé</span><div class="ev-pay">${g("Y").map(r => `<label><input type="checkbox" data-pay="${esc(r.p)}"${paid[r.p] ? " checked" : ""}>${esc(r.p)}<em>${ev.price * (1 + (ev.guests ? r.g : 0))} €</em></label>`).join("")}</div></div>` : ""}
@@ -20440,12 +20466,13 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   }
   function admin() {
     const L = list(), t = today(), up = L.filter(e => e.d >= t).sort((a, b) => a.d.localeCompare(b.d)), past = L.filter(e => e.d < t).sort((a, b) => b.d.localeCompare(a.d));
-    const it = ev => { const S = state(ev); return `<button type="button" class="ev-li" data-ev="open" data-id="${esc(ev.id)}"><span class="ev-em">${esc(ev.emo || "📅")}</span><span><b>${esc(ev.t)}</b><small>${fd(ev.d)}${ev.h ? " · " + fh(ev.h) : ""} · ${S.seats} inscrit${S.seats > 1 ? "s" : ""}${ev.price ? ` · ${ev.price} €` : ""}</small></span><span class="chev">›</span></button>`; };
+    const eye = ev => `<button type="button" class="ev-eye${shownEv(ev) ? " on" : ""}" data-ev="eye" data-id="${esc(ev.id)}" aria-pressed="${shownEv(ev)}" aria-label="${shownEv(ev) ? "Visible sur l'Accueil : masquer" : "Masqué : afficher sur l'Accueil"}" title="${shownEv(ev) ? "Visible : touche pour masquer" : "Masqué : touche pour afficher"}">${shownEv(ev) ? EYE : EYEX}</button>`;
+    const it = ev => { const S = state(ev); return `<div class="ev-li${shownEv(ev) ? "" : " off"}"><button type="button" class="ev-lo" data-ev="open" data-id="${esc(ev.id)}"><span class="ev-em">${esc(ev.emo || "📅")}</span><span><b>${esc(ev.t)}</b><small>${shownEv(ev) ? "" : "Masqué · "}${fd(ev.d)}${ev.h ? " · " + fh(ev.h) : ""} · ${S.seats} inscrit${S.seats > 1 ? "s" : ""}${ev.price ? ` · ${ev.price} €` : ""}</small></span></button>${eye(ev)}</div>`; };
     return head("Événements", true) + `<button type="button" class="ev-new" data-ev="new">＋ Créer un événement</button>
       <div class="ev-gh">À venir · ${up.length}</div>${up.length ? up.map(it).join("") : `<p class="ev-note">Aucun événement à venir. Rien ne s'affiche sur l'Accueil.</p>`}
       <div class="ev-gh">Passés · ${past.length}</div>${past.length ? past.map(it).join("") : `<p class="ev-note">Aucun événement passé.</p>`}`;
   }
-  const blank = () => ({ emo: "🍽️", t: "", d: "", h: "20:00", e: "", loc: "", useMap: false, map: null, cal: true, desc: "", pay: false, price: 15, lim: false, max: 20, guests: true, sugg: null });
+  const blank = () => ({ emo: "🍽️", t: "", d: "", h: "20:00", e: "", loc: "", useMap: false, map: null, cal: true, desc: "", pay: false, price: 15, lim: false, max: 20, guests: true, sugg: null, rem: 1, pub: false, notify: true });
   function form() {
     const f = view.f, ok = f.t.trim() && f.d && f.h && (!f.useMap || f.map);
     return head(view.id ? "Modifier l'événement" : "Nouvel événement", true) + `
@@ -20464,9 +20491,12 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ${f.pay ? `<div class="ev-fld"><label class="ev-lbl" for="ev-pr">Prix par personne (€)</label><input class="ev-in" id="ev-pr" type="number" min="1" step="1" value="${f.price}"></div>` : ""}
         <label class="ev-sw"><span>Places limitées<small>Liste d'attente automatique quand c'est complet</small></span><input type="checkbox" id="ev-lim"${f.lim ? " checked" : ""}></label>
         ${f.lim ? `<div class="ev-fld"><label class="ev-lbl" for="ev-mx">Nombre de places</label><input class="ev-in" id="ev-mx" type="number" min="2" step="1" value="${f.max}"></div>` : ""}
-        <label class="ev-sw"><span>Accompagnants autorisés</span><input type="checkbox" id="ev-gu"${f.guests ? " checked" : ""}></label></div>
-      ${view.id ? "" : `<label class="ev-sw"><span>Prévenir tout le monde<small>Une notification à la publication, un rappel la veille</small></span><input type="checkbox" id="ev-not"${f.notify !== false ? " checked" : ""}></label>`}
-      <div class="ev-adm"><button type="button" data-ev="${view.id ? "open" : "admin"}" data-id="${esc(view.id || "")}">Annuler</button><button type="button" class="pri" data-ev="save"${ok ? "" : " disabled"}>${view.id ? "Enregistrer" : "Publier"}</button></div>`;
+        <label class="ev-sw"><span>Accompagnants autorisés</span><input type="checkbox" id="ev-gu"${f.guests ? " checked" : ""}></label>
+        <div class="ev-fld"><label class="ev-lbl" for="ev-rem">Rappel aux inscrits</label><select class="ev-in" id="ev-rem">${REM.map(([n, l]) => `<option value="${n}"${+f.rem === n ? " selected" : ""}>${l}</option>`).join("")}</select><span class="ev-note">Notification à 18h à ceux qui viennent ou peut-être.</span></div></div>
+      <div class="ev-opt">
+        <label class="ev-sw"><span>Afficher sur l'Accueil<small>${f.pub ? "Visible par tous les joueurs" : "Masqué : tu peux le préparer et l'afficher plus tard avec l'œil"}</small></span><input type="checkbox" id="ev-pub"${f.pub ? " checked" : ""}></label>
+        ${f.notified ? "" : `<label class="ev-sw"><span>Prévenir tout le monde<small>Une notification quand l'événement s'affiche</small></span><input type="checkbox" id="ev-not"${f.notify !== false ? " checked" : ""}></label>`}</div>
+      <div class="ev-adm"><button type="button" data-ev="${view.id ? "open" : "admin"}" data-id="${esc(view.id || "")}">Annuler</button><button type="button" class="pri" data-ev="save"${ok ? "" : " disabled"}>${f.pub ? (view.id ? "Enregistrer" : "Publier") : "Enregistrer masqué"}</button></div>`;
   }
   // recherche d'adresse (OpenStreetMap, gratuit, sans clé)
   let geoT = null, geoQ = "";
@@ -20482,12 +20512,18 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   async function save() {
     const f = view.f, id = view.id || _db.ref("events").push().key;
     const ev = { emo: f.emo, t: f.t.trim().slice(0, 40), d: f.d, h: f.h, e: f.e || null, loc: f.useMap && f.map ? f.map.n : f.loc.trim().slice(0, 80) || null, map: f.useMap && f.map ? f.map : null, cal: !!f.cal, desc: f.desc.trim().slice(0, 300) || null,
-      price: f.pay ? Math.max(1, Math.round(+f.price || 0)) : 0, max: f.lim ? Math.max(2, Math.round(+f.max || 0)) : 0, guests: !!f.guests, by: (EV[id] || {}).by || me(), at: (EV[id] || {}).at || firebase.database.ServerValue.TIMESTAMP };
+      price: f.pay ? Math.max(1, Math.round(+f.price || 0)) : 0, max: f.lim ? Math.max(2, Math.round(+f.max || 0)) : 0, guests: !!f.guests, rem: +f.rem || 0, pub: !!f.pub, notify: f.notify !== false, notified: !!(EV[id] || {}).notified,
+      by: (EV[id] || {}).by || me(), at: (EV[id] || {}).at || firebase.database.ServerValue.TIMESTAMP };
     try {
-      await _db.ref("events/" + id).set(ev);
-      if (!view.id && f.notify !== false) Promise.resolve().then(() => _db.ref("pushQueue").push({ by: me(), to: "__all", title: `${ev.emo} ${ev.t}`.slice(0, 60), body: `${fd(ev.d).replace(/^./, c => c.toUpperCase())}${ev.h ? " à " + fh(ev.h) : ""}${ev.loc ? " · " + ev.loc : ""}. Réponds sur l'Accueil.`.slice(0, 200), at: firebase.database.ServerValue.TIMESTAMP })).catch(() => {});
-      toast(view.id ? "Événement modifié" : "Événement publié"); view = { k: "detail", id }; redraw();
+      await _db.ref("events/" + id).set(ev); await announce(id, ev);
+      toast(!ev.pub ? "Enregistré, masqué pour l'instant" : view.id ? "Événement modifié" : "Événement publié"); view = { k: "detail", id }; redraw();
     } catch (e) { toast("Enregistrement impossible : vérifie ta connexion."); }
+  }
+  // notification à tous, une seule fois, quand l'événement devient visible
+  async function announce(id, ev) {
+    if (!ev.pub || ev.notified || ev.notify === false) return;
+    try { await _db.ref(`events/${id}/notified`).set(true);
+      await _db.ref("pushQueue").push({ by: me(), to: "__all", title: `${ev.emo || "📅"} ${ev.t}`.slice(0, 60), body: `${fd(ev.d).replace(/^./, c => c.toUpperCase())}${ev.h ? " à " + fh(ev.h) : ""}${ev.loc ? " · " + ev.loc : ""}. Réponds sur l'Accueil.`.slice(0, 200), at: firebase.database.ServerValue.TIMESTAMP }); } catch (e) {}
   }
   const ask = (title, text, okL) => new Promise(res => { const o = document.createElement("div"); o.className = "ch-cf";
     o.innerHTML = `<div class="ch-cf-in" role="alertdialog" aria-modal="true"><b>${title}</b><p>${text}</p><div class="ch-cf-act"><button type="button" data-k="0">Annuler</button><button type="button" class="dang" data-k="1">${okL}</button></div></div>`;
@@ -20505,7 +20541,9 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (a === "pick") { const s = view.f.sugg[+t.dataset.k]; if (s) { view.f.map = s; view.f.loc = s.n; view.f.sugg = null; } return redraw(); }
     if (a === "unmap") { view.f.map = null; return redraw(); }
     if (a === "save") return save();
-    if (a === "edit") { const ev = EV[view.id]; if (!ev) return; view = { k: "form", id: view.id, f: Object.assign(blank(), { emo: ev.emo, t: ev.t, d: ev.d, h: ev.h || "", e: ev.e || "", loc: ev.loc || "", useMap: !!ev.map, map: ev.map || null, cal: !!ev.cal, desc: ev.desc || "", pay: !!ev.price, price: ev.price || 15, lim: !!ev.max, max: ev.max || 20, guests: !!ev.guests }) }; return redraw(); }
+    if (a === "eye") { const id = t.dataset.id, ev = EV[id]; if (!ev) return; const pub = !shownEv(ev);
+      try { await _db.ref(`events/${id}/pub`).set(pub); if (pub) await announce(id, Object.assign({}, ev, { pub })); toast(pub ? "Affiché sur l'Accueil" + (ev.notify !== false && !ev.notified ? " · tout le monde est prévenu" : "") : "Masqué de l'Accueil"); } catch (er) { toast("Non enregistré : vérifie ta connexion."); } return; }
+    if (a === "edit") { const ev = EV[view.id]; if (!ev) return; view = { k: "form", id: view.id, f: Object.assign(blank(), { emo: ev.emo, t: ev.t, d: ev.d, h: ev.h || "", e: ev.e || "", loc: ev.loc || "", useMap: !!ev.map, map: ev.map || null, cal: !!ev.cal, desc: ev.desc || "", pay: !!ev.price, price: ev.price || 15, lim: !!ev.max, max: ev.max || 20, guests: !!ev.guests, rem: ev.rem == null ? 1 : ev.rem, pub: shownEv(ev), notify: ev.notify !== false, notified: !!ev.notified }) }; return redraw(); }
     if (a === "del") { const ev = EV[view.id]; if (!ev || !await ask("Supprimer l'événement ?", `« ${esc(ev.t)} » et toutes ses réponses disparaissent pour tout le monde.`, "Supprimer")) return;
       try { await _db.ref().update({ [`events/${view.id}`]: null, [`eventRsvp/${view.id}`]: null, [`eventPaid/${view.id}`]: null }); toast("Événement supprimé"); view = { k: "admin" }; redraw(); } catch (er) { toast("Suppression impossible : vérifie ta connexion."); } return; }
     if (a === "ics") { const ev = list().find(x => x.id === view.id); if (ev) ics(ev); return; }
@@ -20516,12 +20554,13 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       try { await _db.ref(`eventRsvp/${view.id}/${p}/g`).set(g); } catch (er) { toast("Non enregistré : vérifie ta connexion."); } return; }
   }
   function onInput(e) { if (!view || view.k !== "form") return; const t = e.target, f = view.f;
-    const k = { "ev-t": "t", "ev-d": "d", "ev-h": "h", "ev-e": "e", "ev-x": "desc", "ev-pr": "price", "ev-mx": "max" }[t.id];
+    const k = { "ev-t": "t", "ev-d": "d", "ev-h": "h", "ev-e": "e", "ev-x": "desc", "ev-pr": "price", "ev-mx": "max", "ev-rem": "rem" }[t.id];
     if (k) f[k] = t.value;
     if (t.id === "ev-l") { f.loc = t.value; f.map = null; if (f.useMap) geo(t.value); }
     const b = box.querySelector('[data-ev="save"]'); if (b) b.disabled = !(f.t.trim() && f.d && f.h && (!f.useMap || f.map)); }
   function onChange(e) { if (!view || view.k !== "form") return; const t = e.target, f = view.f;
-    const k = { "ev-map": "useMap", "ev-cal": "cal", "ev-pay": "pay", "ev-lim": "lim", "ev-gu": "guests", "ev-not": "notify" }[t.id];
+    if (t.id === "ev-rem") { f.rem = +t.value; return; }
+    const k = { "ev-map": "useMap", "ev-cal": "cal", "ev-pay": "pay", "ev-lim": "lim", "ev-gu": "guests", "ev-not": "notify", "ev-pub": "pub" }[t.id];
     if (k) { f[k] = t.checked; if (k === "useMap") { f.map = null; f.sugg = null; if (t.checked && f.loc) geo(f.loc); } redraw(); } }
   box && box.addEventListener("toggle", () => {}, true);
   document.addEventListener("toggle", e => { if (box && e.target.classList && e.target.classList.contains("ev-resp") && view) view.open = e.target.open; }, true);
@@ -20625,8 +20664,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Comment ouvrir le Vestiaire ?", "Touche 💬 en haut. Il s'ouvre par-dessus l'appli avec deux onglets : Salons et Messagerie.", "ouvrir vestiaire chat discussion"],
         ["Comment envoyer un message privé ?", "Onglet Messagerie, bouton ✎, puis choisis le joueur. Seuls vous deux voyez la conversation.", "message prive mp messagerie ecrire joueur vestiaire chat"],
         ["Comment envoyer une photo ?", "Bouton +, puis prends une photo ou choisis-en jusqu'à 10 dans la galerie.", "photo image galerie envoyer vestiaire chat message"],
-        ["Comment répondre à un événement du club ?", "Les événements à venir (repas, tournoi, sortie…) s'affichent sur l'Accueil, sous le sondage du lundi. Touche la carte puis Je viens, Peut-être ou Je ne viens pas, et indique tes accompagnants si c'est permis. Quand c'est complet, tu passes en liste d'attente. Tu peux l'ajouter à ton calendrier (Google, Apple, Outlook) et voir qui vient en ouvrant « Réponses ». Rappel la veille à 18h.", "evenement repas tournoi sortie repondre calendrier agenda liste attente"],
-        ["Comment créer un événement ?", "Menu ☰ › ★ Événements › Créer un événement. Titre, date, horaires, lieu (en texte, ou avec une carte en cochant « Afficher une carte »), description. Options : ajout au calendrier, payant (avec suivi de qui a payé), places limitées, accompagnants. Tout le monde est prévenu à la publication. On peut ensuite le modifier ou le supprimer depuis l'événement.", "creer evenement repas tournoi carte prix places cagnotte"],
+        ["Comment répondre à un événement du club ?", "Les événements à venir (repas, tournoi, sortie…) s'affichent sur l'Accueil, sous le sondage du lundi. Touche la carte puis Je viens, Peut-être ou Je ne viens pas, et indique tes accompagnants si c'est permis. Quand c'est complet, tu passes en liste d'attente. S'il y en a plusieurs, fais glisser les cartes. Tu peux l'ajouter à ton calendrier (Google, Apple, Outlook) et voir qui vient en ouvrant « Réponses ». Un rappel arrive à 18h, le nombre de jours avant choisi par le club.", "evenement repas tournoi sortie repondre calendrier agenda liste attente"],
+        ["Comment créer un événement ?", "Menu ☰ › ★ Événements › Créer un événement. Titre, date, horaires, lieu (en texte, ou avec une carte en cochant « Afficher une carte »), description. Options : ajout au calendrier, payant (avec suivi de qui a payé), places limitées, accompagnants, rappel aux inscrits (la veille, 2 jours, 1 semaine…). Il est enregistré masqué par défaut : l'œil à côté de son nom l'affiche ou le cache sur l'Accueil, et tout le monde est prévenu la première fois qu'il s'affiche. On peut le modifier ou le supprimer depuis l'événement.", "creer evenement repas tournoi carte prix places cagnotte masquer afficher oeil rappel brouillon"],
         ["Comment mettre un emoji ou un GIF ?", "Dans le Vestiaire, touche le bouton 🙂 à gauche du message. Onglet Emojis : choisis une catégorie ou cherche en français (ballon, bière, rire…), tes derniers emojis sont dans Récents. Onglet GIF : cherche un GIF et touche-le pour l'envoyer tout de suite. Touche le clavier pour revenir à la saisie.", "emoji emojis gif smiley sourire animation vestiaire"],
         ["Comment créer un sondage dans le Vestiaire ?", "Dans un salon, touche le + à gauche du message › Créer un sondage. Écris la question et jusqu'à 10 réponses. Par défaut, une seule réponse par personne et les votes sont visibles ; tu peux autoriser plusieurs réponses, cacher qui a voté quoi et fixer une date limite. Touche une réponse pour voter, touche-la encore pour retirer ton vote. L'auteur (ou un super admin) peut clore le vote. Pas de sondage dans les messages privés.", "sondage vestiaire vote question reponses date limite clore plusieurs"],
         ["Comment mentionner quelqu'un ?", "Tape @ puis choisis un joueur. @tous prévient tout le monde.", "mentionner mention arobase tous vestiaire chat message"],
