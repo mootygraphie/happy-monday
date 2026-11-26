@@ -4541,6 +4541,9 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #chat .ch-sys.open { border-color: color-mix(in srgb, var(--good) 45%, transparent); background: color-mix(in srgb, var(--good) 9%, transparent); }
   #chat .ch-sys.close { border-color: color-mix(in srgb, var(--bad) 45%, transparent); background: color-mix(in srgb, var(--bad) 9%, transparent); }
   #chat .ch-sys.club { border-color: var(--gold-border); background: var(--gold-bg); color: var(--text); text-align: left; }
+  #chat .ch-sys.bday { display: grid; justify-items: center; gap: 6px; padding: 14px 16px 12px; border-color: rgba(245,200,66,.45); background: radial-gradient(120% 90% at 50% 0%, rgba(245,200,66,.18), transparent 70%), var(--bg2); color: var(--text); font-size: 14px; font-weight: 600; }
+  #chat .ch-sys.bday .bd-av .acm-av { width: 56px; height: 56px; border-radius: 16px; border-color: #f5c842; position: relative; overflow: hidden; }
+  #chat .ch-sys.bday .bd-hint { font-size: 11.5px; font-weight: 500; color: var(--text3); }
   #chat .ch-sys .go { display: inline-block; margin-top: 4px; color: var(--good); font-weight: 700; cursor: pointer; border: none; background: none; padding: 0; font: inherit; font-size: 12.5px; }
   #chat .ch-msg { display: flex; gap: 6px; align-items: flex-end; max-width: 86%; position: relative; touch-action: pan-y; transition: transform .15s; }
   #chat .ch-msg.me { align-self: flex-end; flex-direction: row-reverse; }
@@ -19700,10 +19703,10 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const PH = V.photos || [];
     if (PH.length || V.photoBusy) h += `<div class="ch-photos"><div class="ch-thumbs">${PH.map((x, i) => `<span><img src="${x.data}" alt=""><button type="button" data-ch="photoDel" data-i="${i}" aria-label="Retirer la photo ${i + 1}">✕</button></span>`).join("")}${V.photoBusy ? `<span class="busy">…</span>` : ""}</div>
       <div class="ch-pinfo"><b>📷 ${PH.length} photo${PH.length > 1 ? "s" : ""}</b> · ${Math.round(PH.reduce((a, x) => a + x.size, 0) / 1024)} Ko${PH.length < 10 ? ` · <button type="button" data-ch="photo">+ Ajouter</button>` : " · 10 maximum"}<button type="button" class="x" data-ch="photoCancel" aria-label="Retirer toutes les photos">Tout retirer</button></div></div>`;
+    if (V.plus) h += `<div class="ch-plus"><button type="button" data-ch="cam"><span class="oi">${IC.cam}</span><span>Prendre une photo<small>Ouvre l'appareil photo</small></span></button><button type="button" data-ch="gal"><span class="oi">${IC.gal}</span><span>Choisir dans la galerie<small>Jusqu'à 10 photos d'un coup</small></span></button>${r.dm ? "" : `<button type="button" data-ch="pollNew"><span class="oi">${IC.poll}</span><span>Créer un sondage<small>Une question, jusqu'à 10 réponses</small></span></button>`}</div>`;
     const has = !!(V.draft[V.room] || "").trim() || PH.length;
     h += `<div class="ch-rowc"><button type="button" class="ch-add${V.plus ? " act" : ""}" data-ch="plus" aria-label="Ajouter une photo" aria-expanded="${V.plus}">${IC.plus}</button><button type="button" class="ch-add ch-emob${V.emo ? " on" : ""}" data-ch="emoPanel" aria-label="${V.emo ? "Revenir au clavier" : "Emojis et GIF"}" aria-expanded="${!!V.emo}">${V.emo ? IC.kb : IC.smile}</button><input type="file" id="ch-file" accept="image/*" multiple hidden><input type="file" id="ch-cam" accept="image/*" capture="environment" hidden><textarea id="ch-tx" rows="1" maxlength="1000" placeholder="${r.dm ? "Message à " + esc(r.other) : "Message"}">${esc(V.draft[V.room] || "")}</textarea><button type="button" class="ch-send${has ? "" : " off"}" data-ch="send" aria-label="Envoyer">${IC.send}</button></div>`;
     if (V.emo) h += emoPanelHTML();
-    if (V.plus) h += `<div class="ch-plus"><button type="button" data-ch="cam"><span class="oi">${IC.cam}</span><span>Prendre une photo<small>Ouvre l'appareil photo</small></span></button><button type="button" data-ch="gal"><span class="oi">${IC.gal}</span><span>Choisir dans la galerie<small>Jusqu'à 10 photos d'un coup</small></span></button>${r.dm ? "" : `<button type="button" data-ch="pollNew"><span class="oi">${IC.poll}</span><span>Créer un sondage<small>Une question, jusqu'à 10 réponses</small></span></button>`}</div>`;
     return h;
   }
   function msgHTML(m, p, g) {
@@ -19717,6 +19720,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       const ic = m.sys === "open" ? "🗓️ " : m.sys === "close" ? "🔒 " : "";
       if (m.sys === "club") return `<div class="ch-sys club" data-id="${m.id}"><b>📣 Infos Club${m.title && m.title !== "Happy Monday" ? " · " + esc(m.title) : ""}</b><br>${fmt(m.text)}</div>`;
       if (m.sys === "open" || m.sys === "close") return `<div class="ch-sysline" data-id="${m.id}">${PIC.cal}${esc(m.sys === "open" ? "Sondage ouvert" + ((m.text || "").match(/pour (lundi [^.]*)/) ? " · " + (m.text || "").match(/pour (lundi [^.]*)/)[1] : "") : (m.text || "Sondage fermé").replace(/^Le sondage est fermé/, "Sondage fermé").replace(/\.$/, ""))}</div>`;
+      if (m.sys === "bday") return `<div class="ch-sys bday" data-id="${m.id}">${m.who ? `<span class="bd-av">${av(m.who)}</span>` : ""}<span class="bd-tx">${fmt(m.text || "")}</span><span class="bd-hint">Réponds-lui en dessous ${emoHTML("🎉")}</span></div>`;
       return `<div class="ch-sys ${esc(m.sys)}" data-id="${m.id}">${ic}${esc(m.text)}</div>`;
     }
     const mine = m.by === p, r = R(V.room), q = m.reply;
