@@ -4946,6 +4946,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #chat .ch-msg.me .ch-bub { border-radius: 20px; } #chat .ch-msg.me.cont .ch-bub { border-top-right-radius: 7px; } #chat .ch-msg.me:not(.last) .ch-bub { border-bottom-right-radius: 7px; }
   #chat .ch-bub .who { font-size: 12px; margin-bottom: 2px; }
   #chat .ch-bub .tm { font-size: 10.5px; margin-top: 3px; }
+  /* emojis Teams : à la taille du texte qui les entoure */
+  img.emo { width: 1.2em; height: 1.2em; vertical-align: -.22em; display: inline-block; margin: 0 .02em; object-fit: contain; }
   /* emojis et GIF */
   #chat img.emo { width: 1.3em; height: 1.3em; vertical-align: -0.28em; margin: 0 .03em; display: inline-block; }
   #chat .emo-big img.emo { width: 44px; height: 44px; vertical-align: middle; margin: 2px 1px; }
@@ -5112,8 +5114,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
 </head>
 <body>
 
-<div id="loading-screen" style="position:fixed;inset:0;z-index:10000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
-  <div style="font-size:40px;animation:ldPulse 1.2s ease-in-out infinite">⚽</div>
+<div id="loading-screen" data-noemo style="position:fixed;inset:0;z-index:10000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+  <img src="icons/ballon-chargement.gif" alt="" width="60" height="60" data-noemo style="width:60px;height:60px;display:block">
   <div style="color:var(--text2);font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:600">Chargement…</div>
 </div>
 <style>@keyframes ldPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.1);opacity:.7}}</style>
@@ -5333,6 +5335,43 @@ html.light .hm .hm-sched { color: #1f7a4a; }
 <footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 26/11/2026 - 20:08</footer>
 
 <script>
+/* ══════════ EMOJIS STYLE TEAMS (Fluent, licence MIT) SUR TOUT LE SITE ══════════
+   Chaque emoji affiché devient une image Teams. Exceptions : champs de saisie, listes déroulantes, SVG,
+   et tout ce qui porte data-noemo (le ballon de l'écran de chargement). Image introuvable : l'emoji d'origine reste. */
+window._EMO_RE = /\p{RI}\p{RI}|[#*0-9]️⃣|(?:\p{Emoji_Presentation}|\p{Extended_Pictographic}️)\p{EMod}?(?:‍(?:\p{Emoji_Presentation}|\p{Extended_Pictographic}️?)\p{EMod}?)*/gu;
+(function () {
+  const RE = window._EMO_RE, TEST = new RegExp(RE.source, "u");
+  const FLU = c => `https://cdn.jsdelivr.net/npm/@lobehub/fluent-emoji-3d@1.1.0/assets/${c}.webp`;
+  const code = ch => [...ch].map(c => c.codePointAt(0).toString(16)).join("-");
+  const SKIP = "script,style,textarea,input,select,option,svg,title,noscript,[data-noemo],[contenteditable]";
+  function fail() { const el = this, c = el.dataset.c || ""; if (!el.dataset.r && c) { el.dataset.r = 1; const alt = /-fe0f/.test(c) ? c.replace(/-fe0f/g, "") : c.includes("-") ? "" : c + "-fe0f"; if (alt) { el.src = FLU(alt); return; } } el.replaceWith(document.createTextNode(el.alt || "")); }
+  function conv(t) {
+    const v = t.nodeValue; if (!v || !TEST.test(v)) return;
+    const p = t.parentElement; if (!p || p.closest(SKIP)) return;
+    const frag = document.createDocumentFragment(); let last = 0, m; RE.lastIndex = 0;
+    while ((m = RE.exec(v))) {
+      if (m.index > last) frag.appendChild(document.createTextNode(v.slice(last, m.index)));
+      const img = document.createElement("img"), c = code(m[0]);
+      img.className = "emo"; img.alt = m[0]; img.draggable = false; img.decoding = "async"; img.dataset.c = c; img.addEventListener("error", fail); img.src = FLU(c);
+      frag.appendChild(img); last = m.index + m[0].length;
+    }
+    if (last < v.length) frag.appendChild(document.createTextNode(v.slice(last)));
+    t.replaceWith(frag);
+  }
+  function walk(root) {
+    if (root.nodeType === 3) return conv(root);
+    if (root.nodeType !== 1 || root.closest(SKIP)) return;
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => TEST.test(n.nodeValue || "") ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT });
+    const L = []; while (w.nextNode()) L.push(w.currentNode); L.forEach(conv);
+  }
+  const Q = new Set(); let sched = false;
+  const flush = () => { sched = false; const L = [...Q]; Q.clear(); L.forEach(n => { if (n.isConnected) walk(n); }); };
+  new MutationObserver(ms => { ms.forEach(m => { if (m.type === "characterData") Q.add(m.target); else m.addedNodes.forEach(n => Q.add(n)); }); if (!sched) { sched = true; requestAnimationFrame(flush); } })
+    .observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+  const start = () => document.body && walk(document.body);
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
+})();
+
 
 /* ── Authentification ── */
 function applyRole(role) {
@@ -19624,7 +19663,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     return (m.by === me() ? "Toi" : m.by) + " : " + (m.text || "");
   }
   // ── Emojis style Teams (Fluent, licence MIT) et GIF (Giphy)
-  const EMO_RE = /\p{RI}\p{RI}|[#*0-9]️?⃣|\p{Extended_Pictographic}(?:️|\p{EMod})?(?:‍\p{Extended_Pictographic}(?:️|\p{EMod})?)*/gu;
+  const EMO_RE = window._EMO_RE;
   const FLU = c => `https://cdn.jsdelivr.net/npm/@lobehub/fluent-emoji-3d@1.1.0/assets/${c}.webp`;
   const emoCode = ch => [...ch].map(c => c.codePointAt(0).toString(16)).join("-");
   const emoImg = (ch, c) => `<img class="emo" src="${FLU(c || emoCode(ch))}" alt="${ch}" draggable="false" loading="lazy" onerror="_emoFail(this)">`;
