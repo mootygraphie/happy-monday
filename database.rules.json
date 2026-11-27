@@ -264,6 +264,23 @@
             ".write": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($k.beginsWith(root.child('users/' + auth.uid + '/player').val() + '~') || $k.endsWith('~' + root.child('users/' + auth.uid + '/player').val())) && ($k.beginsWith($p + '~') || $k.endsWith('~' + $p))"
           }
         }
+      },
+      "file": {
+        "$r": {
+          ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
+          ".read": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($r === 'g' || root.child('chat/rooms/' + $r + '/members/' + root.child('users/' + auth.uid + '/player').val()).val() === true)",
+          "$m": {
+            ".write": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($r === 'g' || root.child('chat/rooms/' + $r + '/members/' + root.child('users/' + auth.uid + '/player').val()).val() === true) && ((!data.exists() && newData.child('by').val() === root.child('users/' + auth.uid + '/player').val() && newData.child('data').isString() && newData.child('data').val().length < 4300000) || (data.exists() && !newData.exists() && (data.child('by').val() === root.child('users/' + auth.uid + '/player').val() || root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true)))"
+          }
+        }
+      },
+      "dmfile": {
+        "$k": {
+          ".read": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($k.beginsWith(root.child('users/' + auth.uid + '/player').val() + '~') || $k.endsWith('~' + root.child('users/' + auth.uid + '/player').val()))",
+          "$m": {
+            ".write": "auth != null && (root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || root.child('config/chatOpen').val() === true) && ($k.beginsWith(root.child('users/' + auth.uid + '/player').val() + '~') || $k.endsWith('~' + root.child('users/' + auth.uid + '/player').val())) && ((!data.exists() && newData.child('by').val() === root.child('users/' + auth.uid + '/player').val() && newData.child('data').isString() && newData.child('data').val().length < 4300000) || (data.exists() && !newData.exists() && data.child('by').val() === root.child('users/' + auth.uid + '/player').val()))"
+          }
+        }
       }
     },
     "pushDead": {

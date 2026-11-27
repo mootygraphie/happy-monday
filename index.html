@@ -4981,6 +4981,19 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #chat .ch-msg.me .ch-bub { border-radius: 20px; } #chat .ch-msg.me.cont .ch-bub { border-top-right-radius: 7px; } #chat .ch-msg.me:not(.last) .ch-bub { border-bottom-right-radius: 7px; }
   #chat .ch-bub .who { font-size: 12px; margin-bottom: 2px; }
   #chat .ch-bub .tm { font-size: 10.5px; margin-top: 3px; }
+  /* pièces jointes et liens */
+  #chat a.ch-link { color: #6cc4ff; text-decoration: underline; text-underline-offset: 2px; overflow-wrap: anywhere; }
+  #chat .ch-msg.me a.ch-link { color: #fff; }
+  #chat .ch-file { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; min-width: min(250px, 66vw); padding: 8px 8px 8px 6px; margin: 2px 0 4px; border-radius: 12px; background: rgba(0,0,0,.22); white-space: normal; }
+  #chat .ch-file.busy { opacity: .6; }
+  #chat .ch-fi { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; font-size: 22px; background: rgba(255,255,255,.08); }
+  #chat .ch-fi img.emo { width: 24px; height: 24px; margin: 0; vertical-align: 0; }
+  #chat .ch-file .fx { min-width: 0; } #chat .ch-file b { display: block; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } #chat .ch-file small { font-size: 11.5px; opacity: .7; }
+  #chat .ch-file button { border: 0; border-radius: 10px; padding: 7px 10px; background: rgba(255,255,255,.14); color: inherit; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  #chat .ch-file audio { grid-column: 1 / -1; width: 100%; height: 36px; }
+  #chat .ch-docp { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 14px; background: var(--bg2); border: 1px solid var(--border); }
+  #chat .ch-docp b { display: block; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } #chat .ch-docp small { font-size: 11.5px; color: var(--text3); }
+  #chat .ch-docp .tx { min-width: 0; } #chat .ch-docp button { border: 0; background: var(--bg3); color: var(--text2); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font: inherit; }
   /* emojis Teams : à la taille du texte qui les entoure */
   img.emo { width: 1.2em; height: 1.2em; vertical-align: -.22em; display: inline-block; margin: 0 .02em; object-fit: contain; }
   /* emojis et GIF */
@@ -5366,8 +5379,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="26/11/2026" data-for="sa"><li>🏆 <b>Récompenses</b> : 2 nouveaux classements, Collectionneurs (vignettes collées) et Traders (total, données ou reçues)</li><li>❓ <b>Aide</b> : le guide de l'appli dans le menu ☰, avec une recherche pour poser ta question</li><li>🗓️ <b>Fiche joueur</b> : l'année d'arrivée au club</li><li>🟠 <b>Mises à jour</b> : les petites ne s'affichent plus en grand, juste un point orange sur Menu</li><li>📲 <b>Pastille de l'appli</b> : elle compte aussi les messages non lus du Vestiaire</li><li data-sa>🔒 <b>Visiteurs</b> : sans compte, on ne voit plus que les Sessions</li><li data-sa>⚙️ <b>Accueil</b> : « Ouvrir maintenant » et « Annuler la session » sont rangés sous la roue dentée de la case verte du sondage programmé</li><li>📅 <b>Événements</b> : repas, tournoi, sortie… sur l'Accueil sous le sondage, avec réponse, carte et ajout au calendrier</li><li data-sa>★ <b>Menu Super admin</b> : Membres, Notifications, Événements, Paramètres saison, Pronostics ; suppression des anciens tests de notification</li><li>🙂 <b>Vestiaire</b> : emojis style Teams et GIF, avec le bouton 🙂 à côté du message</li><li>📊 <b>Vestiaire</b> : les sondages, avec le + à côté du message (une ou plusieurs réponses, votes visibles ou non, date limite)</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/11/2026 - 07:26</footer>
+<template id="hm-news" data-date="26/11/2026" data-for="sa"><li>🏆 <b>Récompenses</b> : 2 nouveaux classements, Collectionneurs (vignettes collées) et Traders (total, données ou reçues)</li><li>❓ <b>Aide</b> : le guide de l'appli dans le menu ☰, avec une recherche pour poser ta question</li><li>🗓️ <b>Fiche joueur</b> : l'année d'arrivée au club</li><li>🟠 <b>Mises à jour</b> : les petites ne s'affichent plus en grand, juste un point orange sur Menu</li><li>📲 <b>Pastille de l'appli</b> : elle compte aussi les messages non lus du Vestiaire</li><li data-sa>🔒 <b>Visiteurs</b> : sans compte, on ne voit plus que les Sessions</li><li data-sa>⚙️ <b>Accueil</b> : « Ouvrir maintenant » et « Annuler la session » sont rangés sous la roue dentée de la case verte du sondage programmé</li><li>📅 <b>Événements</b> : repas, tournoi, sortie… sur l'Accueil sous le sondage, avec réponse, carte et ajout au calendrier</li><li data-sa>★ <b>Menu Super admin</b> : Membres, Notifications, Événements, Paramètres saison, Pronostics ; suppression des anciens tests de notification</li><li>📎 <b>Vestiaire</b> : envoie des fichiers (PDF, musique…) avec le +, et les liens sont cliquables</li><li>🙂 <b>Vestiaire</b> : emojis style Teams et GIF, avec le bouton 🙂 à côté du message</li><li>📊 <b>Vestiaire</b> : les sondages, avec le + à côté du message (une ou plusieurs réponses, votes visibles ou non, date limite)</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/11/2026 - 07:33</footer>
 
 <script>
 /* ══════════ EMOJIS STYLE TEAMS (Fluent, licence MIT) SUR TOUT LE SITE ══════════
@@ -19600,6 +19613,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     dots: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>',
     plus: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
     poll: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-6"/></svg>',
+    clip: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.5l-8.2 8.2a5 5 0 0 1-7.1-7.1l8.6-8.6a3.3 3.3 0 0 1 4.7 4.7l-8.6 8.6a1.7 1.7 0 0 1-2.4-2.4l7.9-7.9"/></svg>',
     smile: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 14.2c.9 1.3 2.1 2 3.5 2s2.6-.7 3.5-2"/><circle cx="9.2" cy="10" r=".9" fill="currentColor" stroke="none"/><circle cx="14.8" cy="10" r=".9" fill="currentColor" stroke="none"/></svg>',
     kb: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6.5" width="18" height="11" rx="2"/><path d="M7 10h.01M10 10h.01M13 10h.01M16 10h.01M8 14h8"/></svg>',
     pen: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
@@ -19636,6 +19650,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   const dmOther = id => { const L = id.slice(3).split("~"); return L[0] === me() ? L[1] : L[0]; };
   const mP = id => isDM(id) ? `chat/dm/${id.slice(3)}/msgs` : `chat/msgs/${id}`;
   const iP = id => isDM(id) ? `chat/dmimg/${id.slice(3)}` : `chat/img/${id}`;
+  const fP = id => isDM(id) ? `chat/dmfile/${id.slice(3)}` : `chat/file/${id}`; // pièces jointes (PDF, audio…), chargées seulement au toucher
   const tP = id => isDM(id) ? `chat/dm/${id.slice(3)}/typing` : `chat/typing/${id}`;
   const sNow = () => Date.now() + srvOff;
   const isOn = n => n && online[n] && sNow() - online[n] < 3 * 60000;
@@ -19783,6 +19798,10 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     [...accounts].sort((a, b) => b.length - a.length).forEach(p => {
       h = h.replace(new RegExp("@" + rx(esc(p)) + "(?![\\wÀ-ÿ])", "g"), `<span class="mention${p === me() && !mine ? " you" : ""}">@${esc(p)}</span>`);
     });
+    // liens cliquables (https://…, www.…), sans la ponctuation de fin de phrase
+    h = h.replace(/\b(https?:\/\/|www\.)[^\s<]+/gi, u => { const tail = (u.match(/[.,;:!?)\]]+$/) || [""])[0], url = tail ? u.slice(0, -tail.length) : u;
+      const href = (/^www\./i.test(url) ? "https://" : "") + url.replace(/&amp;/g, "&"), label = url.length > 48 ? url.slice(0, 45) + "…" : url;
+      return `<a class="ch-link" href="${href.replace(/"/g, "%22")}" target="_blank" rel="noopener noreferrer">${label}</a>${tail}`; });
     // emojis style Teams ; un message fait seulement de 1 à 3 emojis s'affiche en grand
     const only = String(t || "").replace(EMO_RE, "").trim() === "" && (String(t || "").match(EMO_RE) || []).length <= 3;
     h = emoHTML(h);
@@ -19926,9 +19945,10 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const PH = V.photos || [];
     if (PH.length || V.photoBusy) h += `<div class="ch-photos"><div class="ch-thumbs">${PH.map((x, i) => `<span><img src="${x.data}" alt=""><button type="button" data-ch="photoDel" data-i="${i}" aria-label="Retirer la photo ${i + 1}">✕</button></span>`).join("")}${V.photoBusy ? `<span class="busy">…</span>` : ""}</div>
       <div class="ch-pinfo"><b>📷 ${PH.length} photo${PH.length > 1 ? "s" : ""}</b> · ${Math.round(PH.reduce((a, x) => a + x.size, 0) / 1024)} Ko${PH.length < 10 ? ` · <button type="button" data-ch="photo">+ Ajouter</button>` : " · 10 maximum"}<button type="button" class="x" data-ch="photoCancel" aria-label="Retirer toutes les photos">Tout retirer</button></div></div>`;
-    if (V.plus) h += `<div class="ch-plus"><button type="button" data-ch="cam"><span class="oi">${IC.cam}</span><span>Prendre une photo<small>Ouvre l'appareil photo</small></span></button><button type="button" data-ch="gal"><span class="oi">${IC.gal}</span><span>Choisir dans la galerie<small>Jusqu'à 10 photos d'un coup</small></span></button>${r.dm ? "" : `<button type="button" data-ch="pollNew"><span class="oi">${IC.poll}</span><span>Créer un sondage<small>Une question, jusqu'à 10 réponses</small></span></button>`}</div>`;
-    const has = !!(V.draft[V.room] || "").trim() || PH.length;
-    h += `<div class="ch-rowc"><button type="button" class="ch-add${V.plus ? " act" : ""}" data-ch="plus" aria-label="Ajouter une photo" aria-expanded="${V.plus}">${IC.plus}</button><button type="button" class="ch-add ch-emob${V.emo ? " on" : ""}" data-ch="emoPanel" aria-label="${V.emo ? "Revenir au clavier" : "Emojis et GIF"}" aria-expanded="${!!V.emo}">${V.emo ? IC.kb : IC.smile}</button><input type="file" id="ch-file" accept="image/*" multiple hidden><input type="file" id="ch-cam" accept="image/*" capture="environment" hidden><textarea id="ch-tx" rows="1" maxlength="1000" placeholder="${r.dm ? "Message à " + esc(r.other) : "Message"}">${esc(V.draft[V.room] || "")}</textarea><button type="button" class="ch-send${has ? "" : " off"}" data-ch="send" aria-label="Envoyer">${IC.send}</button></div>`;
+    if (V.plus) h += `<div class="ch-plus"><button type="button" data-ch="cam"><span class="oi">${IC.cam}</span><span>Prendre une photo<small>Ouvre l'appareil photo</small></span></button><button type="button" data-ch="gal"><span class="oi">${IC.gal}</span><span>Choisir dans la galerie<small>Jusqu'à 10 photos d'un coup</small></span></button><button type="button" data-ch="fileAdd"><span class="oi">${IC.clip}</span><span>Joindre un fichier<small>PDF, document, musique… jusqu'à 3 Mo</small></span></button>${r.dm ? "" : `<button type="button" data-ch="pollNew"><span class="oi">${IC.poll}</span><span>Créer un sondage<small>Une question, jusqu'à 10 réponses</small></span></button>`}</div>`;
+    if (V.doc) h += `<div class="ch-docp">${fileIco(V.doc.name, V.doc.type)}<span class="tx"><b>${esc(V.doc.name)}</b><small>${fileSize(V.doc.size)} · prêt à envoyer</small></span><button type="button" data-ch="docCancel" aria-label="Retirer le fichier">✕</button></div>`;
+    const has = !!(V.draft[V.room] || "").trim() || PH.length || !!V.doc;
+    h += `<div class="ch-rowc"><button type="button" class="ch-add${V.plus ? " act" : ""}" data-ch="plus" aria-label="Ajouter une photo" aria-expanded="${V.plus}">${IC.plus}</button><button type="button" class="ch-add ch-emob${V.emo ? " on" : ""}" data-ch="emoPanel" aria-label="${V.emo ? "Revenir au clavier" : "Emojis et GIF"}" aria-expanded="${!!V.emo}">${V.emo ? IC.kb : IC.smile}</button><input type="file" id="ch-file" accept="image/*" multiple hidden><input type="file" id="ch-doc" hidden><input type="file" id="ch-cam" accept="image/*" capture="environment" hidden><textarea id="ch-tx" rows="1" maxlength="1000" placeholder="${r.dm ? "Message à " + esc(r.other) : "Message"}">${esc(V.draft[V.room] || "")}</textarea><button type="button" class="ch-send${has ? "" : " off"}" data-ch="send" aria-label="Envoyer">${IC.send}</button></div>`;
     if (V.emo) h += emoPanelHTML();
     return h;
   }
@@ -19952,7 +19972,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     return `<div class="ch-msg${mine ? " me" : ""}${g.first ? "" : " cont"}${g.last ? " last" : ""}" data-id="${m.id}"><span class="ch-swipe">↩️</span>${mine ? "" : g.last ? av(m.by) : `<span class="ch-avsp"></span>`}
       <div><div class="ch-bub" data-ch="sheet" data-id="${m.id}">${mine || !g.first || (r && r.dm) ? "" : `<span class="who" style="color:${ncol(m.by)}">${esc(m.by)}</span>`}${q ? `<div class="ch-quote" data-ch="goto" data-to="${esc(q.id)}"><b>${esc(q.by || "Infos Club")}</b>${esc(plain(q.text))}</div>` : ""}${m.img ? `<span class="ch-img" data-ch="img" data-id="${m.id}" style="aspect-ratio:${+m.img.w || 4} / ${+m.img.h || 3}"><img alt="Photo"${IMGS[m.id] ? ` src="${IMGS[m.id]}"` : ""}></span>` : ""}${Array.isArray(m.imgs) ? (m.imgs.length === 1
         ? `<span class="ch-img" data-ch="img" data-id="${m.id}_0" style="aspect-ratio:${+m.imgs[0].w || 4} / ${+m.imgs[0].h || 3}"><img alt="Photo"${IMGS[m.id + "_0"] ? ` src="${IMGS[m.id + "_0"]}"` : ""}></span>`
-        : `<span class="ch-gal n${Math.min(m.imgs.length, 4)}">${m.imgs.map((x, i) => `<span class="ch-img" data-ch="img" data-id="${m.id}_${i}"><img alt="Photo ${i + 1}"${IMGS[m.id + "_" + i] ? ` src="${IMGS[m.id + "_" + i]}"` : ""}></span>`).join("")}</span>`) : ""}${m.gif && m.gif.u ? `<span class="ch-gif" style="aspect-ratio:${+m.gif.w || 1} / ${+m.gif.h || 1}"><img src="${esc(m.gif.u)}" alt="GIF" loading="lazy"></span>` : ""}${m.photoOnly ? "" : fmt(m.text || "", mine)}<span class="tm">${r && r.pinned && r.pinned.id === m.id ? "📌 " : ""}${hm(m.at || Date.now())}</span></div>
+        : `<span class="ch-gal n${Math.min(m.imgs.length, 4)}">${m.imgs.map((x, i) => `<span class="ch-img" data-ch="img" data-id="${m.id}_${i}"><img alt="Photo ${i + 1}"${IMGS[m.id + "_" + i] ? ` src="${IMGS[m.id + "_" + i]}"` : ""}></span>`).join("")}</span>`) : ""}${m.file && m.file.name ? `<span class="ch-file" data-id="${m.id}">${fileIco(m.file.name, m.file.type)}<span class="fx"><b>${esc(m.file.name)}</b><small>${fileSize(+m.file.size || 0)}</small></span>${fileKind(m.file.name, m.file.type) === "audio" ? `<button type="button" data-ch="fileOpen" data-id="${m.id}" data-play="1">▶ Écouter</button>` : `<button type="button" data-ch="fileOpen" data-id="${m.id}">${fileKind(m.file.name, m.file.type) === "pdf" ? "Ouvrir" : "Télécharger"}</button>`}</span>` : ""}${m.gif && m.gif.u ? `<span class="ch-gif" style="aspect-ratio:${+m.gif.w || 1} / ${+m.gif.h || 1}"><img src="${esc(m.gif.u)}" alt="GIF" loading="lazy"></span>` : ""}${m.photoOnly ? "" : fmt(m.text || "", mine)}<span class="tm">${r && r.pinned && r.pinned.id === m.id ? "📌 " : ""}${hm(m.at || Date.now())}</span></div>
       ${reacts.length ? `<div class="ch-reacts">${reacts.map(([e, l]) => `<button type="button" data-ch="react" data-id="${m.id}" data-e="${e}" aria-pressed="${l.includes(p)}" title="${esc(l.join(", "))}">${emoHTML(e)} ${l.length}</button>`).join("")}</div>` : ""}</div></div>`;
   }
   // ── Mini-sondages : chat/msgs/{salon}/{id} = { by, text, at, poll: { q, opts[], multi, voters, until }, votes: { joueur: { index: true } } }
@@ -20212,6 +20232,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   }
   async function send() {
     const t = $("ch-tx"), text = (t ? t.value : "").trim(), r = R(V.room), ph = (V.photos || []).length ? V.photos : null;
+    if (V.doc && r && !ph) return sendDoc(text);
     if ((!text && !ph) || !r || V.photoBusy) return;
     const m = { by: me(), text: (text || (ph ? (ph.length > 1 ? `📷 ${ph.length} photos` : "📷 Photo") : "")).slice(0, 1000), at: TS() };
     if (ph) { m.imgs = ph.map(x => ({ w: x.w, h: x.h })); if (!text) m.photoOnly = true; V.photos = []; }
@@ -20227,6 +20248,40 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     }
     catch (e) { V.draft[V.room] = text; if (ph) V.photos = ph; renderComp(); toast(ph ? "Photo non envoyée : vérifie ta connexion." : "Message non envoyé : vérifie ta connexion."); }
   }
+  // ── pièces jointes : message { file: { name, type, size } }, contenu à part dans chat/file (ou dmfile)
+  const FILE_MAX = 3 * 1024 * 1024;
+  const fileSize = n => n >= 1048576 ? (n / 1048576).toFixed(1).replace(".", ",") + " Mo" : Math.max(1, Math.round(n / 1024)) + " Ko";
+  const fileKind = (n, t) => { const e = (String(n).split(".").pop() || "").toLowerCase(); t = t || "";
+    return /pdf/.test(t) || e === "pdf" ? "pdf" : /^audio\//.test(t) || /^(mp3|m4a|wav|ogg|aac|flac|opus)$/.test(e) ? "audio" : /^video\//.test(t) ? "video" : /^(xls|xlsx|csv|ods|numbers)$/.test(e) ? "sheet" : /^(doc|docx|odt|pages|txt|rtf|md)$/.test(e) ? "doc" : /^(ppt|pptx|odp|key)$/.test(e) ? "slides" : /^(zip|rar|7z|gz)$/.test(e) ? "zip" : "other"; };
+  const fileIco = (n, t) => `<span class="ch-fi ${fileKind(n, t)}">${{ pdf: "📄", audio: "🎵", video: "🎬", sheet: "📊", doc: "📝", slides: "📽️", zip: "🗜️", other: "📎" }[fileKind(n, t)]}</span>`;
+  const FILES = {};
+  async function fileData(rid, id) { if (FILES[id]) return FILES[id]; const sn = await _db.ref(`${fP(rid)}/${id}`).once("value"), v = sn.val(); if (!v || !v.data) throw new Error("absent");
+    const bin = atob(v.data.split(",")[1] || ""), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    return FILES[id] = URL.createObjectURL(new Blob([u8], { type: v.type || "application/octet-stream" })); }
+  async function openFile(id, play) {
+    const r = R(V.room), m = (msgs[r.id] || []).find(x => x.id === id); if (!m || !m.file) return;
+    const card = box.querySelector(`.ch-file[data-id="${CSS.escape(id)}"]`); if (card) card.classList.add("busy");
+    try { const url = await fileData(r.id, id);
+      if (play && card) { const au = card.querySelector("audio") || Object.assign(document.createElement("audio"), { controls: true, preload: "auto" }); au.src = url; if (!au.isConnected) card.appendChild(au); au.play().catch(() => {}); }
+      else { const a = document.createElement("a"); a.href = url; a.rel = "noopener"; if (fileKind(m.file.name, m.file.type) === "pdf") a.target = "_blank"; else a.download = m.file.name || "fichier"; document.body.appendChild(a); a.click(); a.remove(); } }
+    catch (e) { toast("Fichier introuvable ou connexion coupée."); }
+    if (card) card.classList.remove("busy");
+  }
+  function pickDoc(f) {
+    if (!f) return; if (f.size > FILE_MAX) { toast(`Fichier trop lourd (${fileSize(f.size)}) : 3 Mo maximum. Pour plus gros, colle un lien Drive ou WeTransfer.`); return; }
+    const rd = new FileReader(); rd.onload = () => { V.doc = { name: f.name.slice(0, 120), type: f.type || "", size: f.size, data: rd.result }; V.plus = false; renderComp(); }; rd.onerror = () => toast("Fichier illisible."); rd.readAsDataURL(f);
+  }
+  async function sendDoc(text) {
+    const r = R(V.room), d = V.doc; if (!r || !d) return;
+    const m = { by: me(), text: (text || `📎 ${d.name}`).slice(0, 1000), at: TS(), file: { name: d.name, type: d.type, size: d.size } };
+    if (!text) m.photoOnly = true;
+    if (V.reply) m.reply = { id: V.reply.id, by: V.reply.by || "", text: plain(V.reply.text).slice(0, 120) };
+    V.doc = null; V.draft[V.room] = ""; V.reply = null; const t = $("ch-tx"); if (t) { t.value = ""; autoGrow(t); } renderComp(); toast("Envoi du fichier…");
+    try { const ref = _db.ref(mP(r.id)).push(); await _db.ref(`${fP(r.id)}/${ref.key}`).set({ by: m.by, name: d.name, type: d.type, data: d.data }); await ref.set(m);
+      if (r.dm) { const k = r.id.slice(3); _db.ref().update({ [`chat/dmIdx/${m.by}/${k}`]: { with: r.other, at: TS() }, [`chat/dmIdx/${r.other}/${k}`]: { with: m.by, at: TS() } }).catch(() => {}); }
+      renderFeed(true); fitVV(); }
+    catch (e) { V.doc = d; renderComp(); toast("Fichier non envoyé : vérifie ta connexion."); }
+  }
   // Confirmation dans la page (pas de boîte système), renvoie true si on confirme
   function askConfirm(title, text, ok) {
     return new Promise(res => {
@@ -20236,7 +20291,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       document.body.appendChild(o); o.querySelector('[data-k="0"]').focus();
     });
   }
-  const imgPaths = (rid, id) => [`${iP(rid)}/${id}`, ...Array.from({ length: 10 }, (_, i) => `${iP(rid)}/${id}_${i}`)];
+  const imgPaths = (rid, id) => [`${iP(rid)}/${id}`, `${fP(rid)}/${id}`, ...Array.from({ length: 10 }, (_, i) => `${iP(rid)}/${id}_${i}`)];
   async function delSelected() {
     const r = R(V.room), ids = [...V.sel]; if (!r || !ids.length || !isSA()) return;
     const ph = ids.filter(id => { const m = (msgs[r.id] || []).find(x => x.id === id); return m && (m.img || m.imgs); }).length;
@@ -20250,7 +20305,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const r = R(V.form && V.form.id ? V.form.id : V.room); if (!r || !isSA()) return;
     const n = (msgs[r.id] || []).length;
     if (!await askConfirm(`Vider « ${esc(r.name)} » ?`, `Les ${n} message${n > 1 ? "s" : ""} et toutes les photos du salon seront supprimés de la base, pour tout le monde. Le salon et ses membres restent. Impossible de revenir en arrière.`, "Tout supprimer")) return;
-    try { await _db.ref().update({ [`chat/msgs/${r.id}`]: null, [`chat/img/${r.id}`]: null, [`chat/rooms/${r.id}/pinned`]: null }); V.form = null; toast("Salon vidé"); render(); renderFeed(true); }
+    try { await _db.ref().update({ [`chat/msgs/${r.id}`]: null, [`chat/img/${r.id}`]: null, [`chat/file/${r.id}`]: null, [`chat/rooms/${r.id}/pinned`]: null }); V.form = null; toast("Salon vidé"); render(); renderFeed(true); }
     catch (e) { toast("Impossible de vider le salon : vérifie ta connexion."); }
   }
   function flash(idv) { const el = box.querySelector(`.ch-msg[data-id="${CSS.escape(idv)}"], .ch-sys[data-id="${CSS.escape(idv)}"]`); if (!el) { toast("Message trop ancien pour être affiché."); return; } el.scrollIntoView({ block: "center", behavior: "smooth" }); el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1400); }
@@ -20298,6 +20353,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   $("chat-btn").addEventListener("click", () => openChat());
   box.addEventListener("click", async e => {
     if (e.target === box) return closeChat(); // clic dans le voile noir, à côté de la fenêtre
+    if (e.target.closest("a.ch-link")) return; // lien dans un message : il s'ouvre normalement
     let t = e.target.closest("[data-ch]"); if (!t) return;
     if (V.selMode && !/^sel/.test(t.dataset.ch) && e.target.closest(".ch-selrow")) t = e.target.closest(".ch-selrow");
     const a = t.dataset.ch;
@@ -20332,7 +20388,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (a === "fDel") {
       if (!V.form.confirmDel) { V.form.confirmDel = true; return render(); }
       const id = V.form.id;
-      try { await _db.ref().update({ [`chat/rooms/${id}`]: null, [`chat/msgs/${id}`]: null, [`chat/img/${id}`]: null }); V.form = null; V.room = null; toast("Salon supprimé"); render(); }
+      try { await _db.ref().update({ [`chat/rooms/${id}`]: null, [`chat/msgs/${id}`]: null, [`chat/img/${id}`]: null, [`chat/file/${id}`]: null }); V.form = null; V.room = null; toast("Salon supprimé"); render(); }
       catch (er) { toast("Suppression impossible : vérifie ta connexion."); }
       return;
     }
@@ -20363,6 +20419,9 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (a === "cam") { V.plus = false; renderComp(); $("ch-cam")?.click(); return; }
     if (a === "plus") { V.plus = !V.plus; V.emo = null; return renderComp(); }
     if (a === "pollNew") { V.plus = false; renderComp(); pollForm(); return; }
+    if (a === "fileAdd") { V.plus = false; renderComp(); $("ch-doc")?.click(); return; }
+    if (a === "docCancel") { V.doc = null; renderComp(); return; }
+    if (a === "fileOpen") { e.stopPropagation(); openFile(t.dataset.id, !!t.dataset.play); return; }
     if (a === "emoPanel") { if (V.emo) { V.emo = null; renderComp(); $("ch-tx")?.focus(); return; } const tx = $("ch-tx"); V.caret = tx ? tx.selectionStart : null; tx?.blur(); V.plus = false; if (!V.recent) { try { V.recent = JSON.parse(localStorage.getItem("hmft_emo_recent") || "[]"); } catch (e) { V.recent = []; } } V.emo = { tab: "emo", cat: V.recent.length ? -1 : 0, q: "" }; loadEmo(); renderComp(); fitVV(); return; }
     if (a === "emoTab") { V.emo.tab = t.dataset.t; renderComp(); return; }
     if (a === "emoCat") { V.emo.cat = +t.dataset.g; V.emo.q = ""; renderComp(); box.querySelector(".ch-emo-grid")?.scrollTo(0, 0); return; }
@@ -20397,6 +20456,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (em) { e.target.blur(); doReact(V.emoMore, em); } else if (e.target.value.trim()) { e.target.value = ""; toast("Choisis un émoji (touche 😀 du clavier)."); }
   });
   box.addEventListener("change", async e => {
+    if (e.target.id === "ch-doc") { const f = e.target.files && e.target.files[0]; e.target.value = ""; pickDoc(f); return; }
     if (e.target.id === "ch-file" || e.target.id === "ch-cam") {
       // jusqu'à 10 photos par message, réduites une par une
       const room = V.room, all = [...(e.target.files || [])].filter(f => /^image\//.test(f.type)); e.target.value = ""; if (!all.length) return;
@@ -20923,7 +20983,9 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Comment ouvrir le Vestiaire ?", "Touche 💬 en haut. Il s'ouvre par-dessus l'appli avec deux onglets : Salons et Messagerie.", "ouvrir vestiaire chat discussion"],
         ["Comment envoyer un message privé ?", "Onglet Messagerie, bouton ✎, puis choisis le joueur. Seuls vous deux voyez la conversation.", "message prive mp messagerie ecrire joueur vestiaire chat"],
         ["Comment envoyer une photo ?", "Bouton +, puis prends une photo ou choisis-en jusqu'à 10 dans la galerie.", "photo image galerie envoyer vestiaire chat message"],
-        ["Comment mettre un emoji ou un GIF ?", "Dans le Vestiaire, touche le bouton 🙂 à gauche du message. Onglet Emojis : choisis une catégorie ou cherche en français (ballon, bière, rire…), tes derniers emojis sont dans Récents. Onglet GIF : cherche un GIF et touche-le pour l'envoyer tout de suite. Touche le clavier pour revenir à la saisie.", "emoji emojis gif smiley sourire animation vestiaire"],
+["Comment envoyer un fichier (PDF, musique…) ?", "Dans le Vestiaire, touche le + à gauche du message › Joindre un fichier. Tous les types passent (PDF, Word, Excel, MP3, notes vocales…), jusqu'à 3 Mo. Tu peux écrire un message avec, puis envoyer. Dans la discussion : « Ouvrir » pour un PDF, « Écouter » pour un son (il se lit dans le message), « Télécharger » pour le reste. Pour un fichier plus lourd, colle un lien Google Drive ou WeTransfer.", "fichier piece jointe pdf document musique mp3 audio envoyer joindre"],
+        ["Les liens sont cliquables ?", "Oui : une adresse qui commence par https:// ou www. devient un lien dans le message. Touche-le pour l'ouvrir dans un nouvel onglet.", "lien url cliquable adresse site internet"],
+                ["Comment mettre un emoji ou un GIF ?", "Dans le Vestiaire, touche le bouton 🙂 à gauche du message. Onglet Emojis : choisis une catégorie ou cherche en français (ballon, bière, rire…), tes derniers emojis sont dans Récents. Onglet GIF : cherche un GIF et touche-le pour l'envoyer tout de suite. Touche le clavier pour revenir à la saisie.", "emoji emojis gif smiley sourire animation vestiaire"],
         ["Comment créer un sondage dans le Vestiaire ?", "Dans un salon, touche le + à gauche du message › Créer un sondage. Écris la question et jusqu'à 10 réponses. Par défaut, une seule réponse par personne et les votes sont visibles ; tu peux autoriser plusieurs réponses, cacher qui a voté quoi et fixer une date limite. Touche une réponse pour voter, touche-la encore pour retirer ton vote. L'auteur (ou un super admin) peut clore le vote. Pas de sondage dans les messages privés.", "sondage vestiaire vote question reponses date limite clore plusieurs"],
         ["Comment mentionner quelqu'un ?", "Tape @ puis choisis un joueur. @tous prévient tout le monde.", "mentionner mention arobase tous vestiaire chat message"],
         ["Comment répondre ou réagir à un message ?", "Glisse le message vers la droite pour répondre. Touche-le pour réagir (👍 😂 🔥 ⚽ ❤️), répondre, copier ou supprimer le tien.", "repondre reagir reaction supprimer copier vestiaire chat message"],
