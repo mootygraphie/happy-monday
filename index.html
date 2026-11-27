@@ -3509,6 +3509,16 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #bmenu .bm-lbl.sa { color: var(--sa); font-style: normal; letter-spacing: .1em; }
   #bmenu .bm-rows.sa { border-color: var(--sa-border); background: var(--sa-bg); }
   #bmenu .bm-rows.sa .bm-row { background: color-mix(in srgb, var(--sa) 7%, var(--bg3)); border-top-color: var(--sa-border); }
+  #bmenu .bm-back { display: flex; align-items: center; gap: 2px; align-self: flex-start; border: none; background: none; font: inherit; font-size: 14px; font-weight: 600; color: var(--text2); cursor: pointer; padding: 4px 8px 0 0; }
+  #bmenu .bm-back .chev { transform: rotate(180deg); color: var(--text2); }
+  #bmenu .bm-satitle { font-size: 18px; font-weight: 800; font-style: italic; color: var(--sa); }
+  #bmenu .bm-satitle span { font-style: normal; }
+  #bmenu .bm-desc { display: block; font-size: 12px; font-weight: 400; color: var(--text2); margin-top: 1px; }
+  #bmenu .bm-in.slide { animation: bmSlideL .26s cubic-bezier(.2,.9,.3,1); }
+  #bmenu .bm-in.back { animation: bmSlideR .26s cubic-bezier(.2,.9,.3,1); }
+  @keyframes bmSlideL { from { transform: translateX(40%); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes bmSlideR { from { transform: translateX(-40%); opacity: 0; } to { transform: none; opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { #bmenu .bm-in.slide, #bmenu .bm-in.back { animation: none; } }
   #bmenu .bm-star { width: 20px; text-align: center; color: var(--sa); font-size: 16px; flex: none; }
   #bmenu .bm-links { display: flex; justify-content: center; align-items: center; gap: 4px 16px; flex-wrap: wrap; }
   #bmenu .bm-rules { display: flex; align-items: center; justify-content: center; gap: 6px; border: none; background: none; color: var(--text3); font: inherit; font-size: 12px; cursor: pointer; padding: 2px 0 0; }
@@ -5421,8 +5431,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="27/11/2026"><li>🔄 <b>Mettre à jour l'appli</b> : le « Quoi de neuf ? » s'ouvre d'abord, avec le bouton Mettre à jour juste en dessous</li><li data-sa>🖼️ <b>Album</b> : modifier une carte Mythique, et l'offrir à un joueur (il la découvre avec l'animation Mythique)</li><li data-sa>🎁 <b>Offrir</b> : la liste des joueurs qui l'ont déjà reçue, en attente ou découverte</li><li data-sa>👁️ <b>Cartes masquées</b> : un peu assombries ; touche l'œil barré pour la montrer aux joueurs</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/11/2026 - 12:25</footer>
+<template id="hm-news" data-date="27/11/2026"><li>🔄 <b>Mettre à jour l'appli</b> : le « Quoi de neuf ? » s'ouvre d'abord, avec le bouton Mettre à jour juste en dessous</li><li data-sa>🖼️ <b>Album</b> : modifier une carte Mythique, et l'offrir à un joueur (il la découvre avec l'animation Mythique)</li><li data-sa>🎁 <b>Offrir</b> : la liste des joueurs qui l'ont déjà reçue, en attente ou découverte</li><li data-sa>☰ <b>Menu</b> : les réglages super admin sont rangés dans un seul bouton « ★ Options », qui ouvre un sous-menu</li><li data-sa>👁️ <b>Cartes masquées</b> : un peu assombries ; touche l'œil barré pour la montrer aux joueurs</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/11/2026 - 12:36</footer>
 
 <script>
 /* ══════════ EMOJIS STYLE TEAMS (Fluent, licence MIT) SUR TOUT LE SITE ══════════
@@ -19053,7 +19063,7 @@ function _svApply() {
     const shown = id => { const b = $(id); return !!b && b.style.display !== "none"; };
     const esc = x => String(x).replace(/&/g, "&amp;").replace(/</g, "&lt;");
     const MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
-    let menuOpen = false, notifOpen = false, optsOpen = false;
+    let menuOpen = false, notifOpen = false, optsOpen = false, saOpen = false; // saOpen : sous-menu « ★ Options » (super admins)
 
     document.body.insertAdjacentHTML("beforeend", `<nav id="bnav" aria-label="Navigation"></nav><button id="bticker" type="button"></button>
       <div id="bmenu" role="dialog" aria-label="Menu"></div><div id="bnotif-scrim"></div><div id="bnotif" role="dialog" aria-label="Notifications"></div>`);
@@ -19296,7 +19306,7 @@ function _svApply() {
       const m = $("bmenu"), was = m.querySelector(".bm-in"), keep = was ? was.scrollTop : 0;
       m.classList.toggle("open", menuOpen);
       document.documentElement.classList.toggle("bn-lock", menuOpen || notifOpen);
-      if (!menuOpen) { m.innerHTML = ""; optsOpen = false; return; }
+      if (!menuOpen) { m.innerHTML = ""; optsOpen = false; saOpen = false; return; }
       const p = me(), light = document.documentElement.classList.contains("light");
       const row = (k, i, l, sub) => `<button type="button" class="bm-row" data-bm="${k}">${ic(i)}<span class="grow">${l}${sub ? ` <small>· ${sub}</small>` : ""}</span>${ic("chev", "chev")}</button>`;
       const pages = [];
@@ -19310,7 +19320,23 @@ function _svApply() {
       const prof = acc()
         ? `<button type="button" class="bm-prof" data-bm="fiche"><span class="av pf">${esc((p || "").slice(0, 2).toUpperCase())}${typeof portraitImg === "function" ? portraitImg(p, true) : ""}</span><span><b>${esc(p)}</b><small>${typeof _accIsSuper !== "undefined" && _accIsSuper ? "★ Super admin · " : ""}mon compte</small></span>${ic("chev", "chev")}</button>`
         : `<button type="button" class="bm-prof" data-bm="login"><span class="av">${ic("user")}</span><span><b>Se connecter</b><small>ou créer mon compte joueur</small></span>${ic("chev", "chev")}</button>`;
-      m.innerHTML = `<div class="bm-in"><div class="bm-grab"></div>${prof}
+      const isSA = acc() && typeof _accIsSuper !== "undefined" && !!_accIsSuper; if (!isSA) saOpen = false;
+      if (saOpen) { // sous-menu « ★ Options » : glisse depuis la droite, « ‹ Menu » pour revenir
+        const pr = typeof _pronosEnabled !== "undefined" && !!_pronosEnabled;
+        const srow = (k, l, d) => `<button type="button" class="bm-row" data-bm="${k}"><span class="grow">${l}<span class="bm-desc">${d}</span></span>${ic("chev", "chev")}</button>`;
+        m.innerHTML = `<div class="bm-in bm-sapage${was && !was.classList.contains("bm-sapage") ? " slide" : " still"}"><div class="bm-grab"></div>
+          <button type="button" class="bm-back" data-bm="__saback">${ic("chev", "chev")}Menu</button>
+          <b class="bm-satitle"><span>★</span> Options</b>
+          <div class="bm-rows sa">
+            ${srow("__accounts", "Membres", "Les comptes des joueurs")}
+            ${srow("__compose", "Notifications", "Envoyer une notification aux joueurs")}
+            ${srow("__events", "Événements", "Créer et gérer les repas, tournois, sorties…")}
+            ${srow("__seasons", "Paramètres saison", "Dates de la saison, ouverture de l'album")}
+            <button type="button" class="bm-row" data-bm="__pronos" aria-pressed="${pr}"><span class="grow">Pronostics <small>· ${pr ? "activés" : "désactivés"}</small><span class="bm-desc">Le vote des pronos pendant les matchs</span></span><span class="sw"></span></button>
+          </div></div>`;
+        return;
+      }
+      m.innerHTML = `<div class="bm-in${was && was.classList.contains("bm-sapage") ? " back" : ""}"><div class="bm-grab"></div>${prof}
         ${pages.length ? `<span class="bm-lbl bm-pg">Autres pages</span><div class="bm-rows bm-pg">${pages.join("")}</div>` : ""}
         <span class="bm-lbl">Réglages</span><div class="bm-rows">
           ${pwaRows()}
@@ -19318,17 +19344,11 @@ function _svApply() {
           ${acc() ? `<button type="button" class="bm-row" data-bm="__help">${ic("help")}<span class="grow">Aide${typeof _accIsSuper !== "undefined" && _accIsSuper ? ` <small>· joueur et ★ super admin</small>` : ""}</span>${ic("chev", "chev")}</button>` : ""}
           ${acc() || window._hmUpdAvail ? `<button type="button" class="bm-row${window._hmUpdAvail ? " bm-upd" : ""}" data-bm="__update">${ic("swap")}<span class="grow">Mettre à jour l'appli${window._hmUpdAvail ? ` <small class="bm-upd-t">· Nouvelle MàJ disponible !</small>` : typeof window._hmVersion === "function" && window._hmVersion() ? ` <small>· version du ${esc(window._hmVersion().replace(/\/\d{4} - /, " à "))}</small>` : ""}</span>${window._hmUpdAvail ? `<span class="bm-upd-i" aria-label="Mise à jour disponible">!</span>` : ""}${ic("chev", "chev")}</button>` : ""}
         </div>
-        ${acc() && typeof _accIsSuper !== "undefined" && _accIsSuper ? `<span class="bm-lbl sa">★ Options super admin</span><div class="bm-rows sa">
-          <button type="button" class="bm-row" data-bm="__accounts"><span class="bm-star">★</span><span class="grow">Membres</span>${ic("chev", "chev")}</button>
-          <button type="button" class="bm-row" data-bm="__compose"><span class="bm-star">★</span><span class="grow">Notifications</span>${ic("chev", "chev")}</button>
-          <button type="button" class="bm-row" data-bm="__events"><span class="bm-star">★</span><span class="grow">Événements</span>${ic("chev", "chev")}</button>
-          <button type="button" class="bm-row" data-bm="__seasons"><span class="bm-star">★</span><span class="grow">Paramètres saison</span>${ic("chev", "chev")}</button>
-          <button type="button" class="bm-row" data-bm="__pronos" aria-pressed="${typeof _pronosEnabled !== "undefined" && !!_pronosEnabled}"><span class="bm-star">★</span><span class="grow">Pronostics <small>· ${typeof _pronosEnabled !== "undefined" && _pronosEnabled ? "activés" : "désactivés"}</small></span><span class="sw"></span></button>
-        </div>` : ""}
+        ${isSA ? `<div class="bm-rows sa"><button type="button" class="bm-row" data-bm="__sa"><span class="bm-star">★</span><span class="grow">Options</span>${ic("chev", "chev")}</button></div>` : ""}
         ${acc() ? `<div class="bm-rows"><button type="button" class="bm-row danger" data-bm="__logout">${ic("out")}<span class="grow">Se déconnecter</span></button></div>` : ""}
         <div class="bm-links">${shown("footer-reglement-btn") ? `<button type="button" class="bm-rules" data-bm="__rules">${ic("rules")}Règlement 26/27</button>` : ""}
           ${shown("footer-coef-btn") ? `<button type="button" class="bm-rules" data-bm="__coef">${ic("dash")}Coefficients joueurs</button>` : ""}</div></div>`;
-      if (was) { const inn = m.querySelector(".bm-in"); inn.classList.add("still"); inn.scrollTop = keep; }
+      if (was) { const inn = m.querySelector(".bm-in"); if (inn.classList.contains("back")) inn.scrollTop = inn.scrollHeight; else { inn.classList.add("still"); inn.scrollTop = keep; } }
     }
     // Appli installable + notifications push (module « WEBAPP » plus bas)
     function pwaRows() {
@@ -19394,6 +19414,9 @@ function _svApply() {
           if (k === "__help") { close(); render(); window._hmHelp?.(); return; }
           if (k === "__push") { const pw = window._pwa; if (pw) pw.toggle().finally(() => { renderMenu(); renderBell(); }); return; }
           if (k === "__opts") { optsOpen = !optsOpen; renderMenu(); return; }
+          if (k === "__sa") { saOpen = true; renderMenu(); return; }
+          if (k === "__saback") { saOpen = false; renderMenu(); return; }
+          if (k === "__pronos" && saOpen) { $("footer-pronos-btn")?.click(); setTimeout(renderMenu, 900); return; } // on reste dans le sous-menu
           if (k === "__pref") { const pw = window._pwa; if (pw) { pw.setPref(m.dataset.k, !pw.prefs()[m.dataset.k]); } setTimeout(renderMenu, 300); return; }
           if (k === "__seasons") { close(); render(); if (window._seasonsAdmin) window._seasonsAdmin(); return; }
           if (k === "__events") { close(); render(); if (window._evAdmin) window._evAdmin(); return; }
@@ -21234,7 +21257,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     ]},
     sa: { t: "Guide super admin", ch: [
       { n: "01", ico: "★", t: "Le rôle de super admin", s: "L'étoile et ce qu'elle débloque", qa: [
-        ["Qu'est-ce qu'un super admin voit en plus ?", "Sur l'Accueil, une case ★ Super admin ou, avant l'ouverture du sondage, une roue dentée ⚙️ dans la case verte ; la partie « ★ Options super admin » du menu ☰ (Membres, Notifications, Événements, Paramètres saison, Pronostics), et « ★ Modifier la photo » sur les fiches, les stats Datas, les classements ★ (Ballon de Plomb, Calamity James) et les nouveautés ★ dans « Quoi de neuf ? ».", "super admin voit plus etoile droits"],
+        ["Qu'est-ce qu'un super admin voit en plus ?", "Sur l'Accueil, une case ★ Super admin ou, avant l'ouverture du sondage, une roue dentée ⚙️ dans la case verte ; le bouton « ★ Options » du menu ☰, qui ouvre un sous-menu (Membres, Notifications, Événements, Paramètres saison, Pronostics ; « ‹ Menu » pour revenir), et « ★ Modifier la photo » sur les fiches, les stats Datas, les classements ★ (Ballon de Plomb, Calamity James) et les nouveautés ★ dans « Quoi de neuf ? ».", "super admin voit plus etoile droits"],
+        ["Où sont les options super admin ?", "Menu ☰ › ★ Options (en bas, au-dessus de Se déconnecter). Le sous-menu regroupe Membres, Notifications, Événements, Paramètres saison et l'interrupteur Pronostics, avec une ligne d'explication sous chacun. « ‹ Menu » en haut ramène au menu.", "options super admin sous-menu membres notifications evenements parametres saison pronostics ou"],
         ["Comment nommer ou retirer un super admin ?", "Menu ☰ › Mon compte › ★ Membres, puis touche l'étoile ☆ / ★ à gauche du joueur. Tu ne peux pas te retirer l'étoile toi-même.", "nommer retirer super admin etoile droits"],
         ["Comment changer le statut d'un joueur ?", "Menu ☰ › Effectif, appui long sur un joueur : Régulier, Occasionnel, Dépanneur ou Inactif. Un message permet d'annuler juste après. Les dépanneurs sont exclus des classements, sauf du leur.", "statut joueur regulier occasionnel depanneur inactif appui long"]
       ]},
@@ -21263,8 +21287,8 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Comment tourne-t-on à 3 équipes ?", "Le 1er match est tiré au sort, le gagnant reste pour le 2e, puis l'appli fait tourner les équipes. Tu peux toujours modifier l'affiche proposée.", "trois equipes rotation tirage"]
       ]},
       { n: "05", ico: "📣", t: "Envoyer une notification", s: "Infos Club et messages ciblés", qa: [
-        ["Comment envoyer une notification ?", "Menu ☰ › ★ Notifications › bouton + rouge. Écris un titre et un message (200 caractères max), choisis les destinataires (Tous, Choisir… ou Moi (test)), vérifie l'aperçu et envoie. Ça arrive en général en moins d'une minute.", "envoyer notification push message tous infos club"],
-        ["Comment supprimer mes notifications de test ?", "Dans Menu ☰ › ★ Notifications, le bouton « 🗑️ Supprimer mes tests » efface d'un coup tous tes tests de l'historique (filtres Tout ou Tests). Pour un seul test, ouvre-le puis « Supprimer ce test ». Seuls tes propres tests sont concernés, et les notifications déjà reçues sur les téléphones ne bougent pas.", "supprimer test notification historique nettoyer effacer"],
+        ["Comment envoyer une notification ?", "Menu ☰ › ★ Options › Notifications › bouton + rouge. Écris un titre et un message (200 caractères max), choisis les destinataires (Tous, Choisir… ou Moi (test)), vérifie l'aperçu et envoie. Ça arrive en général en moins d'une minute.", "envoyer notification push message tous infos club"],
+        ["Comment supprimer mes notifications de test ?", "Dans Menu ☰ › ★ Options › Notifications, le bouton « 🗑️ Supprimer mes tests » efface d'un coup tous tes tests de l'historique (filtres Tout ou Tests). Pour un seul test, ouvre-le puis « Supprimer ce test ». Seuls tes propres tests sont concernés, et les notifications déjà reçues sur les téléphones ne bougent pas.", "supprimer test notification historique nettoyer effacer"],
         ["Comment savoir qui a lu une notification ?", "L'historique liste chaque envoi avec une barre de lecture (par exemple « 19/24 · 79 % »). Touche une case pour voir qui l'a lue, et à quelle heure.", "qui a lu lecture historique"],
         ["Les Infos Club comptent dans la limite de 4 par jour ?", "Non. Les joueurs reçoivent au maximum 4 notifications automatiques par jour, mais tes Infos Club ne comptent pas dans cette limite.", "limite 4 par jour infos club"]
       ]},
@@ -21276,14 +21300,14 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Je peux lire les messages privés ?", "Non, les messages privés restent privés.", "lire messages prives"]
       ]},
       { n: "07", ico: "📅", t: "Les événements", s: "Créer, publier, suivre les inscrits", qa: [
-        ["Comment créer un événement ?", "Menu ☰ › ★ Événements › Créer un événement. Choisis un emoji (« Plus… » ouvre tous les emojis, avec recherche), un titre, la date, l'heure de début et, si tu veux, de fin, le lieu et une description. Puis les options, et « Enregistrer masqué » ou « Publier ».", "creer evenement nouveau repas tournoi sortie"],
+        ["Comment créer un événement ?", "Menu ☰ › ★ Options › Événements › Créer un événement. Choisis un emoji (« Plus… » ouvre tous les emojis, avec recherche), un titre, la date, l'heure de début et, si tu veux, de fin, le lieu et une description. Puis les options, et « Enregistrer masqué » ou « Publier ».", "creer evenement nouveau repas tournoi sortie"],
         ["Comment préparer un événement sans le publier ?", "Par défaut, un nouvel événement est enregistré masqué : les joueurs ne le voient pas. Dans ★ Événements, l'œil à côté de son nom l'affiche ou le masque sur l'Accueil en un appui (vert = visible, barré = masqué). Le même œil est en haut à droite de l'événement.", "masquer afficher oeil brouillon preparer publier cacher"],
         ["Quand les joueurs sont-ils prévenus ?", "Avec « Prévenir tout le monde » coché, une notification part la première fois que l'événement s'affiche, et une seule fois : le masquer puis le réafficher ne la renvoie pas. Ensuite, le « Rappel aux inscrits » (pas de rappel, la veille, 2 ou 3 jours, 1 ou 2 semaines avant) part à 18h à ceux qui ont répondu Je viens ou Peut-être.", "notification prevenir rappel veille jours avant"],
         ["Comment mettre une carte ?", "Coche « Afficher une carte », tape le nom du lieu ou l'adresse, puis choisis dans la liste proposée. L'événement montre alors une mini-carte avec « Ouvrir dans Maps » et « Itinéraire ». Sans la case, le lieu est un simple texte (« chez Boris », « salle du haut »…).", "carte lieu adresse maps plan localisation"],
         ["Quelles sont les options ?", "Ajout au calendrier (boutons Google, Apple et Outlook), Événement payant (prix par personne), Places limitées (liste d'attente automatique dans l'ordre des réponses), Accompagnants autorisés, et le rappel aux inscrits. Tout est facultatif.", "options calendrier payant places accompagnants rappel"],
         ["Comment suivre qui a payé ?", "Sur un événement payant, ouvre-le : le bloc « ★ Cagnotte » liste les joueurs qui viennent, avec le montant (accompagnants compris). Coche ceux qui ont payé : ils voient « ✓ Payé » dans l'événement.", "cagnotte paye payer argent suivi"],
         ["Comment modifier ou supprimer un événement ?", "Ouvre l'événement (depuis ★ Événements ou l'Accueil) › ★ Modifier, ou Supprimer. La suppression efface aussi toutes les réponses, avec confirmation.", "modifier supprimer evenement corriger annuler"],
-        ["Où retrouver les événements passés ?", "Menu ☰ › ★ Événements : la liste montre « À venir » puis « Passés ». Un événement passé reste consultable (réponses, cagnotte) mais on ne peut plus y répondre.", "evenements passes historique archives"],
+        ["Où retrouver les événements passés ?", "Menu ☰ › ★ Options › Événements : la liste montre « À venir » puis « Passés ». Un événement passé reste consultable (réponses, cagnotte) mais on ne peut plus y répondre.", "evenements passes historique archives"],
       ]},
       { n: "08", ico: "🖼️", t: "Portraits et cartes Mythiques", s: "Photos, cadrage, cartes de l'Album", qa: [
         ["Comment changer ou ajouter un portrait ?", "Réservé aux super admins. Sur la fiche du joueur (touche son nom ou sa vignette), touche « ★ Modifier la photo ». « Changer de photo » remplace l'ancienne ; si la fiche n'a pas encore de portrait, la photo s'ajoute (la carte « locked » reste pour les autres). La photo est réduite toute seule, rangée sur GitHub dans les 10 minutes, puis visible après la mise à jour de l'appli.", "uploader portrait photo vignette pantheon envoyer image remplacer changer ajouter"],
@@ -21295,10 +21319,10 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
                 ["Un portrait ne s'affiche plus après un envoi sur GitHub", "Le nom du fichier doit être exactement celui de la fiche. Les accents envoyés depuis certains téléphones ou Mac sont désormais corrigés tout seuls. Le plus simple reste « ★ Modifier la photo » sur la fiche, qui donne toujours le bon nom.", "portrait ne s affiche plus photo disparue nom fichier accent"],
       ]},
       { n: "09", ico: "⚙️", t: "Saisons et autres réglages", s: "Les fonctions ★ à connaître", qa: [
-        ["Comment régler les dates de saison ?", "Menu ☰ › ★ Paramètres saison : début, fin, album des vignettes, fin des échanges et période de vote du Règlement. Après la fin officielle, l'appli propose de créer la saison suivante avec des dates pré-remplies.", "saison dates reglage album echanges"],
+        ["Comment régler les dates de saison ?", "Menu ☰ › ★ Options › Paramètres saison : début, fin, album des vignettes, fin des échanges et période de vote du Règlement. Après la fin officielle, l'appli propose de créer la saison suivante avec des dates pré-remplies.", "saison dates reglage album echanges"],
                 ["Que se passe-t-il à la clôture du vote du Règlement ?", "L'Effectif se met à jour tout seul : actif › Réguliers, +1 › Occasionnels, dépanneur › Dépanneurs, quitte ou sans réponse › Inactifs.", "cloture vote reglement effectif"],
         ["Quelles sont les autres fonctions ★ ?", "Datas (une trentaine de stats pointues dans Statistiques), Récompenses ★ (Ballon de Plomb, Calamity James), ★ Pronostics et les Coefficients joueurs dans le menu ☰.", "datas pronos coefficients fonctions"],
-        ["Comment activer ou couper les pronostics ?", "Menu ☰ › ★ Options super admin › Pronostics : c'est un interrupteur, comme les notifications (activés ou désactivés écrit à côté). Un appui demande confirmation puis bascule. Activés, les joueurs votent sur chaque match du soir dès que ses 2 équipes sont choisies dans la Saisie, jusqu'à la mi-temps.", "activer desactiver pronos pronostics interrupteur"],
+        ["Comment activer ou couper les pronostics ?", "Menu ☰ › ★ Options › Pronostics : c'est un interrupteur, comme les notifications (activés ou désactivés écrit à côté). Un appui demande confirmation puis bascule. Activés, les joueurs votent sur chaque match du soir dès que ses 2 équipes sont choisies dans la Saisie, jusqu'à la mi-temps.", "activer desactiver pronos pronostics interrupteur"],
         ["Comment renseigner l'année d'arrivée d'un joueur ?", "Elle n'est pas modifiable dans l'appli. Les années de l'effectif actuel sont déjà intégrées. Pour un nouveau joueur ou une correction : base Firebase, sous config/arrivees (par exemple « Boris » : 2016, ou « Fondateur »). Ce qui est en base passe avant la liste intégrée.", "annee arrivee renseigner club depuis fondateur"],
         ["Comment supprimer une soirée ?", "Touche la croix ronde sur la date, avec confirmation.", "supprimer soiree session date"]
       ]},
