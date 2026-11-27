@@ -334,6 +334,7 @@
       ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
     },
     "vgGifts": {
+      ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
       "$p": {
         ".read": "auth != null && root.child('users/' + auth.uid + '/player').val() === $p || auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
         ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true || auth != null && root.child('users/' + auth.uid + '/player').val() === $p"
