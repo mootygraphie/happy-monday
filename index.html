@@ -3721,15 +3721,15 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .pu-h { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 10px; padding: 8px 0; border-top: 1px solid var(--border); font-size: 13.5px; }
   .pu-h small { grid-column: 1; color: var(--text3); font-size: 11.5px; } .pu-h span { grid-row: 1 / 3; grid-column: 2; align-self: center; font-size: 12px; font-weight: 700; color: var(--text2); }
   .pu-h span.ok { color: #34c77b; } .pu-h span.ko { color: #ef5350; }
-  #panel-vignettes .card.vg-hid { opacity: .5; filter: grayscale(.6); }
+
   .card .vg-pend { display: none; position: absolute; left: 6px; right: 6px; top: 42%; z-index: 4; text-align: center; font-size: 10px; font-weight: 700; color: #fff; background: rgba(0,0,0,.72); border-radius: 8px; padding: 4px 6px; line-height: 1.25; }
   .card.vg-pending .vg-pend { display: block; }
   .card .vg-pend img.emo { position: static !important; inset: auto !important; width: 1.2em !important; height: 1.2em !important; transform: none !important; object-fit: contain !important; display: inline-block !important; vertical-align: -.25em !important; margin: 0 .1em 0 0 !important; }
-  #panel-vignettes .stk.vg-saprev { position: relative; } #panel-vignettes .stk.vg-saprev .card { opacity: .82; }
-  #panel-vignettes .stk .card.vg-hid, #panel-vignettes .stk.vg-saprev .card.vg-hid { opacity: .4; filter: grayscale(1) brightness(.8); }
-  #vg-modal .card.vg-hid { filter: grayscale(.8); }
+  /* super admins : non possédée = noir et blanc ; masquée = œil barré ; possédée = couleur */
+  #panel-vignettes .stk.vg-saprev { position: relative; } #panel-vignettes .stk.vg-saprev .card { filter: grayscale(1); }
   #panel-vignettes .vg-sab { position: absolute; left: 50%; top: -8px; transform: translateX(-50%); z-index: 6; font-size: 9.5px; font-weight: 700; color: #1d1604; background: #f5c542; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
-  #panel-vignettes .vg-hidb, #vg-modal .vg-hidb { position: absolute; right: 8px; top: 8px; z-index: 5; font-size: 10px; font-weight: 700; color: #fff; background: rgba(0,0,0,.75); border: 1px solid rgba(255,255,255,.2); padding: 3px 7px; border-radius: 999px; }
+  #panel-vignettes .vg-hidb, #vg-modal .vg-hidb { position: absolute; right: 7px; top: 7px; z-index: 5; width: 30px; height: 30px; display: grid; place-items: center; color: #fff; background: rgba(0,0,0,.78); border: 1.5px solid rgba(255,255,255,.35); border-radius: 50%; }
+  .vg-hidb svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   #panel-vignettes .vg-imp { grid-column: span 1; aspect-ratio: 3 / 4.2; border-radius: 14px; border: 2px dashed rgba(245,197,66,.6); background: rgba(245,197,66,.1); color: #f5c542; display: grid; place-content: center; justify-items: center; gap: 6px; text-align: center; padding: 10px; font: inherit; cursor: pointer; }
   #panel-vignettes .vg-imp .pl { font-size: 34px; line-height: 1; } #panel-vignettes .vg-imp b { font-size: 12.5px; text-transform: uppercase; font-style: italic; } #panel-vignettes .vg-imp small { font-size: 10.5px; color: var(--text2); }
   .vg-vis { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; justify-content: center; margin-top: 14px; max-width: 360px; margin-left: auto; margin-right: auto; }
@@ -17117,7 +17117,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   let CLUB_KEYS = ["g:logo", "g:gymnase"];
   // Cartes Mythiques importées depuis l'appli (★) : vgMyth/{id} = { sec: "club" | "pan", nm, sub, file } ;
   // vgHidden/{clé de carte} = true : carte Mythique masquée aux joueurs (les super admins la voient, grisée).
-  let MYTH = {}, HIDDEN = {}, mythOn = false;
+  let MYTH = {}, HIDDEN = {}, mythOn = false, HIDC = [];
   // image pas encore rangée sur GitHub : on montre l'aperçu enregistré avec la carte
   window._vgPrev = img => { const p = img.dataset.prev; if (!p || img.dataset.pv) return; img.dataset.pv = 1; img.src = p; const c = img.closest(".card"); if (c) c.classList.add("vg-pending"); };
   const vgSA = () => typeof _accIsSuper !== "undefined" && !!_accIsSuper;
@@ -17298,8 +17298,9 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
         st: { pres: 0, mj: 0, v: 0, nu: 0, d: 0, b: 0, p: 0, gk: 0, enc: 0 }, nt: [], nSess: sessions.length }); });
     ALL = [...CLUB, ...(vOwn ? [VINT] : []), ...PLAYERS, ...HF, ...NT, ...PAN];
     // cartes Mythiques masquées : invisibles pour les joueurs, grisées pour les super admins
-    ALL.forEach(c => { c.hid = c.r === "M" && !!HIDDEN[c.k]; }); if (!vgSA()) ALL = ALL.filter(c => !c.hid);
-    BYK = Object.fromEntries(ALL.map(c => [c.k, c]));
+    // cartes Mythiques masquées : hors des totaux pour tout le monde ; les super admins les voient à leur place (œil barré)
+    ALL.forEach(c => { c.hid = c.r === "M" && !!HIDDEN[c.k]; }); HIDC = vgSA() ? ALL.filter(c => c.hid) : []; ALL = ALL.filter(c => !c.hid);
+    BYK = Object.fromEntries([...ALL, ...HIDC].map(c => [c.k, c]));
     buildSections();
     if (!vOwn) { const lk = { ...VINT, locked: true }; BYK[VINT_KEY] = lk; const club = SECS.find(x => x.id === "club"); if (club) { club.items.push(lk); lk.no = club.items.length; } }
   }
@@ -17386,7 +17387,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   // album (carte et emplacement). Il se révèle dès que ce joueur le débloque à son tour.
   function lockedSecret(c) { return c.ty === "h" && c.sec && !(ME && c.h.some(x => x[0] === ME)); }
   const hfStyle = c => c.ty === "h" ? ` style="--cc:var(${CATVAR[c.cat] || "--hf-secret"})"` : "";
-  const cardHTML = (c, lazy) => `<div class="card r-${c.r} ty-${c.ty}${c.locked ? " locked" : ""}${c.hid ? " vg-hid" : ""} t-${c.team || ""}"${hfStyle(c)} data-k="${c.k}">${c.hid ? `<span class="vg-hidb">Masquée</span>` : ""}<div class="card-in">
+  const cardHTML = (c, lazy) => `<div class="card r-${c.r} ty-${c.ty}${c.locked ? " locked" : ""}${c.hid ? " vg-hid" : ""} t-${c.team || ""}"${hfStyle(c)} data-k="${c.k}">${c.hid ? `<span class="vg-hidb" title="Masquée aux joueurs" aria-label="Masquée aux joueurs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M10.6 5.6A9.6 9.6 0 0 1 12 5.5C18 5.5 21.5 12 21.5 12a16 16 0 0 1-3.2 3.9M6.2 6.9C3.9 8.6 2.5 12 2.5 12S6 18.5 12 18.5c1.7 0 3.2-.5 4.4-1.2M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg></span>` : ""}<div class="card-in">
       <div class="face front">${frontHTML(c, lazy)}</div><div class="face back">${backHTML(c)}</div></div></div>`;
   const coverHTML = () => `<div class="face-in"><span class="ball">⚽</span><b>Happy <span>Monday</span></b><small>${SEASON_LABEL.replace("Saison ", "Saison ")}</small></div>`;
 
@@ -17811,7 +17812,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   const CATORD = ["Attaque", "Défense", "Collectif", "Présence", "Distinctions", "Secrets"];
   function buildSections() {
     SECS.forEach(s => {
-      s.items = ALL.filter(s.f).sort((a, b) => a.ty === "h" ? (CATORD.indexOf(a.cat) - CATORD.indexOf(b.cat) || RO[a.r] - RO[b.r]) : (RO[a.r] - RO[b.r] || (a.ty === "p" ? (a.rk || 99) - (b.rk || 99) || b.o - a.o : 0)));
+      s.items = [...ALL, ...HIDC].filter(s.f).sort((a, b) => a.ty === "h" ? (CATORD.indexOf(a.cat) - CATORD.indexOf(b.cat) || RO[a.r] - RO[b.r]) : (RO[a.r] - RO[b.r] || (a.ty === "p" ? (a.rk || 99) - (b.rk || 99) || b.o - a.o : 0)));
     });
     let no = 0; SECS.forEach(s => s.items.forEach(c => { c.no = ++no; }));
   }
@@ -17860,7 +17861,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     if (p.kind === "myth") return `<div class="${cls}" style="--sc:#f5c542"><div class="sec-head"><small>★ Super admin</small><h2>✨ Cartes Mythiques</h2><p>Ajoute une légende au Panthéon ou une carte du Club</p></div><div class="stk-grid"><button type="button" class="vg-imp" data-vgimp><span class="pl">+</span><b>Importer une carte Mythique</b><small>Panthéon ou Club</small></button></div>${foot("Mythiques")}</div>`;
     const s = p.s;
     const head = `<div class="sec-head"><small>${p.first ? "Section" : "Section · suite"}</small><h2>${s.ic} ${s.t}</h2><p>${s.sub}</p></div>`;
-    const slots = p.items.map(c => c.locked ? `<button class="stk" data-k="${c.k}" aria-label="${c.nm} (grisée)">${cardHTML(c, true)}</button>` : !COL[c.k] && c.r === "M" && vgSA() ? `<button class="stk vg-saprev" data-k="${c.k}" aria-label="Aperçu super admin : ${c.n || c.nm}">${cardHTML(c, true)}<span class="vg-sab">★ Aperçu</span></button>` : COL[c.k] && (PASTED.has(c.k) || !hideNew)
+    const slots = p.items.map(c => c.locked ? `<button class="stk" data-k="${c.k}" aria-label="${c.nm} (grisée)">${cardHTML(c, true)}</button>` : !COL[c.k] && c.r === "M" && vgSA() ? `<button class="stk vg-saprev" data-k="${c.k}" aria-label="Aperçu super admin : ${c.n || c.nm}">${cardHTML(c, true)}</button>` : COL[c.k] && (PASTED.has(c.k) || !hideNew)
       ? `<button class="stk${PASTED.has(c.k) ? "" : " new"}" data-k="${c.k}" aria-label="Vignette ${c.no} : ${c.n || c.nm}">${cardHTML(c, true)}${COL[c.k] > 1 ? `<span class="count">×${COL[c.k]}</span>` : ""}</button>`
       : `<div class="stk-empty" style="--rc:var(--r${c.r})"><span class="wm">${c.ty === "p" ? "👤" : lockedSecret(c) ? "🤫" : c.ic}</span><span class="no">N° ${String(c.no).padStart(2, "0")}</span><span class="nm2">${lockedSecret(c) ? "🤫 Secret" : (c.n || c.nm)}</span><span class="rt">${RL[c.r]}</span></div>`).join("");
     const fill = Array.from({ length: per() - p.items.length }, () => `<div class="stk-blank"></div>`).join("");
@@ -21258,10 +21259,10 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       { n: "08", ico: "🖼️", t: "Portraits et cartes Mythiques", s: "Photos, cadrage, cartes de l'Album", qa: [
         ["Comment changer ou ajouter un portrait ?", "Réservé aux super admins. Sur la fiche du joueur (touche son nom ou sa vignette), touche « ★ Modifier la photo ». « Changer de photo » remplace l'ancienne ; si la fiche n'a pas encore de portrait, la photo s'ajoute (la carte « locked » reste pour les autres). La photo est réduite toute seule, rangée sur GitHub dans les 10 minutes, puis visible après la mise à jour de l'appli.", "uploader portrait photo vignette pantheon envoyer image remplacer changer ajouter"],
         ["Comment recadrer la vignette carrée d'un joueur ?", "Ouvre « ★ Modifier la photo » sur sa fiche. Dans le carré, glisse avec le doigt pour déplacer, pince pour zoomer (molette ou curseur sur ordinateur). L'aperçu montre les vignettes telles qu'elles apparaîtront. « Enregistrer » applique le cadrage tout de suite partout (Effectif, Membres, Vestiaire, stats…). « Recentrer » revient au cadrage de départ.", "recadrer cadrage vignette carree zoom deplacer avatar portrait"],
-["Comment ajouter une carte Mythique ?", "Vignettes › Album, tout à la dernière page : « + Importer une carte Mythique » (réservé aux super admins). Choisis Panthéon (une légende du club, légende « Légende du Futsal » automatique) ou Club (lieu, objet, souvenir… avec ta propre légende), donne un nom, choisis l'image et regarde l'aperçu. « Rendre visible » désactivé : la carte est importée mais masquée aux joueurs. La carte s'affiche tout de suite (avec « Publication du portrait en cours » le temps que l'image soit rangée sur GitHub, 10 minutes au plus), sans rien renommer. Les super admins voient toutes les cartes Mythiques en entier, marquées « Aperçu » s'ils ne les ont pas encore. Les cartes du Club sont offertes à tous, celles du Panthéon se gagnent comme les autres légendes.", "carte mythique importer ajouter pantheon club album vignette legende"],
+["Comment ajouter une carte Mythique ?", "Vignettes › Album, tout à la dernière page : « + Importer une carte Mythique » (réservé aux super admins). Choisis Panthéon (une légende du club, légende « Légende du Futsal » automatique) ou Club (lieu, objet, souvenir… avec ta propre légende), donne un nom, choisis l'image et regarde l'aperçu. « Rendre visible » désactivé : la carte est importée mais masquée aux joueurs. La carte s'affiche tout de suite (avec « Publication du portrait en cours » le temps que l'image soit rangée sur GitHub, 10 minutes au plus), sans rien renommer. Les super admins voient toutes les cartes Mythiques en entier : en noir et blanc s'ils ne les ont pas encore. Les cartes du Club sont offertes à tous, celles du Panthéon se gagnent comme les autres légendes.", "carte mythique importer ajouter pantheon club album vignette legende"],
 ["Comment modifier une carte Mythique ?", "Ouvre la carte en grand dans l'Album › ✏️ Modifier. Tu peux changer l'image (elle s'affiche tout de suite, la vraie arrive dans les 10 minutes) et, pour une carte du Club, son nom et sa légende. Le nom d'une légende du Panthéon ne change pas. L'écusson, le gymnase et le Kit Vintage d'origine ne se modifient pas ici.", "modifier carte mythique image photo changer pantheon club corriger"],
         ["Comment offrir une carte à un joueur ?", "Ouvre la carte en grand › 🎁 Offrir, puis choisis le joueur. À sa prochaine ouverture de l'appli, il voit l'animation Mythique en premier (avec « Un cadeau du club »), puis la carte rejoint son album comme s'il l'avait tirée d'un booster.", "offrir carte cadeau joueur animation mythique"],
-                ["Comment masquer ou montrer une carte Mythique ?", "Ouvre la carte en grand dans l'Album : sous la carte, « Masquer » ou « Montrer ». Ça marche sur toutes les cartes Mythiques, anciennes comprises (écusson, gymnase, Panthéon…). Masquée, elle disparaît pour les joueurs, même ceux qui l'avaient ; toi, tu la vois grisée avec « Masquée ».", "masquer montrer cacher carte mythique album visible"],
+                ["Comment masquer ou montrer une carte Mythique ?", "Ouvre la carte en grand dans l'Album : sous la carte, « Masquer » ou « Montrer ». Ça marche sur toutes les cartes Mythiques, anciennes comprises (écusson, gymnase, Panthéon…). Masquée, elle disparaît pour les joueurs (même ceux qui l'avaient) et ne compte dans le total de personne ; toi, tu la vois à sa place avec un œil barré. Dès que tu la montres, elle s'ajoute au total de tout le monde. Repère super admin : noir et blanc = pas encore dans ton album, couleur = dans ton album, œil barré = masquée.", "masquer montrer cacher carte mythique album visible"],
                 ["Un portrait ne s'affiche plus après un envoi sur GitHub", "Le nom du fichier doit être exactement celui de la fiche. Les accents envoyés depuis certains téléphones ou Mac sont désormais corrigés tout seuls. Le plus simple reste « ★ Modifier la photo » sur la fiche, qui donne toujours le bon nom.", "portrait ne s affiche plus photo disparue nom fichier accent"],
       ]},
       { n: "09", ico: "⚙️", t: "Saisons et autres réglages", s: "Les fonctions ★ à connaître", qa: [
