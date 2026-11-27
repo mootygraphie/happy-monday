@@ -3098,8 +3098,8 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
   .acm-who b { display: block; font-size: 21px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1.1; }
   .acm-who .acm-ps { display: block; font-style: normal; font-size: 12px; color: var(--text3); }
   .acm-who em { font-style: normal; font-size: 11.5px; font-weight: 700; color: var(--sa); }
-  .acm-link2 { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; }
-  .acm-link2 span { color: var(--text3); font-size: 18px; }
+  .acm-link2 { display: flex; align-items: center; justify-content: flex-start; gap: 8px; width: 100%; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; }
+  .acm-link2 span { color: var(--text3); font-size: 18px; margin-left: auto; }
   .acm-acct .acm-cot { margin: 0; padding: 10px 14px; }
   .acm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px 10px; } /* passe sur une colonne dès que la place manque : jamais de chevauchement */
   .acm-grid .wide { grid-column: 1 / -1; }
@@ -3511,7 +3511,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #bmenu .bm-rows.sa .bm-row { background: color-mix(in srgb, var(--sa) 7%, var(--bg3)); border-top-color: var(--sa-border); }
   #bmenu .bm-back { display: flex; align-items: center; gap: 2px; align-self: flex-start; border: none; background: none; font: inherit; font-size: 14px; font-weight: 600; color: var(--text2); cursor: pointer; padding: 4px 8px 0 0; }
   #bmenu .bm-back .chev { transform: rotate(180deg); color: var(--text2); }
-  #bmenu .bm-in.bm-sapage { padding-bottom: 40px; } /* de l'air sous Pronostics, loin de la barre du bas */
+  #bmenu .bm-in.bm-sapage { padding-bottom: 60px; } /* de l'air sous Pronostics, loin de la barre du bas */
   #bmenu .bm-satitle { font-size: 18px; font-weight: 800; font-style: italic; color: var(--sa); }
   #bmenu .bm-satitle span { font-style: normal; }
   #bmenu .bm-desc { display: block; font-size: 12px; font-weight: 400; color: var(--text2); margin-top: 1px; }
@@ -4833,6 +4833,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .hm-news ul { list-style: none; margin: 0 0 16px; padding: 10px 12px; border-radius: 12px; background: var(--bg3); display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; color: var(--text2); }
   .hm-news .hm-news-new { color: #ff9f0a; font-weight: 700; } .hm-news p.hm-news-ok { margin: 0; padding: 9px 12px; border-radius: 10px; font-size: 13px; font-weight: 600; text-align: center; color: #3fbf7f; background: rgba(52,199,123,.1); border: 1px solid rgba(52,199,123,.25); }
   .hm-news .ch-cf-in { position: relative; }
+  .hm-news .ch-cf-act { justify-content: center; }
   .hm-news .hm-news-x { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 50%; border: none; background: var(--bg3); color: var(--text2); font-size: 14px; line-height: 1; cursor: pointer; display: grid; place-items: center; }
   .hm-news .hm-news-x:hover { color: var(--text); }
   .hm-news .ch-cf-in > b { padding-right: 34px; }
@@ -5441,7 +5442,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
 </div>
 
 <template id="hm-news" data-date="27/11/2026"><li>🔄 <b>Mettre à jour l'appli</b> : le « Quoi de neuf ? » s'ouvre d'abord, avec le bouton Mettre à jour quand une nouvelle version est là</li><li data-sa>🖼️ <b>Album</b> : modifier une carte Mythique, et l'offrir à un joueur (il la découvre avec l'animation Mythique)</li><li data-sa>🎁 <b>Offrir</b> : la liste des joueurs qui l'ont déjà reçue, en attente ou découverte</li><li data-sa>☰ <b>Menu</b> : les réglages super admin sont rangés dans un seul bouton « ★ Options », qui ouvre un sous-menu</li><li data-sa>👁️ <b>Cartes masquées</b> : assombries ; touche l'œil barré pour la montrer aux joueurs</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/11/2026 - 12:41</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/11/2026 - 12:46</footer>
 
 <script>
 /* ══════════ EMOJIS STYLE TEAMS (Fluent, licence MIT) SUR TOUT LE SITE ══════════
