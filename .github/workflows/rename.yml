@@ -1,0 +1,34 @@
+# Renommer un joueur partout dans la base. D'abord en simulation (apply vide), puis avec apply = 1.
+name: Renommer un joueur
+
+on:
+  workflow_dispatch:
+    inputs:
+      old:
+        description: "Nom actuel (exactement, ex. Chagot)"
+        required: true
+      new:
+        description: "Nouveau nom (ex. Cyril)"
+        required: true
+      apply:
+        description: "1 = enregistrer ; vide = simulation"
+        required: false
+        default: ""
+
+jobs:
+  rename:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "google-auth>=2.29,<3" requests
+      - name: Renommer
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+          OLD: ${{ github.event.inputs.old }}
+          NEW: ${{ github.event.inputs.new }}
+          APPLY: ${{ github.event.inputs.apply }}
+        run: python .github/scripts/rename_player.py

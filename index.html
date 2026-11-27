@@ -2654,6 +2654,11 @@ html:has(#vg-modal:not([hidden])), html:has(#vg-modal:not([hidden])) body { over
 #panel-vignettes .pz-txt > * { opacity: 0; transform: translateY(10px); }
 #panel-vignettes .pz.txt .pz-txt > * { transition: all .5s ease-out; opacity: 1; transform: none; }
 #panel-vignettes .pz.txt .pz-txt > :nth-child(2) { transition-delay: .15s; } #panel-vignettes .pz.txt .pz-txt > :nth-child(3) { transition-delay: .5s; } #panel-vignettes .pz.txt .pz-txt > :nth-child(4) { transition-delay: .7s; }
+#panel-vignettes .pz-gift { font-size: 13px; font-weight: 800; color: #fff; background: rgba(227,11,11,.85); border-radius: 999px; padding: 4px 12px; margin-bottom: 6px; }
+/* cadeau joué par-dessus l'Accueil : le panneau Vignettes ne montre que l'animation */
+#panel-vignettes.vg-fxonly { display: block !important; position: fixed; inset: 0; z-index: 2000; padding: 0; background: none; pointer-events: none; }
+#panel-vignettes.vg-fxonly > :not(.pz) { display: none !important; }
+#panel-vignettes.vg-fxonly > .pz { pointer-events: auto; }
 #panel-vignettes .pz-kick { font-size: 11px; font-weight: 800; letter-spacing: .34em; color: #f5c542; }
 #panel-vignettes .pz-name { font-size: clamp(30px, 9vw, 46px); font-weight: 800; font-style: italic; letter-spacing: .08em; line-height: 1.05; text-transform: uppercase; color: transparent; background: linear-gradient(180deg, #fff6d8, #f5c542 55%, #b8860b); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 2px 12px rgba(245,197,66,.55)); }
 #panel-vignettes .pz-sub { font-size: 13px; font-weight: 600; color: #f3f0ea; } #panel-vignettes .pz-rar { font-size: 12px; font-weight: 800; letter-spacing: .18em; color: #ff8a7a; }
@@ -3721,11 +3726,14 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .card.vg-pending .vg-pend { display: block; }
   .card .vg-pend img.emo { position: static !important; inset: auto !important; width: 1.2em !important; height: 1.2em !important; transform: none !important; object-fit: contain !important; display: inline-block !important; vertical-align: -.25em !important; margin: 0 .1em 0 0 !important; }
   #panel-vignettes .stk.vg-saprev { position: relative; } #panel-vignettes .stk.vg-saprev .card { opacity: .82; }
+  #panel-vignettes .stk .card.vg-hid, #panel-vignettes .stk.vg-saprev .card.vg-hid { opacity: .4; filter: grayscale(1) brightness(.8); }
+  #vg-modal .card.vg-hid { filter: grayscale(.8); }
   #panel-vignettes .vg-sab { position: absolute; left: 50%; top: -8px; transform: translateX(-50%); z-index: 6; font-size: 9.5px; font-weight: 700; color: #1d1604; background: #f5c542; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
   #panel-vignettes .vg-hidb, #vg-modal .vg-hidb { position: absolute; right: 8px; top: 8px; z-index: 5; font-size: 10px; font-weight: 700; color: #fff; background: rgba(0,0,0,.75); border: 1px solid rgba(255,255,255,.2); padding: 3px 7px; border-radius: 999px; }
   #panel-vignettes .vg-imp { grid-column: span 1; aspect-ratio: 3 / 4.2; border-radius: 14px; border: 2px dashed rgba(245,197,66,.6); background: rgba(245,197,66,.1); color: #f5c542; display: grid; place-content: center; justify-items: center; gap: 6px; text-align: center; padding: 10px; font: inherit; cursor: pointer; }
   #panel-vignettes .vg-imp .pl { font-size: 34px; line-height: 1; } #panel-vignettes .vg-imp b { font-size: 12.5px; text-transform: uppercase; font-style: italic; } #panel-vignettes .vg-imp small { font-size: 10.5px; color: var(--text2); }
-  .vg-vis { display: flex; gap: 10px; align-items: center; justify-content: center; margin-top: 14px; }
+  .vg-vis { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; justify-content: center; margin-top: 14px; max-width: 360px; margin-left: auto; margin-right: auto; }
+  .vg-vis span { flex-basis: 100%; text-align: center; }
   .vg-vis span { font-size: 13px; color: #c9c9d6; }
   .vg-vis button { border-radius: 999px; padding: 9px 18px; font: inherit; font-weight: 700; border: 1px solid rgba(255,255,255,.2); background: #22222f; color: #fff; cursor: pointer; }
   .vg-vis button.show { background: #34c77b; border-color: #34c77b; color: #062814; }
@@ -5977,6 +5985,10 @@ const ALL_PLAYERS = [
 /* Jokers — présents uniquement quand listés en "+1".
    Jamais comptés "pas répondu" lors de leurs absences.
 */
+// Joueurs renommés : on corrige aussi ce que le téléphone a gardé en mémoire (les données de la base sont renommées à part)
+const _RENAMED = { Chagot: "Cyril" };
+["hmft_jokers", "hmft_absents", "hmft_inactifs", "hmft_extra_players"].forEach(k => { try { const v = JSON.parse(localStorage.getItem(k) || "null"); if (Array.isArray(v) && v.some(n => _RENAMED[n])) localStorage.setItem(k, JSON.stringify(v.map(n => _RENAMED[n] || n))); } catch (e) {} });
+try { const ss = localStorage.getItem("hmft_sessions") || ""; if (Object.keys(_RENAMED).some(n => ss.includes(`"${n}"`))) localStorage.removeItem("hmft_sessions"); } catch (e) {}
 let JOKERS  = new Set(JSON.parse(localStorage.getItem('hmft_jokers')  || 'null') || ["Hamine","Marius","Harone","Alexi","Godefroy"]);
 let ABSENTS = new Set(JSON.parse(localStorage.getItem('hmft_absents') || 'null') || []);
 /* Inactifs : desactives par un admin, masques de tout le monde sauf des admins
@@ -12122,7 +12134,7 @@ function _greffierCount(p) {
 // Haut fait « Recruteur » 🪖 : +1 à chaque venue (présent) d'un joueur qu'on a amené.
 // Parrain d'un joueur = celui qui l'a amené en +1 dans le vote de cette soirée (sessionVotes/{date}/plus),
 // sinon son parrain habituel : liste rétroactive ci-dessous, puis le premier qui l'a amené en +1.
-const RECRUTEURS_RETRO = { "Chagot": "Godefroy", "Matt B": "Godefroy", "Edouard": "Pierre-Olivier", "Enzo": "Pierre-Olivier", "Florian": "Antoine", "Marius": "JB", "Robin": "Ben" };
+const RECRUTEURS_RETRO = { "Cyril": "Godefroy", "Matt B": "Godefroy", "Edouard": "Pierre-Olivier", "Enzo": "Pierre-Olivier", "Florian": "Antoine", "Marius": "JB", "Robin": "Ben" };
 var _SV_ALL = {};
 function _recruteurCount(p) {
   const def = Object.assign({}, RECRUTEURS_RETRO), byDate = {};
@@ -12147,7 +12159,7 @@ function _saisieLogMark() {
 }
 /* Dépanneurs : liste FIXE (config/depanneurs), joueurs ajoutés ponctuellement hors roster
    d'origine — section « Dépanneurs » de l'album quel que soit leur statut. */
-var _VG_DEP = new Set(["Chagot", "Marius", "Robin", "Alexi", "Edouard", "Enzo", "Florian", "Matt B"]);
+var _VG_DEP = new Set(["Cyril", "Marius", "Robin", "Alexi", "Edouard", "Enzo", "Florian", "Matt B"]);
 const _vgSeasonKey = sy => `${sy}-${String((sy + 1) % 100).padStart(2, "0")}`;
 SEASON_DEFS.forEach(sd => {
   const yy = String(sd.sy % 100).padStart(2, "0"), yy1 = String((sd.sy + 1) % 100).padStart(2, "0");
@@ -17483,7 +17495,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
           <div class="pz-back"><div class="in"><span class="em">🏛️</span><span class="bt">PANTHÉON</span><span class="crk"></span></div></div>
           <div class="pz-front">${cardHTML(c)}<div class="pz-holo"></div><div class="pz-spec"></div></div></div></div></div></div>
         <canvas class="smk-f"></canvas><div class="pz-ring"></div><canvas class="cfx"></canvas>
-        <div class="pz-txt"><div class="pz-kick">🏛️ PANTHÉON</div><div class="pz-name">${c.n}</div><div class="pz-sub">Légende du Futsal</div><div class="pz-rar">★ Mythique ★</div></div>
+        <div class="pz-txt">${c.gift ? `<div class="pz-gift">🎁 ${c.gift}</div>` : ""}<div class="pz-kick">🏛️ PANTHÉON</div><div class="pz-name">${c.n}</div><div class="pz-sub">Légende du Futsal</div><div class="pz-rar">★ Mythique ★</div></div>
         <div class="pz-flash"></div><div class="pz-tap">Touche pour continuer</div>`;
       fxRoot().appendChild(w);
       const W = innerWidth, H = innerHeight, CY = H * .42, dpr = Math.min(2, devicePixelRatio || 1), cvs = [".smk-b", ".smk-f", ".cfx"].map(s => w.querySelector(s));
@@ -17957,35 +17969,86 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     if (c.ty !== "g") card.addEventListener("click", () => { card.classList.toggle("flipped"); card.querySelector(".card-in").style.transform = ""; }); // cartes du Club : pas de verso
     if (!c.locked) tilt(card);
     let vis = document.getElementById("vg-modal-vis"); if (vis) vis.remove();
-    if (vgSA() && c.r === "M") { document.getElementById("vg-modal-card").insertAdjacentHTML("afterend", `<div class="vg-vis" id="vg-modal-vis"><span>${c.hid ? "Masquée aux joueurs" : "Visible par les joueurs"}</span><button type="button" class="${c.hid ? "show" : ""}" data-vgvis="${c.k}">${c.hid ? "Montrer" : "Masquer"}</button></div>`);
-      document.getElementById("vg-modal-vis").addEventListener("click", async e => { const b = e.target.closest("[data-vgvis]"); if (!b) return; const k = b.dataset.vgvis, hide = !HIDDEN[k];
+    if (vgSA() && c.r === "M") { document.getElementById("vg-modal-card").insertAdjacentHTML("afterend", `<div class="vg-vis" id="vg-modal-vis"><span>${c.hid ? "Masquée aux joueurs" : "Visible par les joueurs"}</span><button type="button" class="${c.hid ? "show" : ""}" data-vgvis="${c.k}">${c.hid ? "Montrer" : "Masquer"}</button>${mythOf(c.k) ? `<button type="button" data-vgedit="${c.k}">✏️ Modifier</button>` : ""}<button type="button" data-vggift="${c.k}">🎁 Offrir</button></div>`);
+      document.getElementById("vg-modal-vis").addEventListener("click", async e => { const gb = e.target.closest("[data-vggift]"); if (gb) { giftForm(gb.dataset.vggift); return; } const eb = e.target.closest("[data-vgedit]"); if (eb) { const k = eb.dataset.vgedit; closeModal(); openImport(k); return; } const b = e.target.closest("[data-vgvis]"); if (!b) return; const k = b.dataset.vgvis, hide = !HIDDEN[k];
         try { await _db.ref(`vgHidden/${k.replace(/[.#$\[\]\/]/g, "_")}`).set(hide ? true : null); HIDDEN[k] = hide || undefined; if (!hide) delete HIDDEN[k]; buildSig = ""; build(); openModal(k); _showToast(hide ? "Carte masquée aux joueurs" : "Carte visible par les joueurs"); }
         catch (er) { _showToast("Non enregistré : vérifie ta connexion."); } }); }
     document.getElementById("vg-modal").hidden = false; document.getElementById("vg-modal-close").focus();
   }
+  // ── 🎁 Cartes offertes : vgGifts/{joueur}/{id} = { k, by, at, done }. À la prochaine ouverture de l'appli,
+  // le joueur voit l'animation Mythique par-dessus l'Accueil, puis la carte entre dans son album (comme un booster).
+  let giftOn = null, giftBusy = false;
+  async function playGifts(who, G) {
+    if (giftBusy) return; const todo = Object.entries(G || {}).filter(([, g]) => g && g.k && !g.done).sort((a, b) => (a[1].at || 0) - (b[1].at || 0)); if (!todo.length) return;
+    giftBusy = true;
+    try {
+      for (const [id, g] of todo) {
+        buildSig = ""; build(); const c0 = BYK[g.k]; if (!c0) continue;
+        // la carte entre dans l'album (non « collée » : elle se colle à la prochaine ouverture, comme après un booster)
+        await _db.ref(`vignettes/${SEASON}/${who}/cards`).transaction(cur => { cur = cur || {}; cur[g.k] = (cur[g.k] || 0) + 1; return cur; });
+        await _db.ref(`vgGifts/${who}/${id}/done`).set(firebase.database.ServerValue.TIMESTAMP);
+        if (who === ME) COL[g.k] = (COL[g.k] || 0) + 1;
+        const c = Object.assign({}, c0, { gift: g.msg || "Un cadeau du club" });
+        panel.classList.add("vg-fxonly");
+        try { if (c.pan) await pantheonReveal(c); else { panel.classList.remove("vg-fxonly"); openModal(c.k); _showToast("🎁 Un cadeau du club : la carte est dans ton album"); } }
+        finally { panel.classList.remove("vg-fxonly"); }
+      }
+    } catch (e) { console.warn("cadeau :", e); }
+    giftBusy = false;
+    try { if (panel.classList.contains("active")) render(); } catch (e) {}
+  }
+  function watchGifts() {
+    const who = typeof _accPlayer === "function" ? _accPlayer() : null; if (!who || giftOn === who || typeof _db === "undefined" || !_db) return;
+    const ls = document.getElementById("loading-screen"); if (ls && ls.style.display !== "none" && ls.isConnected) return; // après l'écran de chargement
+    giftOn = who; _db.ref(`vgGifts/${who}`).on("value", s => { const G = s.val(); if (G) setTimeout(() => playGifts(who, G), 600); }, () => { giftOn = null; });
+  }
+  setInterval(watchGifts, 1500);
+  // ★ offrir la carte ouverte en grand à un joueur
+  function giftForm(k) {
+    const names = [...new Set((typeof ALL_PLAYERS !== "undefined" ? ALL_PLAYERS : []).filter(n => !(typeof INACTIFS !== "undefined" && INACTIFS.has(n))))].sort((a, b) => a.localeCompare(b, "fr"));
+    const c = BYK[k]; if (!c) return; const nm = c.n || c.nm;
+    const o = document.createElement("div"); o.className = "sz-ov"; o.style.zIndex = 3100; document.body.appendChild(o);
+    o.innerHTML = `<div class="sz-box" role="dialog" aria-modal="true" aria-labelledby="vgg-t"><div class="sz-h"><span class="sz-k"><span>★</span> Super admin · Album</span><button type="button" class="sz-x" data-g="x" aria-label="Fermer">✕</button></div>
+      <b class="pu-ttl" id="vgg-t">Offrir « ${String(nm).replace(/</g, "&lt;")} »</b>
+      <div class="ev-fld"><label class="ev-lbl" for="vgg-p">À qui ?</label><select class="ev-in" id="vgg-p"><option value="">Choisis un joueur</option>${names.map(n => `<option>${n.replace(/</g, "&lt;")}</option>`).join("")}</select></div>
+      <p class="ev-note">À sa prochaine ouverture de l'appli, il verra l'animation Mythique en premier, puis la carte rejoindra son album comme s'il l'avait tirée d'un booster.</p>
+      <div class="ev-adm"><button type="button" data-g="x">Annuler</button><button type="button" class="pri" data-g="go" disabled>Offrir</button></div></div>`;
+    const sel = o.querySelector("#vgg-p"), go = o.querySelector('[data-g="go"]');
+    sel.addEventListener("change", () => { go.disabled = !sel.value; });
+    o.addEventListener("click", async e => { if (e.target === o || e.target.closest('[data-g="x"]')) { o.remove(); return; }
+      if (!e.target.closest('[data-g="go"]') || !sel.value) return; go.disabled = true;
+      try { await _db.ref(`vgGifts/${sel.value}`).push({ k, by: ME, at: firebase.database.ServerValue.TIMESTAMP }); o.remove(); _showToast(`🎁 Cadeau prévu : ${sel.value} le découvrira à sa prochaine ouverture`); }
+      catch (er) { go.disabled = false; _showToast("Non enregistré : vérifie ta connexion."); } });
+  }
   function closeModal() { const m = document.getElementById("vg-modal"); if (m) m.hidden = true; if (document.getElementById("vg-modal-vis")) { document.getElementById("vg-modal-vis").remove(); try { renderAlbum(); } catch (e) {} } }
   // ── ★ importer une carte Mythique : l'image part par portraitQueue (rangée sur GitHub par l'Action)
-  function openImport() {
+  // editK : modifier une carte Mythique existante (image ; nom et légende pour le Club)
+  function mythOf(k) { const c = BYK[k]; if (!c) return null;
+    if (c.pan) { const e = Object.entries(MYTH).find(([, m]) => m && m.sec === "pan" && m.nm === c.n); return { sec: "pan", nm: c.n, sub: "Légende du Futsal", file: (e && e[1].file) || c.img || "Pantheon_" + c.n, id: e ? e[0] : null, c }; }
+    if (/^g:x/.test(k)) { const id = k.slice(3), m = MYTH[id]; return m ? { sec: "club", nm: m.nm, sub: m.sub || "", file: m.file, id, c } : null; }
+    return null; }
+  function openImport(editK) {
     if (!vgSA()) return;
     const vesc = x => String(x == null ? "" : x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
-    const f = { sec: "pan", nm: "", sub: "", data: "", vis: false, busy: false };
+    const ed = editK ? mythOf(editK) : null; if (editK && !ed) return;
+    const f = ed ? { sec: ed.sec, nm: ed.nm, sub: ed.sub, data: "", cur: ed.c.prev || (ed.c.pan ? `portraits/${encodeURIComponent(ed.file)}.jpeg` : ed.c.img), vis: true, busy: false } : { sec: "pan", nm: "", sub: "", data: "", vis: false, busy: false };
     const o = document.createElement("div"); o.className = "sz-ov"; document.body.appendChild(o);
     const clean = v => String(v || "").replace(/[’‘]/g, "'").replace(/\s+/g, " ").trim();
     const okNm = v => /^[A-Za-zÀ-ÖØ-öø-ÿ0-9 '.-]{1,30}$/.test(v);
-    const prevCard = () => { const pan = f.sec === "pan", img = f.data ? `<img src="${f.data}" alt="">` : `<span class="vg-pp">📷</span>`;
+    const prevCard = () => { const pan = f.sec === "pan", img = f.data || f.cur ? `<img src="${f.data || f.cur}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'vg-pp',textContent:'📷'}))">` : `<span class="vg-pp">📷</span>`;
       return `<div class="vg-prev ${pan ? "pan" : "club"}">${img}<span class="st"><b>${vesc(clean(f.nm) || "Nom de la carte")}</b><small>${vesc(pan ? "Légende du Futsal" : clean(f.sub))}</small></span><i>★ Mythique</i></div>`; };
-    const draw = () => { const pan = f.sec === "pan", nm = clean(f.nm), ok = okNm(nm) && f.data && (pan || clean(f.sub)) && !f.busy;
-      const dupe = pan ? PANTH.some(x => x.n === nm) : Object.values(MYTH).some(m => m && m.sec === "club" && m.nm === nm);
+    const draw = () => { const pan = f.sec === "pan", nm = clean(f.nm), ok = okNm(nm) && (f.data || ed) && (pan || clean(f.sub)) && !f.busy && (!ed || f.data || nm !== ed.nm || clean(f.sub) !== ed.sub);
+      const dupe = !ed && (pan ? PANTH.some(x => x.n === nm) : Object.values(MYTH).some(m => m && m.sec === "club" && m.nm === nm));
       o.innerHTML = `<div class="sz-box vg-impbox" role="dialog" aria-modal="true" aria-labelledby="vgi-t">
         <div class="sz-h"><span class="sz-k"><span>★</span> Super admin · Album</span><button type="button" class="sz-x" data-i="close" aria-label="Fermer">✕</button></div>
-        <b class="pu-ttl" id="vgi-t">Nouvelle carte Mythique</b>
-        <div class="ev-fld"><span class="ev-lbl">Section</span><div class="pu-seg"><button type="button" data-i="sec" data-s="pan" aria-pressed="${pan}">🏛️ Panthéon</button><button type="button" data-i="sec" data-s="club" aria-pressed="${!pan}">🏟️ Club</button></div></div>
-        <div class="ev-fld"><label class="ev-lbl" for="vgi-nm">Nom de la carte</label><input class="ev-in" id="vgi-nm" maxlength="30" value="${vesc(f.nm)}" placeholder="${pan ? "Ex. : Zizou" : "Ex. : Le bar d'après-match"}" autocomplete="off">
+        <b class="pu-ttl" id="vgi-t">${ed ? "Modifier la carte" : "Nouvelle carte Mythique"}</b>
+        ${ed ? `<p class="ev-note">${pan ? "🏛️ Panthéon" : "🏟️ Club"}</p>` : `<div class="ev-fld"><span class="ev-lbl">Section</span><div class="pu-seg"><button type="button" data-i="sec" data-s="pan" aria-pressed="${pan}">🏛️ Panthéon</button><button type="button" data-i="sec" data-s="club" aria-pressed="${!pan}">🏟️ Club</button></div></div>`}
+        <div class="ev-fld"><label class="ev-lbl" for="vgi-nm">Nom de la carte</label><input class="ev-in" id="vgi-nm" maxlength="30" value="${vesc(f.nm)}" placeholder="${pan ? "Ex. : Zizou" : "Ex. : Le bar d'après-match"}" autocomplete="off"${ed && pan ? " disabled" : ""}>${ed && pan ? `<span class="ev-note">Le nom d'une légende ne change pas (il sert à la retrouver dans les albums).</span>` : ""}
           ${nm && !okNm(nm) ? `<span class="ev-note" style="color:#ef5350">Lettres, chiffres, espaces, apostrophe et tiret seulement.</span>` : dupe ? `<span class="ev-note">Une carte porte déjà ce nom : son image sera remplacée.</span>` : ""}</div>
         <div class="ev-fld"><label class="ev-lbl" for="vgi-sub">Légende</label><input class="ev-in" id="vgi-sub" maxlength="60" value="${pan ? "Légende du Futsal" : vesc(f.sub)}"${pan ? " disabled" : ""} placeholder="Ex. : Là où se refait le match" autocomplete="off">${pan ? `<span class="ev-note">Automatique pour le Panthéon, comme les autres légendes.</span>` : ""}</div>
         <div class="ev-fld"><span class="ev-lbl">Image et aperçu</span><div class="vg-imgrow">${prevCard()}<div class="vg-imgb"><label class="pe-btn" for="vgi-f">📷 ${f.data ? "Changer d'image" : "Choisir une image"}</label><input type="file" id="vgi-f" accept="image/*" hidden><span class="ev-note">Réduite toute seule. Format portrait conseillé.</span></div></div></div>
-        <label class="ev-sw"><span>Rendre visible<small>${f.vis ? "Les joueurs la voient dès sa mise en ligne" : "Importée mais masquée aux joueurs"}</small></span><input type="checkbox" id="vgi-vis"${f.vis ? " checked" : ""}></label>
-        <div class="ev-adm"><button type="button" data-i="close">Annuler</button><button type="button" class="pri" data-i="go"${ok ? "" : " disabled"}>${f.busy ? "Envoi…" : "Importer"}</button></div>
+        ${ed ? "" : `<label class="ev-sw"><span>Rendre visible<small>${f.vis ? "Les joueurs la voient dès sa mise en ligne" : "Importée mais masquée aux joueurs"}</small></span><input type="checkbox" id="vgi-vis"${f.vis ? " checked" : ""}></label>`}
+        <div class="ev-adm"><button type="button" data-i="close">Annuler</button><button type="button" class="pri" data-i="go"${ok ? "" : " disabled"}>${f.busy ? "Envoi…" : ed ? "Enregistrer" : "Importer"}</button></div>
         <p class="ev-note">L'image est rangée sur GitHub dans les 10 minutes, puis la carte apparaît dans l'Album après la mise à jour de l'appli.</p></div>`; };
     // aperçu léger (420 px) enregistré avec la carte : affiché tout de suite, le temps que GitHub range la vraie image
     const small = data => new Promise(res => { const im = new Image(); im.onload = () => { const w = Math.min(420, im.naturalWidth), h = Math.round(im.naturalHeight * w / im.naturalWidth), c = document.createElement("canvas"); c.width = w; c.height = h; c.getContext("2d").drawImage(im, 0, 0, w, h); res(c.toDataURL("image/jpeg", .74)); }; im.onerror = () => res(""); im.src = data; });
@@ -17995,6 +18058,19 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
       const t = e.target.closest("[data-i]"); if (!t) return; const a = t.dataset.i;
       if (a === "close") { o.remove(); return; }
       if (a === "sec") { f.sec = t.dataset.s; draw(); return; }
+      if (a === "go" && ed) {
+        const nm = clean(f.nm); f.busy = true; draw();
+        try {
+          const up = {}, id = ed.id || _db.ref("vgMyth").push().key, base0 = ed.id ? (MYTH[ed.id] || {}) : { sec: ed.sec, nm: ed.nm, sub: ed.sub, file: ed.file, by: ME, at: firebase.database.ServerValue.TIMESTAMP };
+          const rec = Object.assign({}, base0, ed.sec === "club" ? { nm, sub: clean(f.sub) } : {}, f.prev ? { prev: f.prev } : {});
+          up[`vgMyth/${id}`] = rec;
+          if (f.data) up[`portraitQueue/${_db.ref("portraitQueue").push().key}`] = { name: ed.file, data: f.data, by: ME, at: firebase.database.ServerValue.TIMESTAMP };
+          await _db.ref().update(up); MYTH[id] = rec; buildSig = ""; build();
+          o.remove(); _showToast(f.data ? "Carte modifiée ✓ nouvelle image en ligne dans les 10 minutes" : "Carte modifiée ✓");
+          try { renderAlbum(); } catch (er) {} setTimeout(() => { if (BYK[editK]) openModal(editK); }, 300);
+        } catch (er) { f.busy = false; draw(); _showToast("Modification impossible : vérifie ta connexion."); }
+        return;
+      }
       if (a === "go") {
         const pan = f.sec === "pan", nm = clean(f.nm); f.busy = true; draw();
         try {
@@ -21183,7 +21259,9 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Comment changer ou ajouter un portrait ?", "Réservé aux super admins. Sur la fiche du joueur (touche son nom ou sa vignette), touche « ★ Modifier la photo ». « Changer de photo » remplace l'ancienne ; si la fiche n'a pas encore de portrait, la photo s'ajoute (la carte « locked » reste pour les autres). La photo est réduite toute seule, rangée sur GitHub dans les 10 minutes, puis visible après la mise à jour de l'appli.", "uploader portrait photo vignette pantheon envoyer image remplacer changer ajouter"],
         ["Comment recadrer la vignette carrée d'un joueur ?", "Ouvre « ★ Modifier la photo » sur sa fiche. Dans le carré, glisse avec le doigt pour déplacer, pince pour zoomer (molette ou curseur sur ordinateur). L'aperçu montre les vignettes telles qu'elles apparaîtront. « Enregistrer » applique le cadrage tout de suite partout (Effectif, Membres, Vestiaire, stats…). « Recentrer » revient au cadrage de départ.", "recadrer cadrage vignette carree zoom deplacer avatar portrait"],
 ["Comment ajouter une carte Mythique ?", "Vignettes › Album, tout à la dernière page : « + Importer une carte Mythique » (réservé aux super admins). Choisis Panthéon (une légende du club, légende « Légende du Futsal » automatique) ou Club (lieu, objet, souvenir… avec ta propre légende), donne un nom, choisis l'image et regarde l'aperçu. « Rendre visible » désactivé : la carte est importée mais masquée aux joueurs. La carte s'affiche tout de suite (avec « Publication du portrait en cours » le temps que l'image soit rangée sur GitHub, 10 minutes au plus), sans rien renommer. Les super admins voient toutes les cartes Mythiques en entier, marquées « Aperçu » s'ils ne les ont pas encore. Les cartes du Club sont offertes à tous, celles du Panthéon se gagnent comme les autres légendes.", "carte mythique importer ajouter pantheon club album vignette legende"],
-        ["Comment masquer ou montrer une carte Mythique ?", "Ouvre la carte en grand dans l'Album : sous la carte, « Masquer » ou « Montrer ». Ça marche sur toutes les cartes Mythiques, anciennes comprises (écusson, gymnase, Panthéon…). Masquée, elle disparaît pour les joueurs, même ceux qui l'avaient ; toi, tu la vois grisée avec « Masquée ».", "masquer montrer cacher carte mythique album visible"],
+["Comment modifier une carte Mythique ?", "Ouvre la carte en grand dans l'Album › ✏️ Modifier. Tu peux changer l'image (elle s'affiche tout de suite, la vraie arrive dans les 10 minutes) et, pour une carte du Club, son nom et sa légende. Le nom d'une légende du Panthéon ne change pas. L'écusson, le gymnase et le Kit Vintage d'origine ne se modifient pas ici.", "modifier carte mythique image photo changer pantheon club corriger"],
+        ["Comment offrir une carte à un joueur ?", "Ouvre la carte en grand › 🎁 Offrir, puis choisis le joueur. À sa prochaine ouverture de l'appli, il voit l'animation Mythique en premier (avec « Un cadeau du club »), puis la carte rejoint son album comme s'il l'avait tirée d'un booster.", "offrir carte cadeau joueur animation mythique"],
+                ["Comment masquer ou montrer une carte Mythique ?", "Ouvre la carte en grand dans l'Album : sous la carte, « Masquer » ou « Montrer ». Ça marche sur toutes les cartes Mythiques, anciennes comprises (écusson, gymnase, Panthéon…). Masquée, elle disparaît pour les joueurs, même ceux qui l'avaient ; toi, tu la vois grisée avec « Masquée ».", "masquer montrer cacher carte mythique album visible"],
                 ["Un portrait ne s'affiche plus après un envoi sur GitHub", "Le nom du fichier doit être exactement celui de la fiche. Les accents envoyés depuis certains téléphones ou Mac sont désormais corrigés tout seuls. Le plus simple reste « ★ Modifier la photo » sur la fiche, qui donne toujours le bon nom.", "portrait ne s affiche plus photo disparue nom fichier accent"],
       ]},
       { n: "09", ico: "⚙️", t: "Saisons et autres réglages", s: "Les fonctions ★ à connaître", qa: [
