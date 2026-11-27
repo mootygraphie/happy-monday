@@ -4816,6 +4816,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #chat .ch-pl-f .tm { margin-left: auto; position: static; }
   .ch-cf-in p b { font-size: inherit; color: var(--text); }
   .hm-news ul { list-style: none; margin: 0 0 16px; padding: 10px 12px; border-radius: 12px; background: var(--bg3); display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; color: var(--text2); }
+  .hm-news .hm-news-new { color: #ff9f0a; font-weight: 700; } .hm-news p.hm-news-ok { font-size: 12.5px; color: var(--text2); margin: 0 0 14px; }
   .hm-news ul b { color: var(--text); font-weight: 600; font-size: inherit; } .hm-news p { margin: 4px 0 12px; }
   #chat .ch-photos { margin-bottom: 8px; padding: 8px; border-radius: 14px; background: var(--bg3); border: 1px solid var(--border2); }
   #chat .ch-thumbs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 6px; }
@@ -5420,8 +5421,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="26/11/2026" data-for="sa"><li>🏆 <b>Récompenses</b> : 2 nouveaux classements, Collectionneurs (vignettes collées) et Traders (total, données ou reçues)</li><li>❓ <b>Aide</b> : le guide de l'appli dans le menu ☰, avec une recherche pour poser ta question</li><li>🗓️ <b>Fiche joueur</b> : l'année d'arrivée au club</li><li>🟠 <b>Mises à jour</b> : les petites ne s'affichent plus en grand, juste un point orange sur Menu</li><li>📲 <b>Pastille de l'appli</b> : elle compte aussi les messages non lus du Vestiaire</li><li data-sa>🔒 <b>Visiteurs</b> : sans compte, on ne voit plus que les Sessions</li><li data-sa>⚙️ <b>Accueil</b> : « Ouvrir maintenant » et « Annuler la session » sont rangés sous la roue dentée de la case verte du sondage programmé</li><li>📅 <b>Événements</b> : repas, tournoi, sortie… sur l'Accueil sous le sondage, avec réponse, carte et ajout au calendrier</li><li data-sa>★ <b>Menu Super admin</b> : Membres, Notifications, Événements, Paramètres saison, Pronostics ; suppression des anciens tests de notification</li><li>📎 <b>Vestiaire</b> : envoie des fichiers (PDF, musique…) avec le +, et les liens sont cliquables</li><li>🙂 <b>Vestiaire</b> : emojis style Teams et GIF, avec le bouton 🙂 à côté du message</li><li>📊 <b>Vestiaire</b> : les sondages, avec le + à côté du message (une ou plusieurs réponses, votes visibles ou non, date limite)</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/11/2026 - 08:40</footer>
+<template id="hm-news" data-date="27/11/2026"><li>🔄 <b>Mettre à jour l'appli</b> : le « Quoi de neuf ? » s'ouvre d'abord, avec le bouton Mettre à jour juste en dessous</li><li data-sa>🖼️ <b>Album</b> : modifier une carte Mythique, et l'offrir à un joueur (il la découvre avec l'animation Mythique)</li><li data-sa>🎁 <b>Offrir</b> : la liste des joueurs qui l'ont déjà reçue, en attente ou découverte</li><li data-sa>👁️ <b>Cartes masquées</b> : un peu assombries ; touche l'œil barré pour la montrer aux joueurs</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/11/2026 - 12:25</footer>
 
 <script>
 /* ══════════ EMOJIS STYLE TEAMS (Fluent, licence MIT) SUR TOUT LE SITE ══════════
@@ -19314,7 +19315,6 @@ function _svApply() {
         <span class="bm-lbl">Réglages</span><div class="bm-rows">
           ${pwaRows()}
           <button type="button" class="bm-row" data-bm="__theme" aria-pressed="${!light}">${ic("moon")}<span class="grow">Mode sombre</span><span class="sw"></span></button>
-          ${acc() ? `<button type="button" class="bm-row" data-bm="__news">${ic("gift")}<span class="grow">Quoi de neuf ?</span>${ic("chev", "chev")}</button>` : ""}
           ${acc() ? `<button type="button" class="bm-row" data-bm="__help">${ic("help")}<span class="grow">Aide${typeof _accIsSuper !== "undefined" && _accIsSuper ? ` <small>· joueur et ★ super admin</small>` : ""}</span>${ic("chev", "chev")}</button>` : ""}
           ${acc() || window._hmUpdAvail ? `<button type="button" class="bm-row${window._hmUpdAvail ? " bm-upd" : ""}" data-bm="__update">${ic("swap")}<span class="grow">Mettre à jour l'appli${window._hmUpdAvail ? ` <small class="bm-upd-t">· Nouvelle MàJ disponible !</small>` : typeof window._hmVersion === "function" && window._hmVersion() ? ` <small>· version du ${esc(window._hmVersion().replace(/\/\d{4} - /, " à "))}</small>` : ""}</span>${window._hmUpdAvail ? `<span class="bm-upd-i" aria-label="Mise à jour disponible">!</span>` : ""}${ic("chev", "chev")}</button>` : ""}
         </div>
@@ -19389,7 +19389,7 @@ function _svApply() {
         if (m) {
           const k = m.dataset.bm;
           if (k === "__theme") { $("theme-btn")?.click(); renderMenu(); return; }
-          if (k === "__update") { window._hmUpdate?.(); return; }
+          if (k === "__update") { (window._hmNews || window._hmUpdate)?.(); return; }
           if (k === "__news") { window._hmNews?.(); return; }
           if (k === "__help") { close(); render(); window._hmHelp?.(); return; }
           if (k === "__push") { const pw = window._pwa; if (pw) pw.toggle().finally(() => { renderMenu(); renderBell(); }); return; }
@@ -21146,9 +21146,9 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["À quoi sert le menu du bas ?", "Sessions (les soirées passées, devient En direct pendant la soirée), Récomp. (les récompenses de la saison), l'écusson Accueil (prochaine session et sondage), Vignettes (ton album) et Menu ☰ pour tout le reste.", "menu bas barre onglets ecusson accueil"],
         ["Pourquoi les emojis ont un style différent ?", "Tous les emojis de l'appli sont au style Teams : ils s'affichent pareil sur iPhone, Android et ordinateur. Seuls les notifications, le texte que tu tapes et les listes déroulantes gardent les emojis de ton téléphone.", "emoji emojis style teams dessin different"],
         ["Que veut dire l'écusson rouge avec une pastille ?", "Le sondage attend ta réponse. Touche l'écusson pour répondre.", "ecusson rouge pastille sondage"],
-        ["Qu'est-ce qu'il y a dans le menu ☰ ?", "Ta carte profil (Mon compte), Statistiques, Effectif, Règlement, Notifications, Installer l'appli, Mode sombre, « Quoi de neuf ? », « Mettre à jour l'appli », Aide et Se déconnecter.", "menu hamburger trois traits reglages"],
+        ["Qu'est-ce qu'il y a dans le menu ☰ ?", "Ta carte profil (Mon compte), Statistiques, Effectif, Règlement, Notifications, Installer l'appli, Mode sombre, « Mettre à jour l'appli » (avec le Quoi de neuf ?), Aide et Se déconnecter.", "menu hamburger trois traits reglages"],
         ["À quoi sert le bandeau au-dessus du menu du bas ?", "Il te rappelle ce qui est urgent : sondage pas encore répondu ou score du match en cours. Touche-le pour y aller.", "bandeau rappel urgent score"],
-        ["Comment mettre à jour l'appli ?", "Petite mise à jour : un point orange apparaît sur Menu, et « Nouvelle MàJ disponible ! » à côté de Mettre à jour l'appli. Touche-le quand tu veux. Grosse mise à jour (nouvelle fonctionnalité) : l'écran « Le vestiaire a été repeint » s'affiche, touche Mettre à jour. Rien de ce que tu saisissais n'est perdu.", "mise a jour nouvelle version actualiser repeint point orange maj"],
+        ["Comment mettre à jour l'appli ?", "Menu ☰ › Mettre à jour l'appli : le « Quoi de neuf ? » s'ouvre avec les nouveautés, puis touche « Mettre à jour » (ou « Plus tard »). Petite mise à jour : un point orange apparaît sur Menu, et « Nouvelle MàJ disponible ! » à côté de Mettre à jour l'appli. Touche-le quand tu veux. Grosse mise à jour (nouvelle fonctionnalité) : l'écran « Le vestiaire a été repeint » s'affiche, touche Mettre à jour. Rien de ce que tu saisissais n'est perdu.", "mise a jour nouvelle version actualiser repeint point orange maj quoi de neuf nouveautes"],
         ["Que veut dire le point orange sur Menu ?", "Une nouvelle version de l'appli est disponible. Menu ☰ › Mettre à jour l'appli pour la charger.", "point orange menu pastille orange"],
         ["Comment passer en mode clair ou sombre ?", "Menu ☰ › Mode sombre, avec l'interrupteur.", "theme clair sombre nuit couleur"],
         ["Que veulent dire les couleurs ?", "Vert = OK, présent, payé. Orange = à faire, blessé. Rouge = absent, alerte. Doré = récompenses.", "couleurs vert orange rouge dore signification"]
@@ -21304,7 +21304,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       ]},
       { n: "10", ico: "🧯", t: "Que faire si…", s: "Les procédures express", qa: [
         ["Un joueur ne reçoit pas les notifications", "Regarde le diagnostic sur sa fiche. Fais-lui activer via Menu ☰ › Notifications, puis envoie-lui un test. S'il les recevait avant, il suffit qu'il rouvre l'appli une fois.", "joueur recoit pas notifications diagnostic"],
-        ["La mise à jour ne s'affiche pas", "Menu ☰ › Mettre à jour l'appli. Sur iPhone, ferme complètement l'appli puis rouvre-la.", "mise a jour affiche pas iphone"],
+        ["La mise à jour ne s'affiche pas", "Menu ☰ › Mettre à jour l'appli, puis « Mettre à jour » sous le Quoi de neuf ?. Sur iPhone, ferme complètement l'appli puis rouvre-la.", "mise a jour affiche pas iphone"],
         ["J'ai une question qui n'est pas ici", "Demande à un autre super admin dans le Vestiaire.", "autre question"]
       ]}
     ]}
@@ -21390,13 +21390,20 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   const cur = () => { const m = ((document.querySelector("footer") || {}).innerHTML || "").match(RE) || ((document.querySelector("footer") || {}).outerHTML || "").match(RE); return m ? m[1] : ""; };
   window._hmVersion = cur;
   // Menu ☰ « Quoi de neuf ? » : nouveautés de la version installée (★ = réservées aux super admins)
+  // « Mettre à jour l'appli » (menu ☰) ouvre ce panneau : nouveautés de la nouvelle version si elle est déjà
+  // repérée (sinon de la version installée), puis le bouton « Mettre à jour ».
   window._hmNews = () => {
-    const t = document.getElementById("hm-news"), sa = typeof _accIsSuper !== "undefined" && !!_accIsSuper;
-    const items = t ? t.innerHTML.replace(/<li data-sa="?"?>([\s\S]*?)<\/li>/g, (_, x) => sa ? `<li>★ ${x}</li>` : "") : "";
-    const d = t ? t.dataset.date || "" : "", MO = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"], [dd, mm] = d.split("/");
+    const sa = typeof _accIsSuper !== "undefined" && !!_accIsSuper, nu = window._hmUpdAvail && window._hmUpdTxt;
+    let d = "", items = "";
+    if (nu) { const t = window._hmUpdTxt.match(/<template id="hm-news"([^>]*)>([\s\S]*?)<\/template>/); if (t) { d = (t[1].match(/data-date="([^"]*)"/) || [])[1] || ""; items = t[2]; } }
+    else { const t = document.getElementById("hm-news"); if (t) { d = t.dataset.date || ""; items = t.innerHTML; } }
+    items = items.replace(/<li data-sa(?:="")?>([\s\S]*?)<\/li>/g, (_, x) => sa ? `<li>★ ${x}</li>` : "");
+    const MO = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"], [dd, mm] = d.split("/");
     const o = document.createElement("div"); o.className = "ch-cf hm-news";
-    o.innerHTML = `<div class="ch-cf-in" role="dialog" aria-modal="true" aria-label="Quoi de neuf ?"><b>Quoi de neuf ?</b><p>${d ? `Version du ${+dd} ${MO[+mm - 1] || ""}` : ""}</p>${/<li/.test(items) ? `<ul>${items}</ul>` : `<p>Pas de nouveauté particulière dans cette version.</p>`}<div class="ch-cf-act"><button type="button" data-k="0">Fermer</button></div></div>`;
-    o.addEventListener("click", e => { if (e.target === o || e.target.closest("[data-k]")) o.remove(); });
+    o.innerHTML = `<div class="ch-cf-in" role="dialog" aria-modal="true" aria-label="Quoi de neuf ?"><b>Quoi de neuf ?</b><p>${d ? `${nu ? "Nouvelle version" : "Version"} du ${+dd} ${MO[+mm - 1] || ""}` : ""}${nu ? ` · <span class="hm-news-new">disponible</span>` : ""}</p>${/<li/.test(items) ? `<ul>${items}</ul>` : `<p>Pas de nouveauté particulière dans cette version.</p>`}${nu ? "" : `<p class="hm-news-ok">Tu as déjà la dernière version. « Mettre à jour » recharge quand même l'appli, au cas où.</p>`}<div class="ch-cf-act"><button type="button" data-k="0">Plus tard</button><button type="button" class="ok" data-k="upd">Mettre à jour</button></div></div>`;
+    o.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-k]");
+      if (b && b.dataset.k === "upd") { b.disabled = true; b.textContent = "Mise à jour…"; window._hmUpdate(); return; }
+      if (e.target === o || b) o.remove(); });
     document.body.appendChild(o);
   };
   window._hmUpdate = async () => {
@@ -21427,6 +21434,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     // Grosse mise à jour (nouvelle fonctionnalité) : <template id="hm-news" data-date="jj/mm/aaaa" data-maj="grosse">,
     // le plein écran « Le vestiaire a été repeint » s'affiche, seulement si data-date est le jour de cette version.
     const tm = txt.match(/<template id="hm-news"([^>]*)>/), big = !!(tm && /data-maj="grosse"/.test(tm[1]) && (tm[1].match(/data-date="([^"]*)"/) || [])[1] === v.slice(0, 10));
+    window._hmUpdTxt = txt;
     if (!big) { if (window._hmUpdAvail !== v) { window._hmUpdAvail = v; try { window._bnRefresh && window._bnRefresh(); window._bnRenderMenu && window._bnRenderMenu(); } catch (e) {} } return; }
     shown = true;
     const MO = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
