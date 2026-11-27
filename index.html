@@ -3684,6 +3684,17 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .ev-sugg small { display: block; color: var(--text3); font-size: 11.5px; }
   .ev-picked { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; background: var(--bg3); }
   .ev-picked button { margin-left: auto; border: 0; background: none; color: #00BBFF; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .pu-box { gap: 12px; }
+  .pu-ttl { font-size: 22px; font-weight: 800; font-style: italic; text-transform: uppercase; }
+  .pu-seg { display: flex; gap: 6px; }
+  .pu-seg button { flex: 1; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); border-radius: 12px; padding: 9px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .pu-seg button[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); color: #fff; }
+  .pu-drop { display: grid; justify-items: center; gap: 4px; padding: 18px; border-radius: 16px; border: 1.5px dashed var(--border2); background: var(--bg); cursor: pointer; text-align: center; }
+  .pu-drop span { font-size: 30px; } .pu-drop small { color: var(--text3); font-size: 12px; }
+  .pu-drop img { max-width: 180px; max-height: 260px; border-radius: 12px; display: block; }
+  .pu-h { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 10px; padding: 8px 0; border-top: 1px solid var(--border); font-size: 13.5px; }
+  .pu-h small { grid-column: 1; color: var(--text3); font-size: 11.5px; } .pu-h span { grid-row: 1 / 3; grid-column: 2; align-self: center; font-size: 12px; font-weight: 700; color: var(--text2); }
+  .pu-h span.ok { color: #34c77b; } .pu-h span.ko { color: #ef5350; }
   .sz-ov { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.65); }
   .sz-box, .sz-box * { box-sizing: border-box; }
   .sz-box { width: 100%; min-width: 0; max-width: 440px; max-height: calc(100vh - 32px); overflow-y: auto; border-radius: 20px; padding: 18px; background: var(--bg2); border: 1px solid var(--border2); color: var(--text); display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 50px rgba(0,0,0,.5); }
@@ -5336,7 +5347,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
 </div>
 
 <template id="hm-news" data-date="26/11/2026" data-for="sa"><li>🏆 <b>Récompenses</b> : 2 nouveaux classements, Collectionneurs (vignettes collées) et Traders (total, données ou reçues)</li><li>❓ <b>Aide</b> : le guide de l'appli dans le menu ☰, avec une recherche pour poser ta question</li><li>🗓️ <b>Fiche joueur</b> : l'année d'arrivée au club</li><li>🟠 <b>Mises à jour</b> : les petites ne s'affichent plus en grand, juste un point orange sur Menu</li><li>📲 <b>Pastille de l'appli</b> : elle compte aussi les messages non lus du Vestiaire</li><li data-sa>🔒 <b>Visiteurs</b> : sans compte, on ne voit plus que les Sessions</li><li data-sa>⚙️ <b>Accueil</b> : « Ouvrir maintenant » et « Annuler la session » sont rangés sous la roue dentée de la case verte du sondage programmé</li><li>📅 <b>Événements</b> : repas, tournoi, sortie… sur l'Accueil sous le sondage, avec réponse, carte et ajout au calendrier</li><li data-sa>★ <b>Menu Super admin</b> : Membres, Notifications, Événements, Paramètres saison, Pronostics ; suppression des anciens tests de notification</li><li>🙂 <b>Vestiaire</b> : emojis style Teams et GIF, avec le bouton 🙂 à côté du message</li><li>📊 <b>Vestiaire</b> : les sondages, avec le + à côté du message (une ou plusieurs réponses, votes visibles ou non, date limite)</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/11/2026 - 07:16</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/11/2026 - 07:26</footer>
 
 <script>
 /* ══════════ EMOJIS STYLE TEAMS (Fluent, licence MIT) SUR TOUT LE SITE ══════════
@@ -19057,12 +19068,13 @@ function _svApply() {
           ${acc() ? `<button type="button" class="bm-row" data-bm="__help">${ic("help")}<span class="grow">Aide${typeof _accIsSuper !== "undefined" && _accIsSuper ? ` <small>· joueur et ★ super admin</small>` : ""}</span>${ic("chev", "chev")}</button>` : ""}
           ${acc() || window._hmUpdAvail ? `<button type="button" class="bm-row${window._hmUpdAvail ? " bm-upd" : ""}" data-bm="__update">${ic("swap")}<span class="grow">Mettre à jour l'appli${window._hmUpdAvail ? ` <small class="bm-upd-t">· Nouvelle MàJ disponible !</small>` : typeof window._hmVersion === "function" && window._hmVersion() ? ` <small>· version du ${esc(window._hmVersion().replace(/\/\d{4} - /, " à "))}</small>` : ""}</span>${window._hmUpdAvail ? `<span class="bm-upd-i" aria-label="Mise à jour disponible">!</span>` : ""}${ic("chev", "chev")}</button>` : ""}
         </div>
-        ${acc() && typeof _accIsSuper !== "undefined" && _accIsSuper ? `<span class="bm-lbl sa">★ Super admin</span><div class="bm-rows sa">
+        ${acc() && typeof _accIsSuper !== "undefined" && _accIsSuper ? `<span class="bm-lbl sa">★ Options super admin</span><div class="bm-rows sa">
           <button type="button" class="bm-row" data-bm="__accounts"><span class="bm-star">★</span><span class="grow">Membres</span>${ic("chev", "chev")}</button>
           <button type="button" class="bm-row" data-bm="__compose"><span class="bm-star">★</span><span class="grow">Notifications</span>${ic("chev", "chev")}</button>
           <button type="button" class="bm-row" data-bm="__events"><span class="bm-star">★</span><span class="grow">Événements</span>${ic("chev", "chev")}</button>
+          <button type="button" class="bm-row" data-bm="__portrait"><span class="bm-star">★</span><span class="grow">Uploader un portrait</span>${ic("chev", "chev")}</button>
           <button type="button" class="bm-row" data-bm="__seasons"><span class="bm-star">★</span><span class="grow">Paramètres saison</span>${ic("chev", "chev")}</button>
-          ${shown("footer-pronos-wrap") ? `<button type="button" class="bm-row" data-bm="__pronos"><span class="bm-star">★</span><span class="grow">Pronostics <small>· ${esc((($("footer-pronos-btn") || {}).textContent || "").replace(/^Pronos\s*:\s*/i, "") || "réglage")}</small></span></button>` : ""}
+          <button type="button" class="bm-row" data-bm="__pronos" aria-pressed="${typeof _pronosEnabled !== "undefined" && !!_pronosEnabled}"><span class="bm-star">★</span><span class="grow">Pronostics <small>· ${typeof _pronosEnabled !== "undefined" && _pronosEnabled ? "activés" : "désactivés"}</small></span><span class="sw"></span></button>
         </div>` : ""}
         ${acc() ? `<div class="bm-rows"><button type="button" class="bm-row danger" data-bm="__logout">${ic("out")}<span class="grow">Se déconnecter</span></button></div>` : ""}
         <div class="bm-links">${shown("footer-reglement-btn") ? `<button type="button" class="bm-rules" data-bm="__rules">${ic("rules")}Règlement 26/27</button>` : ""}
@@ -19136,6 +19148,7 @@ function _svApply() {
           if (k === "__pref") { const pw = window._pwa; if (pw) { pw.setPref(m.dataset.k, !pw.prefs()[m.dataset.k]); } setTimeout(renderMenu, 300); return; }
           if (k === "__seasons") { close(); render(); if (window._seasonsAdmin) window._seasonsAdmin(); return; }
           if (k === "__events") { close(); render(); if (window._evAdmin) window._evAdmin(); return; }
+          if (k === "__portrait") { close(); render(); if (window._portraitUpload) window._portraitUpload(); return; }
           if (k === "__compose") { const pw = window._pwa; close(); render(); if (pw) pw.compose(); return; }
           if (k === "__install") { const pw = window._pwa; close(); render(); if (pw) pw.install(); return; }
           close(); render();
@@ -19146,7 +19159,7 @@ function _svApply() {
           else if (k === "__admin") { typeof _openAdminPwd === "function" && _openAdminPwd(); }
           else if (k === "__rules") $("footer-reglement-btn")?.click();
           else if (k === "__coef") $("footer-coef-btn")?.click();
-          else if (k === "__pronos") $("footer-pronos-btn")?.click();
+          else if (k === "__pronos") { $("footer-pronos-btn")?.click(); setTimeout(render, 900); }
           else goTab(k);
           return;
         }
@@ -19226,6 +19239,13 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     let healing = false, healedFor = null;
     async function heal() {
       const p = me(); if (!p || !_db || !pushOK() || healing || healedFor === p) return;
+      // Chrome (Android) retire tout seul l'autorisation aux sites qu'il juge peu utilisés : l'autorisation
+      // revient à « demander » et l'abonnement disparaît. On le signale avec un bandeau « Réactiver ».
+      if (Notification.permission === "default" && lsGet(WANT) === "1") {
+        healedFor = p; askAgain("🔔 Ton navigateur a retiré l'autorisation des notifications.");
+        try { _db.ref(`pushDebug/${p}`).set({ ok: false, step: "autorisation retirée par le navigateur", err: "", ua: navigator.userAgent.slice(0, 80), at: firebase.database.ServerValue.TIMESTAMP }); } catch (e) {}
+        return;
+      }
       if (Notification.permission !== "granted") return;
       healing = true;
       try {
@@ -19252,9 +19272,9 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       o.innerHTML = `<div class="ch-cf-in" role="alertdialog" aria-modal="true"><b>Désactiver les notifications ?</b><p>Tu ne recevras plus rien sur ce téléphone : sondage, rappels, Vestiaire, événements.</p><div class="ch-cf-act"><button type="button" data-k="0">Garder</button><button type="button" class="dang" data-k="1">Désactiver</button></div></div>`;
       o.addEventListener("click", ev => { const b = ev.target.closest("[data-k]"); if (b || ev.target === o) { o.remove(); res(!!(b && b.dataset.k === "1")); } });
       document.body.appendChild(o); o.querySelector('[data-k="0"]').focus(); });
-    function askAgain() {
+    function askAgain(msg) {
       if (document.getElementById("push-again")) return;
-      document.body.insertAdjacentHTML("beforeend", `<div id="push-again" role="alert"><span>🔔 Tes notifications se sont coupées sur ce téléphone.</span><button type="button" data-pa="on">Réactiver</button><button type="button" data-pa="x" aria-label="Plus tard">✕</button></div>`);
+      document.body.insertAdjacentHTML("beforeend", `<div id="push-again" role="alert"><span>${msg || "🔔 Tes notifications se sont coupées sur ce téléphone."}</span><button type="button" data-pa="on">Réactiver</button><button type="button" data-pa="x" aria-label="Plus tard">✕</button></div>`);
       document.getElementById("push-again").addEventListener("click", e => { const b = e.target.closest("[data-pa]"); if (!b) return; document.getElementById("push-again")?.remove(); if (b.dataset.pa === "on" && window._pwa) window._pwa.toggle(); });
     }
     async function drop(player) { if (!sub || !player) return; const id = await subId(sub.endpoint); await _db.ref(`pushSubs/${player}/${id}`).remove(); }
@@ -20651,6 +20671,73 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   window._evAdmin = () => { if (!isSA()) return; watch(); open({ k: "admin" }); };
 })();
 
+/* ══════════ ★ UPLOADER UN PORTRAIT (super admins) ══════════
+   La photo est réduite ici (900 px de large, JPEG), puis déposée dans portraitQueue/{id}. Toutes les 10 min,
+   l'Action « Notifications push » la range dans portraits/{nom}.jpeg sur GitHub et republie le site. */
+(function () {
+  const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+  const me = () => (typeof _accPlayer === "function" ? _accPlayer() : null);
+  const isSA = () => typeof _accIsSuper !== "undefined" && !!_accIsSuper;
+  const toast = t => (typeof _showToast === "function" ? _showToast(t) : null);
+  let box = null, st = null, qRef = null, Q = {};
+  const players = () => [...new Set((typeof ALL_PLAYERS !== "undefined" ? ALL_PLAYERS : []).filter(n => typeof INACTIFS === "undefined" || !INACTIFS.has(n)))].sort((a, b) => a.localeCompare(b, "fr"));
+  const fileName = () => (st.kind === "pan" ? "Pantheon_" : "") + st.name.normalize("NFC").trim();
+  const okName = n => /^[A-Za-zÀ-ÖØ-öø-ÿ0-9 '_.-]{1,40}$/.test(n) && !n.startsWith(".");
+  function shrink(file) {
+    return new Promise((res, rej) => { const url = URL.createObjectURL(file), im = new Image();
+      im.onload = () => { const w = Math.min(900, im.naturalWidth), h = Math.round(im.naturalHeight * w / im.naturalWidth), c = document.createElement("canvas"); c.width = w; c.height = h;
+        c.getContext("2d").drawImage(im, 0, 0, w, h); URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg", .86)); };
+      im.onerror = () => { URL.revokeObjectURL(url); rej(new Error("image illisible")); }; im.src = url; });
+  }
+  const when = t => t ? new Date(t).toLocaleString("fr", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
+  function draw() {
+    if (!box) return; const n = st.name ? fileName() : "", ok = st.data && st.name && okName(n);
+    const exists = st.kind === "player" && st.name && typeof ALL_PLAYERS !== "undefined" && ALL_PLAYERS.includes(st.name);
+    const hist = Object.entries(Q).map(([id, q]) => Object.assign({ id }, q)).sort((a, b) => (b.at || 0) - (a.at || 0)).slice(0, 8);
+    box.innerHTML = `<div class="sz-box pu-box" role="dialog" aria-modal="true" aria-labelledby="pu-t">
+      <div class="sz-h"><span class="sz-k"><span>★</span> Options · Uploader un portrait</span><button type="button" class="sz-x" data-pu="close" aria-label="Fermer">✕</button></div>
+      <b id="pu-t" class="pu-ttl">Nouveau portrait</b>
+      <div class="pu-seg"><button type="button" data-pu="kind" data-k="player" aria-pressed="${st.kind === "player"}">Joueur</button><button type="button" data-pu="kind" data-k="pan" aria-pressed="${st.kind === "pan"}">Carte Panthéon</button></div>
+      <div class="ev-fld"><label class="ev-lbl" for="pu-n">${st.kind === "pan" ? "Prénom de la légende" : "Joueur"}</label>
+        <input class="ev-in" id="pu-n" list="pu-list" value="${esc(st.name)}" placeholder="${st.kind === "pan" ? "Ex. : Paulo" : "Choisis ou tape le prénom"}" autocomplete="off">
+        ${st.kind === "player" ? `<datalist id="pu-list">${players().map(p => `<option value="${esc(p)}"></option>`).join("")}</datalist>` : ""}
+        <span class="ev-note">Fichier : <b>${n ? esc(n) + ".jpeg" : "…"}</b>${n && !okName(n) ? ` · <span style="color:#ef5350">caractères non autorisés</span>` : exists ? " · remplace le portrait actuel" : st.kind === "player" && st.name ? " · nouveau nom : vérifie l'orthographe exacte de la fiche" : ""}</span></div>
+      <label class="pu-drop" for="pu-f">${st.data ? `<img src="${st.data}" alt="Aperçu du portrait">` : `<span>📷</span><b>Choisir une photo</b><small>Elle sera réduite à 900 px de large</small>`}</label>
+      <input type="file" id="pu-f" accept="image/*" hidden>
+      ${st.busy ? `<p class="ev-note">Préparation…</p>` : ""}
+      <div class="ev-adm"><button type="button" data-pu="close">Annuler</button><button type="button" class="pri" data-pu="send"${ok && !st.busy ? "" : " disabled"}>Envoyer</button></div>
+      <p class="ev-note">Le portrait est rangé sur GitHub dans les 10 minutes, puis visible sur le site après la mise à jour (rouvrir l'appli).</p>
+      ${hist.length ? `<div class="ev-gh">Derniers envois</div>${hist.map(q => `<div class="pu-h"><b>${esc(q.name || "?")}</b><small>${esc(q.by || "")} · ${when(q.at)}</small><span class="${q.status === "done" ? "ok" : q.status === "error" ? "ko" : ""}">${q.status === "done" ? "✓ en ligne" : q.status === "error" ? "✕ " + esc(q.err || "erreur") : "⏳ en attente"}</span></div>`).join("")}` : ""}
+    </div>`;
+  }
+  function onClick(e) {
+    if (e.target === box) return close();
+    const t = e.target.closest("[data-pu]"); if (!t) return; const a = t.dataset.pu;
+    if (a === "close") return close();
+    if (a === "kind") { st.kind = t.dataset.k; st.name = ""; return draw(); }
+    if (a === "send") return send();
+  }
+  async function send() {
+    const n = fileName(); if (!st.data || !okName(n)) return;
+    st.busy = true; draw();
+    try { await _db.ref("portraitQueue").push({ name: n, data: st.data, by: me(), at: firebase.database.ServerValue.TIMESTAMP }); toast("Portrait envoyé : en ligne dans les 10 minutes"); st = { kind: st.kind, name: "", data: null }; }
+    catch (er) { toast("Envoi impossible : vérifie ta connexion."); st.busy = false; }
+    draw();
+  }
+  function close() { if (box) box.remove(); box = null; if (qRef) { qRef.off(); qRef = null; } }
+  window._portraitUpload = () => {
+    if (!isSA() || typeof _db === "undefined" || !_db) return;
+    st = { kind: "player", name: "", data: null }; Q = {};
+    box = document.createElement("div"); box.className = "sz-ov"; document.body.appendChild(box);
+    box.addEventListener("click", onClick);
+    box.addEventListener("input", e => { if (e.target.id === "pu-n") { st.name = e.target.value; const pos = e.target.selectionStart; draw(); const n = document.getElementById("pu-n"); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (er) {} } } });
+    box.addEventListener("change", async e => { if (e.target.id !== "pu-f") return; const f = e.target.files && e.target.files[0]; if (!f) return;
+      st.busy = true; draw(); try { st.data = await shrink(f); } catch (er) { toast("Photo illisible : essaie une autre image."); } st.busy = false; draw(); });
+    qRef = _db.ref("portraitQueue").limitToLast(10); qRef.on("value", s => { Q = s.val() || {}; Object.values(Q).forEach(q => { if (q) delete q.data; }); draw(); }, () => {});
+    draw();
+  };
+})();
+
 /* ══════════ SAISIE : « Confirmer les équipes et lancer le direct » à glisser ══════════
    On fait glisser le rond jusqu'au bout : équipes confirmées, direct lancé, écran des Matchs. */
 (function () {
@@ -20779,7 +20866,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     ]},
     sa: { t: "Guide super admin", ch: [
       { n: "01", ico: "★", t: "Le rôle de super admin", s: "L'étoile et ce qu'elle débloque", qa: [
-        ["Qu'est-ce qu'un super admin voit en plus ?", "Sur l'Accueil, une case ★ Super admin ou, avant l'ouverture du sondage, une roue dentée ⚙️ dans la case verte ; des entrées ★ dans le menu ☰ (Membres, Notifications, Événements, Paramètres saison, Pronostics), les stats Datas, les classements ★ (Ballon de Plomb, Calamity James) et les nouveautés ★ dans « Quoi de neuf ? ».", "super admin voit plus etoile droits"],
+        ["Qu'est-ce qu'un super admin voit en plus ?", "Sur l'Accueil, une case ★ Super admin ou, avant l'ouverture du sondage, une roue dentée ⚙️ dans la case verte ; la partie « ★ Options super admin » du menu ☰ (Membres, Notifications, Événements, Uploader un portrait, Paramètres saison, Pronostics), les stats Datas, les classements ★ (Ballon de Plomb, Calamity James) et les nouveautés ★ dans « Quoi de neuf ? ».", "super admin voit plus etoile droits"],
         ["Comment nommer ou retirer un super admin ?", "Menu ☰ › Mon compte › ★ Membres, puis touche l'étoile ☆ / ★ à gauche du joueur. Tu ne peux pas te retirer l'étoile toi-même.", "nommer retirer super admin etoile droits"],
         ["Comment changer le statut d'un joueur ?", "Menu ☰ › Effectif, appui long sur un joueur : Régulier, Occasionnel, Dépanneur ou Inactif. Un message permet d'annuler juste après. Les dépanneurs sont exclus des classements, sauf du leur.", "statut joueur regulier occasionnel depanneur inactif appui long"]
       ]},
@@ -20832,9 +20919,11 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       ]},
       { n: "08", ico: "⚙️", t: "Saisons et autres réglages", s: "Les fonctions ★ à connaître", qa: [
         ["Comment régler les dates de saison ?", "Menu ☰ › ★ Paramètres saison : début, fin, album des vignettes, fin des échanges et période de vote du Règlement. Après la fin officielle, l'appli propose de créer la saison suivante avec des dates pré-remplies.", "saison dates reglage album echanges"],
-        ["Que se passe-t-il à la clôture du vote du Règlement ?", "L'Effectif se met à jour tout seul : actif › Réguliers, +1 › Occasionnels, dépanneur › Dépanneurs, quitte ou sans réponse › Inactifs.", "cloture vote reglement effectif"],
+["Comment uploader un portrait ?", "Menu ☰ › ★ Options super admin › Uploader un portrait. Choisis « Joueur » (prénom exactement comme sa fiche, la liste aide) ou « Carte Panthéon » (prénom de la légende), puis la photo : elle est réduite toute seule. Le nom du fichier s'affiche avant l'envoi, et un portrait existant est remplacé. Il est rangé sur GitHub dans les 10 minutes puis visible après la mise à jour de l'appli. « Derniers envois » montre où en est chaque envoi.", "uploader portrait photo vignette pantheon envoyer image remplacer"],
+        ["Un portrait ne s'affiche plus après un envoi sur GitHub", "Le nom du fichier doit être exactement celui de la fiche. Les accents envoyés depuis certains téléphones ou Mac sont désormais corrigés tout seuls. Le plus simple reste « Uploader un portrait » dans l'appli, qui donne le bon nom.", "portrait ne s affiche plus photo disparue nom fichier accent"],
+                ["Que se passe-t-il à la clôture du vote du Règlement ?", "L'Effectif se met à jour tout seul : actif › Réguliers, +1 › Occasionnels, dépanneur › Dépanneurs, quitte ou sans réponse › Inactifs.", "cloture vote reglement effectif"],
         ["Quelles sont les autres fonctions ★ ?", "Datas (une trentaine de stats pointues dans Statistiques), Récompenses ★ (Ballon de Plomb, Calamity James), ★ Pronostics et les Coefficients joueurs dans le menu ☰.", "datas pronos coefficients fonctions"],
-        ["Comment activer ou couper les pronostics ?", "Menu ☰ › ★ Pronostics : l'état actuel est écrit à côté (activés ou désactivés), un appui bascule de l'un à l'autre. Activés, les joueurs votent sur chaque match du soir dès que ses 2 équipes sont choisies dans la Saisie, jusqu'à la mi-temps.", "activer desactiver pronos pronostics interrupteur"],
+        ["Comment activer ou couper les pronostics ?", "Menu ☰ › ★ Options super admin › Pronostics : c'est un interrupteur, comme les notifications (activés ou désactivés écrit à côté). Un appui demande confirmation puis bascule. Activés, les joueurs votent sur chaque match du soir dès que ses 2 équipes sont choisies dans la Saisie, jusqu'à la mi-temps.", "activer desactiver pronos pronostics interrupteur"],
         ["Comment renseigner l'année d'arrivée d'un joueur ?", "Elle n'est pas modifiable dans l'appli. Les années de l'effectif actuel sont déjà intégrées. Pour un nouveau joueur ou une correction : base Firebase, sous config/arrivees (par exemple « Boris » : 2016, ou « Fondateur »). Ce qui est en base passe avant la liste intégrée.", "annee arrivee renseigner club depuis fondateur"],
         ["Comment supprimer une soirée ?", "Touche la croix ronde sur la date, avec confirmation.", "supprimer soiree session date"]
       ]},

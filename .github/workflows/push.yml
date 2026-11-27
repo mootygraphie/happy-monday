@@ -43,3 +43,25 @@ jobs:
           DRY_RUN: ${{ github.event.inputs.dry_run }}
           WATCH: "540"  # reste éveillée 9 min (surveillance toutes les 15 s), sauf test et simulation
         run: python .github/scripts/send_push.py
+
+  # Portraits envoyés depuis l'appli (★ Options › Uploader un portrait) : rangés dans portraits/,
+  # liste du Panthéon à jour, site republié. Une seule lecture de la base s'il n'y a rien à faire.
+  portraits:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "google-auth>=2.29,<3" requests pillow==11.0.0
+      - name: Ranger les portraits envoyés depuis l'appli
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+          GH_TOKEN: ${{ github.token }}
+        run: python .github/scripts/import_portraits.py

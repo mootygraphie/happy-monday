@@ -299,6 +299,10 @@
       "$id": {
         ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
       }
+    },
+    "portraitQueue": {
+      ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
+      ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
     }
   }
 }
