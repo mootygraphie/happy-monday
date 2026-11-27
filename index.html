@@ -3704,6 +3704,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .pe-card { width: min(220px, 100%); margin: 0 auto; border-radius: 14px; overflow: hidden; } .pe-card img { width: 100%; display: block; }
   .pe-acts { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
   .pe-btn { border: 1px solid var(--border2); background: var(--bg3); color: var(--text); border-radius: 12px; padding: 9px 14px; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+  .eff-editpf { display: block; width: max-content; margin-top: 8px; }
   .pph-editpf { margin-top: 6px; border: 1px dashed var(--sa-border); background: var(--sa-bg); color: var(--sa); border-radius: 999px; padding: 5px 12px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
   .pu-ttl { font-size: 22px; font-weight: 800; font-style: italic; text-transform: uppercase; }
   .pu-seg { display: flex; gap: 6px; }
@@ -11786,11 +11787,12 @@ function renderJoueurs() {
     const r = window._effRow(n), g = grpOf(n), tot = SESSIONS.length;
     const o = document.createElement("div"); o.className = "eff-ov";
     o.innerHTML = `<div class="eff-sheet" role="dialog" aria-label="${esc(n)}"><div class="eff-grab"></div>
-      <div class="eff-fh"><span class="pf eff-fph g${g}">${esc(n.slice(0, 2).toUpperCase())}${portraitImg(n)}</span><span><b>${esc(n)}</b><small>${r.presences || 0} soirée${(r.presences || 0) > 1 ? "s" : ""} sur ${tot}</small><em>${GL[g]}</em></span></div>
+      <div class="eff-fh"><span class="pf eff-fph g${g}">${esc(n.slice(0, 2).toUpperCase())}${portraitImg(n)}</span><span><b>${esc(n)}</b><small>${r.presences || 0} soirée${(r.presences || 0) > 1 ? "s" : ""} sur ${tot}</small><em>${GL[g]}</em>${typeof _accIsSuper !== "undefined" && _accIsSuper ? `<button type="button" class="pph-editpf eff-editpf" data-effpf="${esc(n)}">★ Modifier la photo</button>` : ""}</span></div>
       <div class="eff-fs"><div><b style="color:#8fe0b2">${r.taux || 0}%</b><small>présence</small></div><div><b style="color:#ff8a80">${r.absences || 0}</b><small>absences</small></div><div><b style="color:#ffb067">${r.blesses || 0}</b><small>blessures</small></div>
         <div><b>${r.pasRepondu || 0}</b><small>pas répondu</small></div><div><b style="color:#7fb2ff">${r.sac || 0}</b><small>sac</small></div><div><b style="color:#c9a3ff">${r.maillots || 0}</b><small>maillots</small></div></div>
       <button type="button" class="eff-fbtn player-link" data-player="${esc(n)}">Voir sa fiche complète ›</button></div>`;
     const close = () => { o.remove(); document.documentElement.classList.remove("eff-lock"); };
+    o.addEventListener("click", ev => { const b = ev.target.closest("[data-effpf]"); if (!b) return; ev.stopPropagation(); close(); window._portraitEditor && window._portraitEditor(b.dataset.effpf); }, true);
     o.addEventListener("click", ev => { if (ev.target === o || ev.target.closest(".eff-grab") || ev.target.closest(".eff-fbtn")) close(); });
     document.body.appendChild(o); document.documentElement.classList.add("eff-lock");
     requestAnimationFrame(() => o.classList.add("on"));
