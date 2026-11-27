@@ -3716,6 +3716,24 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .pu-h { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 10px; padding: 8px 0; border-top: 1px solid var(--border); font-size: 13.5px; }
   .pu-h small { grid-column: 1; color: var(--text3); font-size: 11.5px; } .pu-h span { grid-row: 1 / 3; grid-column: 2; align-self: center; font-size: 12px; font-weight: 700; color: var(--text2); }
   .pu-h span.ok { color: #34c77b; } .pu-h span.ko { color: #ef5350; }
+  #panel-vignettes .card.vg-hid { opacity: .5; filter: grayscale(.6); }
+  #panel-vignettes .vg-hidb, #vg-modal .vg-hidb { position: absolute; right: 8px; top: 8px; z-index: 5; font-size: 10px; font-weight: 700; color: #fff; background: rgba(0,0,0,.75); border: 1px solid rgba(255,255,255,.2); padding: 3px 7px; border-radius: 999px; }
+  #panel-vignettes .vg-imp { grid-column: span 1; aspect-ratio: 3 / 4.2; border-radius: 14px; border: 2px dashed rgba(245,197,66,.6); background: rgba(245,197,66,.1); color: #f5c542; display: grid; place-content: center; justify-items: center; gap: 6px; text-align: center; padding: 10px; font: inherit; cursor: pointer; }
+  #panel-vignettes .vg-imp .pl { font-size: 34px; line-height: 1; } #panel-vignettes .vg-imp b { font-size: 12.5px; text-transform: uppercase; font-style: italic; } #panel-vignettes .vg-imp small { font-size: 10.5px; color: var(--text2); }
+  .vg-vis { display: flex; gap: 10px; align-items: center; justify-content: center; margin-top: 14px; }
+  .vg-vis span { font-size: 13px; color: #c9c9d6; }
+  .vg-vis button { border-radius: 999px; padding: 9px 18px; font: inherit; font-weight: 700; border: 1px solid rgba(255,255,255,.2); background: #22222f; color: #fff; cursor: pointer; }
+  .vg-vis button.show { background: #34c77b; border-color: #34c77b; color: #062814; }
+  .vg-impbox { gap: 12px; }
+  .vg-imgrow { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 12px; align-items: center; }
+  .vg-imgb { display: grid; gap: 6px; justify-items: start; }
+  .vg-prev { position: relative; display: flex; flex-direction: column; aspect-ratio: 3 / 4.3; border-radius: 12px; overflow: hidden; border: 2px solid var(--fc); background: #111; --fc: #f5c542; }
+  .vg-prev.club { --fc: #ff2b1c; }
+  .vg-prev img { flex: 1; min-height: 0; width: 100%; object-fit: cover; } .vg-prev .vg-pp { flex: 1; display: grid; place-items: center; font-size: 26px; opacity: .5; }
+  .vg-prev .st { padding: 6px 7px 18px; background: linear-gradient(160deg, color-mix(in srgb, var(--fc) 35%, #1b0d22), #1b1430); }
+  .vg-prev b { display: block; font-size: 10px; font-style: italic; text-transform: uppercase; line-height: 1.15; } .vg-prev small { display: block; font-size: 8.5px; opacity: .7; }
+  .vg-prev i { position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%); font-style: normal; font-size: 8px; font-weight: 700; text-transform: uppercase; background: var(--fc); color: #fff; padding: 1px 6px; border-radius: 999px; white-space: nowrap; }
+  .vg-prev.pan i { color: #2a1e00; }
   .sz-ov { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.65); }
   .sz-box, .sz-box * { box-sizing: border-box; }
   .sz-box { width: 100%; min-width: 0; max-width: 440px; max-height: calc(100vh - 32px); overflow-y: auto; border-radius: 20px; padding: 18px; background: var(--bg2); border: 1px solid var(--border2); color: var(--text); display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 50px rgba(0,0,0,.5); }
@@ -5381,7 +5399,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
 </div>
 
 <template id="hm-news" data-date="26/11/2026" data-for="sa"><li>🏆 <b>Récompenses</b> : 2 nouveaux classements, Collectionneurs (vignettes collées) et Traders (total, données ou reçues)</li><li>❓ <b>Aide</b> : le guide de l'appli dans le menu ☰, avec une recherche pour poser ta question</li><li>🗓️ <b>Fiche joueur</b> : l'année d'arrivée au club</li><li>🟠 <b>Mises à jour</b> : les petites ne s'affichent plus en grand, juste un point orange sur Menu</li><li>📲 <b>Pastille de l'appli</b> : elle compte aussi les messages non lus du Vestiaire</li><li data-sa>🔒 <b>Visiteurs</b> : sans compte, on ne voit plus que les Sessions</li><li data-sa>⚙️ <b>Accueil</b> : « Ouvrir maintenant » et « Annuler la session » sont rangés sous la roue dentée de la case verte du sondage programmé</li><li>📅 <b>Événements</b> : repas, tournoi, sortie… sur l'Accueil sous le sondage, avec réponse, carte et ajout au calendrier</li><li data-sa>★ <b>Menu Super admin</b> : Membres, Notifications, Événements, Paramètres saison, Pronostics ; suppression des anciens tests de notification</li><li>📎 <b>Vestiaire</b> : envoie des fichiers (PDF, musique…) avec le +, et les liens sont cliquables</li><li>🙂 <b>Vestiaire</b> : emojis style Teams et GIF, avec le bouton 🙂 à côté du message</li><li>📊 <b>Vestiaire</b> : les sondages, avec le + à côté du message (une ou plusieurs réponses, votes visibles ou non, date limite)</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/11/2026 - 07:33</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/11/2026 - 08:28</footer>
 
 <script>
 /* ══════════ EMOJIS STYLE TEAMS (Fluent, licence MIT) SUR TOUT LE SITE ══════════
@@ -17079,7 +17097,18 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
 
   /* ═════════ calcul des cartes ═════════ */
   let ALL = [], BYK = {}, PLAYERS = [], NTEAM = {}, buildSig = "";
-  const CLUB_KEYS = ["g:logo", "g:gymnase"];
+  let CLUB_KEYS = ["g:logo", "g:gymnase"];
+  // Cartes Mythiques importées depuis l'appli (★) : vgMyth/{id} = { sec: "club" | "pan", nm, sub, file } ;
+  // vgHidden/{clé de carte} = true : carte Mythique masquée aux joueurs (les super admins la voient, grisée).
+  let MYTH = {}, HIDDEN = {}, mythOn = false;
+  const vgSA = () => typeof _accIsSuper !== "undefined" && !!_accIsSuper;
+  function watchMyth() {
+    if (mythOn || typeof _db === "undefined" || !_db || !(typeof _accPlayer === "function" && _accPlayer())) return; mythOn = true;
+    const again = () => { CLUB_KEYS = ["g:logo", "g:gymnase", ...Object.entries(MYTH).filter(([, m]) => m && m.sec === "club").map(([id]) => "g:x" + id)]; buildSig = ""; try { if (ME) { COL = withClub(COL, ME); CLUB_KEYS.forEach(k => PASTED.add(k)); } } catch (e) {} try { if (panel.classList.contains("active")) render(); } catch (e) {} };
+    _db.ref("vgMyth").on("value", s => { MYTH = s.val() || {}; again(); }, () => {});
+    _db.ref("vgHidden").on("value", s => { HIDDEN = s.val() || {}; again(); }, () => {});
+  }
+  setInterval(watchMyth, 2000);
   // « Équipement Vintage » : légendaire unique, offerte d'office à ces joueurs seulement (ni booster ni échange).
   // Pour les autres : visible en gris dans l'album, sans animation, et non comptée dans leur total.
   const VINT_KEY = "g:vintage", VINT_OWN = new Set(["Boris", "Sylvain", "Guy", "Cédric", "Mahdi", "Raph P", "Ben", "JB", "Houari", "Tof", "Pierre-Olivier", "Yassir"]);
@@ -17096,7 +17125,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   function build() {
     const sessions = SESSIONS.filter(s => _seasonStart(s.date) === SY);
     const ABSs = (typeof _accStatusAbs !== "undefined" && _accStatusAbs) || ABSENTS, INAs = (typeof _accStatusInact !== "undefined" && _accStatusInact) || INACTIFS;
-    const sig = sessions.length + "|" + sessions.map(s => s.date + ":" + (s.matchs || []).length).join(",") + "|" + (CUSTOM_ACH_AWARDS || []).length + "|" + [...ABSs].join(",") + "|" + [...INAs].join(",") + "|" + ALL_PLAYERS.length + "|" + ME;
+    watchMyth();
+    const sig = (vgSA() ? "sa|" : "") + sessions.length + "|" + sessions.map(s => s.date + ":" + (s.matchs || []).length).join(",") + "|" + (CUSTOM_ACH_AWARDS || []).length + "|" + [...ABSs].join(",") + "|" + [...INAs].join(",") + "|" + ALL_PLAYERS.length + "|" + ME;
     if (sig === buildSig && ALL.length) return;
     buildSig = sig;
     // ── joueurs
@@ -17240,7 +17270,10 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     // Panthéon : cartes Mythiques, stats à 100, sans influence sur les autres cartes
     const PAN = PANTH.map(x => ({ k: "m:" + (_PANTH_KEY[x.n] || x.n), ty: "p", pan: true, n: x.n, img: x.f, o: 100, s: Object.fromEntries(STATS.map(k => [k, 100])), t: "Légende", r: "M", team: "",
       st: { pres: 0, mj: 0, v: 0, nu: 0, d: 0, b: 0, p: 0, gk: 0, enc: 0 }, nt: [], nSess: sessions.length }));
+    Object.entries(MYTH).forEach(([id, m]) => { if (m && m.sec === "club" && m.nm) CLUB.push({ k: "g:x" + id, ty: "g", nm: m.nm, ic: "⭐", img: `portraits/${encodeURIComponent(m.file || ("Club_" + m.nm))}.jpeg`, sub: m.sub || "", r: "M", nSess: sessions.length }); });
     ALL = [...CLUB, ...(vOwn ? [VINT] : []), ...PLAYERS, ...HF, ...NT, ...PAN];
+    // cartes Mythiques masquées : invisibles pour les joueurs, grisées pour les super admins
+    ALL.forEach(c => { c.hid = c.r === "M" && !!HIDDEN[c.k]; }); if (!vgSA()) ALL = ALL.filter(c => !c.hid);
     BYK = Object.fromEntries(ALL.map(c => [c.k, c]));
     buildSections();
     if (!vOwn) { const lk = { ...VINT, locked: true }; BYK[VINT_KEY] = lk; const club = SECS.find(x => x.id === "club"); if (club) { club.items.push(lk); lk.no = club.items.length; } }
@@ -17328,7 +17361,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   // album (carte et emplacement). Il se révèle dès que ce joueur le débloque à son tour.
   function lockedSecret(c) { return c.ty === "h" && c.sec && !(ME && c.h.some(x => x[0] === ME)); }
   const hfStyle = c => c.ty === "h" ? ` style="--cc:var(${CATVAR[c.cat] || "--hf-secret"})"` : "";
-  const cardHTML = (c, lazy) => `<div class="card r-${c.r} ty-${c.ty}${c.locked ? " locked" : ""} t-${c.team || ""}"${hfStyle(c)} data-k="${c.k}"><div class="card-in">
+  const cardHTML = (c, lazy) => `<div class="card r-${c.r} ty-${c.ty}${c.locked ? " locked" : ""}${c.hid ? " vg-hid" : ""} t-${c.team || ""}"${hfStyle(c)} data-k="${c.k}">${c.hid ? `<span class="vg-hidb">Masquée</span>` : ""}<div class="card-in">
       <div class="face front">${frontHTML(c, lazy)}</div><div class="face back">${backHTML(c)}</div></div></div>`;
   const coverHTML = () => `<div class="face-in"><span class="ball">⚽</span><b>Happy <span>Monday</span></b><small>${SEASON_LABEL.replace("Saison ", "Saison ")}</small></div>`;
 
@@ -17762,7 +17795,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   function buildPages() {
     const P = [{ kind: "cover" }, { kind: "toc" }], PER = per();
     SECS.forEach(s => { s.page = P.length; for (let i = 0; i < s.items.length; i += PER) P.push({ kind: "sec", s, items: s.items.slice(i, i + PER), first: i === 0 }); });
-    if (P.length % 2) P.push({ kind: "blank" }); // plus de page « Fin de l'album » (retirée le 23/11)
+    if (vgSA()) { if (!(P.length % 2)) P.push({ kind: "blank" }); P.push({ kind: "myth" }); } // ★ importer une carte Mythique : toujours la toute dernière page
+    else if (P.length % 2) P.push({ kind: "blank" }); // plus de page « Fin de l'album » (retirée le 23/11)
     return P;
   }
   // Couverture tirée une fois par ouverture de l'album (COVER remis à zéro par render()), puis gardée pendant qu'on tourne les pages.
@@ -17798,6 +17832,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
       ${SECS.map(s => { const got = s.items.filter(c => COL[c.k]).length; return `<button class="toc-row" data-go="${s.page}" style="--sc:${s.col}"><span class="i">${s.ic}</span><span><b>${s.t}</b><small>${s.sub} · p. ${s.page + 1}</small></span><span class="pr">${got} / ${s.items.length}<i><u style="width:${s.items.length ? got / s.items.length * 100 : 0}%"></u></i></span></button>`; }).join("")}${foot("Sommaire")}</div>`;
     if (p.kind === "end") { const left = ALL.length - ownedN(); return `<div class="${cls} end-pg"><div class="big">🏁</div><h3>Fin de l'album</h3><p>${left ? `Encore ${left} vignette${left > 1 ? "s" : ""} à trouver.` : "Album complet. Bravo !"}</p>${foot("")}</div>`; }
     if (p.kind === "blank") return `<div class="${cls} blank-pg">${foot("")}</div>`;
+    if (p.kind === "myth") return `<div class="${cls}" style="--sc:#f5c542"><div class="sec-head"><small>★ Super admin</small><h2>✨ Cartes Mythiques</h2><p>Ajoute une légende au Panthéon ou une carte du Club</p></div><div class="stk-grid"><button type="button" class="vg-imp" data-vgimp><span class="pl">+</span><b>Importer une carte Mythique</b><small>Panthéon ou Club</small></button></div>${foot("Mythiques")}</div>`;
     const s = p.s;
     const head = `<div class="sec-head"><small>${p.first ? "Section" : "Section · suite"}</small><h2>${s.ic} ${s.t}</h2><p>${s.sub}</p></div>`;
     const slots = p.items.map(c => c.locked ? `<button class="stk" data-k="${c.k}" aria-label="${c.nm} (grisée)">${cardHTML(c, true)}</button>` : COL[c.k] && (PASTED.has(c.k) || !hideNew)
@@ -17908,9 +17943,62 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const card = document.querySelector("#vg-modal-card .card");
     if (c.ty !== "g") card.addEventListener("click", () => { card.classList.toggle("flipped"); card.querySelector(".card-in").style.transform = ""; }); // cartes du Club : pas de verso
     if (!c.locked) tilt(card);
+    let vis = document.getElementById("vg-modal-vis"); if (vis) vis.remove();
+    if (vgSA() && c.r === "M") { document.getElementById("vg-modal-card").insertAdjacentHTML("afterend", `<div class="vg-vis" id="vg-modal-vis"><span>${c.hid ? "Masquée aux joueurs" : "Visible par les joueurs"}</span><button type="button" class="${c.hid ? "show" : ""}" data-vgvis="${c.k}">${c.hid ? "Montrer" : "Masquer"}</button></div>`);
+      document.getElementById("vg-modal-vis").addEventListener("click", async e => { const b = e.target.closest("[data-vgvis]"); if (!b) return; const k = b.dataset.vgvis, hide = !HIDDEN[k];
+        try { await _db.ref(`vgHidden/${k.replace(/[.#$\[\]\/]/g, "_")}`).set(hide ? true : null); HIDDEN[k] = hide || undefined; if (!hide) delete HIDDEN[k]; buildSig = ""; build(); openModal(k); _showToast(hide ? "Carte masquée aux joueurs" : "Carte visible par les joueurs"); }
+        catch (er) { _showToast("Non enregistré : vérifie ta connexion."); } }); }
     document.getElementById("vg-modal").hidden = false; document.getElementById("vg-modal-close").focus();
   }
-  function closeModal() { const m = document.getElementById("vg-modal"); if (m) m.hidden = true; }
+  function closeModal() { const m = document.getElementById("vg-modal"); if (m) m.hidden = true; if (document.getElementById("vg-modal-vis")) { document.getElementById("vg-modal-vis").remove(); try { renderAlbum(); } catch (e) {} } }
+  // ── ★ importer une carte Mythique : l'image part par portraitQueue (rangée sur GitHub par l'Action)
+  function openImport() {
+    if (!vgSA()) return;
+    const vesc = x => String(x == null ? "" : x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+    const f = { sec: "pan", nm: "", sub: "", data: "", vis: false, busy: false };
+    const o = document.createElement("div"); o.className = "sz-ov"; document.body.appendChild(o);
+    const clean = v => String(v || "").replace(/[’‘]/g, "'").replace(/\s+/g, " ").trim();
+    const okNm = v => /^[A-Za-zÀ-ÖØ-öø-ÿ0-9 '.-]{1,30}$/.test(v);
+    const prevCard = () => { const pan = f.sec === "pan", img = f.data ? `<img src="${f.data}" alt="">` : `<span class="vg-pp">📷</span>`;
+      return `<div class="vg-prev ${pan ? "pan" : "club"}">${img}<span class="st"><b>${vesc(clean(f.nm) || "Nom de la carte")}</b><small>${vesc(pan ? "Légende du Futsal" : clean(f.sub))}</small></span><i>★ Mythique</i></div>`; };
+    const draw = () => { const pan = f.sec === "pan", nm = clean(f.nm), ok = okNm(nm) && f.data && (pan || clean(f.sub)) && !f.busy;
+      const dupe = pan ? PANTH.some(x => x.n === nm) : Object.values(MYTH).some(m => m && m.sec === "club" && m.nm === nm);
+      o.innerHTML = `<div class="sz-box vg-impbox" role="dialog" aria-modal="true" aria-labelledby="vgi-t">
+        <div class="sz-h"><span class="sz-k"><span>★</span> Super admin · Album</span><button type="button" class="sz-x" data-i="close" aria-label="Fermer">✕</button></div>
+        <b class="pu-ttl" id="vgi-t">Nouvelle carte Mythique</b>
+        <div class="ev-fld"><span class="ev-lbl">Section</span><div class="pu-seg"><button type="button" data-i="sec" data-s="pan" aria-pressed="${pan}">🏛️ Panthéon</button><button type="button" data-i="sec" data-s="club" aria-pressed="${!pan}">🏟️ Club</button></div></div>
+        <div class="ev-fld"><label class="ev-lbl" for="vgi-nm">Nom de la carte</label><input class="ev-in" id="vgi-nm" maxlength="30" value="${vesc(f.nm)}" placeholder="${pan ? "Ex. : Zizou" : "Ex. : Le bar d'après-match"}" autocomplete="off">
+          ${nm && !okNm(nm) ? `<span class="ev-note" style="color:#ef5350">Lettres, chiffres, espaces, apostrophe et tiret seulement.</span>` : dupe ? `<span class="ev-note">Une carte porte déjà ce nom : son image sera remplacée.</span>` : ""}</div>
+        <div class="ev-fld"><label class="ev-lbl" for="vgi-sub">Légende</label><input class="ev-in" id="vgi-sub" maxlength="60" value="${pan ? "Légende du Futsal" : vesc(f.sub)}"${pan ? " disabled" : ""} placeholder="Ex. : Là où se refait le match" autocomplete="off">${pan ? `<span class="ev-note">Automatique pour le Panthéon, comme les autres légendes.</span>` : ""}</div>
+        <div class="ev-fld"><span class="ev-lbl">Image et aperçu</span><div class="vg-imgrow">${prevCard()}<div class="vg-imgb"><label class="pe-btn" for="vgi-f">📷 ${f.data ? "Changer d'image" : "Choisir une image"}</label><input type="file" id="vgi-f" accept="image/*" hidden><span class="ev-note">Réduite toute seule. Format portrait conseillé.</span></div></div></div>
+        <label class="ev-sw"><span>Rendre visible<small>${f.vis ? "Les joueurs la voient dès sa mise en ligne" : "Importée mais masquée aux joueurs"}</small></span><input type="checkbox" id="vgi-vis"${f.vis ? " checked" : ""}></label>
+        <div class="ev-adm"><button type="button" data-i="close">Annuler</button><button type="button" class="pri" data-i="go"${ok ? "" : " disabled"}>${f.busy ? "Envoi…" : "Importer"}</button></div>
+        <p class="ev-note">L'image est rangée sur GitHub dans les 10 minutes, puis la carte apparaît dans l'Album après la mise à jour de l'appli.</p></div>`; };
+    const shrink = file => new Promise((res, rej) => { const u = URL.createObjectURL(file), im = new Image(); im.onload = () => { const w = Math.min(900, im.naturalWidth), h = Math.round(im.naturalHeight * w / im.naturalWidth), c = document.createElement("canvas"); c.width = w; c.height = h; c.getContext("2d").drawImage(im, 0, 0, w, h); URL.revokeObjectURL(u); res(c.toDataURL("image/jpeg", .86)); }; im.onerror = () => { URL.revokeObjectURL(u); rej(); }; im.src = u; });
+    o.addEventListener("click", async e => {
+      if (e.target === o) { o.remove(); return; }
+      const t = e.target.closest("[data-i]"); if (!t) return; const a = t.dataset.i;
+      if (a === "close") { o.remove(); return; }
+      if (a === "sec") { f.sec = t.dataset.s; draw(); return; }
+      if (a === "go") {
+        const pan = f.sec === "pan", nm = clean(f.nm); f.busy = true; draw();
+        try {
+          const id = _db.ref("vgMyth").push().key, file = (pan ? "Pantheon_" : "Club_") + nm, k = pan ? "m:" + nm : "g:x" + id, up = {};
+          up[`vgMyth/${id}`] = { sec: f.sec, nm, sub: pan ? "Légende du Futsal" : clean(f.sub), file, by: ME, at: firebase.database.ServerValue.TIMESTAMP };
+          up[`vgHidden/${k.replace(/[.#$\[\]\/]/g, "_")}`] = f.vis ? null : true;
+          up[`portraitQueue/${_db.ref("portraitQueue").push().key}`] = { name: file, data: f.data, by: ME, at: firebase.database.ServerValue.TIMESTAMP };
+          await _db.ref().update(up);
+          o.remove(); _showToast(f.vis ? "Carte importée : en ligne dans les 10 minutes" : "Carte importée, masquée aux joueurs");
+        } catch (er) { f.busy = false; draw(); _showToast("Import impossible : vérifie ta connexion."); }
+      }
+    });
+    o.addEventListener("input", e => { const t = e.target, pos = t.selectionStart; if (t.id === "vgi-nm") f.nm = t.value; else if (t.id === "vgi-sub") f.sub = t.value; else return; draw(); const n = document.getElementById(t.id); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (er) {} } });
+    o.addEventListener("change", async e => { const t = e.target;
+      if (t.id === "vgi-vis") { f.vis = t.checked; draw(); return; }
+      if (t.id === "vgi-f") { const file = t.files && t.files[0]; if (!file) return; try { f.data = await shrink(file); } catch (er) { _showToast("Image illisible : essaie une autre image."); } draw(); } });
+    draw();
+  }
+  document.addEventListener("click", e => { if (e.target.closest("[data-vgimp]")) openImport(); });
 
 
   /* ═════════ ÉCHANGES DE DOUBLES ═════════
@@ -21071,10 +21159,12 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Comment modifier ou supprimer un événement ?", "Ouvre l'événement (depuis ★ Événements ou l'Accueil) › ★ Modifier, ou Supprimer. La suppression efface aussi toutes les réponses, avec confirmation.", "modifier supprimer evenement corriger annuler"],
         ["Où retrouver les événements passés ?", "Menu ☰ › ★ Événements : la liste montre « À venir » puis « Passés ». Un événement passé reste consultable (réponses, cagnotte) mais on ne peut plus y répondre.", "evenements passes historique archives"],
       ]},
-      { n: "08", ico: "🖼️", t: "Les portraits", s: "Changer une photo, recadrer la vignette", qa: [
+      { n: "08", ico: "🖼️", t: "Portraits et cartes Mythiques", s: "Photos, cadrage, cartes de l'Album", qa: [
         ["Comment changer ou ajouter un portrait ?", "Réservé aux super admins. Sur la fiche du joueur (touche son nom ou sa vignette), touche « ★ Modifier la photo ». « Changer de photo » remplace l'ancienne ; si la fiche n'a pas encore de portrait, la photo s'ajoute (la carte « locked » reste pour les autres). La photo est réduite toute seule, rangée sur GitHub dans les 10 minutes, puis visible après la mise à jour de l'appli.", "uploader portrait photo vignette pantheon envoyer image remplacer changer ajouter"],
         ["Comment recadrer la vignette carrée d'un joueur ?", "Ouvre « ★ Modifier la photo » sur sa fiche. Dans le carré, glisse avec le doigt pour déplacer, pince pour zoomer (molette ou curseur sur ordinateur). L'aperçu montre les vignettes telles qu'elles apparaîtront. « Enregistrer » applique le cadrage tout de suite partout (Effectif, Membres, Vestiaire, stats…). « Recentrer » revient au cadrage de départ.", "recadrer cadrage vignette carree zoom deplacer avatar portrait"],
-        ["Un portrait ne s'affiche plus après un envoi sur GitHub", "Le nom du fichier doit être exactement celui de la fiche. Les accents envoyés depuis certains téléphones ou Mac sont désormais corrigés tout seuls. Le plus simple reste « ★ Modifier la photo » sur la fiche, qui donne toujours le bon nom.", "portrait ne s affiche plus photo disparue nom fichier accent"],
+["Comment ajouter une carte Mythique ?", "Vignettes › Album, tout à la dernière page : « + Importer une carte Mythique » (réservé aux super admins). Choisis Panthéon (une légende du club, légende « Légende du Futsal » automatique) ou Club (lieu, objet, souvenir… avec ta propre légende), donne un nom, choisis l'image et regarde l'aperçu. « Rendre visible » désactivé : la carte est importée mais masquée aux joueurs. L'image est rangée sur GitHub dans les 10 minutes, sans rien renommer. Les cartes du Club sont offertes à tous, celles du Panthéon se gagnent comme les autres légendes.", "carte mythique importer ajouter pantheon club album vignette legende"],
+        ["Comment masquer ou montrer une carte Mythique ?", "Ouvre la carte en grand dans l'Album : sous la carte, « Masquer » ou « Montrer ». Ça marche sur toutes les cartes Mythiques, anciennes comprises (écusson, gymnase, Panthéon…). Masquée, elle disparaît pour les joueurs, même ceux qui l'avaient ; toi, tu la vois grisée avec « Masquée ».", "masquer montrer cacher carte mythique album visible"],
+                ["Un portrait ne s'affiche plus après un envoi sur GitHub", "Le nom du fichier doit être exactement celui de la fiche. Les accents envoyés depuis certains téléphones ou Mac sont désormais corrigés tout seuls. Le plus simple reste « ★ Modifier la photo » sur la fiche, qui donne toujours le bon nom.", "portrait ne s affiche plus photo disparue nom fichier accent"],
       ]},
       { n: "09", ico: "⚙️", t: "Saisons et autres réglages", s: "Les fonctions ★ à connaître", qa: [
         ["Comment régler les dates de saison ?", "Menu ☰ › ★ Paramètres saison : début, fin, album des vignettes, fin des échanges et période de vote du Règlement. Après la fin officielle, l'appli propose de créer la saison suivante avec des dates pré-remplies.", "saison dates reglage album echanges"],

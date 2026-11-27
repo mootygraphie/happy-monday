@@ -324,6 +324,14 @@
     "portraitCrops": {
       ".read": true,
       ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
+    },
+    "vgMyth": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
+    },
+    "vgHidden": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
     }
   }
 }
