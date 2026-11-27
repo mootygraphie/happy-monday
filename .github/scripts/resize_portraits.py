@@ -13,7 +13,19 @@ MAX_WIDTH = 900
 FOLDER = Path(__file__).resolve().parents[2] / "portraits"
 EXTS = {".png", ".jpeg", ".jpg", ".webp"}
 
+import unicodedata
+
 changed = []
+# Noms de fichiers : accents en forme composee (NFC). Certains telephones et Mac envoient « é » en deux
+# morceaux (e + accent) : meme nom a l'ecran, mais le site ne trouve plus la photo.
+for path in sorted(FOLDER.iterdir()):
+    nfc = unicodedata.normalize("NFC", path.name)
+    if nfc != path.name:
+        target = path.with_name(nfc)
+        if target.exists():
+            target.unlink()  # une ancienne version au bon nom : la nouvelle la remplace
+        path.rename(target)
+        changed.append(f"{nfc} : nom corrige (accents)")
 for path in sorted(FOLDER.iterdir()):
     if path.suffix.lower() not in EXTS:
         continue
