@@ -4782,6 +4782,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #chat .ch-emo button { border: none; background: none; font-size: 26px; cursor: pointer; border-radius: 50%; width: 44px; height: 44px; }
   #chat .ch-emo button[aria-pressed="true"] { background: var(--gold-bg); }
   #chat .ch-emo button.more { font-size: 22px; font-weight: 700; color: var(--text2); border: 1.5px dashed var(--border2); }
+  #chat .ch-emo button { display: grid; place-items: center; padding: 0; } #chat .ch-emo button img.emo { width: 30px; height: 30px; margin: 0; vertical-align: 0; }
   #chat .ch-emoin { display: flex; gap: 8px; align-items: center; }
   #chat .ch-emoin input { flex: 1; min-width: 0; background: var(--bg3); border: 1.5px solid var(--gold-border); border-radius: 30px; padding: 12px 16px; font: inherit; font-size: 16px; color: var(--text); outline: none; }
   #chat .ch-emoin button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); cursor: pointer; flex: none; }
@@ -4954,7 +4955,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #chat .ch-reacts img.emo { width: 15px; height: 15px; vertical-align: -3px; margin: 0; }
   #chat .ch-emob svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   #chat .ch-emob.on { background: var(--gold); color: #fff; }
-  #chat .ch-emo { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 8px 2px 2px; width: 100%; align-self: stretch; box-sizing: border-box; }
+  #chat .ch-emop { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 8px 2px 2px; width: 100%; align-self: stretch; box-sizing: border-box; }
   #chat .ch-emo-tabs { display: flex; gap: 8px; }
   #chat .ch-emo-tabs button { flex: none; width: auto; height: auto; margin: 0; position: static; transform: none; border: 1px solid var(--border2); background: var(--bg2); color: var(--text2); border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
   #chat .ch-emo-tabs button[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); color: #fff; }
@@ -5332,7 +5333,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
 </div>
 
 <template id="hm-news" data-date="26/11/2026" data-for="sa"><li>🏆 <b>Récompenses</b> : 2 nouveaux classements, Collectionneurs (vignettes collées) et Traders (total, données ou reçues)</li><li>❓ <b>Aide</b> : le guide de l'appli dans le menu ☰, avec une recherche pour poser ta question</li><li>🗓️ <b>Fiche joueur</b> : l'année d'arrivée au club</li><li>🟠 <b>Mises à jour</b> : les petites ne s'affichent plus en grand, juste un point orange sur Menu</li><li>📲 <b>Pastille de l'appli</b> : elle compte aussi les messages non lus du Vestiaire</li><li data-sa>🔒 <b>Visiteurs</b> : sans compte, on ne voit plus que les Sessions</li><li data-sa>⚙️ <b>Accueil</b> : « Ouvrir maintenant » et « Annuler la session » sont rangés sous la roue dentée de la case verte du sondage programmé</li><li>📅 <b>Événements</b> : repas, tournoi, sortie… sur l'Accueil sous le sondage, avec réponse, carte et ajout au calendrier</li><li data-sa>★ <b>Menu Super admin</b> : Membres, Notifications, Événements, Paramètres saison, Pronostics ; suppression des anciens tests de notification</li><li>🙂 <b>Vestiaire</b> : emojis style Teams et GIF, avec le bouton 🙂 à côté du message</li><li>📊 <b>Vestiaire</b> : les sondages, avec le + à côté du message (une ou plusieurs réponses, votes visibles ou non, date limite)</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 26/11/2026 - 20:08</footer>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/11/2026 - 07:16</footer>
 
 <script>
 /* ══════════ EMOJIS STYLE TEAMS (Fluent, licence MIT) SUR TOUT LE SITE ══════════
@@ -16629,7 +16630,7 @@ function _accRender(keepFocus) {
       ${_accNoCotis(_accPlayer()) && !a.paid ? `<div class="acm-cot ok"><span><b>Cotisation ${cl}</b></span><span class="st">Pas de cotisation</span></div>` : a.paid === undefined ? `<p class="acm-sub">Chargement…</p>` : `<div class="acm-cot ${a.paid ? "ok" : "due"}"><span><b>Cotisation ${cl}</b></span><span class="st">${a.paid ? "✓ Payée" : "À payer"}</span></div>`}
       <div class="acm-sec">Compte</div>
       ${(() => { const pw = window._pwa, st = pw && pw.pushState ? pw.pushState() : "unsupported", d = a.myPush;
-        const lab = { on: `<span style="color:var(--good)">✓ actives sur ce téléphone</span>`, off: `<span style="color:#ff9f0a">désactivées sur ce téléphone</span>`, denied: `<span style="color:var(--bad)">bloquées dans les réglages</span>`, install: `<span style="color:#ff9f0a">installe d'abord l'appli</span>`, unsupported: `<span style="color:var(--text3)">pas gérées par ce navigateur</span>` }[st] || "—";
+        const lab = { on: `<span style="color:var(--good)">✓ actives sur ce téléphone</span>`, off: `<span style="color:#ff9f0a">désactivées sur ce téléphone</span>`, denied: `<span style="color:var(--bad)">bloquées dans les réglages</span>`, install: `<span style="color:#ff9f0a">installe d'abord l'appli</span>`, checking: `<span style="color:var(--text3)">vérification…</span>`, unsupported: `<span style="color:var(--text3)">pas gérées par ce navigateur</span>` }[st] || "—";
         return `<div class="acm-kv"><span>Pseudo</span><b>@${_accEsc((_accProfile && _accProfile.pseudo) || ((_accUser && _accUser.email) || "").split("@")[0])}</b><span>Notifications</span><b>${lab}${d && !d.ok && st !== "on" ? `<small class="acm-kvs">dernier essai : ${_accEsc(d.err || d.step || "")}</small>` : ""}${st === "off" || st === "install" ? `<button type="button" class="acm-mini" data-a="pushon">${st === "install" ? "Comment faire ›" : "Activer"}</button>` : ""}${st === "on" ? `<button type="button" class="acm-mini" data-a="pushtest">Tester</button>` : ""}</b></div>`; })()}
       <div class="acm-sec">Coordonnées</div>${err}
       ${a.prof === undefined ? `<p class="acm-sub">Chargement…</p>` : !ed ? `<div class="acm-kv acm-kvc">${(() => { const kv = (l, v) => `<span>${l}</span><b>${v ? _accEsc(v) : `<i class="no">à renseigner</i>`}</b>`, fd = d => { if (!d) return ""; const [y, m, j] = d.split("-"); return `${+j} ${MONTH_NAMES[+m - 1]} ${y}`; };
@@ -19072,7 +19073,7 @@ function _svApply() {
       if (pw.canInstall()) h += `<button type="button" class="bm-row" data-bm="__install">${ic("dl")}<span class="grow">Installer l'appli</span>${ic("chev", "chev")}</button>`;
       const st = acc() ? pw.pushState() : "unsupported";
       if (st !== "unsupported") {
-        const sub = st === "denied" ? "bloquées dans les réglages" : st === "install" ? "installe d'abord l'appli" : "";
+        const sub = st === "denied" ? "bloquées dans les réglages" : st === "install" ? "installe d'abord l'appli" : st === "checking" ? "vérification…" : "";
         h += `<button type="button" class="bm-row" data-bm="__push" aria-pressed="${st === "on"}">${ic("bell")}<span class="grow">Notifications${sub ? ` <small>· ${sub}</small>` : ""}</span><span class="sw"></span></button>`;
         if (st === "on") {
           h += `<button type="button" class="bm-sub bm-opts" data-bm="__opts" aria-expanded="${optsOpen}"><span class="grow">Choisir les notifications</span>${ic("chev", "chev")}</button>`;
@@ -19199,7 +19200,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const standalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
     const pushOK = () => hasSW && "PushManager" in window && "Notification" in window;
     const OWNER = "hmft_push_owner";
-    let reg = null, sub = null, deferred = null;
+    let reg = null, sub = null, deferred = null, checked = !("serviceWorker" in navigator); // checked : abonnement du téléphone déjà lu
     const me = () => (typeof _accPlayer === "function" ? _accPlayer() : null);
     const refresh = () => { try { window._bnRefresh && window._bnRefresh(); } catch (e) {} };
     const toast = m => { try { _showToast(m); } catch (e) {} };
@@ -19231,15 +19232,23 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         if (sub) { const id = await subId(sub.endpoint), d = await _db.ref(`pushDead/${p}/${id}`).once("value"); dead = !!d.val(); }
         if (!sub && lsGet(WANT) !== "1" && lsGet(OWNER) !== p) { healedFor = p; return; } // jamais activé ici : on ne force rien
         if (dead) { try { await sub.unsubscribe(); } catch (e) {} sub = null; }
+        const lost = !sub && !dead; // voulu sur ce téléphone, autorisé, mais plus d'abonnement : perdu par le téléphone
+        const note = step => { try { _db.ref(`pushDebug/${p}`).set({ ok: false, step, err: "", ua: navigator.userAgent.slice(0, 80), at: firebase.database.ServerValue.TIMESTAMP }); } catch (e) {} };
         if (!sub) {
           try { sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(_PWA_VAPID) }); }
-          catch (e) { sub = null; askAgain(); }
+          catch (e) { sub = null; askAgain(); note(dead ? "abonnement refusé par Apple/Google, réabonnement impossible sans toucher" : "abonnement perdu par le téléphone, réabonnement impossible sans toucher"); }
+          if (sub && (lost || dead)) note(dead ? "abonnement refusé par Apple/Google, réparé tout seul" : "abonnement perdu par le téléphone, réparé tout seul");
         }
         if (sub) { await save(p); ensured = p; _db.ref(`pushDead/${p}`).remove().catch(() => {}); }
         healedFor = p; refresh();
       } catch (e) { console.warn("push heal:", e); }
       finally { healing = false; }
     }
+    // Couper les notifications demande une confirmation : un appui par erreur dans le menu ne les désactive plus
+    const confirmOff = () => new Promise(res => { const o = document.createElement("div"); o.className = "ch-cf";
+      o.innerHTML = `<div class="ch-cf-in" role="alertdialog" aria-modal="true"><b>Désactiver les notifications ?</b><p>Tu ne recevras plus rien sur ce téléphone : sondage, rappels, Vestiaire, événements.</p><div class="ch-cf-act"><button type="button" data-k="0">Garder</button><button type="button" class="dang" data-k="1">Désactiver</button></div></div>`;
+      o.addEventListener("click", ev => { const b = ev.target.closest("[data-k]"); if (b || ev.target === o) { o.remove(); res(!!(b && b.dataset.k === "1")); } });
+      document.body.appendChild(o); o.querySelector('[data-k="0"]').focus(); });
     function askAgain() {
       if (document.getElementById("push-again")) return;
       document.body.insertAdjacentHTML("beforeend", `<div id="push-again" role="alert"><span>🔔 Tes notifications se sont coupées sur ce téléphone.</span><button type="button" data-pa="on">Réactiver</button><button type="button" data-pa="x" aria-label="Plus tard">✕</button></div>`);
@@ -19436,6 +19445,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       pushState: () => {
         if (!pushOK()) return isIOS && !standalone() ? "install" : "unsupported";
         if (Notification.permission === "denied") return "denied";
+        if (!checked) return "checking"; // pas encore lu : on n'affiche pas « désactivées » à tort
         return sub ? "on" : "off";
       },
       async install() {
@@ -19454,7 +19464,9 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
           if (st === "install") { guide(); return; }
           if (st === "unsupported") { dbg(false, "non compatible"); toast(nav === "navigateur intégré" ? "Ouvre le site dans Chrome ou Samsung Internet (pas depuis WhatsApp ou Messenger) pour activer les notifications." : "Ce navigateur ne gère pas les notifications. Essaie avec Chrome, ou installe l'appli."); return; }
           if (st === "denied") { dbg(false, "bloquées dans les réglages"); toast("Les notifications sont bloquées : autorise-les pour ce navigateur dans les réglages du téléphone (Applications › " + (nav === "autre" ? "ton navigateur" : nav) + " › Notifications)."); return; }
+          if (st === "checking") { toast("Vérification des notifications en cours, réessaie dans une seconde."); return; }
           if (st === "on") {
+            if (!await confirmOff()) return;
             try { await drop(lsGet(OWNER) || p); } catch (e) {}
             try { await sub.unsubscribe(); } catch (e) {}
             sub = null; lsSet(OWNER, null); lsSet(WANT, null); toast("Notifications désactivées sur ce téléphone"); return;
@@ -19488,9 +19500,10 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (hasSW) navigator.serviceWorker.register("sw.js").then(async r => {
       reg = r;
       if (pushOK()) { try { sub = await r.pushManager.getSubscription(); } catch (e) {} }
+      checked = true;
       if (sub) lsSet(WANT, "1");
       refresh(); sync(); _accReady.then(() => { sync(); heal(); }).catch(() => {}); // dès que le compte est connu
-    }).catch(e => console.warn("sw:", e));
+    }).catch(e => { checked = true; refresh(); console.warn("sw:", e); });
     window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferred = e; refresh(); });
     window.addEventListener("appinstalled", () => { deferred = null; refresh(); toast("Appli installée !"); });
     // Comptes activés (super admin) : 📲 pour ceux qui ouvrent l'appli installée — appInstalls/{joueur}
@@ -19695,16 +19708,16 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       if (!E.gifs && !E.gload) setTimeout(gifLoad, 0);
       const body = E.gerr ? `<p class="ch-emo-msg">${esc(E.gerr)}</p>` : !E.gifs ? `<p class="ch-emo-msg">Chargement…</p>` : !E.gifs.length ? `<p class="ch-emo-msg">Aucun GIF trouvé.</p>`
         : `<div class="ch-gifs">${E.gifs.map((g, k) => `<button type="button" data-ch="gifSend" data-k="${k}" aria-label="Envoyer le GIF ${esc(g.t)}"><img src="${esc(g.p)}" alt="" loading="lazy"></button>`).join("")}</div>`;
-      return `<div class="ch-emo">${tabs}<input id="ch-gq" class="ch-emo-q" type="search" placeholder="Chercher un GIF" value="${esc(E.gq || "")}" autocomplete="off">${body}<small class="ch-emo-by">Powered by GIPHY</small></div>`;
+      return `<div class="ch-emop">${tabs}<input id="ch-gq" class="ch-emo-q" type="search" placeholder="Chercher un GIF" value="${esc(E.gq || "")}" autocomplete="off">${body}<small class="ch-emo-by">Powered by GIPHY</small></div>`;
     }
-    if (!EMOD) { loadEmo(); return `<div class="ch-emo">${tabs}<p class="ch-emo-msg">Chargement…</p></div>`; }
+    if (!EMOD) { loadEmo(); return `<div class="ch-emop">${tabs}<p class="ch-emo-msg">Chargement…</p></div>`; }
     const q = enorm(E.q), rec = V.recent || [];
     const G = [[-1, "🕘", "Récents"], [0, "😀"], [1, "👋"], [3, "🐶"], [4, "🍔"], [6, "⚽"], [5, "🚗"], [7, "💡"], [8, "❤️"], [9, "🏁"]].filter(g => g[0] !== -1 || rec.length);
     if (E.cat === -1 && !rec.length) E.cat = 0;
     const byE = ch => EMOD.e.find(x => x[0] === ch);
     const L = q ? EMOD.e.filter(x => enorm(x[2]).includes(q)).slice(0, 160) : E.cat === -1 ? rec.map(ch => byE(ch) || [ch, -1, "", 0]) : EMOD.e.filter(x => x[1] === E.cat);
     const cats = G.map(([g, ic, lb]) => `<button type="button" data-ch="emoCat" data-g="${g}" aria-pressed="${!q && E.cat === g}" title="${esc(lb || EMOD.g[g] || "")}">${emoImg(ic, (byE(ic) || [])[3] || "")}</button>`).join("");
-    return `<div class="ch-emo">${tabs}<input id="ch-eq" class="ch-emo-q" type="search" placeholder="Chercher un emoji (ballon, bière, rire…)" value="${esc(E.q || "")}" autocomplete="off">${q ? "" : `<div class="ch-emo-cats">${cats}</div>`}
+    return `<div class="ch-emop">${tabs}<input id="ch-eq" class="ch-emo-q" type="search" placeholder="Chercher un emoji (ballon, bière, rire…)" value="${esc(E.q || "")}" autocomplete="off">${q ? "" : `<div class="ch-emo-cats">${cats}</div>`}
       <div class="ch-emo-grid">${L.length ? L.map(x => `<button type="button" data-ch="emoPick" data-e="${x[0]}" aria-label="${esc(x[2].split(" ")[0])}">${emoImg(x[0], x[3] || "")}</button>`).join("") : `<p class="ch-emo-msg">Aucun emoji trouvé.</p>`}</div></div>`;
   }
   function emoInsert(ch) {
@@ -20106,7 +20119,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (f && near) f.scrollTop = f.scrollHeight;
   }
   if (vv) { vv.addEventListener("resize", fitVV); vv.addEventListener("scroll", fitVV); }
-  box.addEventListener("focusin", e => { if (e.target.id === "ch-tx" && V.emo) { V.emo = null; const c = box.querySelector(".ch-emo"); if (c) c.remove(); const b = box.querySelector(".ch-emob"); if (b) { b.classList.remove("on"); b.innerHTML = IC.smile; b.setAttribute("aria-expanded", "false"); } } if (e.target.id === "ch-tx") setTimeout(fitVV, 60); setTimeout(fitVV, 350); });
+  box.addEventListener("focusin", e => { if (e.target.id === "ch-tx" && V.emo) { V.emo = null; const c = box.querySelector(".ch-emop"); if (c) c.remove(); const b = box.querySelector(".ch-emob"); if (b) { b.classList.remove("on"); b.innerHTML = IC.smile; b.setAttribute("aria-expanded", "false"); } } if (e.target.id === "ch-tx") setTimeout(fitVV, 60); setTimeout(fitVV, 350); });
   function hide() { if (V.room) stopTyping(); watchTyping(null); box.style.top = ""; box.style.height = ""; box.style.bottom = ""; V.open = false; V.room = null; V.view = null; V.form = null; V.sheet = null; V.drop = false; V.plus = false; V.q = ""; box.hidden = true; box.innerHTML = ""; document.documentElement.classList.remove("ch-lock"); renderBtn(); }
   const goHome = () => { const t = document.querySelector('.main-tab[data-tab="vote"]'); if (t && !t.classList.contains("active")) t.click(); };
   function closeChat() { if (V.room) markRead(V.room); const back = (V.pushed ? 1 : 0) + (V.pushed2 ? 1 : 0); V.pushed = V.pushed2 = false; hide(); goHome(); if (back) { V.skipPop = 1; try { history.go(-back); } catch (e) {} } }
@@ -20359,7 +20372,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     if (e.target.id === "ch-fq") { V.form.q = e.target.value; return filterMembers(); }
     if (e.target.id === "ch-q") { V.q = e.target.value; return render(); }
     if (e.target.id === "ch-pq") { V.pq = e.target.value; return render(); }
-    if (e.target.id === "ch-eq" && V.emo) { V.emo.q = e.target.value; const g = box.querySelector(".ch-emo"); renderComp(); const n = $("ch-eq"); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } return; }
+    if (e.target.id === "ch-eq" && V.emo) { V.emo.q = e.target.value; const g = box.querySelector(".ch-emop"); renderComp(); const n = $("ch-eq"); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } return; }
     if (e.target.id === "ch-gq" && V.emo) { V.emo.gq = e.target.value; clearTimeout(gifT); gifT = setTimeout(() => { V.emo && (V.emo.gifs = null, gifLoad()); }, 450); return; }
     if (e.target.id !== "ch-tx") return;
     V.draft[V.room] = e.target.value; autoGrow(e.target);
@@ -20676,6 +20689,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       { n: "02", ico: "🧭", t: "Se repérer", s: "L'en-tête, le menu du bas, le menu ☰", qa: [
         ["À quoi servent les boutons en haut ?", "💬 ouvre le Vestiaire, le chat du club, avec le nombre de messages non lus (ou « @ » si on t'a mentionné). 🔔 ouvre les notifications de l'appli, avec un compteur rouge.", "entete haut bouton cloche bulle vestiaire notifications"],
         ["À quoi sert le menu du bas ?", "Sessions (les soirées passées, devient En direct pendant la soirée), Récomp. (les récompenses de la saison), l'écusson Accueil (prochaine session et sondage), Vignettes (ton album) et Menu ☰ pour tout le reste.", "menu bas barre onglets ecusson accueil"],
+        ["Pourquoi les emojis ont un style différent ?", "Tous les emojis de l'appli sont au style Teams : ils s'affichent pareil sur iPhone, Android et ordinateur. Seuls les notifications, le texte que tu tapes et les listes déroulantes gardent les emojis de ton téléphone.", "emoji emojis style teams dessin different"],
         ["Que veut dire l'écusson rouge avec une pastille ?", "Le sondage attend ta réponse. Touche l'écusson pour répondre.", "ecusson rouge pastille sondage"],
         ["Qu'est-ce qu'il y a dans le menu ☰ ?", "Ta carte profil (Mon compte), Statistiques, Effectif, Règlement, Notifications, Installer l'appli, Mode sombre, « Quoi de neuf ? », « Mettre à jour l'appli », Aide et Se déconnecter.", "menu hamburger trois traits reglages"],
         ["À quoi sert le bandeau au-dessus du menu du bas ?", "Il te rappelle ce qui est urgent : sondage pas encore répondu ou score du match en cours. Touche-le pour y aller.", "bandeau rappel urgent score"],
@@ -20730,8 +20744,6 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Comment ouvrir le Vestiaire ?", "Touche 💬 en haut. Il s'ouvre par-dessus l'appli avec deux onglets : Salons et Messagerie.", "ouvrir vestiaire chat discussion"],
         ["Comment envoyer un message privé ?", "Onglet Messagerie, bouton ✎, puis choisis le joueur. Seuls vous deux voyez la conversation.", "message prive mp messagerie ecrire joueur vestiaire chat"],
         ["Comment envoyer une photo ?", "Bouton +, puis prends une photo ou choisis-en jusqu'à 10 dans la galerie.", "photo image galerie envoyer vestiaire chat message"],
-        ["Comment répondre à un événement du club ?", "Les événements à venir (repas, tournoi, sortie…) s'affichent sur l'Accueil, sous le sondage du lundi. Touche la carte puis Je viens, Peut-être ou Je ne viens pas, et indique tes accompagnants si c'est permis. Quand c'est complet, tu passes en liste d'attente. S'il y en a plusieurs, fais glisser les cartes. Tu peux l'ajouter à ton calendrier (Google, Apple, Outlook) et voir qui vient en ouvrant « Réponses ». Un rappel arrive à 18h, le nombre de jours avant choisi par le club.", "evenement repas tournoi sortie repondre calendrier agenda liste attente"],
-        ["Comment créer un événement ?", "Menu ☰ › ★ Événements › Créer un événement. Titre, date, horaires, lieu (en texte, ou avec une carte en cochant « Afficher une carte »), description. Options : ajout au calendrier, payant (avec suivi de qui a payé), places limitées, accompagnants, rappel aux inscrits (la veille, 2 jours, 1 semaine…). Il est enregistré masqué par défaut : l'œil à côté de son nom l'affiche ou le cache sur l'Accueil, et tout le monde est prévenu la première fois qu'il s'affiche. On peut le modifier ou le supprimer depuis l'événement.", "creer evenement repas tournoi carte prix places cagnotte masquer afficher oeil rappel brouillon"],
         ["Comment mettre un emoji ou un GIF ?", "Dans le Vestiaire, touche le bouton 🙂 à gauche du message. Onglet Emojis : choisis une catégorie ou cherche en français (ballon, bière, rire…), tes derniers emojis sont dans Récents. Onglet GIF : cherche un GIF et touche-le pour l'envoyer tout de suite. Touche le clavier pour revenir à la saisie.", "emoji emojis gif smiley sourire animation vestiaire"],
         ["Comment créer un sondage dans le Vestiaire ?", "Dans un salon, touche le + à gauche du message › Créer un sondage. Écris la question et jusqu'à 10 réponses. Par défaut, une seule réponse par personne et les votes sont visibles ; tu peux autoriser plusieurs réponses, cacher qui a voté quoi et fixer une date limite. Touche une réponse pour voter, touche-la encore pour retirer ton vote. L'auteur (ou un super admin) peut clore le vote. Pas de sondage dans les messages privés.", "sondage vestiaire vote question reponses date limite clore plusieurs"],
         ["Comment mentionner quelqu'un ?", "Tape @ puis choisis un joueur. @tous prévient tout le monde.", "mentionner mention arobase tous vestiaire chat message"],
@@ -20740,7 +20752,18 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Que veulent dire les coches ?", "✓ gris = envoyé, ✓ vert = lu. Un point vert sur une photo = la personne est en ligne.", "coche lu envoye en ligne point vert vestiaire chat message"],
         ["Comment couper les notifications d'un salon ?", "Dans le salon, touche la cloche. Le bouton ⋯ de la liste règle aussi le fond d'écran, les notifications (tout ou seulement les @mentions), les confirmations de lecture et le statut en ligne.", "couper notifications salon silence cloche reglages"]
       ]},
-      { n: "08", ico: "🔔", t: "Notifications et Mon compte", s: "Être prévenu, gérer ses infos", qa: [
+      { n: "08", ico: "📅", t: "Les événements du club", s: "Repas, tournoi, sortie : répondre et s'organiser", qa: [
+        ["Où voir les événements du club ?", "Sur l'Accueil, sous le sondage du lundi, dans « Événement du club ». S'il y en a plusieurs, fais glisser les cartes avec le doigt ou touche les points dessous. S'il n'y a aucun événement à venir, rien ne s'affiche.", "evenement club repas tournoi sortie accueil ou voir carrousel"],
+        ["Comment répondre à un événement ?", "Touche la carte de l'événement, puis Je viens, Peut-être ou Je ne viens pas. Tu peux changer d'avis à tout moment, ta réponse est enregistrée tout de suite.", "repondre evenement je viens peut etre changer reponse"],
+        ["Je peux venir accompagné ?", "Si l'événement l'autorise, une ligne « Accompagnants » apparaît après « Je viens » : touche + ou − pour indiquer combien de personnes tu amènes. Elles comptent dans les places et, si c'est payant, dans le montant.", "accompagnant invite plus un conjoint ami"],
+        ["C'est complet, que se passe-t-il ?", "Si l'événement a un nombre de places limité et qu'il est plein, ton « Je viens » te place en liste d'attente, dans l'ordre des réponses. Dès qu'une place se libère, le premier en attente passe automatiquement dans la liste.", "complet liste attente places limitees"],
+        ["Comment l'ajouter à mon calendrier ?", "Dans l'événement, « Ajouter à mon calendrier » : Google ouvre Google Agenda, Apple et Outlook téléchargent un fichier calendrier que ton téléphone ouvre tout seul. L'heure, le lieu et le rappel sont déjà dedans. Ce bloc n'apparaît que si le club l'a activé.", "calendrier agenda google apple outlook ics ajouter"],
+        ["Où se passe l'événement ?", "Le lieu est indiqué sous la date. S'il y a une carte, touche « Ouvrir dans Maps » pour le voir, ou « Itinéraire » pour t'y guider.", "lieu adresse carte maps itineraire gps"],
+        ["Comment voir qui vient ?", "Dans l'événement, ouvre le volet « Réponses » : la liste est rangée par réponse (Je viens, Liste d'attente, Peut-être, Ne viennent pas), avec les accompagnants.", "qui vient liste reponses participants inscrits"],
+        ["L'événement est payant, comment ça marche ?", "Le prix par personne est affiché dans l'événement. Le paiement se fait en dehors de l'appli (au super admin qui organise). Il indique ensuite que tu as payé : « À régler » devient « ✓ Payé ».", "payant prix payer cagnotte regle paye"],
+        ["Je vais recevoir un rappel ?", "Oui, si tu as répondu Je viens ou Peut-être et que tes notifications sont activées : un rappel arrive à 18h, le nombre de jours avant choisi par le club (la veille, par exemple).", "rappel notification evenement veille"],
+      ]},
+      { n: "09", ico: "🔔", t: "Notifications et Mon compte", s: "Être prévenu, gérer ses infos", qa: [
         ["Comment activer les notifications ?", "Menu ☰ › Notifications › Activer. Le téléphone demande l'autorisation en 3 étapes. Sur Android, si rien ne s'affiche : cadenas de la barre d'adresse › Notifications › Autoriser.", "activer notifications push autoriser"],
         ["Je ne reçois plus de notifications", "Rouvre l'appli une fois : ton abonnement se réenregistre tout seul. Tu peux aussi utiliser le bouton « Tester » dans Mon compte.", "plus de notifications recois pas marche pas probleme"],
         ["Que montre la cloche ?", "Les 10 dernières notifications, datées : sondage, Infos Club, boosters et échanges de vignettes.", "cloche historique echanges dates"],
@@ -20753,7 +20776,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     ]},
     sa: { t: "Guide super admin", ch: [
       { n: "01", ico: "★", t: "Le rôle de super admin", s: "L'étoile et ce qu'elle débloque", qa: [
-        ["Qu'est-ce qu'un super admin voit en plus ?", "Sur l'Accueil, une case ★ Super admin ou, avant l'ouverture du sondage, une roue dentée ⚙️ dans la case verte ; des entrées ★ dans le menu ☰ (Membres, Notifications, Saisons), les stats Datas, les classements ★ (Ballon de Plomb, Calamity James) et les nouveautés ★ dans « Quoi de neuf ? ».", "super admin voit plus etoile droits"],
+        ["Qu'est-ce qu'un super admin voit en plus ?", "Sur l'Accueil, une case ★ Super admin ou, avant l'ouverture du sondage, une roue dentée ⚙️ dans la case verte ; des entrées ★ dans le menu ☰ (Membres, Notifications, Événements, Paramètres saison, Pronostics), les stats Datas, les classements ★ (Ballon de Plomb, Calamity James) et les nouveautés ★ dans « Quoi de neuf ? ».", "super admin voit plus etoile droits"],
         ["Comment nommer ou retirer un super admin ?", "Menu ☰ › Mon compte › ★ Membres, puis touche l'étoile ☆ / ★ à gauche du joueur. Tu ne peux pas te retirer l'étoile toi-même.", "nommer retirer super admin etoile droits"],
         ["Comment changer le statut d'un joueur ?", "Menu ☰ › Effectif, appui long sur un joueur : Régulier, Occasionnel, Dépanneur ou Inactif. Un message permet d'annuler juste après. Les dépanneurs sont exclus des classements, sauf du leur.", "statut joueur regulier occasionnel depanneur inactif appui long"]
       ]},
@@ -20783,6 +20806,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       ]},
       { n: "05", ico: "📣", t: "Envoyer une notification", s: "Infos Club et messages ciblés", qa: [
         ["Comment envoyer une notification ?", "Menu ☰ › ★ Notifications › bouton + rouge. Écris un titre et un message (200 caractères max), choisis les destinataires (Tous, Choisir… ou Moi (test)), vérifie l'aperçu et envoie. Ça arrive en général en moins d'une minute.", "envoyer notification push message tous infos club"],
+        ["Comment supprimer mes notifications de test ?", "Dans Menu ☰ › ★ Notifications, le bouton « 🗑️ Supprimer mes tests » efface d'un coup tous tes tests de l'historique (filtres Tout ou Tests). Pour un seul test, ouvre-le puis « Supprimer ce test ». Seuls tes propres tests sont concernés, et les notifications déjà reçues sur les téléphones ne bougent pas.", "supprimer test notification historique nettoyer effacer"],
         ["Comment savoir qui a lu une notification ?", "L'historique liste chaque envoi avec une barre de lecture (par exemple « 19/24 · 79 % »). Touche une case pour voir qui l'a lue, et à quelle heure.", "qui a lu lecture historique"],
         ["Les Infos Club comptent dans la limite de 4 par jour ?", "Non. Les joueurs reçoivent au maximum 4 notifications automatiques par jour, mais tes Infos Club ne comptent pas dans cette limite.", "limite 4 par jour infos club"]
       ]},
@@ -20793,15 +20817,25 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Comment gérer un salon ?", "Paramètres du salon : renommer, changer les membres, supprimer plusieurs messages, 🧹 vider ou supprimer le salon. Le Vestiaire général ne peut être ni renommé ni supprimé.", "parametres salon renommer vider membres"],
         ["Je peux lire les messages privés ?", "Non, les messages privés restent privés.", "lire messages prives"]
       ]},
-      { n: "07", ico: "⚙️", t: "Saisons et autres réglages", s: "Les fonctions ★ à connaître", qa: [
-        ["Comment régler les dates de saison ?", "Menu ☰ › ★ Saisons : début, fin, album des vignettes, fin des échanges et période de vote du Règlement. Après la fin officielle, l'appli propose de créer la saison suivante avec des dates pré-remplies.", "saison dates reglage album echanges"],
+      { n: "07", ico: "📅", t: "Les événements", s: "Créer, publier, suivre les inscrits", qa: [
+        ["Comment créer un événement ?", "Menu ☰ › ★ Événements › Créer un événement. Choisis un emoji (« Plus… » ouvre tous les emojis, avec recherche), un titre, la date, l'heure de début et, si tu veux, de fin, le lieu et une description. Puis les options, et « Enregistrer masqué » ou « Publier ».", "creer evenement nouveau repas tournoi sortie"],
+        ["Comment préparer un événement sans le publier ?", "Par défaut, un nouvel événement est enregistré masqué : les joueurs ne le voient pas. Dans ★ Événements, l'œil à côté de son nom l'affiche ou le masque sur l'Accueil en un appui (vert = visible, barré = masqué). Le même œil est en haut à droite de l'événement.", "masquer afficher oeil brouillon preparer publier cacher"],
+        ["Quand les joueurs sont-ils prévenus ?", "Avec « Prévenir tout le monde » coché, une notification part la première fois que l'événement s'affiche, et une seule fois : le masquer puis le réafficher ne la renvoie pas. Ensuite, le « Rappel aux inscrits » (pas de rappel, la veille, 2 ou 3 jours, 1 ou 2 semaines avant) part à 18h à ceux qui ont répondu Je viens ou Peut-être.", "notification prevenir rappel veille jours avant"],
+        ["Comment mettre une carte ?", "Coche « Afficher une carte », tape le nom du lieu ou l'adresse, puis choisis dans la liste proposée. L'événement montre alors une mini-carte avec « Ouvrir dans Maps » et « Itinéraire ». Sans la case, le lieu est un simple texte (« chez Boris », « salle du haut »…).", "carte lieu adresse maps plan localisation"],
+        ["Quelles sont les options ?", "Ajout au calendrier (boutons Google, Apple et Outlook), Événement payant (prix par personne), Places limitées (liste d'attente automatique dans l'ordre des réponses), Accompagnants autorisés, et le rappel aux inscrits. Tout est facultatif.", "options calendrier payant places accompagnants rappel"],
+        ["Comment suivre qui a payé ?", "Sur un événement payant, ouvre-le : le bloc « ★ Cagnotte » liste les joueurs qui viennent, avec le montant (accompagnants compris). Coche ceux qui ont payé : ils voient « ✓ Payé » dans l'événement.", "cagnotte paye payer argent suivi"],
+        ["Comment modifier ou supprimer un événement ?", "Ouvre l'événement (depuis ★ Événements ou l'Accueil) › ★ Modifier, ou Supprimer. La suppression efface aussi toutes les réponses, avec confirmation.", "modifier supprimer evenement corriger annuler"],
+        ["Où retrouver les événements passés ?", "Menu ☰ › ★ Événements : la liste montre « À venir » puis « Passés ». Un événement passé reste consultable (réponses, cagnotte) mais on ne peut plus y répondre.", "evenements passes historique archives"],
+      ]},
+      { n: "08", ico: "⚙️", t: "Saisons et autres réglages", s: "Les fonctions ★ à connaître", qa: [
+        ["Comment régler les dates de saison ?", "Menu ☰ › ★ Paramètres saison : début, fin, album des vignettes, fin des échanges et période de vote du Règlement. Après la fin officielle, l'appli propose de créer la saison suivante avec des dates pré-remplies.", "saison dates reglage album echanges"],
         ["Que se passe-t-il à la clôture du vote du Règlement ?", "L'Effectif se met à jour tout seul : actif › Réguliers, +1 › Occasionnels, dépanneur › Dépanneurs, quitte ou sans réponse › Inactifs.", "cloture vote reglement effectif"],
-        ["Quelles sont les autres fonctions ★ ?", "Datas (une trentaine de stats pointues dans Statistiques), Récompenses ★ (Ballon de Plomb, Calamity James), l'interrupteur Pronos et les Coefficients joueurs dans le menu ☰.", "datas pronos coefficients fonctions"],
-        ["Comment activer ou couper les pronostics ?", "Menu ☰ › ★ Pronos : l'interrupteur affiche « Pronos : activés » ou « Pronos : désactivés ». Activés, les joueurs votent sur chaque match du soir dès que ses 2 équipes sont choisies dans la Saisie, jusqu'à la mi-temps.", "activer desactiver pronos pronostics interrupteur"],
+        ["Quelles sont les autres fonctions ★ ?", "Datas (une trentaine de stats pointues dans Statistiques), Récompenses ★ (Ballon de Plomb, Calamity James), ★ Pronostics et les Coefficients joueurs dans le menu ☰.", "datas pronos coefficients fonctions"],
+        ["Comment activer ou couper les pronostics ?", "Menu ☰ › ★ Pronostics : l'état actuel est écrit à côté (activés ou désactivés), un appui bascule de l'un à l'autre. Activés, les joueurs votent sur chaque match du soir dès que ses 2 équipes sont choisies dans la Saisie, jusqu'à la mi-temps.", "activer desactiver pronos pronostics interrupteur"],
         ["Comment renseigner l'année d'arrivée d'un joueur ?", "Elle n'est pas modifiable dans l'appli. Les années de l'effectif actuel sont déjà intégrées. Pour un nouveau joueur ou une correction : base Firebase, sous config/arrivees (par exemple « Boris » : 2016, ou « Fondateur »). Ce qui est en base passe avant la liste intégrée.", "annee arrivee renseigner club depuis fondateur"],
         ["Comment supprimer une soirée ?", "Touche la croix ronde sur la date, avec confirmation.", "supprimer soiree session date"]
       ]},
-      { n: "08", ico: "🧯", t: "Que faire si…", s: "Les procédures express", qa: [
+      { n: "09", ico: "🧯", t: "Que faire si…", s: "Les procédures express", qa: [
         ["Un joueur ne reçoit pas les notifications", "Regarde le diagnostic sur sa fiche. Fais-lui activer via Menu ☰ › Notifications, puis envoie-lui un test. S'il les recevait avant, il suffit qu'il rouvre l'appli une fois.", "joueur recoit pas notifications diagnostic"],
         ["La mise à jour ne s'affiche pas", "Menu ☰ › Mettre à jour l'appli. Sur iPhone, ferme complètement l'appli puis rouvre-la.", "mise a jour affiche pas iphone"],
         ["J'ai une question qui n'est pas ici", "Demande à un autre super admin dans le Vestiaire.", "autre question"]
