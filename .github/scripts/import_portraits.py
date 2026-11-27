@@ -45,7 +45,7 @@ def main():
         print("Aucun portrait en attente.")
         return
     supers = requests.get(f"{DB}/config/superAdmins.json", headers=h, timeout=20).json() or {}
-    done, results = [], {}
+    done, results, crops = [], {}, {}
     for qid, q in todo.items():
         name = unicodedata.normalize("NFC", str(q.get("name") or "").strip())
         try:
@@ -66,6 +66,8 @@ def main():
             (FOLDER / f"{name}.{ext}").write_bytes(raw)
             done.append(name)
             results[qid] = {"status": "done", "file": f"{name}.{ext}", "doneAt": int(time.time() * 1000), "data": None}
+            if isinstance(q.get("crop"), dict):
+                crops[name] = q["crop"]  # cadrage choisi avec la photo : appliqué une fois la photo en ligne
             print("Portrait range :", f"{name}.{ext}", f"({len(raw) // 1024} Ko) par", q.get("by"))
         except Exception as e:
             results[qid] = {"status": "error", "err": str(e)[:120], "doneAt": int(time.time() * 1000), "data": None}
@@ -89,6 +91,8 @@ def main():
             subprocess.run(["gh", "api", "-X", "POST", f"repos/{os.environ.get('GITHUB_REPOSITORY', 'mootygraphie/happy-monday')}/pages/builds"], cwd=ROOT)
     for qid, r in results.items():
         requests.patch(f"{DB}/portraitQueue/{qid}.json", headers=h, data=json.dumps(r), timeout=20)
+    for name, c in crops.items():
+        requests.put(f"{DB}/portraitCrops/{requests.utils.quote(name, safe='')}.json", headers=h, data=json.dumps(c), timeout=20)
 
 
 if __name__ == "__main__":

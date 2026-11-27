@@ -3684,7 +3684,27 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   .ev-sugg small { display: block; color: var(--text3); font-size: 11.5px; }
   .ev-picked { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; background: var(--bg3); }
   .ev-picked button { margin-left: auto; border: 0; background: none; color: #00BBFF; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
-  .pu-box { gap: 12px; }
+  .pu-box, .pe-box { gap: 12px; }
+  .pe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; max-height: 52vh; overflow-y: auto; }
+  .pe-pan { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+  .pe-fiche { display: grid; justify-items: center; gap: 4px; padding: 8px 4px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; text-align: center; }
+  .pe-fiche .roster-avatar { width: 52px; height: 52px; position: relative; overflow: hidden; }
+  .pe-fiche small { font-size: 10.5px; color: var(--text3); font-weight: 500; }
+  .pe-pc { width: 52px; height: 70px; border-radius: 8px; overflow: hidden; background: var(--bg3); } .pe-pc img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pe-row { display: flex; gap: 8px; } .pe-go { flex: none; border-radius: 12px; border: 0; background: var(--gold); color: #fff; font: inherit; font-weight: 700; padding: 0 14px; cursor: pointer; } .pe-go:disabled { opacity: .45; }
+  .pe-who { font-size: 14px; color: var(--text2); } .pe-who b { color: var(--text); font-size: 16px; }
+  .pe-crop { position: relative; width: min(260px, 100%); aspect-ratio: 1; margin: 0 auto; border-radius: 22px; overflow: hidden; background: var(--bg3); touch-action: none; cursor: grab; user-select: none; }
+  .pe-crop:active { cursor: grabbing; }
+  .pe-crop img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; pointer-events: none; }
+  .pe-frame { position: absolute; inset: 0; border-radius: 22px; box-shadow: inset 0 0 0 2px rgba(255,255,255,.7); pointer-events: none; }
+  .pe-zoom { display: flex; align-items: center; gap: 10px; width: min(260px, 100%); margin: 0 auto; color: var(--text2); font-weight: 700; } .pe-zoom input { flex: 1; accent-color: var(--gold); }
+  .pe-prev { display: flex; align-items: center; justify-content: center; gap: 12px; } .pe-prev small { font-size: 12px; color: var(--text3); max-width: 160px; }
+  .pe-prev .roster-avatar, .pe-prev .acm-av { position: relative; overflow: hidden; flex: none; }
+  .pe-prev img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
+  .pe-card { width: min(220px, 100%); margin: 0 auto; border-radius: 14px; overflow: hidden; } .pe-card img { width: 100%; display: block; }
+  .pe-acts { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .pe-btn { border: 1px solid var(--border2); background: var(--bg3); color: var(--text); border-radius: 12px; padding: 9px 14px; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+  .pph-editpf { margin-top: 6px; border: 1px dashed var(--sa-border); background: var(--sa-bg); color: var(--sa); border-radius: 999px; padding: 5px 12px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
   .pu-ttl { font-size: 22px; font-weight: 800; font-style: italic; text-transform: uppercase; }
   .pu-seg { display: flex; gap: 6px; }
   .pu-seg button { flex: 1; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); border-radius: 12px; padding: 9px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
@@ -12569,6 +12589,7 @@ function openPlayerPanel(playerName) {
         <div class="pph-id">
           <div class="pph-avatar" style="background:${_avatarBg};color:${_avatarFg}">${_initials}</div>
           <div class="pph-hero-name">${playerName}</div>
+          ${typeof _accIsSuper !== "undefined" && _accIsSuper ? `<button type="button" class="pph-editpf" onclick="window._portraitEditor && window._portraitEditor(${JSON.stringify(playerName).replace(/"/g, "&quot;")})">★ Modifier la photo</button>` : ""}
           <div class="pph-pills"><span class="pph-freq-pill st-${_ppS[1]}">${_ppS[0]}</span>${_ppSince ? `<span class="pph-freq-pill ${/fondateur/i.test(_ppSince) ? "pph-founder" : "pph-since"}">${_ppSince}</span>` : ""}</div>
         </div>
       </div>
@@ -19072,7 +19093,7 @@ function _svApply() {
           <button type="button" class="bm-row" data-bm="__accounts"><span class="bm-star">★</span><span class="grow">Membres</span>${ic("chev", "chev")}</button>
           <button type="button" class="bm-row" data-bm="__compose"><span class="bm-star">★</span><span class="grow">Notifications</span>${ic("chev", "chev")}</button>
           <button type="button" class="bm-row" data-bm="__events"><span class="bm-star">★</span><span class="grow">Événements</span>${ic("chev", "chev")}</button>
-          <button type="button" class="bm-row" data-bm="__portrait"><span class="bm-star">★</span><span class="grow">Uploader un portrait</span>${ic("chev", "chev")}</button>
+          <button type="button" class="bm-row" data-bm="__portrait"><span class="bm-star">★</span><span class="grow">Portraits</span>${ic("chev", "chev")}</button>
           <button type="button" class="bm-row" data-bm="__seasons"><span class="bm-star">★</span><span class="grow">Paramètres saison</span>${ic("chev", "chev")}</button>
           <button type="button" class="bm-row" data-bm="__pronos" aria-pressed="${typeof _pronosEnabled !== "undefined" && !!_pronosEnabled}"><span class="bm-star">★</span><span class="grow">Pronostics <small>· ${typeof _pronosEnabled !== "undefined" && _pronosEnabled ? "activés" : "désactivés"}</small></span><span class="sw"></span></button>
         </div>` : ""}
@@ -20671,71 +20692,140 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   window._evAdmin = () => { if (!isSA()) return; watch(); open({ k: "admin" }); };
 })();
 
-/* ══════════ ★ UPLOADER UN PORTRAIT (super admins) ══════════
-   La photo est réduite ici (900 px de large, JPEG), puis déposée dans portraitQueue/{id}. Toutes les 10 min,
-   l'Action « Notifications push » la range dans portraits/{nom}.jpeg sur GitHub et republie le site. */
+/* ══════════ ★ PORTRAITS : envoi et cadrage (super admins) ══════════
+   - On choisit la fiche (ou la carte Panthéon), puis la photo : réduite ici (900 px, JPEG), déposée dans
+     portraitQueue/{id} ; l'Action « Notifications push » la range dans portraits/{fiche}.jpeg sur GitHub
+     (l'ancienne est remplacée ; locked.jpeg n'est jamais touchée) et republie le site.
+   - Cadrage de la vignette carrée (glisser, pincer, molette ou curseur) : portraitCrops/{fiche} = { s, x, y }
+     (zoom, point fixe en %). Appliqué partout aux vignettes carrées ; pour une nouvelle photo, il part avec
+     elle et n'est appliqué qu'une fois la photo en ligne. */
 (function () {
   const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
   const me = () => (typeof _accPlayer === "function" ? _accPlayer() : null);
   const isSA = () => typeof _accIsSuper !== "undefined" && !!_accIsSuper;
   const toast = t => (typeof _showToast === "function" ? _showToast(t) : null);
-  let box = null, st = null, qRef = null, Q = {};
-  const players = () => [...new Set((typeof ALL_PLAYERS !== "undefined" ? ALL_PLAYERS : []).filter(n => typeof INACTIFS === "undefined" || !INACTIFS.has(n)))].sort((a, b) => a.localeCompare(b, "fr"));
-  const fileName = () => (st.kind === "pan" ? "Pantheon_" : "") + st.name.normalize("NFC").trim();
-  const okName = n => /^[A-Za-zÀ-ÖØ-öø-ÿ0-9 '_.-]{1,40}$/.test(n) && !n.startsWith(".");
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  // ── cadrages enregistrés : une feuille de style ajoutée après les réglages d'origine (elle gagne)
+  let CROPS = {}, cropsOn = false;
+  const cssStr = n => String(n).replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  function applyCrops() {
+    let el = document.getElementById("pf-crops"); if (!el) { el = document.createElement("style"); el.id = "pf-crops"; document.head.appendChild(el); }
+    el.textContent = Object.entries(CROPS).filter(([, c]) => c && c.s).map(([n, c]) => `:is(.roster-avatar, .acm-av).pf > .pf-img[data-pf="${cssStr(n)}"]:not(.pf-locked) { transform: scale(${(+c.s).toFixed(3)}); transform-origin: ${(+c.x).toFixed(2)}% ${(+c.y).toFixed(2)}%; }`).join("\n");
+  }
+  function watchCrops() { if (cropsOn || typeof _db === "undefined" || !_db) return; cropsOn = true; _db.ref("portraitCrops").on("value", s => { CROPS = s.val() || {}; applyCrops(); }, () => { cropsOn = false; }); }
+  setInterval(watchCrops, 2000); setTimeout(watchCrops, 300);
+  // cadrage actuel d'une fiche (base, sinon réglage d'origine du site) en { s, cx, cy } : zoom et centre visible
+  function currentCrop(name) {
+    let s, ox, oy; const c = CROPS[name];
+    if (c && c.s) { s = +c.s; ox = c.x / 100; oy = c.y / 100; }
+    else { const d = document.createElement("div"); d.className = "roster-avatar pf"; d.style.cssText = "position:absolute;left:-9999px;top:0";
+      d.innerHTML = `<img class="pf-img" data-pf="${esc(name)}" alt="">`; document.body.appendChild(d); const im = d.firstChild, cs = getComputedStyle(im), w = im.offsetWidth || 55, h = im.offsetHeight || 55;
+      const m = cs.transform.match(/matrix\(([^,]+)/); s = m ? +m[1] : 1; const o = cs.transformOrigin.split(" ").map(parseFloat); ox = (o[0] || w / 2) / w; oy = (o[1] || h / 2) / h; d.remove(); }
+    s = clamp(s || 1, 1, 6);
+    return { s, cx: s > 1 ? ox + (.5 - ox) / s : .5, cy: s > 1 ? oy + (.5 - oy) / s : .5 };
+  }
+  const toCss = c => { const s = c.s; if (s <= 1.001) return { s: 1, x: 50, y: 50 }; const k = 1 - 1 / s; return { s, x: clamp((c.cx - .5 / s) / k, 0, 1) * 100, y: clamp((c.cy - .5 / s) / k, 0, 1) * 100 }; };
+  const fit = c => { c.s = clamp(c.s, 1, 6); const h = .5 / c.s; c.cx = clamp(c.cx, h, 1 - h); c.cy = clamp(c.cy, h, 1 - h); return c; };
+  const roster = () => { const L = typeof ALL_PLAYERS !== "undefined" ? ALL_PLAYERS : [], I = typeof INACTIFS !== "undefined" ? INACTIFS : new Set(); return [...new Set(L.filter(n => !I.has(n)))].sort((a, b) => a.localeCompare(b, "fr")); };
+  const hasPf = n => !(typeof _PORTRAIT_MISSING !== "undefined" && _PORTRAIT_MISSING.has(n));
   function shrink(file) {
     return new Promise((res, rej) => { const url = URL.createObjectURL(file), im = new Image();
       im.onload = () => { const w = Math.min(900, im.naturalWidth), h = Math.round(im.naturalHeight * w / im.naturalWidth), c = document.createElement("canvas"); c.width = w; c.height = h;
         c.getContext("2d").drawImage(im, 0, 0, w, h); URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg", .86)); };
       im.onerror = () => { URL.revokeObjectURL(url); rej(new Error("image illisible")); }; im.src = url; });
   }
-  const when = t => t ? new Date(t).toLocaleString("fr", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
-  function draw() {
-    if (!box) return; const n = st.name ? fileName() : "", ok = st.data && st.name && okName(n);
-    const exists = st.kind === "player" && st.name && typeof ALL_PLAYERS !== "undefined" && ALL_PLAYERS.includes(st.name);
-    const hist = Object.entries(Q).map(([id, q]) => Object.assign({ id }, q)).sort((a, b) => (b.at || 0) - (a.at || 0)).slice(0, 8);
-    box.innerHTML = `<div class="sz-box pu-box" role="dialog" aria-modal="true" aria-labelledby="pu-t">
-      <div class="sz-h"><span class="sz-k"><span>★</span> Options · Uploader un portrait</span><button type="button" class="sz-x" data-pu="close" aria-label="Fermer">✕</button></div>
-      <b id="pu-t" class="pu-ttl">Nouveau portrait</b>
-      <div class="pu-seg"><button type="button" data-pu="kind" data-k="player" aria-pressed="${st.kind === "player"}">Joueur</button><button type="button" data-pu="kind" data-k="pan" aria-pressed="${st.kind === "pan"}">Carte Panthéon</button></div>
-      <div class="ev-fld"><label class="ev-lbl" for="pu-n">${st.kind === "pan" ? "Prénom de la légende" : "Joueur"}</label>
-        <input class="ev-in" id="pu-n" list="pu-list" value="${esc(st.name)}" placeholder="${st.kind === "pan" ? "Ex. : Paulo" : "Choisis ou tape le prénom"}" autocomplete="off">
-        ${st.kind === "player" ? `<datalist id="pu-list">${players().map(p => `<option value="${esc(p)}"></option>`).join("")}</datalist>` : ""}
-        <span class="ev-note">Fichier : <b>${n ? esc(n) + ".jpeg" : "…"}</b>${n && !okName(n) ? ` · <span style="color:#ef5350">caractères non autorisés</span>` : exists ? " · remplace le portrait actuel" : st.kind === "player" && st.name ? " · nouveau nom : vérifie l'orthographe exacte de la fiche" : ""}</span></div>
-      <label class="pu-drop" for="pu-f">${st.data ? `<img src="${st.data}" alt="Aperçu du portrait">` : `<span>📷</span><b>Choisir une photo</b><small>Elle sera réduite à 900 px de large</small>`}</label>
-      <input type="file" id="pu-f" accept="image/*" hidden>
+  let box = null, st = null, PAN = null;
+  const head = t => `<div class="sz-h"><span class="sz-k"><span>★</span> Options · ${t}</span><button type="button" class="sz-x" data-pe="close" aria-label="Fermer">✕</button></div>`;
+  function pickView() {
+    const q = (st.q || "").toLowerCase(), L = roster().filter(n => !q || n.toLowerCase().includes(q));
+    const pan = PAN || [];
+    return head("Portraits") + `<div class="pu-seg"><button type="button" data-pe="kind" data-k="player" aria-pressed="${st.kind === "player"}">Fiche joueur</button><button type="button" data-pe="kind" data-k="pan" aria-pressed="${st.kind === "pan"}">Carte Panthéon</button></div>
+      ${st.kind === "player" ? `<input class="ev-in" id="pe-q" type="search" value="${esc(st.q || "")}" placeholder="Chercher une fiche" autocomplete="off">
+        <div class="pe-grid">${L.map(n => `<button type="button" class="pe-fiche" data-pe="open" data-n="${esc(n)}"><span class="roster-avatar pf">${esc(n.slice(0, 2).toUpperCase())}${typeof portraitImg === "function" ? portraitImg(n, true) : ""}</span><span>${esc(n)}</span>${hasPf(n) ? "" : `<small>pas de portrait</small>`}</button>`).join("")}</div>`
+      : `<div class="pe-pan">${pan.map(x => `<button type="button" class="pe-fiche" data-pe="pan" data-n="${esc(x.n)}"><span class="pe-pc"><img src="portraits/${encodeURIComponent(x.f)}.jpeg" alt="" onerror="this.remove()"></span><span>${esc(x.n)}</span></button>`).join("")}</div>
+        <div class="ev-fld"><label class="ev-lbl" for="pe-new">Nouvelle légende</label><div class="pe-row"><input class="ev-in" id="pe-new" value="${esc(st.newPan || "")}" placeholder="Prénom de la légende" autocomplete="off"><button type="button" class="pe-go" data-pe="pannew"${/^[A-Za-zÀ-ÖØ-öø-ÿ0-9 '-]{1,30}$/.test((st.newPan || "").trim()) ? "" : " disabled"}>Choisir</button></div></div>`}`;
+  }
+  function editView() {
+    const pan = st.kind === "pan", src = st.data || (st.has ? (pan ? `portraits/${encodeURIComponent("Pantheon_" + st.name)}.jpeg` : portraitUrl(st.name)) : "");
+    const css = toCss(st.c), changed = !!st.data || (!pan && st.has && JSON.stringify(css) !== JSON.stringify(toCss(st.c0)));
+    const tr = `transform: scale(${css.s}); transform-origin: ${css.x}% ${css.y}%`;
+    return head(pan ? "Carte Panthéon" : "Portrait") + `<div class="pe-who">${pan ? "Légende" : "Fiche"} <b>${esc(st.name)}</b>${st.has || st.data ? "" : ` · <small>pas encore de portrait</small>`}</div>
+      ${!src ? `<label class="pu-drop" for="pe-f"><span>📷</span><b>Choisir une photo</b><small>Elle sera réduite à 900 px de large</small></label>`
+        : pan ? `<div class="pe-card"><img src="${esc(src)}" alt="Carte"></div>`
+        : `<div class="pe-crop" id="pe-crop" aria-label="Cadrage de la vignette : glisse pour déplacer, pince ou molette pour zoomer"><img src="${esc(src)}" alt="" draggable="false" style="${tr}"><span class="pe-frame"></span></div>
+          <div class="pe-zoom"><span>−</span><input type="range" id="pe-z" min="1" max="6" step="0.01" value="${st.c.s.toFixed(2)}" aria-label="Zoom"><span>+</span></div>
+          <div class="pe-prev"><span class="roster-avatar pf"><img class="pf-img" src="${esc(src)}" alt="" style="${tr}"></span><span class="acm-av pf" style="position:relative;overflow:hidden"><img class="pf-img" src="${esc(src)}" alt="" style="${tr}"></span><small>Glisse pour déplacer, pince (ou molette) pour zoomer.</small></div>`}
+      <input type="file" id="pe-f" accept="image/*" hidden>
       ${st.busy ? `<p class="ev-note">Préparation…</p>` : ""}
-      <div class="ev-adm"><button type="button" data-pu="close">Annuler</button><button type="button" class="pri" data-pu="send"${ok && !st.busy ? "" : " disabled"}>Envoyer</button></div>
-      <p class="ev-note">Le portrait est rangé sur GitHub dans les 10 minutes, puis visible sur le site après la mise à jour (rouvrir l'appli).</p>
-      ${hist.length ? `<div class="ev-gh">Derniers envois</div>${hist.map(q => `<div class="pu-h"><b>${esc(q.name || "?")}</b><small>${esc(q.by || "")} · ${when(q.at)}</small><span class="${q.status === "done" ? "ok" : q.status === "error" ? "ko" : ""}">${q.status === "done" ? "✓ en ligne" : q.status === "error" ? "✕ " + esc(q.err || "erreur") : "⏳ en attente"}</span></div>`).join("")}` : ""}
-    </div>`;
+      <div class="pe-acts">${src ? `<label class="pe-btn" for="pe-f">📷 ${st.data ? "Une autre photo" : "Changer de photo"}</label>` : ""}${!pan && src ? `<button type="button" class="pe-btn" data-pe="reset">Recentrer</button>` : ""}</div>
+      ${st.data ? `<p class="ev-note">${st.has ? "La photo actuelle sera remplacée" : "La photo sera ajoutée (la carte « locked » reste pour les autres)"} dans les 10 minutes, puis visible après la mise à jour de l'appli${pan ? "" : ", avec ce cadrage"}.</p>` : !pan && st.has ? `<p class="ev-note">Le cadrage s'applique tout de suite à toutes les vignettes carrées.</p>` : ""}
+      <div class="ev-adm"><button type="button" data-pe="${st.direct ? "close" : "back"}">${st.direct ? "Annuler" : "Retour"}</button><button type="button" class="pri" data-pe="save"${changed && !st.busy ? "" : " disabled"}>Enregistrer</button></div>`;
   }
-  function onClick(e) {
-    if (e.target === box) return close();
-    const t = e.target.closest("[data-pu]"); if (!t) return; const a = t.dataset.pu;
-    if (a === "close") return close();
-    if (a === "kind") { st.kind = t.dataset.k; st.name = ""; return draw(); }
-    if (a === "send") return send();
+  function draw() { if (!box) return; const sc = box.querySelector(".sz-box"), top = sc ? sc.scrollTop : 0, f = document.activeElement, fid = f && box.contains(f) && f.id, pos = f && f.selectionStart;
+    box.innerHTML = `<div class="sz-box pe-box" role="dialog" aria-modal="true">${st.view === "pick" ? pickView() : editView()}</div>`;
+    const n = box.querySelector(".sz-box"); if (n) n.scrollTop = top; if (fid && fid !== "pe-z") { const el = document.getElementById(fid); if (el) { el.focus(); try { el.setSelectionRange(pos, pos); } catch (e) {} } }
+    bindCrop(); }
+  // aperçu en direct, sans tout redessiner pendant le geste
+  function live() { const css = toCss(st.c), tr = `scale(${css.s})`, to = `${css.x}% ${css.y}%`; box.querySelectorAll(".pe-crop img, .pe-prev img").forEach(i => { i.style.transform = tr; i.style.transformOrigin = to; });
+    const z = document.getElementById("pe-z"); if (z && document.activeElement !== z) z.value = st.c.s.toFixed(2);
+    const b = box.querySelector('[data-pe="save"]'); if (b) b.disabled = !(st.data || JSON.stringify(css) !== JSON.stringify(toCss(st.c0))) || st.busy; }
+  function bindCrop() {
+    const el = document.getElementById("pe-crop"); if (!el) return;
+    const P = new Map(); let last = null;
+    const dist = () => { const [a, b] = [...P.values()]; return Math.hypot(a.x - b.x, a.y - b.y); };
+    el.addEventListener("pointerdown", e => { el.setPointerCapture(e.pointerId); P.set(e.pointerId, { x: e.clientX, y: e.clientY }); last = P.size === 2 ? dist() : null; });
+    el.addEventListener("pointermove", e => { if (!P.has(e.pointerId)) return; const p = P.get(e.pointerId), W = el.clientWidth;
+      if (P.size === 1) { st.c.cx -= (e.clientX - p.x) / (W * st.c.s); st.c.cy -= (e.clientY - p.y) / (W * st.c.s); }
+      P.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (P.size === 2) { const d = dist(); if (last) st.c.s *= d / last; last = d; }
+      fit(st.c); live(); });
+    const up = e => { P.delete(e.pointerId); last = P.size === 2 ? dist() : null; };
+    el.addEventListener("pointerup", up); el.addEventListener("pointercancel", up);
+    el.addEventListener("wheel", e => { e.preventDefault(); st.c.s *= Math.exp(-e.deltaY * .0015); fit(st.c); live(); }, { passive: false });
   }
-  async function send() {
-    const n = fileName(); if (!st.data || !okName(n)) return;
+  async function save() {
+    const name = st.kind === "pan" ? "Pantheon_" + st.name : st.name, css = toCss(st.c), crop = { s: +css.s.toFixed(3), x: +css.x.toFixed(2), y: +css.y.toFixed(2) };
     st.busy = true; draw();
-    try { await _db.ref("portraitQueue").push({ name: n, data: st.data, by: me(), at: firebase.database.ServerValue.TIMESTAMP }); toast("Portrait envoyé : en ligne dans les 10 minutes"); st = { kind: st.kind, name: "", data: null }; }
-    catch (er) { toast("Envoi impossible : vérifie ta connexion."); st.busy = false; }
-    draw();
+    try {
+      if (st.data) { const item = { name, data: st.data, by: me(), at: firebase.database.ServerValue.TIMESTAMP }; if (st.kind === "player") item.crop = crop;
+        await _db.ref("portraitQueue").push(item); toast(st.has ? "Photo envoyée : elle remplace l'ancienne dans les 10 minutes" : "Photo envoyée : en ligne dans les 10 minutes"); }
+      else { await _db.ref(`portraitCrops/${name}`).set(crop); toast("Cadrage enregistré"); }
+      close();
+    } catch (er) { st.busy = false; draw(); toast("Enregistrement impossible : vérifie ta connexion."); }
   }
-  function close() { if (box) box.remove(); box = null; if (qRef) { qRef.off(); qRef = null; } }
-  window._portraitUpload = () => {
-    if (!isSA() || typeof _db === "undefined" || !_db) return;
-    st = { kind: "player", name: "", data: null }; Q = {};
-    box = document.createElement("div"); box.className = "sz-ov"; document.body.appendChild(box);
+  function openEdit(name, kind, direct) {
+    const pan = kind === "pan", has = pan ? (PAN || []).some(x => x.n === name) : hasPf(name);
+    const c = pan ? { s: 1, cx: .5, cy: .5 } : currentCrop(name);
+    st = Object.assign(st || {}, { view: "edit", name, kind, has, data: null, c: Object.assign({}, c), c0: Object.assign({}, c), direct: !!direct, busy: false }); draw();
+  }
+  async function onClick(e) {
+    if (e.target === box) return close();
+    const t = e.target.closest("[data-pe]"); if (!t) return; const a = t.dataset.pe;
+    if (a === "close") return close();
+    if (a === "kind") { st.kind = t.dataset.k; if (st.kind === "pan" && !PAN) { try { PAN = await (await fetch("portraits/pantheon.json?v=" + Date.now())).json(); } catch (er) { PAN = []; } } return draw(); }
+    if (a === "open") return openEdit(t.dataset.n, "player");
+    if (a === "pan") return openEdit(t.dataset.n, "pan");
+    if (a === "pannew") return openEdit((st.newPan || "").trim(), "pan");
+    if (a === "back") { st.view = "pick"; st.data = null; return draw(); }
+    if (a === "reset") { st.c = fit({ s: 2.2, cx: .5, cy: .34 + (.5 - .34) / 2.2 }); return live(); }
+    if (a === "save") return save();
+  }
+  function close() { if (box) box.remove(); box = null; }
+  function open(name) {
+    if (!isSA() || typeof _db === "undefined" || !_db) return; watchCrops();
+    close(); box = document.createElement("div"); box.className = "sz-ov"; document.body.appendChild(box);
     box.addEventListener("click", onClick);
-    box.addEventListener("input", e => { if (e.target.id === "pu-n") { st.name = e.target.value; const pos = e.target.selectionStart; draw(); const n = document.getElementById("pu-n"); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (er) {} } } });
-    box.addEventListener("change", async e => { if (e.target.id !== "pu-f") return; const f = e.target.files && e.target.files[0]; if (!f) return;
-      st.busy = true; draw(); try { st.data = await shrink(f); } catch (er) { toast("Photo illisible : essaie une autre image."); } st.busy = false; draw(); });
-    qRef = _db.ref("portraitQueue").limitToLast(10); qRef.on("value", s => { Q = s.val() || {}; Object.values(Q).forEach(q => { if (q) delete q.data; }); draw(); }, () => {});
-    draw();
-  };
+    box.addEventListener("input", e => { const t = e.target;
+      if (t.id === "pe-q") { st.q = t.value; draw(); }
+      else if (t.id === "pe-new") { st.newPan = t.value; draw(); }
+      else if (t.id === "pe-z") { st.c.s = +t.value; fit(st.c); live(); } });
+    box.addEventListener("change", async e => { if (e.target.id !== "pe-f") return; const f = e.target.files && e.target.files[0]; if (!f) return;
+      st.busy = true; draw(); try { st.data = await shrink(f); if (st.kind === "player") st.c = fit({ s: 2.2, cx: .5, cy: .34 + (.5 - .34) / 2.2 }); } catch (er) { toast("Photo illisible : essaie une autre image."); } st.busy = false; draw(); });
+    st = { view: "pick", kind: "player", q: "" };
+    if (name) openEdit(name, "player", true); else draw();
+  }
+  window._portraitUpload = () => open();
+  window._portraitEditor = name => open(name);
 })();
 
 /* ══════════ SAISIE : « Confirmer les équipes et lancer le direct » à glisser ══════════
@@ -20866,7 +20956,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     ]},
     sa: { t: "Guide super admin", ch: [
       { n: "01", ico: "★", t: "Le rôle de super admin", s: "L'étoile et ce qu'elle débloque", qa: [
-        ["Qu'est-ce qu'un super admin voit en plus ?", "Sur l'Accueil, une case ★ Super admin ou, avant l'ouverture du sondage, une roue dentée ⚙️ dans la case verte ; la partie « ★ Options super admin » du menu ☰ (Membres, Notifications, Événements, Uploader un portrait, Paramètres saison, Pronostics), les stats Datas, les classements ★ (Ballon de Plomb, Calamity James) et les nouveautés ★ dans « Quoi de neuf ? ».", "super admin voit plus etoile droits"],
+        ["Qu'est-ce qu'un super admin voit en plus ?", "Sur l'Accueil, une case ★ Super admin ou, avant l'ouverture du sondage, une roue dentée ⚙️ dans la case verte ; la partie « ★ Options super admin » du menu ☰ (Membres, Notifications, Événements, Portraits, Paramètres saison, Pronostics), et « ★ Modifier la photo » sur les fiches, les stats Datas, les classements ★ (Ballon de Plomb, Calamity James) et les nouveautés ★ dans « Quoi de neuf ? ».", "super admin voit plus etoile droits"],
         ["Comment nommer ou retirer un super admin ?", "Menu ☰ › Mon compte › ★ Membres, puis touche l'étoile ☆ / ★ à gauche du joueur. Tu ne peux pas te retirer l'étoile toi-même.", "nommer retirer super admin etoile droits"],
         ["Comment changer le statut d'un joueur ?", "Menu ☰ › Effectif, appui long sur un joueur : Régulier, Occasionnel, Dépanneur ou Inactif. Un message permet d'annuler juste après. Les dépanneurs sont exclus des classements, sauf du leur.", "statut joueur regulier occasionnel depanneur inactif appui long"]
       ]},
@@ -20919,8 +21009,9 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       ]},
       { n: "08", ico: "⚙️", t: "Saisons et autres réglages", s: "Les fonctions ★ à connaître", qa: [
         ["Comment régler les dates de saison ?", "Menu ☰ › ★ Paramètres saison : début, fin, album des vignettes, fin des échanges et période de vote du Règlement. Après la fin officielle, l'appli propose de créer la saison suivante avec des dates pré-remplies.", "saison dates reglage album echanges"],
-["Comment uploader un portrait ?", "Menu ☰ › ★ Options super admin › Uploader un portrait. Choisis « Joueur » (prénom exactement comme sa fiche, la liste aide) ou « Carte Panthéon » (prénom de la légende), puis la photo : elle est réduite toute seule. Le nom du fichier s'affiche avant l'envoi, et un portrait existant est remplacé. Il est rangé sur GitHub dans les 10 minutes puis visible après la mise à jour de l'appli. « Derniers envois » montre où en est chaque envoi.", "uploader portrait photo vignette pantheon envoyer image remplacer"],
-        ["Un portrait ne s'affiche plus après un envoi sur GitHub", "Le nom du fichier doit être exactement celui de la fiche. Les accents envoyés depuis certains téléphones ou Mac sont désormais corrigés tout seuls. Le plus simple reste « Uploader un portrait » dans l'appli, qui donne le bon nom.", "portrait ne s affiche plus photo disparue nom fichier accent"],
+["Comment changer ou ajouter un portrait ?", "Sur la fiche du joueur, touche « ★ Modifier la photo » (ou Menu ☰ › ★ Options super admin › Portraits, puis choisis la fiche). « Changer de photo » remplace l'ancienne ; si la fiche n'a pas encore de portrait, la photo s'ajoute (la carte « locked » reste pour les autres). La photo est réduite toute seule, rangée sur GitHub dans les 10 minutes, puis visible après la mise à jour de l'appli. Pour une carte du Panthéon : onglet « Carte Panthéon ».", "uploader portrait photo vignette pantheon envoyer image remplacer changer ajouter"],
+        ["Comment recadrer la vignette carrée d'un joueur ?", "Ouvre « ★ Modifier la photo » sur sa fiche. Dans le carré, glisse avec le doigt pour déplacer, pince pour zoomer (molette ou curseur sur ordinateur). L'aperçu montre les vignettes telles qu'elles apparaîtront. « Enregistrer » applique le cadrage tout de suite partout (Effectif, Membres, Vestiaire, stats…). « Recentrer » revient au cadrage de départ.", "recadrer cadrage vignette carree zoom deplacer avatar portrait"],
+        ["Un portrait ne s'affiche plus après un envoi sur GitHub", "Le nom du fichier doit être exactement celui de la fiche. Les accents envoyés depuis certains téléphones ou Mac sont désormais corrigés tout seuls. Le plus simple reste « ★ Modifier la photo » sur la fiche, qui donne toujours le bon nom.", "portrait ne s affiche plus photo disparue nom fichier accent"],
                 ["Que se passe-t-il à la clôture du vote du Règlement ?", "L'Effectif se met à jour tout seul : actif › Réguliers, +1 › Occasionnels, dépanneur › Dépanneurs, quitte ou sans réponse › Inactifs.", "cloture vote reglement effectif"],
         ["Quelles sont les autres fonctions ★ ?", "Datas (une trentaine de stats pointues dans Statistiques), Récompenses ★ (Ballon de Plomb, Calamity James), ★ Pronostics et les Coefficients joueurs dans le menu ☰.", "datas pronos coefficients fonctions"],
         ["Comment activer ou couper les pronostics ?", "Menu ☰ › ★ Options super admin › Pronostics : c'est un interrupteur, comme les notifications (activés ou désactivés écrit à côté). Un appui demande confirmation puis bascule. Activés, les joueurs votent sur chaque match du soir dès que ses 2 équipes sont choisies dans la Saisie, jusqu'à la mi-temps.", "activer desactiver pronos pronostics interrupteur"],
