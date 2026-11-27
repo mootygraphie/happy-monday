@@ -5441,8 +5441,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="27/11/2026"><li>🔄 <b>Mettre à jour l'appli</b> : le « Quoi de neuf ? » s'ouvre d'abord, avec le bouton Mettre à jour quand une nouvelle version est là</li><li data-sa>🖼️ <b>Album</b> : modifier une carte Mythique, et l'offrir à un joueur (il la découvre avec l'animation Mythique)</li><li data-sa>🎁 <b>Offrir</b> : la liste des joueurs qui l'ont déjà reçue, en attente ou découverte</li><li data-sa>☰ <b>Menu</b> : les réglages super admin sont rangés dans un seul bouton « ★ Options », qui ouvre un sous-menu</li><li data-sa>👁️ <b>Cartes masquées</b> : assombries ; touche l'œil barré pour la montrer aux joueurs</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/11/2026 - 12:46</footer>
+<template id="hm-news" data-date="27/11/2026"><li>🎁 <b>Vignettes</b> : dès le 28 novembre, 2 boosters par jour, un à minuit et un à midi (rappel à 18h s'il n'est pas ouvert)</li><li>🔄 <b>Mettre à jour l'appli</b> : le « Quoi de neuf ? » s'ouvre d'abord, avec le bouton Mettre à jour quand une nouvelle version est là</li><li data-sa>🖼️ <b>Album</b> : modifier une carte Mythique, et l'offrir à un joueur (il la découvre avec l'animation Mythique)</li><li data-sa>🎁 <b>Offrir</b> : la liste des joueurs qui l'ont déjà reçue, en attente ou découverte</li><li data-sa>☰ <b>Menu</b> : les réglages super admin sont rangés dans un seul bouton « ★ Options », qui ouvre un sous-menu</li><li data-sa>👁️ <b>Cartes masquées</b> : assombries ; touche l'œil barré pour la montrer aux joueurs</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/11/2026 - 13:44</footer>
 
 <script>
 /* ══════════ EMOJIS STYLE TEAMS (Fluent, licence MIT) SUR TOUT LE SITE ══════════
@@ -17429,6 +17429,14 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const p = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(_liveNow()));
     return Math.round(Date.parse(p + "T00:00:00Z") / 86400000);
   }
+  // ── 2ᵉ booster à midi (heure de Paris) à partir du 28/11/2026 : un crédit à minuit, un à midi.
+  // boosters = { stock, day, last, lastDay } : last = n° du dernier crédit compté (voir credN), écrit le jour lastDay.
+  // Une ancienne version de l'appli ne connaît que day : si elle l'a avancé (lastDay ≠ day), on repart du minuit de day.
+  const NOON_FROM = Math.round(Date.parse("2026-11-28T00:00:00Z") / 86400000);
+  function parisHalf() { return +new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Paris", hour: "2-digit", hourCycle: "h23" }).format(new Date(_liveNow())) >= 12 ? 1 : 0; }
+  const credN = (d, h) => d + (d >= NOON_FROM ? d - NOON_FROM + (h ? 1 : 0) : 0);
+  function boostStock(b) { const d = parisDay(); if (!b) return 5; const base = b.lastDay === b.day && b.last != null ? b.last : credN(b.day || d, 0); return Math.min(5, (b.stock || 0) + Math.max(0, credN(d, parisHalf()) - base)); }
+  const boostMark = () => { const d = parisDay(); return { day: d, lastDay: d, last: credN(d, parisHalf()) }; };
   function msToParisMidnight() {
     const now = _liveNow(), parts = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(new Date(now)).split(":").map(Number);
     return ((24 - parts[0]) * 3600 - parts[1] * 60 - parts[2]) * 1000;
@@ -17437,10 +17445,10 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     if (!VG_OPEN()) { BOOST = (await _db.ref(root + "/boosters").once("value")).val(); return; } // saison finie : plus de crédit
     const today = parisDay();
     const res = await _db.ref(root + "/boosters").transaction(b => {
-      if (!b) return { stock: 5, day: today, welcome: true }; // 5 boosters offerts à l'ouverture de l'album
-      const add = Math.max(0, today - (b.day || today));
-      if (!add) return; // rien à créditer
-      return { ...b, stock: Math.min(5, (b.stock || 0) + add), day: today };
+      if (!b) return { stock: 5, ...boostMark(), welcome: true }; // 5 boosters offerts à l'ouverture de l'album
+      const mk = boostMark();
+      if (b.day === mk.day && b.lastDay === mk.lastDay && b.last === mk.last) return; // rien à créditer
+      return { ...b, stock: boostStock(b), ...mk };
     });
     BOOST = res.snapshot.val();
   }
@@ -17471,10 +17479,10 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const res = await _db.ref(base() + "/boosters").transaction(b => {
       consumed = false;
       if (!b) return b;
-      const stock = Math.min(5, (b.stock || 0) + Math.max(0, today - (b.day || today)));
+      const stock = boostStock(b);
       if (stock < 1) return;
       consumed = true;
-      return { ...b, stock: stock - 1, day: today };
+      return { ...b, stock: stock - 1, ...boostMark() };
     });
     BOOST = res.snapshot.val() || BOOST;
     return res.committed && consumed;
@@ -17675,7 +17683,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     return `<div class="vg-locked">
       <div class="vg-teaser">${sample.map(c => `<div class="vg-tcard">${cardHTML(c)}</div>`).join("")}</div>
       <h3>Collectionne les vignettes de la saison</h3>
-      <p>${ALL.length} cartes à collectionner : les joueurs, les hauts faits et les faits notables. 5 boosters offerts pour commencer, puis 1 par jour.</p>
+      <p>${ALL.length} cartes à collectionner : les joueurs, les hauts faits et les faits notables. 5 boosters offerts pour commencer, puis 2 par jour (à minuit et à midi).</p>
       <p class="vg-muted">🔐 Les vignettes sont réservées aux comptes joueurs.</p>
       <button class="cta" data-vg="login">Se connecter ou créer mon compte</button></div>`;
   }
@@ -17699,7 +17707,8 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   }
   function stockLine() {
     const st = BOOST ? BOOST.stock : 0;
-    const ms = msToParisMidnight(), h = Math.floor(ms / 3600000), m = Math.floor(ms % 3600000 / 60000);
+    let ms = msToParisMidnight(); if (parisDay() >= NOON_FROM && !parisHalf()) ms -= 12 * 3600000; // prochain crédit : midi ou minuit
+    const h = Math.floor(ms / 3600000), m = Math.floor(ms % 3600000 / 60000);
     const next = st >= 5 ? "Réserve pleine (5 maximum)" : `+1 booster dans ${h ? h + " h " : ""}${m} min`;
     return `<div class="vg-stock"><span class="vg-stock-n">${"🎁".repeat(st) || "—"}</span><span><b>${st} booster${st > 1 ? "s" : ""}</b> disponible${st > 1 ? "s" : ""} · ${next}</span></div>`;
   }
@@ -17712,7 +17721,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
       <button class="pack" id="vg-pack" aria-label="Ouvrir le booster"${n < 1 ? " disabled style=\"opacity:.45;filter:grayscale(.6)\"" : ""}>
         <div class="pack-body"></div><div class="pack-top"></div>
         <div class="pack-label"><span class="ball">⚽</span><b>Happy <span>Monday</span></b><div class="kinds">👤 🏅 📌</div><small>Booster · 5 cartes</small></div></button>
-      <button class="cta" id="vg-open"${n < 1 ? " disabled" : ""}>${n < 1 ? "Plus de booster pour aujourd'hui" : "Ouvrir un booster"}</button>
+      <button class="cta" id="vg-open"${n < 1 ? " disabled" : ""}>${n < 1 ? "Plus de booster pour l'instant" : "Ouvrir un booster"}</button>
       <p class="odds">3 joueurs, 1 haut fait, 1 fait notable. Chances par carte : légendaire 5 %, épique 12 %, rare 30 %, commune 53 %. Au moins une rare. Chaque joueur a 1 % de chance d'être une légende du Panthéon (mythique).</p>`;
     if (n >= 1) { document.getElementById("vg-pack").addEventListener("click", openPack); document.getElementById("vg-open").addEventListener("click", openPack); }
   }
@@ -18442,14 +18451,14 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
   window._vgInfo = () => {
     if (!watchFor || !albumsLoaded) return null;
     const b = ALBUMS[watchFor] && ALBUMS[watchFor].boosters, today = parisDay();
-    const boosters = !VG_OPEN() ? 0 : !b ? 5 : Math.min(5, (b.stock || 0) + Math.max(0, today - (b.day || today)));
+    const boosters = !VG_OPEN() ? 0 : !b ? 5 : boostStock(b);
     const pend = trPending(), now = _liveNow(), W = 7 * 864e5, events = [];
     // Cloche : demandes reçues (en attente), réponses à mes propositions et annulations (7 derniers jours)
     trList().forEach(t => { const gift = !t.get.length;
       if (t.to === watchFor && t.status === "wait" && !trExpired(t) && trValid(t)) events.push({ id: `trq-${t.id}`, kind: "req", who: t.from, gift, at: t.at || 0 });
       else if (t.from === watchFor && (t.status === "ok" || t.status === "ko") && now - (t.doneAt || 0) < W) events.push({ id: `trr-${t.id}`, kind: t.status, who: t.to, gift, at: t.doneAt || 0 });
       else if (t.to === watchFor && t.status === "cancel" && now - (t.doneAt || 0) < W) events.push({ id: `trc-${t.id}`, kind: "cancel", who: t.from, gift, at: t.doneAt || 0 }); });
-    return { boosters, trades: pend.length, tradeKey: pend.map(t => t.id).sort().join(","), day: today, events: events.sort((a, b) => b.at - a.at) };
+    return { boosters, trades: pend.length, tradeKey: pend.map(t => t.id).sort().join(","), day: today * 2 + parisHalf(), events: events.sort((a, b) => b.at - a.at) };
   };
   // Classements Récompenses : collectionneurs (vignettes collées), traders et généreux (échanges acceptés)
   window._vgRank = () => {
@@ -19376,7 +19385,7 @@ function _svApply() {
           const pr = pw.prefs();
           h += `<button type="button" class="bm-sub" data-bm="__pref" data-k="chat" aria-pressed="${pr.chat}"><span class="bm-ck${pr.chat ? " on" : ""}">${pr.chat ? "✓" : ""}</span><span class="grow">Vestiaire <small>· salons dont la cloche est active</small></span></button>
             <button type="button" class="bm-sub" data-bm="__pref" data-k="trades" aria-pressed="${pr.trades}"><span class="bm-ck${pr.trades ? " on" : ""}">${pr.trades ? "✓" : ""}</span><span class="grow">Échanges reçus</span></button>
-            <button type="button" class="bm-sub" data-bm="__pref" data-k="boosters" aria-pressed="${pr.boosters}"><span class="bm-ck${pr.boosters ? " on" : ""}">${pr.boosters ? "✓" : ""}</span><span class="grow">Boosters à ouvrir <small>· à 10h</small></span></button>
+            <button type="button" class="bm-sub" data-bm="__pref" data-k="boosters" aria-pressed="${pr.boosters}"><span class="bm-ck${pr.boosters ? " on" : ""}">${pr.boosters ? "✓" : ""}</span><span class="grow">Boosters à ouvrir <small>· à 10h et 18h</small></span></button>
             <div class="bm-sub"><span class="bm-ck on locked">✓</span><span class="grow">Sondage : ouverture et rappel 3 h</span><small>toujours</small></div>
             <div class="bm-sub"><span class="bm-ck on locked">✓</span><span class="grow">Récap de la soirée</span><small>toujours</small></div>
             <div class="bm-sub"><span class="bm-ck on locked">✓</span><span class="grow">Infos Club, @tous et anniversaires</span><small>toujours</small></div>`;
@@ -21222,7 +21231,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       ]},
       { n: "06", ico: "🃏", t: "Les vignettes", s: "L'album, les boosters, les échanges", qa: [
         ["Qu'est-ce que le Panthéon ?", "5 légendes du club en cartes mythiques, avec leur propre révélation, dans l'album Vignettes.", "pantheon legendes mythiques"],
-        ["Combien de boosters je reçois ?", "Un booster par jour, jusqu'à 5 en réserve. La pastille rouge sur Vignettes indique combien t'attendent.", "boosters combien par jour pastille ouvrir"],
+        ["Combien de boosters je reçois ?", "Deux boosters par jour depuis le 28 novembre : un à minuit, un à midi (heure de Paris), jusqu'à 5 en réserve. La pastille rouge sur Vignettes indique combien t'attendent. Si tu as activé les notifications boosters, un rappel arrive à 10h et à 18h, seulement si le booster n'a pas encore été ouvert.", "boosters combien par jour pastille ouvrir"],
         ["Quelles sont les raretés ?", "Légendaire (1er de chaque section), Épique (2e), Rare (3e et 4e), Commune (les suivants) et Mythique (cartes du Club).", "rarete legendaire epique rare commune mythique"],
         ["Comment sont rangés les joueurs ?", "Chaque joueur est rangé dans sa meilleure spécialité de la saison : Buteurs, Passeurs, Défenseurs, Gardiens (6 joueurs chacune), Guerriers (tous les autres) et Dépanneurs. Après chaque soirée, un joueur peut changer de section ou de rareté, mais une carte collée le reste.", "sections rangement specialite change"],
         ["Comment échanger mes doubles ?", "Vignettes › 🔄 Échanges. Propose jusqu'à 3 doubles contre 3 cartes à un autre joueur. Une proposition expire après 3 jours, et les doubles proposés sont réservés le temps de l'échange.", "echanger doubles echange proposer trade"],

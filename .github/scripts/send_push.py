@@ -6,6 +6,7 @@ Notifications :
   - sondage ouvert                  → tous les abonnés, une fois par lundi
   - « plus que 3 h » (dès 18h30)    → abonnés qui n'ont pas répondu, une fois
   - booster disponible (10h-10h59) → abonnés qui ont au moins 1 booster et n'en ont ouvert aucun aujourd'hui, une fois par jour
+  - 2ᵉ booster (midi, depuis le 28/11/2026) : rappel à 18h-18h59 si aucun booster n'a été ouvert depuis midi
                                        (passage de 10h raté : rien ce jour-là, jamais de booster le soir)
   - message d'un super admin        → pushQueue/{id} = {by, title, body, to: joueur | [joueurs] | "__all"}
   - Le Vestiaire (chat)              → membres du salon abonnés, sauf salon coupé (chat/mute) ; une @mention passe toujours
@@ -465,9 +466,16 @@ def main(fast=False):
                 mark(f"pushSent/trade/{tid}")
     block("Échanges", do_trades)
 
-    # ── boosters de vignettes : seulement entre 10h00 et 10h59 (passage raté = rien ce jour-là)
+    # ── boosters de vignettes : 10h00-10h59 (booster de minuit) et 18h00-18h59 (booster de midi, depuis le 28/11/2026)
+    # passage raté = rien pour ce créneau
+    NOON_FROM = (datetime.date(2026, 11, 28) - datetime.date(1970, 1, 1)).days
+    def cred_n(d, h):  # n° du dernier crédit (minuit, puis midi à partir de NOON_FROM) : même calcul que l'appli
+        return d + ((d - NOON_FROM + h) if d >= NOON_FROM else 0)
     def do_boost():
-        if now.hour != 10:
+        pm = now.hour == 18
+        if now.hour != 10 and not pm:
+            return
+        if pm and (today - datetime.date(1970, 1, 1)).days < NOON_FROM:
             return
         seasons = sorted(k for k in (fetch(f"{DB}/vignettes.json?shallow=true") or {}) if "-" in k)
         if not seasons:
@@ -480,21 +488,24 @@ def main(fast=False):
             return
         V = req(f"vignettes/{season}") or {}
         day = (today - datetime.date(1970, 1, 1)).days
-        done = (sent.get("boost") or {}).get(day_iso) or {}
-        midnight = datetime.datetime.combine(today, datetime.time(0, 0), PARIS).timestamp() * 1000
+        slot = day_iso + ("-pm" if pm else "")
+        done = (sent.get("boost") or {}).get(slot) or {}
+        # ouvert depuis le dernier crédit (minuit pour 10h, midi pour 18h) : pas de rappel
+        since = datetime.datetime.combine(today, datetime.time(12 if pm else 0, 0), PARIS).timestamp() * 1000
         logs = req(f"vignettesLog/{season}") or {}
         for p in subs:
             b = (V.get(p) or {}).get("boosters")
             if not b or done.get(p) or not allowed(p, "boosters"):
                 continue
             # déjà ouvert un booster aujourd'hui (journal des ouvertures, hors échanges) : pas de rappel
-            if any(isinstance(e, dict) and e.get("cards") and (e.get("at") or 0) >= midnight for e in (logs.get(p) or {}).values()):
+            if any(isinstance(e, dict) and e.get("cards") and (e.get("at") or 0) >= since for e in (logs.get(p) or {}).values()):
                 continue
-            stock = min(5, (b.get("stock") or 0) + max(0, day - (b.get("day") or day)))
+            base = b.get("last") if b.get("lastDay") == b.get("day") and b.get("last") is not None else cred_n(b.get("day") or day, 0)
+            stock = min(5, (b.get("stock") or 0) + max(0, cred_n(day, 1 if pm else 0) - base))
             if stock > 0:
-                print("Boosters :", p, stock)
-                mark(f"pushSent/boost/{day_iso}/{p}")
-                auto_send(p, "🎁 " + ("Un booster t'attend" if stock == 1 else f"{stock} boosters t'attendent"), "Ouvre-les dans Vignettes.", "./?n=vg#vignettes", f"boost-{day_iso}")
+                print("Boosters :", p, stock, "(18h)" if pm else "(10h)")
+                mark(f"pushSent/boost/{slot}/{p}")
+                auto_send(p, "🎁 Ton nouveau booster est disponible !", "Ouvre-le dans Vignettes." if stock == 1 else f"{stock} boosters t'attendent dans Vignettes.", "./?n=vg#vignettes", f"boost-{slot}")
     block("Boosters", do_boost)
     print(stats)
 
