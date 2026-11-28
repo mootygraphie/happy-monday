@@ -4445,6 +4445,53 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #hm-help .hh-pn button:disabled small { color: var(--text3); }
   #hm-help .hh-shot { display: block; width: 100%; max-width: 340px; margin: 0 auto 14px; border-radius: 14px; border: 1px solid var(--border2); box-shadow: 0 8px 20px rgba(0,0,0,.25); }
   #hm-help .hh-ans .hh-shot { margin-top: 12px; margin-bottom: 0; }
+  /* ★ Vidéos des buts */
+  #hm-vid { position: fixed; inset: 0; z-index: 1300; background: var(--bg); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  #hm-vid[hidden] { display: none; }
+  #hm-vid .vd-in { max-width: 760px; margin: 0 auto; padding: calc(env(safe-area-inset-top, 0px) + 16px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 40px) max(16px, env(safe-area-inset-left, 0px)); position: relative; }
+  #hm-vid .vd-x { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 16px); right: max(16px, env(safe-area-inset-right, 0px)); width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg2); color: var(--text); cursor: pointer; }
+  #hm-vid .vd-k { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--sa); }
+  #hm-vid .vd-title { font-size: clamp(28px, 7vw, 40px); line-height: 1.05; font-weight: 800; font-style: italic; text-transform: uppercase; margin: 4px 0 6px; padding-right: 48px; }
+  #hm-vid .vd-lead, #hm-vid .vd-note { color: var(--text2); font-size: 13px; line-height: 1.5; margin: 6px 0; }
+  #hm-vid .vd-warn { color: #ff9f0a; font-size: 13px; margin: 6px 0; }
+  #hm-vid .vd-sec { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; padding: 16px 0; border-top: 1px solid var(--border); }
+  #hm-vid .vd-sec > div > b { display: block; font-size: 16px; font-weight: 800; font-style: italic; text-transform: uppercase; margin-bottom: 6px; }
+  #hm-vid .vd-n { width: 28px; height: 28px; border-radius: 50%; background: var(--gold); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 14px; }
+  #hm-vid select, #hm-vid input[type=text], #hm-vid input[type=number] { font: inherit; font-size: 14px; color: var(--text); background: var(--bg2); border: 1px solid var(--border2); border-radius: 10px; padding: 9px 10px; max-width: 100%; }
+  #hm-vid select, #hm-vid input[type=text] { width: 100%; }
+  #hm-vid input[type=number] { width: 64px; }
+  #hm-vid button { font: inherit; cursor: pointer; }
+  #hm-vid .vd-cam { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 10px 12px; margin-top: 8px; }
+  #hm-vid .vd-camh { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  #hm-vid .vd-pick { border: 1px solid var(--gold-border); background: var(--gold-bg); color: var(--text); border-radius: 10px; padding: 7px 12px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  #hm-vid .vd-files { display: grid; gap: 4px; margin-top: 8px; font-size: 13px; }
+  #hm-vid .vd-files div { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; } #hm-vid .vd-files small { color: var(--text2); font-variant-numeric: tabular-nums; }
+  #hm-vid .vd-off { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 8px; font-size: 12.5px; color: var(--text2); }
+  #hm-vid .vd-off button, #hm-vid .vd-nudge button { border: 1px solid var(--border2); background: var(--bg3); color: var(--text); border-radius: 8px; padding: 4px 8px; font-size: 12px; font-weight: 600; }
+  #hm-vid .vd-off b { color: var(--text); font-variant-numeric: tabular-nums; min-width: 52px; text-align: center; }
+  #hm-vid .vd-m { display: grid; gap: 4px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  #hm-vid .vd-mt { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; } #hm-vid .vd-mt i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  #hm-vid .vd-ms { font-size: 12.5px; color: var(--text2); }
+  #hm-vid .vd-seg { display: inline-flex; gap: 4px; padding: 3px; border-radius: 10px; background: var(--bg2); border: 1px solid var(--border); justify-self: start; }
+  #hm-vid .vd-seg button { border: 0; background: none; color: var(--text2); border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 700; }
+  #hm-vid .vd-seg button[aria-pressed="true"] { background: var(--gold); color: #fff; }
+  #hm-vid .vd-player { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 6px 0 10px; }
+  #hm-vid .vd-player[hidden] { display: none; }
+  #hm-vid video { width: 100%; max-height: 46vh; border-radius: 12px; background: #000; display: block; }
+  #hm-vid #vd-cap { font-size: 12.5px; color: var(--text2); margin-top: 6px; } #hm-vid #vd-cap b { color: var(--text); }
+  #hm-vid .vd-goals { display: grid; gap: 6px; }
+  #hm-vid .vd-g { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 9px 10px; border-radius: 12px; background: var(--bg2); border: 1px solid var(--border); }
+  #hm-vid .vd-g.on { border-color: var(--gold-border); } #hm-vid .vd-g.out { opacity: .6; }
+  #hm-vid .vd-gn { font-weight: 800; color: var(--gold); font-variant-numeric: tabular-nums; }
+  #hm-vid .vd-gi { min-width: 0; font-size: 14px; } #hm-vid .vd-gi small { display: block; font-size: 12px; color: var(--text2); overflow-wrap: anywhere; } #hm-vid .vd-gi em { color: #ff9f0a; font-style: normal; }
+  #hm-vid .vd-ga { display: flex; gap: 6px; }
+  #hm-vid .vd-ga button { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--gold-border); background: var(--gold-bg); color: var(--text); font-size: 13px; }
+  #hm-vid .vd-nudge { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; font-size: 12.5px; color: var(--text2); }
+  #hm-vid .vd-row { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13.5px; color: var(--text2); margin-bottom: 8px; } #hm-vid .vd-row label { display: flex; align-items: center; gap: 6px; }
+  #hm-vid .vd-dir { display: grid; gap: 4px; font-size: 13px; color: var(--text2); margin-bottom: 10px; }
+  #hm-vid .vd-go { width: 100%; border: 0; border-radius: 12px; background: var(--gold); color: #fff; font-weight: 800; font-size: 15px; padding: 13px; }
+  #hm-vid .vd-go:disabled { opacity: .45; cursor: default; }
+  #hm-vid button:focus-visible, #hm-vid .vd-pick:focus-within { outline: 2px solid var(--gold); outline-offset: 2px; }
   #hm-help .hh-none { margin-top: 14px; padding: 18px 16px; border-radius: 16px; background: var(--bg2); border: 1px dashed var(--border2); }
   #hm-help .hh-none p { margin: 6px 0 12px; color: var(--text2); font-size: 13.5px; line-height: 1.5; }
   #hm-help .hh-none button { border: 0; border-radius: 10px; padding: 9px 14px; background: var(--gold); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
@@ -5492,7 +5539,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="28/11/2026"><li>📝 <b>Aide</b> : la saisie de la soirée expliquée étape par étape, pour tous les joueurs</li><li>⚽ <b>Chargement</b> : un petit terrain animé à l'ouverture de l'appli et pendant les chargements, et de nouvelles illustrations sur l'Accueil</li><li data-sa>💬 <b>Salons</b> : dans les paramètres, les membres du salon s'affichent en premier</li><li>❓ <b>Aide</b> : un sommaire pour aller directement à la bonne partie, des flèches pour passer à la suivante, et des captures d'écran sous les réponses</li><li>🎁 <b>Vignettes</b> : dès le 28 novembre, 2 boosters par jour, un à minuit et un à midi (rappel à 18h s'il n'est pas ouvert)</li><li>🔄 <b>Mettre à jour l'appli</b> : le « Quoi de neuf ? » s'ouvre d'abord, avec le bouton Mettre à jour quand une nouvelle version est là</li><li data-sa>🖼️ <b>Album</b> : modifier une carte Mythique, et l'offrir à un joueur (il la découvre avec l'animation Mythique)</li><li data-sa>🎲 <b>Cartes Mythiques</b> : chacune peut être offerte à tous ou mise en jeu dans les boosters, Club comme Panthéon</li><li data-sa>🎁 <b>Offrir</b> : la liste des joueurs qui l'ont déjà reçue, en attente ou découverte</li><li data-sa>☰ <b>Menu</b> : les réglages super admin sont rangés dans un seul bouton « ★ Options », qui ouvre un sous-menu</li><li data-sa>👁️ <b>Cartes masquées</b> : assombries ; touche l'œil barré pour la montrer aux joueurs</li></template>
+<template id="hm-news" data-date="28/11/2026"><li data-sa>🎥 <b>Vidéos des buts</b> : ★ Options › Vidéos des buts prépare le montage Premiere des GoPro (un clip par but et le résumé)</li><li>📝 <b>Aide</b> : la saisie de la soirée expliquée étape par étape, pour tous les joueurs</li><li>⚽ <b>Chargement</b> : un petit terrain animé à l'ouverture de l'appli et pendant les chargements, et de nouvelles illustrations sur l'Accueil</li><li data-sa>💬 <b>Salons</b> : dans les paramètres, les membres du salon s'affichent en premier</li><li>❓ <b>Aide</b> : un sommaire pour aller directement à la bonne partie, des flèches pour passer à la suivante, et des captures d'écran sous les réponses</li><li>🎁 <b>Vignettes</b> : dès le 28 novembre, 2 boosters par jour, un à minuit et un à midi (rappel à 18h s'il n'est pas ouvert)</li><li>🔄 <b>Mettre à jour l'appli</b> : le « Quoi de neuf ? » s'ouvre d'abord, avec le bouton Mettre à jour quand une nouvelle version est là</li><li data-sa>🖼️ <b>Album</b> : modifier une carte Mythique, et l'offrir à un joueur (il la découvre avec l'animation Mythique)</li><li data-sa>🎲 <b>Cartes Mythiques</b> : chacune peut être offerte à tous ou mise en jeu dans les boosters, Club comme Panthéon</li><li data-sa>🎁 <b>Offrir</b> : la liste des joueurs qui l'ont déjà reçue, en attente ou découverte</li><li data-sa>☰ <b>Menu</b> : les réglages super admin sont rangés dans un seul bouton « ★ Options », qui ouvre un sous-menu</li><li data-sa>👁️ <b>Cartes masquées</b> : assombries ; touche l'œil barré pour la montrer aux joueurs</li></template>
 <footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 28/11/2026 - 12:53</footer>
 
 <script>
@@ -19437,6 +19484,7 @@ function _svApply() {
             ${srow("__compose", "Notifications", "Envoyer une notification aux joueurs")}
             ${srow("__events", "Événements", "Créer et gérer les repas, tournois, sorties…")}
             ${srow("__seasons", "Paramètres saison", "Dates de la saison, ouverture de l'album")}
+            ${srow("__vid", "Vidéos des buts", "Des vidéos GoPro au montage Premiere")}
             <button type="button" class="bm-row" data-bm="__pronos" aria-pressed="${pr}"><span class="grow">Pronostics <small>· ${pr ? "activés" : "désactivés"}</small><span class="bm-desc">Le vote des pronos pendant les matchs</span></span><span class="sw"></span></button>
           </div></div>`;
         return;
@@ -19524,6 +19572,7 @@ function _svApply() {
           if (k === "__pronos" && saOpen) { $("footer-pronos-btn")?.click(); setTimeout(renderMenu, 900); return; } // on reste dans le sous-menu
           if (k === "__pref") { const pw = window._pwa; if (pw) { pw.setPref(m.dataset.k, !pw.prefs()[m.dataset.k]); } setTimeout(renderMenu, 300); return; }
           if (k === "__seasons") { close(); render(); if (window._seasonsAdmin) window._seasonsAdmin(); return; }
+          if (k === "__vid") { close(); render(); if (window._vidAdmin) window._vidAdmin(); return; }
           if (k === "__events") { close(); render(); if (window._evAdmin) window._evAdmin(); return; }
           if (k === "__portrait") { close(); render(); if (window._portraitUpload) window._portraitUpload(); return; }
           if (k === "__compose") { const pw = window._pwa; close(); render(); if (pw) pw.compose(); return; }
@@ -21256,6 +21305,196 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   document.addEventListener("pointerup", end); document.addEventListener("pointercancel", e => { x0 = null; reset(); sl = null; });
 })();
 
+/* ══════════ VIDÉOS DES BUTS (★ Options) : GoPro → montage Premiere ══════════
+   Tout se passe dans le navigateur, rien à installer : on choisit la soirée et les fichiers des 2 caméras,
+   l'outil lit l'heure de début de chaque vidéo (en-tête MP4), retrouve chaque but grâce à l'heure enregistrée
+   dans la saisie (matchs[].log : { k: "goal", t: A|B, s, p, h, at }), permet de vérifier et recaler chaque
+   clip, puis télécharge un fichier .xml à importer dans Premiere (une séquence par but + le résumé).
+   Les vidéos ne quittent jamais l'ordinateur. */
+(function () {
+  const isSA = () => typeof _accIsSuper !== "undefined" && !!_accIsSuper;
+  const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+  const xesc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const TL = t => (typeof TEAM_LABEL !== "undefined" && TEAM_LABEL[t]) || t;
+  const COLS = { Rouge: "#ff3fa4", Vert: "#f2e600", Bleue: "#22b8ff" };
+  const pad = n => String(n).padStart(2, "0");
+  // heure « murale » de Paris d'un instant (ms) → ms « faux UTC » (comparable à l'horloge GoPro, réglée en heure locale)
+  const wall = ms => { const p = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" }).formatToParts(new Date(ms)).reduce((o, x) => (o[x.type] = x.value, o), {});
+    return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second) + (ms % 1000); };
+  const hms = w => { const d = new Date(w); return `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`; };
+  const hm = w => { const d = new Date(w); return `${d.getUTCHours()}h${pad(d.getUTCMinutes())}`; };
+  const mmss = s => `${Math.floor(s / 60)}:${pad(Math.floor(s % 60))}`;
+
+  /* ── lecture de l'en-tête MP4 (sans lire la vidéo : quelques Ko, même pour un fichier de 4 Go) ── */
+  async function rd(file, off, len) { return new DataView(await file.slice(off, off + len).arrayBuffer()); }
+  const tag = (dv, o) => String.fromCharCode(dv.getUint8(o), dv.getUint8(o + 1), dv.getUint8(o + 2), dv.getUint8(o + 3));
+  const u64 = (dv, o) => dv.getUint32(o) * 4294967296 + dv.getUint32(o + 4);
+  function kids(dv, a, b) { const L = []; let o = a; while (o + 8 <= b) { let sz = dv.getUint32(o); const t = tag(dv, o + 4); let h = 8; if (sz === 1) { sz = u64(dv, o + 8); h = 16; } else if (sz === 0) sz = b - o; if (sz < h || o + sz > b) break; L.push({ t, s: o + h, e: o + sz }); o += sz; } return L; }
+  const one = (dv, box, t) => box && kids(dv, box.s, box.e).find(k => k.t === t);
+  async function probe(file) {
+    let off = 0, moov = null;
+    while (off + 8 <= file.size) { const h = await rd(file, off, 16); let sz = h.getUint32(0); const t = tag(h, 4); if (sz === 1) sz = u64(h, 8); else if (sz === 0) sz = file.size - off; if (sz < 8) break; if (t === "moov") { moov = { off, sz }; break; } off += sz; }
+    if (!moov) throw new Error("en-tête vidéo introuvable");
+    const dv = await rd(file, moov.off, moov.sz), root = { s: 8, e: moov.sz };
+    const mv = one(dv, root, "mvhd"); if (!mv) throw new Error("mvhd absent");
+    const v = dv.getUint8(mv.s), created = v === 1 ? u64(dv, mv.s + 4) : dv.getUint32(mv.s + 4), ts = v === 1 ? dv.getUint32(mv.s + 20) : dv.getUint32(mv.s + 12), du = v === 1 ? u64(dv, mv.s + 24) : dv.getUint32(mv.s + 16);
+    let fps = 0, w = 0, ht = 0;
+    for (const tk of kids(dv, root.s, root.e).filter(k => k.t === "trak")) {
+      const md = one(dv, tk, "mdia"), hd = one(dv, md, "hdlr"); if (!hd || tag(dv, hd.s + 8) !== "vide") continue;
+      const th = one(dv, tk, "tkhd"); if (th) { w = dv.getUint32(th.e - 8) >>> 16; ht = dv.getUint32(th.e - 4) >>> 16; }
+      const mh = one(dv, md, "mdhd"), mv2 = dv.getUint8(mh.s), tsc = mv2 === 1 ? dv.getUint32(mh.s + 20) : dv.getUint32(mh.s + 12);
+      const st = one(dv, one(dv, one(dv, md, "minf"), "stbl"), "stts"); if (st && dv.getUint32(st.s + 4)) fps = tsc / dv.getUint32(st.s + 12);
+      break;
+    }
+    // l'horloge GoPro est en heure locale : secondes depuis 1904 lues comme une heure « murale »
+    const start = created ? (created - 2082844800) * 1000 : 0;
+    return { start, dur: du / ts, fps: fps || 30, w: w || 1920, h: ht || 1080 };
+  }
+
+  /* ── état ── */
+  const LS = "hmft_vid";
+  let el = null, S = null;
+  const save = () => { try { const all = JSON.parse(localStorage.getItem(LS) || "{}"); all[S.date] = { side: S.side, off: S.off, nudge: S.nudge, before: S.before, after: S.after, dir: S.dir }; localStorage.setItem(LS, JSON.stringify(all)); } catch (e) {} };
+  const restore = d => { try { return JSON.parse(localStorage.getItem(LS) || "{}")[d] || {}; } catch (e) { return {}; } };
+  const sessionsWithGoals = () => (typeof SESSIONS !== "undefined" ? SESSIONS : []).filter(s => s && (s.matchs || []).some(m => (m.log || []).some(e => e && e.k === "goal" && e.at))).sort((a, b) => b.date.localeCompare(a.date));
+  function pick(date) {
+    const r = restore(date);
+    S = { date, cams: S ? S.cams : [[], []], side: r.side || {}, off: r.off || [0, 0], nudge: r.nudge || {}, before: r.before ?? 10, after: r.after ?? 5, dir: r.dir || "", cur: null };
+  }
+  function goals() {
+    const s = (typeof SESSIONS !== "undefined" ? SESSIONS : []).find(x => x.date === S.date); if (!s) return [];
+    const out = [];
+    (s.matchs || []).forEach((m, mi) => {
+      const L = (Array.isArray(m.log) ? m.log : Object.values(m.log || {})).filter(Boolean), st = L.find(e => e.k === "start");
+      let sa = 0, sb = 0;
+      L.filter(e => e.k === "goal" && e.at).forEach(e => { if (e.t === "A") sa++; else sb++;
+        const id = `${mi}-${e.at}`, half = e.h === 2 ? 2 : 1, a = S.side[mi] ?? 0; // a = caméra vers laquelle l'équipe A attaque en 1re mi-temps
+        const towardA = (e.t === "A") === (half === 1), cam = towardA ? a : 1 - a;
+        out.push({ id, mi, m, e, cam, half, score: `${sa}–${sb}`, w: wall(e.at) + ((S.nudge[id] || 0) * 1000), kick: st && st.at ? wall(st.at) : null });
+      });
+    });
+    return out.sort((x, y) => x.e.at - y.e.at).map((g, i) => ({ ...g, n: i + 1 }));
+  }
+  // fichier qui contient l'instant w pour la caméra c
+  function locate(c, w) {
+    for (const f of S.cams[c]) { const s0 = f.start + S.off[c] * 1000; if (w >= s0 && w <= s0 + f.dur * 1000) return { f, t: (w - s0) / 1000 }; }
+    return null;
+  }
+  // chapitres GoPro (GX01xxxx, GX02xxxx…) : le début de chaque chapitre = fin du précédent
+  function chain(list) {
+    list.sort((a, b) => a.name.localeCompare(b.name));
+    const G = {}; list.forEach(f => { const m = /^G[A-Z](\d\d)(\d{4})\./i.exec(f.name); if (m) (G[m[2]] = G[m[2]] || []).push({ f, ch: +m[1] }); });
+    Object.values(G).forEach(L => { L.sort((a, b) => a.ch - b.ch); for (let i = 1; i < L.length; i++) L[i].f.start = L[i - 1].f.start + L[i - 1].f.dur * 1000; });
+    list.sort((a, b) => a.start - b.start);
+  }
+  async function addFiles(c, files) {
+    const L = [];
+    for (const file of files) {
+      try { const p = await probe(file); L.push({ name: file.name, file, url: URL.createObjectURL(file), ...p, start: p.start || (file.lastModified ? wall(file.lastModified) - p.dur * 1000 : 0) }); }
+      catch (er) { L.push({ name: file.name, err: er.message }); }
+    }
+    S.cams[c] = [...S.cams[c], ...L.filter(f => !f.err)]; chain(S.cams[c]);
+    const bad = L.filter(f => f.err); if (bad.length) _showToast(`Fichier illisible : ${bad.map(f => f.name).join(", ")}`);
+    render();
+  }
+
+  /* ── affichage ── */
+  function render() {
+    if (!el) return;
+    const list = sessionsWithGoals(), s = list.find(x => x.date === S.date), G = goals();
+    const fd = d => new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+    const camBox = c => { const F = S.cams[c];
+      return `<div class="vd-cam"><div class="vd-camh"><b>Caméra ${c + 1}</b><label class="vd-pick">📂 ${F.length ? "Ajouter" : "Choisir les vidéos"}<input type="file" accept="video/mp4,video/quicktime,.mp4,.mov" multiple data-vfile="${c}" hidden></label></div>
+        ${F.length ? `<div class="vd-files">${F.map(f => `<div><span>${esc(f.name)}</span><small>${hms(f.start + S.off[c] * 1000)} → ${hms(f.start + S.off[c] * 1000 + f.dur * 1000)} · ${Math.round(f.fps)} i/s</small></div>`).join("")}</div>
+        <div class="vd-off"><span>Recaler l'horloge</span><button type="button" data-voff="${c}" data-d="-3600">−1 h</button><button type="button" data-voff="${c}" data-d="-1">−1 s</button><b>${S.off[c] > 0 ? "+" : ""}${S.off[c]} s</b><button type="button" data-voff="${c}" data-d="1">+1 s</button><button type="button" data-voff="${c}" data-d="3600">+1 h</button></div>` : `<p class="vd-note">Les fichiers MP4 de la carte SD (dossier DCIM). Ils restent sur ton ordinateur.</p>`}</div>`; };
+    const miss = G.filter(g => !locate(g.cam, g.w)).length, ready = G.length && S.cams[0].length + S.cams[1].length && miss < G.length;
+    const matchRows = s ? (s.matchs || []).map((m, mi) => { const gg = G.filter(g => g.mi === mi); if (!gg.length) return ""; const a = S.side[mi] ?? 0;
+      return `<div class="vd-m"><span class="vd-mt"><i style="background:${COLS[m.eqA] || "#888"}"></i>${esc(TL(m.eqA))} <b>${m.scoreA}–${m.scoreB}</b> ${esc(TL(m.eqB))}<i style="background:${COLS[m.eqB] || "#888"}"></i></span>
+        <span class="vd-ms">Au coup d'envoi, les ${esc(TL(m.eqA))} attaquent vers</span><span class="vd-seg"><button type="button" data-vside="${mi}" data-c="0" aria-pressed="${a === 0}">Caméra 1</button><button type="button" data-vside="${mi}" data-c="1" aria-pressed="${a === 1}">Caméra 2</button></span></div>`; }).join("") : "";
+    const goalRows = G.map(g => { const L = locate(g.cam, g.w), nd = S.nudge[g.id] || 0, mine = S.cur === g.id;
+      return `<div class="vd-g${mine ? " on" : ""}${L ? "" : " out"}"><span class="vd-gn">${g.n}</span><span class="vd-gi"><b>${esc(g.e.s)}</b>${g.e.p ? ` · ${esc(g.e.p)}` : ""}<small>M${g.mi + 1} · ${g.score} · ${hm(g.w)} · cam. ${g.cam + 1}${L ? ` · ${esc(L.f.name)} à ${mmss(L.t)}` : " · <em>hors des vidéos</em>"}${nd ? ` · recalé ${nd > 0 ? "+" : ""}${nd} s` : ""}</small></span>
+        <span class="vd-ga">${L ? `<button type="button" data-vplay="${g.id}" aria-label="Voir le but ${g.n}">▶</button>` : ""}<button type="button" data-vcam="${g.id}" title="Changer de caméra">⇄</button></span>
+        ${mine ? `<span class="vd-nudge"><span>Le but est à :</span><button type="button" data-vn="${g.id}" data-d="-10">−10 s</button><button type="button" data-vn="${g.id}" data-d="-2">−2 s</button><button type="button" data-vn="${g.id}" data-d="-1">−1 s</button><button type="button" data-vn="${g.id}" data-d="1">+1 s</button><button type="button" data-vn="${g.id}" data-d="2">+2 s</button><button type="button" data-vn="${g.id}" data-d="10">+10 s</button>${nd ? `<button type="button" data-vn="${g.id}" data-d="0">Annuler</button>` : ""}</span>` : ""}</div>`; }).join("");
+    el.querySelector(".vd-body").innerHTML = `
+      <div class="vd-sec"><span class="vd-n">1</span><div><b>La soirée</b>${list.length ? `<select id="vd-date">${list.map(x => `<option value="${x.date}"${x.date === S.date ? " selected" : ""}>${fd(x.date)} · ${(x.matchs || []).length} matchs</option>`).join("")}</select>` : `<p class="vd-note">Aucune soirée avec l'heure des buts pour l'instant : elle est enregistrée par la saisie en direct, à partir des prochaines soirées.</p>`}</div></div>
+      ${s ? `<div class="vd-sec"><span class="vd-n">2</span><div><b>Les vidéos</b>${camBox(0)}${camBox(1)}</div></div>
+      <div class="vd-sec"><span class="vd-n">3</span><div><b>Les côtés</b><p class="vd-note">Les équipes changent de côté à la mi-temps : l'outil s'en occupe. Vérifie avec ▶ sur le premier but de chaque match.</p>${matchRows}</div></div>
+      <div class="vd-sec"><span class="vd-n">4</span><div><b>Les buts · ${G.length}</b>${miss && S.cams[0].length + S.cams[1].length ? `<p class="vd-warn">${miss} but${miss > 1 ? "s" : ""} hors des vidéos : vérifie l'heure des caméras (étape 2) ou le côté du match.</p>` : ""}
+        <div class="vd-player"${S.cur ? "" : " hidden"}><video id="vd-v" playsinline controls muted></video><div id="vd-cap"></div></div>
+        <div class="vd-goals">${goalRows}</div></div></div>
+      <div class="vd-sec"><span class="vd-n">5</span><div><b>Le montage Premiere</b>
+        <div class="vd-row"><label>Avant le but <input type="number" min="3" max="30" id="vd-bef" value="${S.before}"> s</label><label>Après <input type="number" min="2" max="20" id="vd-aft" value="${S.after}"> s</label></div>
+        <label class="vd-dir">Dossier des vidéos sur le Mac (facultatif)<input type="text" id="vd-dir" placeholder="/Users/toi/Movies/HM 30-11" value="${esc(S.dir)}" autocomplete="off"></label>
+        <button type="button" class="vd-go" data-vxml${ready ? "" : " disabled"}>⬇ Télécharger le montage (.xml)</button>
+        <p class="vd-note">Dans Premiere : Fichier › Importer, choisis ce fichier. Tu obtiens une séquence par but et « Résumé » avec tous les buts bout à bout (et un repère au nom du buteur sur chaque but). Si Premiere demande où sont les vidéos, montre-lui le dossier : il les retrouve toutes d'un coup. Pour tout exporter : Fichier › Exporter › Média sur chaque séquence, ou envoie-les dans Media Encoder.</p></div></div>` : ""}`;
+    if (S.cur) setTimeout(() => playCur(false), 0);
+  }
+  function playCur(start) {
+    const g = goals().find(x => x.id === S.cur), v = el && el.querySelector("#vd-v"); if (!g || !v) return;
+    const L = locate(g.cam, g.w); if (!L) return;
+    const a = Math.max(0, L.t - S.before), b = L.t + S.after;
+    el.querySelector("#vd-cap").innerHTML = `<b>But ${g.n} · ${esc(g.e.s)}</b> · le but est prévu à ${mmss(L.t)} (${esc(L.f.name)}), le clip va de ${mmss(a)} à ${mmss(b)}`;
+    if (v.dataset.src !== L.f.url) { v.src = L.f.url; v.dataset.src = L.f.url; }
+    v.dataset.a = a; v.dataset.b = b;
+    const go = () => { v.currentTime = a; if (start) v.play().catch(() => {}); };
+    if (v.readyState >= 1) go(); else v.addEventListener("loadedmetadata", go, { once: true });
+  }
+
+  /* ── export Premiere (XML Final Cut Pro 7, que Premiere importe) ── */
+  function xml() {
+    const G = goals().map(g => ({ g, L: locate(g.cam, g.w) })).filter(x => x.L);
+    const fps = Math.round(G[0].L.f.fps), ntsc = Math.abs(G[0].L.f.fps - fps) > .01 ? "TRUE" : "FALSE";
+    const rate = `<rate><timebase>${fps}</timebase><ntsc>${ntsc}</ntsc></rate>`, fr = s => Math.round(s * fps);
+    const seen = new Set(), fid = f => "file-" + S.cams.flat().indexOf(f);
+    const url = f => "file://localhost" + encodeURI((S.dir ? S.dir.replace(/\/+$/, "") : "") + "/" + f.name);
+    const fileX = f => { if (seen.has(f)) return `<file id="${fid(f)}"/>`; seen.add(f);
+      return `<file id="${fid(f)}"><name>${xesc(f.name)}</name><pathurl>${url(f)}</pathurl>${rate}<duration>${fr(f.dur)}</duration><media><video><samplecharacteristics>${rate}<width>${f.w}</width><height>${f.h}</height></samplecharacteristics></video><audio><samplecharacteristics><depth>16</depth><samplerate>48000</samplerate></samplecharacteristics><channelcount>2</channelcount></audio></media></file>`; };
+    let ci = 0;
+    const clip = (x, at, kind) => { const { g, L } = x, a = Math.max(0, L.t - S.before), b = Math.min(L.f.dur, L.t + S.after), len = fr(b) - fr(a), nm = xesc(`But ${pad(g.n)} · ${g.e.s}`);
+      return { len, x: `<clipitem id="ci-${++ci}"><name>${nm}</name><duration>${fr(L.f.dur)}</duration>${rate}<start>${at}</start><end>${at + len}</end><in>${fr(a)}</in><out>${fr(b)}</out>${fileX(L.f)}${kind === "a" ? `<sourcetrack><mediatype>audio</mediatype><trackindex>1</trackindex></sourcetrack>` : ""}</clipitem>` }; };
+    const seq = (id, name, items, markers) => { let at = 0; const V = [], A = [];
+      items.forEach(x => { const v = clip(x, at, "v"); V.push(v.x); A.push(clip(x, at, "a").x); at += v.len; });
+      return `<sequence id="${id}"><name>${xesc(name)}</name><duration>${at}</duration>${rate}<media><video><format><samplecharacteristics>${rate}<width>${items[0].L.f.w}</width><height>${items[0].L.f.h}</height></samplecharacteristics></format><track>${V.join("")}</track></video><audio><track>${A.join("")}</track></audio></media>${markers || ""}</sequence>`; };
+    const d = S.date.split("-").reverse().join("-");
+    let at = 0; const mk = G.map(x => { const L = x.L, len = fr(Math.min(L.f.dur, L.t + S.after)) - fr(Math.max(0, L.t - S.before)), m = `<marker><name>${xesc(`${x.g.e.s}${x.g.e.p ? ` (passe ${x.g.e.p})` : ""}`)}</name><comment>${xesc(`Match ${x.g.mi + 1} · ${TL(x.g.m.eqA)} ${x.g.score} ${TL(x.g.m.eqB)}`)}</comment><in>${at + fr(Math.min(S.before, L.t))}</in><out>-1</out></marker>`; at += len; return m; }).join("");
+    const body = [seq("seq-resume", `Résumé ${d}`, G, mk), ...G.map(x => seq("seq-" + x.g.n, `But ${pad(x.g.n)} · ${x.g.e.s} · ${d}`, [x]))].join("");
+    return `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE xmeml>\n<xmeml version="4"><project><name>${xesc(`Happy Monday ${d}`)}</name><children>${body}</children></project></xmeml>\n`;
+  }
+
+  /* ── ouverture et événements ── */
+  function open() {
+    if (!isSA()) return;
+    const list = sessionsWithGoals(); pick(S && S.date && list.some(x => x.date === S.date) ? S.date : (list[0] || {}).date || "");
+    if (!el) {
+      el = document.createElement("div"); el.id = "hm-vid"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-label", "Vidéos des buts");
+      el.innerHTML = `<div class="vd-in"><button type="button" class="vd-x" data-vx aria-label="Fermer">✕</button><span class="vd-k">★ Super admin</span><div class="vd-title">Vidéos des buts</div><p class="vd-lead">Des vidéos GoPro de la soirée au montage Premiere. Tout se passe sur cet ordinateur : rien n'est envoyé.</p><div class="vd-body"></div></div>`;
+      document.body.appendChild(el);
+      el.addEventListener("click", e => {
+        const t = e.target.closest("[data-vx],[data-voff],[data-vside],[data-vplay],[data-vcam],[data-vn],[data-vxml]"); if (!t) return;
+        if (t.dataset.vx != null) { close(); return; }
+        if (t.dataset.voff != null) { const c = +t.dataset.voff; S.off[c] += +t.dataset.d; save(); render(); return; }
+        if (t.dataset.vside != null) { S.side[t.dataset.vside] = +t.dataset.c; save(); render(); return; }
+        if (t.dataset.vplay != null) { S.cur = t.dataset.vplay; render(); setTimeout(() => { playCur(true); el.querySelector(".vd-player").scrollIntoView({ block: "nearest", behavior: "smooth" }); }, 30); return; }
+        if (t.dataset.vcam != null) { const g = goals().find(x => x.id === t.dataset.vcam); if (g) { S.side[g.mi] = 1 - (S.side[g.mi] ?? 0); save(); render(); _showToast(`Match ${g.mi + 1} : caméras inversées`); } return; }
+        if (t.dataset.vn != null) { const id = t.dataset.vn, d = +t.dataset.d; S.nudge[id] = d ? (S.nudge[id] || 0) + d : 0; if (!S.nudge[id]) delete S.nudge[id]; save(); render(); setTimeout(() => playCur(true), 30); return; }
+        if (t.dataset.vxml != null) { try { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([xml()], { type: "application/xml" })); a.download = `happy-monday-${S.date}.xml`; document.body.appendChild(a); a.click(); a.remove(); _showToast("Montage téléchargé : importe-le dans Premiere"); } catch (er) { _showToast("Montage impossible : " + er.message); } }
+      });
+      el.addEventListener("change", e => {
+        if (e.target.dataset.vfile != null) { addFiles(+e.target.dataset.vfile, [...e.target.files]); e.target.value = ""; return; }
+        if (e.target.id === "vd-date") { pick(e.target.value); render(); return; }
+        if (e.target.id === "vd-bef" || e.target.id === "vd-aft") { S.before = Math.max(3, Math.min(30, +el.querySelector("#vd-bef").value || 10)); S.after = Math.max(2, Math.min(20, +el.querySelector("#vd-aft").value || 5)); save(); return; }
+        if (e.target.id === "vd-dir") { S.dir = e.target.value.trim(); save(); }
+      });
+      el.addEventListener("timeupdate", e => { const v = e.target; if (v.id === "vd-v" && v.dataset.b && v.currentTime >= +v.dataset.b) v.pause(); }, true);
+      document.addEventListener("keydown", e => { if (e.key === "Escape" && el && !el.hidden) close(); });
+    }
+    el.hidden = false; document.documentElement.classList.add("bn-lock"); render();
+  }
+  function close() { if (el) { el.hidden = true; const v = el.querySelector("#vd-v"); if (v) v.pause(); } document.documentElement.classList.remove("bn-lock"); }
+  window._vidAdmin = open;
+  window._vidXML = () => xml(); // tests
+})();
+
 /* ══════════ AIDE : guide joueur + guide super admin, en FAQ avec recherche ══════════
    Contenu repris des guides PDF (novembre 2026). Chaque entrée : [question, réponse, mots-clés].
    La recherche compare les mots de la question posée aux questions, mots-clés et réponses. */
@@ -21400,6 +21639,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       ]},
       { n: "04", ico: "⚽", t: "La saisie de la soirée", s: "Ce que les super admins font en plus", qa: [
         ["Où est expliquée la saisie ?", "Dans le guide joueur, partie « La saisie de la soirée » : tous les joueurs connectés peuvent saisir le lundi dès 19h45, l'explication est donc la même pour tout le monde (présences, équipes, matchs, clôture, avec les captures).", "saisie explication guide joueur ou"],
+        ["Comment monter les vidéos des buts (GoPro) ?", "Menu ☰ › ★ Options › Vidéos des buts, depuis un ordinateur. 1. Choisis la soirée. 2. Ajoute les fichiers MP4 de chaque caméra (carte SD › DCIM) : l'outil lit l'heure de début de chaque vidéo, rien n'est envoyé sur Internet. 3. Pour chaque match, indique vers quelle caméra attaque la première équipe au coup d'envoi (le changement de côté à la mi-temps est automatique). 4. Vérifie les buts avec ▶ et recale ceux saisis en retard (−10 s à +10 s). 5. « Télécharger le montage » donne un fichier .xml : dans Premiere, Fichier › Importer, tu obtiens une séquence par but et le Résumé de la soirée. Avant de filmer, connecte les GoPro à l'appli Quik pour mettre leur heure à jour ; sinon, « Recaler l'horloge » corrige le décalage.", "video videos gopro camera montage premiere clip resume buts filmer"],
         ["Qu'est-ce qu'un super admin peut faire en plus dans la saisie ?", "Ouvrir la saisie dès l'ouverture du sondage, et pas seulement le lundi dès 19h45 : pratique pour préparer les présences avant la soirée. Le reste de la saisie fonctionne exactement comme pour les joueurs.", "super admin saisie avant preparer presences avance"],
       ]},
       { n: "05", ico: "📣", t: "Envoyer une notification", s: "Infos Club et messages ciblés", qa: [
