@@ -4417,6 +4417,30 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   #hm-help .hh-ans .hh-k { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
   #hm-help .hh-ans b { display: block; font-size: 16px; line-height: 1.3; }
   #hm-help .hh-ans p { margin: 8px 0 0; font-size: 14px; line-height: 1.6; color: var(--text); }
+  /* sommaire et navigation entre les parties */
+  #hm-help .hh-toc { display: grid; gap: 8px; margin-top: 18px; }
+  #hm-help .hh-tile { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-radius: 14px; background: var(--bg2); border: 1px solid var(--border); }
+  #hm-help .hh-tile:hover, #hm-help .hh-tile:focus-visible { border-color: var(--gold-border); }
+  #hm-help .hh-tile:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  #hm-help .hh-tt { flex: 1; min-width: 0; }
+  #hm-help .hh-tt b { display: block; font-size: 15px; font-weight: 800; font-style: italic; text-transform: uppercase; line-height: 1.15; }
+  #hm-help .hh-tt small { display: block; font-size: 12px; color: var(--text2); margin-top: 2px; }
+  #hm-help .hh-tile .car { color: var(--text3); font-size: 20px; }
+  #hm-help .hh-nav { display: flex; gap: 8px; margin-top: 16px; position: sticky; top: 0; z-index: 2; padding: 8px 0; background: var(--bg); }
+  #hm-help .hh-home { flex: none; border: 1px solid var(--border2); background: var(--bg2); color: var(--text); font: inherit; font-size: 13px; font-weight: 700; border-radius: 12px; padding: 0 12px; height: 44px; cursor: pointer; }
+  #hm-help .hh-sel { flex: 1; min-width: 0; position: relative; display: block; }
+  #hm-help .hh-sel select { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; border-radius: 12px; border: 1.5px solid var(--gold-border); background: var(--bg2); color: var(--text); font: inherit; font-size: 14px; font-weight: 700; padding: 0 34px 0 12px; text-overflow: ellipsis; cursor: pointer; }
+  #hm-help .hh-sel .car { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--gold); pointer-events: none; font-size: 13px; }
+  #hm-help .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  #hm-help .hh-pn { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 22px; }
+  #hm-help .hh-pn button { border: 1px solid var(--border2); background: var(--bg2); color: var(--text); font: inherit; border-radius: 14px; padding: 11px 12px; cursor: pointer; display: grid; gap: 2px; min-width: 0; text-align: left; }
+  #hm-help .hh-pn .hh-nx { text-align: right; }
+  #hm-help .hh-pn small { font-size: 11.5px; color: var(--gold); font-weight: 700; }
+  #hm-help .hh-pn b { font-size: 13.5px; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; }
+  #hm-help .hh-pn button:disabled { opacity: .4; cursor: default; }
+  #hm-help .hh-pn button:disabled small { color: var(--text3); }
+  #hm-help .hh-shot { display: block; width: 100%; max-width: 340px; margin: 0 auto 14px; border-radius: 14px; border: 1px solid var(--border2); box-shadow: 0 8px 20px rgba(0,0,0,.25); }
+  #hm-help .hh-ans .hh-shot { margin-top: 12px; margin-bottom: 0; }
   #hm-help .hh-none { margin-top: 14px; padding: 18px 16px; border-radius: 16px; background: var(--bg2); border: 1px dashed var(--border2); }
   #hm-help .hh-none p { margin: 6px 0 12px; color: var(--text2); font-size: 13.5px; line-height: 1.5; }
   #hm-help .hh-none button { border: 0; border-radius: 10px; padding: 9px 14px; background: var(--gold); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
@@ -5443,7 +5467,7 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="28/11/2026"><li>🎁 <b>Vignettes</b> : dès le 28 novembre, 2 boosters par jour, un à minuit et un à midi (rappel à 18h s'il n'est pas ouvert)</li><li>🔄 <b>Mettre à jour l'appli</b> : le « Quoi de neuf ? » s'ouvre d'abord, avec le bouton Mettre à jour quand une nouvelle version est là</li><li data-sa>🖼️ <b>Album</b> : modifier une carte Mythique, et l'offrir à un joueur (il la découvre avec l'animation Mythique)</li><li data-sa>🎲 <b>Cartes Mythiques</b> : chacune peut être offerte à tous ou mise en jeu dans les boosters, Club comme Panthéon</li><li data-sa>🎁 <b>Offrir</b> : la liste des joueurs qui l'ont déjà reçue, en attente ou découverte</li><li data-sa>☰ <b>Menu</b> : les réglages super admin sont rangés dans un seul bouton « ★ Options », qui ouvre un sous-menu</li><li data-sa>👁️ <b>Cartes masquées</b> : assombries ; touche l'œil barré pour la montrer aux joueurs</li></template>
+<template id="hm-news" data-date="28/11/2026"><li>❓ <b>Aide</b> : un sommaire pour aller directement à la bonne partie, et des flèches pour passer à la suivante</li><li>🎁 <b>Vignettes</b> : dès le 28 novembre, 2 boosters par jour, un à minuit et un à midi (rappel à 18h s'il n'est pas ouvert)</li><li>🔄 <b>Mettre à jour l'appli</b> : le « Quoi de neuf ? » s'ouvre d'abord, avec le bouton Mettre à jour quand une nouvelle version est là</li><li data-sa>🖼️ <b>Album</b> : modifier une carte Mythique, et l'offrir à un joueur (il la découvre avec l'animation Mythique)</li><li data-sa>🎲 <b>Cartes Mythiques</b> : chacune peut être offerte à tous ou mise en jeu dans les boosters, Club comme Panthéon</li><li data-sa>🎁 <b>Offrir</b> : la liste des joueurs qui l'ont déjà reçue, en attente ou découverte</li><li data-sa>☰ <b>Menu</b> : les réglages super admin sont rangés dans un seul bouton « ★ Options », qui ouvre un sous-menu</li><li data-sa>👁️ <b>Cartes masquées</b> : assombries ; touche l'œil barré pour la montrer aux joueurs</li></template>
 <footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 27/11/2026 - 19:02</footer>
 
 <script>
@@ -21409,7 +21433,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   /* ── affichage ── */
   const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
   const isSA = () => typeof _accIsSuper !== "undefined" && !!_accIsSuper;
-  let G = "joueur", Q = "", OPEN = null, el = null;
+  let G = "joueur", Q = "", OPEN = null, el = null, SEC = null; // SEC : partie ouverte (null = sommaire)
   const star = () => G === "sa" ? `<span class="hh-star">★</span> ` : ""; // questions du guide super admin
   function body() {
     const D = HELP[G];
@@ -21417,15 +21441,28 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       const R = search(G, Q);
       if (!R.length) return `<div class="hh-none"><b>Pas de réponse dans le guide.</b><p>Essaie avec d'autres mots, ou pose ta question dans le Vestiaire : ${G === "sa" ? "un autre super admin" : "un super admin"} te répondra.</p><button type="button" data-hh="chat">Ouvrir le Vestiaire ›</button></div>`;
       const [b, ...o] = R;
-      return `<div class="hh-ans"><span class="hh-k">${esc(b.c.ico)} ${esc(b.c.t)}</span><b>${star()}${esc(b.q)}</b><p>${esc(b.a)}</p></div>
+      return `<div class="hh-ans"><span class="hh-k">${esc(b.c.ico)} ${esc(b.c.t)}</span><b>${star()}${esc(b.q)}</b><p>${esc(b.a)}</p>${shots(b.c.qa[b.i])}</div>
         ${o.length ? `<div class="cr-h2">Ça peut aussi t'aider</div>${o.map(e => qa(e.c, e.i, true)).join("")}` : ""}`;
     }
-    return D.ch.map((c, ci) => `<section class="hh-ch"><div class="hh-chh"><span class="hh-n">${String(ci + 1).padStart(2, "0")}</span><span class="hh-ico">${esc(c.ico)}</span><span><b>${esc(c.t)}</b><small>${esc(c.s)}</small></span></div>
-      ${c.qa.map((x, i) => qa(c, i)).join("")}</section>`).join("");
+    const num = i => String(i + 1).padStart(2, "0");
+    // sommaire : une tuile par partie
+    if (SEC == null || !D.ch[SEC]) return `<div class="hh-toc">${D.ch.map((c, ci) => `<button type="button" class="hh-tile" data-hs="${ci}"><span class="hh-n">${num(ci)}</span><span class="hh-ico">${esc(c.ico)}</span><span class="hh-tt"><b>${esc(c.t)}</b><small>${esc(c.s)} · ${c.qa.length} question${c.qa.length > 1 ? "s" : ""}</small></span><span class="car">›</span></button>`).join("")}</div>`;
+    // une partie : menu déroulant en haut, questions, puis précédente / suivante
+    const c = D.ch[SEC], pv = D.ch[SEC - 1], nx = D.ch[SEC + 1];
+    return `<div class="hh-nav"><button type="button" class="hh-home" data-hs="toc" aria-label="Retour au sommaire">☰ Sommaire</button>
+        <label class="hh-sel"><span class="sr">Aller à une partie</span><select id="hh-sec">${D.ch.map((x, i) => `<option value="${i}"${i === SEC ? " selected" : ""}>${num(i)} · ${esc(x.t)}</option>`).join("")}</select><span class="car" aria-hidden="true">▾</span></label></div>
+      <section class="hh-ch"><div class="hh-chh"><span class="hh-n">${num(SEC)}</span><span class="hh-ico">${esc(c.ico)}</span><span><b>${esc(c.t)}</b><small>${esc(c.s)}</small></span></div>
+      ${c.qa.map((x, i) => qa(c, i)).join("")}</section>
+      <div class="hh-pn">
+        <button type="button" class="hh-pv" data-hs="${pv ? SEC - 1 : "toc"}"><small>${pv ? "‹ Partie précédente" : "‹ Retour"}</small><b>${pv ? esc(pv.t) : "Au sommaire"}</b></button>
+        <button type="button" class="hh-nx" data-hs="${nx ? SEC + 1 : ""}"${nx ? "" : " disabled"}><small>Partie suivante ›</small><b>${nx ? esc(nx.t) : "Fin du guide"}</b></button>
+      </div>`;
   }
+  // captures d'écran : 4ᵉ élément facultatif d'une question, une image ou une liste (dossier help/)
+  const shots = x => [].concat(x[3] || []).map(src => `<img class="hh-shot" src="${esc(src)}" alt="" loading="lazy" decoding="async">`).join("");
   function qa(c, i, flat) {
     const id = `${G}-${c.t}-${i}`, o = OPEN === id, x = c.qa[i];
-    return `<div class="hh-q${o ? " open" : ""}${flat ? " flat" : ""}"><button type="button" data-hq="${id}" aria-expanded="${o}"><span class="hh-qt">${star()}${esc(x[0])}</span><span class="car">›</span></button>${o ? `<p>${esc(x[1])}</p>` : ""}</div>`;
+    return `<div class="hh-q${o ? " open" : ""}${flat ? " flat" : ""}"><button type="button" data-hq="${id}" aria-expanded="${o}"><span class="hh-qt">${star()}${esc(x[0])}</span><span class="car">›</span></button>${o ? `<p>${esc(x[1])}</p>${shots(x)}` : ""}</div>`;
   }
   function render(keepFocus) {
     if (!el) return;
@@ -21437,7 +21474,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   }
   function open(g) {
     if (typeof _hmIsVisitor === "function" && _hmIsVisitor()) return;
-    G = g && HELP[g] && (g !== "sa" || isSA()) ? g : "joueur"; Q = ""; OPEN = null;
+    G = g && HELP[g] && (g !== "sa" || isSA()) ? g : "joueur"; Q = ""; OPEN = null; SEC = null;
     if (!el) {
       el = document.createElement("div"); el.id = "hm-help"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-label", "Aide");
       el.innerHTML = `<div class="hh-in"><button type="button" class="hh-x" data-hh="close" aria-label="Fermer">✕</button><div class="hh-top"></div>
@@ -21445,17 +21482,20 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         <div class="hh-body"></div></div>`;
       document.body.appendChild(el);
       el.addEventListener("input", e => { if (e.target.id === "hh-q") { Q = e.target.value; OPEN = null; render(true); } });
+      el.addEventListener("change", e => { if (e.target.id === "hh-sec") goSec(+e.target.value); });
       el.addEventListener("click", e => {
-        const t = e.target.closest("[data-hh],[data-hg],[data-hq]"); if (!t) return;
+        const t = e.target.closest("[data-hh],[data-hg],[data-hq],[data-hs]"); if (!t) return;
+        if (t.dataset.hs != null) { if (t.disabled || t.dataset.hs === "") return; goSec(t.dataset.hs === "toc" ? null : +t.dataset.hs); return; }
         if (t.dataset.hh === "close") return close();
         if (t.dataset.hh === "chat") { close(); document.getElementById("chat-btn")?.click(); return; }
-        if (t.dataset.hg) { G = t.dataset.hg; OPEN = null; render(true); el.querySelector(".hh-body").scrollTop = 0; return; }
+        if (t.dataset.hg) { G = t.dataset.hg; OPEN = null; SEC = null; render(true); el.scrollTop = 0; return; }
         if (t.dataset.hq) { OPEN = OPEN === t.dataset.hq ? null : t.dataset.hq; render(true); }
       });
       document.addEventListener("keydown", e => { if (e.key === "Escape" && el && !el.hidden) close(); });
     }
     el.hidden = false; document.documentElement.classList.add("bn-lock"); render();
   }
+  function goSec(i) { SEC = i; OPEN = null; render(true); el.scrollTop = 0; }
   function close() { if (el) el.hidden = true; document.documentElement.classList.remove("bn-lock"); }
   window._hmHelp = open;
 })();
