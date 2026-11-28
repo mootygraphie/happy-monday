@@ -333,6 +333,10 @@
       ".read": "auth != null",
       ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
     },
+    "vgMode": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true"
+    },
     "vgGifts": {
       ".read": "auth != null && root.child('config/superAdmins/' + root.child('users/' + auth.uid + '/player').val()).val() === true",
       "$p": {
