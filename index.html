@@ -3208,10 +3208,10 @@ html.light .hm .hm-art.bdo b { color: #b8860b; } html.light .hm .hm-art.bdo smal
 .hm .hm-art.vg { background: radial-gradient(120% 120% at 100% 0%, rgba(184,146,255,.2), var(--bg2) 60%); border-color: rgba(184,146,255,.45); } .hm .hm-art.vg small { color: #b892ff; }
 .hm .hm-art.bdo .art, .hm .hm-art.vg .art { top: auto; bottom: auto; }
 /* trophée et jokers : grands, en bas à droite, légèrement décalés hors de la case (coupés par le bord), en pleine opacité */
-.hm .hm-art.bdo .art { right: -20px; top: 52px; width: 88px; height: 88px; transform: rotate(-10deg); filter: drop-shadow(0 6px 14px rgba(0,0,0,.45)); }
-.hm .hm-art.vg .art { right: -12px; top: 50px; width: 110px; height: 86px; }
+.hm .hm-art.bdo .art { right: -24px; top: 58px; width: 76px; height: 76px; transform: rotate(-10deg); filter: drop-shadow(0 6px 14px rgba(0,0,0,.45)); }
+.hm .hm-art.vg .art { right: -8px; top: 42px; width: 100px; height: 86px; }
 .hm .hm-art .art img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.hm .hm-art .art.fan img { position: absolute; left: 50%; bottom: 0; width: 56px; height: 56px; margin-left: -28px; transform-origin: 50% 120%; transform: translateX(calc((var(--i) - 1) * 20px)) rotate(calc((var(--i) - 1) * 18deg - 6deg)); filter: drop-shadow(0 4px 8px rgba(0,0,0,.45)); }
+.hm .hm-art .art.fan img { position: absolute; left: 50%; bottom: 0; width: 56px; height: 56px; margin-left: -28px; transform-origin: 50% 130%; transform: translateX(calc((var(--i) - 1) * 13px)) translateY(calc((var(--i) - 1) * (var(--i) - 1) * 5px)) rotate(calc((var(--i) - 1) * 26deg - 4deg)); filter: drop-shadow(0 4px 8px rgba(0,0,0,.45)); }
 .hm .hm-know { padding: 16px; border-radius: 16px; background: transparent; border: 1.5px dashed color-mix(in srgb, var(--text) 30%, transparent); }
 .hm .hm-know small { font-size: 10.5px; font-weight: 800; font-style: italic; letter-spacing: .06em; text-transform: uppercase; color: var(--hm-red); }
 .hm .hm-know p { margin: 10px 0 12px; font-size: 14.5px; font-weight: 700; line-height: 1.3; } .hm .hm-know p b { color: var(--hm-red); }
@@ -5256,10 +5256,26 @@ html.light .hm .hm-sched { color: #1f7a4a; }
 <body>
 
 <div id="loading-screen" data-noemo style="position:fixed;inset:0;z-index:10000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
-  <img src="icons/ballon-chargement.gif" alt="" width="60" height="60" data-noemo style="width:60px;height:60px;display:block">
-  <div style="color:var(--text2);font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:600">Chargement…</div>
+  <div class="ld-p" aria-hidden="true"><span class="ld-but"></span><span class="ld-j" style="left:10px;top:29px"></span><span class="ld-j" style="left:40px;top:8px"></span><span class="ld-j" style="left:56px;top:48px"></span><span class="ld-b"></span><span class="ld-goal">BUT</span></div>
+  <div class="ld-t" role="status">Échauffement</div>
 </div>
-<style>@keyframes ldPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.1);opacity:.7}}</style>
+<style>
+/* écran de chargement : petit terrain, trois passes, frappe, « BUT » (en code, rien à télécharger) */
+#loading-screen .ld-p { position: relative; width: 104px; height: 68px; border-radius: 7px; background: repeating-linear-gradient(90deg, #127a43 0 13px, #0f6c3b 13px 26px); border: 1.5px solid rgba(255,255,255,.75); box-shadow: 0 8px 18px rgba(0,0,0,.45); overflow: hidden; }
+#loading-screen .ld-p::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1.5px solid rgba(255,255,255,.55); }
+#loading-screen .ld-p::after { content: ""; position: absolute; left: 50%; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; border: 1.5px solid rgba(255,255,255,.55); border-radius: 50%; }
+#loading-screen .ld-but { position: absolute; right: -1px; top: 23px; width: 7px; height: 22px; border: 1.5px solid #fff; border-right: 0; background: rgba(255,255,255,.12); }
+#loading-screen .ld-j { position: absolute; width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid #fff; background: #e30b0b; box-shadow: 0 1px 3px rgba(0,0,0,.4); }
+#loading-screen .ld-b { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px #111; animation: ldPass 3s cubic-bezier(.5,0,.4,1) infinite; }
+#loading-screen .ld-goal { position: absolute; right: 12px; top: 4px; font: 800 9px/1 inherit; font-size: 9px; letter-spacing: .1em; color: #f5c842; opacity: 0; text-shadow: 0 1px 3px rgba(0,0,0,.6); animation: ldGoal 3s linear infinite; }
+#loading-screen .ld-t { color: var(--text2); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; }
+#loading-screen .ld-t::after { content: ""; display: inline-block; width: 1.4em; text-align: left; animation: ldDots 1.4s steps(4) infinite; }
+@keyframes ldPass { 0%, 8% { left: 18px; top: 31px; opacity: 1; } 28%, 36% { left: 48px; top: 10px; } 56%, 64% { left: 64px; top: 50px; } 84% { left: 99px; top: 31px; opacity: 1; } 90% { opacity: 0; } 91%, 100% { left: 18px; top: 31px; opacity: 0; } }
+@keyframes ldGoal { 0%, 82% { opacity: 0; } 85%, 96% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes ldPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: .7; } }
+@keyframes ldDots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+@media (prefers-reduced-motion: reduce) { #loading-screen .ld-b, #loading-screen .ld-goal { animation-duration: 6s; } }
+</style>
 
 <div id="acc-modal" hidden>
   <div class="acm-card" role="dialog" aria-modal="true" aria-label="Compte joueur">
@@ -5472,8 +5488,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="28/11/2026"><li data-sa>⚽ <b>Aide</b> : la saisie de la soirée expliquée étape par étape, avec captures</li><li data-sa>💬 <b>Salons</b> : dans les paramètres, les membres du salon s'affichent en premier</li><li>❓ <b>Aide</b> : un sommaire pour aller directement à la bonne partie, des flèches pour passer à la suivante, et des captures d'écran sous les réponses</li><li>🎁 <b>Vignettes</b> : dès le 28 novembre, 2 boosters par jour, un à minuit et un à midi (rappel à 18h s'il n'est pas ouvert)</li><li>🔄 <b>Mettre à jour l'appli</b> : le « Quoi de neuf ? » s'ouvre d'abord, avec le bouton Mettre à jour quand une nouvelle version est là</li><li data-sa>🖼️ <b>Album</b> : modifier une carte Mythique, et l'offrir à un joueur (il la découvre avec l'animation Mythique)</li><li data-sa>🎲 <b>Cartes Mythiques</b> : chacune peut être offerte à tous ou mise en jeu dans les boosters, Club comme Panthéon</li><li data-sa>🎁 <b>Offrir</b> : la liste des joueurs qui l'ont déjà reçue, en attente ou découverte</li><li data-sa>☰ <b>Menu</b> : les réglages super admin sont rangés dans un seul bouton « ★ Options », qui ouvre un sous-menu</li><li data-sa>👁️ <b>Cartes masquées</b> : assombries ; touche l'œil barré pour la montrer aux joueurs</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 28/11/2026 - 09:25</footer>
+<template id="hm-news" data-date="28/11/2026"><li>⚽ <b>Chargement</b> : un petit terrain animé à l'ouverture de l'appli, et de nouvelles illustrations sur l'Accueil</li><li data-sa>⚽ <b>Aide</b> : la saisie de la soirée expliquée étape par étape, avec captures</li><li data-sa>💬 <b>Salons</b> : dans les paramètres, les membres du salon s'affichent en premier</li><li>❓ <b>Aide</b> : un sommaire pour aller directement à la bonne partie, des flèches pour passer à la suivante, et des captures d'écran sous les réponses</li><li>🎁 <b>Vignettes</b> : dès le 28 novembre, 2 boosters par jour, un à minuit et un à midi (rappel à 18h s'il n'est pas ouvert)</li><li>🔄 <b>Mettre à jour l'appli</b> : le « Quoi de neuf ? » s'ouvre d'abord, avec le bouton Mettre à jour quand une nouvelle version est là</li><li data-sa>🖼️ <b>Album</b> : modifier une carte Mythique, et l'offrir à un joueur (il la découvre avec l'animation Mythique)</li><li data-sa>🎲 <b>Cartes Mythiques</b> : chacune peut être offerte à tous ou mise en jeu dans les boosters, Club comme Panthéon</li><li data-sa>🎁 <b>Offrir</b> : la liste des joueurs qui l'ont déjà reçue, en attente ou découverte</li><li data-sa>☰ <b>Menu</b> : les réglages super admin sont rangés dans un seul bouton « ★ Options », qui ouvre un sous-menu</li><li data-sa>👁️ <b>Cartes masquées</b> : assombries ; touche l'œil barré pour la montrer aux joueurs</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 28/11/2026 - 10:12</footer>
 
 <script>
 /* ══════════ EMOJIS STYLE TEAMS (Fluent, licence MIT) SUR TOUT LE SITE ══════════
