@@ -3205,11 +3205,13 @@ html.light #panel-vignettes .vg-subtab[aria-selected="true"] { background: rgba(
 .hm .hm-art .art { position: absolute; z-index: 0; pointer-events: none; }
 .hm .hm-art.bdo { background: radial-gradient(120% 120% at 100% 0%, rgba(245,197,66,.2), var(--bg2) 60%); border-color: rgba(245,197,66,.45); } .hm .hm-art.bdo small { color: #f5c542; } .hm .hm-art.bdo b { color: #ffd24d; }
 html.light .hm .hm-art.bdo b { color: #b8860b; } html.light .hm .hm-art.bdo small { color: #a87a00; }
-.hm .hm-art.bdo .art { right: -14px; bottom: -34px; width: 84px; height: 84px; filter: drop-shadow(0 6px 14px rgba(0,0,0,.45)); opacity: .9; }
 .hm .hm-art.vg { background: radial-gradient(120% 120% at 100% 0%, rgba(184,146,255,.2), var(--bg2) 60%); border-color: rgba(184,146,255,.45); } .hm .hm-art.vg small { color: #b892ff; }
-.hm .hm-art.vg .art { right: -2px; bottom: -22px; width: 76px; height: 62px; opacity: .95; transform: translateY(34px); }
+.hm .hm-art.bdo .art, .hm .hm-art.vg .art { top: auto; bottom: auto; }
+/* trophée et jokers : grands, en bas à droite, légèrement décalés hors de la case (coupés par le bord), en pleine opacité */
+.hm .hm-art.bdo .art { right: -20px; top: 52px; width: 88px; height: 88px; transform: rotate(-10deg); filter: drop-shadow(0 6px 14px rgba(0,0,0,.45)); }
+.hm .hm-art.vg .art { right: -12px; top: 50px; width: 110px; height: 86px; }
 .hm .hm-art .art img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.hm .hm-art .art.fan img { position: absolute; left: 50%; bottom: 0; width: 40px; height: 40px; margin-left: -20px; transform-origin: 50% 110%; transform: translateX(calc((var(--i) - 1) * 14px)) translateY(calc((var(--i) - 1) * (var(--i) - 1) * 4px)) rotate(calc((var(--i) - 1) * 20deg)); filter: drop-shadow(0 4px 8px rgba(0,0,0,.45)); }
+.hm .hm-art .art.fan img { position: absolute; left: 50%; bottom: 0; width: 56px; height: 56px; margin-left: -28px; transform-origin: 50% 120%; transform: translateX(calc((var(--i) - 1) * 20px)) rotate(calc((var(--i) - 1) * 18deg - 6deg)); filter: drop-shadow(0 4px 8px rgba(0,0,0,.45)); }
 .hm .hm-know { padding: 16px; border-radius: 16px; background: transparent; border: 1.5px dashed color-mix(in srgb, var(--text) 30%, transparent); }
 .hm .hm-know small { font-size: 10.5px; font-weight: 800; font-style: italic; letter-spacing: .06em; text-transform: uppercase; color: var(--hm-red); }
 .hm .hm-know p { margin: 10px 0 12px; font-size: 14.5px; font-weight: 700; line-height: 1.3; } .hm .hm-know p b { color: var(--hm-red); }
