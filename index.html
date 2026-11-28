@@ -5255,26 +5255,30 @@ html.light .hm .hm-sched { color: #1f7a4a; }
 </head>
 <body>
 
-<div id="loading-screen" data-noemo style="position:fixed;inset:0;z-index:10000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+<div id="loading-screen" class="ldw" data-noemo style="position:fixed;inset:0;z-index:10000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
   <div class="ld-p" aria-hidden="true"><span class="ld-but"></span><span class="ld-j" style="left:10px;top:29px"></span><span class="ld-j" style="left:40px;top:8px"></span><span class="ld-j" style="left:56px;top:48px"></span><span class="ld-b"></span><span class="ld-goal">BUT</span></div>
   <div class="ld-t" role="status">Échauffement</div>
 </div>
+<script>window._hmLd = () => `<div class="ldw sm" data-noemo><div class="ld-p" aria-hidden="true"><span class="ld-but"></span><span class="ld-j" style="left:10px;top:29px"></span><span class="ld-j" style="left:40px;top:8px"></span><span class="ld-j" style="left:56px;top:48px"></span><span class="ld-b"></span><span class="ld-goal">BUT</span></div><div class="ld-t" role="status">Échauffement</div></div>`;</script>
 <style>
-/* écran de chargement : petit terrain, trois passes, frappe, « BUT » (en code, rien à télécharger) */
-#loading-screen .ld-p { position: relative; width: 104px; height: 68px; border-radius: 7px; background: repeating-linear-gradient(90deg, #127a43 0 13px, #0f6c3b 13px 26px); border: 1.5px solid rgba(255,255,255,.75); box-shadow: 0 8px 18px rgba(0,0,0,.45); overflow: hidden; }
-#loading-screen .ld-p::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1.5px solid rgba(255,255,255,.55); }
-#loading-screen .ld-p::after { content: ""; position: absolute; left: 50%; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; border: 1.5px solid rgba(255,255,255,.55); border-radius: 50%; }
-#loading-screen .ld-but { position: absolute; right: -1px; top: 23px; width: 7px; height: 22px; border: 1.5px solid #fff; border-right: 0; background: rgba(255,255,255,.12); }
-#loading-screen .ld-j { position: absolute; width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid #fff; background: #e30b0b; box-shadow: 0 1px 3px rgba(0,0,0,.4); }
-#loading-screen .ld-b { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px #111; animation: ldPass 3s cubic-bezier(.5,0,.4,1) infinite; }
-#loading-screen .ld-goal { position: absolute; right: 12px; top: 4px; font: 800 9px/1 inherit; font-size: 9px; letter-spacing: .1em; color: #f5c842; opacity: 0; text-shadow: 0 1px 3px rgba(0,0,0,.6); animation: ldGoal 3s linear infinite; }
-#loading-screen .ld-t { color: var(--text2); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; }
-#loading-screen .ld-t::after { content: ""; display: inline-block; width: 1.4em; text-align: left; animation: ldDots 1.4s steps(4) infinite; }
+/* animation de chargement de l'appli : petit terrain, trois passes, frappe, « BUT » (en code, rien à télécharger).
+   Écran de démarrage en taille normale ; .ldw.sm = version réduite dans les fenêtres (_hmLd()). */
+.ldw { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 22px 0; }
+.ldw .ld-p { position: relative; width: 104px; height: 68px; border-radius: 7px; background: repeating-linear-gradient(90deg, #127a43 0 13px, #0f6c3b 13px 26px); border: 1.5px solid rgba(255,255,255,.75); box-shadow: 0 8px 18px rgba(0,0,0,.45); overflow: hidden; flex: none; }
+.ldw .ld-p::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1.5px solid rgba(255,255,255,.55); }
+.ldw .ld-p::after { content: ""; position: absolute; left: 50%; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; border: 1.5px solid rgba(255,255,255,.55); border-radius: 50%; }
+.ldw .ld-but { position: absolute; right: -1px; top: 23px; width: 7px; height: 22px; border: 1.5px solid #fff; border-right: 0; background: rgba(255,255,255,.12); }
+.ldw .ld-j { position: absolute; width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid #fff; background: #e30b0b; box-shadow: 0 1px 3px rgba(0,0,0,.4); }
+.ldw .ld-b { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px #111; animation: ldPass 3s cubic-bezier(.5,0,.4,1) infinite; }
+.ldw .ld-goal { position: absolute; right: 12px; top: 4px; font-size: 9px; font-weight: 800; line-height: 1; letter-spacing: .1em; color: #f5c842; opacity: 0; text-shadow: 0 1px 3px rgba(0,0,0,.6); animation: ldGoal 3s linear infinite; }
+.ldw .ld-t { color: var(--text2); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; }
+.ldw .ld-t::after { content: ""; display: inline-block; width: 1.4em; text-align: left; animation: ldDots 1.4s steps(4) infinite; }
+.ldw.sm { gap: 8px; padding: 16px 0; } .ldw.sm .ld-p { transform: scale(.7); margin: -10px -16px; } .ldw.sm .ld-t { font-size: 11px; }
 @keyframes ldPass { 0%, 8% { left: 18px; top: 31px; opacity: 1; } 28%, 36% { left: 48px; top: 10px; } 56%, 64% { left: 64px; top: 50px; } 84% { left: 99px; top: 31px; opacity: 1; } 90% { opacity: 0; } 91%, 100% { left: 18px; top: 31px; opacity: 0; } }
 @keyframes ldGoal { 0%, 82% { opacity: 0; } 85%, 96% { opacity: 1; } 100% { opacity: 0; } }
 @keyframes ldPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: .7; } }
 @keyframes ldDots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
-@media (prefers-reduced-motion: reduce) { #loading-screen .ld-b, #loading-screen .ld-goal { animation-duration: 6s; } }
+@media (prefers-reduced-motion: reduce) { .ldw .ld-b, .ldw .ld-goal { animation-duration: 6s; } }
 </style>
 
 <div id="acc-modal" hidden>
@@ -5488,8 +5492,8 @@ html.light .hm .hm-sched { color: #1f7a4a; }
   <div class="mhf-dr-body" id="mhf-dr-body"></div>
 </div>
 
-<template id="hm-news" data-date="28/11/2026"><li>⚽ <b>Chargement</b> : un petit terrain animé à l'ouverture de l'appli, et de nouvelles illustrations sur l'Accueil</li><li data-sa>⚽ <b>Aide</b> : la saisie de la soirée expliquée étape par étape, avec captures</li><li data-sa>💬 <b>Salons</b> : dans les paramètres, les membres du salon s'affichent en premier</li><li>❓ <b>Aide</b> : un sommaire pour aller directement à la bonne partie, des flèches pour passer à la suivante, et des captures d'écran sous les réponses</li><li>🎁 <b>Vignettes</b> : dès le 28 novembre, 2 boosters par jour, un à minuit et un à midi (rappel à 18h s'il n'est pas ouvert)</li><li>🔄 <b>Mettre à jour l'appli</b> : le « Quoi de neuf ? » s'ouvre d'abord, avec le bouton Mettre à jour quand une nouvelle version est là</li><li data-sa>🖼️ <b>Album</b> : modifier une carte Mythique, et l'offrir à un joueur (il la découvre avec l'animation Mythique)</li><li data-sa>🎲 <b>Cartes Mythiques</b> : chacune peut être offerte à tous ou mise en jeu dans les boosters, Club comme Panthéon</li><li data-sa>🎁 <b>Offrir</b> : la liste des joueurs qui l'ont déjà reçue, en attente ou découverte</li><li data-sa>☰ <b>Menu</b> : les réglages super admin sont rangés dans un seul bouton « ★ Options », qui ouvre un sous-menu</li><li data-sa>👁️ <b>Cartes masquées</b> : assombries ; touche l'œil barré pour la montrer aux joueurs</li></template>
-<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 28/11/2026 - 10:12</footer>
+<template id="hm-news" data-date="28/11/2026"><li>📝 <b>Aide</b> : la saisie de la soirée expliquée étape par étape, pour tous les joueurs</li><li>⚽ <b>Chargement</b> : un petit terrain animé à l'ouverture de l'appli et pendant les chargements, et de nouvelles illustrations sur l'Accueil</li><li data-sa>💬 <b>Salons</b> : dans les paramètres, les membres du salon s'affichent en premier</li><li>❓ <b>Aide</b> : un sommaire pour aller directement à la bonne partie, des flèches pour passer à la suivante, et des captures d'écran sous les réponses</li><li>🎁 <b>Vignettes</b> : dès le 28 novembre, 2 boosters par jour, un à minuit et un à midi (rappel à 18h s'il n'est pas ouvert)</li><li>🔄 <b>Mettre à jour l'appli</b> : le « Quoi de neuf ? » s'ouvre d'abord, avec le bouton Mettre à jour quand une nouvelle version est là</li><li data-sa>🖼️ <b>Album</b> : modifier une carte Mythique, et l'offrir à un joueur (il la découvre avec l'animation Mythique)</li><li data-sa>🎲 <b>Cartes Mythiques</b> : chacune peut être offerte à tous ou mise en jeu dans les boosters, Club comme Panthéon</li><li data-sa>🎁 <b>Offrir</b> : la liste des joueurs qui l'ont déjà reçue, en attente ou découverte</li><li data-sa>☰ <b>Menu</b> : les réglages super admin sont rangés dans un seul bouton « ★ Options », qui ouvre un sous-menu</li><li data-sa>👁️ <b>Cartes masquées</b> : assombries ; touche l'œil barré pour la montrer aux joueurs</li></template>
+<footer>Divodurum &mdash; <button class="footer-link-btn" id="footer-reglement-btn" style="display:none">Règlement 26/27</button> &mdash; <button class="footer-link-btn" id="footer-coef-btn" style="display:none">Coefficient joueurs</button><span id="footer-pronos-wrap" style="display:none"> &mdash; <button class="footer-link-btn" id="footer-pronos-btn">Pronos : désactivés</button></span> &mdash; 28/11/2026 - 12:48</footer>
 
 <script>
 /* ══════════ EMOJIS STYLE TEAMS (Fluent, licence MIT) SUR TOUT LE SITE ══════════
@@ -9263,7 +9267,7 @@ function _rwClsHTML(adm) {
   const c = _RW_CATS.find(x => x.id === _RW.cat && (adm || !x.adm)) || _RW_CATS[0];
   if (c.id === "hf") return _rwHfAdminHTML();
   const VR = c.vg ? (typeof window._vgRank === "function" ? window._vgRank() : null) : null;
-  if (c.vg && !VR) return `<div class="rw-empty">Chargement des albums…</div>`;
+  if (c.vg && !VR) return _hmLd();
   // Traders : filtre Total / Données / Reçues
   const trSeg = c.id === "vgtr" ? `<div class="rw-tseg rw-trseg" role="tablist">${[["tot", "Total"], ["don", "Données"], ["rec", "Reçues"]].map(([k, l]) => `<button type="button" data-rwtr="${k}" aria-pressed="${_RW.tr === k}">${l}</button>`).join("")}</div>` : "";
   const rows = c.vg ? (VR[c.id === "vgtr" ? "vgtr_" + _RW.tr : c.id] || []) : (_RW.data.T[c.id] || []), W = c.vg ? [] : (_RW.data.T[c.id + "W"] || []);
@@ -15314,7 +15318,7 @@ function renderReglement() {
         <button class="regl-view-pill" id="regl-pill-recap">Récapitulatif</button>
       </div>
     </div>
-    <div id="regl-admin-content"><div style="color:var(--text3);font-size:13px">Chargement…</div></div>
+    <div id="regl-admin-content"><div class="ldw sm" data-noemo><div class="ld-p" aria-hidden="true"><span class="ld-but"></span><span class="ld-j" style="left:10px;top:29px"></span><span class="ld-j" style="left:40px;top:8px"></span><span class="ld-j" style="left:56px;top:48px"></span><span class="ld-b"></span><span class="ld-goal">BUT</span></div><div class="ld-t" role="status">Échauffement</div></div></div>
   </div>
 
 </div>`;
@@ -16789,13 +16793,13 @@ function _accRender(keepFocus) {
       ${_accSaisieBlocked() ? `<p class="acm-sub" style="margin:0">⏸️ Saisie indisponible : ta fiche est Dépanneur ou Inactif cette saison.</p>` : ""}
       <button class="acm-link2" data-a="fiche">👤 Voir ma fiche joueur<span>›</span></button>
       <div class="acm-sec">Cotisation</div>
-      ${_accNoCotis(_accPlayer()) && !a.paid ? `<div class="acm-cot ok"><span><b>Cotisation ${cl}</b></span><span class="st">Pas de cotisation</span></div>` : a.paid === undefined ? `<p class="acm-sub">Chargement…</p>` : `<div class="acm-cot ${a.paid ? "ok" : "due"}"><span><b>Cotisation ${cl}</b></span><span class="st">${a.paid ? "✓ Payée" : "À payer"}</span></div>`}
+      ${_accNoCotis(_accPlayer()) && !a.paid ? `<div class="acm-cot ok"><span><b>Cotisation ${cl}</b></span><span class="st">Pas de cotisation</span></div>` : a.paid === undefined ? _hmLd() : `<div class="acm-cot ${a.paid ? "ok" : "due"}"><span><b>Cotisation ${cl}</b></span><span class="st">${a.paid ? "✓ Payée" : "À payer"}</span></div>`}
       <div class="acm-sec">Compte</div>
       ${(() => { const pw = window._pwa, st = pw && pw.pushState ? pw.pushState() : "unsupported", d = a.myPush;
         const lab = { on: `<span style="color:var(--good)">✓ actives sur ce téléphone</span>`, off: `<span style="color:#ff9f0a">désactivées sur ce téléphone</span>`, denied: `<span style="color:var(--bad)">bloquées dans les réglages</span>`, install: `<span style="color:#ff9f0a">installe d'abord l'appli</span>`, checking: `<span style="color:var(--text3)">vérification…</span>`, unsupported: `<span style="color:var(--text3)">pas gérées par ce navigateur</span>` }[st] || "—";
         return `<div class="acm-kv"><span>Pseudo</span><b>@${_accEsc((_accProfile && _accProfile.pseudo) || ((_accUser && _accUser.email) || "").split("@")[0])}</b><span>Notifications</span><b>${lab}${d && !d.ok && st !== "on" ? `<small class="acm-kvs">dernier essai : ${_accEsc(d.err || d.step || "")}</small>` : ""}${st === "off" || st === "install" ? `<button type="button" class="acm-mini" data-a="pushon">${st === "install" ? "Comment faire ›" : "Activer"}</button>` : ""}${st === "on" ? `<button type="button" class="acm-mini" data-a="pushtest">Tester</button>` : ""}</b></div>`; })()}
       <div class="acm-sec">Coordonnées</div>${err}
-      ${a.prof === undefined ? `<p class="acm-sub">Chargement…</p>` : !ed ? `<div class="acm-kv acm-kvc">${(() => { const kv = (l, v) => `<span>${l}</span><b>${v ? _accEsc(v) : `<i class="no">à renseigner</i>`}</b>`, fd = d => { if (!d) return ""; const [y, m, j] = d.split("-"); return `${+j} ${MONTH_NAMES[+m - 1]} ${y}`; };
+      ${a.prof === undefined ? _hmLd() : !ed ? `<div class="acm-kv acm-kvc">${(() => { const kv = (l, v) => `<span>${l}</span><b>${v ? _accEsc(v) : `<i class="no">à renseigner</i>`}</b>`, fd = d => { if (!d) return ""; const [y, m, j] = d.split("-"); return `${+j} ${MONTH_NAMES[+m - 1]} ${y}`; };
           return kv("Prénom", pf.prenom) + kv("Nom", pf.nom) + kv("Naissance", fd(pf.naissance)) + kv("Téléphone", pf.tel) + kv("E-mail", pf.email); })()}<button type="button" class="acm-pensq" data-a="pedit" aria-label="Modifier mes coordonnées" title="Modifier"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button></div>
         <p class="acm-help" style="margin:6px 0 0">🔒 Visibles seulement par toi et les responsables du club.</p>`
       : `<form id="acm-prof" class="acm-grid ed" autocomplete="on">
@@ -16813,7 +16817,7 @@ function _accRender(keepFocus) {
     const nPaid = (rows || []).filter(r => cot[r.player]).length, cotL = [...new Set(ALL_PLAYERS)].filter(n => !_accNoCotis(n)), nPaidAll = cotL.filter(n => cot[n]).length, nDue = cotL.length - nPaidAll;
     h = `<div class="acm-top"><button class="acm-back" data-a="tome" aria-label="Retour">‹</button><span class="acm-kicker" style="color:var(--sa)">★ Super admin</span></div>
       <h4 class="acm-h">Membres</h4>
-      <p class="acm-sub">${rows ? `<b>${rows.length}</b> compte${rows.length > 1 ? "s" : ""} sur ${total} joueurs · <span style="color:var(--good)">${nPaidAll} cotisation${nPaidAll > 1 ? "s" : ""} payée${nPaidAll > 1 ? "s" : ""}</span> · <span style="color:#ff9f0a">${nDue} à payer</span>` : "Chargement…"}</p>${err}
+      <p class="acm-sub">${rows ? `<b>${rows.length}</b> compte${rows.length > 1 ? "s" : ""} sur ${total} joueurs · <span style="color:var(--good)">${nPaidAll} cotisation${nPaidAll > 1 ? "s" : ""} payée${nPaidAll > 1 ? "s" : ""}</span> · <span style="color:#ff9f0a">${nDue} à payer</span>` : "Échauffement…"}</p>${err}
       <div class="acm-list acm-accl acm-mem" style="max-height:58vh">${(rows || []).map(r => `<div class="acm-pl${r.uid === myUid ? " me" : ""}">
         <button class="acm-star${r.super ? " on" : ""}" data-a="star" data-n="${_accEsc(r.player)}"${r.uid === myUid ? " disabled" : ""} aria-label="${r.super ? `Retirer les droits super admin de ${_accEsc(r.player)}` : `Passer ${_accEsc(r.player)} super admin`}">${r.super ? "★" : "☆"}</button>
         <button class="acm-memrow" data-a="member" data-n="${_accEsc(r.player)}">${(s0 => { const live = s0 && Date.now() - s0.t < 3 * 60000, pst = (a.subs || {})[r.player] || "none", on = pst === "ok", paid = !!cot[r.player];
@@ -16843,7 +16847,7 @@ function _accRender(keepFocus) {
         if (pend && pend.status === "error") return `<p class="acm-err">Réinitialisation impossible : ${_accEsc(pend.err || "")}</p>`;
         return r.uid ? `<button class="acm-btn ghost" data-a="pwreset" data-n="${_accEsc(n)}">${a.confirmPw === n ? "Confirmer : nouveau mot de passe ?" : "🔑 Réinitialiser le mot de passe"}</button>` : ""; })()}
       <div class="acm-sec">Infos</div>
-      ${pf === undefined ? `<p class="acm-sub">Chargement…</p>` : `<div class="acm-kv">${kv("Prénom", pf.prenom)}${kv("Nom", pf.nom)}${kv("Naissance", fd(pf.naissance))}${kv("Téléphone", pf.tel)}${kv("E-mail", pf.email)}</div>`}
+      ${pf === undefined ? _hmLd() : `<div class="acm-kv">${kv("Prénom", pf.prenom)}${kv("Nom", pf.nom)}${kv("Naissance", fd(pf.naissance))}${kv("Téléphone", pf.tel)}${kv("E-mail", pf.email)}</div>`}
       <button class="acm-btn ghost" data-a="mfiche" data-n="${_accEsc(n)}">👤 Voir sa fiche joueur</button>
       ${r.uid && r.uid !== (_accUser && _accUser.uid) ? `<button class="acm-btn danger" data-a="detach" data-n="${_accEsc(n)}">${a.confirmDetach === n ? "Confirmer : détacher la carte ?" : "🔗 Détacher la carte de ce compte"}</button>` : ""}`;
   } else if (a.view === "login" || a.view === "create0") {
@@ -17719,7 +17723,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     if (me !== ME) { ME = me; loadedFor = null; COL = {}; PASTED = new Set(); BOOST = null; if (boostRef) { boostRef.off(); boostRef = null; } }
     if (!ME) { body.innerHTML = teaserHTML(); return; }
     if (loadedFor !== ME) {
-      body.innerHTML = loadErr ? `<div class="vg-locked"><p>${loadErr}</p><button class="cta" data-vg="retry">Réessayer</button></div>` : `<p class="hint" style="padding:40px 0">Chargement de ton album…</p>`;
+      body.innerHTML = loadErr ? `<div class="vg-locked"><p>${loadErr}</p><button class="cta" data-vg="retry">Réessayer</button></div>` : `<div style="padding:30px 0">${_hmLd()}</div>`;
       if (!loadErr) loadMine();
       return;
     }
@@ -18133,7 +18137,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
     const o = document.createElement("div"); o.className = "sz-ov"; o.style.zIndex = 3100; document.body.appendChild(o);
     o.innerHTML = `<div class="sz-box" role="dialog" aria-modal="true" aria-labelledby="vgg-t"><div class="sz-h"><span class="sz-k"><span>★</span> Super admin · Album</span><button type="button" class="sz-x" data-g="x" aria-label="Fermer">✕</button></div>
       <b class="pu-ttl" id="vgg-t">Offrir « ${String(nm).replace(/</g, "&lt;")} »</b>
-      <div class="ev-fld vgg-done"><span class="ev-lbl">Déjà offerte à</span><div class="vgg-list" id="vgg-list"><span class="ev-note">Chargement…</span></div></div>
+      <div class="ev-fld vgg-done"><span class="ev-lbl">Déjà offerte à</span><div class="vgg-list" id="vgg-list">${_hmLd()}</div></div>
       <div class="ev-fld"><label class="ev-lbl" for="vgg-p">À qui ?</label><select class="ev-in" id="vgg-p"><option value="">Choisis un joueur</option>${names.map(n => `<option>${n.replace(/</g, "&lt;")}</option>`).join("")}</select></div>
       <p class="ev-note">À sa prochaine ouverture de l'appli, il verra l'animation Mythique en premier, puis la carte rejoindra son album comme s'il l'avait tirée d'un booster.</p>
       <div class="ev-adm"><button type="button" data-g="x">Annuler</button><button type="button" class="pri" data-g="go" disabled>Offrir</button></div></div>`;
@@ -18975,7 +18979,7 @@ function _svApply() {
   }
   function body() {
     const d = _svData;
-    if (!_svDate) return `<p class="sv-lock">Chargement…</p>`;
+    if (!_svDate) return _hmLd();
     if (ui.pres && isSA() && d && d.status === "open") return vPres();
     const A = hmAfter(), pollOpen = d && d.status === "open" && !closed();
     if (A && !(pollOpen && _svDate !== A[0].date)) return hmAfterView(A[0], A[1]);
@@ -19766,7 +19770,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         catch (er) { inn.insertAdjacentHTML("afterbegin", `<p class="pc-note">Suppression impossible : vérifie ta connexion.</p>`); }
       }
       async function loadHist() {
-        inn.innerHTML = `${hdr("Notifications")}<p class="pc-note">Chargement…</p>`;
+        inn.innerHTML = `${hdr("Notifications")}${_hmLd()}`;
         try {
           const [snap, rs] = await Promise.all([_db.ref("pushQueue").once("value"), _db.ref("notifRead").once("value").catch(() => null)]);
           st.reads = rs ? rs.val() || {} : {}; st.cat = st.cat || "all";
@@ -19797,7 +19801,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         if (a === "detail") { detailView(t.dataset.id); return; }
         if (a === "histBack") { keepForm(); histView(); return; }
         if (a === "hist") {
-          keepForm(); inn.innerHTML = `<p class="pc-note">Chargement…</p>`;
+          keepForm(); inn.innerHTML = _hmLd();
           try {
             const [snap, rs] = await Promise.all([_db.ref("pushQueue").once("value"), _db.ref("notifRead").once("value").catch(() => null)]);
             st.reads = rs ? rs.val() || {} : {}; st.cat = st.cat || "all";
@@ -20104,11 +20108,11 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const tabs = `<div class="ch-emo-tabs"><button type="button" data-ch="emoTab" data-t="emo" aria-pressed="${E.tab === "emo"}">Emojis</button><button type="button" data-ch="emoTab" data-t="gif" aria-pressed="${E.tab === "gif"}">GIF</button></div>`;
     if (E.tab === "gif") {
       if (!E.gifs && !E.gload) setTimeout(gifLoad, 0);
-      const body = E.gerr ? `<p class="ch-emo-msg">${esc(E.gerr)}</p>` : !E.gifs ? `<p class="ch-emo-msg">Chargement…</p>` : !E.gifs.length ? `<p class="ch-emo-msg">Aucun GIF trouvé.</p>`
+      const body = E.gerr ? `<p class="ch-emo-msg">${esc(E.gerr)}</p>` : !E.gifs ? _hmLd() : !E.gifs.length ? `<p class="ch-emo-msg">Aucun GIF trouvé.</p>`
         : `<div class="ch-gifs">${E.gifs.map((g, k) => `<button type="button" data-ch="gifSend" data-k="${k}" aria-label="Envoyer le GIF ${esc(g.t)}"><img src="${esc(g.p)}" alt="" loading="lazy"></button>`).join("")}</div>`;
       return `<div class="ch-emop">${tabs}<input id="ch-gq" class="ch-emo-q" type="search" placeholder="Chercher un GIF" value="${esc(E.gq || "")}" autocomplete="off">${body}<small class="ch-emo-by">Powered by GIPHY</small></div>`;
     }
-    if (!EMOD) { loadEmo(); return `<div class="ch-emop">${tabs}<p class="ch-emo-msg">Chargement…</p></div>`; }
+    if (!EMOD) { loadEmo(); return `<div class="ch-emop">${tabs}${_hmLd()}</div>`; }
     const q = enorm(E.q), rec = V.recent || [];
     const G = [[-1, "🕘", "Récents"], [0, "😀"], [1, "👋"], [3, "🐶"], [4, "🍔"], [6, "⚽"], [5, "🚗"], [7, "💡"], [8, "❤️"], [9, "🏁"]].filter(g => g[0] !== -1 || rec.length);
     if (E.cat === -1 && !rec.length) E.cat = 0;
@@ -20392,7 +20396,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
     const near = force || f.scrollHeight - f.scrollTop - f.clientHeight < 90, keep = f.scrollTop;
     const p = me(), L = msgs[V.room], seen = V.seen[V.room] || 0;
     let h = "", lastDay = "", sepDone = false;
-    if (!L) h = `<p class="ch-empty">Chargement…</p>`;
+    if (!L) h = _hmLd();
     else if (!L.length) h = `<p class="ch-empty">${r.gen ? "Le Vestiaire est ouvert : écris le premier message !" : "Salon tout neuf : lance la discussion !"}</p>`;
     else {
       if (r.dm) h += `<div class="ch-priv">${IC.lock}Visible de vous deux seulement</div>`;
@@ -20459,7 +20463,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
       <div class="ch-quick"><button type="button" data-ch="fAll">Tout le monde</button><button type="button" data-ch="fNone">Personne</button></div>
       <div class="ch-mlist">${(() => { // membres du salon d'abord (ordre figé à l'ouverture : cocher ne fait pas sauter les lignes)
         const inR = p => f.members0 ? f.members0.has(p) : f.members.has(p), L = [...accounts].sort((x, y) => (inR(y) ? 1 : 0) - (inR(x) ? 1 : 0)), nIn = L.filter(inR).length;
-        return L.map((p, i) => `${f.mode !== "new" && i === 0 && nIn ? `<div class="ch-mhd">Dans le salon · ${nIn}</div>` : ""}${f.mode !== "new" && i === nIn && nIn ? `<div class="ch-mhd">Autres joueurs</div>` : ""}<label class="ch-mrow" data-p="${esc(p.toLowerCase())}"><input type="checkbox" data-m="${esc(p)}"${f.members.has(p) ? " checked" : ""}${p === me() ? " disabled" : ""}>${av(p)}<span class="nm">${esc(p)}</span>${p === me() ? `<small>toi</small>` : ""}</label>`).join(""); })() || `<p class="ch-note">Chargement des comptes…</p>`}</div>
+        return L.map((p, i) => `${f.mode !== "new" && i === 0 && nIn ? `<div class="ch-mhd">Dans le salon · ${nIn}</div>` : ""}${f.mode !== "new" && i === nIn && nIn ? `<div class="ch-mhd">Autres joueurs</div>` : ""}<label class="ch-mrow" data-p="${esc(p.toLowerCase())}"><input type="checkbox" data-m="${esc(p)}"${f.members.has(p) ? " checked" : ""}${p === me() ? " disabled" : ""}>${av(p)}<span class="nm">${esc(p)}</span>${p === me() ? `<small>toi</small>` : ""}</label>`).join(""); })() || _hmLd()}</div>
       <p class="ch-note">Seuls les joueurs qui ont un compte peuvent être ajoutés.</p>
       <button type="button" class="ch-btn" data-ch="fSave" id="ch-fsave"${ok ? "" : " disabled"}>${f.mode === "new" ? "Créer le salon" : "Enregistrer"}</button>
       ${f.mode === "edit" ? `<button type="button" class="ch-del" data-ch="fDel">${f.confirmDel ? "Confirmer : supprimer le salon et ses messages ?" : "🗑️ Supprimer le salon"}</button>` : ""}
@@ -20897,7 +20901,7 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
   const ECATS = [[0, "😀"], [1, "👋"], [3, "🐶"], [4, "🍔"], [6, "⚽"], [5, "🚗"], [7, "💡"], [8, "❤️"], [9, "🏁"]];
   function pickerHTML(f) {
     const D = window._emo && window._emo.data();
-    if (!D) { if (window._emo) window._emo.load().then(redraw); return `<p class="ev-note">Chargement des emojis…</p>`; }
+    if (!D) { if (window._emo) window._emo.load().then(redraw); return _hmLd(); }
     const q = enorm(f.eq), L = q ? D.e.filter(x => enorm(x[2]).includes(q)).slice(0, 120) : D.e.filter(x => x[1] === (f.ecat || 0));
     return `<div class="ev-pick"><input class="ev-in" id="ev-eq" type="search" value="${esc(f.eq || "")}" placeholder="Chercher (ballon, bière, gâteau…)" autocomplete="off">
       ${q ? "" : `<div class="ev-pcats">${ECATS.map(([g, ic]) => `<button type="button" data-ev="ecat" data-g="${g}" aria-pressed="${(f.ecat || 0) === g}" aria-label="${esc(D.g[g] || "")}">${em(ic)}</button>`).join("")}</div>`}
@@ -21294,6 +21298,21 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Qu'y a-t-il dans le récap ?", "Ta soirée (ton équipe, ton bilan, tes buts et passes, 4 stats marrantes), Les héros (MVP, buteur, passeur, gardien : touche une carte pour le top 5), l'équipe-type, le classement (touche une équipe pour sa composition) et les faits notables.", "recap contenu heros mvp equipe type faits notables"],
         ["Quelles sont les couleurs des équipes ?", "Roses (rouge), Jaunes (vert) et Bleus (bleu).", "couleurs equipes roses jaunes bleus"]
       ]},
+      { n: "04b", ico: "📝", t: "La saisie de la soirée", s: "Présences, équipes, matchs, clôture", qa: [
+        ["Qui peut saisir la soirée ?", "Tous les joueurs connectés, le lundi dès 19h45 : pendant la soirée, le bouton du milieu du menu du bas devient « Saisie ». Pas besoin d'être super admin : n'importe quel joueur connecté peut tenir la feuille de match. La saisie s'enregistre toute seule (« ✓ Sauvegardé à … » en haut) : si l'appli se ferme, tu reprends exactement où tu en étais. « Enregistrer » force une sauvegarde, « Effacer » vide toute la saisie en cours (à éviter pendant la soirée).", "qui peut saisir saisie acces 19h45 sauvegarde enregistrer effacer", ["help/s-saisie-steps.jpg"]],
+        ["Quelles sont les étapes de la saisie ?", "Quatre étapes, dans l'ordre : 1. Présences (qui est là ce soir), 2. Équipes (les couleurs), 3. Matchs (le direct, match par match), 4. Logistique (sac, maillots et clôture). Le menu déroulant en haut (« 1. Présences ▾ ») permet de passer d'une étape à l'autre, et les boutons « ← » / « → » en bas aussi. Rien n'est publié tant que la soirée n'est pas clôturée à l'étape 4.", "etapes saisie ordre presences equipes matchs logistique", ["help/s-saisie-steps.jpg"]],
+        ["Étape 1 : comment faire les présences ?", "Les réponses du sondage sont reprises automatiquement. Les pastilles en haut filtrent la liste : tout le monde, présents ✅, absents ❌, blessés 🤕 et sans réponse ❓. Touche le bouton à droite d'un nom pour changer son statut (Présent, Absent, Blessé…). Quelqu'un vient sans être inscrit, ou un invité ? En bas, « Ajouter un dépanneur » : choisis-le dans la liste puis « Ajouter ». Quand la liste est juste, « Équipes → ».", "presences etape 1 filtre present absent depanneur ajouter invite", ["help/s-saisie-pres.jpg", "help/s-saisie-dep.jpg"]],
+        ["Étape 2 : comment faire les équipes ?", "« Générer les équipes » (dès 10 présents) répartit les présents en équipes équilibrées selon le coefficient de chaque joueur : 2 équipes jusqu'à 11 présents, 3 équipes à partir de 12. Le nombre s'affiche sous le bouton. Pour corriger, touche un joueur et choisis sa couleur ; « Réinitialiser » repart de zéro. Quand c'est bon, fais glisser le gros bouton rouge « Confirmer les équipes et lancer le DIRECT » jusqu'au bout : la saisie passe en plein écran et le direct démarre pour tout le monde dans l'appli.", "equipes etape 2 generer repartition couleur confirmer glisser direct", ["help/s-saisie-teams.jpg"]],
+        ["Comment lancer un match ?", "En haut de l'étape Matchs, la carte « Prochain match » propose l'affiche et dit pourquoi (tirage, le gagnant reste, rotation). Touche « LANCER › ». Sur l'écran Nouveau match : les deux couleurs en haut (tu peux en changer), puis le gardien 🧤 de chaque équipe (repris du match précédent, touche pour changer) et, à 6 joueurs, qui commence sur le banc. « Coup d'envoi » lance le chrono et le direct.", "lancer match coup d envoi gardien couleurs prochain match banc", ["help/s-saisie-next.jpg", "help/s-saisie-setup.jpg"]],
+        ["Comment saisir un but ?", "Pendant le match, chaque joueur a deux boutons à droite de son nom : l'étoile ⭐ (fait notable) et le ballon ⚽ (but). Touche le ballon du buteur, puis choisis le passeur dans la liste (ou « Sans passe »). Tu peux aussi ajouter un fait notable lié au but (reprise de volée, lucarne…). « ✓ Valider le but » met à jour le score et le direct pour tout le monde ; « Annuler le but » ferme sans rien enregistrer.", "saisir but buteur passeur sans passe valider ballon score", ["help/s-saisie-live.jpg", "help/s-saisie-goal.jpg"]],
+        ["Comment saisir un fait notable, un CSC ou une blessure ?", "L'étoile ⭐ d'un joueur ajoute un fait notable hors but (poteau, gros arrêt, Jingle Bells…) : choisis-le puis « Valider ». Toucher le nom d'un joueur ouvre trois choix : CSC (but contre son camp, compté pour l'équipe adverse), Gants (il prend la place de gardien) et Blessé (il sort du match). Après une blessure, « ⋯ Actions › Joker » permet de faire entrer un joueur de l'équipe au repos pour compléter.", "fait notable etoile csc contre son camp blessure blesse gants gardien joker", ["help/s-saisie-player.jpg"]],
+        ["Que contient le bouton « ⋯ Actions » ?", "En bas de l'écran du match : Gardiens (changer de gardien en cours de match), Blessure (un joueur sort ou revient), Joker (seulement après une blessure : un joueur de l'équipe au repos vient compléter), Buts du match (corriger le buteur, le passeur ou retirer un but), Changer les équipes (tant qu'aucun but n'est marqué) et Supprimer le match.", "actions menu gardiens blessure joker buts du match changer equipes supprimer match", ["help/s-saisie-actions.jpg"]],
+        ["Comment gérer la mi-temps et la fin du match ?", "« Mi-temps » ouvre un écran avec le score et les gardiens de la 2ᵉ mi-temps : les mêmes par défaut, touche pour changer. « ▶ Lancer la 2ᵉ mi-temps » reprend le match. À la fin, « 🏁 Fin du match » (bouton vert) : tu arrives sur le classement de la soirée, le prochain match proposé (« LANCER › ») et la liste des matchs joués, avec l'œil pour revoir un match et le crayon pour le corriger.", "mi-temps fin du match deuxieme mi-temps classement prochain match corriger", ["help/s-saisie-ht.jpg", "help/s-saisie-2mt.jpg", "help/s-saisie-end.jpg"]],
+        ["Comment retirer un but saisi par erreur ?", "Match en cours : « ⋯ Actions › Buts du match », puis retire ou corrige le but (buteur, passeur). Match déjà terminé : dans la liste des matchs de la soirée, touche le crayon du match, corrige, puis termine à nouveau avec « 🏁 Fin du match ». Le score et les stats sont recalculés.", "retirer but erreur corriger buteur passeur crayon match termine"],
+        ["Les équipes sont mauvaises", "Tant qu'aucun but n'est marqué : « ⋯ Actions › Changer les équipes ». Après le premier but, corrige plutôt joueur par joueur (Blessure, Joker, Gants) pour ne pas fausser les stats du match.", "changer equipes erreur mauvaises equipes"],
+        ["Comment tourne-t-on à 3 équipes ?", "Le 1er match est tiré au sort. Au 2ᵉ, le gagnant reste sur le terrain et affronte l'équipe qui attendait (en cas de nul, un tirage décide qui reste). Ensuite, c'est une rotation : l'équipe restée sur le terrain reçoit, et celle qui vient de jouer deux matchs de suite sort. À 2 équipes, on alterne simplement qui reçoit. L'affiche proposée reste modifiable sur l'écran Nouveau match.", "rotation 3 equipes tirage gagnant reste nul prochain match ordre"],
+        ["Étape 4 : comment clôturer la soirée ?", "Dans Logistique, choisis qui ramène le sac 🎒 et qui lave et ramène les maillots 👕 : l'appli propose en premier ceux qui l'ont le moins fait. Puis « Clôturer la soirée » : un résumé s'affiche (nombre de matchs, de buts, de joueurs, sac et maillots). En confirmant, la soirée est enregistrée et publiée pour tout le monde (stats, récap, récompenses, vignettes). C'est définitif.", "cloturer soiree logistique sac maillots publier definitif etape 4", ["help/s-saisie-logi.jpg"]]
+      ]},
       { n: "", ico: "🎲", t: "Les pronostics", s: "Parier sur les matchs du soir", qa: [
         ["Comment marchent les pronostics ?", "Pendant la soirée, quand les pronos sont activés, chaque match s'ouvre au vote dès que ses 2 équipes sont choisies dans la Saisie. Dans En direct, choisis l'issue (victoire d'une équipe ou nul), puis tente le score exact si tu veux.", "pronostics pronos parier pari vote match fonctionnement"],
         ["Jusqu'à quand je peux pronostiquer ?", "Jusqu'à la mi-temps du match. Après, les votes sont clos.", "pronos jusqu quand mi temps clos delai"],
@@ -21379,20 +21398,9 @@ const _PWA_VAPID = "BGxfqQdoByJuJgkMHi-mXdgMK7LayFhva1K8-2p0v952HOsTxOHTVwsKw2uq
         ["Comment corriger les présences ?", "Modifier les votes ouvre l'écran Présences. Touche le statut d'un joueur pour le faire tourner : ❓ › ✅ › ❌ › 🤕. Pratique pour ceux qui n'ont pas de compte.", "corriger presences modifier votes"],
         ["Faut-il annuler sous 10 présents ?", "Une session n'est jamais annulée automatiquement faute de joueurs. Sous 10 présents, c'est à toi de décider. Les jokers restent possibles pour tous jusqu'au lundi.", "moins de 10 presents annuler decider"]
       ]},
-      { n: "04", ico: "⚽", t: "La saisie de la soirée", s: "Équipes, matchs, logistique", qa: [
-        ["Qui peut saisir la soirée ?", "Tous les joueurs connectés, le lundi dès 19h45 : pendant la soirée, le bouton du milieu du menu du bas devient « Saisie ». Les super admins y ont accès dès l'ouverture du sondage, pour préparer les présences à l'avance. La saisie s'enregistre toute seule (« ✓ Sauvegardé à … » en haut) : si l'appli se ferme, tu reprends exactement où tu en étais. « Enregistrer » force une sauvegarde, « Effacer » vide toute la saisie en cours (à éviter pendant la soirée).", "qui peut saisir saisie acces 19h45 sauvegarde enregistrer effacer", ["help/s-saisie-steps.jpg"]],
-        ["Quelles sont les étapes de la saisie ?", "Quatre étapes, dans l'ordre : 1. Présences (qui est là ce soir), 2. Équipes (les couleurs), 3. Matchs (le direct, match par match), 4. Logistique (sac, maillots et clôture). Le menu déroulant en haut (« 1. Présences ▾ ») permet de passer d'une étape à l'autre, et les boutons « ← » / « → » en bas aussi. Rien n'est publié tant que la soirée n'est pas clôturée à l'étape 4.", "etapes saisie ordre presences equipes matchs logistique", ["help/s-saisie-steps.jpg"]],
-        ["Étape 1 : comment faire les présences ?", "Les réponses du sondage sont reprises automatiquement. Les pastilles en haut filtrent la liste : tout le monde, présents ✅, absents ❌, blessés 🤕 et sans réponse ❓. Touche le bouton à droite d'un nom pour changer son statut (Présent, Absent, Blessé…). Quelqu'un vient sans être inscrit, ou un invité ? En bas, « Ajouter un dépanneur » : choisis-le dans la liste puis « Ajouter ». Quand la liste est juste, « Équipes → ».", "presences etape 1 filtre present absent depanneur ajouter invite", ["help/s-saisie-pres.jpg", "help/s-saisie-dep.jpg"]],
-        ["Étape 2 : comment faire les équipes ?", "« Générer les équipes » (dès 10 présents) répartit les présents en équipes équilibrées selon le coefficient de chaque joueur : 2 équipes jusqu'à 11 présents, 3 équipes à partir de 12. Le nombre s'affiche sous le bouton. Pour corriger, touche un joueur et choisis sa couleur ; « Réinitialiser » repart de zéro. Quand c'est bon, fais glisser le gros bouton rouge « Confirmer les équipes et lancer le DIRECT » jusqu'au bout : la saisie passe en plein écran et le direct démarre pour tout le monde dans l'appli.", "equipes etape 2 generer repartition couleur confirmer glisser direct", ["help/s-saisie-teams.jpg"]],
-        ["Comment lancer un match ?", "En haut de l'étape Matchs, la carte « Prochain match » propose l'affiche et dit pourquoi (tirage, le gagnant reste, rotation). Touche « LANCER › ». Sur l'écran Nouveau match : les deux couleurs en haut (tu peux en changer), puis le gardien 🧤 de chaque équipe (repris du match précédent, touche pour changer) et, à 6 joueurs, qui commence sur le banc. « Coup d'envoi » lance le chrono et le direct.", "lancer match coup d envoi gardien couleurs prochain match banc", ["help/s-saisie-next.jpg", "help/s-saisie-setup.jpg"]],
-        ["Comment saisir un but ?", "Pendant le match, chaque joueur a deux boutons à droite de son nom : l'étoile ⭐ (fait notable) et le ballon ⚽ (but). Touche le ballon du buteur, puis choisis le passeur dans la liste (ou « Sans passe »). Tu peux aussi ajouter un fait notable lié au but (reprise de volée, lucarne…). « ✓ Valider le but » met à jour le score et le direct pour tout le monde ; « Annuler le but » ferme sans rien enregistrer.", "saisir but buteur passeur sans passe valider ballon score", ["help/s-saisie-live.jpg", "help/s-saisie-goal.jpg"]],
-        ["Comment saisir un fait notable, un CSC ou une blessure ?", "L'étoile ⭐ d'un joueur ajoute un fait notable hors but (poteau, gros arrêt, Jingle Bells…) : choisis-le puis « Valider ». Toucher le nom d'un joueur ouvre trois choix : CSC (but contre son camp, compté pour l'équipe adverse), Gants (il prend la place de gardien) et Blessé (il sort du match). Après une blessure, « ⋯ Actions › Joker » permet de faire entrer un joueur de l'équipe au repos pour compléter.", "fait notable etoile csc contre son camp blessure blesse gants gardien joker", ["help/s-saisie-player.jpg"]],
-        ["Que contient le bouton « ⋯ Actions » ?", "En bas de l'écran du match : Gardiens (changer de gardien en cours de match), Blessure (un joueur sort ou revient), Joker (seulement après une blessure : un joueur de l'équipe au repos vient compléter), Buts du match (corriger le buteur, le passeur ou retirer un but), Changer les équipes (tant qu'aucun but n'est marqué) et Supprimer le match.", "actions menu gardiens blessure joker buts du match changer equipes supprimer match", ["help/s-saisie-actions.jpg"]],
-        ["Comment gérer la mi-temps et la fin du match ?", "« Mi-temps » ouvre un écran avec le score et les gardiens de la 2ᵉ mi-temps : les mêmes par défaut, touche pour changer. « ▶ Lancer la 2ᵉ mi-temps » reprend le match. À la fin, « 🏁 Fin du match » (bouton vert) : tu arrives sur le classement de la soirée, le prochain match proposé (« LANCER › ») et la liste des matchs joués, avec l'œil pour revoir un match et le crayon pour le corriger.", "mi-temps fin du match deuxieme mi-temps classement prochain match corriger", ["help/s-saisie-ht.jpg", "help/s-saisie-2mt.jpg", "help/s-saisie-end.jpg"]],
-        ["Comment retirer un but saisi par erreur ?", "Match en cours : « ⋯ Actions › Buts du match », puis retire ou corrige le but (buteur, passeur). Match déjà terminé : dans la liste des matchs de la soirée, touche le crayon du match, corrige, puis termine à nouveau avec « 🏁 Fin du match ». Le score et les stats sont recalculés.", "retirer but erreur corriger buteur passeur crayon match termine"],
-        ["Les équipes sont mauvaises", "Tant qu'aucun but n'est marqué : « ⋯ Actions › Changer les équipes ». Après le premier but, corrige plutôt joueur par joueur (Blessure, Joker, Gants) pour ne pas fausser les stats du match.", "changer equipes erreur mauvaises equipes"],
-        ["Comment tourne-t-on à 3 équipes ?", "Le 1er match est tiré au sort. Au 2ᵉ, le gagnant reste sur le terrain et affronte l'équipe qui attendait (en cas de nul, un tirage décide qui reste). Ensuite, c'est une rotation : l'équipe restée sur le terrain reçoit, et celle qui vient de jouer deux matchs de suite sort. À 2 équipes, on alterne simplement qui reçoit. L'affiche proposée reste modifiable sur l'écran Nouveau match.", "rotation 3 equipes tirage gagnant reste nul prochain match ordre"],
-        ["Étape 4 : comment clôturer la soirée ?", "Dans Logistique, choisis qui ramène le sac 🎒 et qui lave et ramène les maillots 👕 : l'appli propose en premier ceux qui l'ont le moins fait. Puis « Clôturer la soirée » : un résumé s'affiche (nombre de matchs, de buts, de joueurs, sac et maillots). En confirmant, la soirée est enregistrée et publiée pour tout le monde (stats, récap, récompenses, vignettes). C'est définitif.", "cloturer soiree logistique sac maillots publier definitif etape 4", ["help/s-saisie-logi.jpg"]]
+      { n: "04", ico: "⚽", t: "La saisie de la soirée", s: "Ce que les super admins font en plus", qa: [
+        ["Où est expliquée la saisie ?", "Dans le guide joueur, partie « La saisie de la soirée » : tous les joueurs connectés peuvent saisir le lundi dès 19h45, l'explication est donc la même pour tout le monde (présences, équipes, matchs, clôture, avec les captures).", "saisie explication guide joueur ou"],
+        ["Qu'est-ce qu'un super admin peut faire en plus dans la saisie ?", "Ouvrir la saisie dès l'ouverture du sondage, et pas seulement le lundi dès 19h45 : pratique pour préparer les présences avant la soirée. Le reste de la saisie fonctionne exactement comme pour les joueurs.", "super admin saisie avant preparer presences avance"],
       ]},
       { n: "05", ico: "📣", t: "Envoyer une notification", s: "Infos Club et messages ciblés", qa: [
         ["Comment envoyer une notification ?", "Menu ☰ › ★ Options › Notifications › bouton + rouge. Écris un titre et un message (200 caractères max), choisis les destinataires (Tous, Choisir… ou Moi (test)), vérifie l'aperçu et envoie. Ça arrive en général en moins d'une minute.", "envoyer notification push message tous infos club"],
